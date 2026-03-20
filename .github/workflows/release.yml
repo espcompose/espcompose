@@ -38,6 +38,21 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
+      - name: Show tool versions
+        run: |
+          node -v
+          npm -v
+          pnpm -v
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Show npm version after upgrade
+        run: npm -v
+
+      - name: Clear token auth so npm uses OIDC trusted publishing
+        run: echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
+        
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
