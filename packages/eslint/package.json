@@ -28,6 +28,11 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xmlguy74/espcompose.git",
+    "directory": "packages/eslint"
+  },
   "engines": {
     "node": ">=22"
   },
