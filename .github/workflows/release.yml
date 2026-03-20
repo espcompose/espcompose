@@ -59,6 +59,10 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Enable max npm logging
+        run: |
+          npm config set loglevel silly
+
       - name: Create Release PR or Publish
         id: changesets
         uses: changesets/action@v1
