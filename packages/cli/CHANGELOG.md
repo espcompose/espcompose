@@ -1,5 +1,16 @@
 # @esphome/compose-cli
 
+## 0.1.2
+
+### Patch Changes
+
+- [#16](https://github.com/xmlguy74/espcompose/pull/16) [`f229338`](https://github.com/xmlguy74/espcompose/commit/f229338b0bee17c1c160b2a5e0cd65888c05f253) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Release pipeline maintenance
+
+- [#10](https://github.com/xmlguy74/espcompose/pull/10) [`c5a48a5`](https://github.com/xmlguy74/espcompose/commit/c5a48a5a76654258e5cbe2faf19108c48137cba9) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Corrected minimum node version setting.
+
+- Updated dependencies [[`f229338`](https://github.com/xmlguy74/espcompose/commit/f229338b0bee17c1c160b2a5e0cd65888c05f253), [`c5a48a5`](https://github.com/xmlguy74/espcompose/commit/c5a48a5a76654258e5cbe2faf19108c48137cba9)]:
+  - @esphome/compose@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

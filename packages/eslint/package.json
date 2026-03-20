@@ -1,6 +1,6 @@
 {
   "name": "@esphome/compose-eslint",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ESLint plugin with custom rules for ESPHome Compose projects",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
