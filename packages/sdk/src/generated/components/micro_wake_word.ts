@@ -9,7 +9,7 @@ import type { micro_wake_word_MicroWakeWord, microphone_Microphone } from "../ma
 export interface MicroWakeWordMicrophoneProps {
     microphone?: Ref<microphone_Microphone>;
     /** @yamlKey bits_per_sample */
-    bitsPerSample?: number;
+    bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
     /** @yamlKey gain_factor */
     gainFactor?: number;

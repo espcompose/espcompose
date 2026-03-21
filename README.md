@@ -209,8 +209,7 @@ Output is written to `<projectDir>/.espcompose/esphome.yaml`.
 ```
 packages/
   sdk/         @esphome/compose           Core SDK, JSX runtime, hooks, generated types
-  compiler/    @esphome/compose-compiler  Compiler pipeline, AST transforms, ESPHome wrappers
-  cli/         espcompose                 CLI binary
+  cli/         @esphome/compose-cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
   eslint/      @esphome/compose-eslint    ESLint plugin
   e2e/         (private)                  End-to-end snapshot tests
 ```

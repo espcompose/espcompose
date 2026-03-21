@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@esphome/compose": "workspace:*",
-    "@esphome/compose-compiler": "workspace:*",
+    "@esphome/compose-cli": "workspace:*",
     "yaml": "catalog:"
   },
   "devDependencies": {

@@ -1,0 +1,22 @@
+{
+  "name": "espcompose-demo",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.tsx",
+  "scripts": {
+    "build": "espcompose transpile",
+    "lint": "eslint .",
+    "flash": "espcompose run"
+  },
+  "dependencies": {
+    "@esphome/compose": "workspace:*",
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@esphome/compose-cli": "workspace:*",
+    "@esphome/compose-eslint": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

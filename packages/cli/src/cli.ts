@@ -8,7 +8,7 @@ import {
   esphomeCompile,
   esphomeRun,
   esphomeLogs,
-} from '@esphome/compose-compiler';
+} from './compiler';
 import { initProject } from './init';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports

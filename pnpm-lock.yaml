@@ -92,80 +92,71 @@ importers:
       '@esphome/compose':
         specifier: workspace:*
         version: link:../sdk
+      '@esphome/compose-eslint':
+        specifier: workspace:*
+        version: link:../eslint
       commander:
         specifier: 'catalog:'
         version: 12.1.0
       esbuild:
         specifier: 'catalog:'
         version: 0.21.5
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.4(jiti@2.6.1)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      typescript-eslint:
+        specifier: 'catalog:'
+        version: 8.57.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       which:
         specifier: 'catalog:'
         version: 6.0.1
     devDependencies:
-      '@esphome/compose-compiler':
-        specifier: workspace:*
-        version: link:../compiler
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
       '@types/which':
         specifier: 'catalog:'
         version: 3.0.4
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.4(jiti@2.6.1)
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.57.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
 
-  packages/compiler:
+  packages/demo:
     dependencies:
       '@esphome/compose':
         specifier: workspace:*
         version: link:../sdk
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+    devDependencies:
+      '@esphome/compose-cli':
+        specifier: workspace:*
+        version: link:../cli
       '@esphome/compose-eslint':
         specifier: workspace:*
         version: link:../eslint
-      esbuild:
-        specifier: 'catalog:'
-        version: 0.21.5
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.4(jiti@2.6.1)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.57.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      which:
-        specifier: 'catalog:'
-        version: 6.0.1
-    devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
-      '@types/which':
+      eslint:
         specifier: 'catalog:'
-        version: 3.0.4
-      tsup:
+        version: 9.39.4(jiti@2.6.1)
+      typescript-eslint:
         specifier: 'catalog:'
-        version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+        version: 8.57.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
 
   packages/e2e:
     dependencies:
       '@esphome/compose':
         specifier: workspace:*
         version: link:../sdk
-      '@esphome/compose-compiler':
+      '@esphome/compose-cli':
         specifier: workspace:*
-        version: link:../compiler
+        version: link:../cli
       yaml:
         specifier: 'catalog:'
         version: 2.8.2
@@ -1200,6 +1191,10 @@ packages:
   dot-prop@5.3.0:
     resolution: {integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==}
     engines: {node: '>=8'}
+
+  dotenv@17.3.1:
+    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
+    engines: {node: '>=12'}
 
   dotenv@8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
@@ -3095,6 +3090,8 @@ snapshots:
   dot-prop@5.3.0:
     dependencies:
       is-obj: 2.0.0
+
+  dotenv@17.3.1: {}
 
   dotenv@8.6.0: {}
 

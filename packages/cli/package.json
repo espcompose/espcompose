@@ -3,15 +3,16 @@
   "version": "0.1.3",
   "description": "ESPHome Compose CLI - Command-line tools for building ESPHome Compose projects",
   "bin": {
-    "espcompose": "dist/cli.js"
+    "espcompose": "bin/espcompose.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts",
+    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @esphome/compose-eslint --external typescript-eslint",
     "clean": "rimraf dist",
     "lint": "eslint src",
     "test": "echo \"No tests yet\""
@@ -37,17 +38,17 @@
   },
   "dependencies": {
     "@esphome/compose": "workspace:*",
+    "@esphome/compose-eslint": "workspace:*",
     "commander": "catalog:",
     "esbuild": "catalog:",
+    "eslint": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "which": "catalog:"
   },
   "devDependencies": {
-    "typescript-eslint": "catalog:",
-    "@esphome/compose-compiler": "workspace:*",
     "@types/node": "catalog:",
     "@types/which": "catalog:",
-    "eslint": "catalog:",
     "tsup": "catalog:"
   }
 }

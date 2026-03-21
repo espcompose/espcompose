@@ -16,7 +16,7 @@ interface MixerSourceSpeakersPropsBufferDurationProps {
 }
 interface MixerSourceSpeakersProps {
     /** @yamlKey bits_per_sample */
-    bitsPerSample?: unknown;
+    bitsPerSample?: unknown | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
     numChannels?: number;
     /**

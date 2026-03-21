@@ -7,3 +7,12 @@
 
 // Re-export CLI utilities for programmatic use
 export { program } from 'commander';
+export { compile, build, lint } from './compiler/index.js';
+export type { CompileOptions } from './compiler/index.js';
+export {
+  resolveEsphome,
+  esphomeConfig,
+  esphomeCompile,
+  esphomeRun,
+  esphomeLogs,
+} from './compiler/index.js';

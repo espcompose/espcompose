@@ -1282,7 +1282,7 @@ export interface _Speaker {
      * positive integer: The audio sample bit depth after resampling. Defaults to the output speaker's bits per sample.
      * @yamlKey bits_per_sample
      */
-    bitsPerSample?: number;
+    bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
     numChannels?: number;
     /**
@@ -1428,7 +1428,7 @@ export interface _Microphone {
      * int: The bits per sample to use as input to the component. May be restricted by the component to a specific value.
      * @yamlKey bits_per_sample
      */
-    bitsPerSample?: number;
+    bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
     numChannels?: number;
     /** @yamlKey sample_rate */

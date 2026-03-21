@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import type { SchemaConfigVar, SchemaDefinition, SchemaRegistry } from './schema-types.js';
-import { OPTIONAL_FIELD_OVERRIDES } from './overrides.js';
+import { OPTIONAL_FIELD_OVERRIDES, TYPE_OVERRIDES } from './overrides.js';
 import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refType, voidFunctionType, propSig, addJsDoc } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -85,7 +85,11 @@ export function buildInterfaceBody(
       continue;
     }
 
-    const { typeNode, required } = resolveConfigVar(varName, varDef, interfaceNamePrefix, acc, markerRefs, registry);
+    const typeOverride = TYPE_OVERRIDES.get(varName);
+    const { typeNode: schemaType, required } = resolveConfigVar(varName, varDef, interfaceNamePrefix, acc, markerRefs, registry);
+    const typeNode = typeOverride
+      ? unionType([schemaType, ...typeOverride.map((v) => stringLiteralType(v))])
+      : schemaType;
     const isOverriddenOptional = OPTIONAL_FIELD_OVERRIDES.has(`${interfaceNamePrefix}.${varName}`);
     const optional = !(required && varDef.key !== 'GeneratedID' && !isOverriddenOptional);
 

@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { build, esphomeConfig } from '@esphome/compose-compiler';
+import { build, esphomeConfig } from '@esphome/compose-cli';
 import { expect } from 'vitest';
 
 /**

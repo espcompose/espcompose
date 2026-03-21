@@ -11,7 +11,7 @@ interface Es7210Props extends _CoreComponent {
      * enum: The bit depth of the audio samples. One of `16bit`, `24bit` or `32bit`. Defaults to `16bit`.
      * @yamlKey bits_per_sample
      */
-    bitsPerSample?: "16" | "24" | "32";
+    bitsPerSample?: ("16" | "24" | "32") | "8bit" | "16bit" | "24bit" | "32bit";
     /**
      * enum: The gain applied to the ADC microphones. One of `0DB`, `3DB`, `6DB`, `9DB`, `12DB`, `15DB`, `18DB`, `21DB`, `24...
      * @yamlKey mic_gain
