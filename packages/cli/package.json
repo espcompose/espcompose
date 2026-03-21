@@ -1,6 +1,6 @@
 {
   "name": "@esphome/compose-cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ESPHome Compose CLI - Command-line tools for building ESPHome Compose projects",
   "bin": {
     "espcompose": "dist/cli.js"

@@ -1,5 +1,12 @@
 # @esphome/compose-cli
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`721820c`](https://github.com/xmlguy74/espcompose/commit/721820c418975cda553201dfd0f7002bcbaad776)]:
+  - @esphome/compose@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

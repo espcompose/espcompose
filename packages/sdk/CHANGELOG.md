@@ -1,5 +1,11 @@
 # @esphome/compose
 
+## 0.1.3
+
+### Patch Changes
+
+- [#22](https://github.com/xmlguy74/espcompose/pull/22) [`721820c`](https://github.com/xmlguy74/espcompose/commit/721820c418975cda553201dfd0f7002bcbaad776) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Experimental support for lvgl concepts
+
 ## 0.1.2
 
 ### Patch Changes
