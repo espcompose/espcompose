@@ -1,3 +1,5 @@
+import type { Context } from './hooks/useContext';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = Record<string, any>> = (props: P) => EspComposeElement | null;
 
@@ -156,7 +158,13 @@ declare global {
   namespace JSX {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface Element extends EspComposeElement {}
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    interface IntrinsicElements {}
+    interface IntrinsicElements {
+      /** Built-in context provider element. Use `createContextProvider()` instead of this directly. */
+      context: {
+        context: Context<unknown>;
+        value: unknown;
+        children?: EspComposeElement | EspComposeElement[];
+      };
+    }
   }
 }

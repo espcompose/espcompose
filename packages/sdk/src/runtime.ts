@@ -2,6 +2,8 @@ import yaml from 'yaml';
 import type { EspComposeElement, FunctionComponent } from './types';
 import { isRef } from './types';
 import { useScript, withScriptScope } from './hooks';
+import { withContext } from './hooks/useContext';
+import type { Context } from './hooks/useContext';
 import {
   Fragment,
   flattenFragments,
@@ -50,7 +52,7 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     const result = el.type(el.props as never);
     if (result == null) return undefined;
     return toPlainObject(Array.isArray(result) ? result : result);
-  }
+ }
 
   const { children, ref, "x:custom": xCustom, ...ownProps } = el.props as Record<string, unknown> & { children?: unknown; ref?: unknown; "x:custom"?: unknown };
 
@@ -64,6 +66,14 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   const allProps = xCustom != null
     ? { ...propsWithId, ...(xCustom as Record<string, unknown>) }
     : propsWithId;
+
+  // Context provider: wrap child serialisation in withContext
+  if (el.type === 'context') {
+    const { context: ctx, value } = el.props as { context: Context<unknown>; value: unknown };
+    return withContext(ctx, value, () =>
+      toPlainObject(children as EspComposeElement | EspComposeElement[] | undefined)
+    );
+  }
 
   if (el.type === 'esphome') {
     // The <esphome> root: own props become `esphome:`, each child element
@@ -120,8 +130,14 @@ function childrenToTopLevelSections(
       const rendered = Array.isArray(result) ? result : [result];
       const inner = flattenFragments(rendered);
       for (const c of inner) {
-        mergeSection(sections, c);
+        if (c.type === 'context') {
+          mergeContextSections(sections, c);
+        } else {
+          mergeSection(sections, c);
+        }
       }
+    } else if (child.type === 'context') {
+      mergeContextSections(sections, child);
     } else {
       mergeSection(sections, child);
     }
@@ -133,6 +149,39 @@ function childrenToTopLevelSections(
     out[key] = values.length === 1 ? values[0] : values;
   }
   return out;
+}
+
+function mergeContextSections(
+  sections: Record<string, unknown[]>,
+  el: EspComposeElement,
+): void {
+  const { context: ctx, value, children: ctxChildren } = el.props as {
+    context: Context<unknown>; value: unknown;
+    children?: EspComposeElement | EspComposeElement[];
+  };
+  withContext(ctx, value, () => {
+    const inner = ctxChildren
+      ? flattenFragments(Array.isArray(ctxChildren) ? ctxChildren : [ctxChildren])
+      : [];
+    for (const c of inner) {
+      if (typeof c.type === 'function') {
+        const result = c.type(c.props as never);
+        if (result == null) return;
+        const rendered = Array.isArray(result) ? result : [result];
+        for (const r of flattenFragments(rendered)) {
+          if (r.type === 'context') {
+            mergeContextSections(sections, r);
+          } else {
+            mergeSection(sections, r);
+          }
+        }
+      } else if (c.type === 'context') {
+        mergeContextSections(sections, c);
+      } else {
+        mergeSection(sections, c);
+      }
+    }
+  });
 }
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {

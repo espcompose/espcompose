@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@esphome/compose": "workspace:*",
+    "@esphome/compose-ui": "workspace:*",
     "dotenv": "^17.3.1"
   },
   "devDependencies": {

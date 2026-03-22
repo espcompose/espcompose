@@ -11,6 +11,7 @@
   "dependencies": {
     "@esphome/compose": "workspace:*",
     "@esphome/compose-cli": "workspace:*",
+    "@esphome/compose-ui": "workspace:*",
     "yaml": "catalog:"
   },
   "devDependencies": {

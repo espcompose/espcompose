@@ -7,6 +7,7 @@
 
 import tseslint from 'typescript-eslint';
 import type { ESLint, Linter } from 'eslint';
+import jsxChildrenIntents from './rules/jsx-children-intents';
 
 const plugin: ESLint.Plugin = {
   meta: {
@@ -14,7 +15,8 @@ const plugin: ESLint.Plugin = {
     version: '0.0.1',
   },
   rules: {
-    // Custom rules will be added here
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'jsx-children-intents': jsxChildrenIntents as any,
   },
 };
 
@@ -45,6 +47,9 @@ const recommended: Linter.Config[] = [
       '@typescript-eslint/no-unused-vars': ['warn', {
         varsIgnorePattern: '^ESPCompose$',
       }],
+
+      // Enforce valid parent-child component nesting based on declared intents.
+      '@esphome/compose-eslint/jsx-children-intents': 'error',
     },
   },
   {

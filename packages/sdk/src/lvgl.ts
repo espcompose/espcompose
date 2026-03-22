@@ -13,6 +13,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { EspComposeElement, FunctionComponent } from './types';
+import { withContext } from './hooks/useContext';
+import type { Context } from './hooks/useContext';
 import {
   extractElementProps,
   flattenFragments,
@@ -43,6 +45,14 @@ function resolveLvglChildren(
       if (result == null) continue;
       const rendered = Array.isArray(result) ? result : [result];
       resolved.push(...resolveLvglChildren(rendered));
+    } else if (el.type === 'context') {
+      // Context provider intrinsic: push context and recurse into children
+      const { context: ctx, value, children: ctxChildren } = el.props as {
+        context: Context<unknown>; value: unknown;
+        children?: EspComposeElement | EspComposeElement[];
+      };
+      const inner = withContext(ctx, value, () => resolveLvglChildren(ctxChildren));
+      resolved.push(...inner);
     } else {
       resolved.push(el);
     }

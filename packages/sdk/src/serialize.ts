@@ -42,14 +42,25 @@ export function keysToSnakeCase(obj: Record<string, unknown>): Record<string, un
 }
 
 /**
+ * Regex for CSS-style hex colour strings: #RGB, #RRGGBB, #RRGGBBAA.
+ * Matched strings are translated to ESPHome's `0x` format at serialisation time.
+ */
+const HEX_COLOR_RE = /^#([0-9a-fA-F]{3,8})$/;
+
+/**
  * Serialize a prop value for YAML output.
  * Ref<T> instances (produced by useRef()) are serialized as their string token.
+ * CSS-style hex colours (#RRGGBB) are converted to ESPHome's 0xRRGGBB format.
  * Plain objects have their keys recursively converted to snake_case.
  * Arrays are mapped element-wise.
  * All other values are passed through unchanged.
  */
 export function serializeValue(v: unknown): unknown {
   if (isRef(v)) return v.toString();
+  if (typeof v === 'string') {
+    const m = HEX_COLOR_RE.exec(v);
+    if (m) return `0x${m[1]}`;
+  }
   if (Array.isArray(v)) return v.map(serializeValue);
   if (v !== null && typeof v === 'object') {
     return keysToSnakeCase(v as Record<string, unknown>);

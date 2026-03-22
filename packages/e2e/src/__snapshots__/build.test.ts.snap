@@ -187,6 +187,130 @@ lvgl:
 "
 `;
 
+exports[`ESPHome Compose Build > design-system-device 1`] = `
+"esphome:
+  name: design-system-device
+  comment: Design system demo
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  data_rate: 40MHz
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - bg_color: "0x121212"
+      border_width: 0
+      pad_all: 24
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_width: 0
+            layout:
+              type: flex
+              flex_flow: COLUMN
+            widgets:
+              - label:
+                  text_font: montserrat_28
+                  text_color: "0xE0E0E0"
+              - obj:
+                  pad_all: 16
+                  radius: 8
+                  bg_color: "0x2C2C2C"
+                  border_width: 0
+                  layout:
+                    type: flex
+                    flex_flow: COLUMN
+                  widgets:
+                    - label:
+                        text_font: montserrat_20
+                        text_color: "0xE0E0E0"
+                    - obj:
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
+                        widgets:
+                          - label:
+                              text: Brightness
+                              text_font: montserrat_16
+                              text_color: "0xE0E0E0"
+                          - slider:
+                              min_value: 0
+                              max_value: 255
+                    - obj:
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
+                        layout:
+                          type: flex
+                          flex_flow: ROW
+                          flex_align_main: SPACE_BETWEEN
+                          flex_align_cross: CENTER
+                        widgets:
+                          - label:
+                              text: Power
+                              text_font: montserrat_16
+                              text_color: "0xE0E0E0"
+                          - switch: {}
+              - obj:
+                  bg_opa: TRANSP
+                  border_width: 0
+                  layout:
+                    type: flex
+                    flex_flow: ROW
+                    flex_align_main: SPACE_BETWEEN
+                  widgets:
+                    - button:
+                        width: 104
+                        height: 36
+                        bg_color: "0x43A047"
+                        pressed:
+                          bg_color: "0x2E7D32"
+                        widgets:
+                          - label:
+                              text: Turn On
+                              text_color: "0xFFFFFF"
+                              text_font: montserrat_14
+                              align: CENTER
+                    - button:
+                        width: 104
+                        height: 36
+                        bg_opa: TRANSP
+                        border_color: "0xE53935"
+                        border_width: 2
+                        pressed:
+                          bg_color: "0xE53935"
+                          bg_opa: COVER
+                        widgets:
+                          - label:
+                              text: Turn Off
+                              text_color: "0xE53935"
+                              text_font: montserrat_14
+                              align: CENTER
+"
+`;
+
 exports[`ESPHome Compose Build > function-component-device 1`] = `
 "esphome:
   name: component-device

@@ -28,4 +28,8 @@ describe('ESPHome Compose Build', () => {
   it('lvgl-device', async () => {
     await createProjectTest(projectsDir, 'lvgl-device');
   });
+
+  it('design-system-device', async () => {
+    await createProjectTest(projectsDir, 'design-system-device');
+  });
 });
