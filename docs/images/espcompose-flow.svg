@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="260" viewBox="0 0 1200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ESPCompose transpile and compile flow diagram">
+  <defs>
+    <style>
+      .title { font: 600 22px Arial, Helvetica, sans-serif; fill: #1f2937; }
+      .label { font: 600 20px Arial, Helvetica, sans-serif; fill: #374151; }
+      .mono  { font: 500 22px "SFMono-Regular", Menlo, Consolas, monospace; fill: #111827; }
+      .box   { fill: #ffffff; stroke: #111827; stroke-width: 3; rx: 0; }
+      .arrow { stroke: #2563eb; stroke-width: 4; fill: none; }
+      .arrowText { font: 600 18px Arial, Helvetica, sans-serif; fill: #2563eb; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- Top labels -->
+  <text x="120" y="36" class="label" text-anchor="middle">index.tsx</text>
+  <text x="600" y="36" class="label" text-anchor="middle">ESPHome YAML</text>
+  <text x="1030" y="36" class="label" text-anchor="middle">Firmware</text>
+
+  <!-- Left box -->
+  <rect x="35" y="58" width="170" height="150" class="box"/>
+  <text x="120" y="105" class="mono" text-anchor="middle">&lt;esphome</text>
+  <text x="120" y="138" class="mono" text-anchor="middle">  ...</text>
+  <text x="120" y="171" class="mono" text-anchor="middle">/&gt;</text>
+
+  <!-- Middle box -->
+  <rect x="510" y="58" width="180" height="150" class="box"/>
+  <text x="600" y="105" class="mono" text-anchor="middle">esphome:</text>
+  <text x="600" y="138" class="mono" text-anchor="middle">  name:</text>
+  <text x="600" y="171" class="mono" text-anchor="middle">  ...</text>
+
+  <!-- Right box -->
+  <rect x="940" y="58" width="180" height="150" class="box"/>
+  <text x="1030" y="105" class="mono" text-anchor="middle">.bin</text>
+  <text x="1030" y="138" class="mono" text-anchor="middle">flash</text>
+  <text x="1030" y="171" class="mono" text-anchor="middle">to ESP</text>
+
+  <!-- Arrow 1 -->
+  <line x1="225" y1="133" x2="485" y2="133" class="arrow" marker-end="url(#arrowhead)"/>
+  <text x="355" y="118" class="arrowText" text-anchor="middle">espcompose</text>
+  <text x="355" y="160" class="arrowText" text-anchor="middle">transpile</text>
+
+  <!-- Arrow 2 -->
+  <line x1="710" y1="133" x2="915" y2="133" class="arrow" marker-end="url(#arrowhead)"/>
+  <text x="812" y="118" class="arrowText" text-anchor="middle">esphome</text>
+  <text x="812" y="160" class="arrowText" text-anchor="middle">compile</text>
+</svg>
