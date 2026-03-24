@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { Area } from "../markers";
 export interface EsphomeProjectProps {
     /** string: Name of the project */
@@ -22,7 +22,7 @@ export interface EsphomeAreasProps {
 export interface EsphomeDevicesProps {
     name: unknown;
     /** @yamlKey area_id */
-    areaId?: Ref<Area>;
+    areaId?: RefProp<Area>;
 }
 export interface EsphomeProps {
     /** string: This is the name of the node. It should always be unique in your ESPHome network. May only contain lowercase ... */

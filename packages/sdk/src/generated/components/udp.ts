@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { udp_UDPComponent } from "../markers";
 export interface UdpProps {
     /** int: The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specifi... */

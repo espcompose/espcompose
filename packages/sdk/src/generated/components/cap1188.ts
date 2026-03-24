@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { cap1188_CAP1188Component, i2c_I2CBus } from "../markers";
 export interface Cap1188Props extends _CoreComponent {
@@ -23,7 +23,7 @@ export interface Cap1188Props extends _CoreComponent {
      */
     allowMultipleTouches?: boolean;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the sensor. Defaults to `0x29`. */
     address?: unknown;
 }

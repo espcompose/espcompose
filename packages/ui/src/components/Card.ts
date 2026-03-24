@@ -2,13 +2,14 @@
  * Card component — a styled container for grouping content.
  *
  * Compiles to <lvgl-obj> with rounded corners, padding, and themed background.
+ * Background color comes from the `ds-surface-alt` style definition.
  */
 
 import type { EspComposeElement } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
 import { resolveSpacing, resolveRadius } from '../theme/resolvers';
 import type { SpacingToken, RadiusToken } from '../theme/types';
-import { useTheme } from '../theme/context';
+import { STYLE_SURFACE_ALT } from '../theme/style-ids';
 
 interface CardProps {
   children?: EspComposeElement | EspComposeElement[];
@@ -16,7 +17,7 @@ interface CardProps {
   padding?: SpacingToken | number;
   /** Corner radius. Default: 'md'. */
   radius?: RadiusToken | number;
-  /** Background color (hex). Default: theme surfaceAlt. */
+  /** Background color override (hex). If set, overrides the style definition. */
   bgColor?: string;
   /** Border color (hex). */
   borderColor?: string;
@@ -43,20 +44,21 @@ export const Card = createIntentComponent(
   (props: CardProps): EspComposeElement => {
     const padding = resolveSpacing(props.padding ?? 'md');
     const radius = resolveRadius(props.radius ?? 'md');
-    const theme = useTheme();
     const gap = props.gap != null ? resolveSpacing(props.gap) : undefined;
 
     return {
       type: 'lvgl-obj',
       props: {
+        styles: STYLE_SURFACE_ALT,
         padAll: padding,
         radius,
-        bgColor: props.bgColor ?? theme.colors.surfaceAlt,
+        ...(props.bgColor != null ? { bgColor: props.bgColor } : {}),
         ...(props.borderColor != null ? { borderColor: props.borderColor } : {}),
         borderWidth: props.borderWidth ?? 0,
-        ...(props.width != null ? { width: props.width } : {}),
-        ...(props.height != null ? { height: props.height } : {}),
+        width: props.width ?? '100%',
+        height: props.height ?? 'SIZE_CONTENT',
         'x:custom': {
+          scrollbar_mode: 'OFF',
           layout: {
             type: 'flex',
             flex_flow: 'COLUMN',

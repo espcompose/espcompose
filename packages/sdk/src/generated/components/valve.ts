@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { template__TemplateValve, web_server_WebServer } from "../markers";
 interface ValveWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */

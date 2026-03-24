@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { sm2235_SM2235 } from "../markers";
 export interface Sm2235Props {
 }

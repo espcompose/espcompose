@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BleClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _HomeassistantHomeAssistantImportControl, _ModbusControllerModbusitembaseschema, _NextionSensorConfigSensorComponent, _PipsolarComponent, _UartDevice } from "../bases";
 import type { Color, EntityBase, at581x_AT581XComponent, at581x_RFSwitch, ble_client_BLEClientSwitch, copy_CopySwitch, dfrobot_sen0395_DfrobotSen0395Component, dfrobot_sen0395_Sen0395LedSwitch, dfrobot_sen0395_Sen0395PowerSwitch, dfrobot_sen0395_Sen0395StartAfterBootSwitch, dfrobot_sen0395_Sen0395UartPresenceSwitch, factory_reset_FactoryResetSwitch, gpio_GPIOSwitch, gree_GreeClimate, haier_HaierClimateBase, hbridge_HBridgeSwitch, homeassistant_HomeassistantSwitch, ld2410_LD2410Component, ld2412_LD2412Component, ld2450_LD2450Component, lvgl_LVGLSwitch, lvgl_LvPseudoButton, micronova_MicroNova, modbus_controller_ModbusSwitch, nextion_NextionSwitch, opentherm_OpenthermHub, output_BinaryOutput, output_OutputSwitch, restart_RestartSwitch, safe_mode_SafeModeComponent, safe_mode_SafeModeSwitch, seeed_mr24hpc1_MR24HPC1Component, shutdown_ShutdownSwitch, switch__Switch, template__TemplateSwitch, tm1638_TM1638Component, tm1638_TM1638SwitchLed, tuya_Tuya, tuya_TuyaSwitch, uart_UARTSwitch, web_server_WebServer, zigbee_ZigbeeComponent, zigbee_ZigbeeSwitch } from "../markers";
 interface SwitchWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -31,7 +31,7 @@ interface GreeTurboPropsAvailabilityProps {
 }
 interface GreeTurboPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -67,7 +67,7 @@ interface GreeTurboProps {
     /** @yamlKey web_server */
     webServer?: GreeTurboPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -89,7 +89,7 @@ interface GreeLightPropsAvailabilityProps {
 }
 interface GreeLightPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -125,7 +125,7 @@ interface GreeLightProps {
     /** @yamlKey web_server */
     webServer?: GreeLightPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -147,7 +147,7 @@ interface GreeHealthPropsAvailabilityProps {
 }
 interface GreeHealthPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -183,7 +183,7 @@ interface GreeHealthProps {
     /** @yamlKey web_server */
     webServer?: GreeHealthPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -205,7 +205,7 @@ interface GreeXfanPropsAvailabilityProps {
 }
 interface GreeXfanPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -241,7 +241,7 @@ interface GreeXfanProps {
     /** @yamlKey web_server */
     webServer?: GreeXfanPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -263,7 +263,7 @@ interface HaierDisplayPropsAvailabilityProps {
 }
 interface HaierDisplayPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -299,7 +299,7 @@ interface HaierDisplayProps {
     /** @yamlKey web_server */
     webServer?: HaierDisplayPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -321,7 +321,7 @@ interface HaierHealthModePropsAvailabilityProps {
 }
 interface HaierHealthModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -360,7 +360,7 @@ interface HaierHealthModeProps {
     /** @yamlKey web_server */
     webServer?: HaierHealthModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -382,7 +382,7 @@ interface HaierBeeperPropsAvailabilityProps {
 }
 interface HaierBeeperPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -418,7 +418,7 @@ interface HaierBeeperProps {
     /** @yamlKey web_server */
     webServer?: HaierBeeperPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -440,7 +440,7 @@ interface HaierQuietModePropsAvailabilityProps {
 }
 interface HaierQuietModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -476,7 +476,7 @@ interface HaierQuietModeProps {
     /** @yamlKey web_server */
     webServer?: HaierQuietModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -514,7 +514,7 @@ interface Ld2410EngineeringModePropsAvailabilityProps {
 }
 interface Ld2410EngineeringModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -550,7 +550,7 @@ interface Ld2410EngineeringModeProps {
     /** @yamlKey web_server */
     webServer?: Ld2410EngineeringModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -572,7 +572,7 @@ interface Ld2410BluetoothPropsAvailabilityProps {
 }
 interface Ld2410BluetoothPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -608,7 +608,7 @@ interface Ld2410BluetoothProps {
     /** @yamlKey web_server */
     webServer?: Ld2410BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -630,7 +630,7 @@ interface Ld2412BluetoothPropsAvailabilityProps {
 }
 interface Ld2412BluetoothPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -666,7 +666,7 @@ interface Ld2412BluetoothProps {
     /** @yamlKey web_server */
     webServer?: Ld2412BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -688,7 +688,7 @@ interface Ld2412EngineeringModePropsAvailabilityProps {
 }
 interface Ld2412EngineeringModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -724,7 +724,7 @@ interface Ld2412EngineeringModeProps {
     /** @yamlKey web_server */
     webServer?: Ld2412EngineeringModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -746,7 +746,7 @@ interface Ld2450BluetoothPropsAvailabilityProps {
 }
 interface Ld2450BluetoothPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -782,7 +782,7 @@ interface Ld2450BluetoothProps {
     /** @yamlKey web_server */
     webServer?: Ld2450BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -804,7 +804,7 @@ interface Ld2450MultiTargetPropsAvailabilityProps {
 }
 interface Ld2450MultiTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -840,7 +840,7 @@ interface Ld2450MultiTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2450MultiTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -862,7 +862,7 @@ interface MicronovaStovePropsAvailabilityProps {
 }
 interface MicronovaStovePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -901,7 +901,7 @@ interface MicronovaStoveProps {
     /** @yamlKey web_server */
     webServer?: MicronovaStovePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -916,7 +916,7 @@ interface MicronovaStoveProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey micronova_id */
-    micronovaId?: Ref<micronova_MicroNova>;
+    micronovaId?: RefProp<micronova_MicroNova>;
     /** @yamlKey memory_location */
     memoryLocation?: unknown;
     /** @yamlKey memory_address */
@@ -937,7 +937,7 @@ interface OpenthermChEnablePropsAvailabilityProps {
 }
 interface OpenthermChEnablePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -977,7 +977,7 @@ interface OpenthermChEnableProps {
     /** @yamlKey web_server */
     webServer?: OpenthermChEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1001,7 +1001,7 @@ interface OpenthermDhwEnablePropsAvailabilityProps {
 }
 interface OpenthermDhwEnablePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1041,7 +1041,7 @@ interface OpenthermDhwEnableProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1065,7 +1065,7 @@ interface OpenthermCoolingEnablePropsAvailabilityProps {
 }
 interface OpenthermCoolingEnablePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1105,7 +1105,7 @@ interface OpenthermCoolingEnableProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1129,7 +1129,7 @@ interface OpenthermOtcActivePropsAvailabilityProps {
 }
 interface OpenthermOtcActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1169,7 +1169,7 @@ interface OpenthermOtcActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermOtcActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1193,7 +1193,7 @@ interface OpenthermCh2ActivePropsAvailabilityProps {
 }
 interface OpenthermCh2ActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1233,7 +1233,7 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCh2ActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1257,7 +1257,7 @@ interface OpenthermSummerModeActivePropsAvailabilityProps {
 }
 interface OpenthermSummerModeActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1297,7 +1297,7 @@ interface OpenthermSummerModeActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermSummerModeActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1321,7 +1321,7 @@ interface OpenthermDhwBlockPropsAvailabilityProps {
 }
 interface OpenthermDhwBlockPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1361,7 +1361,7 @@ interface OpenthermDhwBlockProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwBlockPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -1385,7 +1385,7 @@ interface PipsolarOutputSourcePriorityUtilityPropsAvailabilityProps {
 }
 interface PipsolarOutputSourcePriorityUtilityPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1424,7 +1424,7 @@ interface PipsolarOutputSourcePriorityUtilityProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityUtilityPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1448,7 +1448,7 @@ interface PipsolarOutputSourcePrioritySolarPropsAvailabilityProps {
 }
 interface PipsolarOutputSourcePrioritySolarPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1487,7 +1487,7 @@ interface PipsolarOutputSourcePrioritySolarProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePrioritySolarPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1511,7 +1511,7 @@ interface PipsolarOutputSourcePriorityBatteryPropsAvailabilityProps {
 }
 interface PipsolarOutputSourcePriorityBatteryPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1550,7 +1550,7 @@ interface PipsolarOutputSourcePriorityBatteryProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityBatteryPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1574,7 +1574,7 @@ interface PipsolarOutputSourcePriorityHybridPropsAvailabilityProps {
 }
 interface PipsolarOutputSourcePriorityHybridPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1613,7 +1613,7 @@ interface PipsolarOutputSourcePriorityHybridProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityHybridPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1637,7 +1637,7 @@ interface PipsolarInputVoltageRangePropsAvailabilityProps {
 }
 interface PipsolarInputVoltageRangePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1676,7 +1676,7 @@ interface PipsolarInputVoltageRangeProps {
     /** @yamlKey web_server */
     webServer?: PipsolarInputVoltageRangePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1700,7 +1700,7 @@ interface PipsolarPvOkConditionForParallelPropsAvailabilityProps {
 }
 interface PipsolarPvOkConditionForParallelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1739,7 +1739,7 @@ interface PipsolarPvOkConditionForParallelProps {
     /** @yamlKey web_server */
     webServer?: PipsolarPvOkConditionForParallelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1763,7 +1763,7 @@ interface PipsolarPvPowerBalancePropsAvailabilityProps {
 }
 interface PipsolarPvPowerBalancePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1802,7 +1802,7 @@ interface PipsolarPvPowerBalanceProps {
     /** @yamlKey web_server */
     webServer?: PipsolarPvPowerBalancePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1826,7 +1826,7 @@ interface SeeedMr24hpc1UnderlyingOpenFunctionPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1UnderlyingOpenFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1862,7 +1862,7 @@ interface SeeedMr24hpc1UnderlyingOpenFunctionProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1UnderlyingOpenFunctionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1893,7 +1893,7 @@ interface SwitchBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: SwitchWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -1914,7 +1914,7 @@ interface At581xProps {
      * [ID](/guides/configuration-types#id): The ID of the AT581x component defined above. Required when multiple instances ...
      * @yamlKey at581x_id
      */
-    at581xId?: Ref<at581x_AT581XComponent>;
+    at581xId?: RefProp<at581x_AT581XComponent>;
 }
 interface BleClientProps extends _BleClient, _CoreComponent {
     icon?: unknown;
@@ -1924,7 +1924,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The switch that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<switch__Switch>;
+    sourceId: RefProp<switch__Switch>;
 }
 interface DfrobotSen0395SensorActiveProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -1933,7 +1933,7 @@ interface DfrobotSen0395SensorActiveProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the DFRobot mmWave component defined above. Required when multiple in...
      * @yamlKey dfrobot_sen0395_id
      */
-    dfrobotSen0395Id?: Ref<dfrobot_sen0395_DfrobotSen0395Component>;
+    dfrobotSen0395Id?: RefProp<dfrobot_sen0395_DfrobotSen0395Component>;
 }
 interface DfrobotSen0395TurnOnLedProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -1942,7 +1942,7 @@ interface DfrobotSen0395TurnOnLedProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the DFRobot mmWave component defined above. Required when multiple in...
      * @yamlKey dfrobot_sen0395_id
      */
-    dfrobotSen0395Id?: Ref<dfrobot_sen0395_DfrobotSen0395Component>;
+    dfrobotSen0395Id?: RefProp<dfrobot_sen0395_DfrobotSen0395Component>;
 }
 interface DfrobotSen0395PresenceViaUartProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -1951,7 +1951,7 @@ interface DfrobotSen0395PresenceViaUartProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the DFRobot mmWave component defined above. Required when multiple in...
      * @yamlKey dfrobot_sen0395_id
      */
-    dfrobotSen0395Id?: Ref<dfrobot_sen0395_DfrobotSen0395Component>;
+    dfrobotSen0395Id?: RefProp<dfrobot_sen0395_DfrobotSen0395Component>;
 }
 interface DfrobotSen0395StartAfterBootProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -1960,7 +1960,7 @@ interface DfrobotSen0395StartAfterBootProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the DFRobot mmWave component defined above. Required when multiple in...
      * @yamlKey dfrobot_sen0395_id
      */
-    dfrobotSen0395Id?: Ref<dfrobot_sen0395_DfrobotSen0395Component>;
+    dfrobotSen0395Id?: RefProp<dfrobot_sen0395_DfrobotSen0395Component>;
 }
 interface FactoryResetProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -1971,7 +1971,7 @@ interface GpioProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to use for the switch. */
     pin: Pin;
     /** list: A list of other GPIO switches in an interlock group. See [Interlocking](https://esphome.io/components/switch/gp... */
-    interlock?: Array<Ref<switch__Switch>>;
+    interlock?: Array<RefProp<switch__Switch>>;
     /**
      * [Time](/guides/configuration-types#time): For interlocking mode, set how long to wait after other items in an interlo...
      * @yamlKey interlock_wait_time
@@ -1980,7 +1980,7 @@ interface GpioProps extends _CoreComponent {
 }
 interface GreeProps {
     /** @yamlKey gree_id */
-    greeId: Ref<gree_GreeClimate>;
+    greeId: RefProp<gree_GreeClimate>;
     turbo?: GreeTurboProps;
     light?: GreeLightProps;
     health?: GreeHealthProps;
@@ -1991,7 +1991,7 @@ interface HaierProps {
      * [ID](/guides/configuration-types#id): The id of Haier climate component
      * @yamlKey haier_id
      */
-    haierId?: Ref<haier_HaierClimateBase>;
+    haierId?: RefProp<haier_HaierClimateBase>;
     /** A switch that enables or disables Haier climate led display. All options from [Switch](/components/switch#config-swit... */
     display?: HaierDisplayProps;
     /**
@@ -2038,7 +2038,7 @@ interface Ld2410Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: Ref<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<ld2410_LD2410Component>;
     /**
      * enable/disable engineering mode. Note that this requires more resources and is not recommended to be enabled when not...
      * @yamlKey engineering_mode
@@ -2052,7 +2052,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: Ref<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<ld2412_LD2412Component>;
     /** Turn on/off the bluetooth adapter. Defaults to `true`. All options from [Switch](/components/switch#config-switch). */
     bluetooth?: Ld2412BluetoothProps;
     /** @yamlKey engineering_mode */
@@ -2063,7 +2063,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component ...
      * @yamlKey ld2450_id
      */
-    ld2450Id?: Ref<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<ld2450_LD2450Component>;
     /** Turn on/off the bluetooth adapter. Defaults to `true`. All options from [Switch](/components/switch#config-switch). */
     bluetooth?: Ld2450BluetoothProps;
     /**
@@ -2073,11 +2073,11 @@ interface Ld2450Props {
     multiTarget?: Ld2450MultiTargetProps;
 }
 interface LvglProps {
-    widget: Ref<lvgl_LvPseudoButton>;
+    widget: RefProp<lvgl_LvPseudoButton>;
 }
 interface MicronovaProps {
     /** @yamlKey micronova_id */
-    micronovaId?: Ref<micronova_MicroNova>;
+    micronovaId?: RefProp<micronova_MicroNova>;
     stove?: MicronovaStoveProps;
 }
 interface ModbusControllerProps extends _CoreComponent, _ModbusControllerModbusitembaseschema {
@@ -2102,16 +2102,16 @@ interface NextionProps extends _NextionSensorConfigSensorComponent {
      * [Color](/components/display#config-color): The foreground color when pressed
      * @yamlKey foreground_pressed_color
      */
-    foregroundPressedColor?: Ref<Color>;
+    foregroundPressedColor?: RefProp<Color>;
     /**
      * [Color](/components/display#config-color): The background color when pressed
      * @yamlKey background_pressed_color
      */
-    backgroundPressedColor?: Ref<Color>;
+    backgroundPressedColor?: RefProp<Color>;
 }
 interface OpenthermProps extends _CoreComponent {
     /** @yamlKey opentherm_id */
-    openthermId?: Ref<opentherm_OpenthermHub>;
+    openthermId?: RefProp<opentherm_OpenthermHub>;
     /** @yamlKey ch_enable */
     chEnable?: OpenthermChEnableProps;
     /** @yamlKey dhw_enable */
@@ -2129,7 +2129,7 @@ interface OpenthermProps extends _CoreComponent {
 }
 interface OutputProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the output component to use. */
-    output: Ref<output_BinaryOutput>;
+    output: RefProp<output_BinaryOutput>;
 }
 interface PipsolarProps extends _PipsolarComponent {
     /**
@@ -2178,11 +2178,11 @@ interface SafeModeProps extends _CoreComponent {
     entityCategory?: unknown;
     icon?: unknown;
     /** @yamlKey safe_mode */
-    safeMode?: Ref<safe_mode_SafeModeComponent>;
+    safeMode?: RefProp<safe_mode_SafeModeComponent>;
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: Ref<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
     /**
      * Enable/disable underlying open function. When this switch is off, it indicates that it is currently in standard mode....
      * @yamlKey underlying_open_function
@@ -2217,12 +2217,12 @@ interface TemplateProps extends _CoreComponent {
 }
 interface Tm1638Props extends _CoreComponent {
     /** @yamlKey tm1638_id */
-    tm1638Id?: Ref<tm1638_TM1638Component>;
+    tm1638Id?: RefProp<tm1638_TM1638Component>;
     led: number;
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey switch_datapoint */
     switchDatapoint: number;
 }

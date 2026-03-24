@@ -2,12 +2,13 @@
  * SwitchField — a label + switch in a row layout.
  *
  * Compiles to a container with a label and a switch widget.
+ * Label uses `ds-text-primary` style reference; switch inherits part
+ * styles from the LVGL `theme:` block.
  */
 
 import type { EspComposeElement } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
-import { fontDefToLvgl } from '../theme/resolvers';
-import { useTheme } from '../theme/context';
+import { STYLE_TEXT_PRIMARY } from '../theme/style-ids';
 
 interface SwitchFieldProps {
   /** Label text displayed next to the switch. */
@@ -28,14 +29,11 @@ interface SwitchFieldProps {
  */
 export const SwitchField = createIntentComponent(
   (props: SwitchFieldProps): EspComposeElement => {
-    const theme = useTheme();
-
     const label: EspComposeElement = {
       type: 'lvgl-label',
       props: {
+        styles: STYLE_TEXT_PRIMARY,
         text: props.label,
-        textFont: fontDefToLvgl(theme.typography.body),
-        textColor: theme.colors.textPrimary,
       },
     };
 

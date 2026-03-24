@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { micro_wake_word_MicroWakeWord, microphone_Microphone } from "../markers";
 export interface MicroWakeWordMicrophoneProps {
-    microphone?: Ref<microphone_Microphone>;
+    microphone?: RefProp<microphone_Microphone>;
     /** @yamlKey bits_per_sample */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;

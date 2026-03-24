@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { binary_sensor_BinarySensor, template__TemplateAlarmControlPanel, web_server_WebServer } from "../markers";
 interface AlarmControlPanelWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -56,7 +56,7 @@ interface TemplateTriggerTimeProps {
 }
 interface TemplateBinarySensorsProps {
     /** string: The id of the binary sensor component */
-    input: Ref<binary_sensor_BinarySensor>;
+    input: RefProp<binary_sensor_BinarySensor>;
     /**
      * boolean: This binary sensor will not trigger the alarm when in `armed_home` state.
      * @yamlKey bypass_armed_home

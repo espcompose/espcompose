@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { http_request_HttpRequestComponent } from "../markers";
 export interface HttpRequestTimeoutProps {

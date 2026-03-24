@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { dfplayer_DFPlayer, uart_UARTComponent } from "../markers";
 export interface DfplayerProps {
     /**
@@ -15,7 +15,7 @@ export interface DfplayerProps {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

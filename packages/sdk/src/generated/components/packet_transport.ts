@@ -3,22 +3,22 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _PacketTransportTransport, _UartDevice, _Udp } from "../bases";
 import type { espnow_ESPNowComponent, espnow_ESPNowTransport, sx126x_SX126x, sx126x_SX126xTransport, sx127x_SX127x, sx127x_SX127xTransport, uart_UARTTransport, udp_UDPTransport } from "../markers";
 interface EspnowProps extends _PacketTransportTransport {
     /** @yamlKey espnow_id */
-    espnowId?: Ref<espnow_ESPNowComponent>;
+    espnowId?: RefProp<espnow_ESPNowComponent>;
     /** @yamlKey peer_address */
     peerAddress?: unknown;
 }
 interface Sx126xProps extends _PacketTransportTransport {
     /** @yamlKey sx126x_id */
-    sx126xId?: Ref<sx126x_SX126x>;
+    sx126xId?: RefProp<sx126x_SX126x>;
 }
 interface Sx127xProps extends _PacketTransportTransport {
     /** @yamlKey sx127x_id */
-    sx127xId?: Ref<sx127x_SX127x>;
+    sx127xId?: RefProp<sx127x_SX127x>;
 }
 interface UartProps extends _PacketTransportTransport, _UartDevice {
 }

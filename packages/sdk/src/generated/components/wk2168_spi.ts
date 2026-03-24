@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { spi_SPIComponent, weikai_spi_WeikaiComponentSPI } from "../markers";
 export interface Wk2168SpiProps {
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

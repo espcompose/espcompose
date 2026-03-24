@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { i2c_I2CBus, weikai_i2c_WeikaiComponentI2C } from "../markers";
 export interface Wk2212I2cProps {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 declare global {

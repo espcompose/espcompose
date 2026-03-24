@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BthomeMithermometerBleDevice, _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _HomeassistantHomeAssistantImport, _ModbusControllerModbusitembaseschema, _Msa3xxMsaSensor, _NextionBinarySensorConfigBinarySensor, _PacketTransportBinarySensorStatusSensor, _PipsolarComponent, _Touchscreen } from "../bases";
 import type { EntityBase, analog_threshold_AnalogThresholdBinarySensor, apds9960_APDS9960, as3935_AS3935Component, binary_sensor_BinarySensor, ble_presence_BLEPresenceDevice, cap1188_CAP1188Channel, cap1188_CAP1188Component, copy_CopyBinarySensor, cst226_CST226Button, cst226_CST226Touchscreen, cst816_CST816Touchscreen, daly_bms_DalyBmsComponent, dfrobot_sen0395_DfrobotSen0395Component, display_DisplayPage, esp32_ble_tracker_ESP32BLETracker, esp32_touch_ESP32TouchBinarySensor, esp32_touch_ESP32TouchComponent, ezo_pmp_EzoPMP, fingerprint_grow_FingerprintGrowComponent, gdk101_GDK101Component, gpio_GPIOBinarySensor, gt911_GT911Button, gt911_GT911Touchscreen, haier_HonClimate, hlk_fm22x_HlkFm22xComponent, homeassistant_HomeassistantBinarySensor, hydreon_rgxx_HydreonRGxxBinaryComponent, hydreon_rgxx_HydreonRGxxComponent, i2c_I2CBus, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420BinarySensor, ld2420_LD2420Component, ld2450_LD2450Component, lvgl_LvPseudoButton, m5stack_8angle_M5Stack8AngleComponent, m5stack_8angle_M5Stack8AngleSwitchBinarySensor, matrix_keypad_MatrixKeypad, matrix_keypad_MatrixKeypadBinarySensor, modbus_controller_ModbusBinarySensor, mpr121_MPR121BinarySensor, mpr121_MPR121Component, nextion_NextionBinarySensor, nfc_NfcTagBinarySensor, nfc_Nfcc, opentherm_OpenthermHub, packet_transport_PacketTransport, pn532_PN532, pn532_PN532BinarySensor, qwiic_pir_QwiicPIRComponent, rc522_RC522, rc522_RC522BinarySensor, rd03d_RD03DComponent, rdm6300_RDM6300BinarySensor, rdm6300_RDM6300Component, remote_base_RemoteReceiverBase, sdl_Sdl, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60bha2_MR60BHA2Component, seeed_mr60fda2_MR60FDA2Component, sensor_Sensor, sim800l_Sim800LComponent, status_StatusBinarySensor, switch__Switch, switch__SwitchBinarySensor, sx1509_SX1509BinarySensor, sx1509_SX1509Component, sy6970_SY6970Component, template__TemplateBinarySensor, tm1637_TM1637Display, tm1637_TM1637Key, tm1638_TM1638Component, tm1638_TM1638Key, touchscreen_Touchscreen, touchscreen_TouchscreenBinarySensor, tt21100_TT21100Button, tt21100_TT21100Touchscreen, ttp229_bsf_TTP229BSFChannel, ttp229_bsf_TTP229BSFComponent, ttp229_lsf_TTP229Channel, ttp229_lsf_TTP229LSFComponent, tuya_Tuya, tuya_TuyaBinarySensor, udp_UDPComponent, vbus_DeltaSolBS2009BSensor, vbus_DeltaSolBS2BSensor, vbus_DeltaSolBSPlusBSensor, vbus_DeltaSolCBSensor, vbus_DeltaSolCS2BSensor, vbus_DeltaSolCSPlusBSensor, vbus_VBus, vbus_VBusCustomBSensor, web_server_WebServer, wireguard_Wireguard, xiaomi_cgpr1_XiaomiCGPR1, xiaomi_mjyd02yla_XiaomiMJYD02YLA, xiaomi_mue4094rt_XiaomiMUE4094RT, xiaomi_rtcgq02lm_XiaomiRTCGQ02LM, xiaomi_wx08zm_XiaomiWX08ZM, zigbee_ZigbeeComponent } from "../markers";
 interface BinarySensorWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -37,7 +37,7 @@ interface HaierOutdoorFanStatusPropsAvailabilityProps {
 }
 interface HaierOutdoorFanStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -69,7 +69,7 @@ interface HaierOutdoorFanStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierOutdoorFanStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -101,7 +101,7 @@ interface HaierDefrostStatusPropsAvailabilityProps {
 }
 interface HaierDefrostStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -133,7 +133,7 @@ interface HaierDefrostStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierDefrostStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -165,7 +165,7 @@ interface HaierCompressorStatusPropsAvailabilityProps {
 }
 interface HaierCompressorStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -197,7 +197,7 @@ interface HaierCompressorStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierCompressorStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -229,7 +229,7 @@ interface HaierIndoorFanStatusPropsAvailabilityProps {
 }
 interface HaierIndoorFanStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -261,7 +261,7 @@ interface HaierIndoorFanStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierIndoorFanStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -293,7 +293,7 @@ interface HaierFourWayValveStatusPropsAvailabilityProps {
 }
 interface HaierFourWayValveStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -325,7 +325,7 @@ interface HaierFourWayValveStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierFourWayValveStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -357,7 +357,7 @@ interface HaierIndoorElectricHeatingStatusPropsAvailabilityProps {
 }
 interface HaierIndoorElectricHeatingStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -389,7 +389,7 @@ interface HaierIndoorElectricHeatingStatusProps {
     /** @yamlKey web_server */
     webServer?: HaierIndoorElectricHeatingStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -421,7 +421,7 @@ interface HydreonRgxxTooColdPropsAvailabilityProps {
 }
 interface HydreonRgxxTooColdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -457,7 +457,7 @@ interface HydreonRgxxTooColdProps {
     /** @yamlKey web_server */
     webServer?: HydreonRgxxTooColdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -489,7 +489,7 @@ interface HydreonRgxxLensBadPropsAvailabilityProps {
 }
 interface HydreonRgxxLensBadPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -525,7 +525,7 @@ interface HydreonRgxxLensBadProps {
     /** @yamlKey web_server */
     webServer?: HydreonRgxxLensBadPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -557,7 +557,7 @@ interface HydreonRgxxEmSatPropsAvailabilityProps {
 }
 interface HydreonRgxxEmSatPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -593,7 +593,7 @@ interface HydreonRgxxEmSatProps {
     /** @yamlKey web_server */
     webServer?: HydreonRgxxEmSatPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -633,7 +633,7 @@ interface XiaomiCgpr1BatteryLevelPropsAvailabilityProps {
 }
 interface XiaomiCgpr1BatteryLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -674,7 +674,7 @@ interface XiaomiCgpr1BatteryLevelProps {
     /** @yamlKey web_server */
     webServer?: XiaomiCgpr1BatteryLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -704,7 +704,7 @@ interface XiaomiCgpr1IdleTimePropsAvailabilityProps {
 }
 interface XiaomiCgpr1IdleTimePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -744,7 +744,7 @@ interface XiaomiCgpr1IdleTimeProps {
     /** @yamlKey web_server */
     webServer?: XiaomiCgpr1IdleTimePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -774,7 +774,7 @@ interface XiaomiCgpr1IlluminancePropsAvailabilityProps {
 }
 interface XiaomiCgpr1IlluminancePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -815,7 +815,7 @@ interface XiaomiCgpr1IlluminanceProps {
     /** @yamlKey web_server */
     webServer?: XiaomiCgpr1IlluminancePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -845,7 +845,7 @@ interface XiaomiMjyd02ylaIdleTimePropsAvailabilityProps {
 }
 interface XiaomiMjyd02ylaIdleTimePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -885,7 +885,7 @@ interface XiaomiMjyd02ylaIdleTimeProps {
     /** @yamlKey web_server */
     webServer?: XiaomiMjyd02ylaIdleTimePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -915,7 +915,7 @@ interface XiaomiMjyd02ylaBatteryLevelPropsAvailabilityProps {
 }
 interface XiaomiMjyd02ylaBatteryLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -956,7 +956,7 @@ interface XiaomiMjyd02ylaBatteryLevelProps {
     /** @yamlKey web_server */
     webServer?: XiaomiMjyd02ylaBatteryLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -986,7 +986,7 @@ interface XiaomiMjyd02ylaIlluminancePropsAvailabilityProps {
 }
 interface XiaomiMjyd02ylaIlluminancePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1027,7 +1027,7 @@ interface XiaomiMjyd02ylaIlluminanceProps {
     /** @yamlKey web_server */
     webServer?: XiaomiMjyd02ylaIlluminancePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -1057,7 +1057,7 @@ interface XiaomiMjyd02ylaLightPropsAvailabilityProps {
 }
 interface XiaomiMjyd02ylaLightPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1093,7 +1093,7 @@ interface XiaomiMjyd02ylaLightProps {
     /** @yamlKey web_server */
     webServer?: XiaomiMjyd02ylaLightPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1133,7 +1133,7 @@ interface XiaomiWx08zmTabletPropsAvailabilityProps {
 }
 interface XiaomiWx08zmTabletPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1173,7 +1173,7 @@ interface XiaomiWx08zmTabletProps {
     /** @yamlKey web_server */
     webServer?: XiaomiWx08zmTabletPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -1203,7 +1203,7 @@ interface XiaomiWx08zmBatteryLevelPropsAvailabilityProps {
 }
 interface XiaomiWx08zmBatteryLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1244,7 +1244,7 @@ interface XiaomiWx08zmBatteryLevelProps {
     /** @yamlKey web_server */
     webServer?: XiaomiWx08zmBatteryLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -1274,7 +1274,7 @@ interface DalyBmsChargingMosEnabledPropsAvailabilityProps {
 }
 interface DalyBmsChargingMosEnabledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1310,7 +1310,7 @@ interface DalyBmsChargingMosEnabledProps {
     /** @yamlKey web_server */
     webServer?: DalyBmsChargingMosEnabledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1342,7 +1342,7 @@ interface DalyBmsDischargingMosEnabledPropsAvailabilityProps {
 }
 interface DalyBmsDischargingMosEnabledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1378,7 +1378,7 @@ interface DalyBmsDischargingMosEnabledProps {
     /** @yamlKey web_server */
     webServer?: DalyBmsDischargingMosEnabledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1410,7 +1410,7 @@ interface EzoPmpPumpStatePropsAvailabilityProps {
 }
 interface EzoPmpPumpStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1443,7 +1443,7 @@ interface EzoPmpPumpStateProps {
     /** @yamlKey web_server */
     webServer?: EzoPmpPumpStatePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1475,7 +1475,7 @@ interface EzoPmpIsPausedPropsAvailabilityProps {
 }
 interface EzoPmpIsPausedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1508,7 +1508,7 @@ interface EzoPmpIsPausedProps {
     /** @yamlKey web_server */
     webServer?: EzoPmpIsPausedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1540,7 +1540,7 @@ interface Gdk101VibrationsPropsAvailabilityProps {
 }
 interface Gdk101VibrationsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1572,7 +1572,7 @@ interface Gdk101VibrationsProps {
     /** @yamlKey web_server */
     webServer?: Gdk101VibrationsPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1604,7 +1604,7 @@ interface Ld2410HasTargetPropsAvailabilityProps {
 }
 interface Ld2410HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1639,7 +1639,7 @@ interface Ld2410HasTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2410HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1671,7 +1671,7 @@ interface Ld2410HasMovingTargetPropsAvailabilityProps {
 }
 interface Ld2410HasMovingTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1706,7 +1706,7 @@ interface Ld2410HasMovingTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2410HasMovingTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1738,7 +1738,7 @@ interface Ld2410HasStillTargetPropsAvailabilityProps {
 }
 interface Ld2410HasStillTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1773,7 +1773,7 @@ interface Ld2410HasStillTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2410HasStillTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1805,7 +1805,7 @@ interface Ld2410OutPinPresenceStatusPropsAvailabilityProps {
 }
 interface Ld2410OutPinPresenceStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1837,7 +1837,7 @@ interface Ld2410OutPinPresenceStatusProps {
     /** @yamlKey web_server */
     webServer?: Ld2410OutPinPresenceStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1869,7 +1869,7 @@ interface Ld2412DynamicBackgroundCorrectionStatusPropsAvailabilityProps {
 }
 interface Ld2412DynamicBackgroundCorrectionStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1901,7 +1901,7 @@ interface Ld2412DynamicBackgroundCorrectionStatusProps {
     /** @yamlKey web_server */
     webServer?: Ld2412DynamicBackgroundCorrectionStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -1933,7 +1933,7 @@ interface Ld2412HasTargetPropsAvailabilityProps {
 }
 interface Ld2412HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1968,7 +1968,7 @@ interface Ld2412HasTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2412HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2000,7 +2000,7 @@ interface Ld2412HasMovingTargetPropsAvailabilityProps {
 }
 interface Ld2412HasMovingTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2035,7 +2035,7 @@ interface Ld2412HasMovingTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2412HasMovingTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2067,7 +2067,7 @@ interface Ld2412HasStillTargetPropsAvailabilityProps {
 }
 interface Ld2412HasStillTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2102,7 +2102,7 @@ interface Ld2412HasStillTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2412HasStillTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2134,7 +2134,7 @@ interface Ld2420HasTargetPropsAvailabilityProps {
 }
 interface Ld2420HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2170,7 +2170,7 @@ interface Ld2420HasTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2420HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2202,7 +2202,7 @@ interface Ld2450HasTargetPropsAvailabilityProps {
 }
 interface Ld2450HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2237,7 +2237,7 @@ interface Ld2450HasTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2450HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2269,7 +2269,7 @@ interface Ld2450HasMovingTargetPropsAvailabilityProps {
 }
 interface Ld2450HasMovingTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2304,7 +2304,7 @@ interface Ld2450HasMovingTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2450HasMovingTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2336,7 +2336,7 @@ interface Ld2450HasStillTargetPropsAvailabilityProps {
 }
 interface Ld2450HasStillTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2371,7 +2371,7 @@ interface Ld2450HasStillTargetProps {
     /** @yamlKey web_server */
     webServer?: Ld2450HasStillTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2403,7 +2403,7 @@ interface Msa3xxTapPropsAvailabilityProps {
 }
 interface Msa3xxTapPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2438,7 +2438,7 @@ interface Msa3xxTapProps {
     /** @yamlKey web_server */
     webServer?: Msa3xxTapPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2470,7 +2470,7 @@ interface Msa3xxDoubleTapPropsAvailabilityProps {
 }
 interface Msa3xxDoubleTapPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2505,7 +2505,7 @@ interface Msa3xxDoubleTapProps {
     /** @yamlKey web_server */
     webServer?: Msa3xxDoubleTapPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2537,7 +2537,7 @@ interface Msa3xxActivePropsAvailabilityProps {
 }
 interface Msa3xxActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2572,7 +2572,7 @@ interface Msa3xxActiveProps {
     /** @yamlKey web_server */
     webServer?: Msa3xxActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2604,7 +2604,7 @@ interface OpenthermFaultIndicationPropsAvailabilityProps {
 }
 interface OpenthermFaultIndicationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2640,7 +2640,7 @@ interface OpenthermFaultIndicationProps {
     /** @yamlKey web_server */
     webServer?: OpenthermFaultIndicationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2672,7 +2672,7 @@ interface OpenthermChActivePropsAvailabilityProps {
 }
 interface OpenthermChActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2707,7 +2707,7 @@ interface OpenthermChActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermChActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2739,7 +2739,7 @@ interface OpenthermDhwActivePropsAvailabilityProps {
 }
 interface OpenthermDhwActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2774,7 +2774,7 @@ interface OpenthermDhwActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2806,7 +2806,7 @@ interface OpenthermFlameOnPropsAvailabilityProps {
 }
 interface OpenthermFlameOnPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2841,7 +2841,7 @@ interface OpenthermFlameOnProps {
     /** @yamlKey web_server */
     webServer?: OpenthermFlameOnPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2873,7 +2873,7 @@ interface OpenthermCoolingActivePropsAvailabilityProps {
 }
 interface OpenthermCoolingActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2909,7 +2909,7 @@ interface OpenthermCoolingActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -2941,7 +2941,7 @@ interface OpenthermCh2ActivePropsAvailabilityProps {
 }
 interface OpenthermCh2ActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2976,7 +2976,7 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCh2ActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3008,7 +3008,7 @@ interface OpenthermDiagnosticIndicationPropsAvailabilityProps {
 }
 interface OpenthermDiagnosticIndicationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3044,7 +3044,7 @@ interface OpenthermDiagnosticIndicationProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDiagnosticIndicationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3076,7 +3076,7 @@ interface OpenthermElectricityProductionPropsAvailabilityProps {
 }
 interface OpenthermElectricityProductionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3112,7 +3112,7 @@ interface OpenthermElectricityProductionProps {
     /** @yamlKey web_server */
     webServer?: OpenthermElectricityProductionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3144,7 +3144,7 @@ interface OpenthermDhwPresentPropsAvailabilityProps {
 }
 interface OpenthermDhwPresentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3180,7 +3180,7 @@ interface OpenthermDhwPresentProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwPresentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3212,7 +3212,7 @@ interface OpenthermControlTypeOnOffPropsAvailabilityProps {
 }
 interface OpenthermControlTypeOnOffPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3248,7 +3248,7 @@ interface OpenthermControlTypeOnOffProps {
     /** @yamlKey web_server */
     webServer?: OpenthermControlTypeOnOffPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3280,7 +3280,7 @@ interface OpenthermCoolingSupportedPropsAvailabilityProps {
 }
 interface OpenthermCoolingSupportedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3316,7 +3316,7 @@ interface OpenthermCoolingSupportedProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingSupportedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3348,7 +3348,7 @@ interface OpenthermDhwStorageTankPropsAvailabilityProps {
 }
 interface OpenthermDhwStorageTankPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3384,7 +3384,7 @@ interface OpenthermDhwStorageTankProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwStorageTankPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3416,7 +3416,7 @@ interface OpenthermControllerPumpControlAllowedPropsAvailabilityProps {
 }
 interface OpenthermControllerPumpControlAllowedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3452,7 +3452,7 @@ interface OpenthermControllerPumpControlAllowedProps {
     /** @yamlKey web_server */
     webServer?: OpenthermControllerPumpControlAllowedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3484,7 +3484,7 @@ interface OpenthermCh2PresentPropsAvailabilityProps {
 }
 interface OpenthermCh2PresentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3520,7 +3520,7 @@ interface OpenthermCh2PresentProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCh2PresentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3552,7 +3552,7 @@ interface OpenthermWaterFillingPropsAvailabilityProps {
 }
 interface OpenthermWaterFillingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3588,7 +3588,7 @@ interface OpenthermWaterFillingProps {
     /** @yamlKey web_server */
     webServer?: OpenthermWaterFillingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3620,7 +3620,7 @@ interface OpenthermHeatModePropsAvailabilityProps {
 }
 interface OpenthermHeatModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3656,7 +3656,7 @@ interface OpenthermHeatModeProps {
     /** @yamlKey web_server */
     webServer?: OpenthermHeatModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3688,7 +3688,7 @@ interface OpenthermDhwSetpointTransferEnabledPropsAvailabilityProps {
 }
 interface OpenthermDhwSetpointTransferEnabledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3724,7 +3724,7 @@ interface OpenthermDhwSetpointTransferEnabledProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwSetpointTransferEnabledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3756,7 +3756,7 @@ interface OpenthermMaxChSetpointTransferEnabledPropsAvailabilityProps {
 }
 interface OpenthermMaxChSetpointTransferEnabledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3792,7 +3792,7 @@ interface OpenthermMaxChSetpointTransferEnabledProps {
     /** @yamlKey web_server */
     webServer?: OpenthermMaxChSetpointTransferEnabledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3824,7 +3824,7 @@ interface OpenthermDhwSetpointRwPropsAvailabilityProps {
 }
 interface OpenthermDhwSetpointRwPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3860,7 +3860,7 @@ interface OpenthermDhwSetpointRwProps {
     /** @yamlKey web_server */
     webServer?: OpenthermDhwSetpointRwPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3892,7 +3892,7 @@ interface OpenthermMaxChSetpointRwPropsAvailabilityProps {
 }
 interface OpenthermMaxChSetpointRwPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3928,7 +3928,7 @@ interface OpenthermMaxChSetpointRwProps {
     /** @yamlKey web_server */
     webServer?: OpenthermMaxChSetpointRwPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -3960,7 +3960,7 @@ interface OpenthermServiceRequestPropsAvailabilityProps {
 }
 interface OpenthermServiceRequestPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3996,7 +3996,7 @@ interface OpenthermServiceRequestProps {
     /** @yamlKey web_server */
     webServer?: OpenthermServiceRequestPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4028,7 +4028,7 @@ interface OpenthermLockoutResetPropsAvailabilityProps {
 }
 interface OpenthermLockoutResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4064,7 +4064,7 @@ interface OpenthermLockoutResetProps {
     /** @yamlKey web_server */
     webServer?: OpenthermLockoutResetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4096,7 +4096,7 @@ interface OpenthermLowWaterPressurePropsAvailabilityProps {
 }
 interface OpenthermLowWaterPressurePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4132,7 +4132,7 @@ interface OpenthermLowWaterPressureProps {
     /** @yamlKey web_server */
     webServer?: OpenthermLowWaterPressurePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4164,7 +4164,7 @@ interface OpenthermFlameFaultPropsAvailabilityProps {
 }
 interface OpenthermFlameFaultPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4200,7 +4200,7 @@ interface OpenthermFlameFaultProps {
     /** @yamlKey web_server */
     webServer?: OpenthermFlameFaultPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4232,7 +4232,7 @@ interface OpenthermAirPressureFaultPropsAvailabilityProps {
 }
 interface OpenthermAirPressureFaultPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4268,7 +4268,7 @@ interface OpenthermAirPressureFaultProps {
     /** @yamlKey web_server */
     webServer?: OpenthermAirPressureFaultPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4300,7 +4300,7 @@ interface OpenthermWaterOverTempPropsAvailabilityProps {
 }
 interface OpenthermWaterOverTempPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4336,7 +4336,7 @@ interface OpenthermWaterOverTempProps {
     /** @yamlKey web_server */
     webServer?: OpenthermWaterOverTempPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4368,7 +4368,7 @@ interface PipsolarAddSbuPriorityVersionPropsAvailabilityProps {
 }
 interface PipsolarAddSbuPriorityVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4404,7 +4404,7 @@ interface PipsolarAddSbuPriorityVersionProps {
     /** @yamlKey web_server */
     webServer?: PipsolarAddSbuPriorityVersionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4436,7 +4436,7 @@ interface PipsolarConfigurationStatusPropsAvailabilityProps {
 }
 interface PipsolarConfigurationStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4472,7 +4472,7 @@ interface PipsolarConfigurationStatusProps {
     /** @yamlKey web_server */
     webServer?: PipsolarConfigurationStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4504,7 +4504,7 @@ interface PipsolarSccFirmwareVersionPropsAvailabilityProps {
 }
 interface PipsolarSccFirmwareVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4540,7 +4540,7 @@ interface PipsolarSccFirmwareVersionProps {
     /** @yamlKey web_server */
     webServer?: PipsolarSccFirmwareVersionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4572,7 +4572,7 @@ interface PipsolarLoadStatusPropsAvailabilityProps {
 }
 interface PipsolarLoadStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4608,7 +4608,7 @@ interface PipsolarLoadStatusProps {
     /** @yamlKey web_server */
     webServer?: PipsolarLoadStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4640,7 +4640,7 @@ interface PipsolarBatteryVoltageToSteadyWhileChargingPropsAvailabilityProps {
 }
 interface PipsolarBatteryVoltageToSteadyWhileChargingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4676,7 +4676,7 @@ interface PipsolarBatteryVoltageToSteadyWhileChargingProps {
     /** @yamlKey web_server */
     webServer?: PipsolarBatteryVoltageToSteadyWhileChargingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4708,7 +4708,7 @@ interface PipsolarChargingStatusPropsAvailabilityProps {
 }
 interface PipsolarChargingStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4744,7 +4744,7 @@ interface PipsolarChargingStatusProps {
     /** @yamlKey web_server */
     webServer?: PipsolarChargingStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4776,7 +4776,7 @@ interface PipsolarSccChargingStatusPropsAvailabilityProps {
 }
 interface PipsolarSccChargingStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4812,7 +4812,7 @@ interface PipsolarSccChargingStatusProps {
     /** @yamlKey web_server */
     webServer?: PipsolarSccChargingStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4844,7 +4844,7 @@ interface PipsolarAcChargingStatusPropsAvailabilityProps {
 }
 interface PipsolarAcChargingStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4880,7 +4880,7 @@ interface PipsolarAcChargingStatusProps {
     /** @yamlKey web_server */
     webServer?: PipsolarAcChargingStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4912,7 +4912,7 @@ interface PipsolarChargingToFloatingModePropsAvailabilityProps {
 }
 interface PipsolarChargingToFloatingModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4948,7 +4948,7 @@ interface PipsolarChargingToFloatingModeProps {
     /** @yamlKey web_server */
     webServer?: PipsolarChargingToFloatingModePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -4980,7 +4980,7 @@ interface PipsolarSwitchOnPropsAvailabilityProps {
 }
 interface PipsolarSwitchOnPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5016,7 +5016,7 @@ interface PipsolarSwitchOnProps {
     /** @yamlKey web_server */
     webServer?: PipsolarSwitchOnPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5048,7 +5048,7 @@ interface PipsolarDustproofInstalledPropsAvailabilityProps {
 }
 interface PipsolarDustproofInstalledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5084,7 +5084,7 @@ interface PipsolarDustproofInstalledProps {
     /** @yamlKey web_server */
     webServer?: PipsolarDustproofInstalledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5116,7 +5116,7 @@ interface PipsolarSilenceBuzzerOpenBuzzerPropsAvailabilityProps {
 }
 interface PipsolarSilenceBuzzerOpenBuzzerPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5152,7 +5152,7 @@ interface PipsolarSilenceBuzzerOpenBuzzerProps {
     /** @yamlKey web_server */
     webServer?: PipsolarSilenceBuzzerOpenBuzzerPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5184,7 +5184,7 @@ interface PipsolarOverloadBypassFunctionPropsAvailabilityProps {
 }
 interface PipsolarOverloadBypassFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5220,7 +5220,7 @@ interface PipsolarOverloadBypassFunctionProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOverloadBypassFunctionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5252,7 +5252,7 @@ interface PipsolarLcdEscapeToDefaultPropsAvailabilityProps {
 }
 interface PipsolarLcdEscapeToDefaultPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5288,7 +5288,7 @@ interface PipsolarLcdEscapeToDefaultProps {
     /** @yamlKey web_server */
     webServer?: PipsolarLcdEscapeToDefaultPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5320,7 +5320,7 @@ interface PipsolarOverloadRestartFunctionPropsAvailabilityProps {
 }
 interface PipsolarOverloadRestartFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5356,7 +5356,7 @@ interface PipsolarOverloadRestartFunctionProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOverloadRestartFunctionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5388,7 +5388,7 @@ interface PipsolarOverTemperatureRestartFunctionPropsAvailabilityProps {
 }
 interface PipsolarOverTemperatureRestartFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5424,7 +5424,7 @@ interface PipsolarOverTemperatureRestartFunctionProps {
     /** @yamlKey web_server */
     webServer?: PipsolarOverTemperatureRestartFunctionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5456,7 +5456,7 @@ interface PipsolarBacklightOnPropsAvailabilityProps {
 }
 interface PipsolarBacklightOnPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5492,7 +5492,7 @@ interface PipsolarBacklightOnProps {
     /** @yamlKey web_server */
     webServer?: PipsolarBacklightOnPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5524,7 +5524,7 @@ interface PipsolarAlarmOnWhenPrimarySourceInterruptPropsAvailabilityProps {
 }
 interface PipsolarAlarmOnWhenPrimarySourceInterruptPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5560,7 +5560,7 @@ interface PipsolarAlarmOnWhenPrimarySourceInterruptProps {
     /** @yamlKey web_server */
     webServer?: PipsolarAlarmOnWhenPrimarySourceInterruptPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5592,7 +5592,7 @@ interface PipsolarFaultCodeRecordPropsAvailabilityProps {
 }
 interface PipsolarFaultCodeRecordPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5628,7 +5628,7 @@ interface PipsolarFaultCodeRecordProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultCodeRecordPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5660,7 +5660,7 @@ interface PipsolarPowerSavingPropsAvailabilityProps {
 }
 interface PipsolarPowerSavingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5696,7 +5696,7 @@ interface PipsolarPowerSavingProps {
     /** @yamlKey web_server */
     webServer?: PipsolarPowerSavingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5728,7 +5728,7 @@ interface PipsolarWarningsPresentPropsAvailabilityProps {
 }
 interface PipsolarWarningsPresentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5764,7 +5764,7 @@ interface PipsolarWarningsPresentProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningsPresentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5796,7 +5796,7 @@ interface PipsolarFaultsPresentPropsAvailabilityProps {
 }
 interface PipsolarFaultsPresentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5832,7 +5832,7 @@ interface PipsolarFaultsPresentProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultsPresentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5864,7 +5864,7 @@ interface PipsolarWarningPowerLossPropsAvailabilityProps {
 }
 interface PipsolarWarningPowerLossPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5900,7 +5900,7 @@ interface PipsolarWarningPowerLossProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningPowerLossPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -5932,7 +5932,7 @@ interface PipsolarFaultInverterFaultPropsAvailabilityProps {
 }
 interface PipsolarFaultInverterFaultPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5968,7 +5968,7 @@ interface PipsolarFaultInverterFaultProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultInverterFaultPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6000,7 +6000,7 @@ interface PipsolarFaultBusOverPropsAvailabilityProps {
 }
 interface PipsolarFaultBusOverPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6036,7 +6036,7 @@ interface PipsolarFaultBusOverProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultBusOverPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6068,7 +6068,7 @@ interface PipsolarFaultBusUnderPropsAvailabilityProps {
 }
 interface PipsolarFaultBusUnderPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6104,7 +6104,7 @@ interface PipsolarFaultBusUnderProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultBusUnderPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6136,7 +6136,7 @@ interface PipsolarFaultBusSoftFailPropsAvailabilityProps {
 }
 interface PipsolarFaultBusSoftFailPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6172,7 +6172,7 @@ interface PipsolarFaultBusSoftFailProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultBusSoftFailPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6204,7 +6204,7 @@ interface PipsolarWarningLineFailPropsAvailabilityProps {
 }
 interface PipsolarWarningLineFailPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6240,7 +6240,7 @@ interface PipsolarWarningLineFailProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningLineFailPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6272,7 +6272,7 @@ interface PipsolarFaultOpvshortPropsAvailabilityProps {
 }
 interface PipsolarFaultOpvshortPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6308,7 +6308,7 @@ interface PipsolarFaultOpvshortProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultOpvshortPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6340,7 +6340,7 @@ interface PipsolarFaultInverterVoltageTooLowPropsAvailabilityProps {
 }
 interface PipsolarFaultInverterVoltageTooLowPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6376,7 +6376,7 @@ interface PipsolarFaultInverterVoltageTooLowProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultInverterVoltageTooLowPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6408,7 +6408,7 @@ interface PipsolarFaultInverterVoltageTooHighPropsAvailabilityProps {
 }
 interface PipsolarFaultInverterVoltageTooHighPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6444,7 +6444,7 @@ interface PipsolarFaultInverterVoltageTooHighProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultInverterVoltageTooHighPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6476,7 +6476,7 @@ interface PipsolarWarningOverTemperaturePropsAvailabilityProps {
 }
 interface PipsolarWarningOverTemperaturePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6512,7 +6512,7 @@ interface PipsolarWarningOverTemperatureProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningOverTemperaturePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6544,7 +6544,7 @@ interface PipsolarWarningFanLockPropsAvailabilityProps {
 }
 interface PipsolarWarningFanLockPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6580,7 +6580,7 @@ interface PipsolarWarningFanLockProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningFanLockPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6612,7 +6612,7 @@ interface PipsolarWarningBatteryVoltageHighPropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryVoltageHighPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6648,7 +6648,7 @@ interface PipsolarWarningBatteryVoltageHighProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryVoltageHighPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6680,7 +6680,7 @@ interface PipsolarWarningBatteryLowAlarmPropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryLowAlarmPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6716,7 +6716,7 @@ interface PipsolarWarningBatteryLowAlarmProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryLowAlarmPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6748,7 +6748,7 @@ interface PipsolarWarningBatteryUnderShutdownPropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryUnderShutdownPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6784,7 +6784,7 @@ interface PipsolarWarningBatteryUnderShutdownProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryUnderShutdownPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6816,7 +6816,7 @@ interface PipsolarWarningBatteryDeratingPropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryDeratingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6852,7 +6852,7 @@ interface PipsolarWarningBatteryDeratingProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryDeratingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6884,7 +6884,7 @@ interface PipsolarWarningOverLoadPropsAvailabilityProps {
 }
 interface PipsolarWarningOverLoadPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6920,7 +6920,7 @@ interface PipsolarWarningOverLoadProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningOverLoadPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -6952,7 +6952,7 @@ interface PipsolarWarningEepromFailedPropsAvailabilityProps {
 }
 interface PipsolarWarningEepromFailedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6988,7 +6988,7 @@ interface PipsolarWarningEepromFailedProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningEepromFailedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7020,7 +7020,7 @@ interface PipsolarFaultInverterOverCurrentPropsAvailabilityProps {
 }
 interface PipsolarFaultInverterOverCurrentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7056,7 +7056,7 @@ interface PipsolarFaultInverterOverCurrentProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultInverterOverCurrentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7088,7 +7088,7 @@ interface PipsolarFaultInverterSoftFailedPropsAvailabilityProps {
 }
 interface PipsolarFaultInverterSoftFailedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7124,7 +7124,7 @@ interface PipsolarFaultInverterSoftFailedProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultInverterSoftFailedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7156,7 +7156,7 @@ interface PipsolarFaultSelfTestFailedPropsAvailabilityProps {
 }
 interface PipsolarFaultSelfTestFailedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7192,7 +7192,7 @@ interface PipsolarFaultSelfTestFailedProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultSelfTestFailedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7224,7 +7224,7 @@ interface PipsolarFaultOpDcVoltageOverPropsAvailabilityProps {
 }
 interface PipsolarFaultOpDcVoltageOverPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7260,7 +7260,7 @@ interface PipsolarFaultOpDcVoltageOverProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultOpDcVoltageOverPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7292,7 +7292,7 @@ interface PipsolarFaultBatteryOpenPropsAvailabilityProps {
 }
 interface PipsolarFaultBatteryOpenPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7328,7 +7328,7 @@ interface PipsolarFaultBatteryOpenProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultBatteryOpenPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7360,7 +7360,7 @@ interface PipsolarFaultCurrentSensorFailedPropsAvailabilityProps {
 }
 interface PipsolarFaultCurrentSensorFailedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7396,7 +7396,7 @@ interface PipsolarFaultCurrentSensorFailedProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultCurrentSensorFailedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7428,7 +7428,7 @@ interface PipsolarFaultBatteryShortPropsAvailabilityProps {
 }
 interface PipsolarFaultBatteryShortPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7464,7 +7464,7 @@ interface PipsolarFaultBatteryShortProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultBatteryShortPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7496,7 +7496,7 @@ interface PipsolarWarningPowerLimitPropsAvailabilityProps {
 }
 interface PipsolarWarningPowerLimitPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7532,7 +7532,7 @@ interface PipsolarWarningPowerLimitProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningPowerLimitPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7564,7 +7564,7 @@ interface PipsolarWarningPvVoltageHighPropsAvailabilityProps {
 }
 interface PipsolarWarningPvVoltageHighPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7600,7 +7600,7 @@ interface PipsolarWarningPvVoltageHighProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningPvVoltageHighPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7632,7 +7632,7 @@ interface PipsolarFaultMpptOverloadPropsAvailabilityProps {
 }
 interface PipsolarFaultMpptOverloadPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7668,7 +7668,7 @@ interface PipsolarFaultMpptOverloadProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultMpptOverloadPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7700,7 +7700,7 @@ interface PipsolarWarningMpptOverloadPropsAvailabilityProps {
 }
 interface PipsolarWarningMpptOverloadPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7736,7 +7736,7 @@ interface PipsolarWarningMpptOverloadProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningMpptOverloadPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7768,7 +7768,7 @@ interface PipsolarWarningBatteryTooLowToChargePropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryTooLowToChargePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7804,7 +7804,7 @@ interface PipsolarWarningBatteryTooLowToChargeProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryTooLowToChargePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7836,7 +7836,7 @@ interface PipsolarFaultDcDcOverCurrentPropsAvailabilityProps {
 }
 interface PipsolarFaultDcDcOverCurrentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7872,7 +7872,7 @@ interface PipsolarFaultDcDcOverCurrentProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultDcDcOverCurrentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7904,7 +7904,7 @@ interface PipsolarFaultCodePropsAvailabilityProps {
 }
 interface PipsolarFaultCodePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7940,7 +7940,7 @@ interface PipsolarFaultCodeProps {
     /** @yamlKey web_server */
     webServer?: PipsolarFaultCodePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -7972,7 +7972,7 @@ interface PipsolarWarningLowPvEnergyPropsAvailabilityProps {
 }
 interface PipsolarWarningLowPvEnergyPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8008,7 +8008,7 @@ interface PipsolarWarningLowPvEnergyProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningLowPvEnergyPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8040,7 +8040,7 @@ interface PipsolarWarningHighAcInputDuringBusSoftStartPropsAvailabilityProps {
 }
 interface PipsolarWarningHighAcInputDuringBusSoftStartPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8076,7 +8076,7 @@ interface PipsolarWarningHighAcInputDuringBusSoftStartProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningHighAcInputDuringBusSoftStartPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8108,7 +8108,7 @@ interface PipsolarWarningBatteryEqualizationPropsAvailabilityProps {
 }
 interface PipsolarWarningBatteryEqualizationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8144,7 +8144,7 @@ interface PipsolarWarningBatteryEqualizationProps {
     /** @yamlKey web_server */
     webServer?: PipsolarWarningBatteryEqualizationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8176,7 +8176,7 @@ interface Rd03dTargetPropsAvailabilityProps {
 }
 interface Rd03dTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8212,7 +8212,7 @@ interface Rd03dTargetProps {
     /** @yamlKey web_server */
     webServer?: Rd03dTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8244,7 +8244,7 @@ interface Rd03dTarget1PropsAvailabilityProps {
 }
 interface Rd03dTarget1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8280,7 +8280,7 @@ interface Rd03dTarget1Props {
     /** @yamlKey web_server */
     webServer?: Rd03dTarget1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8312,7 +8312,7 @@ interface Rd03dTarget2PropsAvailabilityProps {
 }
 interface Rd03dTarget2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8348,7 +8348,7 @@ interface Rd03dTarget2Props {
     /** @yamlKey web_server */
     webServer?: Rd03dTarget2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8380,7 +8380,7 @@ interface Rd03dTarget3PropsAvailabilityProps {
 }
 interface Rd03dTarget3PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8416,7 +8416,7 @@ interface Rd03dTarget3Props {
     /** @yamlKey web_server */
     webServer?: Rd03dTarget3PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8753,7 +8753,7 @@ interface SeeedMr24hpc1HasTargetPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8788,7 +8788,7 @@ interface SeeedMr24hpc1HasTargetProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8820,7 +8820,7 @@ interface SeeedMr60bha2HasTargetPropsAvailabilityProps {
 }
 interface SeeedMr60bha2HasTargetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8855,7 +8855,7 @@ interface SeeedMr60bha2HasTargetProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr60bha2HasTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8887,7 +8887,7 @@ interface SeeedMr60fda2PeopleExistPropsAvailabilityProps {
 }
 interface SeeedMr60fda2PeopleExistPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8922,7 +8922,7 @@ interface SeeedMr60fda2PeopleExistProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2PeopleExistPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -8954,7 +8954,7 @@ interface SeeedMr60fda2FallDetectedPropsAvailabilityProps {
 }
 interface SeeedMr60fda2FallDetectedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8989,7 +8989,7 @@ interface SeeedMr60fda2FallDetectedProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2FallDetectedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9021,7 +9021,7 @@ interface Sim800lRegisteredPropsAvailabilityProps {
 }
 interface Sim800lRegisteredPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9054,7 +9054,7 @@ interface Sim800lRegisteredProps {
     /** @yamlKey web_server */
     webServer?: Sim800lRegisteredPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9086,7 +9086,7 @@ interface Sy6970VbusConnectedPropsAvailabilityProps {
 }
 interface Sy6970VbusConnectedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9122,7 +9122,7 @@ interface Sy6970VbusConnectedProps {
     /** @yamlKey web_server */
     webServer?: Sy6970VbusConnectedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9154,7 +9154,7 @@ interface Sy6970ChargingPropsAvailabilityProps {
 }
 interface Sy6970ChargingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9190,7 +9190,7 @@ interface Sy6970ChargingProps {
     /** @yamlKey web_server */
     webServer?: Sy6970ChargingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9222,7 +9222,7 @@ interface Sy6970ChargeDonePropsAvailabilityProps {
 }
 interface Sy6970ChargeDonePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9258,7 +9258,7 @@ interface Sy6970ChargeDoneProps {
     /** @yamlKey web_server */
     webServer?: Sy6970ChargeDonePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9290,7 +9290,7 @@ interface VbusDeltasolBsPlusRelay1PropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusRelay1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9326,7 +9326,7 @@ interface VbusDeltasolBsPlusRelay1Props {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusRelay1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9358,7 +9358,7 @@ interface VbusDeltasolBsPlusRelay2PropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusRelay2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9394,7 +9394,7 @@ interface VbusDeltasolBsPlusRelay2Props {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusRelay2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9426,7 +9426,7 @@ interface VbusDeltasolBsPlusSensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusSensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9459,7 +9459,7 @@ interface VbusDeltasolBsPlusSensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusSensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9491,7 +9491,7 @@ interface VbusDeltasolBsPlusSensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusSensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9524,7 +9524,7 @@ interface VbusDeltasolBsPlusSensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusSensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9556,7 +9556,7 @@ interface VbusDeltasolBsPlusSensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusSensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9589,7 +9589,7 @@ interface VbusDeltasolBsPlusSensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusSensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9621,7 +9621,7 @@ interface VbusDeltasolBsPlusSensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusSensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9654,7 +9654,7 @@ interface VbusDeltasolBsPlusSensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusSensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9686,7 +9686,7 @@ interface VbusDeltasolBsPlusCollectorMaxPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusCollectorMaxPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9719,7 +9719,7 @@ interface VbusDeltasolBsPlusCollectorMaxProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusCollectorMaxPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9751,7 +9751,7 @@ interface VbusDeltasolBsPlusCollectorMinPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusCollectorMinPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9784,7 +9784,7 @@ interface VbusDeltasolBsPlusCollectorMinProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusCollectorMinPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9816,7 +9816,7 @@ interface VbusDeltasolBsPlusCollectorFrostPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusCollectorFrostPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9849,7 +9849,7 @@ interface VbusDeltasolBsPlusCollectorFrostProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusCollectorFrostPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9881,7 +9881,7 @@ interface VbusDeltasolBsPlusTubeCollectorPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusTubeCollectorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9914,7 +9914,7 @@ interface VbusDeltasolBsPlusTubeCollectorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusTubeCollectorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -9946,7 +9946,7 @@ interface VbusDeltasolBsPlusRecoolingPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusRecoolingPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -9979,7 +9979,7 @@ interface VbusDeltasolBsPlusRecoolingProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusRecoolingPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10011,7 +10011,7 @@ interface VbusDeltasolBsPlusHqmPropsAvailabilityProps {
 }
 interface VbusDeltasolBsPlusHqmPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10044,7 +10044,7 @@ interface VbusDeltasolBsPlusHqmProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBsPlusHqmPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10076,7 +10076,7 @@ interface VbusDeltasolBs2009Sensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2009Sensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10109,7 +10109,7 @@ interface VbusDeltasolBs2009Sensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2009Sensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10141,7 +10141,7 @@ interface VbusDeltasolBs2009Sensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2009Sensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10174,7 +10174,7 @@ interface VbusDeltasolBs2009Sensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2009Sensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10206,7 +10206,7 @@ interface VbusDeltasolBs2009Sensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2009Sensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10239,7 +10239,7 @@ interface VbusDeltasolBs2009Sensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2009Sensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10271,7 +10271,7 @@ interface VbusDeltasolBs2009Sensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2009Sensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10304,7 +10304,7 @@ interface VbusDeltasolBs2009Sensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2009Sensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10336,7 +10336,7 @@ interface VbusDeltasolBs2009FrostProtectionActivePropsAvailabilityProps {
 }
 interface VbusDeltasolBs2009FrostProtectionActivePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10369,7 +10369,7 @@ interface VbusDeltasolBs2009FrostProtectionActiveProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2009FrostProtectionActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10401,7 +10401,7 @@ interface VbusDeltasolBs2Sensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2Sensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10434,7 +10434,7 @@ interface VbusDeltasolBs2Sensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2Sensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10466,7 +10466,7 @@ interface VbusDeltasolBs2Sensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2Sensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10499,7 +10499,7 @@ interface VbusDeltasolBs2Sensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2Sensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10531,7 +10531,7 @@ interface VbusDeltasolBs2Sensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2Sensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10564,7 +10564,7 @@ interface VbusDeltasolBs2Sensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2Sensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10596,7 +10596,7 @@ interface VbusDeltasolBs2Sensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolBs2Sensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10629,7 +10629,7 @@ interface VbusDeltasolBs2Sensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolBs2Sensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10661,7 +10661,7 @@ interface VbusDeltasolCSensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCSensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10694,7 +10694,7 @@ interface VbusDeltasolCSensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCSensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10726,7 +10726,7 @@ interface VbusDeltasolCSensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCSensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10759,7 +10759,7 @@ interface VbusDeltasolCSensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCSensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10791,7 +10791,7 @@ interface VbusDeltasolCSensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCSensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10824,7 +10824,7 @@ interface VbusDeltasolCSensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCSensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10856,7 +10856,7 @@ interface VbusDeltasolCSensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCSensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10889,7 +10889,7 @@ interface VbusDeltasolCSensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCSensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10921,7 +10921,7 @@ interface VbusDeltasolCs2Sensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCs2Sensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -10954,7 +10954,7 @@ interface VbusDeltasolCs2Sensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCs2Sensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -10986,7 +10986,7 @@ interface VbusDeltasolCs2Sensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCs2Sensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11019,7 +11019,7 @@ interface VbusDeltasolCs2Sensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCs2Sensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11051,7 +11051,7 @@ interface VbusDeltasolCs2Sensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCs2Sensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11084,7 +11084,7 @@ interface VbusDeltasolCs2Sensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCs2Sensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11116,7 +11116,7 @@ interface VbusDeltasolCs2Sensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCs2Sensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11149,7 +11149,7 @@ interface VbusDeltasolCs2Sensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCs2Sensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11181,7 +11181,7 @@ interface VbusDeltasolCsPlusSensor1ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCsPlusSensor1ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11214,7 +11214,7 @@ interface VbusDeltasolCsPlusSensor1ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCsPlusSensor1ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11246,7 +11246,7 @@ interface VbusDeltasolCsPlusSensor2ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCsPlusSensor2ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11279,7 +11279,7 @@ interface VbusDeltasolCsPlusSensor2ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCsPlusSensor2ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11311,7 +11311,7 @@ interface VbusDeltasolCsPlusSensor3ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCsPlusSensor3ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11344,7 +11344,7 @@ interface VbusDeltasolCsPlusSensor3ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCsPlusSensor3ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11376,7 +11376,7 @@ interface VbusDeltasolCsPlusSensor4ErrorPropsAvailabilityProps {
 }
 interface VbusDeltasolCsPlusSensor4ErrorPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11409,7 +11409,7 @@ interface VbusDeltasolCsPlusSensor4ErrorProps {
     /** @yamlKey web_server */
     webServer?: VbusDeltasolCsPlusSensor4ErrorPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11441,7 +11441,7 @@ interface VbusCustomBinarySensorsPropsAvailabilityProps {
 }
 interface VbusCustomBinarySensorsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11477,7 +11477,7 @@ interface VbusCustomBinarySensorsProps {
     /** @yamlKey web_server */
     webServer?: VbusCustomBinarySensorsPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11510,7 +11510,7 @@ interface WireguardStatusPropsAvailabilityProps {
 }
 interface WireguardStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11546,7 +11546,7 @@ interface WireguardStatusProps {
     /** @yamlKey web_server */
     webServer?: WireguardStatusPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11578,7 +11578,7 @@ interface WireguardEnabledPropsAvailabilityProps {
 }
 interface WireguardEnabledPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11611,7 +11611,7 @@ interface WireguardEnabledProps {
     /** @yamlKey web_server */
     webServer?: WireguardEnabledPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11643,7 +11643,7 @@ interface XiaomiRtcgq02lmMotionPropsAvailabilityProps {
 }
 interface XiaomiRtcgq02lmMotionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11687,7 +11687,7 @@ interface XiaomiRtcgq02lmMotionProps {
     /** @yamlKey web_server */
     webServer?: XiaomiRtcgq02lmMotionPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11720,7 +11720,7 @@ interface XiaomiRtcgq02lmLightPropsAvailabilityProps {
 }
 interface XiaomiRtcgq02lmLightPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11756,7 +11756,7 @@ interface XiaomiRtcgq02lmLightProps {
     /** @yamlKey web_server */
     webServer?: XiaomiRtcgq02lmLightPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11788,7 +11788,7 @@ interface XiaomiRtcgq02lmButtonPropsAvailabilityProps {
 }
 interface XiaomiRtcgq02lmButtonPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -11832,7 +11832,7 @@ interface XiaomiRtcgq02lmButtonProps {
     /** @yamlKey web_server */
     webServer?: XiaomiRtcgq02lmButtonPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11860,7 +11860,7 @@ interface BinarySensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey web_server */
     webServer?: BinarySensorWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -11888,13 +11888,13 @@ interface AnalogThresholdProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the source sensor.
      * @yamlKey sensor_id
      */
-    sensorId: Ref<sensor_Sensor>;
+    sensorId: RefProp<sensor_Sensor>;
     /** float: Configures the reference for comparison. Accepts either a shorthand */
     threshold: AnalogThresholdThresholdProps;
 }
 interface As3935Props {
     /** @yamlKey as3935_id */
-    as3935Id?: Ref<as3935_AS3935Component>;
+    as3935Id?: RefProp<as3935_AS3935Component>;
 }
 interface BlePresenceProps extends _CoreComponent {
     /**
@@ -11932,21 +11932,21 @@ interface BlePresenceProps extends _CoreComponent {
      */
     minRssi?: number;
     /** @yamlKey esp32_ble_id */
-    esp32BleId?: Ref<esp32_ble_tracker_ESP32BLETracker>;
+    esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
 }
 interface CopyProps extends _CoreComponent {
     /**
      * [ID](/guides/configuration-types#id): The binary sensor that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<binary_sensor_BinarySensor>;
+    sourceId: RefProp<binary_sensor_BinarySensor>;
 }
 interface Cst226Props {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the touchscreen.
      * @yamlKey cst226_id
      */
-    cst226Id?: Ref<cst226_CST226Touchscreen>;
+    cst226Id?: RefProp<cst226_CST226Touchscreen>;
 }
 interface GpioProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to monitor. */
@@ -11967,7 +11967,7 @@ interface Gt911Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the touchscreen.
      * @yamlKey gt911_id
      */
-    gt911Id?: Ref<gt911_GT911Touchscreen>;
+    gt911Id?: RefProp<gt911_GT911Touchscreen>;
     /** int: Internal index of the touch button, between 0 and 3. The default is 0. */
     index?: number;
 }
@@ -11976,7 +11976,7 @@ interface HaierProps {
      * [ID](/guides/configuration-types#id): The id of haier climate component
      * @yamlKey haier_id
      */
-    haierId?: Ref<haier_HonClimate>;
+    haierId?: RefProp<haier_HonClimate>;
     /**
      * A binary sensor that indicates outdoor fan activity. All options from [Binary Sensor](/components/binary_sensor#confi...
      * @yamlKey outdoor_fan_status
@@ -12015,7 +12015,7 @@ interface HydreonRgxxProps {
      * [ID](/guides/configuration-types#id): The ID of the Hydreon Rain Sensor display.
      * @yamlKey hydreon_rgxx_id
      */
-    hydreonRgxxId?: Ref<hydreon_rgxx_HydreonRGxxComponent>;
+    hydreonRgxxId?: RefProp<hydreon_rgxx_HydreonRGxxComponent>;
     /**
      * `true` if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
      * @yamlKey too_cold
@@ -12051,7 +12051,7 @@ interface NextionProps extends _NextionBinarySensorConfigBinarySensor, _CoreComp
 }
 interface NfcProps extends _CoreComponent {
     /** @yamlKey nfcc_id */
-    nfccId?: Ref<nfc_Nfcc>;
+    nfccId?: RefProp<nfc_Nfcc>;
     /**
      * string: A (sub)string that must appear in the tag's NDEF message. May not be used with `tag_id` and/or `uid` (below).
      * @yamlKey ndef_contains
@@ -12067,7 +12067,7 @@ interface NfcProps extends _CoreComponent {
 }
 interface PacketTransportDataProps {
     /** @yamlKey transport_id */
-    transportId?: Ref<packet_transport_PacketTransport>;
+    transportId?: RefProp<packet_transport_PacketTransport>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the original binary sensor in the provider device. If not specified d...
      * @yamlKey remote_id
@@ -12089,12 +12089,12 @@ interface QwiicPirProps extends _CoreComponent {
      */
     debounceMode?: "RAW" | "NATIVE" | "HYBRID";
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Rc522Props {
     /** @yamlKey rc522_id */
-    rc522Id?: Ref<rc522_RC522>;
+    rc522Id?: RefProp<rc522_RC522>;
     uid: unknown;
 }
 interface SdlProps extends _CoreComponent {
@@ -12102,7 +12102,7 @@ interface SdlProps extends _CoreComponent {
     /** The ID of an [SDL key](https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html). */
     key: "SDLK_UNKNOWN" | "SDLK_RETURN" | "SDLK_ESCAPE" | "SDLK_BACKSPACE" | "SDLK_TAB" | "SDLK_SPACE" | "SDLK_EXCLAIM" | "SDLK_QUOTEDBL" | "SDLK_HASH" | "SDLK_PERCENT" | "SDLK_DOLLAR" | "SDLK_AMPERSAND" | "SDLK_QUOTE" | "SDLK_LEFTPAREN" | "SDLK_RIGHTPAREN" | "SDLK_ASTERISK" | "SDLK_PLUS" | "SDLK_COMMA" | "SDLK_MINUS" | "SDLK_PERIOD" | "SDLK_SLASH" | "SDLK_0" | "SDLK_1" | "SDLK_2" | "SDLK_3" | "SDLK_4" | "SDLK_5" | "SDLK_6" | "SDLK_7" | "SDLK_8" | "SDLK_9" | "SDLK_COLON" | "SDLK_SEMICOLON" | "SDLK_LESS" | "SDLK_EQUALS" | "SDLK_GREATER" | "SDLK_QUESTION" | "SDLK_AT" | "SDLK_LEFTBRACKET" | "SDLK_BACKSLASH" | "SDLK_RIGHTBRACKET" | "SDLK_CARET" | "SDLK_UNDERSCORE" | "SDLK_BACKQUOTE" | "SDLK_a" | "SDLK_b" | "SDLK_c" | "SDLK_d" | "SDLK_e" | "SDLK_f" | "SDLK_g" | "SDLK_h" | "SDLK_i" | "SDLK_j" | "SDLK_k" | "SDLK_l" | "SDLK_m" | "SDLK_n" | "SDLK_o" | "SDLK_p" | "SDLK_q" | "SDLK_r" | "SDLK_s" | "SDLK_t" | "SDLK_u" | "SDLK_v" | "SDLK_w" | "SDLK_x" | "SDLK_y" | "SDLK_z" | "SDLK_CAPSLOCK" | "SDLK_F1" | "SDLK_F2" | "SDLK_F3" | "SDLK_F4" | "SDLK_F5" | "SDLK_F6" | "SDLK_F7" | "SDLK_F8" | "SDLK_F9" | "SDLK_F10" | "SDLK_F11" | "SDLK_F12" | "SDLK_PRINTSCREEN" | "SDLK_SCROLLLOCK" | "SDLK_PAUSE" | "SDLK_INSERT" | "SDLK_HOME" | "SDLK_PAGEUP" | "SDLK_DELETE" | "SDLK_END" | "SDLK_PAGEDOWN" | "SDLK_RIGHT" | "SDLK_LEFT" | "SDLK_DOWN" | "SDLK_UP" | "SDLK_NUMLOCKCLEAR" | "SDLK_KP_DIVIDE" | "SDLK_KP_MULTIPLY" | "SDLK_KP_MINUS" | "SDLK_KP_PLUS" | "SDLK_KP_ENTER" | "SDLK_KP_1" | "SDLK_KP_2" | "SDLK_KP_3" | "SDLK_KP_4" | "SDLK_KP_5" | "SDLK_KP_6" | "SDLK_KP_7" | "SDLK_KP_8" | "SDLK_KP_9" | "SDLK_KP_0" | "SDLK_KP_PERIOD" | "SDLK_APPLICATION" | "SDLK_POWER" | "SDLK_KP_EQUALS" | "SDLK_F13" | "SDLK_F14" | "SDLK_F15" | "SDLK_F16" | "SDLK_F17" | "SDLK_F18" | "SDLK_F19" | "SDLK_F20" | "SDLK_F21" | "SDLK_F22" | "SDLK_F23" | "SDLK_F24" | "SDLK_EXECUTE" | "SDLK_HELP" | "SDLK_MENU" | "SDLK_SELECT" | "SDLK_STOP" | "SDLK_AGAIN" | "SDLK_UNDO" | "SDLK_CUT" | "SDLK_COPY" | "SDLK_PASTE" | "SDLK_FIND" | "SDLK_MUTE" | "SDLK_VOLUMEUP" | "SDLK_VOLUMEDOWN" | "SDLK_KP_COMMA" | "SDLK_KP_EQUALSAS400" | "SDLK_ALTERASE" | "SDLK_SYSREQ" | "SDLK_CANCEL" | "SDLK_CLEAR" | "SDLK_PRIOR" | "SDLK_RETURN2" | "SDLK_SEPARATOR" | "SDLK_OUT" | "SDLK_OPER" | "SDLK_CLEARAGAIN" | "SDLK_CRSEL" | "SDLK_EXSEL" | "SDLK_KP_00" | "SDLK_KP_000" | "SDLK_THOUSANDSSEPARATOR" | "SDLK_DECIMALSEPARATOR" | "SDLK_CURRENCYUNIT" | "SDLK_CURRENCYSUBUNIT" | "SDLK_KP_LEFTPAREN" | "SDLK_KP_RIGHTPAREN" | "SDLK_KP_LEFTBRACE" | "SDLK_KP_RIGHTBRACE" | "SDLK_KP_TAB" | "SDLK_KP_BACKSPACE" | "SDLK_KP_A" | "SDLK_KP_B" | "SDLK_KP_C" | "SDLK_KP_D" | "SDLK_KP_E" | "SDLK_KP_F" | "SDLK_KP_XOR" | "SDLK_KP_POWER" | "SDLK_KP_PERCENT" | "SDLK_KP_LESS" | "SDLK_KP_GREATER" | "SDLK_KP_AMPERSAND" | "SDLK_KP_DBLAMPERSAND" | "SDLK_KP_VERTICALBAR" | "SDLK_KP_DBLVERTICALBAR" | "SDLK_KP_COLON" | "SDLK_KP_HASH" | "SDLK_KP_SPACE" | "SDLK_KP_AT" | "SDLK_KP_EXCLAM" | "SDLK_KP_MEMSTORE" | "SDLK_KP_MEMRECALL" | "SDLK_KP_MEMCLEAR" | "SDLK_KP_MEMADD" | "SDLK_KP_MEMSUBTRACT" | "SDLK_KP_MEMMULTIPLY" | "SDLK_KP_MEMDIVIDE" | "SDLK_KP_PLUSMINUS" | "SDLK_KP_CLEAR" | "SDLK_KP_CLEARENTRY" | "SDLK_KP_BINARY" | "SDLK_KP_OCTAL" | "SDLK_KP_DECIMAL" | "SDLK_KP_HEXADECIMAL" | "SDLK_LCTRL" | "SDLK_LSHIFT" | "SDLK_LALT" | "SDLK_LGUI" | "SDLK_RCTRL" | "SDLK_RSHIFT" | "SDLK_RALT" | "SDLK_RGUI" | "SDLK_MODE" | "SDLK_AUDIONEXT" | "SDLK_AUDIOPREV" | "SDLK_AUDIOSTOP" | "SDLK_AUDIOPLAY" | "SDLK_AUDIOMUTE" | "SDLK_MEDIASELECT" | "SDLK_WWW" | "SDLK_MAIL" | "SDLK_CALCULATOR" | "SDLK_COMPUTER" | "SDLK_AC_SEARCH" | "SDLK_AC_HOME" | "SDLK_AC_BACK" | "SDLK_AC_FORWARD" | "SDLK_AC_STOP" | "SDLK_AC_REFRESH" | "SDLK_AC_BOOKMARKS" | "SDLK_BRIGHTNESSDOWN" | "SDLK_BRIGHTNESSUP" | "SDLK_DISPLAYSWITCH" | "SDLK_KBDILLUMTOGGLE" | "SDLK_KBDILLUMDOWN" | "SDLK_KBDILLUMUP" | "SDLK_EJECT" | "SDLK_SLEEP" | "SDLK_APP1" | "SDLK_APP2" | "SDLK_AUDIOREWIND" | "SDLK_AUDIOFASTFORWARD" | "SDLK_SOFTLEFT" | "SDLK_SOFTRIGHT" | "SDLK_CALL" | "SDLK_ENDCALL";
     /** @yamlKey sdl_id */
-    sdlId?: Ref<sdl_Sdl>;
+    sdlId?: RefProp<sdl_Sdl>;
 }
 interface StatusProps extends _CoreComponent {
     /** @yamlKey entity_category */
@@ -12120,25 +12120,25 @@ interface SwitchProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The source switch to observe.
      * @yamlKey source_id
      */
-    sourceId: Ref<switch__Switch>;
+    sourceId: RefProp<switch__Switch>;
 }
 interface Tm1637Props {
     /**
      * :[ID](/guides/configuration-types#id): The id of the tm1637 that should be used to scan the keys in case you are usin...
      * @yamlKey tm1637_id
      */
-    tm1637Id?: Ref<tm1637_TM1637Display>;
+    tm1637Id?: RefProp<tm1637_TM1637Display>;
     /** integer: The keycode for the connected key (Seg0 = 0, Seg1 = 1 etc,). Range is from 0 to 15. */
     key: number;
 }
 interface Tm1638Props {
     /** @yamlKey tm1638_id */
-    tm1638Id?: Ref<tm1638_TM1638Component>;
+    tm1638Id?: RefProp<tm1638_TM1638Component>;
     key: number;
 }
 interface TouchscreenProps extends _CoreComponent {
     /** @yamlKey touchscreen_id */
-    touchscreenId?: Ref<touchscreen_Touchscreen>;
+    touchscreenId?: RefProp<touchscreen_Touchscreen>;
     /** @yamlKey use_raw */
     useRaw?: boolean;
     /** @yamlKey x_min */
@@ -12150,15 +12150,15 @@ interface TouchscreenProps extends _CoreComponent {
     /** @yamlKey y_max */
     yMax: number;
     /** @yamlKey page_id */
-    pageId?: Ref<display_DisplayPage>;
-    pages?: Array<Ref<display_DisplayPage>>;
+    pageId?: RefProp<display_DisplayPage>;
+    pages?: Array<RefProp<display_DisplayPage>>;
 }
 interface Tt21100Props {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the touchscreen.
      * @yamlKey tt21100_id
      */
-    tt21100Id?: Ref<tt21100_TT21100Touchscreen>;
+    tt21100Id?: RefProp<tt21100_TT21100Touchscreen>;
     /** int: Internal index of the touch button, between 0 and 3. */
     index: number;
 }
@@ -12205,7 +12205,7 @@ interface Apds9960Props {
     /** @yamlKey device_class */
     deviceClass?: unknown;
     /** @yamlKey apds9960_id */
-    apds9960Id?: Ref<apds9960_APDS9960>;
+    apds9960Id?: RefProp<apds9960_APDS9960>;
     /** string: The direction to measure. One of: */
     direction: "up" | "down" | "left" | "right";
 }
@@ -12214,7 +12214,7 @@ interface Cap1188Props {
      * [ID](/guides/configuration-types#id): The ID of the CAP1188 defined above. Useful for multiple CAP1188's on the I²C bus.
      * @yamlKey cap1188_id
      */
-    cap1188Id?: Ref<cap1188_CAP1188Component>;
+    cap1188Id?: RefProp<cap1188_CAP1188Component>;
     /** int: The channel number the CAP1188 the touchkey is connected to. */
     channel: number;
 }
@@ -12235,12 +12235,12 @@ interface Cst816Props extends _Touchscreen {
      */
     skipProbe?: boolean;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface DalyBmsProps extends _CoreComponent {
     /** @yamlKey bms_daly_id */
-    bmsDalyId?: Ref<daly_bms_DalyBmsComponent>;
+    bmsDalyId?: RefProp<daly_bms_DalyBmsComponent>;
     /**
      * The BMS charging MOS status to enable the recharge of the battery. All options from [Binary Sensor](/components/binar...
      * @yamlKey charging_mos_enabled
@@ -12259,11 +12259,11 @@ interface DfrobotSen0395Props {
      * [ID](/guides/configuration-types#id): The ID of the DFRobot mmWave component defined above. Required when multiple in...
      * @yamlKey dfrobot_sen0395_id
      */
-    dfrobotSen0395Id?: Ref<dfrobot_sen0395_DfrobotSen0395Component>;
+    dfrobotSen0395Id?: RefProp<dfrobot_sen0395_DfrobotSen0395Component>;
 }
 interface Esp32TouchProps {
     /** @yamlKey esp32_touch_id */
-    esp32TouchId?: Ref<esp32_touch_ESP32TouchComponent>;
+    esp32TouchId?: RefProp<esp32_touch_ESP32TouchComponent>;
     /** [Pin](/guides/configuration-types#pin): The pin to detect touch */
     pin: unknown;
     /** `int`: The threshold to use to detect touch events. See */
@@ -12275,7 +12275,7 @@ interface Esp32TouchProps {
     wakeupThreshold?: number;
 }
 interface EzoPmpProps {
-    id?: Ref<ezo_pmp_EzoPMP>;
+    id?: RefProp<ezo_pmp_EzoPMP>;
     /** @yamlKey pump_state */
     pumpState?: EzoPmpPumpStateProps;
     /** @yamlKey is_paused */
@@ -12283,18 +12283,18 @@ interface EzoPmpProps {
 }
 interface FingerprintGrowProps {
     /** @yamlKey fingerprint_grow_id */
-    fingerprintGrowId?: Ref<fingerprint_grow_FingerprintGrowComponent>;
+    fingerprintGrowId?: RefProp<fingerprint_grow_FingerprintGrowComponent>;
     icon?: unknown;
 }
 interface Gdk101Props {
     /** @yamlKey gdk101_id */
-    gdk101Id?: Ref<gdk101_GDK101Component>;
+    gdk101Id?: RefProp<gdk101_GDK101Component>;
     /** Vibration status. All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor). */
     vibrations: Gdk101VibrationsProps;
 }
 interface HlkFm22xProps {
     /** @yamlKey hlk_fm22x_id */
-    hlkFm22xId?: Ref<hlk_fm22x_HlkFm22xComponent>;
+    hlkFm22xId?: RefProp<hlk_fm22x_HlkFm22xComponent>;
     icon?: unknown;
 }
 interface Ld2410Props {
@@ -12302,7 +12302,7 @@ interface Ld2410Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: Ref<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<ld2410_LD2410Component>;
     /**
      * If true target detect either still or in movement. All options from [Binary Sensor](/components/binary_sensor#config-...
      * @yamlKey has_target
@@ -12329,7 +12329,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: Ref<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<ld2412_LD2412Component>;
     /**
      * True while the sensor is performing dynamic background correction. All options from [Binary Sensor](/components/binar...
      * @yamlKey dynamic_background_correction_status
@@ -12353,7 +12353,7 @@ interface Ld2412Props {
 }
 interface Ld2420Props extends _CoreComponent {
     /** @yamlKey ld2420_id */
-    ld2420Id?: Ref<ld2420_LD2420Component>;
+    ld2420Id?: RefProp<ld2420_LD2420Component>;
     /**
      * If a target is detected with either still or in movement has_target will be set true for the duration of the presence...
      * @yamlKey has_target
@@ -12365,7 +12365,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
      * @yamlKey ld2450_id
      */
-    ld2450Id?: Ref<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<ld2450_LD2450Component>;
     /**
      * True if either target is still or in movement. All options from [Binary Sensor](/components/binary_sensor#config-bina...
      * @yamlKey has_target
@@ -12384,11 +12384,11 @@ interface Ld2450Props {
 }
 interface LvglProps {
     id?: unknown;
-    widget: Ref<lvgl_LvPseudoButton>;
+    widget: RefProp<lvgl_LvPseudoButton>;
 }
 interface M5stack8angleProps extends _CoreComponent {
     /** @yamlKey m5stack_8angle_id */
-    m5stack8angleId?: Ref<m5stack_8angle_M5Stack8AngleComponent>;
+    m5stack8angleId?: RefProp<m5stack_8angle_M5Stack8AngleComponent>;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }
@@ -12397,7 +12397,7 @@ interface MatrixKeypadProps {
      * [ID](/guides/configuration-types#id): The ID of the keypad to process keypresses from.
      * @yamlKey keypad_id
      */
-    keypadId?: Ref<matrix_keypad_MatrixKeypad>;
+    keypadId?: RefProp<matrix_keypad_MatrixKeypad>;
     /** integer: The row of the key. */
     row?: number;
     /** integer: The column of the key. */
@@ -12414,7 +12414,7 @@ interface Mpr121Props {
      * [ID](/guides/configuration-types#id): The ID of the MPR121 defined above. Useful for multiple MPR121's on the I²C bus
      * @yamlKey mpr121_id
      */
-    mpr121Id?: Ref<mpr121_MPR121Component>;
+    mpr121Id?: RefProp<mpr121_MPR121Component>;
     /** int: The channel number at the MPR121 the touchkey is connected to. */
     channel: number;
     /**
@@ -12441,7 +12441,7 @@ interface Msa3xxProps extends _Msa3xxMsaSensor {
 }
 interface OpenthermProps extends _CoreComponent {
     /** @yamlKey opentherm_id */
-    openthermId?: Ref<opentherm_OpenthermHub>;
+    openthermId?: RefProp<opentherm_OpenthermHub>;
     /** @yamlKey fault_indication */
     faultIndication?: OpenthermFaultIndicationProps;
     /** @yamlKey ch_active */
@@ -12779,12 +12779,12 @@ interface PipsolarProps extends _PipsolarComponent {
 }
 interface Pn532Props {
     /** @yamlKey pn532_id */
-    pn532Id?: Ref<pn532_PN532>;
+    pn532Id?: RefProp<pn532_PN532>;
     uid: unknown;
 }
 interface Rc522SpiProps {
     /** @yamlKey rc522_id */
-    rc522Id?: Ref<rc522_RC522>;
+    rc522Id?: RefProp<rc522_RC522>;
     uid: unknown;
 }
 interface Rd03dProps {
@@ -12792,7 +12792,7 @@ interface Rd03dProps {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the RD-03D component.
      * @yamlKey rd03d_id
      */
-    rd03dId?: Ref<rd03d_RD03DComponent>;
+    rd03dId?: RefProp<rd03d_RD03DComponent>;
     /** True if any target is detected. All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor). */
     target?: Rd03dTargetProps;
     /** @yamlKey target_1 */
@@ -12804,7 +12804,7 @@ interface Rd03dProps {
 }
 interface Rdm6300Props {
     /** @yamlKey rdm6300_id */
-    rdm6300Id?: Ref<rdm6300_RDM6300Component>;
+    rdm6300Id?: RefProp<rdm6300_RDM6300Component>;
     /** int: The unique ID of the NFC/RFID tag. */
     uid: number;
 }
@@ -12909,11 +12909,11 @@ interface RemoteReceiverProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The remote receiver to receive the remote code with. Required if multiple recei...
      * @yamlKey receiver_id
      */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: Ref<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
     /**
      * If true target detect either still or in movement. All options from [Binary Sensor](/components/binary_sensor#config-...
      * @yamlKey has_target
@@ -12922,7 +12922,7 @@ interface SeeedMr24hpc1Props {
 }
 interface SeeedMr60bha2Props {
     /** @yamlKey mr60bha2_id */
-    mr60bha2Id?: Ref<seeed_mr60bha2_MR60BHA2Component>;
+    mr60bha2Id?: RefProp<seeed_mr60bha2_MR60BHA2Component>;
     /**
      * If true when target (person) is detected. All options from [Binary Sensor](/components/binary_sensor#config-binary_se...
      * @yamlKey has_target
@@ -12931,7 +12931,7 @@ interface SeeedMr60bha2Props {
 }
 interface SeeedMr60fda2Props {
     /** @yamlKey mr60fda2_id */
-    mr60fda2Id?: Ref<seeed_mr60fda2_MR60FDA2Component>;
+    mr60fda2Id?: RefProp<seeed_mr60fda2_MR60FDA2Component>;
     /**
      * If true when target (person) is detected. All options from [Binary Sensor](/components/binary_sensor#config-binary_se...
      * @yamlKey people_exist
@@ -12945,13 +12945,13 @@ interface SeeedMr60fda2Props {
 }
 interface Sim800lProps {
     /** @yamlKey sim800l_id */
-    sim800lId?: Ref<sim800l_Sim800LComponent>;
+    sim800lId?: RefProp<sim800l_Sim800LComponent>;
     /** Indicates if the SIM800L has successfully registered in the cellular network. */
     registered?: Sim800lRegisteredProps;
 }
 interface Sx1509Props {
     /** @yamlKey sx1509_id */
-    sx1509Id?: Ref<sx1509_SX1509Component>;
+    sx1509Id?: RefProp<sx1509_SX1509Component>;
     /** int: The row number for this key on the keypad. */
     row: number;
     /** int: The column number for this key on the keypad. */
@@ -12959,7 +12959,7 @@ interface Sx1509Props {
 }
 interface Sy6970Props {
     /** @yamlKey sy6970_id */
-    sy6970Id?: Ref<sy6970_SY6970Component>;
+    sy6970Id?: RefProp<sy6970_SY6970Component>;
     /** @yamlKey vbus_connected */
     vbusConnected?: Sy6970VbusConnectedProps;
     charging?: Sy6970ChargingProps;
@@ -12973,17 +12973,17 @@ interface TemplateProps extends _CoreComponent {
 }
 interface Ttp229BsfProps {
     /** @yamlKey ttp229_id */
-    ttp229Id?: Ref<ttp229_bsf_TTP229BSFComponent>;
+    ttp229Id?: RefProp<ttp229_bsf_TTP229BSFComponent>;
     channel: number;
 }
 interface Ttp229LsfProps {
     /** @yamlKey ttp229_id */
-    ttp229Id?: Ref<ttp229_lsf_TTP229LSFComponent>;
+    ttp229Id?: RefProp<ttp229_lsf_TTP229LSFComponent>;
     channel: number;
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey sensor_datapoint */
     sensorDatapoint: number;
 }
@@ -13011,7 +13011,7 @@ interface UdpProps {
 }
 interface VbusDeltasolBsPlusProps extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     relay1?: VbusDeltasolBsPlusRelay1Props;
     relay2?: VbusDeltasolBsPlusRelay2Props;
     /** @yamlKey sensor1_error */
@@ -13035,7 +13035,7 @@ interface VbusDeltasolBsPlusProps extends _CoreComponent {
 }
 interface VbusDeltasolBs2009Props extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     /** @yamlKey sensor1_error */
     sensor1Error?: VbusDeltasolBs2009Sensor1ErrorProps;
     /** @yamlKey sensor2_error */
@@ -13049,7 +13049,7 @@ interface VbusDeltasolBs2009Props extends _CoreComponent {
 }
 interface VbusDeltasolBs2Props extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     /** @yamlKey sensor1_error */
     sensor1Error?: VbusDeltasolBs2Sensor1ErrorProps;
     /** @yamlKey sensor2_error */
@@ -13061,7 +13061,7 @@ interface VbusDeltasolBs2Props extends _CoreComponent {
 }
 interface VbusDeltasolCProps extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     /** @yamlKey sensor1_error */
     sensor1Error?: VbusDeltasolCSensor1ErrorProps;
     /** @yamlKey sensor2_error */
@@ -13073,7 +13073,7 @@ interface VbusDeltasolCProps extends _CoreComponent {
 }
 interface VbusDeltasolCs2Props extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     /** @yamlKey sensor1_error */
     sensor1Error?: VbusDeltasolCs2Sensor1ErrorProps;
     /** @yamlKey sensor2_error */
@@ -13085,7 +13085,7 @@ interface VbusDeltasolCs2Props extends _CoreComponent {
 }
 interface VbusDeltasolCsPlusProps extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     /** @yamlKey sensor1_error */
     sensor1Error?: VbusDeltasolCsPlusSensor1ErrorProps;
     /** @yamlKey sensor2_error */
@@ -13097,7 +13097,7 @@ interface VbusDeltasolCsPlusProps extends _CoreComponent {
 }
 interface VbusCustomProps extends _CoreComponent {
     /** @yamlKey vbus_id */
-    vbusId?: Ref<vbus_VBus>;
+    vbusId?: RefProp<vbus_VBus>;
     command?: number;
     source?: number;
     dest?: number;
@@ -13106,12 +13106,12 @@ interface VbusCustomProps extends _CoreComponent {
 }
 interface WireguardProps {
     /** @yamlKey wireguard_id */
-    wireguardId?: Ref<wireguard_Wireguard>;
+    wireguardId?: RefProp<wireguard_Wireguard>;
     status?: WireguardStatusProps;
     enabled?: WireguardEnabledProps;
 }
 interface XiaomiRtcgq02lmProps {
-    id?: Ref<xiaomi_rtcgq02lm_XiaomiRTCGQ02LM>;
+    id?: RefProp<xiaomi_rtcgq02lm_XiaomiRTCGQ02LM>;
     motion?: XiaomiRtcgq02lmMotionProps;
     light?: XiaomiRtcgq02lmLightProps;
     button?: XiaomiRtcgq02lmButtonProps;

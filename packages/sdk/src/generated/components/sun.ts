@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { sun_Sun, time_RealTimeClock } from "../markers";
 export interface SunProps {
     /** @yamlKey time_id */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /** float: The latitude for performing the calculation. */
     latitude: unknown;
     /** float: The longitude for performing the calculation. */

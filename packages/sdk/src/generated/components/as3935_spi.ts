@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _As3935, _CoreComponent } from "../bases";
 import type { as3935_spi_SPIAS3935Component, spi_SPIComponent } from "../markers";
 export interface As3935SpiProps extends _As3935, _CoreComponent {
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

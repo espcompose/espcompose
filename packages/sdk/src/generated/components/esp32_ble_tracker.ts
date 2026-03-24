@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface Esp32BleTrackerScanParametersPropsDurationProps {
@@ -44,7 +44,7 @@ export interface Esp32BleTrackerScanParametersProps {
 }
 export interface Esp32BleTrackerProps extends _CoreComponent {
     /** @yamlKey ble_id */
-    bleId?: Ref<esp32_ble_ESP32BLE>;
+    bleId?: RefProp<esp32_ble_ESP32BLE>;
     /**
      * int: DEPRECATED - This option has been moved to the [Esp32 Ble](/components/esp32_ble/) component. Please configure `...
      * @yamlKey max_connections

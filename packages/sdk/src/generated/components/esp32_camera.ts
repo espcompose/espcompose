@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { esp32_camera_ESP32Camera, i2c_InternalI2CBus } from "../markers";
 export interface Esp32CameraExternalClockProps {
@@ -48,7 +48,7 @@ export interface Esp32CameraProps extends _CoreEntityBase, _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [I²C bus](/components/i2c) the camera is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_InternalI2CBus>;
+    i2cId?: RefProp<i2c_InternalI2CBus>;
     /**
      * pin: The ESP pin the reset pin of the camera is connected to. If set, this will reset the camera before the ESP boots.
      * @yamlKey reset_pin

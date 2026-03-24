@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { pipsolar_Pipsolar, uart_UARTComponent } from "../markers";
 export interface PipsolarProps extends _CoreComponent {
@@ -13,7 +13,7 @@ export interface PipsolarProps extends _CoreComponent {
      * The uart Bus ID
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

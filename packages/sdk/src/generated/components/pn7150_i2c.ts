@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, pn7150_PN7150 } from "../markers";
 export interface Pn7150I2cTagTtlProps {
@@ -16,7 +16,7 @@ export interface Pn7150I2cTagTtlProps {
 }
 export interface Pn7150I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
     /** @yamlKey on_emulated_tag_scan */
     onEmulatedTagScan?: () => void;

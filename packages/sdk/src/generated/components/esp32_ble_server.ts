@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE, esp32_ble_server_BLEServer } from "../markers";
 export interface Esp32BleServerManufacturerProps {
@@ -80,7 +80,7 @@ export interface Esp32BleServerServicesProps {
 }
 export interface Esp32BleServerProps extends _CoreComponent {
     /** @yamlKey ble_id */
-    bleId?: Ref<esp32_ble_ESP32BLE>;
+    bleId?: RefProp<esp32_ble_ESP32BLE>;
     /** [Value Configuration](https://esphome.io/components/esp32_ble_server#esp32_ble_server-value): The name of the manufac... */
     manufacturer?: Esp32BleServerManufacturerProps;
     /** int: Sets the [appearance](https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/core/appearance_value... */

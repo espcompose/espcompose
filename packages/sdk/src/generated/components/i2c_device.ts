@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { i2c_I2CBus, i2c_device_I2CDeviceComponent } from "../markers";
 export interface I2cDeviceProps {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: I²C address of the device. */
     address: unknown;
 }

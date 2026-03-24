@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, tca9548a_TCA9548AComponent } from "../markers";
 export interface Tca9548aChannelsProps {
@@ -17,7 +17,7 @@ export interface Tca9548aProps extends _CoreComponent {
      * The I²C Bus ID Defaults to `false`
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the Multiplexer. Defaults to `0x70`. */
     address?: unknown;
 }

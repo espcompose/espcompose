@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { web_server_WebServer, web_server_base_WebServerBase } from "../markers";
 export interface WebServerAuthProps {
@@ -54,7 +54,7 @@ export interface WebServerProps extends _CoreComponent {
     /** Enables a simple *Digest* authentication with username and password. */
     auth?: WebServerAuthProps;
     /** @yamlKey web_server_base_id */
-    webServerBaseId?: Ref<web_server_base_WebServerBase>;
+    webServerBaseId?: RefProp<web_server_base_WebServerBase>;
     /**
      * boolean: Whether `internal` entities should be displayed on the web interface. Defaults to `false`.
      * @yamlKey include_internal

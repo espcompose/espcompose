@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { as5600_AS5600Component, i2c_I2CBus } from "../markers";
 export interface As5600Props extends _CoreComponent {
@@ -46,7 +46,7 @@ export interface As5600Props extends _CoreComponent {
     /** int: The allowable rotation range from the start_position. Mutually exclusive with end_position. See [Position / Rang... */
     range?: unknown;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The i²c address of the sensor. See [I²C Addresses](https://esphome.io/components/sensor/as5600#as5600_i2c_addres... */
     address?: unknown;
 }

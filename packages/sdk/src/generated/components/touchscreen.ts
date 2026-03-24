@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _Touchscreen } from "../bases";
 import type { axs15231_AXS15231Touchscreen, chsc6x_CHSC6XTouchscreen, cst226_CST226Touchscreen, cst816_CST816Touchscreen, display_Display, ektf2232_EKTF2232Touchscreen, ft5x06_FT5x06Touchscreen, ft63x6_FT63X6Touchscreen, gt911_GT911Touchscreen, i2c_I2CBus, lilygo_t5_47_LilygoT547Touchscreen, sdl_Sdl, sdl_SdlTouchscreen, spi_SPIComponent, tt21100_TT21100Touchscreen, xpt2046_XPT2046Component } from "../markers";
 interface Axs15231TransformProps {
@@ -213,11 +213,11 @@ interface Cst816Props extends _Touchscreen {
      */
     skipProbe?: boolean;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Axs15231Props extends _CoreComponent {
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     transform?: Axs15231TransformProps;
     /** @yamlKey touch_timeout */
     touchTimeout?: Axs15231TouchTimeoutProps;
@@ -241,11 +241,11 @@ interface Axs15231Props extends _CoreComponent {
      */
     resetPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Chsc6xProps extends _CoreComponent {
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     transform?: Chsc6xTransformProps;
     /** @yamlKey touch_timeout */
     touchTimeout?: Chsc6xTouchTimeoutProps;
@@ -264,7 +264,7 @@ interface Chsc6xProps extends _CoreComponent {
      */
     interruptPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Ektf2232Props extends _Touchscreen {
@@ -279,7 +279,7 @@ interface Ektf2232Props extends _Touchscreen {
      */
     resetPin: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Ft5x06Props extends _Touchscreen {
@@ -289,7 +289,7 @@ interface Ft5x06Props extends _Touchscreen {
      */
     interruptPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Ft63x6Props extends _Touchscreen {
@@ -305,11 +305,11 @@ interface Ft63x6Props extends _Touchscreen {
     resetPin?: Pin;
     threshold?: number;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface LilygoT547Props extends _CoreComponent {
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     transform?: LilygoT547TransformProps;
     /** @yamlKey touch_timeout */
     touchTimeout?: LilygoT547TouchTimeoutProps;
@@ -328,11 +328,11 @@ interface LilygoT547Props extends _CoreComponent {
      */
     interruptPin: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Cst226Props extends _CoreComponent {
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     transform?: Cst226TransformProps;
     /** @yamlKey touch_timeout */
     touchTimeout?: Cst226TouchTimeoutProps;
@@ -356,7 +356,7 @@ interface Cst226Props extends _CoreComponent {
      */
     resetPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Gt911Props extends _Touchscreen {
@@ -371,12 +371,12 @@ interface Gt911Props extends _Touchscreen {
      */
     resetPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface SdlProps extends _Touchscreen {
     /** @yamlKey sdl_id */
-    sdlId?: Ref<sdl_Sdl>;
+    sdlId?: RefProp<sdl_Sdl>;
 }
 interface Tt21100Props extends _Touchscreen {
     /**
@@ -390,11 +390,11 @@ interface Tt21100Props extends _Touchscreen {
      */
     resetPin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface Xpt2046Props extends _CoreComponent {
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     transform?: Xpt2046TransformProps;
     /** @yamlKey touch_timeout */
     touchTimeout?: Xpt2046TouchTimeoutProps;
@@ -411,7 +411,7 @@ interface Xpt2046Props extends _CoreComponent {
     interruptPin?: Pin;
     threshold?: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

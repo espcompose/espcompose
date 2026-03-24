@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _UponorSmatrixDevice } from "../bases";
 import type { anova_Anova, ballu_BalluClimate, bang_bang_BangBangClimate, bedjet_BedJetClimate, ble_client_BLEClient, climate_ir_lg_LgIrClimate, coolix_CoolixClimate, daikin_DaikinClimate, daikin_arc_DaikinArcClimate, daikin_brc_DaikinBrcClimate, delonghi_DelonghiClimate, emmeti_EmmetiClimate, fujitsu_general_FujitsuGeneralClimate, gree_GreeClimate, haier_HonClimate, haier_Smartair2Climate, heatpumpir_HeatpumpIRClimate, hitachi_ac344_HitachiClimate, hitachi_ac424_HitachiClimate, midea_ac_AirConditioner, midea_ir_MideaIR, mitsubishi_MitsubishiClimate, mqtt_MQTTClimateComponent, noblex_NoblexClimate, output_FloatOutput, pid_PIDClimate, remote_base_RemoteReceiverBase, remote_base_RemoteTransmitterBase, remote_transmitter_RemoteTransmitterComponent, sensor_Sensor, tcl112_Tcl112Climate, thermostat_ThermostatClimate, toshiba_ToshibaClimate, tuya_Tuya, tuya_TuyaClimate, uart_UARTComponent, uponor_smatrix_UponorSmatrixClimate, web_server_WebServer, whirlpool_WhirlpoolClimate, whynter_Whynter, yashima_YashimaClimate, zhlt01_ZHLT01Climate, zigbee_ZigbeeComponent } from "../markers";
 interface ClimateWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -103,7 +103,7 @@ interface MideaOutdoorTemperaturePropsAvailabilityProps {
 }
 interface MideaOutdoorTemperaturePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -143,7 +143,7 @@ interface MideaOutdoorTemperatureProps {
     /** @yamlKey web_server */
     webServer?: MideaOutdoorTemperaturePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -173,7 +173,7 @@ interface MideaPowerUsagePropsAvailabilityProps {
 }
 interface MideaPowerUsagePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -213,7 +213,7 @@ interface MideaPowerUsageProps {
     /** @yamlKey web_server */
     webServer?: MideaPowerUsagePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -243,7 +243,7 @@ interface MideaHumiditySetpointPropsAvailabilityProps {
 }
 interface MideaHumiditySetpointPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -283,7 +283,7 @@ interface MideaHumiditySetpointProps {
     /** @yamlKey web_server */
     webServer?: MideaHumiditySetpointPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -593,7 +593,7 @@ interface AnovaProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the BLE Client.
      * @yamlKey ble_client_id
      */
-    bleClientId?: Ref<ble_client_BLEClient>;
+    bleClientId?: RefProp<ble_client_BLEClient>;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }
@@ -602,22 +602,22 @@ interface BalluProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface BangBangProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The sensor that is used to measure the current temperature. */
-    sensor: Ref<sensor_Sensor>;
+    sensor: RefProp<sensor_Sensor>;
     /**
      * [ID](/guides/configuration-types#id): If specified, this sensor is used to measure the current humidity. This is used...
      * @yamlKey humidity_sensor
      */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /**
      * float: The default low target temperature for the control algorithm. This can be dynamically set in the frontend later.
      * @yamlKey default_target_temperature_low
@@ -654,13 +654,13 @@ interface ClimateIrLgProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey header_high */
     headerHigh?: ClimateIrLgHeaderHighProps;
     /** @yamlKey header_low */
@@ -677,52 +677,52 @@ interface CoolixProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface DaikinProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface DaikinArcProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface DaikinBrcProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
     useFahrenheit?: boolean;
 }
@@ -731,52 +731,52 @@ interface DelonghiProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface EmmetiProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface FujitsuGeneralProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface GreeProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     model: "generic" | "yan" | "yaa" | "yac" | "yac1fb9" | "yx1ff" | "yag";
 }
 interface HeatpumpirProps extends _CoreComponent {
@@ -784,13 +784,13 @@ interface HeatpumpirProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     protocol: "aux" | "ballu" | "carrier_mca" | "carrier_nqv" | "daikin_arc417" | "daikin_arc480" | "daikin" | "electroluxyal" | "fuego" | "fujitsu_awyz" | "gree" | "greeya" | "greeyan" | "greeyac" | "greeyt" | "greeyap" | "hisense_aud" | "hitachi" | "hyundai" | "ivt" | "midea" | "mitsubishi_fa" | "mitsubishi_fd" | "mitsubishi_fe" | "mitsubishi_heavy_fdtc" | "mitsubishi_heavy_zj" | "mitsubishi_heavy_zm" | "mitsubishi_heavy_zmp" | "mitsubishi_heavy_kj" | "mitsubishi_msc" | "mitsubishi_msy" | "mitsubishi_sez" | "panasonic_ckp" | "panasonic_dke" | "panasonic_eke" | "panasonic_jke" | "panasonic_lke" | "panasonic_nke" | "samsung_aqv" | "samsung_fjm" | "sharp" | "toshiba_daiseikai" | "toshiba" | "zhlt01" | "nibe" | "carrier_qlima_1" | "carrier_qlima_2" | "samsung_aqv12msan" | "zhjg01" | "airway" | "bgh_aud" | "panasonic_altdke" | "philco_phs32" | "vaillantvai8" | "r51m";
     /** @yamlKey horizontal_default */
     horizontalDefault: "auto" | "middle" | "left" | "mleft" | "mright" | "right";
@@ -806,26 +806,26 @@ interface HitachiAc344Props extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface HitachiAc424Props extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface MideaProps extends _CoreComponent {
     /** [Time](/guides/configuration-types#time): Minimal period between requests to the appliance. Defaults to `1s`. */
@@ -841,7 +841,7 @@ interface MideaProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Defined and used automatically when using [Remote Transmitter](/components/remo...
      * @yamlKey transmitter_id
      */
-    transmitterId?: Ref<remote_transmitter_RemoteTransmitterComponent>;
+    transmitterId?: RefProp<remote_transmitter_RemoteTransmitterComponent>;
     /** boolean: Beeper feedback on command. Defaults to `False`. */
     beeper?: boolean;
     /** boolean: Get capabilities automatically. Allows you not to manually define most of the capabilities of the appliance.... */
@@ -890,20 +890,20 @@ interface MideaProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Uart](/components/uart/) if you want to use mul...
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 interface MideaIrProps extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
     useFahrenheit?: boolean;
 }
@@ -912,13 +912,13 @@ interface MitsubishiProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey set_fan_mode */
     setFanMode?: "quiet_4levels" | "4levels" | "3levels";
     /** @yamlKey supports_dry */
@@ -935,22 +935,22 @@ interface NoblexProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_base_RemoteTransmitterBase>;
+    transmitterId?: RefProp<remote_base_RemoteTransmitterBase>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface PidProps {
     /** [ID](/guides/configuration-types#id): The sensor that is used to measure the current temperature. */
-    sensor: Ref<sensor_Sensor>;
+    sensor: RefProp<sensor_Sensor>;
     /**
      * [ID](/guides/configuration-types#id): If specified, this sensor is used to measure the current humidity. This is used...
      * @yamlKey humidity_sensor
      */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /**
      * float: The default target temperature (setpoint) for the control algorithm. This can be dynamically set in the fronte...
      * @yamlKey default_target_temperature
@@ -960,12 +960,12 @@ interface PidProps {
      * [ID](/guides/configuration-types#id): The ID of a [float output](/components/output#config-output) that decreases the...
      * @yamlKey cool_output
      */
-    coolOutput?: Ref<output_FloatOutput>;
+    coolOutput?: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The ID of a [float output](/components/output#config-output) that increases the...
      * @yamlKey heat_output
      */
-    heatOutput?: Ref<output_FloatOutput>;
+    heatOutput?: RefProp<output_FloatOutput>;
     /**
      * Enables a deadband to stabilise and minimise changes in the output when the temperature is close to the target temper...
      * @yamlKey deadband_parameters
@@ -982,20 +982,20 @@ interface Tcl112Props extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface ThermostatProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The sensor that is used to measure the current temperature. */
-    sensor: Ref<sensor_Sensor>;
+    sensor: RefProp<sensor_Sensor>;
     /**
      * [ID](/guides/configuration-types#id): If specified, this sensor is used to measure the current humidity. This may be ...
      * @yamlKey humidity_sensor
      */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /**
      * [Action](/automations/actions#all-actions): The action to call when the climate device should enter its idle state (n...
      * @yamlKey idle_action
@@ -1307,11 +1307,11 @@ interface ToshibaProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     model?: "GENERIC" | "RAC-PT1411HWRU-C" | "RAC-PT1411HWRU-F" | "RAS-2819T";
 }
 interface WhirlpoolProps extends _CoreComponent {
@@ -1319,11 +1319,11 @@ interface WhirlpoolProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     model?: "DG11J1-3A" | "DG11J1-91";
 }
 interface WhynterProps extends _CoreComponent {
@@ -1331,33 +1331,33 @@ interface WhynterProps extends _CoreComponent {
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
     useFahrenheit?: boolean;
 }
 interface YashimaProps extends _CoreComponent {
     /** @yamlKey transmitter_id */
-    transmitterId?: Ref<remote_transmitter_RemoteTransmitterComponent>;
+    transmitterId?: RefProp<remote_transmitter_RemoteTransmitterComponent>;
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
 }
 interface Zhlt01Props extends _CoreComponent {
     /** @yamlKey supports_cool */
     supportsCool?: boolean;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
-    humiditySensor?: Ref<sensor_Sensor>;
+    humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
-    receiverId?: Ref<remote_base_RemoteReceiverBase>;
+    receiverId?: RefProp<remote_base_RemoteReceiverBase>;
 }
 interface BedjetProps extends _CoreComponent, _BedjetClient {
     /**
@@ -1405,7 +1405,7 @@ interface HaierSMARTAIR2Props extends _CoreComponent {
      * [ID](/guides/configuration-types#id): ID of the UART port to communicate with AC.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
     /**
      * boolean: (supported by smartAir2 only) If `true` - use alternative values to control swing mode. Use only if the orig...
      * @yamlKey alternative_swing_control
@@ -1449,7 +1449,7 @@ interface HaierHONProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): ID of the UART port to communicate with AC.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
     /**
      * list: (supported only by hOn) Defines control method (should be supported by AC). Supported values: `MONITOR_ONLY` - ...
      * @yamlKey control_method
@@ -1488,7 +1488,7 @@ interface HaierHONProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey supports_heat */
     supportsHeat?: boolean;
     /** @yamlKey supports_cool */

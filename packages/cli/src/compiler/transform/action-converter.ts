@@ -19,6 +19,7 @@
 
 import ts from 'typescript';
 import { exprToCpp, type ConstMap } from './expression-to-cpp.js';
+import { resolveActionYamlKey, camelToSnake } from '@esphome/compose';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -40,6 +41,28 @@ export interface ConversionError {
  * The `scriptParams` map associates each script name with its ordered parameter
  * names so that call-site arguments can be matched to the correct YAML keys.
  */
+/**
+ * Describes a module-level ref variable created via useRef<MarkerType>().
+ */
+export interface RefInfo {
+  /** The ref's variable name (e.g. 'myLight'). */
+  name: string;
+  /** The C++ classes whose actions apply to this ref (from MARKER_ACTION_CLASS_MAP). */
+  classes: string[];
+}
+
+/**
+ * Marker that instructs the AST emitter to generate a variable reference
+ * (calling `.toString()`) instead of a string literal.
+ *
+ * Since ref tokens are generated at runtime by `RefHandle`, the transformer
+ * cannot know the actual token at compile time. Instead, we embed a reference
+ * to the variable so that the token is resolved when the code executes.
+ */
+export class RefTokenMarker {
+  constructor(public readonly varName: string) {}
+}
+
 export interface ConverterContext {
   /** Names of top-level function declarations in the user's source file. */
   knownScripts: Set<string>;
@@ -48,6 +71,12 @@ export interface ConverterContext {
    * Used to emit `{ 'script.execute': { id: 'name', paramName: value } }`.
    */
   scriptParams: Map<string, string[]>;
+  /**
+   * Maps ref variable name → ref info.
+   * Populated from module-level `const x = useRef<light_LightOutput>()` declarations.
+   * Used to rewrite `x.turnOn()` → `{ 'light.turn_on': { id: token } }`.
+   */
+  knownRefs: Map<string, RefInfo>;
   /** Accumulated errors — populated by convertStatements. */
   errors: ConversionError[];
 }
@@ -303,8 +332,20 @@ function convertCall(
     return convertScriptCall(callee.text, call.arguments, ctx, constMap);
   }
 
+  // ref.action(params?) — calls to action methods on component refs
+  if (
+    ts.isPropertyAccessExpression(callee) &&
+    ts.isIdentifier(callee.expression)
+  ) {
+    const refName = callee.expression.text;
+    const refInfo = ctx.knownRefs.get(refName);
+    if (refInfo) {
+      return convertRefAction(refInfo, callee.name.text, call.arguments, ctx, constMap);
+    }
+  }
+
   ctx.errors.push({
-    message: `Call to '${callee.getText()}' is not supported inside scripts. Only delay(), logger.log(), and other script functions can be called.`,
+    message: `Call to '${callee.getText()}' is not supported inside scripts. Only delay(), logger.log(), ref.action(), and other script functions can be called.`,
     node: call,
   });
   return null;
@@ -434,10 +475,109 @@ function convertBlockOrStatement(stmt: ts.Statement, ctx: ConverterContext, cons
   return action === null ? [] : Array.isArray(action) ? action : [action];
 }
 
-/** camelCase / PascalCase identifier → snake_case string for ESPHome IDs. */
-export function camelToSnake(name: string): string {
-  return name
-    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-    .toLowerCase();
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// Ref action conversion
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Convert a ref action call (e.g. `lightRef.turnOn({ brightness: 0.5 })`)
+ * into an ESPHome YAML action object.
+ *
+ * The action is resolved from the static registry using the ref's domain
+ * and the method name. Parameters are extracted from the call arguments.
+ *
+ * @example
+ * lightRef.turnOn({ brightness: 0.5 })
+ * → { 'light.turn_on': { id: 'r_abc123', brightness: 0.5 } }
+ *
+ * switchRef.toggle()
+ * → { 'switch.toggle': 'r_abc123' }
+ */
+function convertRefAction(
+  refInfo: RefInfo,
+  methodName: string,
+  args: ts.NodeArray<ts.Expression>,
+  ctx: ConverterContext,
+  constMap: ConstMap,
+): unknown {
+  const yamlKey = resolveActionYamlKey(refInfo.classes, methodName);
+  const marker = new RefTokenMarker(refInfo.name);
+  if (!yamlKey) {
+    // Fallback: derive domain from first class namespace (e.g. "light::LightState" → "light")
+    const domain = refInfo.classes[0]?.split('::')[0]?.replace(/_$/, '') ?? 'unknown';
+    const fallbackKey = `${domain}.${camelToSnake(methodName)}`;
+    return buildRefActionYaml(fallbackKey, marker, args, ctx, constMap);
+  }
+
+  return buildRefActionYaml(yamlKey, marker, args, ctx, constMap);
+}
+
+/**
+ * Build the YAML action object for a ref action call.
+ *
+ * When no parameters are passed, emits the shorthand form:
+ *   { 'domain.action': 'ref_token' }
+ *
+ * When parameters are passed (as an object literal argument), emits:
+ *   { 'domain.action': { id: 'ref_token', param1: value1, ... } }
+ */
+function buildRefActionYaml(
+  yamlKey: string,
+  refMarker: RefTokenMarker,
+  args: ts.NodeArray<ts.Expression>,
+  ctx: ConverterContext,
+  constMap: ConstMap,
+): unknown {
+  // No arguments → shorthand: { 'action': <refMarker> }
+  if (args.length === 0) {
+    return { [yamlKey]: refMarker };
+  }
+
+  // Single object literal argument → extract key-value params
+  const [arg] = args;
+  if (ts.isObjectLiteralExpression(arg)) {
+    const actionObj: Record<string, unknown> = { id: refMarker };
+
+    for (const prop of arg.properties) {
+      if (!ts.isPropertyAssignment(prop)) continue;
+      const key = ts.isIdentifier(prop.name) ? prop.name.text : ts.isStringLiteral(prop.name) ? prop.name.text : null;
+      if (!key) continue;
+
+      // Convert the value
+      const yamlPropKey = camelToSnake(key);
+
+      if (ts.isNumericLiteral(prop.initializer)) {
+        actionObj[yamlPropKey] = Number(prop.initializer.text);
+      } else if (ts.isStringLiteral(prop.initializer)) {
+        actionObj[yamlPropKey] = prop.initializer.text;
+      } else if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+        actionObj[yamlPropKey] = true;
+      } else if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
+        actionObj[yamlPropKey] = false;
+      } else if (ts.isIdentifier(prop.initializer) && constMap.has(prop.initializer.text)) {
+        // Const-inlined value
+        const val = constMap.get(prop.initializer.text)!;
+        actionObj[yamlPropKey] = val;
+      } else {
+        // Try C++ expression as fallback
+        const result = exprToCpp(prop.initializer, constMap);
+        if (result.ok) {
+          actionObj[yamlPropKey] = result.cpp;
+        } else {
+          ctx.errors.push({ message: `Cannot convert ref action parameter '${key}': ${result.error}`, node: prop.initializer });
+        }
+      }
+    }
+
+    return { [yamlKey]: actionObj };
+  }
+
+  // Unsupported argument form
+  ctx.errors.push({
+    message: `Ref action arguments must be an object literal (e.g. { brightness: 0.5 }).`,
+    node: arg,
+  });
+  return { [yamlKey]: refMarker };
 }

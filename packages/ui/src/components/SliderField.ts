@@ -2,14 +2,15 @@
  * SliderField — a label + slider composite.
  *
  * Compiles to a container with a label and a slider widget.
- * Gap is placed inside the layout dict as pad_row (per ESPHome docs).
+ * Label uses `ds-text-primary` style reference; slider inherits part
+ * styles from the LVGL `theme:` block.
  */
 
 import type { EspComposeElement } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
-import { resolveSpacing, fontDefToLvgl } from '../theme/resolvers';
+import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
-import { useTheme } from '../theme/context';
+import { STYLE_TEXT_PRIMARY } from '../theme/style-ids';
 
 interface SliderFieldProps {
   /** Label text displayed above the slider. */
@@ -36,15 +37,13 @@ interface SliderFieldProps {
  */
 export const SliderField = createIntentComponent(
   (props: SliderFieldProps): EspComposeElement => {
-    const theme = useTheme();
     const gap = props.gap != null ? resolveSpacing(props.gap) : undefined;
 
     const label: EspComposeElement = {
       type: 'lvgl-label',
       props: {
+        styles: STYLE_TEXT_PRIMARY,
         text: props.label,
-        textFont: fontDefToLvgl(theme.typography.body),
-        textColor: theme.colors.textPrimary,
       },
     };
 

@@ -12,6 +12,7 @@ export * from './types';
 export * from './actions';
 export * from './intents';
 export { INTRINSIC_INTENT_REGISTRY } from './intent-registry';
+export { camelToSnake } from './serialize';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
 // component-prop interfaces & marker phantom-types.

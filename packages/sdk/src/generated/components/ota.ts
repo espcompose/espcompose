@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _OtaBaseOta } from "../bases";
 import type { esphome_ESPHomeOTAComponent, http_request_HttpRequestComponent, http_request_OtaHttpRequestComponent, web_server_WebServerOTAComponent, zephyr_CdcAcm, zephyr_mcumgr_OTAComponent } from "../markers";
 interface ZephyrMcumgrTransportProps {
@@ -39,7 +39,7 @@ interface EsphomeProps extends _OtaBaseOta, _CoreComponent {
 }
 interface HttpRequestProps extends _OtaBaseOta, _CoreComponent {
     /** @yamlKey http_request_id */
-    httpRequestId?: Ref<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
 }
 interface Nrf52Props {
     /** string: The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Oth... */

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { wiegand_Wiegand } from "../markers";
 export interface WiegandProps {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin where the `D0` output of the Wiegand's interface connects. */

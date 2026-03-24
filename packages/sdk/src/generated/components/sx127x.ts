@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { spi_SPIComponent, sx127x_SX127x } from "../markers";
 export interface Sx127xProps extends _CoreComponent {
@@ -117,7 +117,7 @@ export interface Sx127xProps extends _CoreComponent {
      */
     syncValue?: Array<unknown>;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

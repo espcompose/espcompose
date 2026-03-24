@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sim800l_Sim800LComponent, uart_UARTComponent } from "../markers";
 export interface Sim800lProps extends _CoreComponent {
@@ -35,7 +35,7 @@ export interface Sim800lProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

@@ -227,6 +227,7 @@ export interface aic3204_AIC3204 {
 export interface airthings_ble_AirthingsListener {
     readonly __brand_airthings_ble_AirthingsListener?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  airthings_wave_base::AirthingsWaveBase
 export interface airthings_wave_base_AirthingsWaveBase {
@@ -395,6 +396,7 @@ export interface atc_mithermometer_ATCMiThermometer {
     readonly __brand_atc_mithermometer_ATCMiThermometer?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  atm90e26::ATM90E26Component
 export interface atm90e26_ATM90E26Component {
@@ -478,6 +480,7 @@ export interface b_parasite_BParasite {
     readonly __brand_b_parasite_BParasite?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  ballu::BalluClimate
 export interface ballu_BalluClimate {
@@ -530,6 +533,8 @@ export interface beken_spi_led_strip_BekenSPILEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  bh1750::BH1750Sensor
 export interface bh1750_BH1750Sensor {
@@ -558,6 +563,8 @@ export interface binary_BinaryFan {
 export interface binary_BinaryLightOutput {
     readonly __brand_binary_BinaryLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  binary_sensor::BinarySensor
 export interface binary_sensor_BinarySensor {
@@ -635,6 +642,7 @@ export interface ble_client_BLEClient {
 //  ble_client::BLEClientNode
 export interface ble_client_BLEClientNode {
     readonly __brand_ble_client_BLEClientNode?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  ble_client::BLEClientRSSISensor
 export interface ble_client_BLEClientRSSISensor {
@@ -707,12 +715,14 @@ export interface bluetooth_proxy_BluetoothConnection {
     readonly __brand_esp32_ble_client_BLEClientBase?: true;
     readonly __brand_esp32_ble_tracker_ESPBTClient?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  bluetooth_proxy::BluetoothProxy
 export interface bluetooth_proxy_BluetoothProxy {
     readonly __brand_bluetooth_proxy_BluetoothProxy?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  bm8563::BM8563
 export interface bm8563_BM8563 {
@@ -780,6 +790,7 @@ export interface bthome_mithermometer_BTHomeMiThermometer {
     readonly __brand_bthome_mithermometer_BTHomeMiThermometer?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  button::Button
 export interface button_Button {
@@ -897,6 +908,8 @@ export interface cm1106_CM1106Component {
 export interface color_temperature_CTLightOutput {
     readonly __brand_color_temperature_CTLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  combination::KalmanCombinationComponent
 export interface combination_KalmanCombinationComponent {
@@ -1070,6 +1083,7 @@ export interface cse7766_CSE7766Component {
     readonly __brand_cse7766_CSE7766Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  cst226::CST226Button
 export interface cst226_CST226Button {
@@ -1119,6 +1133,8 @@ export interface current_based_CurrentBasedCover {
 export interface cwww_CWWWLightOutput {
     readonly __brand_cwww_CWWWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  dac7678::DAC7678Channel
 export interface dac7678_DAC7678Channel {
@@ -1185,6 +1201,9 @@ export interface datetime_DateEntity {
 //  datetime::DateTimeBase
 export interface datetime_DateTimeBase {
     readonly __brand_datetime_DateTimeBase?: true;
+    readonly __brand_datetime_DateEntity?: true;
+    readonly __brand_datetime_DateTimeEntity?: true;
+    readonly __brand_datetime_TimeEntity?: true;
 }
 //  datetime::DateTimeEntity
 export interface datetime_DateTimeEntity {
@@ -1235,6 +1254,7 @@ export interface dfrobot_sen0395_DfrobotSen0395Component {
 //  dfrobot_sen0395::DfrobotSen0395Switch
 export interface dfrobot_sen0395_DfrobotSen0395Switch {
     readonly __brand_dfrobot_sen0395_DfrobotSen0395Switch?: true;
+    readonly __brand_dfrobot_sen0395_DfrobotSen0395Component?: true;
 }
 //  dfrobot_sen0395::Sen0395LedSwitch
 export interface dfrobot_sen0395_Sen0395LedSwitch {
@@ -1292,6 +1312,8 @@ export interface display_Display {
 //  display::DisplayBuffer
 export interface display_DisplayBuffer {
     readonly __brand_display_DisplayBuffer?: true;
+    readonly __brand_display_DisplayPage?: true;
+    readonly __brand_display_Display?: true;
 }
 //  display::DisplayPage
 export interface display_DisplayPage {
@@ -1306,6 +1328,7 @@ export interface dlms_meter_DlmsMeterComponent {
     readonly __brand_dlms_meter_DlmsMeterComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  dps310::DPS310Component
 export interface dps310_DPS310Component {
@@ -1496,15 +1519,21 @@ export interface esp32_ble_server_BLEServer {
     readonly __brand_Component?: true;
     readonly __brand_esp32_ble_GATTsEventHandler?: true;
     readonly __brand_Parented?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
+    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_server::BLEService
 export interface esp32_ble_server_BLEService {
     readonly __brand_esp32_ble_server_BLEService?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
+    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_server::esp32_ble_server_automations::BLECharacteristicSetValueAction
 export interface esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction {
     readonly __brand_esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction?: true;
     readonly __brand_Action?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
+    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_tracker::ESP32BLETracker
 export interface esp32_ble_tracker_ESP32BLETracker {
@@ -1517,10 +1546,12 @@ export interface esp32_ble_tracker_ESP32BLETracker {
 //  esp32_ble_tracker::ESPBTClient
 export interface esp32_ble_tracker_ESPBTClient {
     readonly __brand_esp32_ble_tracker_ESPBTClient?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  esp32_ble_tracker::ESPBTDeviceListener
 export interface esp32_ble_tracker_ESPBTDeviceListener {
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  esp32_camera::ESP32Camera
 export interface esp32_camera_ESP32Camera {
@@ -1566,6 +1597,8 @@ export interface esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  esp32_touch::ESP32TouchBinarySensor
 export interface esp32_touch_ESP32TouchBinarySensor {
@@ -1601,6 +1634,7 @@ export interface esphome_dsmr_Dsmr {
     readonly __brand_esphome_dsmr_Dsmr?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  espnow::ESPNowComponent
 export interface espnow_ESPNowComponent {
@@ -2075,6 +2109,7 @@ export interface hlw8032_HLW8032Component {
     readonly __brand_hlw8032_HLW8032Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  hm3301::HM3301Component
 export interface hm3301_HM3301Component {
@@ -2384,6 +2419,7 @@ export interface inkbird_ibsth1_mini_InkbirdIbstH1Mini {
     readonly __brand_inkbird_ibsth1_mini_InkbirdIbstH1Mini?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  inkplate::Inkplate
 export interface inkplate_Inkplate {
@@ -2607,6 +2643,7 @@ export interface ld2412_LD2412Component {
     readonly __brand_ld2412_LD2412Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  ld2412::LightOutControlSelect
 export interface ld2412_LightOutControlSelect {
@@ -2662,6 +2699,7 @@ export interface ld2420_LD2420Component {
     readonly __brand_ld2420_LD2420Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  ld2420::LD2420FactoryResetButton
 export interface ld2420_LD2420FactoryResetButton {
@@ -2771,6 +2809,7 @@ export interface ld2450_LD2450Component {
     readonly __brand_ld2450_LD2450Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  ld2450::MultiTargetSwitch
 export interface ld2450_MultiTargetSwitch {
@@ -2831,6 +2870,8 @@ export interface libretiny_pwm_LibreTinyPWM {
 //  light::AddressableLight
 export interface light_AddressableLight {
     readonly __brand_light_AddressableLight?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  light::AddressableLightState
 export interface light_AddressableLightState {
@@ -2842,10 +2883,14 @@ export interface light_AddressableLightState {
 //  light::AddressableLightWrapper
 export interface light_AddressableLightWrapper {
     readonly __brand_light_AddressableLightWrapper?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  light::LightOutput
 export interface light_LightOutput {
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  light::LightState
 export interface light_LightState {
@@ -2955,6 +3000,10 @@ export interface lvgl_LVGLText {
 export interface lvgl_LVLight {
     readonly __brand_lvgl_LVLight?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_lvgl_LvglComponent?: true;
+    readonly __brand_lvgl_LvPseudoButton?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  lvgl::LvPseudoButton
 export interface lvgl_LvPseudoButton {
@@ -2980,6 +3029,8 @@ export interface m5stack_8angle_M5Stack8AngleLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  m5stack_8angle::M5Stack8AngleSwitchBinarySensor
 export interface m5stack_8angle_M5Stack8AngleSwitchBinarySensor {
@@ -3278,6 +3329,7 @@ export interface micronova_MicroNova {
     readonly __brand_micronova_MicroNova?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  micronova::MicroNovaButton
 export interface micronova_MicroNovaButton {
@@ -3333,6 +3385,7 @@ export interface microphone_Microphone {
 //  microphone::MicrophoneSource
 export interface microphone_MicrophoneSource {
     readonly __brand_microphone_MicrophoneSource?: true;
+    readonly __brand_microphone_Microphone?: true;
 }
 //  mics_4514::MICS4514Component
 export interface mics_4514_MICS4514Component {
@@ -3372,6 +3425,7 @@ export interface mitsubishi_MitsubishiClimate {
 export interface mixer_speaker_MixerSpeaker {
     readonly __brand_mixer_speaker_MixerSpeaker?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mixer_speaker_SourceSpeaker?: true;
 }
 //  mixer_speaker::SourceSpeaker
 export interface mixer_speaker_SourceSpeaker {
@@ -3412,6 +3466,7 @@ export interface modbus_Modbus {
     readonly __brand_modbus_Modbus?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  modbus::ModbusDevice
 export interface modbus_ModbusDevice {
@@ -3499,23 +3554,28 @@ export interface modbus_controller_ServerRegister {
 export interface monochromatic_MonochromaticLightOutput {
     readonly __brand_monochromatic_MonochromaticLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  mopeka_ble::MopekaListener
 export interface mopeka_ble_MopekaListener {
     readonly __brand_mopeka_ble_MopekaListener?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  mopeka_pro_check::MopekaProCheck
 export interface mopeka_pro_check_MopekaProCheck {
     readonly __brand_mopeka_pro_check_MopekaProCheck?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  mopeka_std_check::MopekaStdCheck
 export interface mopeka_std_check_MopekaStdCheck {
     readonly __brand_mopeka_std_check_MopekaStdCheck?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  mpl3115a2::MPL3115A2Component
 export interface mpl3115a2_MPL3115A2Component {
@@ -3555,18 +3615,21 @@ export interface mqtt_MQTTAlarmControlPanelComponent {
     readonly __brand_mqtt_MQTTAlarmControlPanelComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTBinarySensorComponent
 export interface mqtt_MQTTBinarySensorComponent {
     readonly __brand_mqtt_MQTTBinarySensorComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTButtonComponent
 export interface mqtt_MQTTButtonComponent {
     readonly __brand_mqtt_MQTTButtonComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTClientComponent
 export interface mqtt_MQTTClientComponent {
@@ -3578,106 +3641,124 @@ export interface mqtt_MQTTClimateComponent {
     readonly __brand_mqtt_MQTTClimateComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTComponent
 export interface mqtt_MQTTComponent {
     readonly __brand_mqtt_MQTTComponent?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTCoverComponent
 export interface mqtt_MQTTCoverComponent {
     readonly __brand_mqtt_MQTTCoverComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTDateComponent
 export interface mqtt_MQTTDateComponent {
     readonly __brand_mqtt_MQTTDateComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTDateTimeComponent
 export interface mqtt_MQTTDateTimeComponent {
     readonly __brand_mqtt_MQTTDateTimeComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTEventComponent
 export interface mqtt_MQTTEventComponent {
     readonly __brand_mqtt_MQTTEventComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTFanComponent
 export interface mqtt_MQTTFanComponent {
     readonly __brand_mqtt_MQTTFanComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTJSONLightComponent
 export interface mqtt_MQTTJSONLightComponent {
     readonly __brand_mqtt_MQTTJSONLightComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTLockComponent
 export interface mqtt_MQTTLockComponent {
     readonly __brand_mqtt_MQTTLockComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTNumberComponent
 export interface mqtt_MQTTNumberComponent {
     readonly __brand_mqtt_MQTTNumberComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTSelectComponent
 export interface mqtt_MQTTSelectComponent {
     readonly __brand_mqtt_MQTTSelectComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTSensorComponent
 export interface mqtt_MQTTSensorComponent {
     readonly __brand_mqtt_MQTTSensorComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTSwitchComponent
 export interface mqtt_MQTTSwitchComponent {
     readonly __brand_mqtt_MQTTSwitchComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTTextComponent
 export interface mqtt_MQTTTextComponent {
     readonly __brand_mqtt_MQTTTextComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTTextSensor
 export interface mqtt_MQTTTextSensor {
     readonly __brand_mqtt_MQTTTextSensor?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTTimeComponent
 export interface mqtt_MQTTTimeComponent {
     readonly __brand_mqtt_MQTTTimeComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTUpdateComponent
 export interface mqtt_MQTTUpdateComponent {
     readonly __brand_mqtt_MQTTUpdateComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt::MQTTValveComponent
 export interface mqtt_MQTTValveComponent {
     readonly __brand_mqtt_MQTTValveComponent?: true;
     readonly __brand_mqtt_MQTTComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_mqtt_MQTTClientComponent?: true;
 }
 //  mqtt_subscribe::MQTTSubscribeSensor
 export interface mqtt_subscribe_MQTTSubscribeSensor {
@@ -3745,6 +3826,8 @@ export interface neopixelbus_NeoPixelBusLightOutputBase {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  nextion::Nextion
 export interface nextion_Nextion {
@@ -4024,6 +4107,8 @@ export interface partition_PartitionLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  pca6416a::PCA6416AComponent
 export interface pca6416a_PCA6416AComponent {
@@ -4144,6 +4229,7 @@ export interface pmsx003_PMSX003Component {
     readonly __brand_pmsx003_PMSX003Component?: true;
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_Component?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  pmwcs3::PMWCS3Component
 export interface pmwcs3_PMWCS3Component {
@@ -4256,6 +4342,7 @@ export interface pvvx_mithermometer_PVVXMiThermometer {
     readonly __brand_pvvx_mithermometer_PVVXMiThermometer?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  pylontech::PylontechComponent
 export interface pylontech_PylontechComponent {
@@ -4335,6 +4422,7 @@ export interface qwiic_pir_QwiicPIRComponent {
 export interface radon_eye_ble_RadonEyeListener {
     readonly __brand_radon_eye_ble_RadonEyeListener?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  radon_eye_rd200::RadonEyeRD200
 export interface radon_eye_rd200_RadonEyeRD200 {
@@ -4378,6 +4466,7 @@ export interface rd03d_RD03DComponent {
     readonly __brand_rd03d_RD03DComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  rdm6300::RDM6300BinarySensor
 export interface rdm6300_RDM6300BinarySensor {
@@ -4390,6 +4479,7 @@ export interface rdm6300_RDM6300Component {
     readonly __brand_rdm6300_RDM6300Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  remote_base::RemoteReceiverBase
 export interface remote_base_RemoteReceiverBase {
@@ -4456,21 +4546,29 @@ export interface rf_bridge_RFBridgeComponent {
 export interface rgb_RGBLightOutput {
     readonly __brand_rgb_RGBLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  rgbct::RGBCTLightOutput
 export interface rgbct_RGBCTLightOutput {
     readonly __brand_rgbct_RGBCTLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  rgbw::RGBWLightOutput
 export interface rgbw_RGBWLightOutput {
     readonly __brand_rgbw_RGBWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  rgbww::RGBWWLightOutput
 export interface rgbww_RGBWWLightOutput {
     readonly __brand_rgbww_RGBWWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  rotary_encoder::RotaryEncoderSensor
 export interface rotary_encoder_RotaryEncoderSensor {
@@ -4490,6 +4588,8 @@ export interface rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  rp2040_pwm::RP2040PWM
 export interface rp2040_pwm_RP2040PWM {
@@ -4522,12 +4622,14 @@ export interface runtime_stats_RuntimeStatsCollector {
 export interface ruuvi_ble_RuuviListener {
     readonly __brand_ruuvi_ble_RuuviListener?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  ruuvitag::RuuviTag
 export interface ruuvitag_RuuviTag {
     readonly __brand_ruuvitag_RuuviTag?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  rx8130::RX8130Component
 export interface rx8130_RX8130Component {
@@ -4609,6 +4711,7 @@ export interface sds011_SDS011Component {
     readonly __brand_sds011_SDS011Component?: true;
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_Component?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  seeed_mr24hpc1::CustomModeNumber
 export interface seeed_mr24hpc1_CustomModeNumber {
@@ -4645,6 +4748,7 @@ export interface seeed_mr24hpc1_MR24HPC1Component {
     readonly __brand_seeed_mr24hpc1_MR24HPC1Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  seeed_mr24hpc1::MotionBoundarySelect
 export interface seeed_mr24hpc1_MotionBoundarySelect {
@@ -4705,6 +4809,7 @@ export interface seeed_mr60bha2_MR60BHA2Component {
     readonly __brand_seeed_mr60bha2_MR60BHA2Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  seeed_mr60fda2::GetRadarParametersButton
 export interface seeed_mr60fda2_GetRadarParametersButton {
@@ -4729,6 +4834,7 @@ export interface seeed_mr60fda2_MR60FDA2Component {
     readonly __brand_seeed_mr60fda2_MR60FDA2Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  seeed_mr60fda2::ResetRadarButton
 export interface seeed_mr60fda2_ResetRadarButton {
@@ -4805,6 +4911,7 @@ export interface serial_proxy_SerialProxy {
     readonly __brand_serial_proxy_SerialProxy?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  servo::Servo
 export interface servo_Servo {
@@ -4965,6 +5072,7 @@ export interface sml_Sml {
     readonly __brand_sml_Sml?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  sml::SmlSensor
 export interface sml_SmlSensor {
@@ -5022,6 +5130,9 @@ export interface sonoff_d1_SonoffD1Output {
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_uart_UARTComponent?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  sound_level::SoundLevelComponent
 export interface sound_level_SoundLevelComponent {
@@ -5031,6 +5142,8 @@ export interface sound_level_SoundLevelComponent {
 //  speaker::AudioPipeline
 export interface speaker_AudioPipeline {
     readonly __brand_speaker_AudioPipeline?: true;
+    readonly __brand_speaker_Speaker?: true;
+    readonly __brand_speaker_SpeakerMediaPlayer?: true;
 }
 //  speaker::Speaker
 export interface speaker_Speaker {
@@ -5045,6 +5158,7 @@ export interface speaker_SpeakerMediaPlayer {
 //  speaker_source::PipelineContext
 export interface speaker_source_PipelineContext {
     readonly __brand_speaker_source_PipelineContext?: true;
+    readonly __brand_speaker_source_SpeakerSourceMediaPlayer?: true;
 }
 //  speaker_source::SpeakerSourceMediaPlayer
 export interface speaker_source_SpeakerSourceMediaPlayer {
@@ -5091,6 +5205,8 @@ export interface spi_led_strip_SpiLedStrip {
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
     readonly __brand_spi_SPIDevice?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  sprinkler::Sprinkler
 export interface sprinkler_Sprinkler {
@@ -5306,6 +5422,8 @@ export interface status_led_StatusLEDLightOutput {
     readonly __brand_status_led_StatusLEDLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  stepper::Stepper
 export interface stepper_Stepper {
@@ -5354,6 +5472,7 @@ export interface sun_gtil2_SunGTIL2 {
     readonly __brand_sun_gtil2_SunGTIL2?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  switch_::Switch
 export interface switch__Switch {
@@ -5375,6 +5494,7 @@ export interface sx126x_SX126x {
 //  sx126x::SX126xListener
 export interface sx126x_SX126xListener {
     readonly __brand_sx126x_SX126xListener?: true;
+    readonly __brand_sx126x_SX126x?: true;
 }
 //  sx126x::SX126xTransport
 export interface sx126x_SX126xTransport {
@@ -5393,6 +5513,7 @@ export interface sx127x_SX127x {
 //  sx127x::SX127xListener
 export interface sx127x_SX127xListener {
     readonly __brand_sx127x_SX127xListener?: true;
+    readonly __brand_sx127x_SX127x?: true;
 }
 //  sx127x::SX127xTransport
 export interface sx127x_SX127xTransport {
@@ -5749,6 +5870,7 @@ export interface thermopro_ble_ThermoProBLE {
     readonly __brand_thermopro_ble_ThermoProBLE?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  thermostat::ThermostatClimate
 export interface thermostat_ThermostatClimate {
@@ -6004,6 +6126,7 @@ export interface tuya_Tuya {
     readonly __brand_tuya_Tuya?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  tuya::TuyaBinarySensor
 export interface tuya_TuyaBinarySensor {
@@ -6038,6 +6161,8 @@ export interface tuya_TuyaLight {
     readonly __brand_tuya_TuyaLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  tuya::TuyaNumber
 export interface tuya_TuyaNumber {
@@ -6095,6 +6220,7 @@ export interface uart_UARTComponent {
 //  uart::UARTDevice
 export interface uart_UARTDevice {
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  uart::UARTEvent
 export interface uart_UARTEvent {
@@ -6177,6 +6303,7 @@ export interface uponor_smatrix_UponorSmatrixComponent {
     readonly __brand_uponor_smatrix_UponorSmatrixComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  uponor_smatrix::UponorSmatrixDevice
 export interface uponor_smatrix_UponorSmatrixDevice {
@@ -6334,6 +6461,7 @@ export interface vbus_VBus {
     readonly __brand_vbus_VBus?: true;
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_Component?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  vbus::VBusCustomBSensor
 export interface vbus_VBusCustomBSensor {
@@ -6582,24 +6710,28 @@ export interface xgzp68xx_XGZP68XXComponent {
 export interface xiaomi_ble_XiaomiListener {
     readonly __brand_xiaomi_ble_XiaomiListener?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_cgd1::XiaomiCGD1
 export interface xiaomi_cgd1_XiaomiCGD1 {
     readonly __brand_xiaomi_cgd1_XiaomiCGD1?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_cgdk2::XiaomiCGDK2
 export interface xiaomi_cgdk2_XiaomiCGDK2 {
     readonly __brand_xiaomi_cgdk2_XiaomiCGDK2?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_cgg1::XiaomiCGG1
 export interface xiaomi_cgg1_XiaomiCGG1 {
     readonly __brand_xiaomi_cgg1_XiaomiCGG1?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_cgpr1::XiaomiCGPR1
 export interface xiaomi_cgpr1_XiaomiCGPR1 {
@@ -6614,72 +6746,84 @@ export interface xiaomi_gcls002_XiaomiGCLS002 {
     readonly __brand_xiaomi_gcls002_XiaomiGCLS002?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_hhccjcy01::XiaomiHHCCJCY01
 export interface xiaomi_hhccjcy01_XiaomiHHCCJCY01 {
     readonly __brand_xiaomi_hhccjcy01_XiaomiHHCCJCY01?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_hhccjcy10::XiaomiHHCCJCY10
 export interface xiaomi_hhccjcy10_XiaomiHHCCJCY10 {
     readonly __brand_xiaomi_hhccjcy10_XiaomiHHCCJCY10?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_hhccpot002::XiaomiHHCCPOT002
 export interface xiaomi_hhccpot002_XiaomiHHCCPOT002 {
     readonly __brand_xiaomi_hhccpot002_XiaomiHHCCPOT002?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_jqjcy01ym::XiaomiJQJCY01YM
 export interface xiaomi_jqjcy01ym_XiaomiJQJCY01YM {
     readonly __brand_xiaomi_jqjcy01ym_XiaomiJQJCY01YM?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_lywsd02::XiaomiLYWSD02
 export interface xiaomi_lywsd02_XiaomiLYWSD02 {
     readonly __brand_xiaomi_lywsd02_XiaomiLYWSD02?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_lywsd02mmc::XiaomiLYWSD02MMC
 export interface xiaomi_lywsd02mmc_XiaomiLYWSD02MMC {
     readonly __brand_xiaomi_lywsd02mmc_XiaomiLYWSD02MMC?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_lywsd03mmc::XiaomiLYWSD03MMC
 export interface xiaomi_lywsd03mmc_XiaomiLYWSD03MMC {
     readonly __brand_xiaomi_lywsd03mmc_XiaomiLYWSD03MMC?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_lywsdcgq::XiaomiLYWSDCGQ
 export interface xiaomi_lywsdcgq_XiaomiLYWSDCGQ {
     readonly __brand_xiaomi_lywsdcgq_XiaomiLYWSDCGQ?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_mhoc303::XiaomiMHOC303
 export interface xiaomi_mhoc303_XiaomiMHOC303 {
     readonly __brand_xiaomi_mhoc303_XiaomiMHOC303?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_mhoc401::XiaomiMHOC401
 export interface xiaomi_mhoc401_XiaomiMHOC401 {
     readonly __brand_xiaomi_mhoc401_XiaomiMHOC401?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_miscale::XiaomiMiscale
 export interface xiaomi_miscale_XiaomiMiscale {
     readonly __brand_xiaomi_miscale_XiaomiMiscale?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_mjyd02yla::XiaomiMJYD02YLA
 export interface xiaomi_mjyd02yla_XiaomiMJYD02YLA {
@@ -6702,6 +6846,7 @@ export interface xiaomi_rtcgq02lm_XiaomiRTCGQ02LM {
     readonly __brand_xiaomi_rtcgq02lm_XiaomiRTCGQ02LM?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xiaomi_wx08zm::XiaomiWX08ZM
 export interface xiaomi_wx08zm_XiaomiWX08ZM {
@@ -6716,6 +6861,7 @@ export interface xiaomi_xmwsdj04mmc_XiaomiXMWSDJ04MMC {
     readonly __brand_xiaomi_xmwsdj04mmc_XiaomiXMWSDJ04MMC?: true;
     readonly __brand_esp32_ble_tracker_ESPBTDeviceListener?: true;
     readonly __brand_Component?: true;
+    readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
 }
 //  xl9535::XL9535Component
 export interface xl9535_XL9535Component {
@@ -6768,6 +6914,7 @@ export interface zhlt01_ZHLT01Climate {
 export interface zigbee_ZigbeeBinarySensor {
     readonly __brand_zigbee_ZigbeeBinarySensor?: true;
     readonly __brand_Component?: true;
+    readonly __brand_zigbee_ZigbeeComponent?: true;
 }
 //  zigbee::ZigbeeComponent
 export interface zigbee_ZigbeeComponent {
@@ -6778,16 +6925,19 @@ export interface zigbee_ZigbeeComponent {
 export interface zigbee_ZigbeeNumber {
     readonly __brand_zigbee_ZigbeeNumber?: true;
     readonly __brand_Component?: true;
+    readonly __brand_zigbee_ZigbeeComponent?: true;
 }
 //  zigbee::ZigbeeSensor
 export interface zigbee_ZigbeeSensor {
     readonly __brand_zigbee_ZigbeeSensor?: true;
     readonly __brand_Component?: true;
+    readonly __brand_zigbee_ZigbeeComponent?: true;
 }
 //  zigbee::ZigbeeSwitch
 export interface zigbee_ZigbeeSwitch {
     readonly __brand_zigbee_ZigbeeSwitch?: true;
     readonly __brand_Component?: true;
+    readonly __brand_zigbee_ZigbeeComponent?: true;
 }
 //  zigbee::ZigbeeTime
 export interface zigbee_ZigbeeTime {
@@ -6810,6 +6960,7 @@ export interface zwave_proxy_ZWaveProxy {
     readonly __brand_zwave_proxy_ZWaveProxy?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  zyaura::ZyAuraSensor
 export interface zyaura_ZyAuraSensor {

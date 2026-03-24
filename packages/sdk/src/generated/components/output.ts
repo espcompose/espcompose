@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BleClient, _CoreComponent, _Emc2101Component, _ModbusControllerModbusitembaseschema, _OutputBinaryOutput, _OutputFloatOutput, _PipsolarComponent } from "../bases";
 import type { ac_dimmer_AcDimmer, ble_client_BLEBinaryOutput, bp1658cj_BP1658CJ, bp1658cj_BP1658CJ_Channel, bp5758d_BP5758D, bp5758d_BP5758D_Channel, dac7678_DAC7678Channel, dac7678_DAC7678Output, emc2101_EMC2101Output, esp32_dac_ESP32DAC, esp8266_pwm_ESP8266PWM, gp8403_GP8403Component, gp8403_GP8403Output, gpio_GPIOBinaryOutput, i2c_I2CBus, ledc_LEDCOutput, libretiny_pwm_LibreTinyPWM, max6956_MAX6956, max6956_MAX6956LedChannel, mcp4461_Mcp4461Component, mcp4461_Mcp4461Wiper, mcp4725_MCP4725, mcp4728_MCP4728Channel, mcp4728_MCP4728Component, mcp47a1_MCP47A1, modbus_controller_ModbusBinaryOutput, modbus_controller_ModbusFloatOutput, my9231_MY9231OutputComponent, my9231_MY9231OutputComponent_Channel, opentherm_OpenthermHub, pca9685_PCA9685Channel, pca9685_PCA9685Output, power_supply_PowerSupply, rp2040_pwm_RP2040PWM, sigma_delta_output_SigmaDeltaOutput, slow_pwm_SlowPWMOutput, sm16716_SM16716, sm16716_SM16716_Channel, sm2135_SM2135, sm2135_SM2135_Channel, sm2235_SM2235, sm2235_SM2235_Channel, sm2335_SM2335, sm2335_SM2335_Channel, sx1509_SX1509Component, sx1509_SX1509FloatOutputChannel, template__TemplateBinaryOutput, template__TemplateFloatOutput, tlc59208f_TLC59208FChannel, tlc59208f_TLC59208FOutput, tlc5947_TLC5947, tlc5947_TLC5947Channel, tlc5971_TLC5971, tlc5971_TLC5971Channel, tm1638_TM1638Component, tm1638_TM1638OutputLed, x9c_X9cOutput } from "../markers";
 interface SlowPwmPeriodProps {
@@ -24,7 +24,7 @@ interface X9cStepDelayProps {
 }
 interface OpenthermTSetProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -44,7 +44,7 @@ interface OpenthermTSetProps {
 }
 interface OpenthermTSetCh2Props {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -64,7 +64,7 @@ interface OpenthermTSetCh2Props {
 }
 interface OpenthermCoolingControlProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -82,7 +82,7 @@ interface OpenthermCoolingControlProps {
 }
 interface OpenthermTDhwSetProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -104,7 +104,7 @@ interface OpenthermTDhwSetProps {
 }
 interface OpenthermMaxTSetProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -126,7 +126,7 @@ interface OpenthermMaxTSetProps {
 }
 interface OpenthermTRoomSetProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -144,7 +144,7 @@ interface OpenthermTRoomSetProps {
 }
 interface OpenthermTRoomSetCh2Props {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -162,7 +162,7 @@ interface OpenthermTRoomSetCh2Props {
 }
 interface OpenthermTRoomProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -180,7 +180,7 @@ interface OpenthermTRoomProps {
 }
 interface OpenthermMaxRelModLevelProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -198,7 +198,7 @@ interface OpenthermMaxRelModLevelProps {
 }
 interface OpenthermOtcHcRatioProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -220,7 +220,7 @@ interface OpenthermOtcHcRatioProps {
 }
 interface PipsolarBatteryRechargeVoltageProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -236,7 +236,7 @@ interface PipsolarBatteryRechargeVoltageProps {
 }
 interface PipsolarBatteryUnderVoltageProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -252,7 +252,7 @@ interface PipsolarBatteryUnderVoltageProps {
 }
 interface PipsolarBatteryFloatVoltageProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -268,7 +268,7 @@ interface PipsolarBatteryFloatVoltageProps {
 }
 interface PipsolarBatteryTypeProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -284,7 +284,7 @@ interface PipsolarBatteryTypeProps {
 }
 interface PipsolarCurrentMaxAcChargingCurrentProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -300,7 +300,7 @@ interface PipsolarCurrentMaxAcChargingCurrentProps {
 }
 interface PipsolarCurrentMaxChargingCurrentProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -316,7 +316,7 @@ interface PipsolarCurrentMaxChargingCurrentProps {
 }
 interface PipsolarOutputSourcePriorityProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -332,7 +332,7 @@ interface PipsolarOutputSourcePriorityProps {
 }
 interface PipsolarChargerSourcePriorityProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -348,7 +348,7 @@ interface PipsolarChargerSourcePriorityProps {
 }
 interface PipsolarBatteryRedischargeVoltageProps {
     /** @yamlKey power_supply */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     inverted?: boolean;
     /** @yamlKey max_power */
     maxPower?: unknown;
@@ -412,13 +412,13 @@ interface LibretinyPwmProps extends _OutputFloatOutput, _CoreComponent {
 }
 interface Mcp4725Props extends _OutputFloatOutput, _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I2C address of the DAC. Defaults to `0x60`. */
     address?: unknown;
 }
 interface Mcp47a1Props extends _OutputFloatOutput, _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I²C address of the DAC. Defaults to `0x2E`. */
     address?: unknown;
 }
@@ -516,7 +516,7 @@ interface Bp1658cjProps extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey bp1658cj_id
      */
-    bp1658cjId?: Ref<bp1658cj_BP1658CJ>;
+    bp1658cjId?: RefProp<bp1658cj_BP1658CJ>;
     /** int: Chose the channel of the BP1658CJ chain of this output component. */
     channel: number;
 }
@@ -525,7 +525,7 @@ interface Bp5758dProps extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey bp5758d_id
      */
-    bp5758dId?: Ref<bp5758d_BP5758D>;
+    bp5758dId?: RefProp<bp5758d_BP5758D>;
     /** int: Chose the channel of the BP5758D chain of this output component. Valid values are 1-5. */
     channel: number;
     /** int: Current in mA, valid values are 0-90, default 10. */
@@ -536,7 +536,7 @@ interface Dac7678Props extends _OutputFloatOutput {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [DAC7678 hub](https://esphome.io/components/outp...
      * @yamlKey dac7678_id
      */
-    dac7678Id?: Ref<dac7678_DAC7678Output>;
+    dac7678Id?: RefProp<dac7678_DAC7678Output>;
     /** int: Chose the channel of the DAC7678 of this output component. Must be in range from 0 to 7. */
     channel: number;
 }
@@ -547,7 +547,7 @@ interface Gp8403Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the GP8403 component. Defaults to the only GP8403 component if there ...
      * @yamlKey gp8403_id
      */
-    gp8403Id?: Ref<gp8403_GP8403Component>;
+    gp8403Id?: RefProp<gp8403_GP8403Component>;
     /** int: The channel of the GP8403 to use. Must be `0` or `1`. */
     channel: number;
 }
@@ -556,7 +556,7 @@ interface GpioProps extends _OutputBinaryOutput, _CoreComponent {
     pin: Pin;
 }
 interface Max6956Props extends _OutputFloatOutput, _CoreComponent {
-    max6956?: Ref<max6956_MAX6956>;
+    max6956?: RefProp<max6956_MAX6956>;
     pin: number;
 }
 interface Mcp4461Props extends _OutputFloatOutput {
@@ -564,7 +564,7 @@ interface Mcp4461Props extends _OutputFloatOutput {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [MCP4461](https://esphome.io/components/output/m...
      * @yamlKey mcp4461_id
      */
-    mcp4461Id?: Ref<mcp4461_Mcp4461Component>;
+    mcp4461Id?: RefProp<mcp4461_Mcp4461Component>;
     /** string: Choose the channel of this MCP4461 output component. One of `A`, `B`, `C`, `D`, `E`, `F`, `G` or `H`. */
     channel: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
     /**
@@ -593,7 +593,7 @@ interface Mcp4728Props extends _OutputFloatOutput {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [MCP4728](https://esphome.io/components/output/m...
      * @yamlKey mcp4728_id
      */
-    mcp4728Id?: Ref<mcp4728_MCP4728Component>;
+    mcp4728Id?: RefProp<mcp4728_MCP4728Component>;
     /** string: Chose the channel of the MCP4728 chain of this output component. One of `A`, `B`, `C` or `D`. */
     channel: "A" | "B" | "C" | "D";
     /** string: Chose the VREF source. One of `vdd` or `internal`. Defaults to `vdd`. */
@@ -626,13 +626,13 @@ interface My9231Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey my9231_id
      */
-    my9231Id?: Ref<my9231_MY9231OutputComponent>;
+    my9231Id?: RefProp<my9231_MY9231OutputComponent>;
     /** int: Chose the channel of the MY9231/MY9291 chain of this output component. Channel 0 is the most close channel. */
     channel: number;
 }
 interface OpenthermProps extends _CoreComponent {
     /** @yamlKey opentherm_id */
-    openthermId?: Ref<opentherm_OpenthermHub>;
+    openthermId?: RefProp<opentherm_OpenthermHub>;
     /** @yamlKey t_set */
     tSet?: OpenthermTSetProps;
     /** @yamlKey t_set_ch2 */
@@ -659,7 +659,7 @@ interface Pca9685Props extends _OutputFloatOutput {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [PCA9685 hub](https://esphome.io/components/outp...
      * @yamlKey pca9685_id
      */
-    pca9685Id?: Ref<pca9685_PCA9685Output>;
+    pca9685Id?: RefProp<pca9685_PCA9685Output>;
     /** int: Choose the channel of the PCA9685 of this output component. Must be in range from 0 to 15. */
     channel: number;
 }
@@ -715,7 +715,7 @@ interface Sm16716Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey sm16716_id
      */
-    sm16716Id?: Ref<sm16716_SM16716>;
+    sm16716Id?: RefProp<sm16716_SM16716>;
     /** int: Chose the channel of the SM16716 chain of this output component. */
     channel: number;
 }
@@ -724,7 +724,7 @@ interface Sm2135Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey sm2135_id
      */
-    sm2135Id?: Ref<sm2135_SM2135>;
+    sm2135Id?: RefProp<sm2135_SM2135>;
     /** int: Chose the channel of the SM2135 chain of this output component. */
     channel: number;
 }
@@ -733,7 +733,7 @@ interface Sm2235Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey sm2235_id
      */
-    sm2235Id?: Ref<sm2235_SM2235>;
+    sm2235Id?: RefProp<sm2235_SM2235>;
     /** int: Chose the channel of the SM2235 chain of this output component. */
     channel: number;
 }
@@ -742,13 +742,13 @@ interface Sm2335Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [Component/Hub](https://esphome.io/components/ou...
      * @yamlKey sm2335_id
      */
-    sm2335Id?: Ref<sm2335_SM2335>;
+    sm2335Id?: RefProp<sm2335_SM2335>;
     /** int: Chose the channel of the SM2335 chain of this output component. */
     channel: number;
 }
 interface Sx1509Props extends _OutputFloatOutput, _CoreComponent {
     /** @yamlKey sx1509_id */
-    sx1509Id?: Ref<sx1509_SX1509Component>;
+    sx1509Id?: RefProp<sx1509_SX1509Component>;
     pin: number;
 }
 interface TemplateBinaryProps extends _OutputBinaryOutput {
@@ -770,7 +770,7 @@ interface Tlc59208fProps extends _OutputFloatOutput {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [TLC59208F chip](https://esphome.io/components/o...
      * @yamlKey tlc59208f_id
      */
-    tlc59208fId?: Ref<tlc59208f_TLC59208FOutput>;
+    tlc59208fId?: RefProp<tlc59208f_TLC59208FOutput>;
     /** int: Choose the channel of the TLC59208F for this output component. Must be in range from 0 to 7. */
     channel: number;
 }
@@ -779,7 +779,7 @@ interface Tlc5947Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [TLC5947-component](https://esphome.io/component...
      * @yamlKey tlc5947_id
      */
-    tlc5947Id?: Ref<tlc5947_TLC5947>;
+    tlc5947Id?: RefProp<tlc5947_TLC5947>;
     /** int: Chose the channel of the TLC5947 chain of this output component. */
     channel: number;
 }
@@ -788,13 +788,13 @@ interface Tlc5971Props extends _OutputFloatOutput, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [TLC5971-component](https://esphome.io/component...
      * @yamlKey tlc5971_id
      */
-    tlc5971Id?: Ref<tlc5971_TLC5971>;
+    tlc5971Id?: RefProp<tlc5971_TLC5971>;
     /** int: Chose the channel of the TLC5971 chain of this output component. */
     channel: number;
 }
 interface Tm1638Props extends _OutputBinaryOutput, _CoreComponent {
     /** @yamlKey tm1638_id */
-    tm1638Id?: Ref<tm1638_TM1638Component>;
+    tm1638Id?: RefProp<tm1638_TM1638Component>;
     led: number;
 }
 export type OutputProps = ({

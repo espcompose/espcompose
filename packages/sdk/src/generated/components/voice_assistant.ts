@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { media_player_MediaPlayer, micro_wake_word_MicroWakeWord, microphone_Microphone, speaker_Speaker, voice_assistant_VoiceAssistant } from "../markers";
 export interface VoiceAssistantMicrophoneProps {
-    microphone?: Ref<microphone_Microphone>;
+    microphone?: RefProp<microphone_Microphone>;
     /** @yamlKey bits_per_sample */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
@@ -29,9 +29,9 @@ export interface VoiceAssistantProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The [media_player](/components/media_player/) to use to output the response. Ca...
      * @yamlKey media_player
      */
-    mediaPlayer?: Ref<media_player_MediaPlayer>;
+    mediaPlayer?: RefProp<media_player_MediaPlayer>;
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to use to output the response. Cannot be us... */
-    speaker?: Ref<speaker_Speaker>;
+    speaker?: RefProp<speaker_Speaker>;
     /**
      * boolean: Enable wake word on the assist pipeline. Defaults to `false`.
      * @yamlKey use_wake_word
@@ -41,7 +41,7 @@ export interface VoiceAssistantProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The [micro_wake_word](/components/micro_wake_word/) component used for wake wor...
      * @yamlKey micro_wake_word
      */
-    microWakeWord?: Ref<micro_wake_word_MicroWakeWord>;
+    microWakeWord?: RefProp<micro_wake_word_MicroWakeWord>;
     /**
      * integer: The noise suppression level to apply to the assist pipeline. Between 0 and 4 inclusive. Defaults to 0 (disab...
      * @yamlKey noise_suppression_level

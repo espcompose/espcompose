@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, pca9554_PCA9554Component } from "../markers";
 export interface Pca9554Props extends _CoreComponent {
@@ -13,7 +13,7 @@ export interface Pca9554Props extends _CoreComponent {
      */
     pinCount?: "4" | "8" | "16";
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x20`. */
     address?: unknown;
 }

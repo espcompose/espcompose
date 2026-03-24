@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { Color, font_Font, graph_Graph, sensor_Sensor } from "../markers";
 export interface GraphDurationProps {
     days?: unknown;
@@ -22,20 +22,20 @@ export interface GraphXGridProps {
     microseconds?: unknown;
 }
 export interface GraphTracesProps {
-    sensor: Ref<sensor_Sensor>;
+    sensor: RefProp<sensor_Sensor>;
     name?: string;
     /** @yamlKey line_thickness */
     lineThickness?: number;
     /** @yamlKey line_type */
     lineType?: "SOLID" | "DOTTED" | "DASHED";
-    color?: Ref<Color>;
+    color?: RefProp<Color>;
     continuous?: boolean;
 }
 export interface GraphLegendProps {
     /** @yamlKey name_font */
-    nameFont: Ref<font_Font>;
+    nameFont: RefProp<font_Font>;
     /** @yamlKey value_font */
-    valueFont?: Ref<font_Font>;
+    valueFont?: RefProp<font_Font>;
     width?: number;
     height?: number;
     border?: boolean;
@@ -67,7 +67,7 @@ export interface GraphProps {
     /** boolean: Draw a border around the legend. Defaults to `true`. */
     border?: boolean;
     /** [ID](/guides/configuration-types#id): The sensor value to plot */
-    sensor?: Ref<sensor_Sensor>;
+    sensor?: RefProp<sensor_Sensor>;
     /**
      * Defaults to 3
      * @yamlKey line_thickness
@@ -79,7 +79,7 @@ export interface GraphProps {
      */
     lineType?: "SOLID" | "DOTTED" | "DASHED";
     /** Sets the color of the sensor trace. */
-    color?: Ref<Color>;
+    color?: RefProp<Color>;
     /**
      * Specifies the minimum Y-axis value.
      * @yamlKey min_value

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { rp2040_ble_RP2040BLE } from "../markers";
 export interface Rp2040BleProps extends _CoreComponent {

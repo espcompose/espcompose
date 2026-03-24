@@ -1,12 +1,12 @@
 import yaml from 'yaml';
 import type { EspComposeElement, FunctionComponent } from './types';
-import { isRef } from './types';
 import { useScript, withScriptScope } from './hooks';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
 import {
   Fragment,
   flattenFragments,
+  extractElementProps,
   keysToSnakeCase,
   stripUndefined,
   toYamlKey,
@@ -54,18 +54,7 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     return toPlainObject(Array.isArray(result) ? result : result);
  }
 
-  const { children, ref, "x:custom": xCustom, ...ownProps } = el.props as Record<string, unknown> & { children?: unknown; ref?: unknown; "x:custom"?: unknown };
-
-  // If a `ref` was passed, extract its token and inject it as `id`.
-  // This mirrors React's ref pattern: <as5600 ref={myRef} /> → id: <token>
-  const propsWithId = ref != null
-    ? { id: isRef(ref) ? ref.toString() : String(ref), ...ownProps }
-    : ownProps;
-
-  // Spread x:custom values into the props so they appear as direct YAML keys.
-  const allProps = xCustom != null
-    ? { ...propsWithId, ...(xCustom as Record<string, unknown>) }
-    : propsWithId;
+  const { allProps, children } = extractElementProps(el);
 
   // Context provider: wrap child serialisation in withContext
   if (el.type === 'context') {
@@ -193,13 +182,7 @@ function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElem
     return;
   }
 
-  const { children: grandchildren, ref, "x:custom": xCustom, ...ownProps } = child.props as Record<string, unknown> & { children?: unknown; ref?: unknown; "x:custom"?: unknown };
-  const propsWithId = ref != null
-    ? { id: isRef(ref) ? ref.toString() : String(ref), ...ownProps }
-    : ownProps;
-  const allProps = xCustom != null
-    ? { ...propsWithId, ...(xCustom as Record<string, unknown>) }
-    : propsWithId;
+  const { allProps, children: grandchildren } = extractElementProps(child);
   const childData = buildChildData(
     grandchildren as EspComposeElement | EspComposeElement[] | undefined
   );

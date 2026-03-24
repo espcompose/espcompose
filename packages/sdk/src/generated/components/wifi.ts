@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { wifi_WiFiComponent } from "../markers";
 export interface WifiNetworksPropsManualIpProps {
     /** IPv4 address: The main DNS server to use. */

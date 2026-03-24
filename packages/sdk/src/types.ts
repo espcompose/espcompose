@@ -1,4 +1,8 @@
 import type { Context } from './hooks/useContext';
+import type {
+  InferActions,
+} from './generated/actions';
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = Record<string, any>> = (props: P) => EspComposeElement | null;
@@ -16,30 +20,86 @@ export interface EspComposeElement {
 //   <i2c ref={bus} sda={21} scl={22} />
 //   <as5600 i2cId={bus} />
 //
-// When `ref` is passed to an element, the runtime serialises it as `id: <token>`
-// in the YAML output. When a Ref<T> value is passed to a use_id prop, it is
-// serialised as the plain token string.
+// For actionable components, the marker type automatically provides
+// typed action methods via InferActions:
+//
+//   const light = useRef<light_LightOutput>();
+//   light.turnOn({ brightness: 0.5 });  // ← autocomplete from LightStateActions
 //
 // IDs are auto-generated — no user-supplied strings are required.
 // ────────────────────────────────────────────────────────────────────────────
 
 declare const REF_BRAND: unique symbol;
 
-export interface Ref<T = unknown> {
-  readonly [REF_BRAND]?: T;
+/**
+ * Base ref interface — a branded, toString-able reference.
+ *
+ * The phantom uses a **function-property** signature so that the type
+ * parameter sits in a *contravariant* position (under `strictFunctionTypes`).
+ * This lets `BaseRef<Base>` be assignable where `BaseRef<Derived>` is
+ * expected — the standard OOP "upcast" direction that users need when
+ * passing a base-typed ref to a more-specific component slot.
+ */
+interface BaseRef<T = unknown> {
+  readonly [REF_BRAND]?: (phantom: T) => void;
   toString(): string;
 }
 
-export class RefHandle<T = unknown> implements Ref<T> {
-  declare readonly [REF_BRAND]?: T;
+/**
+ * A typed component reference.
+ *
+ * When `T` is a marker type that belongs to an actionable class (light,
+ * switch, fan, etc.), the ref also carries typed action methods
+ * (e.g. `.turnOn()`, `.toggle()`). These methods are compile-time markers —
+ * no-ops at runtime — that the compiler transformer rewrites to ESPHome
+ * YAML action objects.
+ *
+ * Uses intersection-based InferActions<T> so derived markers inherit all
+ * ancestor actions (e.g. FloatOutput gets BinaryOutput + FloatOutput methods).
+ */
+export type Ref<T = unknown> = BaseRef<T> & InferActions<T>;
+
+/**
+ * Prop-side ref type — accepts any `Ref<U>` whose marker `U` is a structural
+ * subtype of `T` (i.e. `U` has all of `T`'s brands and possibly more).
+ *
+ * Generated component props use `RefProp<T>` instead of `Ref<T>` so that
+ * users can pass a base-typed ref where a derived component is expected:
+ *
+ *   const outputRef = useRef<output_FloatOutput>();
+ *   <output platform="ledc" ref={outputRef} />  // ✅ ledc extends FloatOutput
+ *
+ * Cross-component reference props (`output`, `i2cId`, etc.) also use
+ * `RefProp<T>` so the same upcast pattern works there.
+ */
+export type RefProp<T = unknown> = BaseRef<T>;
+
+export class RefHandle<T = unknown> implements BaseRef<T> {
+  declare readonly [REF_BRAND]?: (phantom: T) => void;
 
   private readonly _token: string;
 
   constructor() {
     // Generate a short, URL-safe, collision-resistant token.
-    // We avoid depending on a third-party library; Math.random with base-36
-    // gives ~10 chars of entropy — sufficient for a single device config file.
+    // Math.random with base-36 gives ~10 chars of entropy —
+    // sufficient for a single device config file.
     this._token = `r_${Math.random().toString(36).slice(2, 11)}`;
+
+    // Return a Proxy that intercepts property access for action methods.
+    // Any property not on the RefHandle prototype returns a no-op function,
+    // preventing runtime errors when action methods are called.
+    // The compiler transformer rewrites these calls at compile time.
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (prop in target || typeof prop === 'symbol') {
+          return Reflect.get(target, prop, receiver);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return function actionMarker(..._args: unknown[]): void {
+          // No-op at runtime. The compiler transformer rewrites these calls.
+        };
+      },
+    });
   }
 
   toString(): string {
@@ -56,13 +116,20 @@ export class RefHandle<T = unknown> implements Ref<T> {
  * `ref` prop to assign it an ID, and to `use_id` props on other elements to
  * reference it.
  *
+ * For actionable component types, the ref automatically provides domain-specific
+ * action methods (e.g. `.turnOn()`, `.toggle()`).
+ *
  * @example
  * const bus = useRef<i2c_I2CBus>();
  * <i2c ref={bus} sda={21} scl={22} />
  * <as5600 i2cId={bus} />
+ *
+ * @example
+ * const myLight = useRef<light_LightOutput>();
+ * myLight.turnOn({ brightness: 0.5 });
  */
 export function useRef<T = unknown>(): Ref<T> {
-  return new RefHandle<T>();
+  return new RefHandle<T>() as unknown as Ref<T>;
 }
 
 /**
@@ -91,8 +158,8 @@ export interface BaseProps {
  * <i2c ref={bus} sda={21} scl={22} />
  * <as5600 i2cId={bus} />
  */
-export interface ComponentProps<T = unknown> extends BaseProps {
-  ref?: Ref<T>;
+export interface ComponentProps<T = never> extends BaseProps {
+  ref?: RefProp<T>;
   /**
    * Pass arbitrary key-value pairs that are spread directly into the
    * component's YAML output.  Useful for components whose upstream schema

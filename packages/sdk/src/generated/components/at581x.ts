@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { at581x_AT581XComponent, i2c_I2CBus } from "../markers";
 export interface At581xProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface At581xProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I2C](/components/i2c/) if you want to use multi...
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 declare global {

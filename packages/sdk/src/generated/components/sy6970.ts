@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, sy6970_SY6970Component } from "../markers";
 export interface Sy6970Props extends _CoreComponent {
@@ -42,7 +42,7 @@ export interface Sy6970Props extends _CoreComponent {
      */
     updateInterval?: unknown;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the device. Defaults to `0x6A`. */
     address?: unknown;
 }

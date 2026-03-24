@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { mcp23s17_MCP23S17, spi_SPIComponent } from "../markers";
 export interface Mcp23s17Props extends _CoreComponent {
@@ -15,7 +15,7 @@ export interface Mcp23s17Props extends _CoreComponent {
      */
     openDrainInterrupt?: boolean;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

@@ -41,6 +41,23 @@ export interface StatusColors {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Widget part colors
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface PartColors {
+  /** Primary fill / track color. */
+  bg: string;
+  /** Knob / handle color. */
+  knob: string;
+}
+
+export interface ThemeParts {
+  slider: PartColors;
+  switch: PartColors;
+  arc: PartColors;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Theme interface
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -89,4 +106,12 @@ export interface Theme {
 
   /** Component size scale. */
   sizes: Record<SizeToken, SizeDimensions>;
+
+  /**
+   * Widget part colors (slider indicator/knob, switch, arc).
+   *
+   * Optional — when omitted, `themeToStyleDefinitions()` derives sensible
+   * defaults from `colors.primary` and `colors.textPrimary`.
+   */
+  parts?: ThemeParts;
 }

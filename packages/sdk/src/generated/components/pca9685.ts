@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, pca9685_PCA9685Output } from "../markers";
 export interface Pca9685Props extends _CoreComponent {
@@ -20,7 +20,7 @@ export interface Pca9685Props extends _CoreComponent {
      */
     phaseBalancer?: "none" | "linear";
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. */
     address?: unknown;
 }

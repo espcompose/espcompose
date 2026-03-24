@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { lcd_base_LCDDisplay, lcd_menu_LCDCharacterMenuComponent } from "../markers";
 export interface LcdMenuProps {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the LCD display.
      * @yamlKey display_id
      */
-    displayId?: Ref<lcd_base_LCDDisplay>;
+    displayId?: RefProp<lcd_base_LCDDisplay>;
     /**
      * 0-255: Code of the character used to mark menu item selected. Defaults to `0x3e` (`>` ).
      * @yamlKey mark_selected

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ttp229_bsf_TTP229BSFComponent } from "../markers";
 export interface Ttp229BsfProps extends _CoreComponent {

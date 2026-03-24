@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { font_Glyph } from "../markers";
 export interface FontExtrasProps {
     /** string: The path of the font file with the extra glyphs. */

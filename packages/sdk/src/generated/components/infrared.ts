@@ -3,15 +3,15 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { ir_rf_proxy_IrRfProxy, remote_receiver_RemoteReceiverComponent, remote_transmitter_RemoteTransmitterComponent } from "../markers";
 interface IrRfProxyProps extends _CoreEntityBase, _CoreComponent {
     frequency?: unknown;
     /** @yamlKey remote_receiver_id */
-    remoteReceiverId?: Ref<remote_receiver_RemoteReceiverComponent>;
+    remoteReceiverId?: RefProp<remote_receiver_RemoteReceiverComponent>;
     /** @yamlKey remote_transmitter_id */
-    remoteTransmitterId?: Ref<remote_transmitter_RemoteTransmitterComponent>;
+    remoteTransmitterId?: RefProp<remote_transmitter_RemoteTransmitterComponent>;
 }
 export type InfraredProps = {
     platform: "ir_rf_proxy";

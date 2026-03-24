@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { aic3204_AIC3204, es8156_ES8156, es8311_ES8311, es8388_ES8388, i2c_I2CBus } from "../markers";
 interface Aic3204Props extends _CoreComponent {
@@ -11,7 +11,7 @@ interface Aic3204Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the AIC3204 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: unknown;
 }
@@ -20,7 +20,7 @@ interface Es8156Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8156 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: unknown;
 }
@@ -54,7 +54,7 @@ interface Es8311Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8311 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: unknown;
 }
@@ -63,7 +63,7 @@ interface Es8388Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x10`. */
     address?: unknown;
 }

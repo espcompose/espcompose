@@ -34,9 +34,10 @@ export async function createProjectTest(
 
   // Normalise random ref tokens (r_<random>) to deterministic sequential IDs
   // so that snapshots are stable across runs.
+  // Use word boundaries to avoid matching substrings like ds_slider_indicator.
   let counter = 0;
   const tokenMap = new Map<string, string>();
-  const stableYaml = yamlContent.replace(/r_[a-z0-9]{8,11}/g, (tok) => {
+  const stableYaml = yamlContent.replace(/\br_[a-z0-9]{8,11}\b/g, (tok) => {
     let stable = tokenMap.get(tok);
     if (!stable) {
       stable = `r_ref${counter++}`;

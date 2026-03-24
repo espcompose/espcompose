@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { airthings_ble_AirthingsListener, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface AirthingsBleProps {
     /** @yamlKey esp32_ble_id */
-    esp32BleId?: Ref<esp32_ble_tracker_ESP32BLETracker>;
+    esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
 }
 declare global {
     namespace JSX {

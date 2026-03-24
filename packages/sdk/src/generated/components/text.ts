@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent } from "../bases";
 import type { copy_CopyText, lvgl_LVGLText, template__TemplateText, text_Text, web_server_WebServer } from "../markers";
 interface TextWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -26,10 +26,10 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The text that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<text_Text>;
+    sourceId: RefProp<text_Text>;
 }
 interface LvglProps {
-    widget: Ref<unknown>;
+    widget: RefProp<unknown>;
 }
 interface TemplateProps extends _CoreComponent {
     /**

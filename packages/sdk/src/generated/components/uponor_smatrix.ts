@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _UartDevice } from "../bases";
 import type { time_RealTimeClock, uponor_smatrix_UponorSmatrixComponent } from "../markers";
 export interface UponorSmatrixProps extends _CoreComponent, _UartDevice {
@@ -11,7 +11,7 @@ export interface UponorSmatrixProps extends _CoreComponent, _UartDevice {
      * [ID](/guides/configuration-types#id): Specify the ID of the [Time Component](/components/time/) to use as the time so...
      * @yamlKey time_id
      */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /**
      * int: The 32 bit device address of the thermostat that keeps the system time. This will be automatically detected from...
      * @yamlKey time_device_address

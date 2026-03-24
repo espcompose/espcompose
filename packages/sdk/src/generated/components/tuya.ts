@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { time_RealTimeClock, tuya_Tuya, uart_UARTComponent } from "../markers";
 export interface TuyaProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface TuyaProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Some Tuya devices support obtaining local time from ESPHome. Specify the ID of ...
      * @yamlKey time_id
      */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /**
      * list: A list of datapoints to ignore MCU updates for. Useful for certain broken/erratic hardware and debugging.
      * @yamlKey ignore_mcu_update_on_datapoints
@@ -28,7 +28,7 @@ export interface TuyaProps extends _CoreComponent {
      */
     onDatapointUpdate?: () => void;
     /** @yamlKey uart_id */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

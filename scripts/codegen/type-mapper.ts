@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import type { SchemaConfigVar, SchemaDefinition, SchemaRegistry } from './schema-types.js';
 import { OPTIONAL_FIELD_OVERRIDES, TYPE_OVERRIDES } from './overrides.js';
-import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refType, voidFunctionType, propSig, addJsDoc } from './ast-helpers.js';
+import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refPropType, voidFunctionType, propSig, addJsDoc } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -169,7 +169,7 @@ function resolveBaseType(
     case 'schema': {
       const inlineSchema = varDef.schema;
       if (inlineSchema) {
-        const mergedVars = mergeInlineExtends(inlineSchema, registry);
+        const mergedVars = mergeExtends(inlineSchema, registry);
         if (Object.keys(mergedVars).length > 0) {
           const name = generateNestedInterface(varName, { ...inlineSchema, config_vars: mergedVars }, interfaceNamePrefix, acc, markerRefs, registry);
           return typeRef(name);
@@ -191,10 +191,10 @@ function resolveBaseType(
         const validIdent = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
         if (validIdent.test(markerName)) {
           markerRefs.add(markerName);
-          return refType(markerName);
+          return refPropType(markerName);
         }
       }
-      return typeRef('Ref', [keyword('unknown')]);
+      return typeRef('RefProp', [keyword('unknown')]);
     }
     default:
       return keyword('unknown');
@@ -221,9 +221,10 @@ function generateNestedInterface(
 }
 
 /**
- * Lightweight extends merge for inline sub-schemas encountered during type-mapping.
+ * Recursively flatten `extends` references in a schema definition,
+ * merging all inherited config_vars with own config_vars (own wins).
  */
-export function mergeInlineExtends(
+export function mergeExtends(
   schema: SchemaDefinition,
   registry: SchemaRegistry,
   _visited: Set<string> = new Set(),
@@ -234,7 +235,7 @@ export function mergeInlineExtends(
     _visited.add(ref);
     const refDef = registry.get(ref);
     if (!refDef) continue;
-    const inherited = mergeInlineExtends(refDef, registry, _visited);
+    const inherited = mergeExtends(refDef, registry, _visited);
     Object.assign(merged, inherited);
   }
   Object.assign(merged, schema.config_vars ?? {});

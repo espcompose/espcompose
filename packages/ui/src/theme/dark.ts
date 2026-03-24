@@ -59,4 +59,10 @@ export const darkTheme: Theme = {
     lg: { height: 52, fontSize: 18, paddingX: 20, paddingY: 10 },
     xl: { height: 64, fontSize: 22, paddingX: 24, paddingY: 12 },
   },
+
+  parts: {
+    slider: { bg: '#1E88E5', knob: '#E0E0E0' },
+    switch: { bg: '#1E88E5', knob: '#E0E0E0' },
+    arc:    { bg: '#1E88E5', knob: '#E0E0E0' },
+  },
 };

@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { captive_portal_CaptivePortal, web_server_base_WebServerBase } from "../markers";
 export interface CaptivePortalProps extends _CoreComponent {
     /** @yamlKey web_server_base_id */
-    webServerBaseId?: Ref<web_server_base_WebServerBase>;
+    webServerBaseId?: RefProp<web_server_base_WebServerBase>;
     /** string: The compression algorithm used for the embedded web assets. Options are `gzip` or `br` (Brotli). Brotli provi... */
     compression?: "gzip" | "br";
 }

@@ -58,4 +58,10 @@ export const lightTheme: Theme = {
     lg: { height: 52, fontSize: 18, paddingX: 20, paddingY: 10 },
     xl: { height: 64, fontSize: 22, paddingX: 24, paddingY: 12 },
   },
+
+  parts: {
+    slider: { bg: '#1565C0', knob: '#212121' },
+    switch: { bg: '#1565C0', knob: '#212121' },
+    arc:    { bg: '#1565C0', knob: '#212121' },
+  },
 };

@@ -28,8 +28,10 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import ts from 'typescript';
 import type { RootSchema, ComponentEntry, SchemaDefinition, SchemaConfigVar, ConfigSchemaEntry, ComponentSchemas, SchemaRegistry } from './schema-types.js';
-import { buildInterfaceBody, cppClassToMarkerName, toCamelCase, toPascalCase, CPP_PRIMITIVE_TO_TS, type InterfaceAccumulator } from './type-mapper.js';
+import { buildInterfaceBody, cppClassToMarkerName, toCamelCase, toPascalCase, CPP_PRIMITIVE_TO_TS, mergeExtends, type InterfaceAccumulator } from './type-mapper.js';
 import { buildLvglFileContent } from './lvgl-codegen.js';
+import { generateActionsFile } from './action-codegen.js';
+import { extractSchemaActions } from './schema-action-extractor.js';
 import {
   printStatements, addFileHeader, addLineComment, addJsDoc,
   keyword, typeRef, stringLiteralType, unionType, intersectionType, typeLiteral,
@@ -227,11 +229,125 @@ function collectRegistryClasses(registry: SchemaRegistry, out: Set<string>, pare
 }
 
 /**
+ * Walk the C++ parent chain for `cls`, returning all ancestor class names
+ * (including `cls` itself).  Cycle-safe via visited set.
+ */
+function getAncestors(
+  cls: string,
+  parentMap: Map<string, string[]>,
+  visited = new Set<string>(),
+): string[] {
+  if (visited.has(cls)) return [];
+  visited.add(cls);
+  const list = [cls];
+  for (const p of parentMap.get(cls) ?? []) {
+    if (!CPP_PRIMITIVE_TO_TS.has(p)) {
+      list.push(...getAncestors(p, parentMap, visited));
+    }
+  }
+  return list;
+}
+
+/**
+ * Build mappings from marker type names to the C++ classes whose actions
+ * apply, using the classActions map from schema extraction.
+ *
+ * For each C++ class, walks its ancestor chain (via parentMap) and checks if
+ * any ancestor maps to a C++ class that has schema-defined actions.
+ *
+ * Also builds a classBrandMap: for each C++ class with actions, the marker
+ * brand name used for structural type checking in InferActions<T>.
+ */
+interface MarkerClassResult {
+  /** Maps every marker type name → list of C++ classes whose actions apply. */
+  markerClassMap: Map<string, string[]>;
+  /** Maps each C++ class with actions → its marker brand name. */
+  classBrandMap: Map<string, string>;
+}
+
+function buildMarkerClassMap(
+  classes: Set<string>,
+  parentMap: Map<string, string[]>,
+  actionClassKeys: Set<string>,
+): MarkerClassResult {
+  const validIdent = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+  const markerClassMap = new Map<string, string[]>();
+
+  // Build namespace → action classes map for fallback.
+  // Some component id_types (e.g. light::LightOutput) are in the same C++
+  // namespace as their action targets (e.g. light::LightState) but have no
+  // parent-chain connection.  When the ancestor walk finds no direct match,
+  // we fall back to matching by namespace.
+  const nsActionMap = new Map<string, string[]>();
+  for (const cls of actionClassKeys) {
+    const idx = cls.indexOf('::');
+    if (idx > 0) {
+      const ns = cls.slice(0, idx);
+      const list = nsActionMap.get(ns) ?? [];
+      list.push(cls);
+      nsActionMap.set(ns, list);
+    }
+  }
+
+  for (const cls of classes) {
+    if (CPP_PRIMITIVE_TO_TS.has(cls)) continue;
+    const markerName = cppClassToMarkerName(cls);
+    if (!validIdent.test(markerName)) continue;
+
+    const ancestors = getAncestors(cls, parentMap);
+    const matchingClasses: string[] = [];
+    for (const anc of ancestors) {
+      if (actionClassKeys.has(anc)) {
+        matchingClasses.push(anc);
+      }
+    }
+
+    // Namespace fallback: when no ancestor is a direct action target, check
+    // if any ancestor's C++ namespace contains action classes.
+    if (matchingClasses.length === 0) {
+      const checked = new Set<string>();
+      for (const anc of ancestors) {
+        const idx = anc.indexOf('::');
+        if (idx <= 0) continue;
+        const ns = anc.slice(0, idx);
+        if (checked.has(ns)) continue;
+        checked.add(ns);
+        const nsActions = nsActionMap.get(ns);
+        if (nsActions) {
+          for (const ac of nsActions) {
+            if (!matchingClasses.includes(ac)) matchingClasses.push(ac);
+          }
+        }
+      }
+    }
+
+    if (matchingClasses.length > 0) {
+      markerClassMap.set(markerName, matchingClasses);
+    }
+  }
+
+  // Build classBrandMap: for each action class, use its own marker name as brand
+  const classBrandMap = new Map<string, string>();
+  for (const cppClass of actionClassKeys) {
+    const markerName = cppClassToMarkerName(cppClass);
+    if (validIdent.test(markerName)) {
+      classBrandMap.set(cppClass, markerName);
+    }
+  }
+
+  return { markerClassMap, classBrandMap };
+}
+
+/**
  * Build the content of `src/generated/markers.ts`.
  * Each C++ class becomes an empty exported interface used solely as a phantom
  * type brand for `Ref<T>`.
  */
-function buildMarkersFileContent(classes: Set<string>, parentMap: Map<string, string[]>): string {
+function buildMarkersFileContent(
+  classes: Set<string>,
+  parentMap: Map<string, string[]>,
+  virtualBrands: Map<string, string[]> = new Map(),
+): string {
   const validIdent = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
   const statements: ts.Statement[] = [];
 
@@ -244,21 +360,6 @@ function buildMarkersFileContent(classes: Set<string>, parentMap: Map<string, st
     // Event, Text, Image etc. are DOM types but safe to shadow in module scope
   };
 
-  // Compute transitive ancestors for each class so that Ref<Derived> is
-  // assignable to Ref<Base>.  Each marker gets one `readonly __<name>?: true`
-  // property per ancestor (including itself).
-  function getAncestors(cls: string, visited = new Set<string>()): string[] {
-    if (visited.has(cls)) return [];
-    visited.add(cls);
-    const result = [cls];
-    for (const p of parentMap.get(cls) ?? []) {
-      if (!CPP_PRIMITIVE_TO_TS.has(p)) {
-        result.push(...getAncestors(p, visited));
-      }
-    }
-    return result;
-  }
-
   const sorted = [...classes].sort();
   for (const cls of sorted) {
     if (CPP_PRIMITIVE_TO_TS.has(cls)) continue;
@@ -267,7 +368,7 @@ function buildMarkersFileContent(classes: Set<string>, parentMap: Map<string, st
 
     // One readonly optional property per ancestor (self + parents), each with
     // a unique name.  This makes Derived structurally extend Base in TS.
-    const ancestors = getAncestors(cls);
+    const ancestors = getAncestors(cls, parentMap);
     const members: ts.TypeElement[] = [];
     const seen = new Set<string>();
     for (const anc of ancestors) {
@@ -278,6 +379,22 @@ function buildMarkersFileContent(classes: Set<string>, parentMap: Map<string, st
         ts.factory.createPropertySignature(
           [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
           `__brand_${ancMarker}`,
+          ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+          ts.factory.createLiteralTypeNode(ts.factory.createTrue()),
+        ),
+      );
+    }
+
+    // Add virtual brands from namespace-bridged action classes so that
+    // InferActions<T> resolves correctly (e.g. light_LightOutput gets
+    // __brand_light_LightState so it picks up LightStateActions).
+    for (const vb of virtualBrands.get(markerName) ?? []) {
+      if (seen.has(vb)) continue;
+      seen.add(vb);
+      members.push(
+        ts.factory.createPropertySignature(
+          [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+          `__brand_${vb}`,
           ts.factory.createToken(ts.SyntaxKind.QuestionToken),
           ts.factory.createLiteralTypeNode(ts.factory.createTrue()),
         ),
@@ -524,7 +641,7 @@ function buildStandaloneFileContent(
   const statements: ts.Statement[] = [];
 
   // Imports
-  const typesImports = ['ComponentProps', 'Pin', ...(markerRefs.size > 0 ? ['Ref'] : [])];
+  const typesImports = ['ComponentProps', 'Pin', ...(markerRefs.size > 0 ? ['RefProp'] : [])];
   statements.push(importTypeDecl(typesImports, '../../types'));
   if (baseImports.size > 0) {
     statements.push(importTypeDecl([...baseImports], '../bases'));
@@ -750,7 +867,7 @@ function buildPlatformFileContent(
   const statements: ts.Statement[] = [];
 
   // Imports
-  const typesImports = ['ComponentProps', 'Pin', ...(markerRefs.size > 0 ? ['Ref'] : [])];
+  const typesImports = ['ComponentProps', 'Pin', ...(markerRefs.size > 0 ? ['RefProp'] : [])];
   statements.push(importTypeDecl(typesImports, '../../types'));
   if (baseImports.size > 0) {
     statements.push(importTypeDecl([...baseImports], '../bases'));
@@ -825,33 +942,6 @@ function buildPlatformFileContent(
 // ────────────────────────────────────────────────────────────────────────────
 // Extends resolution helpers
 // ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Merge all `extends` references in `schema` into a flat config_vars map.
- * Referenced schemas are looked up in `registry`. The schema's own config_vars
- * take precedence (they override inherited fields with the same name).
- * Cycle-safe: each resolved key is tracked and won't be re-entered.
- */
-function mergeExtends(
-  schema: SchemaDefinition,
-  registry: SchemaRegistry,
-  _visited: Set<string> = new Set(),
-): Record<string, SchemaConfigVar> {
-  const merged: Record<string, SchemaConfigVar> = {};
-
-  for (const ref of schema.extends ?? []) {
-    if (_visited.has(ref)) continue;
-    _visited.add(ref);
-    const refDef = registry.get(ref);
-    if (!refDef) continue;
-    const inherited = mergeExtends(refDef, registry, _visited);
-    Object.assign(merged, inherited);
-  }
-
-  // Own config_vars override anything inherited.
-  Object.assign(merged, schema.config_vars ?? {});
-  return merged;
-}
 
 /**
  * Flatten a `type: "typed"` CONFIG_SCHEMA into a single SchemaDefinition by
@@ -1069,7 +1159,7 @@ function buildBasesFileContent(
   const statements: ts.Statement[] = [];
 
   // Imports
-  const typesImports = ['Pin', ...(markerRefs.size > 0 ? ['Ref'] : [])];
+  const typesImports = ['Pin', ...(markerRefs.size > 0 ? ['RefProp'] : [])];
   statements.push(importTypeDecl(typesImports, '../types'));
   if (markerRefs.size > 0) {
     statements.push(importTypeDecl([...markerRefs], './markers'));
@@ -1436,8 +1526,34 @@ async function run(): Promise<void> {
   // Also include classes referenced in named schemas (for inherited fields).
   collectRegistryClasses(schemaRegistry, allCppClasses, markerParentMap);
 
+  // ── Extract schema-defined actions ──────────────────────────────────────
+  const { classActions, shortcomings } = extractSchemaActions(SCHEMAS_DIR, schemaRegistry);
+  console.log(`  Schema actions: ${classActions.size} target classes, ${shortcomings.length} shortcomings`);
+
+  // ── Build marker → action class map ───────────────────────────────────────
+  const { markerClassMap, classBrandMap } = buildMarkerClassMap(
+    allCppClasses, markerParentMap, new Set(classActions.keys()),
+  );
+
+  // ── Write markers (after action map so we can inject virtual brands) ──────
+  // Build virtualBrands: for each marker with namespace-bridged action classes,
+  // add the action class brands so InferActions<T> resolves at the type level.
+  const virtualBrands = new Map<string, string[]>();
+  for (const [markerName, actionClasses] of markerClassMap) {
+    const extraBrands: string[] = [];
+    for (const cls of actionClasses) {
+      const brandName = classBrandMap.get(cls);
+      if (brandName) extraBrands.push(brandName);
+    }
+    if (extraBrands.length > 0) virtualBrands.set(markerName, extraBrands);
+  }
+
   const markersPath = path.join(GENERATED_DIR, 'markers.ts');
-  fs.writeFileSync(markersPath, buildMarkersFileContent(allCppClasses, markerParentMap), 'utf8');
+  fs.writeFileSync(
+    markersPath,
+    buildMarkersFileContent(allCppClasses, markerParentMap, virtualBrands),
+    'utf8',
+  );
   console.log(`  Markers → ${markersPath} (${allCppClasses.size} classes)`);
 
   // ── Bases pre-pass: collect all extends refs and build globalStubs ─────────
@@ -1524,6 +1640,12 @@ async function run(): Promise<void> {
   const registryPath = path.join(GENERATED_DIR, 'registry.ts');
   fs.writeFileSync(registryPath, buildRegistry(registry), 'utf8');
   console.log(`  Registry → ${registryPath} (${registry.size} entries)`);
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+  const actionsPath = path.join(GENERATED_DIR, 'actions.ts');
+  fs.writeFileSync(actionsPath, generateActionsFile({ classActions, markerClassMap, classBrandMap }), 'utf8');
+  writtenPaths.push(actionsPath);
+  console.log(`  Actions → ${actionsPath} (${classActions.size} classes, ${markerClassMap.size} marker mappings)`);
 
   // ── Barrel ─────────────────────────────────────────────────────────────────
   const barrelPath = path.join(GENERATED_DIR, 'index.ts');

@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreEntityBase, _CoreMqttCommandComponent, _TemplateDatetime_Base } from "../bases";
 import type { template__TemplateDate, template__TemplateDateTime, template__TemplateTime, time_RealTimeClock, web_server_WebServer } from "../markers";
 interface DatetimeWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -18,7 +18,7 @@ interface DatetimeBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey on_value */
     onValue?: () => void;
     /** @yamlKey time_id */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /** @yamlKey web_server */
     webServer?: DatetimeWebServerProps;
 }

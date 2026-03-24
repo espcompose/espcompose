@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { bedjet_BedJetFan, binary_BinaryFan, copy_CopyFan, fan_Fan, hbridge_HBridgeFan, output_BinaryOutput, output_FloatOutput, speed_SpeedFan, template__TemplateFan, tuya_Tuya, tuya_TuyaFan, web_server_WebServer } from "../markers";
 interface FanWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -52,29 +52,29 @@ interface FanBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
 }
 interface BinaryProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the binary output component to use for this fan. */
-    output: Ref<output_BinaryOutput>;
+    output: RefProp<output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the direction state of t...
      * @yamlKey direction_output
      */
-    directionOutput?: Ref<output_BinaryOutput>;
+    directionOutput?: RefProp<output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the oscillation state of...
      * @yamlKey oscillation_output
      */
-    oscillationOutput?: Ref<output_BinaryOutput>;
+    oscillationOutput?: RefProp<output_BinaryOutput>;
 }
 interface HbridgeProps extends _CoreComponent {
     /**
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to Pin A (alternati...
      * @yamlKey pin_a
      */
-    pinA: Ref<output_FloatOutput>;
+    pinA: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to Pin B (alternati...
      * @yamlKey pin_b
      */
-    pinB: Ref<output_FloatOutput>;
+    pinB: RefProp<output_FloatOutput>;
     /**
      * string: The decay mode you want to use with the h-bridge. Either `slow` (coasting) or `fast` (braking). Defaults to `...
      * @yamlKey decay_mode
@@ -89,7 +89,7 @@ interface HbridgeProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to the Enable pin o...
      * @yamlKey enable_pin
      */
-    enablePin?: Ref<output_FloatOutput>;
+    enablePin?: RefProp<output_FloatOutput>;
     /**
      * A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set` ).
      * @yamlKey preset_modes
@@ -98,17 +98,17 @@ interface HbridgeProps extends _CoreComponent {
 }
 interface SpeedProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) to use for this fan. */
-    output: Ref<output_FloatOutput>;
+    output: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the oscillation state of...
      * @yamlKey oscillation_output
      */
-    oscillationOutput?: Ref<output_BinaryOutput>;
+    oscillationOutput?: RefProp<output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the direction state of t...
      * @yamlKey direction_output
      */
-    directionOutput?: Ref<output_BinaryOutput>;
+    directionOutput?: RefProp<output_BinaryOutput>;
     /**
      * int: Set the number of supported discrete speed levels. The value is used to calculate the percentages for each speed...
      * @yamlKey speed_count
@@ -129,7 +129,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The fan that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<fan_Fan>;
+    sourceId: RefProp<fan_Fan>;
 }
 interface TemplateProps extends _CoreComponent {
     /**
@@ -155,7 +155,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey oscillation_datapoint */
     oscillationDatapoint?: number;
     /** @yamlKey speed_datapoint */

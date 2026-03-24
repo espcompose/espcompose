@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _LightAddressableLight, _LightBinaryLight, _LightBrightnessOnlyLight, _LightRgbLight } from "../bases";
 import type { beken_spi_led_strip_BekenSPILEDStripLightOutput, binary_BinaryLightOutput, color_temperature_CTLightOutput, cwww_CWWWLightOutput, esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput, hbridge_HBridgeLightOutput, light_AddressableLightState, light_LightState, lv_led_t, lvgl_LVLight, m5stack_8angle_M5Stack8AngleComponent, m5stack_8angle_M5Stack8AngleLightOutput, monochromatic_MonochromaticLightOutput, neopixelbus_NeoPixelBusLightOutputBase, output_BinaryOutput, output_FloatOutput, partition_PartitionLightOutput, rgb_RGBLightOutput, rgbct_RGBCTLightOutput, rgbw_RGBWLightOutput, rgbww_RGBWWLightOutput, rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput, shelly_dimmer_ShellyDimmer, sonoff_d1_SonoffD1Output, spi_SPIComponent, spi_led_strip_SpiLedStrip, status_led_StatusLEDLightOutput, tuya_Tuya, tuya_TuyaLight, uart_UARTComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 interface BekenSpiLedStripMaxRefreshRateProps {
@@ -74,7 +74,7 @@ interface PartitionSegmentsProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** [ID](/guides/configuration-types#id): The ID of the addressable light to be controlled by this segment. */
-    id: Ref<light_AddressableLightState>;
+    id: RefProp<light_AddressableLightState>;
     /** int: The index of the first LED to address in the segment. Counting starts with 0, so first LED is 0. */
     from: number;
     /** int: The index of the last LED to address in this segment. */
@@ -85,7 +85,7 @@ interface PartitionSegmentsProps {
      * [ID](/guides/configuration-types#id): The ID of a single addressable or non-addressable light. If an addressable ligh...
      * @yamlKey single_light_id
      */
-    singleLightId: Ref<light_LightState>;
+    singleLightId: RefProp<light_LightState>;
 }
 interface ShellyDimmerFirmwareProps {
     url?: unknown;
@@ -102,7 +102,7 @@ interface ShellyDimmerPowerPropsAvailabilityProps {
 }
 interface ShellyDimmerPowerPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -143,7 +143,7 @@ interface ShellyDimmerPowerProps {
     /** @yamlKey web_server */
     webServer?: ShellyDimmerPowerPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -173,7 +173,7 @@ interface ShellyDimmerVoltagePropsAvailabilityProps {
 }
 interface ShellyDimmerVoltagePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -214,7 +214,7 @@ interface ShellyDimmerVoltageProps {
     /** @yamlKey web_server */
     webServer?: ShellyDimmerVoltagePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -244,7 +244,7 @@ interface ShellyDimmerCurrentPropsAvailabilityProps {
 }
 interface ShellyDimmerCurrentPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -285,7 +285,7 @@ interface ShellyDimmerCurrentProps {
     /** @yamlKey web_server */
     webServer?: ShellyDimmerCurrentPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: unknown;
     /** @yamlKey accuracy_decimals */
@@ -342,9 +342,9 @@ interface ColorTemperatureProps extends _LightRgbLight {
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the colo...
      * @yamlKey color_temperature
      */
-    colorTemperature: Ref<output_FloatOutput>;
+    colorTemperature: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the brig... */
-    brightness: Ref<output_FloatOutput>;
+    brightness: RefProp<output_FloatOutput>;
     /**
      * float: The coldest color temperature supported by this light. This is the lowest value when expressed in [mireds](htt...
      * @yamlKey cold_white_color_temperature
@@ -361,12 +361,12 @@ interface CwwwProps extends _LightRgbLight {
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the cold...
      * @yamlKey cold_white
      */
-    coldWhite: Ref<output_FloatOutput>;
+    coldWhite: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the warm...
      * @yamlKey warm_white
      */
-    warmWhite: Ref<output_FloatOutput>;
+    warmWhite: RefProp<output_FloatOutput>;
     /**
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the cold white channel. ...
      * @yamlKey cold_white_color_temperature
@@ -476,7 +476,7 @@ interface FastledSpiProps {
 }
 interface MonochromaticProps extends _LightBrightnessOnlyLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for this light. */
-    output: Ref<output_FloatOutput>;
+    output: RefProp<output_FloatOutput>;
 }
 interface NeopixelbusProps extends _LightAddressableLight, _CoreComponent {
     /** string: The type of light. This is used to specify if it is an RGBW or RGB light and in which order the colors are. D... */
@@ -511,29 +511,29 @@ interface PartitionProps extends _LightAddressableLight {
 }
 interface RgbProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
-    red: Ref<output_FloatOutput>;
+    red: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the gree... */
-    green: Ref<output_FloatOutput>;
+    green: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the blue... */
-    blue: Ref<output_FloatOutput>;
+    blue: RefProp<output_FloatOutput>;
 }
 interface RgbctProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
-    red: Ref<output_FloatOutput>;
+    red: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the gree... */
-    green: Ref<output_FloatOutput>;
+    green: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the blue... */
-    blue: Ref<output_FloatOutput>;
+    blue: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the colo...
      * @yamlKey color_temperature
      */
-    colorTemperature: Ref<output_FloatOutput>;
+    colorTemperature: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the brig...
      * @yamlKey white_brightness
      */
-    whiteBrightness: Ref<output_FloatOutput>;
+    whiteBrightness: RefProp<output_FloatOutput>;
     /**
      * float: The coldest color temperature supported by this light. This is the lowest value when expressed in [mireds](htt...
      * @yamlKey cold_white_color_temperature
@@ -552,13 +552,13 @@ interface RgbctProps extends _LightRgbLight {
 }
 interface RgbwProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
-    red: Ref<output_FloatOutput>;
+    red: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the gree... */
-    green: Ref<output_FloatOutput>;
+    green: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the blue... */
-    blue: Ref<output_FloatOutput>;
+    blue: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the whit... */
-    white: Ref<output_FloatOutput>;
+    white: RefProp<output_FloatOutput>;
     /**
      * boolean: When enabled, this will prevent white leds being on at the same time as RGB leds. See [Color Interlock](http...
      * @yamlKey color_interlock
@@ -567,21 +567,21 @@ interface RgbwProps extends _LightRgbLight {
 }
 interface RgbwwProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
-    red: Ref<output_FloatOutput>;
+    red: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the gree... */
-    green: Ref<output_FloatOutput>;
+    green: RefProp<output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the blue... */
-    blue: Ref<output_FloatOutput>;
+    blue: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the cold...
      * @yamlKey cold_white
      */
-    coldWhite: Ref<output_FloatOutput>;
+    coldWhite: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the warm...
      * @yamlKey warm_white
      */
-    warmWhite: Ref<output_FloatOutput>;
+    warmWhite: RefProp<output_FloatOutput>;
     /**
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the cold white channel. ...
      * @yamlKey cold_white_color_temperature
@@ -690,7 +690,7 @@ interface ShellyDimmerProps extends _LightBrightnessOnlyLight, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 interface SonoffD1Props extends _LightBrightnessOnlyLight, _CoreComponent {
     /**
@@ -709,7 +709,7 @@ interface SonoffD1Props extends _LightBrightnessOnlyLight, _CoreComponent {
      */
     maxValue?: number;
     /** @yamlKey uart_id */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 interface SpiLedStripProps extends _LightAddressableLight {
     /**
@@ -718,7 +718,7 @@ interface SpiLedStripProps extends _LightAddressableLight {
      */
     numLeds?: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /**
      * Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1M...
      * @yamlKey data_rate
@@ -733,34 +733,34 @@ interface SpiLedStripProps extends _LightAddressableLight {
 }
 interface BinaryProps extends _LightBinaryLight {
     /** [ID](/guides/configuration-types#id): The id of the binary [Output Component](/components/output/) to use for this li... */
-    output: Ref<output_BinaryOutput>;
+    output: RefProp<output_BinaryOutput>;
 }
 interface HbridgeProps extends _LightRgbLight {
     /**
      * [ID](/guides/configuration-types#id): The id of the first float [Output Component](/components/output/) to use for th...
      * @yamlKey pin_a
      */
-    pinA: Ref<output_FloatOutput>;
+    pinA: RefProp<output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the second float [Output Component](/components/output/) to use for t...
      * @yamlKey pin_b
      */
-    pinB: Ref<output_FloatOutput>;
+    pinB: RefProp<output_FloatOutput>;
 }
 interface LvglProps extends _LightRgbLight {
-    widget: Ref<lv_led_t>;
+    widget: RefProp<lv_led_t>;
 }
 interface M5stack8angleProps extends _LightAddressableLight {
     /** @yamlKey m5stack_8angle_id */
-    m5stack8angleId?: Ref<m5stack_8angle_M5Stack8AngleComponent>;
+    m5stack8angleId?: RefProp<m5stack_8angle_M5Stack8AngleComponent>;
 }
 interface StatusLedProps extends _LightBinaryLight {
     pin?: Pin;
-    output?: Ref<output_BinaryOutput>;
+    output?: RefProp<output_BinaryOutput>;
 }
 interface TuyaProps extends _LightBrightnessOnlyLight, _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey dimmer_datapoint */
     dimmerDatapoint?: number;
     /** @yamlKey min_value_datapoint */

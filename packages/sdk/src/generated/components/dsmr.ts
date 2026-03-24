@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { esphome_dsmr_Dsmr, uart_UARTComponent } from "../markers";
 export interface DsmrRequestIntervalProps {
     days?: unknown;
@@ -39,7 +39,7 @@ export interface DsmrProps {
     /** @yamlKey receive_timeout */
     receiveTimeout?: DsmrReceiveTimeoutProps;
     /** @yamlKey uart_id */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

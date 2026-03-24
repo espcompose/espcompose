@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { spi_SPIComponent, spi_device_SPIDeviceComponent } from "../markers";
 export interface SpiDeviceProps {
     /** @yamlKey bit_order */
     bitOrder?: "msb_first" | "lsb_first";
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

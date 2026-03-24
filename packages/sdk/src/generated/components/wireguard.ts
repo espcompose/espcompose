@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { time_RealTimeClock, wireguard_Wireguard } from "../markers";
 export interface WireguardPeerPersistentKeepaliveProps {
@@ -24,7 +24,7 @@ export interface WireguardRebootTimeoutProps {
 }
 export interface WireguardProps extends _CoreComponent {
     /** @yamlKey time_id */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /** IPv4 address: The local VPN address of the device. If you intend to upload firmwares through the VPN link you probabl... */
     address: unknown;
     /** IPv4 address: The netmask for the configured address. Default to `255.255.255.255`. See section [Static routes and ou... */

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { mqtt_MQTTClientComponent } from "../markers";
 export interface MqttBirthMessageProps {
     topic: unknown;

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { mdns_MDNSComponent, openthread_OpenThreadComponent } from "../markers";
 export interface OpenthreadPollPeriodProps {
     days?: unknown;
@@ -15,7 +15,7 @@ export interface OpenthreadPollPeriodProps {
 }
 export interface OpenthreadProps {
     /** @yamlKey mdns_id */
-    mdnsId?: Ref<mdns_MDNSComponent>;
+    mdnsId?: RefProp<mdns_MDNSComponent>;
     /**
      * enum: OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`.
      * @yamlKey device_type

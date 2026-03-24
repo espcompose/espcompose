@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ds2484_DS2484OneWireBus, gpio_GPIOOneWireBus, i2c_I2CBus } from "../markers";
 interface Ds2484Props extends _CoreComponent {
@@ -21,7 +21,7 @@ interface Ds2484Props extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I2C](/components/i2c/). Required if you have co...
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the device. Defaults to `0x18`. */
     address?: unknown;
 }

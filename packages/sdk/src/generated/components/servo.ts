@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { output_FloatOutput, servo_Servo } from "../markers";
 export interface ServoAutoDetachTimeProps {
@@ -24,7 +24,7 @@ export interface ServoTransitionLengthProps {
 }
 export interface ServoProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the [output component](/components/output/) to use for this servo. */
-    output: Ref<output_FloatOutput>;
+    output: RefProp<output_FloatOutput>;
     /**
      * percentage: The PWM duty cycle the minimum value (-100%) will map to. Defaults to `3%`.
      * @yamlKey min_level

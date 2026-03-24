@@ -161,6 +161,15 @@ export function buildLvglFileContent(schemaPath: string): string {
     }
   }
 
+  // Add `styles` prop — references to style_definitions by ID(s)
+  {
+    const stringType = keyword('string');
+    const arrayType = ts.factory.createArrayTypeNode(keyword('string'));
+    const stylesType = unionType([stringType, arrayType]);
+    const sig = propSig('styles', stylesType, true);
+    styleMembers.push(addJsDoc(sig, ['Reference to one or more `style_definitions` IDs.']));
+  }
+
   statements.push(
     addBlankLineBefore(
       addJsDoc(

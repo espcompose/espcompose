@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { am43_Am43Component, binary_sensor_BinarySensor, ble_client_BLEClient, copy_CopyCover, cover_Cover, current_based_CurrentBasedCover, endstop_EndstopCover, feedback_FeedbackCover, he60r_HE60rCover, sensor_Sensor, template__TemplateCover, time_based_TimeBasedCover, tormatic_Tormatic, tuya_Tuya, tuya_TuyaCover, uart_UARTComponent, web_server_WebServer } from "../markers";
 interface CoverWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -206,7 +206,7 @@ interface Am43Props extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The id of the `ble_client` entry associated with the device.
      * @yamlKey ble_client_id
      */
-    bleClientId?: Ref<ble_client_BLEClient>;
+    bleClientId?: RefProp<ble_client_BLEClient>;
 }
 interface CurrentBasedProps extends _CoreComponent {
     /**
@@ -218,7 +218,7 @@ interface CurrentBasedProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The open current sensor.
      * @yamlKey open_sensor
      */
-    openSensor: Ref<sensor_Sensor>;
+    openSensor: RefProp<sensor_Sensor>;
     /**
      * float: The amount of current in Amps the motor should drain to consider the cover is opening.
      * @yamlKey open_moving_current_threshold
@@ -243,7 +243,7 @@ interface CurrentBasedProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The close current sensor.
      * @yamlKey close_sensor
      */
-    closeSensor: Ref<sensor_Sensor>;
+    closeSensor: RefProp<sensor_Sensor>;
     /**
      * float: The amount of current in Amps the motor should drain to consider the cover is closing.
      * @yamlKey close_moving_current_threshold
@@ -300,7 +300,7 @@ interface EndstopProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey open_endstop
      */
-    openEndstop: Ref<binary_sensor_BinarySensor>;
+    openEndstop: RefProp<binary_sensor_BinarySensor>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
      * @yamlKey open_action
@@ -320,7 +320,7 @@ interface EndstopProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey close_endstop
      */
-    closeEndstop: Ref<binary_sensor_BinarySensor>;
+    closeEndstop: RefProp<binary_sensor_BinarySensor>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time it takes the cover to close from the fully-open state.
      * @yamlKey close_duration
@@ -352,17 +352,17 @@ interface FeedbackProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey open_endstop
      */
-    openEndstop?: Ref<binary_sensor_BinarySensor>;
+    openEndstop?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey open_sensor
      */
-    openSensor?: Ref<binary_sensor_BinarySensor>;
+    openSensor?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey open_obstacle_sensor
      */
-    openObstacleSensor?: Ref<binary_sensor_BinarySensor>;
+    openObstacleSensor?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
      * @yamlKey close_action
@@ -377,17 +377,17 @@ interface FeedbackProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey close_endstop
      */
-    closeEndstop?: Ref<binary_sensor_BinarySensor>;
+    closeEndstop?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey close_sensor
      */
-    closeSensor?: Ref<binary_sensor_BinarySensor>;
+    closeSensor?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
      * @yamlKey close_obstacle_sensor
      */
-    closeObstacleSensor?: Ref<binary_sensor_BinarySensor>;
+    closeObstacleSensor?: RefProp<binary_sensor_BinarySensor>;
     /**
      * [Time](/guides/configuration-types#time): The maximum duration the cover should be opening or closing. Useful for pro...
      * @yamlKey max_duration
@@ -431,7 +431,7 @@ interface FeedbackProps extends _CoreComponent {
 }
 interface He60rProps extends _CoreComponent {
     /** @yamlKey uart_id */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
     /**
      * [Time](/guides/configuration-types#time): The time required for the door to fully open from the closed position. Defa...
      * @yamlKey open_duration
@@ -487,7 +487,7 @@ interface TimeBasedProps extends _CoreComponent {
 }
 interface TormaticProps extends _CoreComponent {
     /** @yamlKey uart_id */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /** @yamlKey open_duration */
@@ -500,7 +500,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The cover that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<cover_Cover>;
+    sourceId: RefProp<cover_Cover>;
 }
 interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state/position o... */
@@ -557,7 +557,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: Ref<tuya_Tuya>;
+    tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey control_datapoint */
     controlDatapoint?: number;
     /** @yamlKey direction_datapoint */

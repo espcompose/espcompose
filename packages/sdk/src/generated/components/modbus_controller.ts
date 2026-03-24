@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { modbus_Modbus, modbus_controller_ModbusController } from "../markers";
 export interface ModbusControllerCommandThrottleProps {
@@ -102,7 +102,7 @@ export interface ModbusControllerProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the `modbus` hub.
      * @yamlKey modbus_id
      */
-    modbusId?: Ref<modbus_Modbus>;
+    modbusId?: RefProp<modbus_Modbus>;
     /** int: start address of the first register in a range (can be decimal or hexadecimal). */
     address?: unknown;
 }

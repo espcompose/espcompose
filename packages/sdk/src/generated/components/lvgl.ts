@@ -185,6 +185,8 @@ export interface LvglStyleProps {
      * @yamlKey user_4
      */
     user4?: LvglStyleProps;
+    /** Reference to one or more `style_definitions` IDs. */
+    styles?: string | string[];
 }
 //
 export interface LvglObjProps extends LvglStyleProps {

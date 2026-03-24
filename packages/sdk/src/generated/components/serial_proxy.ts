@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { serial_proxy_SerialProxy, uart_UARTComponent } from "../markers";
 export interface SerialProxyProps extends _CoreComponent {
@@ -28,7 +28,7 @@ export interface SerialProxyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [UART](/components/uart/) component this proxy is attached to.
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 declare global {
     namespace JSX {

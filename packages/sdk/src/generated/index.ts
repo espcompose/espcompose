@@ -3,6 +3,7 @@
 
 /* eslint-disable */
 
+export * from "./actions.js";
 export * from "./components/adalight.js";
 export * from "./components/adc128s102.js";
 export * from "./components/ads1115.js";

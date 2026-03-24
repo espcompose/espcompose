@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BthomeMithermometerBleDevice } from "../bases";
 import type { mopeka_ble_MopekaListener } from "../markers";
 export interface MopekaBleProps extends _BthomeMithermometerBleDevice {

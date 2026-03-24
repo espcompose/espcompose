@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _Esp32HostedUpdateBase } from "../bases";
 import type { http_request_HttpRequestComponent, http_request_HttpRequestUpdate, http_request_OtaHttpRequestComponent, mqtt_MQTTUpdateComponent, web_server_WebServer } from "../markers";
 interface UpdateWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -30,14 +30,14 @@ interface Esp32HostedEmbeddedProps extends _Esp32HostedUpdateBase {
 }
 interface Esp32HostedHttpProps extends _Esp32HostedUpdateBase {
     /** @yamlKey http_request_id */
-    httpRequestId?: Ref<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
     source: unknown;
 }
 interface HttpRequestProps extends _CoreComponent {
     /** @yamlKey ota_id */
-    otaId?: Ref<http_request_OtaHttpRequestComponent>;
+    otaId?: RefProp<http_request_OtaHttpRequestComponent>;
     /** @yamlKey http_request_id */
-    httpRequestId?: Ref<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
     source: unknown;
     /** @yamlKey update_interval */
     updateInterval?: unknown;

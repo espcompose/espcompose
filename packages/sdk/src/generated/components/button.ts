@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _UartDevice } from "../bases";
 import type { EntityBase, atm90e32_ATM90E32Component, bl0940_BL0940, bl0940_CalibrationResetButton, button_Button, copy_CopyButton, factory_reset_FactoryResetButton, haier_HonClimate, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, micronova_MicroNova, mqtt_MQTTButtonComponent, output_BinaryOutput, output_OutputButton, restart_RestartButton, safe_mode_SafeModeButton, safe_mode_SafeModeComponent, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60fda2_MR60FDA2Component, shutdown_ShutdownButton, template__TemplateButton, uart_UARTButton, wake_on_lan_WakeOnLanButton, web_server_WebServer } from "../markers";
 interface ButtonWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -23,7 +23,7 @@ interface Atm90e32RunGainCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32RunGainCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -72,7 +72,7 @@ interface Atm90e32ClearGainCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32ClearGainCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -121,7 +121,7 @@ interface Atm90e32RunOffsetCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32RunOffsetCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -170,7 +170,7 @@ interface Atm90e32ClearOffsetCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32ClearOffsetCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -219,7 +219,7 @@ interface Atm90e32RunPowerOffsetCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32RunPowerOffsetCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -268,7 +268,7 @@ interface Atm90e32ClearPowerOffsetCalibrationPropsAvailabilityProps {
 }
 interface Atm90e32ClearPowerOffsetCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -325,7 +325,7 @@ interface HaierSelfCleaningPropsAvailabilityProps {
 }
 interface HaierSelfCleaningPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -377,7 +377,7 @@ interface HaierSteriCleaningPropsAvailabilityProps {
 }
 interface HaierSteriCleaningPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -429,7 +429,7 @@ interface Ld2410FactoryResetPropsAvailabilityProps {
 }
 interface Ld2410FactoryResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -478,7 +478,7 @@ interface Ld2410RestartPropsAvailabilityProps {
 }
 interface Ld2410RestartPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -527,7 +527,7 @@ interface Ld2410QueryParamsPropsAvailabilityProps {
 }
 interface Ld2410QueryParamsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -576,7 +576,7 @@ interface Ld2412FactoryResetPropsAvailabilityProps {
 }
 interface Ld2412FactoryResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -625,7 +625,7 @@ interface Ld2412QueryParamsPropsAvailabilityProps {
 }
 interface Ld2412QueryParamsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -674,7 +674,7 @@ interface Ld2412RestartPropsAvailabilityProps {
 }
 interface Ld2412RestartPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -723,7 +723,7 @@ interface Ld2412StartDynamicBackgroundCorrectionPropsAvailabilityProps {
 }
 interface Ld2412StartDynamicBackgroundCorrectionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -772,7 +772,7 @@ interface Ld2420ApplyConfigPropsAvailabilityProps {
 }
 interface Ld2420ApplyConfigPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -821,7 +821,7 @@ interface Ld2420RevertConfigPropsAvailabilityProps {
 }
 interface Ld2420RevertConfigPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -870,7 +870,7 @@ interface Ld2420RestartModulePropsAvailabilityProps {
 }
 interface Ld2420RestartModulePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -919,7 +919,7 @@ interface Ld2420FactoryResetPropsAvailabilityProps {
 }
 interface Ld2420FactoryResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -968,7 +968,7 @@ interface Ld2450FactoryResetPropsAvailabilityProps {
 }
 interface Ld2450FactoryResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1017,7 +1017,7 @@ interface Ld2450RestartPropsAvailabilityProps {
 }
 interface Ld2450RestartPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1066,7 +1066,7 @@ interface MicronovaCustomButtonPropsAvailabilityProps {
 }
 interface MicronovaCustomButtonPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1110,7 +1110,7 @@ interface MicronovaCustomButtonProps {
     /** @yamlKey on_press */
     onPress?: () => void;
     /** @yamlKey micronova_id */
-    micronovaId?: Ref<micronova_MicroNova>;
+    micronovaId?: RefProp<micronova_MicroNova>;
     /** @yamlKey memory_location */
     memoryLocation: unknown;
     /** @yamlKey memory_address */
@@ -1127,7 +1127,7 @@ interface SeeedMr24hpc1RestartPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1RestartPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1176,7 +1176,7 @@ interface SeeedMr24hpc1CustomSetEndPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1CustomSetEndPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1225,7 +1225,7 @@ interface SeeedMr60fda2GetRadarParametersPropsAvailabilityProps {
 }
 interface SeeedMr60fda2GetRadarParametersPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1275,7 +1275,7 @@ interface SeeedMr60fda2FactoryResetPropsAvailabilityProps {
 }
 interface SeeedMr60fda2FactoryResetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1326,7 +1326,7 @@ interface ButtonBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
 }
 interface Atm90e32Props {
     /** [ID](/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if using more than one ... */
-    id?: Ref<atm90e32_ATM90E32Component>;
+    id?: RefProp<atm90e32_ATM90E32Component>;
     /**
      * A button to run the gain calibration. `enable_gain_calibration` must be `True`. These values can be permanently store...
      * @yamlKey run_gain_calibration
@@ -1363,11 +1363,11 @@ interface Bl0940Props extends _CoreComponent {
     /** @yamlKey entity_category */
     entityCategory?: unknown;
     /** @yamlKey bl0940_id */
-    bl0940Id?: Ref<bl0940_BL0940>;
+    bl0940Id?: RefProp<bl0940_BL0940>;
 }
 interface OutputProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the output component to use. */
-    output: Ref<output_BinaryOutput>;
+    output: RefProp<output_BinaryOutput>;
     /** [Time](/guides/configuration-types#time): How long the output should be set when the button is pressed. */
     duration: OutputDurationProps;
 }
@@ -1395,7 +1395,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The button that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: Ref<button_Button>;
+    sourceId: RefProp<button_Button>;
 }
 interface FactoryResetProps extends _CoreComponent {
     icon?: unknown;
@@ -1409,7 +1409,7 @@ interface HaierProps {
      * [ID](/guides/configuration-types#id): The id of Haier climate component
      * @yamlKey haier_id
      */
-    haierId?: Ref<haier_HonClimate>;
+    haierId?: RefProp<haier_HonClimate>;
     /**
      * A button that starts Haier climate self cleaning. All options from [Button](/components/button#config-button).
      * @yamlKey self_cleaning
@@ -1426,7 +1426,7 @@ interface Ld2410Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: Ref<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<ld2410_LD2410Component>;
     /**
      * This command is used to restore all configuration values to their original values. All options from [Button](/compone...
      * @yamlKey factory_reset
@@ -1445,7 +1445,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: Ref<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<ld2412_LD2412Component>;
     /**
      * This command is used to restore all configuration values to their original values. All options from [Button](/compone...
      * @yamlKey factory_reset
@@ -1466,7 +1466,7 @@ interface Ld2412Props {
 }
 interface Ld2420Props {
     /** @yamlKey ld2420_id */
-    ld2420Id?: Ref<ld2420_LD2420Component>;
+    ld2420Id?: RefProp<ld2420_LD2420Component>;
     /**
      * Saves both manual config tuning or the auto calibrate still and move threshold config settings. May contain any optio...
      * @yamlKey apply_config
@@ -1493,7 +1493,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
      * @yamlKey ld2450_id
      */
-    ld2450Id?: Ref<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<ld2450_LD2450Component>;
     /**
      * Resets the `ld2450` to its factory default configuration/values. All options from [Button](/components/button#config-...
      * @yamlKey factory_reset
@@ -1504,7 +1504,7 @@ interface Ld2450Props {
 }
 interface MicronovaProps {
     /** @yamlKey micronova_id */
-    micronovaId?: Ref<micronova_MicroNova>;
+    micronovaId?: RefProp<micronova_MicroNova>;
     /** @yamlKey custom_button */
     customButton?: MicronovaCustomButtonProps;
 }
@@ -1515,11 +1515,11 @@ interface SafeModeProps extends _CoreComponent {
     /** @yamlKey device_class */
     deviceClass?: unknown;
     /** @yamlKey safe_mode */
-    safeMode?: Ref<safe_mode_SafeModeComponent>;
+    safeMode?: RefProp<safe_mode_SafeModeComponent>;
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: Ref<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
     /** Restart the device. All options from [Button](/components/button#config-button). */
     restart?: SeeedMr24hpc1RestartProps;
     /**
@@ -1530,7 +1530,7 @@ interface SeeedMr24hpc1Props {
 }
 interface SeeedMr60fda2Props {
     /** @yamlKey mr60fda2_id */
-    mr60fda2Id?: Ref<seeed_mr60fda2_MR60FDA2Component>;
+    mr60fda2Id?: RefProp<seeed_mr60fda2_MR60FDA2Component>;
     /**
      * Get all the current setup parameters of the radar. All options from [Button](/components/button#config-button).
      * @yamlKey get_radar_parameters

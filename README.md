@@ -19,6 +19,10 @@ ESPHome Compose provides a JSX authoring layer that compiles to valid ESPHome YA
 
 > **Status:** Early development. APIs will change.
 
+## Help support this project
+
+<a href="https://www.buymeacoffee.com/xmlguy74" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## How It Works
 
 <img style="background-color:#DDDDDD" src="./docs/images/espcompose-flow.svg" />
@@ -26,6 +30,8 @@ ESPHome Compose provides a JSX authoring layer that compiles to valid ESPHome YA
 There is no JavaScript runtime on the device. ESPHome Compose is purely a build-time transpiler — the output is standard ESPHome YAML that gets compiled to firmware through the normal ESPHome toolchain.
 
 ## Quick Start
+
+> **New here?** Check out the [Getting Started guide](docs/getting-started.md) for a step-by-step walkthrough of creating your first project.
 
 ### Prerequisites
 
@@ -247,7 +253,3 @@ Contributions are welcome! Please open an issue to discuss significant changes b
 ## License
 
 [MIT](LICENSE)
-
-## Help support this project
-
-<a href="https://www.buymeacoffee.com/xmlguy74" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

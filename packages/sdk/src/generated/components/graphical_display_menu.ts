@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { Color, display_Display, font_Font, graphical_display_menu_GraphicalDisplayMenu } from "../markers";
 export interface GraphicalDisplayMenuProps {
     /** [ID](/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://esphome.io/componen... */
-    display?: Ref<display_Display>;
+    display?: RefProp<display_Display>;
     /** [Font](/components/font#display-fonts): Specifies the font to use */
-    font: Ref<font_Font>;
+    font: RefProp<font_Font>;
     /**
      * string: Specifies how to render values for menu items that have values (eg. Selects, numbers). Defaults to rendering ...
      * @yamlKey menu_item_value
@@ -19,12 +19,12 @@ export interface GraphicalDisplayMenuProps {
      * [Color](/components/display#config-color): Specifies the foreground color to use. Defaults to COLOR_ON
      * @yamlKey foreground_color
      */
-    foregroundColor?: Ref<Color>;
+    foregroundColor?: RefProp<Color>;
     /**
      * [Color](/components/display#config-color): Specifies the background color to use. Defaults to COLOR_OFF
      * @yamlKey background_color
      */
-    backgroundColor?: Ref<Color>;
+    backgroundColor?: RefProp<Color>;
     /**
      * [Automation](/automations): An automation to perform when the menu needs to be redrawn. This can be useful if your di...
      * @yamlKey on_redraw

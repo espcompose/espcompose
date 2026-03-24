@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _Rc522 } from "../bases";
 import type { rc522_spi_RC522Spi, spi_SPIComponent } from "../markers";
 export interface Rc522SpiProps extends _Rc522 {
@@ -11,7 +11,7 @@ export interface Rc522SpiProps extends _Rc522 {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

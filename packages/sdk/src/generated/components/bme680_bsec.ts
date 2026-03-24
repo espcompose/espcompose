@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { bme680_bsec_BME680BSECComponent, i2c_I2CBus } from "../markers";
 export interface Bme680BsecStateSaveIntervalProps {
     days?: unknown;
@@ -40,7 +40,7 @@ export interface Bme680BsecProps {
      */
     stateSaveInterval?: Bme680BsecStateSaveIntervalProps;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address can be `0x77`. */
     address?: unknown;
 }

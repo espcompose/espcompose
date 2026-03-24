@@ -3,19 +3,19 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { syslog_Syslog, time_RealTimeClock, udp_UDPComponent } from "../markers";
 export interface SyslogProps {
     /**
      * [ID](/guides/configuration-types#id): The ID of the UDP client to use for sending logs. May be omitted if only one UD...
      * @yamlKey udp_id
      */
-    udpId?: Ref<udp_UDPComponent>;
+    udpId?: RefProp<udp_UDPComponent>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the time client to use for time-stamping logs. May be omitted if only...
      * @yamlKey time_id
      */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /** int: The port to send logs to. Defaults to `514`. */
     port?: number;
     /** string: The highest log level to send to the syslog server. Defaults to `DEBUG`. */

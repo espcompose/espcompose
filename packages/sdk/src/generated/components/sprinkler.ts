@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sprinkler_Sprinkler, switch__Switch, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 export interface SprinklerAutoAdvanceSwitchPropsAvailabilityProps {
@@ -15,7 +15,7 @@ export interface SprinklerAutoAdvanceSwitchPropsAvailabilityProps {
 }
 export interface SprinklerAutoAdvanceSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -52,7 +52,7 @@ export interface SprinklerAutoAdvanceSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerAutoAdvanceSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -74,7 +74,7 @@ export interface SprinklerMainSwitchPropsAvailabilityProps {
 }
 export interface SprinklerMainSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -114,7 +114,7 @@ export interface SprinklerMainSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerMainSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -136,7 +136,7 @@ export interface SprinklerQueueEnableSwitchPropsAvailabilityProps {
 }
 export interface SprinklerQueueEnableSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -173,7 +173,7 @@ export interface SprinklerQueueEnableSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerQueueEnableSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -195,7 +195,7 @@ export interface SprinklerReverseSwitchPropsAvailabilityProps {
 }
 export interface SprinklerReverseSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -232,7 +232,7 @@ export interface SprinklerReverseSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerReverseSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -254,7 +254,7 @@ export interface SprinklerStandbySwitchPropsAvailabilityProps {
 }
 export interface SprinklerStandbySwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -291,7 +291,7 @@ export interface SprinklerStandbySwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerStandbySwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -321,7 +321,7 @@ export interface SprinklerMultiplierNumberPropsAvailabilityProps {
 }
 export interface SprinklerMultiplierNumberPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -358,7 +358,7 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey web_server */
     webServer?: SprinklerMultiplierNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: () => void;
     /** @yamlKey on_value_range */
@@ -391,7 +391,7 @@ export interface SprinklerRepeatNumberPropsAvailabilityProps {
 }
 export interface SprinklerRepeatNumberPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -428,7 +428,7 @@ export interface SprinklerRepeatNumberProps {
     /** @yamlKey web_server */
     webServer?: SprinklerRepeatNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: () => void;
     /** @yamlKey on_value_range */
@@ -509,7 +509,7 @@ export interface SprinklerValvesPropsEnableSwitchPropsAvailabilityProps {
 }
 export interface SprinklerValvesPropsEnableSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -546,7 +546,7 @@ export interface SprinklerValvesPropsEnableSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsEnableSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
@@ -576,7 +576,7 @@ export interface SprinklerValvesPropsRunDurationNumberPropsAvailabilityProps {
 }
 export interface SprinklerValvesPropsRunDurationNumberPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -613,7 +613,7 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsRunDurationNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: () => void;
     /** @yamlKey on_value_range */
@@ -646,7 +646,7 @@ export interface SprinklerValvesPropsValveSwitchPropsAvailabilityProps {
 }
 export interface SprinklerValvesPropsValveSwitchPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: Ref<web_server_WebServer>;
+    webServerId?: RefProp<web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -686,7 +686,7 @@ export interface SprinklerValvesPropsValveSwitchProps {
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsValveSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: Ref<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
@@ -709,7 +709,7 @@ export interface SprinklerValvesProps {
      * [Switch](/components/switch#config-switch): This is the [switch](/components/switch#config-switch) component to be us...
      * @yamlKey pump_switch_id
      */
-    pumpSwitchId?: Ref<switch__Switch>;
+    pumpSwitchId?: RefProp<switch__Switch>;
     /**
      * [Time](/guides/configuration-types#time): Required when `run_duration_number` is not provided. The duration in second...
      * @yamlKey run_duration
@@ -729,7 +729,7 @@ export interface SprinklerValvesProps {
      * [Switch](/components/switch#config-switch): This is the [switch](/components/switch#config-switch) component to be us...
      * @yamlKey valve_switch_id
      */
-    valveSwitchId?: Ref<switch__Switch>;
+    valveSwitchId?: RefProp<switch__Switch>;
 }
 export interface SprinklerProps extends _CoreComponent {
     name?: string;

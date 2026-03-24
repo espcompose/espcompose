@@ -1,14 +1,13 @@
 /**
  * Text component — semantic text display.
  *
- * Compiles to <lvgl-label> with theme-driven typography tokens.
+ * Compiles to <lvgl-label> with theme-driven typography via style references.
  */
 
 import type { EspComposeElement } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
-import { resolveTypography, fontDefToLvgl } from '../theme/resolvers';
 import type { TextVariant } from '../theme/types';
-import { useTheme } from '../theme/context';
+import { STYLE_TEXT_VARIANT } from '../theme/style-ids';
 
 interface TextProps {
   children?: EspComposeElement | EspComposeElement[];
@@ -18,7 +17,7 @@ interface TextProps {
   text?: string;
   /** Text alignment within the label. */
   align?: 'LEFT' | 'CENTER' | 'RIGHT' | 'AUTO';
-  /** Text color (hex). If omitted, uses theme textPrimary. */
+  /** Text color (hex). If omitted, inherits from the variant style definition. */
   color?: string;
   /** Long text mode. */
   longMode?: 'WRAP' | 'DOT' | 'SCROLL' | 'SCROLL_CIRCULAR' | 'CLIP';
@@ -40,16 +39,14 @@ interface TextProps {
 export const Text = createIntentComponent(
   (props: TextProps): EspComposeElement => {
     const variant = props.variant ?? 'body';
-    const fontDef = resolveTypography(variant);
-    const color = props.color ?? useTheme().colors.textPrimary;
 
     return {
       type: 'lvgl-label',
       props: {
+        styles: STYLE_TEXT_VARIANT[variant],
         ...(props.text != null ? { text: props.text } : {}),
-        textFont: fontDefToLvgl(fontDef),
         ...(props.align != null ? { textAlign: props.align } : {}),
-        textColor: color,
+        ...(props.color != null ? { textColor: props.color } : {}),
         ...(props.longMode != null ? { longMode: props.longMode } : {}),
         ...(props.x != null ? { x: props.x } : {}),
         ...(props.y != null ? { y: props.y } : {}),

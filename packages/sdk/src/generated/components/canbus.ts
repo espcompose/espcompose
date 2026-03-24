@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _Canbus } from "../bases";
 import type { esp32_can_ESP32Can, mcp2515_MCP2515, spi_SPIComponent } from "../markers";
 interface Esp32CanTxEnqueueTimeoutProps {
@@ -49,7 +49,7 @@ interface Mcp2515Props extends _Canbus {
     /** enum: Operating mode. One of: */
     mode?: "NORMAL" | "LOOPBACK" | "LISTENONLY";
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

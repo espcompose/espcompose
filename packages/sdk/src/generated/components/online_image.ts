@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { http_request_HttpRequestComponent, image_Image, online_image_OnlineImage } from "../markers";
 export interface OnlineImageProps extends _CoreComponent {
@@ -21,9 +21,9 @@ export interface OnlineImageProps extends _CoreComponent {
     /** If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `... */
     transparency?: unknown;
     /** [ID](/guides/configuration-types#id): ID of an [Image](/components/image/) to display while the downloaded image is n... */
-    placeholder?: Ref<image_Image>;
+    placeholder?: RefProp<image_Image>;
     /** @yamlKey http_request_id */
-    httpRequestId?: Ref<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
     /** url: The URL where the image will be downloaded from. */
     url: unknown;
     /**

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { opentherm_OpenthermHub, sensor_Sensor } from "../markers";
 export interface OpenthermProps extends _CoreComponent {
@@ -41,25 +41,25 @@ export interface OpenthermProps extends _CoreComponent {
     /** @yamlKey before_process_response */
     beforeProcessResponse?: () => void;
     /** @yamlKey t_set */
-    tSet?: Ref<sensor_Sensor>;
+    tSet?: RefProp<sensor_Sensor>;
     /** @yamlKey t_set_ch2 */
-    tSetCh2?: Ref<sensor_Sensor>;
+    tSetCh2?: RefProp<sensor_Sensor>;
     /** @yamlKey cooling_control */
-    coolingControl?: Ref<sensor_Sensor>;
+    coolingControl?: RefProp<sensor_Sensor>;
     /** @yamlKey t_dhw_set */
-    tDhwSet?: Ref<sensor_Sensor>;
+    tDhwSet?: RefProp<sensor_Sensor>;
     /** @yamlKey max_t_set */
-    maxTSet?: Ref<sensor_Sensor>;
+    maxTSet?: RefProp<sensor_Sensor>;
     /** @yamlKey t_room_set */
-    tRoomSet?: Ref<sensor_Sensor>;
+    tRoomSet?: RefProp<sensor_Sensor>;
     /** @yamlKey t_room_set_ch2 */
-    tRoomSetCh2?: Ref<sensor_Sensor>;
+    tRoomSetCh2?: RefProp<sensor_Sensor>;
     /** @yamlKey t_room */
-    tRoom?: Ref<sensor_Sensor>;
+    tRoom?: RefProp<sensor_Sensor>;
     /** @yamlKey max_rel_mod_level */
-    maxRelModLevel?: Ref<sensor_Sensor>;
+    maxRelModLevel?: RefProp<sensor_Sensor>;
     /** @yamlKey otc_hc_ratio */
-    otcHcRatio?: Ref<sensor_Sensor>;
+    otcHcRatio?: RefProp<sensor_Sensor>;
     /**
      * byte [0-255]: Controller product type
      * @yamlKey controller_product_type

@@ -1,8 +1,0 @@
-export default {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'subject-case': [0],
-    'body-case': [0],
-    'header-case': [0],
-  },
-};

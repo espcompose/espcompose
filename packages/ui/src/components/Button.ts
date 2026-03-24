@@ -3,13 +3,15 @@
  *
  * Compiles to <lvgl-button> with an inner <lvgl-label>.
  * Uses theme-driven status colors and sizes.
+ * Visual styles come from style definition references; structural props inline.
  */
 
 import type { EspComposeElement } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
-import { resolveStatus, resolveSize, fontDefToLvgl } from '../theme/resolvers';
+import { resolveSize, fontDefToLvgl, resolveStatus } from '../theme/resolvers';
 import type { StatusToken, SizeToken } from '../theme/types';
 import { useTheme } from '../theme/context';
+import { statusStyleId, statusTextStyleId } from '../theme/style-ids';
 
 type ButtonVariant = 'solid' | 'outline';
 
@@ -47,30 +49,26 @@ export const Button = createIntentComponent(
     const size = props.size ?? 'md';
     const variant = props.variant ?? 'solid';
 
-    const colors = resolveStatus(status);
     const dims = resolveSize(size);
     const theme = useTheme();
-
-    const isSolid = variant === 'solid';
+    const sc = resolveStatus(status);
 
     const textFont = fontDefToLvgl({ fontFamily: theme.typography.body.fontFamily, fontSize: dims.fontSize });
 
+    // Style definitions handle base visual state; pressed must be inline
+    // because ESPHome style_definitions don't support state variants.
+    const pressed: Record<string, unknown> =
+      variant === 'solid'
+        ? { bgColor: sc.bgPressed }
+        : { bgColor: sc.bg, bgOpa: 'COVER' };
+
     const buttonProps: Record<string, unknown> = {
+      styles: statusStyleId(status, variant),
       width: props.width ?? dims.paddingX * 2 + 80,
       height: props.height ?? dims.height,
+      pressed,
       ...(props.x != null ? { x: props.x } : {}),
       ...(props.y != null ? { y: props.y } : {}),
-      ...(isSolid
-        ? {
-            bgColor: colors.bg,
-            pressed: { bgColor: colors.bgPressed },
-          }
-        : {
-            bgOpa: 'TRANSP',
-            borderColor: colors.bg,
-            borderWidth: 2,
-            pressed: { bgColor: colors.bg, bgOpa: 'COVER' },
-          }),
       ...(props.onPress != null ? { 'x:custom': { on_press: props.onPress } } : {}),
     };
 
@@ -78,8 +76,8 @@ export const Button = createIntentComponent(
     const label: EspComposeElement = {
       type: 'lvgl-label',
       props: {
+        styles: statusTextStyleId(status, variant),
         text: props.text ?? '',
-        textColor: isSolid ? colors.text : colors.bg,
         textFont,
         align: 'CENTER',
       },

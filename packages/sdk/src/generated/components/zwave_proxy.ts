@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _UartDevice } from "../bases";
 import type { zwave_proxy_ZWaveProxy } from "../markers";
 export interface ZwaveProxyProps extends _CoreComponent, _UartDevice {

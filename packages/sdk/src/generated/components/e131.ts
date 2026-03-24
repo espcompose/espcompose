@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { e131_E131Component } from "../markers";
 export interface E131Props {
     method?: "UNICAST" | "MULTICAST";

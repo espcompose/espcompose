@@ -1,0 +1,9 @@
+{
+  "name": "trigger-device",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.tsx",
+  "dependencies": {
+    "@esphome/compose": "workspace:*"
+  }
+}

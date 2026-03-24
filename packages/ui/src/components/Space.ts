@@ -79,8 +79,8 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   return {
     type: 'lvgl-obj',
     props: {
-      ...(props.width != null ? { width: props.width } : {}),
-      ...(props.height != null ? { height: props.height } : {}),
+      width: props.width ?? '100%',
+      height: props.height ?? 'SIZE_CONTENT',
       ...(padding != null ? { padAll: padding } : {}),
       ...(props.bgColor != null ? { bgColor: props.bgColor } : {}),
       ...(props.bgOpa != null ? { bgOpa: props.bgOpa } : { bgOpa: 'TRANSP' }),
@@ -88,6 +88,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
       borderWidth: props.borderWidth ?? 0,
       ...(props.borderColor != null ? { borderColor: props.borderColor } : {}),
       'x:custom': {
+        scrollbar_mode: 'OFF',
         layout: buildFlexLayout(flow, gapKey, props),
       },
       ...(props.children

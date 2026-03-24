@@ -11,8 +11,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "version": "changeset version",
-    "release": "changeset publish",
-    "prepare": "husky"
+    "release": "changeset publish"
   },
   "keywords": [
     "esphome",
@@ -36,10 +35,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.29.0",
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
     "eslint": "catalog:",
-    "husky": "^9.1.7",
     "rimraf": "catalog:",
     "turbo": "catalog:",
     "tsx": "catalog:",

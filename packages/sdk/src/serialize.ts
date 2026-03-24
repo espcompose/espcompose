@@ -1,5 +1,6 @@
 import type { EspComposeElement } from './types';
 import { isRef } from './types';
+import { Scalar } from 'yaml';
 
 // ────────────────────────────────────────────────────────────────────────────
 // camelCase → snake_case key conversion
@@ -14,7 +15,10 @@ import { isRef } from './types';
 // ────────────────────────────────────────────────────────────────────────────
 
 export function camelToSnake(key: string): string {
-  return key.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+    .toLowerCase();
 }
 
 /**
@@ -48,9 +52,20 @@ export function keysToSnakeCase(obj: Record<string, unknown>): Record<string, un
 const HEX_COLOR_RE = /^#([0-9a-fA-F]{3,8})$/;
 
 /**
+ * Strings that YAML 1.1 parsers (e.g. PyYAML used by ESPHome) interpret as
+ * booleans.  When these appear as prop values they must be quoted in the YAML
+ * output to prevent mis-parsing.
+ */
+const YAML11_BOOL = new Set([
+  'true', 'false', 'yes', 'no', 'on', 'off',
+  'y', 'n',
+]);
+
+/**
  * Serialize a prop value for YAML output.
  * Ref<T> instances (produced by useRef()) are serialized as their string token.
  * CSS-style hex colours (#RRGGBB) are converted to ESPHome's 0xRRGGBB format.
+ * YAML 1.1 boolean-like strings (on, off, yes, no) are wrapped in a quoted Scalar.
  * Plain objects have their keys recursively converted to snake_case.
  * Arrays are mapped element-wise.
  * All other values are passed through unchanged.
@@ -60,8 +75,14 @@ export function serializeValue(v: unknown): unknown {
   if (typeof v === 'string') {
     const m = HEX_COLOR_RE.exec(v);
     if (m) return `0x${m[1]}`;
+    if (YAML11_BOOL.has(v.toLowerCase())) {
+      const s = new Scalar(v);
+      s.type = Scalar.QUOTE_SINGLE;
+      return s;
+    }
   }
   if (Array.isArray(v)) return v.map(serializeValue);
+  if (v instanceof Scalar) return v;
   if (v !== null && typeof v === 'object') {
     return keysToSnakeCase(v as Record<string, unknown>);
   }

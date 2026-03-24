@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { binary_sensor_BinarySensor, esp32_improv_ESP32ImprovComponent, output_BinaryOutput } from "../markers";
 export interface Esp32ImprovIdentifyDurationProps {
@@ -32,12 +32,12 @@ export interface Esp32ImprovWifiTimeoutProps {
 }
 export interface Esp32ImprovProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): A [binary sensor](/components/binary_sensor/) to authorize with. Also accepts `... */
-    authorizer: Ref<binary_sensor_BinarySensor>;
+    authorizer: RefProp<binary_sensor_BinarySensor>;
     /**
      * [ID](/guides/configuration-types#id): An [output](/components/output/) to display feedback to the user.
      * @yamlKey status_indicator
      */
-    statusIndicator?: Ref<output_BinaryOutput>;
+    statusIndicator?: RefProp<output_BinaryOutput>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time to identify for. Defaults to `10s`.
      * @yamlKey identify_duration

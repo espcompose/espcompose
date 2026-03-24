@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, mpr121_MPR121Component } from "../markers";
 export interface Mpr121Props extends _CoreComponent {
@@ -30,7 +30,7 @@ export interface Mpr121Props extends _CoreComponent {
     /** @yamlKey max_touch_channel */
     maxTouchChannel?: number;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the sensor. Defaults to `0x5A`. */
     address?: unknown;
 }

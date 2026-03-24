@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, sx1509_SX1509Component } from "../markers";
 export interface Sx1509KeypadProps {
@@ -44,7 +44,7 @@ export interface Sx1509Props extends _CoreComponent {
     /** Add this to enable the keypad. */
     keypad?: Sx1509KeypadProps;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x3E`. */
     address?: unknown;
 }

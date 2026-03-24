@@ -112,27 +112,27 @@ speaker:
     i2s_dout_pin: 9
     dac_type: external
     channel: mono
-    buffer_ref5: 100ms
+    buffer_duration: 100ms
     bits_per_sample: 16bit
     sample_rate: 48000
   - platform: mixer
     output_speaker: r_ref4
     source_speakers:
+      - id: r_ref5
+        timeout: never
       - id: r_ref6
         timeout: never
-      - id: r_ref7
-        timeout: never
-  - id: r_ref8
+  - id: r_ref7
     platform: resampler
-    output_speaker: r_ref6
+    output_speaker: r_ref5
     sample_rate: 48000
     bits_per_sample: 16
   - platform: resampler
-    output_speaker: r_ref7
+    output_speaker: r_ref6
     sample_rate: 48000
     bits_per_sample: 16
 rtttl:
-  speaker: r_ref8
+  speaker: r_ref7
 switch:
   platform: gpio
   pin: 53
@@ -216,33 +216,166 @@ display:
 lvgl:
   displays:
     - r_ref0
+  style_definitions:
+    - id: ds_bg
+      bg_color: "0x121212"
+    - id: ds_surface
+      bg_color: "0x1E1E1E"
+    - id: ds_surface_alt
+      bg_color: "0x2C2C2C"
+    - id: ds_border
+      border_color: "0x3A3A3A"
+    - id: ds_text_primary
+      text_color: "0xE0E0E0"
+      text_font: montserrat_16
+    - id: ds_text_secondary
+      text_color: "0x9E9E9E"
+      text_font: montserrat_16
+    - id: ds_text_disabled
+      text_color: "0x616161"
+      text_font: montserrat_16
+    - id: ds_text_title
+      text_color: "0xE0E0E0"
+      text_font: montserrat_28
+    - id: ds_text_subtitle
+      text_color: "0xE0E0E0"
+      text_font: montserrat_20
+    - id: ds_text_body
+      text_color: "0xE0E0E0"
+      text_font: montserrat_16
+    - id: ds_text_caption
+      text_color: "0xE0E0E0"
+      text_font: montserrat_12
+    - id: ds_status_primary_solid
+      bg_color: "0x1E88E5"
+    - id: ds_status_primary_solid_text
+      text_color: "0xFFFFFF"
+    - id: ds_status_primary_outline
+      bg_opa: TRANSP
+      border_color: "0x1E88E5"
+      border_width: 2
+    - id: ds_status_primary_outline_text
+      text_color: "0x1E88E5"
+    - id: ds_status_secondary_solid
+      bg_color: "0x546E7A"
+    - id: ds_status_secondary_solid_text
+      text_color: "0xFFFFFF"
+    - id: ds_status_secondary_outline
+      bg_opa: TRANSP
+      border_color: "0x546E7A"
+      border_width: 2
+    - id: ds_status_secondary_outline_text
+      text_color: "0x546E7A"
+    - id: ds_status_success_solid
+      bg_color: "0x43A047"
+    - id: ds_status_success_solid_text
+      text_color: "0xFFFFFF"
+    - id: ds_status_success_outline
+      bg_opa: TRANSP
+      border_color: "0x43A047"
+      border_width: 2
+    - id: ds_status_success_outline_text
+      text_color: "0x43A047"
+    - id: ds_status_warning_solid
+      bg_color: "0xFB8C00"
+    - id: ds_status_warning_solid_text
+      text_color: "0x000000"
+    - id: ds_status_warning_outline
+      bg_opa: TRANSP
+      border_color: "0xFB8C00"
+      border_width: 2
+    - id: ds_status_warning_outline_text
+      text_color: "0xFB8C00"
+    - id: ds_status_danger_solid
+      bg_color: "0xE53935"
+    - id: ds_status_danger_solid_text
+      text_color: "0xFFFFFF"
+    - id: ds_status_danger_outline
+      bg_opa: TRANSP
+      border_color: "0xE53935"
+      border_width: 2
+    - id: ds_status_danger_outline_text
+      text_color: "0xE53935"
+    - id: ds_slider_indicator
+      bg_color: "0x1E88E5"
+    - id: ds_slider_knob
+      bg_color: "0xE0E0E0"
+    - id: ds_switch_indicator
+      bg_color: "0x1E88E5"
+    - id: ds_switch_knob
+      bg_color: "0xE0E0E0"
+    - id: ds_arc_indicator
+      bg_color: "0x1E88E5"
+    - id: ds_arc_knob
+      bg_color: "0xE0E0E0"
+  theme:
+    label:
+      text_color: "0xE0E0E0"
+      text_font: montserrat_16
+    button:
+      bg_color: "0x1E88E5"
+      border_width: 0
+      pressed:
+        bg_color: "0x1565C0"
+    obj:
+      border_width: 0
+      bg_opa: TRANSP
+    slider:
+      bg_color: "0x2C2C2C"
+      indicator:
+        bg_color: "0x1E88E5"
+      knob:
+        bg_color: "0xE0E0E0"
+    switch:
+      bg_color: "0x2C2C2C"
+      indicator:
+        bg_color: "0x1E88E5"
+      knob:
+        bg_color: "0xE0E0E0"
+    arc:
+      arc_color: "0x2C2C2C"
+      indicator:
+        arc_color: "0x1E88E5"
+      knob:
+        bg_color: "0xE0E0E0"
+    dropdown:
+      text_color: "0xE0E0E0"
+      text_font: montserrat_16
+      bg_color: "0x1E1E1E"
+      border_color: "0x3A3A3A"
+      border_width: 1
   pages:
-    - bg_color: "0x121212"
+    - styles: ds_bg
       border_width: 0
       pad_all: 24
+      scrollbar_mode: 'OFF'
       widgets:
         - obj:
+            width: 100%
+            height: SIZE_CONTENT
             bg_opa: TRANSP
             border_width: 0
+            scrollbar_mode: 'OFF'
             layout:
               type: flex
               flex_flow: COLUMN
             widgets:
               - label:
-                  text_font: montserrat_28
-                  text_color: "0xE0E0E0"
+                  styles: ds_text_title
               - obj:
+                  styles: ds_surface_alt
                   pad_all: 16
                   radius: 8
-                  bg_color: "0x2C2C2C"
                   border_width: 0
+                  width: 100%
+                  height: SIZE_CONTENT
+                  scrollbar_mode: 'OFF'
                   layout:
                     type: flex
                     flex_flow: COLUMN
                   widgets:
                     - label:
-                        text_font: montserrat_20
-                        text_color: "0xE0E0E0"
+                        styles: ds_text_subtitle
                     - obj:
                         bg_opa: TRANSP
                         width: 100%
@@ -252,9 +385,8 @@ lvgl:
                           flex_flow: COLUMN
                         widgets:
                           - label:
+                              styles: ds_text_primary
                               text: Brightness
-                              text_font: montserrat_16
-                              text_color: "0xE0E0E0"
                           - slider:
                               min_value: 0
                               max_value: 255
@@ -269,43 +401,43 @@ lvgl:
                           flex_align_cross: CENTER
                         widgets:
                           - label:
+                              styles: ds_text_primary
                               text: Power
-                              text_font: montserrat_16
-                              text_color: "0xE0E0E0"
                           - switch: {}
               - obj:
+                  width: 100%
+                  height: SIZE_CONTENT
                   bg_opa: TRANSP
                   border_width: 0
+                  scrollbar_mode: 'OFF'
                   layout:
                     type: flex
                     flex_flow: ROW
                     flex_align_main: SPACE_BETWEEN
                   widgets:
                     - button:
+                        styles: ds_status_success_solid
                         width: 104
                         height: 36
-                        bg_color: "0x43A047"
                         pressed:
                           bg_color: "0x2E7D32"
                         widgets:
                           - label:
+                              styles: ds_status_success_solid_text
                               text: Turn On
-                              text_color: "0xFFFFFF"
                               text_font: montserrat_14
                               align: CENTER
                     - button:
+                        styles: ds_status_danger_outline
                         width: 104
                         height: 36
-                        bg_opa: TRANSP
-                        border_color: "0xE53935"
-                        border_width: 2
                         pressed:
                           bg_color: "0xE53935"
                           bg_opa: COVER
                         widgets:
                           - label:
+                              styles: ds_status_danger_outline_text
                               text: Turn Off
-                              text_color: "0xE53935"
                               text_font: montserrat_14
                               align: CENTER
 "
@@ -428,5 +560,61 @@ binary_sensor:
   device_class: motion
 logger:
   level: INFO
+"
+`;
+
+exports[`ESPHome Compose Build > trigger-device 1`] = `
+"esphome:
+  name: trigger-device
+  comment: Device demonstrating automation API
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+output:
+  id: r_ref0
+  platform: ledc
+  pin: 19
+  frequency: 1000Hz
+light:
+  id: r_ref1
+  platform: monochromatic
+  name: Desk Light
+  output: r_ref0
+switch:
+  id: r_ref2
+  platform: gpio
+  pin: 5
+  name: Relay
+binary_sensor:
+  platform: gpio
+  pin: 4
+  name: Button
+  on_press:
+    - script.execute: toggle_all
+  on_release:
+    - light.turn_off: r_ref1
+    - delay: 100ms
+    - switch.turn_off: r_ref2
+  on_double_click:
+    - script.execute: dim_light
+script:
+  - id: toggle_all
+    then:
+      - light.toggle: r_ref1
+      - delay: 200ms
+      - switch.toggle: r_ref2
+  - id: dim_light
+    then:
+      - light.turn_on:
+          id: r_ref1
+          brightness: 0.5
+      - logger.log: Light dimmed to 50%
 "
 `;

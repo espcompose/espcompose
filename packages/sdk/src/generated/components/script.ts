@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { script_Script } from "../markers";
 export interface ScriptProps {
     /** string: Controls what happens when a script is invoked while it is still running from one or more previous invocation... */

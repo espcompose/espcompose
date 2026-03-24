@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { mcp3204_MCP3204, spi_SPIComponent } from "../markers";
 export interface Mcp3204Props {
     /**
@@ -12,7 +12,7 @@ export interface Mcp3204Props {
      */
     referenceVoltage?: unknown;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */

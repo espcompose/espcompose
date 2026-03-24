@@ -20,6 +20,7 @@ import {
   SwitchField,
   ThemeProvider,
   darkTheme,
+  createLvglThemeProps,
 } from '@esphome/compose-ui';
 
 export default (() => {
@@ -45,7 +46,7 @@ export default (() => {
         resetPin={33}
       />
 
-      <lvgl displays={[displayRef]}>
+      <lvgl displays={[displayRef]} {...createLvglThemeProps(darkTheme)}>
         <ThemeProvider value={darkTheme}>
           <Screen padding="lg">
             <VStack>

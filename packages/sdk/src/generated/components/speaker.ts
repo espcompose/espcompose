@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent, _I2sAudioSpeakerBase, _Speaker } from "../bases";
 import type { audio_dac_AudioDac, mixer_speaker_MixerSpeaker, resampler_ResamplerSpeaker, speaker_Speaker } from "../markers";
 interface MixerSourceSpeakersPropsBufferDurationProps {
@@ -28,7 +28,7 @@ interface MixerSourceSpeakersProps {
      * [ID](/guides/configuration-types#id): The [audio DAC](/components/audio_dac/) to use for volume control.
      * @yamlKey audio_dac
      */
-    audioDac?: Ref<audio_dac_AudioDac>;
+    audioDac?: RefProp<audio_dac_AudioDac>;
     /**
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values can reduce stutteri...
      * @yamlKey buffer_duration
@@ -50,7 +50,7 @@ interface MixerProps {
      * [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the mixed audio.
      * @yamlKey output_speaker
      */
-    outputSpeaker: Ref<speaker_Speaker>;
+    outputSpeaker: RefProp<speaker_Speaker>;
     /**
      * list: A list of source speaker inputs. Must have at least 2 and at most 8 speakers.
      * @yamlKey source_speakers
@@ -77,7 +77,7 @@ interface ResamplerProps extends _Speaker, _CoreComponent {
      * [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the resampled audio.
      * @yamlKey output_speaker
      */
-    outputSpeaker: Ref<speaker_Speaker>;
+    outputSpeaker: RefProp<speaker_Speaker>;
     /**
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values may reduce stutteri...
      * @yamlKey buffer_duration

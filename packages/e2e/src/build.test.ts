@@ -32,4 +32,8 @@ describe('ESPHome Compose Build', () => {
   it('design-system-device', async () => {
     await createProjectTest(projectsDir, 'design-system-device');
   });
+
+  it('trigger-device', async () => {
+    await createProjectTest(projectsDir, 'trigger-device');
+  });
 });

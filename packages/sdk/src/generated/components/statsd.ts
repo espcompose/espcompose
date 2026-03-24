@@ -3,15 +3,15 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { binary_sensor_BinarySensor, sensor_Sensor, statsd_StatsdComponent } from "../markers";
 export interface StatsdSensorsProps {
-    id: Ref<sensor_Sensor>;
+    id: RefProp<sensor_Sensor>;
     name: string;
 }
 export interface StatsdBinarySensorsProps {
-    id: Ref<binary_sensor_BinarySensor>;
+    id: RefProp<binary_sensor_BinarySensor>;
     name: string;
 }
 export interface StatsdProps extends _CoreComponent {

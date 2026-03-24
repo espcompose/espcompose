@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, Ref } from "../../types";
+import type { ComponentProps, Pin, RefProp } from "../../types";
 import type { _BleClient, _CoreComponent, _DisplayBasicDisplay, _DisplayFullDisplay, _QspiDbiDisplayBase } from "../bases";
 import type { _esphome_hub75_HUB75Display, addressable_light_AddressableLightDisplay, i2c_I2CBus, ili9xxx_ILI9XXXDisplay, inkplate_Inkplate, lcd_gpio_GPIOLCDDisplay, lcd_pcf8574_PCF8574LCDDisplay, light_AddressableLightState, max7219_MAX7219Component, max7219digit_MAX7219Component, nextion_Nextion, pcd8544_PCD8544, power_supply_PowerSupply, pvvx_mithermometer_PVVXDisplay, rpi_dpi_rgb_RpiDpiRgb, sdl_Sdl, spi_SPIComponent, ssd1306_i2c_I2CSSD1306, ssd1306_spi_SPISSD1306, ssd1322_spi_SPISSD1322, ssd1325_spi_SPISSD1325, ssd1327_i2c_I2CSSD1327, ssd1327_spi_SPISSD1327, ssd1331_spi_SPISSD1331, ssd1351_spi_SPISSD1351, st7567_i2c_I2CST7567, st7567_spi_SPIST7567, st7701s_ST7701S, st7735_ST7735, st7789v_ST7789V, st7920_ST7920, time_RealTimeClock, tm1621_TM1621Display, tm1637_TM1637Display, tm1638_TM1638Component, uart_UARTComponent, waveshare_epaper_WaveshareEPaperBase } from "../markers";
 interface Ili9xxxDimensionsProps {
@@ -317,7 +317,7 @@ interface AddressableLightProps extends _DisplayFullDisplay {
      * [ID](/guides/configuration-types#id): The id of the addressable light component to use as a display.
      * @yamlKey addressable_light_id
      */
-    addressableLightId: Ref<light_AddressableLightState>;
+    addressableLightId: RefProp<light_AddressableLightState>;
     /** int: The width of the LED matrix in pixels. */
     width: number;
     /** int: The height of the LED matrix in pixels. */
@@ -519,7 +519,7 @@ interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
      */
     initSequence?: Array<unknown>;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -647,7 +647,7 @@ interface InkplateProps extends _DisplayFullDisplay, _CoreComponent {
      */
     displayData7Pin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     address?: unknown;
 }
 interface LcdGpioProps {
@@ -674,7 +674,7 @@ interface LcdGpioProps {
 }
 interface LcdPcf8574Props {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: The [I²C](/components/i2c) address of the PCF8574 chip, defaults to `0x3F`. */
     address?: unknown;
 }
@@ -695,7 +695,7 @@ interface Max7219Props extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -770,7 +770,7 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -802,7 +802,7 @@ interface Pcd8544Props extends _DisplayFullDisplay, _CoreComponent {
     /** int: Set screen contrast (0-255). Defaults to `0x7f`. */
     contrast?: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -815,7 +815,7 @@ interface PvvxMithermometerProps extends _DisplayBasicDisplay, _BleClient, _Core
      * [ID](/guides/configuration-types#id): ID of a [Time](/components/time/). If set, the time will be synchronized with e...
      * @yamlKey time_id
      */
-    timeId?: Ref<time_RealTimeClock>;
+    timeId?: RefProp<time_RealTimeClock>;
     /**
      * boolean: Whether to automatically clear the display data before each lambda call, or to keep the existing display con...
      * @yamlKey auto_clear_enabled
@@ -1037,7 +1037,7 @@ interface RpiDpiRgbProps extends _DisplayFullDisplay {
 }
 interface Ssd1306I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3C. */
     address?: unknown;
 }
@@ -1045,7 +1045,7 @@ interface Ssd1306SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1062,7 +1062,7 @@ interface Ssd1322SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1092,7 +1092,7 @@ interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1117,7 +1117,7 @@ interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
 }
 interface Ssd1327I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3D. */
     address?: unknown;
 }
@@ -1125,7 +1125,7 @@ interface Ssd1327SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1139,7 +1139,7 @@ interface Ssd1331SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1159,7 +1159,7 @@ interface Ssd1351SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1185,7 +1185,7 @@ interface St7567I2cProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I²C Component](/components/i2c) if you want to ...
      * @yamlKey i2c_id
      */
-    i2cId?: Ref<i2c_I2CBus>;
+    i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3F. */
     address?: unknown;
 }
@@ -1193,7 +1193,7 @@ interface St7567SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1299,7 +1299,7 @@ interface St7701sProps extends _DisplayFullDisplay {
      */
     vsyncFrontPorch?: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /**
      * Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1M...
      * @yamlKey data_rate
@@ -1357,7 +1357,7 @@ interface St7735Props extends _DisplayFullDisplay, _CoreComponent {
      */
     invertColors?: boolean;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1399,7 +1399,7 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): The [power supply](/components/power_supply/) to connect to this display if req...
      * @yamlKey power_supply
      */
-    powerSupply?: Ref<power_supply_PowerSupply>;
+    powerSupply?: RefProp<power_supply_PowerSupply>;
     /** boolean: Limits the supported color depth to eight bits. May be useful on memory-constrained devices. Defaults to `fa... */
     eightbitcolor?: boolean;
     /** int: Sets height of display in pixels. Default depends on `model`. */
@@ -1417,7 +1417,7 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      */
     offsetWidth?: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /**
      * frequency: The SPI data rate (default 20MHz.) Can be reduced if required, e.g. to compensate for long data cables.
      * @yamlKey data_rate
@@ -1442,7 +1442,7 @@ interface St7920Props extends _DisplayFullDisplay, _CoreComponent {
     /** int: The "height" of a screen. Defaults to 64; */
     height: number;
     /** @yamlKey spi_id */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1509,7 +1509,7 @@ interface WaveshareEpaperProps extends _DisplayFullDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: Ref<spi_SPIComponent>;
+    spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1639,7 +1639,7 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [UART Bus](/components/uart) you wish to use for this display. Sp...
      * @yamlKey uart_id
      */
-    uartId?: Ref<uart_UARTComponent>;
+    uartId?: RefProp<uart_UARTComponent>;
 }
 interface SdlProps extends _DisplayFullDisplay {
     /**
