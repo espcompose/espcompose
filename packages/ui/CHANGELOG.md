@@ -1,5 +1,16 @@
 # @esphome/compose-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- [#33](https://github.com/xmlguy74/espcompose/pull/33) [`d0a49b7`](https://github.com/xmlguy74/espcompose/commit/d0a49b72d82cfd1434236f7a4e3eb536751fef6e) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Implement working example of useHAEntity hook pattern, leveraging reactiev dependency tracking. Cleaned up generated code types and ongoing notes.
+
+### Patch Changes
+
+- Updated dependencies [[`d0a49b7`](https://github.com/xmlguy74/espcompose/commit/d0a49b72d82cfd1434236f7a4e3eb536751fef6e)]:
+  - @esphome/compose@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
