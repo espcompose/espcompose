@@ -33,12 +33,12 @@
   },
   "packageManager": "pnpm@10.25.0",
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.29.0",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.30.0",
     "eslint": "catalog:",
     "rimraf": "catalog:",
-    "turbo": "catalog:",
     "tsx": "catalog:",
+    "turbo": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
   }

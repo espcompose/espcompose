@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { bluetooth_proxy_BluetoothProxy, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface BluetoothProxyConnectionsProps {

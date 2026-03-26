@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _HomeassistantHomeAssistantImport, _ModbusControllerModbusitembaseschema, _Msa3xxMsaSensor, _PipsolarComponent, _PylontechComponent, _TeleinfoListener, _UartDevice } from "../bases";
 import type { Color, EntityBase, atm90e32_ATM90E32Component, ble_client_BLETextSensor, ble_scanner_BLEScanner, bme680_bsec_BME680BSECComponent, bme68x_bsec2_BME68xBSEC2Component, copy_CopyTextSensor, daly_bms_DalyBmsComponent, debug_DebugComponent, dlms_meter_DlmsMeterComponent, esp32_ble_tracker_ESP32BLETracker, esphome_dsmr_Dsmr, ezo_pmp_EzoPMP, gdk101_GDK101Component, haier_HonClimate, hlk_fm22x_HlkFm22xComponent, homeassistant_HomeassistantTextSensor, key_collector_KeyCollector, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2420_LD2420TextSensor, ld2450_LD2450Component, libretiny_LTComponent, micronova_MicroNova, modbus_controller_ModbusTextSensor, mqtt_MQTTClientComponent, mqtt_subscribe_MQTTSubscribeTextSensor, nextion_Nextion, nextion_NextionTextSensor, pylontech_PylontechTextSensor, seeed_mr24hpc1_MR24HPC1Component, sml_Sml, sml_SmlTextSensor, sun_Sun, sun_SunTextSensor, sun_gtil2_SunGTIL2, sy6970_SY6970Component, teleinfo_TeleInfoTextSensor, template__TemplateTextSensor, text_sensor_TextSensor, tuya_Tuya, tuya_TuyaTextSensor, uptime_UptimeTextSensor, version_VersionTextSensor, web_server_WebServer, wireguard_Wireguard, wl_134_Wl134Component } from "../markers";
 interface TextSensorWebServerProps {
@@ -46,7 +46,7 @@ interface EthernetInfoIpAddressPropsAddress0PropsWebServerProps {
 }
 interface EthernetInfoIpAddressPropsAddress0Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -55,9 +55,12 @@ interface EthernetInfoIpAddressPropsAddress0Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -74,9 +77,13 @@ interface EthernetInfoIpAddressPropsAddress0Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps {
     topic: unknown;
@@ -95,7 +102,7 @@ interface EthernetInfoIpAddressPropsAddress1PropsWebServerProps {
 }
 interface EthernetInfoIpAddressPropsAddress1Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -104,9 +111,12 @@ interface EthernetInfoIpAddressPropsAddress1Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -123,9 +133,13 @@ interface EthernetInfoIpAddressPropsAddress1Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps {
     topic: unknown;
@@ -144,7 +158,7 @@ interface EthernetInfoIpAddressPropsAddress2PropsWebServerProps {
 }
 interface EthernetInfoIpAddressPropsAddress2Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -153,9 +167,12 @@ interface EthernetInfoIpAddressPropsAddress2Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -172,9 +189,13 @@ interface EthernetInfoIpAddressPropsAddress2Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps {
     topic: unknown;
@@ -193,7 +214,7 @@ interface EthernetInfoIpAddressPropsAddress3PropsWebServerProps {
 }
 interface EthernetInfoIpAddressPropsAddress3Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -202,9 +223,12 @@ interface EthernetInfoIpAddressPropsAddress3Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -221,9 +245,13 @@ interface EthernetInfoIpAddressPropsAddress3Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps {
     topic: unknown;
@@ -242,7 +270,7 @@ interface EthernetInfoIpAddressPropsAddress4PropsWebServerProps {
 }
 interface EthernetInfoIpAddressPropsAddress4Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -251,9 +279,12 @@ interface EthernetInfoIpAddressPropsAddress4Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -270,13 +301,17 @@ interface EthernetInfoIpAddressPropsAddress4Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoIpAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -285,9 +320,12 @@ interface EthernetInfoIpAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -304,9 +342,13 @@ interface EthernetInfoIpAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey address_0 */
     address0?: EthernetInfoIpAddressPropsAddress0Props;
     /** @yamlKey address_1 */
@@ -335,7 +377,7 @@ interface EthernetInfoDnsAddressPropsWebServerProps {
 }
 interface EthernetInfoDnsAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -344,9 +386,12 @@ interface EthernetInfoDnsAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -363,9 +408,13 @@ interface EthernetInfoDnsAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EthernetInfoMacAddressPropsAvailabilityProps {
     topic: unknown;
@@ -384,7 +433,7 @@ interface EthernetInfoMacAddressPropsWebServerProps {
 }
 interface EthernetInfoMacAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -393,9 +442,12 @@ interface EthernetInfoMacAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -412,9 +464,13 @@ interface EthernetInfoMacAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface OpenthreadInfoIpAddressPropsAvailabilityProps {
     topic: unknown;
@@ -433,7 +489,7 @@ interface OpenthreadInfoIpAddressPropsWebServerProps {
 }
 interface OpenthreadInfoIpAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -442,9 +498,12 @@ interface OpenthreadInfoIpAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -461,9 +520,13 @@ interface OpenthreadInfoIpAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface OpenthreadInfoRolePropsAvailabilityProps {
     topic: unknown;
@@ -482,7 +545,7 @@ interface OpenthreadInfoRolePropsWebServerProps {
 }
 interface OpenthreadInfoRoleProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -491,9 +554,12 @@ interface OpenthreadInfoRoleProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -510,9 +576,13 @@ interface OpenthreadInfoRoleProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -535,7 +605,7 @@ interface OpenthreadInfoRloc16PropsWebServerProps {
 }
 interface OpenthreadInfoRloc16Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -544,9 +614,12 @@ interface OpenthreadInfoRloc16Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -563,9 +636,13 @@ interface OpenthreadInfoRloc16Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -588,7 +665,7 @@ interface OpenthreadInfoExtAddrPropsWebServerProps {
 }
 interface OpenthreadInfoExtAddrProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -597,9 +674,12 @@ interface OpenthreadInfoExtAddrProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -616,9 +696,13 @@ interface OpenthreadInfoExtAddrProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -641,7 +725,7 @@ interface OpenthreadInfoEui64PropsWebServerProps {
 }
 interface OpenthreadInfoEui64Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -650,9 +734,12 @@ interface OpenthreadInfoEui64Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -669,9 +756,13 @@ interface OpenthreadInfoEui64Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -694,7 +785,7 @@ interface OpenthreadInfoChannelPropsWebServerProps {
 }
 interface OpenthreadInfoChannelProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -703,9 +794,12 @@ interface OpenthreadInfoChannelProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -722,9 +816,13 @@ interface OpenthreadInfoChannelProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -747,7 +845,7 @@ interface OpenthreadInfoNetworkNamePropsWebServerProps {
 }
 interface OpenthreadInfoNetworkNameProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -756,9 +854,12 @@ interface OpenthreadInfoNetworkNameProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -775,9 +876,13 @@ interface OpenthreadInfoNetworkNameProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -800,7 +905,7 @@ interface OpenthreadInfoNetworkKeyPropsWebServerProps {
 }
 interface OpenthreadInfoNetworkKeyProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -809,9 +914,12 @@ interface OpenthreadInfoNetworkKeyProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -828,9 +936,13 @@ interface OpenthreadInfoNetworkKeyProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -853,7 +965,7 @@ interface OpenthreadInfoPanIdPropsWebServerProps {
 }
 interface OpenthreadInfoPanIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -862,9 +974,12 @@ interface OpenthreadInfoPanIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -881,9 +996,13 @@ interface OpenthreadInfoPanIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -906,7 +1025,7 @@ interface OpenthreadInfoExtPanIdPropsWebServerProps {
 }
 interface OpenthreadInfoExtPanIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -915,9 +1034,12 @@ interface OpenthreadInfoExtPanIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -934,9 +1056,13 @@ interface OpenthreadInfoExtPanIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey update_interval */
@@ -974,7 +1100,7 @@ interface WifiInfoIpAddressPropsAddress0PropsWebServerProps {
 }
 interface WifiInfoIpAddressPropsAddress0Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -983,9 +1109,12 @@ interface WifiInfoIpAddressPropsAddress0Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1002,9 +1131,13 @@ interface WifiInfoIpAddressPropsAddress0Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoIpAddressPropsAddress1PropsAvailabilityProps {
     topic: unknown;
@@ -1023,7 +1156,7 @@ interface WifiInfoIpAddressPropsAddress1PropsWebServerProps {
 }
 interface WifiInfoIpAddressPropsAddress1Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1032,9 +1165,12 @@ interface WifiInfoIpAddressPropsAddress1Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1051,9 +1187,13 @@ interface WifiInfoIpAddressPropsAddress1Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoIpAddressPropsAddress2PropsAvailabilityProps {
     topic: unknown;
@@ -1072,7 +1212,7 @@ interface WifiInfoIpAddressPropsAddress2PropsWebServerProps {
 }
 interface WifiInfoIpAddressPropsAddress2Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1081,9 +1221,12 @@ interface WifiInfoIpAddressPropsAddress2Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1100,9 +1243,13 @@ interface WifiInfoIpAddressPropsAddress2Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoIpAddressPropsAddress3PropsAvailabilityProps {
     topic: unknown;
@@ -1121,7 +1268,7 @@ interface WifiInfoIpAddressPropsAddress3PropsWebServerProps {
 }
 interface WifiInfoIpAddressPropsAddress3Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1130,9 +1277,12 @@ interface WifiInfoIpAddressPropsAddress3Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1149,9 +1299,13 @@ interface WifiInfoIpAddressPropsAddress3Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoIpAddressPropsAddress4PropsAvailabilityProps {
     topic: unknown;
@@ -1170,7 +1324,7 @@ interface WifiInfoIpAddressPropsAddress4PropsWebServerProps {
 }
 interface WifiInfoIpAddressPropsAddress4Props {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1179,9 +1333,12 @@ interface WifiInfoIpAddressPropsAddress4Props {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1198,13 +1355,17 @@ interface WifiInfoIpAddressPropsAddress4Props {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoIpAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1213,9 +1374,12 @@ interface WifiInfoIpAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1232,9 +1396,13 @@ interface WifiInfoIpAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey address_0 */
     address0?: WifiInfoIpAddressPropsAddress0Props;
     /** @yamlKey address_1 */
@@ -1263,7 +1431,7 @@ interface WifiInfoScanResultsPropsWebServerProps {
 }
 interface WifiInfoScanResultsProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1272,9 +1440,12 @@ interface WifiInfoScanResultsProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1291,9 +1462,13 @@ interface WifiInfoScanResultsProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoSsidPropsAvailabilityProps {
     topic: unknown;
@@ -1312,7 +1487,7 @@ interface WifiInfoSsidPropsWebServerProps {
 }
 interface WifiInfoSsidProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1321,9 +1496,12 @@ interface WifiInfoSsidProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1340,9 +1518,13 @@ interface WifiInfoSsidProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoBssidPropsAvailabilityProps {
     topic: unknown;
@@ -1361,7 +1543,7 @@ interface WifiInfoBssidPropsWebServerProps {
 }
 interface WifiInfoBssidProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1370,9 +1552,12 @@ interface WifiInfoBssidProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1389,9 +1574,13 @@ interface WifiInfoBssidProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoMacAddressPropsAvailabilityProps {
     topic: unknown;
@@ -1410,7 +1599,7 @@ interface WifiInfoMacAddressPropsWebServerProps {
 }
 interface WifiInfoMacAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1419,9 +1608,12 @@ interface WifiInfoMacAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1438,9 +1630,13 @@ interface WifiInfoMacAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoDnsAddressPropsAvailabilityProps {
     topic: unknown;
@@ -1459,7 +1655,7 @@ interface WifiInfoDnsAddressPropsWebServerProps {
 }
 interface WifiInfoDnsAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1468,9 +1664,12 @@ interface WifiInfoDnsAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1487,9 +1686,13 @@ interface WifiInfoDnsAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface WifiInfoPowerSaveModePropsAvailabilityProps {
     topic: unknown;
@@ -1508,7 +1711,7 @@ interface WifiInfoPowerSaveModePropsWebServerProps {
 }
 interface WifiInfoPowerSaveModeProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1517,9 +1720,12 @@ interface WifiInfoPowerSaveModeProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1536,9 +1742,13 @@ interface WifiInfoPowerSaveModeProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Atm90e32PhaseStatusPropsPhaseAPropsAvailabilityProps {
     topic: unknown;
@@ -1557,7 +1767,7 @@ interface Atm90e32PhaseStatusPropsPhaseAPropsWebServerProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseAProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1565,12 +1775,13 @@ interface Atm90e32PhaseStatusPropsPhaseAProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1587,9 +1798,13 @@ interface Atm90e32PhaseStatusPropsPhaseAProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Atm90e32PhaseStatusPropsPhaseBPropsAvailabilityProps {
     topic: unknown;
@@ -1608,7 +1823,7 @@ interface Atm90e32PhaseStatusPropsPhaseBPropsWebServerProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseBProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1616,12 +1831,13 @@ interface Atm90e32PhaseStatusPropsPhaseBProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1638,9 +1854,13 @@ interface Atm90e32PhaseStatusPropsPhaseBProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Atm90e32PhaseStatusPropsPhaseCPropsAvailabilityProps {
     topic: unknown;
@@ -1659,7 +1879,7 @@ interface Atm90e32PhaseStatusPropsPhaseCPropsWebServerProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseCProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1667,12 +1887,13 @@ interface Atm90e32PhaseStatusPropsPhaseCProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1689,9 +1910,13 @@ interface Atm90e32PhaseStatusPropsPhaseCProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Atm90e32PhaseStatusProps {
     /**
@@ -1727,7 +1952,7 @@ interface Atm90e32FrequencyStatusPropsWebServerProps {
 }
 interface Atm90e32FrequencyStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1735,12 +1960,13 @@ interface Atm90e32FrequencyStatusProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1757,9 +1983,13 @@ interface Atm90e32FrequencyStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Bme680BsecIaqAccuracyPropsAvailabilityProps {
     topic: unknown;
@@ -1778,7 +2008,7 @@ interface Bme680BsecIaqAccuracyPropsWebServerProps {
 }
 interface Bme680BsecIaqAccuracyProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1786,12 +2016,13 @@ interface Bme680BsecIaqAccuracyProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1808,9 +2039,13 @@ interface Bme680BsecIaqAccuracyProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Bme68xBsec2IaqAccuracyPropsAvailabilityProps {
     topic: unknown;
@@ -1829,7 +2064,7 @@ interface Bme68xBsec2IaqAccuracyPropsWebServerProps {
 }
 interface Bme68xBsec2IaqAccuracyProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1837,12 +2072,13 @@ interface Bme68xBsec2IaqAccuracyProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1859,9 +2095,13 @@ interface Bme68xBsec2IaqAccuracyProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DalyBmsStatusPropsAvailabilityProps {
     topic: unknown;
@@ -1880,7 +2120,7 @@ interface DalyBmsStatusPropsWebServerProps {
 }
 interface DalyBmsStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1888,12 +2128,13 @@ interface DalyBmsStatusProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1910,9 +2151,13 @@ interface DalyBmsStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DebugDevicePropsAvailabilityProps {
     topic: unknown;
@@ -1931,7 +2176,7 @@ interface DebugDevicePropsWebServerProps {
 }
 interface DebugDeviceProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1939,9 +2184,13 @@ interface DebugDeviceProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1958,9 +2207,13 @@ interface DebugDeviceProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DebugResetReasonPropsAvailabilityProps {
     topic: unknown;
@@ -1979,7 +2232,7 @@ interface DebugResetReasonPropsWebServerProps {
 }
 interface DebugResetReasonProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1987,9 +2240,13 @@ interface DebugResetReasonProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2006,9 +2263,13 @@ interface DebugResetReasonProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DlmsMeterTimestampPropsAvailabilityProps {
     topic: unknown;
@@ -2027,7 +2288,7 @@ interface DlmsMeterTimestampPropsWebServerProps {
 }
 interface DlmsMeterTimestampProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2036,12 +2297,12 @@ interface DlmsMeterTimestampProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2058,9 +2319,13 @@ interface DlmsMeterTimestampProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DlmsMeterMeternumberPropsAvailabilityProps {
     topic: unknown;
@@ -2079,7 +2344,7 @@ interface DlmsMeterMeternumberPropsWebServerProps {
 }
 interface DlmsMeterMeternumberProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2088,12 +2353,12 @@ interface DlmsMeterMeternumberProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2110,9 +2375,13 @@ interface DlmsMeterMeternumberProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrIdentificationPropsAvailabilityProps {
     topic: unknown;
@@ -2131,7 +2400,7 @@ interface DsmrIdentificationPropsWebServerProps {
 }
 interface DsmrIdentificationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2140,12 +2409,12 @@ interface DsmrIdentificationProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2162,9 +2431,13 @@ interface DsmrIdentificationProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrP1VersionPropsAvailabilityProps {
     topic: unknown;
@@ -2183,7 +2456,7 @@ interface DsmrP1VersionPropsWebServerProps {
 }
 interface DsmrP1VersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2192,12 +2465,12 @@ interface DsmrP1VersionProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2214,9 +2487,13 @@ interface DsmrP1VersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrP1VersionBePropsAvailabilityProps {
     topic: unknown;
@@ -2235,7 +2512,7 @@ interface DsmrP1VersionBePropsWebServerProps {
 }
 interface DsmrP1VersionBeProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2244,12 +2521,12 @@ interface DsmrP1VersionBeProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2266,9 +2543,13 @@ interface DsmrP1VersionBeProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrTimestampPropsAvailabilityProps {
     topic: unknown;
@@ -2287,7 +2568,7 @@ interface DsmrTimestampPropsWebServerProps {
 }
 interface DsmrTimestampProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2296,12 +2577,12 @@ interface DsmrTimestampProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2318,9 +2599,13 @@ interface DsmrTimestampProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrElectricityTariffPropsAvailabilityProps {
     topic: unknown;
@@ -2339,7 +2624,7 @@ interface DsmrElectricityTariffPropsWebServerProps {
 }
 interface DsmrElectricityTariffProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2348,12 +2633,12 @@ interface DsmrElectricityTariffProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2370,9 +2655,13 @@ interface DsmrElectricityTariffProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrElectricityFailureLogPropsAvailabilityProps {
     topic: unknown;
@@ -2391,7 +2680,7 @@ interface DsmrElectricityFailureLogPropsWebServerProps {
 }
 interface DsmrElectricityFailureLogProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2400,12 +2689,12 @@ interface DsmrElectricityFailureLogProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2422,9 +2711,13 @@ interface DsmrElectricityFailureLogProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrMessageShortPropsAvailabilityProps {
     topic: unknown;
@@ -2443,7 +2736,7 @@ interface DsmrMessageShortPropsWebServerProps {
 }
 interface DsmrMessageShortProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2452,12 +2745,12 @@ interface DsmrMessageShortProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2474,9 +2767,13 @@ interface DsmrMessageShortProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrMessageLongPropsAvailabilityProps {
     topic: unknown;
@@ -2495,7 +2792,7 @@ interface DsmrMessageLongPropsWebServerProps {
 }
 interface DsmrMessageLongProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2504,12 +2801,12 @@ interface DsmrMessageLongProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2526,9 +2823,13 @@ interface DsmrMessageLongProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrEquipmentIdPropsAvailabilityProps {
     topic: unknown;
@@ -2547,7 +2848,7 @@ interface DsmrEquipmentIdPropsWebServerProps {
 }
 interface DsmrEquipmentIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2556,12 +2857,12 @@ interface DsmrEquipmentIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2578,9 +2879,13 @@ interface DsmrEquipmentIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrGasEquipmentIdPropsAvailabilityProps {
     topic: unknown;
@@ -2599,7 +2904,7 @@ interface DsmrGasEquipmentIdPropsWebServerProps {
 }
 interface DsmrGasEquipmentIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2608,12 +2913,12 @@ interface DsmrGasEquipmentIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2630,9 +2935,13 @@ interface DsmrGasEquipmentIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrGasEquipmentIdBePropsAvailabilityProps {
     topic: unknown;
@@ -2651,7 +2960,7 @@ interface DsmrGasEquipmentIdBePropsWebServerProps {
 }
 interface DsmrGasEquipmentIdBeProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2660,12 +2969,12 @@ interface DsmrGasEquipmentIdBeProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2682,9 +2991,13 @@ interface DsmrGasEquipmentIdBeProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrThermalEquipmentIdPropsAvailabilityProps {
     topic: unknown;
@@ -2703,7 +3016,7 @@ interface DsmrThermalEquipmentIdPropsWebServerProps {
 }
 interface DsmrThermalEquipmentIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2712,12 +3025,12 @@ interface DsmrThermalEquipmentIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2734,9 +3047,13 @@ interface DsmrThermalEquipmentIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrWaterEquipmentIdPropsAvailabilityProps {
     topic: unknown;
@@ -2755,7 +3072,7 @@ interface DsmrWaterEquipmentIdPropsWebServerProps {
 }
 interface DsmrWaterEquipmentIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2764,12 +3081,12 @@ interface DsmrWaterEquipmentIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2786,9 +3103,13 @@ interface DsmrWaterEquipmentIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrSubEquipmentIdPropsAvailabilityProps {
     topic: unknown;
@@ -2807,7 +3128,7 @@ interface DsmrSubEquipmentIdPropsWebServerProps {
 }
 interface DsmrSubEquipmentIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2816,12 +3137,12 @@ interface DsmrSubEquipmentIdProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2838,9 +3159,13 @@ interface DsmrSubEquipmentIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrGasDeliveredTextPropsAvailabilityProps {
     topic: unknown;
@@ -2859,7 +3184,7 @@ interface DsmrGasDeliveredTextPropsWebServerProps {
 }
 interface DsmrGasDeliveredTextProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2868,12 +3193,12 @@ interface DsmrGasDeliveredTextProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2890,9 +3215,13 @@ interface DsmrGasDeliveredTextProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrFwCoreChecksumPropsAvailabilityProps {
     topic: unknown;
@@ -2911,7 +3240,7 @@ interface DsmrFwCoreChecksumPropsWebServerProps {
 }
 interface DsmrFwCoreChecksumProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2920,12 +3249,12 @@ interface DsmrFwCoreChecksumProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2942,9 +3271,13 @@ interface DsmrFwCoreChecksumProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrFwCoreVersionPropsAvailabilityProps {
     topic: unknown;
@@ -2963,7 +3296,7 @@ interface DsmrFwCoreVersionPropsWebServerProps {
 }
 interface DsmrFwCoreVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -2972,12 +3305,12 @@ interface DsmrFwCoreVersionProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -2994,9 +3327,13 @@ interface DsmrFwCoreVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrFwModuleChecksumPropsAvailabilityProps {
     topic: unknown;
@@ -3015,7 +3352,7 @@ interface DsmrFwModuleChecksumPropsWebServerProps {
 }
 interface DsmrFwModuleChecksumProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3024,12 +3361,12 @@ interface DsmrFwModuleChecksumProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3046,9 +3383,13 @@ interface DsmrFwModuleChecksumProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrFwModuleVersionPropsAvailabilityProps {
     topic: unknown;
@@ -3067,7 +3408,7 @@ interface DsmrFwModuleVersionPropsWebServerProps {
 }
 interface DsmrFwModuleVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3076,12 +3417,12 @@ interface DsmrFwModuleVersionProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3098,9 +3439,13 @@ interface DsmrFwModuleVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface DsmrTelegramPropsAvailabilityProps {
     topic: unknown;
@@ -3119,20 +3464,21 @@ interface DsmrTelegramPropsWebServerProps {
 }
 interface DsmrTelegramProps {
     /** string: The name for the sensor. */
-    name?: unknown;
-    internal?: unknown;
+    name?: string;
+    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    internal?: boolean;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3149,9 +3495,13 @@ interface DsmrTelegramProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EzoPmpDosingModePropsAvailabilityProps {
     topic: unknown;
@@ -3170,7 +3520,7 @@ interface EzoPmpDosingModePropsWebServerProps {
 }
 interface EzoPmpDosingModeProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3179,9 +3529,12 @@ interface EzoPmpDosingModeProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3198,9 +3551,13 @@ interface EzoPmpDosingModeProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface EzoPmpCalibrationStatusPropsAvailabilityProps {
     topic: unknown;
@@ -3219,7 +3576,7 @@ interface EzoPmpCalibrationStatusPropsWebServerProps {
 }
 interface EzoPmpCalibrationStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3228,9 +3585,12 @@ interface EzoPmpCalibrationStatusProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3247,9 +3607,13 @@ interface EzoPmpCalibrationStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Gdk101VersionPropsAvailabilityProps {
     topic: unknown;
@@ -3268,7 +3632,7 @@ interface Gdk101VersionPropsWebServerProps {
 }
 interface Gdk101VersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3276,9 +3640,13 @@ interface Gdk101VersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3295,9 +3663,13 @@ interface Gdk101VersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface HaierCleaningStatusPropsAvailabilityProps {
     topic: unknown;
@@ -3316,7 +3688,7 @@ interface HaierCleaningStatusPropsWebServerProps {
 }
 interface HaierCleaningStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3324,9 +3696,13 @@ interface HaierCleaningStatusProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3343,9 +3719,13 @@ interface HaierCleaningStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface HaierProtocolVersionPropsAvailabilityProps {
     topic: unknown;
@@ -3364,7 +3744,7 @@ interface HaierProtocolVersionPropsWebServerProps {
 }
 interface HaierProtocolVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3372,9 +3752,13 @@ interface HaierProtocolVersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3391,9 +3775,13 @@ interface HaierProtocolVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface HaierApplianceNamePropsAvailabilityProps {
     topic: unknown;
@@ -3412,7 +3800,7 @@ interface HaierApplianceNamePropsWebServerProps {
 }
 interface HaierApplianceNameProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3420,9 +3808,13 @@ interface HaierApplianceNameProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3439,9 +3831,13 @@ interface HaierApplianceNameProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface HlkFm22xVersionPropsAvailabilityProps {
     topic: unknown;
@@ -3460,7 +3856,7 @@ interface HlkFm22xVersionPropsWebServerProps {
 }
 interface HlkFm22xVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3468,9 +3864,13 @@ interface HlkFm22xVersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3487,9 +3887,13 @@ interface HlkFm22xVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface HlkFm22xLastFaceNamePropsAvailabilityProps {
     topic: unknown;
@@ -3508,7 +3912,7 @@ interface HlkFm22xLastFaceNamePropsWebServerProps {
 }
 interface HlkFm22xLastFaceNameProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3516,9 +3920,13 @@ interface HlkFm22xLastFaceNameProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3535,9 +3943,13 @@ interface HlkFm22xLastFaceNameProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2410VersionPropsAvailabilityProps {
     topic: unknown;
@@ -3556,7 +3968,7 @@ interface Ld2410VersionPropsWebServerProps {
 }
 interface Ld2410VersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3564,9 +3976,13 @@ interface Ld2410VersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3583,9 +3999,13 @@ interface Ld2410VersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2410MacAddressPropsAvailabilityProps {
     topic: unknown;
@@ -3604,7 +4024,7 @@ interface Ld2410MacAddressPropsWebServerProps {
 }
 interface Ld2410MacAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3612,9 +4032,13 @@ interface Ld2410MacAddressProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3631,9 +4055,13 @@ interface Ld2410MacAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2412VersionPropsAvailabilityProps {
     topic: unknown;
@@ -3652,7 +4080,7 @@ interface Ld2412VersionPropsWebServerProps {
 }
 interface Ld2412VersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3660,9 +4088,13 @@ interface Ld2412VersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3679,9 +4111,13 @@ interface Ld2412VersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2412MacAddressPropsAvailabilityProps {
     topic: unknown;
@@ -3700,7 +4136,7 @@ interface Ld2412MacAddressPropsWebServerProps {
 }
 interface Ld2412MacAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3708,9 +4144,13 @@ interface Ld2412MacAddressProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3727,9 +4167,13 @@ interface Ld2412MacAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2420FwVersionPropsAvailabilityProps {
     topic: unknown;
@@ -3748,7 +4192,7 @@ interface Ld2420FwVersionPropsWebServerProps {
 }
 interface Ld2420FwVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3756,9 +4200,13 @@ interface Ld2420FwVersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3775,9 +4223,13 @@ interface Ld2420FwVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450VersionPropsAvailabilityProps {
     topic: unknown;
@@ -3796,7 +4248,7 @@ interface Ld2450VersionPropsWebServerProps {
 }
 interface Ld2450VersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3804,9 +4256,13 @@ interface Ld2450VersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3823,9 +4279,13 @@ interface Ld2450VersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450MacAddressPropsAvailabilityProps {
     topic: unknown;
@@ -3844,7 +4304,7 @@ interface Ld2450MacAddressPropsWebServerProps {
 }
 interface Ld2450MacAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3852,9 +4312,13 @@ interface Ld2450MacAddressProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3871,9 +4335,13 @@ interface Ld2450MacAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450Target1PropsDirectionPropsAvailabilityProps {
     topic: unknown;
@@ -3892,7 +4360,7 @@ interface Ld2450Target1PropsDirectionPropsWebServerProps {
 }
 interface Ld2450Target1PropsDirectionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3900,9 +4368,13 @@ interface Ld2450Target1PropsDirectionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3919,9 +4391,13 @@ interface Ld2450Target1PropsDirectionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450Target1Props {
     direction?: Ld2450Target1PropsDirectionProps;
@@ -3943,7 +4419,7 @@ interface Ld2450Target2PropsDirectionPropsWebServerProps {
 }
 interface Ld2450Target2PropsDirectionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -3951,9 +4427,13 @@ interface Ld2450Target2PropsDirectionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -3970,9 +4450,13 @@ interface Ld2450Target2PropsDirectionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450Target2Props {
     direction?: Ld2450Target2PropsDirectionProps;
@@ -3994,7 +4478,7 @@ interface Ld2450Target3PropsDirectionPropsWebServerProps {
 }
 interface Ld2450Target3PropsDirectionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4002,9 +4486,13 @@ interface Ld2450Target3PropsDirectionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4021,9 +4509,13 @@ interface Ld2450Target3PropsDirectionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Ld2450Target3Props {
     direction?: Ld2450Target3PropsDirectionProps;
@@ -4045,7 +4537,7 @@ interface LibretinyVersionPropsWebServerProps {
 }
 interface LibretinyVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4053,9 +4545,13 @@ interface LibretinyVersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4072,9 +4568,13 @@ interface LibretinyVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface MicronovaStoveStatePropsAvailabilityProps {
     topic: unknown;
@@ -4093,7 +4593,7 @@ interface MicronovaStoveStatePropsWebServerProps {
 }
 interface MicronovaStoveStateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4102,12 +4602,12 @@ interface MicronovaStoveStateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4124,9 +4624,13 @@ interface MicronovaStoveStateProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey micronova_id */
@@ -4155,7 +4659,7 @@ interface Msa3xxOrientationXyPropsWebServerProps {
 }
 interface Msa3xxOrientationXyProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4163,12 +4667,13 @@ interface Msa3xxOrientationXyProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4185,9 +4690,13 @@ interface Msa3xxOrientationXyProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Msa3xxOrientationZPropsAvailabilityProps {
     topic: unknown;
@@ -4206,7 +4715,7 @@ interface Msa3xxOrientationZPropsWebServerProps {
 }
 interface Msa3xxOrientationZProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4214,12 +4723,13 @@ interface Msa3xxOrientationZProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4236,9 +4746,13 @@ interface Msa3xxOrientationZProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarDeviceModePropsAvailabilityProps {
     topic: unknown;
@@ -4257,7 +4771,7 @@ interface PipsolarDeviceModePropsWebServerProps {
 }
 interface PipsolarDeviceModeProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4266,12 +4780,12 @@ interface PipsolarDeviceModeProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4288,9 +4802,13 @@ interface PipsolarDeviceModeProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQpigsPropsAvailabilityProps {
     topic: unknown;
@@ -4309,7 +4827,7 @@ interface PipsolarLastQpigsPropsWebServerProps {
 }
 interface PipsolarLastQpigsProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4318,12 +4836,12 @@ interface PipsolarLastQpigsProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4340,9 +4858,13 @@ interface PipsolarLastQpigsProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQpiriPropsAvailabilityProps {
     topic: unknown;
@@ -4361,7 +4883,7 @@ interface PipsolarLastQpiriPropsWebServerProps {
 }
 interface PipsolarLastQpiriProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4370,12 +4892,12 @@ interface PipsolarLastQpiriProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4392,9 +4914,13 @@ interface PipsolarLastQpiriProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQmodPropsAvailabilityProps {
     topic: unknown;
@@ -4413,7 +4939,7 @@ interface PipsolarLastQmodPropsWebServerProps {
 }
 interface PipsolarLastQmodProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4422,12 +4948,12 @@ interface PipsolarLastQmodProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4444,9 +4970,13 @@ interface PipsolarLastQmodProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQflagPropsAvailabilityProps {
     topic: unknown;
@@ -4465,7 +4995,7 @@ interface PipsolarLastQflagPropsWebServerProps {
 }
 interface PipsolarLastQflagProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4474,12 +5004,12 @@ interface PipsolarLastQflagProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4496,9 +5026,13 @@ interface PipsolarLastQflagProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQpiwsPropsAvailabilityProps {
     topic: unknown;
@@ -4517,7 +5051,7 @@ interface PipsolarLastQpiwsPropsWebServerProps {
 }
 interface PipsolarLastQpiwsProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4526,12 +5060,12 @@ interface PipsolarLastQpiwsProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4548,9 +5082,13 @@ interface PipsolarLastQpiwsProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQtPropsAvailabilityProps {
     topic: unknown;
@@ -4569,7 +5107,7 @@ interface PipsolarLastQtPropsWebServerProps {
 }
 interface PipsolarLastQtProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4578,12 +5116,12 @@ interface PipsolarLastQtProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4600,9 +5138,13 @@ interface PipsolarLastQtProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PipsolarLastQmnPropsAvailabilityProps {
     topic: unknown;
@@ -4621,7 +5163,7 @@ interface PipsolarLastQmnPropsWebServerProps {
 }
 interface PipsolarLastQmnProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4630,12 +5172,12 @@ interface PipsolarLastQmnProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4652,9 +5194,13 @@ interface PipsolarLastQmnProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PylontechBaseStatePropsAvailabilityProps {
     topic: unknown;
@@ -4673,7 +5219,7 @@ interface PylontechBaseStatePropsWebServerProps {
 }
 interface PylontechBaseStateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4682,12 +5228,12 @@ interface PylontechBaseStateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4704,9 +5250,13 @@ interface PylontechBaseStateProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PylontechVoltageStatePropsAvailabilityProps {
     topic: unknown;
@@ -4725,7 +5275,7 @@ interface PylontechVoltageStatePropsWebServerProps {
 }
 interface PylontechVoltageStateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4734,12 +5284,12 @@ interface PylontechVoltageStateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4756,9 +5306,13 @@ interface PylontechVoltageStateProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PylontechCurrentStatePropsAvailabilityProps {
     topic: unknown;
@@ -4777,7 +5331,7 @@ interface PylontechCurrentStatePropsWebServerProps {
 }
 interface PylontechCurrentStateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4786,12 +5340,12 @@ interface PylontechCurrentStateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4808,9 +5362,13 @@ interface PylontechCurrentStateProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface PylontechTemperatureStatePropsAvailabilityProps {
     topic: unknown;
@@ -4829,7 +5387,7 @@ interface PylontechTemperatureStatePropsWebServerProps {
 }
 interface PylontechTemperatureStateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4838,12 +5396,12 @@ interface PylontechTemperatureStateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4860,9 +5418,13 @@ interface PylontechTemperatureStateProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1HeartBeatPropsAvailabilityProps {
     topic: unknown;
@@ -4881,7 +5443,7 @@ interface SeeedMr24hpc1HeartBeatPropsWebServerProps {
 }
 interface SeeedMr24hpc1HeartBeatProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4889,9 +5451,13 @@ interface SeeedMr24hpc1HeartBeatProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4908,9 +5474,13 @@ interface SeeedMr24hpc1HeartBeatProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1ProductModelPropsAvailabilityProps {
     topic: unknown;
@@ -4929,7 +5499,7 @@ interface SeeedMr24hpc1ProductModelPropsWebServerProps {
 }
 interface SeeedMr24hpc1ProductModelProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4937,9 +5507,13 @@ interface SeeedMr24hpc1ProductModelProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -4956,9 +5530,13 @@ interface SeeedMr24hpc1ProductModelProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1ProductIdPropsAvailabilityProps {
     topic: unknown;
@@ -4977,7 +5555,7 @@ interface SeeedMr24hpc1ProductIdPropsWebServerProps {
 }
 interface SeeedMr24hpc1ProductIdProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -4985,9 +5563,13 @@ interface SeeedMr24hpc1ProductIdProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5004,9 +5586,13 @@ interface SeeedMr24hpc1ProductIdProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1HardwareModelPropsAvailabilityProps {
     topic: unknown;
@@ -5025,7 +5611,7 @@ interface SeeedMr24hpc1HardwareModelPropsWebServerProps {
 }
 interface SeeedMr24hpc1HardwareModelProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5033,9 +5619,13 @@ interface SeeedMr24hpc1HardwareModelProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5052,9 +5642,13 @@ interface SeeedMr24hpc1HardwareModelProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1HardwareVersionPropsAvailabilityProps {
     topic: unknown;
@@ -5073,7 +5667,7 @@ interface SeeedMr24hpc1HardwareVersionPropsWebServerProps {
 }
 interface SeeedMr24hpc1HardwareVersionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5081,9 +5675,13 @@ interface SeeedMr24hpc1HardwareVersionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5100,9 +5698,13 @@ interface SeeedMr24hpc1HardwareVersionProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1KeepAwayPropsAvailabilityProps {
     topic: unknown;
@@ -5121,7 +5723,7 @@ interface SeeedMr24hpc1KeepAwayPropsWebServerProps {
 }
 interface SeeedMr24hpc1KeepAwayProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5129,9 +5731,13 @@ interface SeeedMr24hpc1KeepAwayProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5148,9 +5754,13 @@ interface SeeedMr24hpc1KeepAwayProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1MotionStatusPropsAvailabilityProps {
     topic: unknown;
@@ -5169,7 +5779,7 @@ interface SeeedMr24hpc1MotionStatusPropsWebServerProps {
 }
 interface SeeedMr24hpc1MotionStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5177,9 +5787,13 @@ interface SeeedMr24hpc1MotionStatusProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5196,9 +5810,13 @@ interface SeeedMr24hpc1MotionStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SeeedMr24hpc1CustomModeEndPropsAvailabilityProps {
     topic: unknown;
@@ -5217,7 +5835,7 @@ interface SeeedMr24hpc1CustomModeEndPropsWebServerProps {
 }
 interface SeeedMr24hpc1CustomModeEndProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5225,9 +5843,13 @@ interface SeeedMr24hpc1CustomModeEndProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5244,9 +5866,13 @@ interface SeeedMr24hpc1CustomModeEndProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SunGtil2StatePropsAvailabilityProps {
     topic: unknown;
@@ -5265,7 +5891,7 @@ interface SunGtil2StatePropsWebServerProps {
 }
 interface SunGtil2StateProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5274,12 +5900,12 @@ interface SunGtil2StateProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5292,14 +5918,17 @@ interface SunGtil2StateProps {
     availability?: SunGtil2StatePropsAvailabilityProps;
     /** @yamlKey web_server */
     webServer?: SunGtil2StatePropsWebServerProps;
-    id?: unknown;
     /** @yamlKey device_class */
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface SunGtil2SerialNumberPropsAvailabilityProps {
     topic: unknown;
@@ -5318,7 +5947,7 @@ interface SunGtil2SerialNumberPropsWebServerProps {
 }
 interface SunGtil2SerialNumberProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5327,12 +5956,12 @@ interface SunGtil2SerialNumberProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5345,14 +5974,17 @@ interface SunGtil2SerialNumberProps {
     availability?: SunGtil2SerialNumberPropsAvailabilityProps;
     /** @yamlKey web_server */
     webServer?: SunGtil2SerialNumberPropsWebServerProps;
-    id?: unknown;
     /** @yamlKey device_class */
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Sy6970BusStatusPropsAvailabilityProps {
     topic: unknown;
@@ -5371,7 +6003,7 @@ interface Sy6970BusStatusPropsWebServerProps {
 }
 interface Sy6970BusStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5380,12 +6012,12 @@ interface Sy6970BusStatusProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5402,9 +6034,13 @@ interface Sy6970BusStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Sy6970ChargeStatusPropsAvailabilityProps {
     topic: unknown;
@@ -5423,7 +6059,7 @@ interface Sy6970ChargeStatusPropsWebServerProps {
 }
 interface Sy6970ChargeStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5432,12 +6068,12 @@ interface Sy6970ChargeStatusProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5454,9 +6090,13 @@ interface Sy6970ChargeStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface Sy6970NtcStatusPropsAvailabilityProps {
     topic: unknown;
@@ -5475,7 +6115,7 @@ interface Sy6970NtcStatusPropsWebServerProps {
 }
 interface Sy6970NtcStatusProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5484,12 +6124,12 @@ interface Sy6970NtcStatusProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5506,9 +6146,13 @@ interface Sy6970NtcStatusProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface UptimeFormatProps {
     /** string: The string to use for the days element. Defaults to `d`. */
@@ -5541,7 +6185,7 @@ interface WireguardAddressPropsWebServerProps {
 }
 interface WireguardAddressProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -5550,9 +6194,12 @@ interface WireguardAddressProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -5569,9 +6216,13 @@ interface WireguardAddressProps {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface TextSensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey web_server */
@@ -5580,9 +6231,13 @@ interface TextSensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
     deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
 }
 interface BleScannerProps extends _CoreComponent {
     /** @yamlKey esp32_ble_id */
@@ -5716,7 +6371,7 @@ interface BleClientProps extends _CoreComponent, _BleClient {
     descriptorUuid?: unknown;
     notify?: boolean;
     /** @yamlKey on_notify */
-    onNotify?: () => void;
+    onNotify?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }
@@ -5943,9 +6598,9 @@ interface MqttSubscribeProps extends _CoreComponent {
     /** @yamlKey mqtt_parent_id */
     mqttParentId?: RefProp<mqtt_MQTTClientComponent>;
     /** string: The MQTT topic to listen for string data. */
-    topic: unknown;
+    topic: string;
     /** int: The MQTT QoS to subscribe with. Defaults to `0`. */
-    qos?: unknown;
+    qos?: number;
 }
 interface Msa3xxProps extends _Msa3xxMsaSensor {
     /**
@@ -5964,7 +6619,7 @@ interface NextionProps {
      * [Time](/guides/configuration-types#time): The duration to update the sensor. If using a [Nextion Custom Text Sensor P...
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
     /**
      * [ID](/guides/configuration-types#id): The ID of the Nextion display.
      * @yamlKey nextion_id
@@ -5986,7 +6641,7 @@ interface NextionProps {
      * string: The name of the Nextion component.
      * @yamlKey component_name
      */
-    componentName: unknown;
+    componentName: string;
     /**
      * int: The font id for the component
      * @yamlKey font_id
@@ -6111,7 +6766,7 @@ interface SmlProps {
      * string: Specify the OBIS code you want to retrieve data for from the device. The format must be (A-B:C.D.E, e.g. 1-0:...
      * @yamlKey obis_code
      */
-    obisCode: unknown;
+    obisCode: string;
     /**
      * string: Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is...
      * @yamlKey server_id
@@ -6126,7 +6781,7 @@ interface SunProps extends _CoreComponent {
     /** string: The type of value to track. One of `sunrise` and `sunset`. */
     type: "sunset" | "sunrise";
     /** float: The elevation to calculate the next sunrise/sunset event for. Defaults to -0.833° (the horizon, slightly less ... */
-    elevation?: unknown;
+    elevation?: number;
     /** string: The format to format the time value with, see [strftime](/components/time#strftime) for more information. Def... */
     format?: string;
     /** @yamlKey update_interval */
@@ -6165,7 +6820,7 @@ interface TemplateProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The interval to check the text sensor. Set to `never` to disable updates. D...
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
@@ -6183,7 +6838,7 @@ interface UptimeProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The sensor reporting interval. Defaults to `30s`.
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
 }
 interface WireguardProps {
     /** @yamlKey wireguard_id */

@@ -1,7 +1,7 @@
-import { Display, ESPCompose, Ref } from "@esphome/compose";
+import { Display, ESPCompose, Ref, useHAEntity } from "@esphome/compose";
 import {
     Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
-    darkTheme, lightTheme, createLvglThemeProps, createThemeSwitchActions,
+    darkTheme, lightTheme, createLvglThemeProps, applyTheme,
 } from "@esphome/compose-ui";
 
 type UIProps = {
@@ -9,7 +9,8 @@ type UIProps = {
 }
 
 export const UI = (props: UIProps) => {
-    
+    const officeLight = useHAEntity('light.office');
+
     return <>
         <lvgl
             byteOrder="little_endian"
@@ -27,9 +28,19 @@ export const UI = (props: UIProps) => {
                         <SwitchField label="Power" />
                     </Card>
 
+                    <Card>
+                        <HStack>
+                            <lvgl-label text={officeLight.stateText} />
+                            <Button
+                                text="Toggle Office"
+                                onPress={() => { officeLight.toggle(); }}
+                            />
+                        </HStack>
+                    </Card>
+
                     <HStack>
-                        <Button text="Dark Theme" status="primary" onPress={createThemeSwitchActions(darkTheme)} />
-                        <Button text="Light Theme" status="secondary" onPress={createThemeSwitchActions(lightTheme)} />
+                        <Button text="Dark Theme" status="primary" onPress={() => { applyTheme(darkTheme); }} />
+                        <Button text="Light Theme" status="secondary" onPress={() => { applyTheme(lightTheme); }} />
                     </HStack>
                 </VStack>
             </Screen>

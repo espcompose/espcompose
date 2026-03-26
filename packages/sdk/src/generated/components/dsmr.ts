@@ -3,24 +3,8 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { esphome_dsmr_Dsmr, uart_UARTComponent } from "../markers";
-export interface DsmrRequestIntervalProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface DsmrReceiveTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface DsmrProps {
     /** @yamlKey decryption_key */
     decryptionKey?: unknown;
@@ -35,9 +19,9 @@ export interface DsmrProps {
     /** @yamlKey request_pin */
     requestPin?: Pin;
     /** @yamlKey request_interval */
-    requestInterval?: DsmrRequestIntervalProps;
+    requestInterval?: TimePeriod;
     /** @yamlKey receive_timeout */
-    receiveTimeout?: DsmrReceiveTimeoutProps;
+    receiveTimeout?: TimePeriod;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
 }

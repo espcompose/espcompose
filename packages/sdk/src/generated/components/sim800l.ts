@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sim800l_Sim800LComponent, uart_UARTComponent } from "../markers";
 export interface Sim800lProps extends _CoreComponent {
@@ -11,24 +11,24 @@ export interface Sim800lProps extends _CoreComponent {
      * [Automation](/automations): An action to be performed when an SMS is received. See [`on_sms_received` Trigger](https:...
      * @yamlKey on_sms_received
      */
-    onSmsReceived?: () => void;
+    onSmsReceived?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when a call is received. See [`on_incoming_call` Trigger](https...
      * @yamlKey on_incoming_call
      */
-    onIncomingCall?: () => void;
+    onIncomingCall?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when a call is connected, either because an outgoing call accep...
      * @yamlKey on_call_connected
      */
-    onCallConnected?: () => void;
+    onCallConnected?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when a call is disconnected.
      * @yamlKey on_call_disconnected
      */
-    onCallDisconnected?: () => void;
+    onCallDisconnected?: TriggerHandler;
     /** @yamlKey on_ussd_received */
-    onUssdReceived?: () => void;
+    onUssdReceived?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**

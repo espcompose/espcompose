@@ -19,7 +19,7 @@
 
 import ts from 'typescript';
 import { exprToCpp, type ConstMap } from './expression-to-cpp.js';
-import { resolveActionYamlKey, camelToSnake } from '@esphome/compose';
+import { resolveActionYamlKey, camelToSnake, HA_ACTION_MAP } from '@esphome/compose';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -52,6 +52,18 @@ export interface RefInfo {
 }
 
 /**
+ * Describes a module-level HA entity variable created via useHAEntity().
+ */
+export interface HAEntityInfo {
+  /** The variable name (e.g. 'kitchen'). */
+  name: string;
+  /** The full HA entity ID (e.g. 'light.kitchen_floods'). */
+  entityId: string;
+  /** The HA domain extracted from the entity ID prefix (e.g. 'light'). */
+  domain: string;
+}
+
+/**
  * Marker that instructs the AST emitter to generate a variable reference
  * (calling `.toString()`) instead of a string literal.
  *
@@ -61,6 +73,17 @@ export interface RefInfo {
  */
 export class RefTokenMarker {
   constructor(public readonly varName: string) {}
+}
+
+/**
+ * Marker that instructs the AST emitter to spread the result of a call
+ * expression into the action array instead of emitting a single action.
+ *
+ * Used for calls like `applyTheme(darkTheme)` where the function returns
+ * an array of actions that should be inlined into the trigger's action list.
+ */
+export class ActionSpreadMarker {
+  constructor(public readonly callNode: ts.CallExpression) {}
 }
 
 export interface ConverterContext {
@@ -77,6 +100,12 @@ export interface ConverterContext {
    * Used to rewrite `x.turnOn()` → `{ 'light.turn_on': { id: token } }`.
    */
   knownRefs: Map<string, RefInfo>;
+  /**
+   * Maps HA entity variable name → entity info.
+   * Populated from module-level `const x = useHAEntity('light.kitchen')` declarations.
+   * Used to rewrite `x.toggle()` → `{ 'homeassistant.action': { action: 'light.toggle', ... } }`.
+   */
+  knownHAEntities: Map<string, HAEntityInfo>;
   /** Accumulated errors — populated by convertStatements. */
   errors: ConversionError[];
 }
@@ -317,6 +346,15 @@ function convertCall(
     return convertDelay(call, ctx, constMap);
   }
 
+  // applyTheme(theme) → spread into action array
+  if (ts.isIdentifier(callee) && callee.text === 'applyTheme') {
+    if (call.arguments.length !== 1) {
+      ctx.errors.push({ message: 'applyTheme() requires exactly one theme argument.', node: call });
+      return null;
+    }
+    return new ActionSpreadMarker(call);
+  }
+
   // logger.log(message, level?)
   if (
     ts.isPropertyAccessExpression(callee) &&
@@ -338,6 +376,13 @@ function convertCall(
     ts.isIdentifier(callee.expression)
   ) {
     const refName = callee.expression.text;
+
+    // Check HA entity bindings first
+    const haEntity = ctx.knownHAEntities.get(refName);
+    if (haEntity) {
+      return convertHAEntityAction(haEntity, callee.name.text, call.arguments, ctx, constMap);
+    }
+
     const refInfo = ctx.knownRefs.get(refName);
     if (refInfo) {
       return convertRefAction(refInfo, callee.name.text, call.arguments, ctx, constMap);
@@ -345,7 +390,7 @@ function convertCall(
   }
 
   ctx.errors.push({
-    message: `Call to '${callee.getText()}' is not supported inside scripts. Only delay(), logger.log(), ref.action(), and other script functions can be called.`,
+    message: `Call to '${callee.getText()}' is not supported inside scripts. Only delay(), logger.log(), applyTheme(), ref.action(), haEntity.action(), and other script functions can be called.`,
     node: call,
   });
   return null;
@@ -580,4 +625,90 @@ function buildRefActionYaml(
     node: arg,
   });
   return { [yamlKey]: refMarker };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// HA entity action conversion
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Convert a HA entity action call (e.g. `kitchen.toggle()`) into an ESPHome
+ * YAML `homeassistant.action` object.
+ *
+ * @example
+ * kitchen.toggle()
+ * → { 'homeassistant.action': { action: 'light.toggle', data: { entity_id: 'light.kitchen' } } }
+ *
+ * kitchen.turnOn({ brightness: 128 })
+ * → { 'homeassistant.action': { action: 'light.turn_on', data: { entity_id: '...', brightness: 128 } } }
+ */
+function convertHAEntityAction(
+  entityInfo: HAEntityInfo,
+  methodName: string,
+  args: ts.NodeArray<ts.Expression>,
+  ctx: ConverterContext,
+  constMap: ConstMap,
+): unknown {
+  const domainActions = HA_ACTION_MAP[entityInfo.domain];
+  if (!domainActions) {
+    ctx.errors.push({
+      message: `HA entity domain '${entityInfo.domain}' has no known actions. Entity: '${entityInfo.entityId}'.`,
+      node: args.length > 0 ? args[0] : undefined,
+    });
+    return null;
+  }
+
+  const haAction = domainActions[methodName];
+  if (!haAction) {
+    ctx.errors.push({
+      message: `Unknown action '${methodName}' for HA domain '${entityInfo.domain}'. Known actions: ${Object.keys(domainActions).join(', ')}.`,
+      node: args.length > 0 ? args[0] : undefined,
+    });
+    return null;
+  }
+
+  const data: Record<string, unknown> = {
+    entity_id: entityInfo.entityId,
+  };
+
+  // Extract parameters from the object literal argument (if any).
+  if (args.length > 0) {
+    const [arg] = args;
+    if (ts.isObjectLiteralExpression(arg)) {
+      for (const prop of arg.properties) {
+        if (!ts.isPropertyAssignment(prop)) continue;
+        const key = ts.isIdentifier(prop.name) ? prop.name.text
+          : ts.isStringLiteral(prop.name) ? prop.name.text : null;
+        if (!key) continue;
+
+        const yamlPropKey = camelToSnake(key);
+
+        if (ts.isNumericLiteral(prop.initializer)) {
+          data[yamlPropKey] = Number(prop.initializer.text);
+        } else if (ts.isStringLiteral(prop.initializer)) {
+          data[yamlPropKey] = prop.initializer.text;
+        } else if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+          data[yamlPropKey] = true;
+        } else if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
+          data[yamlPropKey] = false;
+        } else if (ts.isIdentifier(prop.initializer) && constMap.has(prop.initializer.text)) {
+          data[yamlPropKey] = constMap.get(prop.initializer.text)!;
+        } else {
+          const result = exprToCpp(prop.initializer, constMap);
+          if (result.ok) {
+            data[yamlPropKey] = result.cpp;
+          } else {
+            ctx.errors.push({ message: `Cannot convert HA action parameter '${key}': ${result.error}`, node: prop.initializer });
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    'homeassistant.action': {
+      action: haAction,
+      data,
+    },
+  };
 }

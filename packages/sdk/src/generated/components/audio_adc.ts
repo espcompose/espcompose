@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { es7210_ES7210, es7243e_ES7243E, i2c_I2CBus } from "../markers";
 interface Es7210Props extends _CoreComponent {
@@ -28,7 +28,7 @@ interface Es7210Props extends _CoreComponent {
      */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x40`. */
-    address?: unknown;
+    address?: number;
 }
 interface Es7243eProps extends _CoreComponent {
     /**
@@ -42,7 +42,7 @@ interface Es7243eProps extends _CoreComponent {
      */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x40`. */
-    address?: unknown;
+    address?: number;
 }
 export type AudioAdcProps = ({
     platform: "es7210";

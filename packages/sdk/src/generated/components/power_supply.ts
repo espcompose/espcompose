@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { power_supply_PowerSupply } from "../markers";
-export interface PowerSupplyEnableTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface PowerSupplyKeepOnTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface PowerSupplyProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to control the power supply on. */
     pin: Pin;
@@ -29,12 +13,12 @@ export interface PowerSupplyProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The time that the power supply needs for startup. The output component will...
      * @yamlKey enable_time
      */
-    enableTime?: PowerSupplyEnableTimeProps;
+    enableTime?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time the power supply should be kept enabled after the last output that...
      * @yamlKey keep_on_time
      */
-    keepOnTime?: PowerSupplyKeepOnTimeProps;
+    keepOnTime?: TimePeriod;
     /**
      * bool: If the power supply should be enabled when the power supply component is setup. Defaults to false. The startup ...
      * @yamlKey enable_on_boot

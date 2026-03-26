@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 import type { _PackagesPackage } from "../bases";
 export interface PackagesStringPropsFilesProps {
     path: unknown;
@@ -11,7 +11,7 @@ export interface PackagesStringPropsFilesProps {
 }
 export interface PackagesStringProps {
     /** string: The URL for the repository. */
-    url: unknown;
+    url: string;
     /** string: Base common path of included files. */
     path?: string;
     /** string: Username to be used for authentication, if required. */
@@ -22,7 +22,7 @@ export interface PackagesStringProps {
     /** List of files to include. Can be one of: */
     files?: Array<PackagesStringPropsFilesProps>;
     /** string: The Git ref(erence) to be used when pulling content from the repository. */
-    ref?: unknown;
+    ref?: string;
     /** [Time](/guides/configuration-types#time): The interval at which the content from the repository should be refreshed. */
     refresh?: string;
 }

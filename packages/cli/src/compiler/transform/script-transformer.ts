@@ -71,7 +71,7 @@
  */
 
 import ts from 'typescript';
-import { convertStatements, RefTokenMarker, type ConverterContext, type RefInfo } from './action-converter.js';
+import { convertStatements, RefTokenMarker, ActionSpreadMarker, type ConverterContext, type RefInfo, type HAEntityInfo } from './action-converter.js';
 import { mapParamType } from './param-type-mapper.js';
 import { MARKER_ACTION_CLASS_MAP, camelToSnake } from '@esphome/compose';
 
@@ -91,6 +91,7 @@ interface TransformCtx {
   knownScripts: Set<string>;
   scriptParams: Map<string, string[]>;
   knownRefs: Map<string, RefInfo>;
+  knownHAEntities: Map<string, HAEntityInfo>;
   addDiag: (message: string, node?: ts.Node) => void;
 }
 
@@ -135,10 +136,13 @@ export function transformScriptFile(
   // ── Step 1b: Collect module-level useRef<MarkerType>() declarations ─────────
   const knownRefs = collectActionRefDeclarations(sourceFile);
 
+  // ── Step 1c: Collect module-level useHAEntity() declarations ────────────
+  const knownHAEntities = collectHAEntityDeclarations(sourceFile);
+
   // ── Step 2: Convert each function body to action metadata ─────────────────
-  const tctx: TransformCtx = { knownScripts, scriptParams, knownRefs, addDiag };
+  const tctx: TransformCtx = { knownScripts, scriptParams, knownRefs, knownHAEntities, addDiag };
   const scriptMetadata = scriptFunctions.map((fn) => {
-    const ctx: ConverterContext = { knownScripts, scriptParams, knownRefs, errors: [] };
+    const ctx: ConverterContext = { knownScripts, scriptParams, knownRefs, knownHAEntities, errors: [] };
     const bodyStatements = fn.node.body ? Array.from(fn.node.body.statements) : [];
     const actions = convertStatements(bodyStatements, ctx);
     for (const err of ctx.errors) addDiag(err.message, err.node);
@@ -185,29 +189,31 @@ interface ScriptFn {
 function collectActionRefDeclarations(sourceFile: ts.SourceFile): Map<string, RefInfo> {
   const refs = new Map<string, RefInfo>();
 
-  for (const stmt of sourceFile.statements) {
-    if (!ts.isVariableStatement(stmt)) continue;
-    const isConst = (stmt.declarationList.flags & ts.NodeFlags.Const) !== 0;
-    if (!isConst) continue;
-
-    for (const decl of stmt.declarationList.declarations) {
-      if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
-
-      if (ts.isCallExpression(decl.initializer)) {
-        const callee = decl.initializer.expression;
-        if (ts.isIdentifier(callee) && callee.text === 'useRef') {
-          const classes = extractActionClassesFromTypeArgs(decl.initializer);
-          if (classes) {
-            refs.set(decl.name.text, {
-              name: decl.name.text,
-              classes,
-            });
+  function visit(node: ts.Node): void {
+    if (ts.isVariableStatement(node)) {
+      const isConst = (node.declarationList.flags & ts.NodeFlags.Const) !== 0;
+      if (isConst) {
+        for (const decl of node.declarationList.declarations) {
+          if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
+          if (ts.isCallExpression(decl.initializer)) {
+            const callee = decl.initializer.expression;
+            if (ts.isIdentifier(callee) && callee.text === 'useRef') {
+              const classes = extractActionClassesFromTypeArgs(decl.initializer);
+              if (classes) {
+                refs.set(decl.name.text, {
+                  name: decl.name.text,
+                  classes,
+                });
+              }
+            }
           }
         }
       }
     }
+    ts.forEachChild(node, visit);
   }
 
+  visit(sourceFile);
   return refs;
 }
 
@@ -231,6 +237,50 @@ function extractActionClassesFromTypeArgs(call: ts.CallExpression): string[] | u
   }
 
   return undefined;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// HA entity declaration collection
+//
+// Scans module-level declarations for:
+//   const kitchen = useHAEntity('light.kitchen_floods');
+//
+// Extracts the variable name, entity ID string literal, and domain.
+// ────────────────────────────────────────────────────────────────────────────
+
+function collectHAEntityDeclarations(sourceFile: ts.SourceFile): Map<string, HAEntityInfo> {
+  const entities = new Map<string, HAEntityInfo>();
+
+  function visit(node: ts.Node): void {
+    if (ts.isVariableStatement(node)) {
+      const isConst = (node.declarationList.flags & ts.NodeFlags.Const) !== 0;
+      if (isConst) {
+        for (const decl of node.declarationList.declarations) {
+          if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
+          if (ts.isCallExpression(decl.initializer)) {
+            const callee = decl.initializer.expression;
+            if (ts.isIdentifier(callee) && callee.text === 'useHAEntity') {
+              const args = decl.initializer.arguments;
+              if (args.length >= 1 && ts.isStringLiteral(args[0])) {
+                const entityId = args[0].text;
+                const dotIndex = entityId.indexOf('.');
+                const domain = dotIndex >= 0 ? entityId.slice(0, dotIndex) : entityId;
+                entities.set(decl.name.text, {
+                  name: decl.name.text,
+                  entityId,
+                  domain,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return entities;
 }
 
 function collectScriptFunctions(sourceFile: ts.SourceFile): ScriptFn[] {
@@ -554,7 +604,7 @@ function rewriteTriggerAttributes(
   factory: ts.NodeFactory,
   tctx: TransformCtx,
 ): ts.JsxAttributes {
-  const { knownScripts, scriptParams, knownRefs, addDiag } = tctx;
+  const { knownScripts, scriptParams, knownRefs, knownHAEntities, addDiag } = tctx;
   const newAttrs: ts.JsxAttributeLike[] = [];
   let changed = false;
 
@@ -602,7 +652,7 @@ function rewriteTriggerAttributes(
     // {() => { … }} → inline arrow function → convert body to action array
     if (ts.isJsxExpression(init) && init.expression && ts.isArrowFunction(init.expression)) {
       const arrow = init.expression as ts.ArrowFunction;
-      const ctx: ConverterContext = { knownScripts, scriptParams, knownRefs, errors: [] };
+      const ctx: ConverterContext = { knownScripts, scriptParams, knownRefs, knownHAEntities, errors: [] };
       let bodyStatements: readonly ts.Statement[];
 
       if (ts.isBlock(arrow.body)) {
@@ -642,10 +692,17 @@ function rewriteTriggerAttributes(
  * function bodies.
  */
 function actionArrayToAst(factory: ts.NodeFactory, actions: unknown[]): ts.ArrayLiteralExpression {
-  return factory.createArrayLiteralExpression(
-    actions.map((a) => valueToAst(factory, a) as ts.Expression),
-    false,
-  );
+  const elements: ts.Expression[] = [];
+  for (const a of actions) {
+    if (a instanceof ActionSpreadMarker) {
+      // Spread the call's return value into the action array:
+      //   applyTheme(darkTheme)  →  ...applyTheme(darkTheme)
+      elements.push(factory.createSpreadElement(a.callNode));
+    } else {
+      elements.push(valueToAst(factory, a) as ts.Expression);
+    }
+  }
+  return factory.createArrayLiteralExpression(elements, false);
 }
 
 function valueToAst(factory: ts.NodeFactory, value: unknown): ts.Expression {

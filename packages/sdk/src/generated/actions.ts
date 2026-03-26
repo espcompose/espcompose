@@ -3,6 +3,8 @@
 
 /* eslint-disable */
 
+import type { TriggerHandler, TimePeriod, MACAddress } from "../types";
+
 // ── ::esphome::hub75::HUB75Display ───────────────────────────────────
 
 export interface HUB75Display_SetBrightnessParams {
@@ -166,12 +168,12 @@ export interface APIServer_ServiceParams {
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
   /** @yamlKey on_success */
-  onSuccess?: unknown;
+  onSuccess?: TriggerHandler;
   /** **[Automation](/automations)**: Optional automation to execute when the Home Assistant action call fails. See [Action Response Handling](https://esphome.io/components/api#action-response-handling).
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler;
 }
 
 export interface APIServer_ActionParams {
@@ -207,19 +209,19 @@ export interface APIServer_ActionParams {
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
   /** @yamlKey on_success */
-  onSuccess?: unknown;
+  onSuccess?: TriggerHandler;
   /** **[Automation](/automations)**: Optional automation to execute when the Home Assistant action call fails. See [Action Response Handling](https://esphome.io/components/api#action-response-handling).
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler;
 }
 
 export interface APIServer_EventParams {
   /** **string**: The event to create - must begin with `esphome.`
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
-  event: unknown;
+  event: string;
   /** **mapping**: Optional *static* data to pass along with the event.
 
   *See also: [Native API Component](https://esphome.io/components/api#configuration-variables)* */
@@ -275,27 +277,27 @@ export interface AT581XComponent_SettingsParams {
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
   /** @yamlKey poweron_selfcheck_time */
-  poweronSelfcheckTime?: Record<string, unknown>;
+  poweronSelfcheckTime?: number;
   /** **int**: Any of the possible power profile (48, 56, 63, 70, 77, 91, 105, 115, 40, 44, 47, 51, 54, 61, 68, 78) in µA
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
   /** @yamlKey power_consumption */
-  powerConsumption?: "4.8e-05" | "5.6e-05" | "6.3e-05" | "7e-05" | "7.7e-05" | "9.1e-05" | "0.000105" | "0.000115" | "4e-05" | "4.4e-05" | "4.7e-05" | "5.1e-05" | "5.4e-05" | "6.1e-05" | "6.8e-05" | "7.8e-05";
+  powerConsumption?: number;
   /** **int**: The delay after an end-of-trigger event where the detection will not trigger anymore. Max 65535ms
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
   /** @yamlKey protect_time */
-  protectTime?: Record<string, unknown>;
+  protectTime?: number;
   /** **int**: The delay while a detection must be active to change the state of the sensor. Max 65535ms
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
   /** @yamlKey trigger_base */
-  triggerBase?: Record<string, unknown>;
+  triggerBase?: number;
   /** **int**: The delay that the output will stay high after a detection event. This is usually what you want to change.
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
   /** @yamlKey trigger_keep */
-  triggerKeep?: Record<string, unknown>;
+  triggerKeep?: number;
   /** **int**: The analog gain to use for threshold test. Any value in range 0-12, with 12 being the lowest gain and 0 the highest
 
   *See also: [AirTouch AT581x Radar](https://esphome.io/components/at581x#configuration-variables)* */
@@ -314,7 +316,7 @@ export interface AT581XComponentActions {
 
 export interface AudioAdc_SetMicGainParams {
   /** @yamlKey mic_gain */
-  micGain: number;
+  micGain: unknown;
 }
 
 export interface AudioAdcActions {
@@ -325,7 +327,7 @@ export interface AudioAdcActions {
 // ── audio_dac::AudioDac ──────────────────────────────────────────────
 
 export interface AudioDac_SetVolumeParams {
-  volume: number;
+  volume: unknown;
 }
 
 export interface AudioDacActions {
@@ -375,7 +377,7 @@ export interface BLEClient_BleWriteParams {
   /** **list of bytes**: The value to be written.
 
   *See also: [BLE Client](https://esphome.io/components/ble_client#configuration-variables)* */
-  value: number;
+  value: number[];
 }
 
 export interface BLEClient_NumericComparisonReplyParams {
@@ -413,7 +415,7 @@ export interface BM8563_StartTimerParams {
   /** **[Time](/guides/configuration-types#config-time)**: The time duration for the timer.
 
   *See also: [BM8563 Time Source](https://esphome.io/components/time/bm8563#bm8563start_timer-action)* */
-  duration: Record<string, unknown>;
+  duration: TimePeriod;
 }
 
 export interface BM8563Actions {
@@ -441,7 +443,7 @@ export interface CanbusComponent_SendParams {
   useExtendedId?: boolean;
   /** @yamlKey remote_transmission_request */
   remoteTransmissionRequest?: boolean;
-  data: number;
+  data: unknown;
 }
 
 export interface CanbusComponentActions {
@@ -455,14 +457,14 @@ export interface CC1101Component_SendPacketParams {
   /** **list**: The packet to send, length should match the configured `packet_length`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  data: number;
+  data: unknown;
 }
 
 export interface CC1101Component_SetFrequencyParams {
   /** **frequency**: The frequency to set. Range: `300MHz` to `928MHz`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  value: number;
+  value: unknown;
 }
 
 export interface CC1101Component_SetOutputPowerParams {
@@ -511,14 +513,14 @@ export interface CC1101Component_SetFilterBandwidthParams {
   /** **frequency**: The filter bandwidth. Range: `58kHz` to `812kHz`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  value: number;
+  value: unknown;
 }
 
 export interface CC1101Component_SetFskDeviationParams {
   /** **frequency**: The frequency deviation. Range: `1.5kHz` to `381kHz`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  value: number;
+  value: unknown;
 }
 
 export interface CC1101Component_SetMskDeviationParams {
@@ -539,14 +541,14 @@ export interface CC1101Component_SetChannelSpacingParams {
   /** **frequency**: The spacing between channels. Range: `25kHz` to `405kHz`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  value: number;
+  value: unknown;
 }
 
 export interface CC1101Component_SetIfFrequencyParams {
   /** **frequency**: The intermediate frequency. Range: `25kHz` to `788kHz`.
 
   *See also: [CC1101 Low-Power Sub-1 GHz RF Transceiver](https://esphome.io/components/cc1101#configuration-variables)* */
-  value: number;
+  value: unknown;
 }
 
 export interface CC1101ComponentActions {
@@ -594,7 +596,7 @@ export interface Climate_ControlParams {
   /** **string**: Put the climate device in a specific mode. One of
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
-  mode?: "OFF" | "HEAT_COOL" | "COOL" | "HEAT" | "DRY" | "FAN_ONLY" | "AUTO";
+  mode?: string;
   /** **float**: Set the target temperature of a climate device.
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
@@ -619,7 +621,7 @@ export interface Climate_ControlParams {
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
   /** @yamlKey fan_mode */
-  fanMode?: "ON" | "OFF" | "AUTO" | "LOW" | "MEDIUM" | "HIGH" | "MIDDLE" | "FOCUS" | "DIFFUSE" | "QUIET";
+  fanMode?: string;
   /** **string**: Set one of the supported custom_fan_modes of the climate device.
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
@@ -628,7 +630,7 @@ export interface Climate_ControlParams {
   /** **string**: Set the preset of the climate device. One of `ECO`, `AWAY`, `BOOST`, `COMFORT`, `HOME`, `SLEEP`, `ACTIVITY`.
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
-  preset?: "NONE" | "ECO" | "AWAY" | "BOOST" | "COMFORT" | "HOME" | "SLEEP" | "ACTIVITY";
+  preset?: string;
   /** **string**: Set one of the supported custom_presets of the climate device.
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
@@ -638,7 +640,7 @@ export interface Climate_ControlParams {
 
   *See also: [Climate Component](https://esphome.io/components/climate#climatecontrol-action)* */
   /** @yamlKey swing_mode */
-  swingMode?: "OFF" | "BOTH" | "VERTICAL" | "HORIZONTAL";
+  swingMode?: string;
 }
 
 export interface ClimateActions {
@@ -663,7 +665,7 @@ export interface Cover_ControlParams {
   /** **string**: The state to set the cover to - one of `OPEN` or `CLOSE`.
 
   *See also: [Cover Component](https://esphome.io/components/cover#covercontrol-action)* */
-  state?: "OPEN" | "CLOSED";
+  state?: string;
   /** **float**: The cover position to set.
 
   *See also: [Cover Component](https://esphome.io/components/cover#covercontrol-action)* */
@@ -687,7 +689,7 @@ export interface Cover_PublishParams {
 
   *See also: [Template Cover](https://esphome.io/components/cover/template#in-some-trigger)* */
   /** @yamlKey current_operation */
-  currentOperation?: "IDLE" | "OPENING" | "CLOSING";
+  currentOperation?: string;
   /** **float**: The tilt position to publish, from 0 (CLOSED) to 1.0 (OPEN)
 
   *See also: [Template Cover](https://esphome.io/components/cover/template#in-some-trigger)* */
@@ -732,7 +734,7 @@ export interface DateTimeEntity_SetParams {
   /** **string**: The value to set the datetime to.
 
   *See also: [Datetime Component](https://esphome.io/components/datetime#using-a-lambda)* */
-  datetime: unknown;
+  datetime: string;
 }
 
 export interface DateTimeEntityActions {
@@ -746,7 +748,7 @@ export interface TimeEntity_SetParams {
   /** **string**: The value to set the datetime to.
 
   *See also: [Datetime Component](https://esphome.io/components/datetime#using-a-lambda)* */
-  time: unknown;
+  time: string;
 }
 
 export interface TimeEntityActions {
@@ -765,7 +767,7 @@ export interface DeepSleepComponent_EnterParams {
   /** **string**: The time of day to wake up. Only on ESP32.
 
   *See also: [Deep Sleep Component](https://esphome.io/components/deep_sleep#esp32-can-sleep-until-a-specific-time-of-day)* */
-  until?: unknown;
+  until?: string;
   /** **[ID](/guides/configuration-types#id)**: The ID of the time component to use for the `until` option. Only on ESP32.
 
   *See also: [Deep Sleep Component](https://esphome.io/components/deep_sleep#esp32-can-sleep-until-a-specific-time-of-day)* */
@@ -986,21 +988,24 @@ export interface ESP8266PWMActions {
 // ── espnow::ESPNowComponent ──────────────────────────────────────────
 
 export interface ESPNowComponent_BroadcastParams {
-  address?: unknown;
+  /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
+
+  *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
+  address?: MACAddress;
   /** **string or list of bytes**: The data to be sent.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  data: number;
+  data: string | number[];
   /** **[Automation](/automations)**: An automation to perform when the data is sent successfully.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
   /** @yamlKey on_sent */
-  onSent?: unknown;
+  onSent?: TriggerHandler[];
   /** **[Automation](/automations)**: An automation to perform when the data could not be sent.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler[];
   /** **boolean**: The automation will wait for the data to be sent and for the `on_sent` or `on_error` actions to be finished before continuing with the next action. Defaults to `true`.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
@@ -1017,21 +1022,21 @@ export interface ESPNowComponent_SendParams {
   /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  address: number;
+  address: MACAddress;
   /** **string or list of bytes**: The data to be sent.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  data: number;
+  data: string | number[];
   /** **[Automation](/automations)**: An automation to perform when the data is sent successfully.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
   /** @yamlKey on_sent */
-  onSent?: unknown;
+  onSent?: TriggerHandler[];
   /** **[Automation](/automations)**: An automation to perform when the data could not be sent.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler[];
   /** **boolean**: The automation will wait for the data to be sent and for the `on_sent` or `on_error` actions to be finished before continuing with the next action. Defaults to `true`.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
@@ -1055,14 +1060,14 @@ export interface ESPNowComponent_DeleteParams {
   /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  address: number;
+  address: MACAddress;
 }
 
 export interface ESPNowComponent_AddParams {
   /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
 
   *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  address: number;
+  address: MACAddress;
 }
 
 export interface ESPNowComponentActions {
@@ -1181,7 +1186,7 @@ export interface Fan_TurnOnParams {
   /** **string**: Set the direction of the fan. Can be either `forward` or `reverse`. Defaults to not changing the direction.
 
   *See also: [Fan Component](https://esphome.io/components/fan#fanturn_on-action)* */
-  direction?: "FORWARD" | "REVERSE";
+  direction?: string;
 }
 
 export interface Fan_CycleSpeedParams {
@@ -1237,7 +1242,7 @@ export interface FingerprintGrowComponent_AuraLedControlParams {
   /** **string**: The state to set the LED. One of `BREATHING`, `FLASHING`, `ALWAYS_ON`, `ALWAYS_OFF`, `GRADUAL_ON` and `GRADUAL_OFF`.
 
   *See also: [Grow Fingerprint Reader](https://esphome.io/components/fingerprint_grow#configuration-variables)* */
-  state: "BREATHING" | "FLASHING" | "ALWAYS_ON" | "ALWAYS_OFF" | "GRADUAL_ON" | "GRADUAL_OFF";
+  state: string;
   /** **int**: The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`, `FLASHING`, `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
 
   *See also: [Grow Fingerprint Reader](https://esphome.io/components/fingerprint_grow#configuration-variables)* */
@@ -1245,7 +1250,7 @@ export interface FingerprintGrowComponent_AuraLedControlParams {
   /** **string**: The LED color to activate. For R503, one of `RED`, `BLUE` and `PURPLE`. For R503-RGB, one of `RED`, `BLUE`, `PURPLE`, `GREEN`, `YELLOW`, `CYAN` and `WHITE`.
 
   *See also: [Grow Fingerprint Reader](https://esphome.io/components/fingerprint_grow#configuration-variables)* */
-  color: "RED" | "BLUE" | "PURPLE" | "GREEN" | "YELLOW" | "CYAN" | "WHITE";
+  color: string;
   /** **int**: How many times to repeat the pattern. Only relevant for `BREATHING` and `FLASHING` states. 0 for infinite, or 1 to 255.
 
   *See also: [Grow Fingerprint Reader](https://esphome.io/components/fingerprint_grow#configuration-variables)* */
@@ -1298,7 +1303,7 @@ export interface GroveMotorDriveTB6612FNG_StopParams {
 }
 
 export interface GroveMotorDriveTB6612FNG_ChangeAddressParams {
-  address: unknown;
+  address: number;
 }
 
 export interface GroveMotorDriveTB6612FNGActions {
@@ -1383,7 +1388,7 @@ export interface HC8ComponentActions {
 // ── hdc302x::HDC302XComponent ────────────────────────────────────────
 
 export interface HDC302XComponent_HeaterOnParams {
-  power?: number;
+  power?: unknown;
   duration?: Record<string, unknown>;
 }
 
@@ -1425,7 +1430,7 @@ export interface HttpRequestComponent_SendParams {
   /** **string**: URL to which to send the request.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
-  url: number;
+  url: string;
   /** **mapping**: Map of HTTP headers. Values are [templatable](/automations/templates).
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1435,7 +1440,7 @@ export interface HttpRequestComponent_SendParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey collect_headers */
-  collectHeaders?: string;
+  collectHeaders?: string[];
   /** **boolean**: when set to `true`, the response data will be captured and placed into the `body` variable as a `std::string` for use in [lambdas](/automations/templates#config-lambda). Defaults to `false`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1445,21 +1450,21 @@ export interface HttpRequestComponent_SendParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_response */
-  onResponse?: unknown;
+  onResponse?: TriggerHandler;
   /** **[Automation](/automations)**: An automation to perform if the request cannot be completed.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler;
   /** **integer**: The maximum buffer size to be used to store the response. Defaults to `1 kB`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey max_response_buffer_size */
-  maxResponseBufferSize?: unknown;
+  maxResponseBufferSize?: number;
   /** **string**: HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`  ).
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
-  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method: string;
   body?: string;
   json?: Record<string, unknown>;
 }
@@ -1468,7 +1473,7 @@ export interface HttpRequestComponent_PostParams {
   /** **string**: URL to which to send the request.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
-  url: number;
+  url: string;
   /** **mapping**: Map of HTTP headers. Values are [templatable](/automations/templates).
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1478,7 +1483,7 @@ export interface HttpRequestComponent_PostParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey collect_headers */
-  collectHeaders?: string;
+  collectHeaders?: string[];
   /** **boolean**: when set to `true`, the response data will be captured and placed into the `body` variable as a `std::string` for use in [lambdas](/automations/templates#config-lambda). Defaults to `false`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1488,17 +1493,17 @@ export interface HttpRequestComponent_PostParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_response */
-  onResponse?: unknown;
+  onResponse?: TriggerHandler;
   /** **[Automation](/automations)**: An automation to perform if the request cannot be completed.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler;
   /** **integer**: The maximum buffer size to be used to store the response. Defaults to `1 kB`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey max_response_buffer_size */
-  maxResponseBufferSize?: unknown;
+  maxResponseBufferSize?: number;
   /** **string**: A HTTP body string to send with request.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1513,7 +1518,7 @@ export interface HttpRequestComponent_GetParams {
   /** **string**: URL to which to send the request.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
-  url: number;
+  url: string;
   /** **mapping**: Map of HTTP headers. Values are [templatable](/automations/templates).
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1523,7 +1528,7 @@ export interface HttpRequestComponent_GetParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey collect_headers */
-  collectHeaders?: string;
+  collectHeaders?: string[];
   /** **boolean**: when set to `true`, the response data will be captured and placed into the `body` variable as a `std::string` for use in [lambdas](/automations/templates#config-lambda). Defaults to `false`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
@@ -1533,17 +1538,17 @@ export interface HttpRequestComponent_GetParams {
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_response */
-  onResponse?: unknown;
+  onResponse?: TriggerHandler;
   /** **[Automation](/automations)**: An automation to perform if the request cannot be completed.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey on_error */
-  onError?: unknown;
+  onError?: TriggerHandler;
   /** **integer**: The maximum buffer size to be used to store the response. Defaults to `1 kB`.
 
   *See also: [HTTP Request](https://esphome.io/components/http_request#configuration-variables)* */
   /** @yamlKey max_response_buffer_size */
-  maxResponseBufferSize?: unknown;
+  maxResponseBufferSize?: number;
 }
 
 export interface HttpRequestComponentActions {
@@ -1562,7 +1567,7 @@ export interface OtaHttpRequestComponent_FlashParams {
 
   *See also: [OTA Update via HTTP Request](https://esphome.io/components/ota/http_request#configuration-variables)* */
   /** @yamlKey md5_url */
-  md5Url?: number;
+  md5Url?: string;
   /** **string**: The [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used with `md5_url` (below); must be specified if `md5_url` is not.
 
   *See also: [OTA Update via HTTP Request](https://esphome.io/components/ota/http_request#configuration-variables)* */
@@ -1578,7 +1583,7 @@ export interface OtaHttpRequestComponent_FlashParams {
   /** **string**: The URL of the binary file containing the (new) firmware to be installed.
 
   *See also: [OTA Update via HTTP Request](https://esphome.io/components/ota/http_request#configuration-variables)* */
-  url: number;
+  url: string;
 }
 
 export interface OtaHttpRequestComponentActions {
@@ -1642,7 +1647,7 @@ export interface LEDCOutput_SetFrequencyParams {
   /** The frequency to set in Hz.
 
   *See also: [ESP32 LEDC Output](https://esphome.io/components/output/ledc#outputledcset_frequency-action)* */
-  frequency: number;
+  frequency: unknown;
 }
 
 export interface LEDCOutputActions {
@@ -1672,11 +1677,11 @@ export interface AddressableLightState_AddressableSetParams {
   /** @yamlKey range_to */
   rangeTo?: number;
   /** @yamlKey color_brightness */
-  colorBrightness?: number;
-  red?: number;
-  green?: number;
-  blue?: number;
-  white?: number;
+  colorBrightness?: unknown;
+  red?: unknown;
+  green?: unknown;
+  blue?: unknown;
+  white?: unknown;
 }
 
 export interface AddressableLightStateActions {
@@ -1698,19 +1703,19 @@ export interface LightState_ControlParams {
 
   *See also: [Light Component](https://esphome.io/components/light#configuration-variables)* */
   state?: boolean;
-  brightness?: number;
+  brightness?: unknown;
   /** @yamlKey color_brightness */
-  colorBrightness?: number;
-  red?: number;
-  green?: number;
-  blue?: number;
-  white?: number;
+  colorBrightness?: unknown;
+  red?: unknown;
+  green?: unknown;
+  blue?: unknown;
+  white?: unknown;
   /** @yamlKey color_temperature */
-  colorTemperature?: number;
+  colorTemperature?: unknown;
   /** @yamlKey cold_white */
-  coldWhite?: number;
+  coldWhite?: unknown;
   /** @yamlKey warm_white */
-  warmWhite?: number;
+  warmWhite?: unknown;
   /** @yamlKey transition_length */
   transitionLength?: Record<string, unknown>;
   /** @yamlKey flash_length */
@@ -1721,20 +1726,23 @@ export interface LightState_ControlParams {
 export interface LightState_TurnOnParams {
   /** @yamlKey color_mode */
   colorMode?: "ON_OFF" | "BRIGHTNESS" | "WHITE" | "COLOR_TEMPERATURE" | "COLD_WARM_WHITE" | "RGB" | "RGB_WHITE" | "RGB_COLOR_TEMPERATURE" | "RGB_COLD_WARM_WHITE";
-  state?: unknown;
-  brightness?: number;
+  /** **boolean**: The ON/OFF state for the light.
+
+  *See also: [Light Component](https://esphome.io/components/light#configuration-variables)* */
+  state?: boolean;
+  brightness?: unknown;
   /** @yamlKey color_brightness */
-  colorBrightness?: number;
-  red?: number;
-  green?: number;
-  blue?: number;
-  white?: number;
+  colorBrightness?: unknown;
+  red?: unknown;
+  green?: unknown;
+  blue?: unknown;
+  white?: unknown;
   /** @yamlKey color_temperature */
-  colorTemperature?: number;
+  colorTemperature?: unknown;
   /** @yamlKey cold_white */
-  coldWhite?: number;
+  coldWhite?: unknown;
   /** @yamlKey warm_white */
-  warmWhite?: number;
+  warmWhite?: unknown;
   /** @yamlKey transition_length */
   transitionLength?: Record<string, unknown>;
   /** @yamlKey flash_length */
@@ -1750,7 +1758,7 @@ export interface LightState_TurnOffParams {
 
 export interface LightState_DimRelativeParams {
   /** @yamlKey relative_brightness */
-  relativeBrightness: number;
+  relativeBrightness: unknown;
   /** @yamlKey transition_length */
   transitionLength?: Record<string, unknown>;
   /** @yamlKey brightness_limits */
@@ -1819,11 +1827,11 @@ export interface Logger_LogParams {
   /** **list of [lambda](/automations/templates#config-lambda)**: The optional arguments for the
 
   *See also: [Logger Component](https://esphome.io/components/logger#loggerlog-action)* */
-  args?: unknown;
+  args?: unknown[];
   /** **string**: The [log level](https://esphome.io/components/logger#logger-log_levels) to print the message
 
   *See also: [Logger Component](https://esphome.io/components/logger#loggerlog-action)* */
-  level?: "ERROR" | "WARN" | "INFO" | "DEBUG" | "VERBOSE" | "VERY_VERBOSE";
+  level?: string;
   /** **string**: The tag (seen in front of the message in the logs) to print the message
 
   *See also: [Logger Component](https://esphome.io/components/logger#loggerlog-action)* */
@@ -1859,7 +1867,7 @@ export interface lv_canvas_t_FillParams {
 export interface lv_canvas_t_SetPixelsParams {
   color: unknown;
   opa?: unknown;
-  points: unknown;
+  points: unknown[];
 }
 
 export interface lv_canvas_t_DrawRectangleParams {
@@ -1938,7 +1946,7 @@ export interface lv_canvas_t_DrawImageParams {
 
 export interface lv_canvas_t_DrawLineParams {
   opa?: unknown;
-  points: unknown;
+  points: unknown[];
   width?: unknown;
   color?: unknown;
   /** @yamlKey round_start */
@@ -1948,7 +1956,7 @@ export interface lv_canvas_t_DrawLineParams {
 }
 
 export interface lv_canvas_t_DrawPolygonParams {
-  points: unknown;
+  points: unknown[];
   radius?: unknown;
   /** @yamlKey bg_opa */
   bgOpa?: unknown;
@@ -2250,7 +2258,7 @@ export interface lv_style_t_UpdateParams {
   /** @yamlKey widget_2 */
   widget2?: unknown;
   main?: Record<string, unknown>;
-  id?: Record<string, unknown>;
+  id?: Record<string, unknown>[];
   state?: Record<string, unknown>;
   /** @yamlKey repeat_count */
   repeatCount?: unknown;
@@ -2289,7 +2297,7 @@ export interface lv_style_t_UpdateParams {
   selectedText?: unknown;
   /** @yamlKey dropdown_list */
   dropdownList?: Record<string, unknown>;
-  options?: unknown;
+  options?: unknown[];
   dir?: unknown;
   selected?: Record<string, unknown>;
   /** @yamlKey pivot_x */
@@ -2309,15 +2317,15 @@ export interface lv_style_t_UpdateParams {
   longMode?: unknown;
   color?: unknown;
   brightness?: unknown;
-  points?: unknown;
+  points?: unknown[];
   ticks?: Record<string, unknown>;
-  scales?: Record<string, unknown>;
+  scales?: Record<string, unknown>[];
   /** @yamlKey visible_row_count */
   visibleRowCount?: unknown;
   cursor?: Record<string, unknown>;
   /** @yamlKey textarea_placeholder */
   textareaPlaceholder?: Record<string, unknown>;
-  styles?: unknown;
+  styles?: unknown[];
   /** @yamlKey grid_cell_x_align */
   gridCellXAlign?: unknown;
   /** @yamlKey grid_cell_y_align */
@@ -2489,7 +2497,7 @@ export interface MAX7219ComponentActions {
 
 export interface MediaPlayer_PlayMediaParams {
   /** @yamlKey media_url */
-  mediaUrl: number;
+  mediaUrl: unknown;
   announcement?: boolean;
 }
 
@@ -2570,7 +2578,7 @@ export interface MediaPlayer_ClearPlaylistParams {
 }
 
 export interface MediaPlayer_VolumeSetParams {
-  volume: number;
+  volume: unknown;
 }
 
 export interface MediaPlayerActions {
@@ -2715,11 +2723,11 @@ export interface SourceSpeakerActions {
 // ── mqtt::MQTTClientComponent ────────────────────────────────────────
 
 export interface MQTTClientComponent_PublishParams {
-  topic: number;
+  topic: unknown;
   /** **string**: The message content.
 
   *See also: [MQTT Client Component](https://esphome.io/components/mqtt#configuration-variables)* */
-  payload: number;
+  payload: string;
   /** **int**: The [Quality of
 
   *See also: [MQTT Client Component](https://esphome.io/components/mqtt#configuration-variables)* */
@@ -2731,7 +2739,7 @@ export interface MQTTClientComponent_PublishParams {
 }
 
 export interface MQTTClientComponent_PublishJsonParams {
-  topic: number;
+  topic: unknown;
   /** **[lambda](/automations/templates#config-lambda)**: The message content.
 
   *See also: [MQTT Client Component](https://esphome.io/components/mqtt#configuration-variables)* */
@@ -2768,7 +2776,7 @@ export interface NAU7802SensorActions {
 // ── nextion::Nextion ─────────────────────────────────────────────────
 
 export interface Nextion_SetBrightnessParams {
-  brightness: number;
+  brightness: unknown;
 }
 
 export interface NextionActions {
@@ -2782,7 +2790,7 @@ export interface NextionBinarySensor_PublishParams {
   /** **string**: The boolean state to publish.
 
   *See also: [Nextion Binary Sensor Component](https://esphome.io/components/binary_sensor/nextion#configuration-variables)* */
-  state: boolean;
+  state: string;
   /** **bool**: Publish new state to Home Assistant. Default is true.
 
   *See also: [Nextion Binary Sensor Component](https://esphome.io/components/binary_sensor/nextion#configuration-variables)* */
@@ -2806,7 +2814,7 @@ export interface NextionSensor_PublishParams {
   /** **string**: The float state to publish.
 
   *See also: [Nextion Sensor Component](https://esphome.io/components/sensor/nextion#in-some-trigger)* */
-  state: number;
+  state: string;
   /** **bool**: Publish new state to Home Assistant. Default is true.
 
   *See also: [Nextion Sensor Component](https://esphome.io/components/sensor/nextion#in-some-trigger)* */
@@ -2830,7 +2838,7 @@ export interface NextionSwitch_PublishParams {
   /** **string**: The boolean state to publish.
 
   *See also: [Nextion Switch Component](https://esphome.io/components/switch/nextion#in-some-trigger)* */
-  state: boolean;
+  state: string;
   /** **bool**: Publish new state to Home Assistant. Default is true.
 
   *See also: [Nextion Switch Component](https://esphome.io/components/switch/nextion#in-some-trigger)* */
@@ -2885,7 +2893,7 @@ export interface Number_OperationParams {
   /** **string**: What operation to perform on the number component. One of `TO_MIN`, `TO_MAX`, `DECREMENT` or `INCREMENT` (case insensitive). When writing a lambda for this field, then return one of the following enum values: `NUMBER_OP_TO_MIN`, `NUMBER_OP_TO_MAX`, `NUMBER_OP_DECREMENT` or `NUMBER_OP_INCREMENT`.
 
   *See also: [Number Component](https://esphome.io/components/number#or-templated-lambda)* */
-  operation: "INCREMENT" | "DECREMENT" | "TO_MIN" | "TO_MAX";
+  operation: string;
   /** **bool**: Can be used with `DECREMENT` or `INCREMENT` to specify whether or not to wrap around the value when respectively the minimum or maximum value of the number is exceeded.
 
   *See also: [Number Component](https://esphome.io/components/number#or-templated-lambda)* */
@@ -2927,11 +2935,11 @@ export interface OnlineImage_SetUrlParams {
   /** **url**: The new URL to download the image from.
 
   *See also: [Online Image Component](https://esphome.io/components/online_image#configuration-variables)* */
-  url: number;
+  url: string;
   /** **bool**: If `true`, the image will be updated (fetched) immediately after setting the new URL. If `false`, the URL will be set but the image will **not** be updated until you call the `update` action. Defaults to `true`
 
   *See also: [Online Image Component](https://esphome.io/components/online_image#configuration-variables)* */
-  update?: number;
+  update?: boolean;
 }
 
 export interface OnlineImageActions {
@@ -2953,17 +2961,17 @@ export interface BinaryOutputActions {
 // ── output::FloatOutput ──────────────────────────────────────────────
 
 export interface FloatOutput_SetLevelParams {
-  level: number;
+  level: unknown;
 }
 
 export interface FloatOutput_SetMinPowerParams {
   /** @yamlKey min_power */
-  minPower: number;
+  minPower: unknown;
 }
 
 export interface FloatOutput_SetMaxPowerParams {
   /** @yamlKey max_power */
-  maxPower: number;
+  maxPower: unknown;
 }
 
 export interface FloatOutputActions {
@@ -2999,17 +3007,17 @@ export interface PIDClimate_AutotuneParams {
   /** **float**: The noiseband of the process (=sensor) variable. The value of the PID controller must be able to reach this value. Defaults to `0.25`.
 
   *See also: [PID Climate](https://esphome.io/components/climate/pid#climatepidautotune-action)* */
-  noiseband?: unknown;
+  noiseband?: number;
   /** **float**: The positive output power to drive the heat output at. Defaults to `1.0`.
 
   *See also: [PID Climate](https://esphome.io/components/climate/pid#climatepidautotune-action)* */
   /** @yamlKey positive_output */
-  positiveOutput?: unknown;
+  positiveOutput?: number;
   /** **float**: The negative output power to drive the cool output at. Defaults to `-1.0`.
 
   *See also: [PID Climate](https://esphome.io/components/climate/pid#climatepidautotune-action)* */
   /** @yamlKey negative_output */
-  negativeOutput?: unknown;
+  negativeOutput?: number;
 }
 
 export interface PIDClimate_SetControlParametersParams {
@@ -3269,7 +3277,7 @@ export interface Select_OperationParams {
   /** **string**: The operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or `NEXT` (case insensitive). When writing a lambda for this field, then return one of the following enum values: `SELECT_OP_FIRST`, `SELECT_OP_LAST`, `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`.
 
   *See also: [Select Component](https://esphome.io/components/select#or-templated-lambdas)* */
-  operation: "NEXT" | "PREVIOUS" | "FIRST" | "LAST";
+  operation: string;
   /** **bool**: Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to wrap around the options list when respectively the last or first option in the select is currently active.
 
   *See also: [Select Component](https://esphome.io/components/select#or-templated-lambdas)* */
@@ -3410,7 +3418,7 @@ export interface SpeakerSourceMediaPlayer_SetPlaylistDelayParams {
   /** **[Time](/guides/configuration-types#time)**: The delay between playlist tracks.
 
   *See also: [Speaker Source Media Player](https://esphome.io/components/media_player/speaker_source#speaker_sourceset_playlist_delay-action)* */
-  delay: Record<string, unknown>;
+  delay: TimePeriod;
 }
 
 export interface SpeakerSourceMediaPlayerActions {
@@ -3424,11 +3432,11 @@ export interface Speaker_PlayParams {
   /** **list of bytes**: The raw audio data to play.
 
   *See also: [Speaker Components](https://esphome.io/components/speaker#speakerplay-action)* */
-  data: number;
+  data: number[];
 }
 
 export interface Speaker_VolumeSetParams {
-  volume: number;
+  volume: unknown;
 }
 
 export interface SpeakerActions {
@@ -3633,7 +3641,7 @@ export interface SX126x_SendPacketParams {
   /** **list**: The packet to send, length should match the configured payload_length.
 
   *See also: [SX126x Component](https://esphome.io/components/sx126x#configuration-variables)* */
-  data: number;
+  data: unknown;
 }
 
 export interface SX126xActions {
@@ -3657,7 +3665,7 @@ export interface SX127x_SendPacketParams {
   /** **list**: The packet to send, length should match the configured payload_length.
 
   *See also: [SX127x Component](https://esphome.io/components/sx127x#configuration-variables)* */
-  data: number;
+  data: unknown;
 }
 
 export interface SX127xActions {
@@ -3681,7 +3689,7 @@ export interface TemplateLock_PublishParams {
   /** **boolean**: The state to publish.
 
   *See also: [Template Lock](https://esphome.io/components/lock/template#in-some-trigger)* */
-  state: "LOCKED" | "UNLOCKED" | "JAMMED" | "LOCKING" | "UNLOCKING";
+  state: boolean;
 }
 
 export interface TemplateLockActions {
@@ -3704,7 +3712,7 @@ export interface TemplateValve_PublishParams {
 
   *See also: [Template Valve](https://esphome.io/components/valve/template#in-some-trigger)* */
   /** @yamlKey current_operation */
-  currentOperation?: "IDLE" | "OPENING" | "CLOSING";
+  currentOperation?: string;
 }
 
 export interface TemplateValveActions {
@@ -3728,7 +3736,7 @@ export interface TemplateWaterHeater_PublishParams {
   /** **string**: The operation mode to publish. See [Water Heater Modes](/components/water_heater#water-heater-modes) for options.
 
   *See also: [Template Water Heater](https://esphome.io/components/water_heater/template#example-action)* */
-  mode?: "OFF" | "ECO" | "ELECTRIC" | "PERFORMANCE" | "HIGH_DEMAND" | "HEAT_PUMP" | "GAS";
+  mode?: string;
   /** **boolean**: The away mode state to publish.
 
   *See also: [Template Water Heater](https://esphome.io/components/water_heater/template#example-action)* */
@@ -3779,7 +3787,7 @@ export interface TM1651Display_SetBrightnessParams {
   /** **int**: There is three levels of brightness (`1`, `2` or `3`  ) from lowest to highest brightness.
 
   *See also: [TM1651 Battery Display](https://esphome.io/components/tm1651#configuration-variables)* */
-  brightness: "1" | "2" | "3";
+  brightness: number;
 }
 
 export interface TM1651Display_SetLevelParams {
@@ -3813,7 +3821,7 @@ export interface TM1651DisplayActions {
 // ── uart::UARTComponent ──────────────────────────────────────────────
 
 export interface UARTComponent_WriteParams {
-  data: number;
+  data: unknown;
 }
 
 export interface UARTComponentActions {
@@ -3824,7 +3832,7 @@ export interface UARTComponentActions {
 // ── udp::UDPComponent ────────────────────────────────────────────────
 
 export interface UDPComponent_WriteParams {
-  data: number;
+  data: unknown;
 }
 
 export interface UDPComponentActions {
@@ -3904,7 +3912,7 @@ export interface Valve_ControlParams {
   /** **string**: The state to set the valve to - one of `OPEN` or `CLOSE`.
 
   *See also: [Valve Component](https://esphome.io/components/valve#valvecontrol-action)* */
-  state?: "OPEN" | "CLOSED";
+  state?: string;
   /** **float**: The valve position to set.
 
   *See also: [Valve Component](https://esphome.io/components/valve#valvecontrol-action)* */

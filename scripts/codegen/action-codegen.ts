@@ -30,6 +30,26 @@ function indent(lines: string, level: number): string {
   return lines.split('\n').map(l => l ? pad + l : l).join('\n');
 }
 
+const SPECIAL_PARAM_TYPES = ['TimePeriod', 'MACAddress', 'IPv4Address'] as const;
+
+function collectSpecialParamTypes(classActions: ClassActionMap): string[] {
+  const found = new Set<string>();
+
+  for (const actions of classActions.values()) {
+    for (const action of actions) {
+      for (const param of action.params) {
+        for (const typeName of SPECIAL_PARAM_TYPES) {
+          if (new RegExp(`\\b${typeName}\\b`).test(param.tsType)) {
+            found.add(typeName);
+          }
+        }
+      }
+    }
+  }
+
+  return [...found];
+}
+
 /**
  * Convert a C++ class name to a clean PascalCase interface prefix.
  * "light::LightState" → "LightState"
@@ -107,11 +127,14 @@ export interface ActionCodegenInput {
 export function generateActionsFile(input: ActionCodegenInput): string {
   const { classActions, markerClassMap, classBrandMap } = input;
   const lines: string[] = [];
+  const specialParamTypes = collectSpecialParamTypes(classActions);
 
   lines.push('// AUTO-GENERATED — DO NOT EDIT.');
   lines.push('// Regenerate with: pnpm codegen');
   lines.push('');
   lines.push('/* eslint-disable */');
+  lines.push('');
+  lines.push(`import type { ${['TriggerHandler', ...specialParamTypes].join(', ')} } from "../types";`);
   lines.push('');
 
   // Track generated interface names for ClassActionMap

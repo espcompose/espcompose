@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _PacketTransportTransport, _UartDevice, _Udp } from "../bases";
 import type { espnow_ESPNowComponent, espnow_ESPNowTransport, sx126x_SX126x, sx126x_SX126xTransport, sx127x_SX127x, sx127x_SX127xTransport, uart_UARTTransport, udp_UDPTransport } from "../markers";
 interface EspnowProps extends _PacketTransportTransport {

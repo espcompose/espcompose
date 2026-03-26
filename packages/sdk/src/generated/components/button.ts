@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _UartDevice } from "../bases";
 import type { EntityBase, atm90e32_ATM90E32Component, bl0940_BL0940, bl0940_CalibrationResetButton, button_Button, copy_CopyButton, factory_reset_FactoryResetButton, haier_HonClimate, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, micronova_MicroNova, mqtt_MQTTButtonComponent, output_BinaryOutput, output_OutputButton, restart_RestartButton, safe_mode_SafeModeButton, safe_mode_SafeModeComponent, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60fda2_MR60FDA2Component, shutdown_ShutdownButton, template__TemplateButton, uart_UARTButton, wake_on_lan_WakeOnLanButton, web_server_WebServer } from "../markers";
 interface ButtonWebServerProps {
@@ -31,7 +31,7 @@ interface Atm90e32RunGainCalibrationPropsWebServerProps {
 }
 interface Atm90e32RunGainCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -39,9 +39,13 @@ interface Atm90e32RunGainCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -61,7 +65,7 @@ interface Atm90e32RunGainCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32ClearGainCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -80,7 +84,7 @@ interface Atm90e32ClearGainCalibrationPropsWebServerProps {
 }
 interface Atm90e32ClearGainCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -88,9 +92,13 @@ interface Atm90e32ClearGainCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -110,7 +118,7 @@ interface Atm90e32ClearGainCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32RunOffsetCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -129,7 +137,7 @@ interface Atm90e32RunOffsetCalibrationPropsWebServerProps {
 }
 interface Atm90e32RunOffsetCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -137,9 +145,13 @@ interface Atm90e32RunOffsetCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -159,7 +171,7 @@ interface Atm90e32RunOffsetCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32ClearOffsetCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -178,7 +190,7 @@ interface Atm90e32ClearOffsetCalibrationPropsWebServerProps {
 }
 interface Atm90e32ClearOffsetCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -186,9 +198,13 @@ interface Atm90e32ClearOffsetCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -208,7 +224,7 @@ interface Atm90e32ClearOffsetCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32RunPowerOffsetCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -227,7 +243,7 @@ interface Atm90e32RunPowerOffsetCalibrationPropsWebServerProps {
 }
 interface Atm90e32RunPowerOffsetCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -235,9 +251,13 @@ interface Atm90e32RunPowerOffsetCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -257,7 +277,7 @@ interface Atm90e32RunPowerOffsetCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32ClearPowerOffsetCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -276,7 +296,7 @@ interface Atm90e32ClearPowerOffsetCalibrationPropsWebServerProps {
 }
 interface Atm90e32ClearPowerOffsetCalibrationProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -284,9 +304,13 @@ interface Atm90e32ClearPowerOffsetCalibrationProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -306,15 +330,7 @@ interface Atm90e32ClearPowerOffsetCalibrationProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
-}
-interface OutputDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
+    onPress?: TriggerHandler;
 }
 interface HaierSelfCleaningPropsAvailabilityProps {
     topic: unknown;
@@ -333,7 +349,7 @@ interface HaierSelfCleaningPropsWebServerProps {
 }
 interface HaierSelfCleaningProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -341,12 +357,13 @@ interface HaierSelfCleaningProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -366,7 +383,7 @@ interface HaierSelfCleaningProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface HaierSteriCleaningPropsAvailabilityProps {
     topic: unknown;
@@ -385,7 +402,7 @@ interface HaierSteriCleaningPropsWebServerProps {
 }
 interface HaierSteriCleaningProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -393,12 +410,13 @@ interface HaierSteriCleaningProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -418,7 +436,7 @@ interface HaierSteriCleaningProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2410FactoryResetPropsAvailabilityProps {
     topic: unknown;
@@ -437,7 +455,7 @@ interface Ld2410FactoryResetPropsWebServerProps {
 }
 interface Ld2410FactoryResetProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -445,9 +463,13 @@ interface Ld2410FactoryResetProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -465,9 +487,9 @@ interface Ld2410FactoryResetProps {
     /** @yamlKey web_server */
     webServer?: Ld2410FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2410RestartPropsAvailabilityProps {
     topic: unknown;
@@ -486,7 +508,7 @@ interface Ld2410RestartPropsWebServerProps {
 }
 interface Ld2410RestartProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -494,9 +516,13 @@ interface Ld2410RestartProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -514,9 +540,9 @@ interface Ld2410RestartProps {
     /** @yamlKey web_server */
     webServer?: Ld2410RestartPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2410QueryParamsPropsAvailabilityProps {
     topic: unknown;
@@ -535,7 +561,7 @@ interface Ld2410QueryParamsPropsWebServerProps {
 }
 interface Ld2410QueryParamsProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -543,9 +569,13 @@ interface Ld2410QueryParamsProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -565,7 +595,7 @@ interface Ld2410QueryParamsProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2412FactoryResetPropsAvailabilityProps {
     topic: unknown;
@@ -584,7 +614,7 @@ interface Ld2412FactoryResetPropsWebServerProps {
 }
 interface Ld2412FactoryResetProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -592,9 +622,13 @@ interface Ld2412FactoryResetProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -612,9 +646,9 @@ interface Ld2412FactoryResetProps {
     /** @yamlKey web_server */
     webServer?: Ld2412FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2412QueryParamsPropsAvailabilityProps {
     topic: unknown;
@@ -633,7 +667,7 @@ interface Ld2412QueryParamsPropsWebServerProps {
 }
 interface Ld2412QueryParamsProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -641,9 +675,13 @@ interface Ld2412QueryParamsProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -663,7 +701,7 @@ interface Ld2412QueryParamsProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2412RestartPropsAvailabilityProps {
     topic: unknown;
@@ -682,7 +720,7 @@ interface Ld2412RestartPropsWebServerProps {
 }
 interface Ld2412RestartProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -690,9 +728,13 @@ interface Ld2412RestartProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -710,9 +752,9 @@ interface Ld2412RestartProps {
     /** @yamlKey web_server */
     webServer?: Ld2412RestartPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2412StartDynamicBackgroundCorrectionPropsAvailabilityProps {
     topic: unknown;
@@ -731,7 +773,7 @@ interface Ld2412StartDynamicBackgroundCorrectionPropsWebServerProps {
 }
 interface Ld2412StartDynamicBackgroundCorrectionProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -739,9 +781,13 @@ interface Ld2412StartDynamicBackgroundCorrectionProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -761,7 +807,7 @@ interface Ld2412StartDynamicBackgroundCorrectionProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2420ApplyConfigPropsAvailabilityProps {
     topic: unknown;
@@ -780,7 +826,7 @@ interface Ld2420ApplyConfigPropsWebServerProps {
 }
 interface Ld2420ApplyConfigProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -788,9 +834,13 @@ interface Ld2420ApplyConfigProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -808,9 +858,9 @@ interface Ld2420ApplyConfigProps {
     /** @yamlKey web_server */
     webServer?: Ld2420ApplyConfigPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2420RevertConfigPropsAvailabilityProps {
     topic: unknown;
@@ -829,7 +879,7 @@ interface Ld2420RevertConfigPropsWebServerProps {
 }
 interface Ld2420RevertConfigProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -837,9 +887,13 @@ interface Ld2420RevertConfigProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -857,9 +911,9 @@ interface Ld2420RevertConfigProps {
     /** @yamlKey web_server */
     webServer?: Ld2420RevertConfigPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2420RestartModulePropsAvailabilityProps {
     topic: unknown;
@@ -878,7 +932,7 @@ interface Ld2420RestartModulePropsWebServerProps {
 }
 interface Ld2420RestartModuleProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -886,9 +940,13 @@ interface Ld2420RestartModuleProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -908,7 +966,7 @@ interface Ld2420RestartModuleProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2420FactoryResetPropsAvailabilityProps {
     topic: unknown;
@@ -927,7 +985,7 @@ interface Ld2420FactoryResetPropsWebServerProps {
 }
 interface Ld2420FactoryResetProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -935,9 +993,13 @@ interface Ld2420FactoryResetProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -957,7 +1019,7 @@ interface Ld2420FactoryResetProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2450FactoryResetPropsAvailabilityProps {
     topic: unknown;
@@ -976,7 +1038,7 @@ interface Ld2450FactoryResetPropsWebServerProps {
 }
 interface Ld2450FactoryResetProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -984,9 +1046,13 @@ interface Ld2450FactoryResetProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1004,9 +1070,9 @@ interface Ld2450FactoryResetProps {
     /** @yamlKey web_server */
     webServer?: Ld2450FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Ld2450RestartPropsAvailabilityProps {
     topic: unknown;
@@ -1025,7 +1091,7 @@ interface Ld2450RestartPropsWebServerProps {
 }
 interface Ld2450RestartProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1033,9 +1099,13 @@ interface Ld2450RestartProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1053,9 +1123,9 @@ interface Ld2450RestartProps {
     /** @yamlKey web_server */
     webServer?: Ld2450RestartPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface MicronovaCustomButtonPropsAvailabilityProps {
     topic: unknown;
@@ -1074,7 +1144,7 @@ interface MicronovaCustomButtonPropsWebServerProps {
 }
 interface MicronovaCustomButtonProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1083,12 +1153,12 @@ interface MicronovaCustomButtonProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1108,7 +1178,7 @@ interface MicronovaCustomButtonProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
     /** @yamlKey micronova_id */
     micronovaId?: RefProp<micronova_MicroNova>;
     /** @yamlKey memory_location */
@@ -1135,7 +1205,7 @@ interface SeeedMr24hpc1RestartPropsWebServerProps {
 }
 interface SeeedMr24hpc1RestartProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1143,9 +1213,13 @@ interface SeeedMr24hpc1RestartProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1163,9 +1237,9 @@ interface SeeedMr24hpc1RestartProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1RestartPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface SeeedMr24hpc1CustomSetEndPropsAvailabilityProps {
     topic: unknown;
@@ -1184,7 +1258,7 @@ interface SeeedMr24hpc1CustomSetEndPropsWebServerProps {
 }
 interface SeeedMr24hpc1CustomSetEndProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1192,9 +1266,13 @@ interface SeeedMr24hpc1CustomSetEndProps {
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    /** icon: Manually set the icon to use for the light in the frontend. */
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1214,7 +1292,7 @@ interface SeeedMr24hpc1CustomSetEndProps {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface SeeedMr60fda2GetRadarParametersPropsAvailabilityProps {
     topic: unknown;
@@ -1233,7 +1311,7 @@ interface SeeedMr60fda2GetRadarParametersPropsWebServerProps {
 }
 interface SeeedMr60fda2GetRadarParametersProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1242,9 +1320,12 @@ interface SeeedMr60fda2GetRadarParametersProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1262,9 +1343,9 @@ interface SeeedMr60fda2GetRadarParametersProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2GetRadarParametersPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface SeeedMr60fda2FactoryResetPropsAvailabilityProps {
     topic: unknown;
@@ -1283,7 +1364,7 @@ interface SeeedMr60fda2FactoryResetPropsWebServerProps {
 }
 interface SeeedMr60fda2FactoryResetProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -1292,9 +1373,12 @@ interface SeeedMr60fda2FactoryResetProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -1312,9 +1396,9 @@ interface SeeedMr60fda2FactoryResetProps {
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface ButtonBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
@@ -1322,7 +1406,7 @@ interface ButtonBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey device_class */
     deviceClass?: "" | "identify" | "restart" | "update";
     /** @yamlKey on_press */
-    onPress?: () => void;
+    onPress?: TriggerHandler;
 }
 interface Atm90e32Props {
     /** [ID](/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if using more than one ... */
@@ -1369,7 +1453,7 @@ interface OutputProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the output component to use. */
     output: RefProp<output_BinaryOutput>;
     /** [Time](/guides/configuration-types#time): How long the output should be set when the button is pressed. */
-    duration: OutputDurationProps;
+    duration: TimePeriod;
 }
 interface RestartProps extends _CoreComponent {
     icon?: unknown;
@@ -1388,7 +1472,7 @@ interface WakeOnLanProps extends _CoreComponent {
      * MAC Address: The MAC Address of the target computer.
      * @yamlKey target_mac_address
      */
-    targetMacAddress: unknown;
+    targetMacAddress: MACAddress;
 }
 interface CopyProps extends _CoreComponent {
     /**

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, MACAddress, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ble_client_BLEClient, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface BleClientProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface BleClientProps extends _CoreComponent {
      * MAC Address: The MAC address of the BLE device to connect to.
      * @yamlKey mac_address
      */
-    macAddress: unknown;
+    macAddress: MACAddress;
     name?: string;
     /**
      * boolean: If true the device will be automatically connected when found by the [Esp32 Ble Tracker](/components/esp32_b...
@@ -22,27 +22,27 @@ export interface BleClientProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when the client connects to a device. See [`on_connect`](https:/...
      * @yamlKey on_connect
      */
-    onConnect?: () => void;
+    onConnect?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the client disconnects from a device. See [`on_disconnect`]...
      * @yamlKey on_disconnect
      */
-    onDisconnect?: () => void;
+    onDisconnect?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to enter the passkey required by the other BLE device. See [`on_passkey_req...
      * @yamlKey on_passkey_request
      */
-    onPasskeyRequest?: () => void;
+    onPasskeyRequest?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to display the passkey to the user. See [`on_passkey_notification`](https:/...
      * @yamlKey on_passkey_notification
      */
-    onPasskeyNotification?: () => void;
+    onPasskeyNotification?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to compare the passkeys shown on the two BLE devices. See [`on_numeric_comp...
      * @yamlKey on_numeric_comparison_request
      */
-    onNumericComparisonRequest?: () => void;
+    onNumericComparisonRequest?: TriggerHandler;
     /** @yamlKey esp32_ble_id */
     esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
 }

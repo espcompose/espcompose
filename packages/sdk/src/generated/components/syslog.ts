@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { syslog_Syslog, time_RealTimeClock, udp_UDPComponent } from "../markers";
 export interface SyslogProps {
     /**

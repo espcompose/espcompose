@@ -3,73 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _LightAddressableLight, _LightBinaryLight, _LightBrightnessOnlyLight, _LightRgbLight } from "../bases";
 import type { beken_spi_led_strip_BekenSPILEDStripLightOutput, binary_BinaryLightOutput, color_temperature_CTLightOutput, cwww_CWWWLightOutput, esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput, hbridge_HBridgeLightOutput, light_AddressableLightState, light_LightState, lv_led_t, lvgl_LVLight, m5stack_8angle_M5Stack8AngleComponent, m5stack_8angle_M5Stack8AngleLightOutput, monochromatic_MonochromaticLightOutput, neopixelbus_NeoPixelBusLightOutputBase, output_BinaryOutput, output_FloatOutput, partition_PartitionLightOutput, rgb_RGBLightOutput, rgbct_RGBCTLightOutput, rgbw_RGBWLightOutput, rgbww_RGBWWLightOutput, rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput, shelly_dimmer_ShellyDimmer, sonoff_d1_SonoffD1Output, spi_SPIComponent, spi_led_strip_SpiLedStrip, status_led_StatusLEDLightOutput, tuya_Tuya, tuya_TuyaLight, uart_UARTComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
-interface BekenSpiLedStripMaxRefreshRateProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripMaxRefreshRateProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripBit0HighProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripBit0LowProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripBit1HighProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripBit1LowProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripResetHighProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Esp32RmtLedStripResetLowProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface PartitionSegmentsProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
@@ -108,17 +44,9 @@ interface ShellyDimmerPowerPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
 }
-interface ShellyDimmerPowerPropsExpireAfterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface ShellyDimmerPowerProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -127,9 +55,12 @@ interface ShellyDimmerPowerProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -145,24 +76,24 @@ interface ShellyDimmerPowerProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: unknown;
+    unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: unknown;
+    accuracyDecimals?: number;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
     forceUpdate?: boolean;
     /** @yamlKey expire_after */
-    expireAfter?: ShellyDimmerPowerPropsExpireAfterProps;
+    expireAfter?: TimePeriod;
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
 }
 interface ShellyDimmerVoltagePropsAvailabilityProps {
     topic: unknown;
@@ -179,17 +110,9 @@ interface ShellyDimmerVoltagePropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
 }
-interface ShellyDimmerVoltagePropsExpireAfterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface ShellyDimmerVoltageProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -198,9 +121,12 @@ interface ShellyDimmerVoltageProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -216,24 +142,24 @@ interface ShellyDimmerVoltageProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: unknown;
+    unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: unknown;
+    accuracyDecimals?: number;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
     forceUpdate?: boolean;
     /** @yamlKey expire_after */
-    expireAfter?: ShellyDimmerVoltagePropsExpireAfterProps;
+    expireAfter?: TimePeriod;
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
 }
 interface ShellyDimmerCurrentPropsAvailabilityProps {
     topic: unknown;
@@ -250,17 +176,9 @@ interface ShellyDimmerCurrentPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
 }
-interface ShellyDimmerCurrentPropsExpireAfterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface ShellyDimmerCurrentProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -269,9 +187,12 @@ interface ShellyDimmerCurrentProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -287,24 +208,24 @@ interface ShellyDimmerCurrentProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: unknown;
+    unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: unknown;
+    accuracyDecimals?: number;
     /** @yamlKey device_class */
-    deviceClass?: unknown;
+    deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
     forceUpdate?: boolean;
     /** @yamlKey expire_after */
-    expireAfter?: ShellyDimmerCurrentPropsExpireAfterProps;
+    expireAfter?: TimePeriod;
     filters?: Array<unknown>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_raw_value */
-    onRawValue?: () => void;
+    onRawValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
 }
 interface BekenSpiLedStripProps extends _LightAddressableLight {
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the light. */
@@ -323,7 +244,7 @@ interface BekenSpiLedStripProps extends _LightAddressableLight {
      * [Time](/guides/configuration-types#time): A time interval used to limit the number of commands a light can handle per...
      * @yamlKey max_refresh_rate
      */
-    maxRefreshRate?: BekenSpiLedStripMaxRefreshRateProps;
+    maxRefreshRate?: TimePeriod;
     /** enum: The chipset to apply known timings from. */
     chipset: "WS2812" | "SK6812" | "APA106" | "SM16703";
     /**
@@ -349,12 +270,12 @@ interface ColorTemperatureProps extends _LightRgbLight {
      * float: The coldest color temperature supported by this light. This is the lowest value when expressed in [mireds](htt...
      * @yamlKey cold_white_color_temperature
      */
-    coldWhiteColorTemperature: unknown;
+    coldWhiteColorTemperature: number;
     /**
      * float: The warmest color temperature supported by this light. This is the highest value when expressed in [mireds](ht...
      * @yamlKey warm_white_color_temperature
      */
-    warmWhiteColorTemperature: unknown;
+    warmWhiteColorTemperature: number;
 }
 interface CwwwProps extends _LightRgbLight {
     /**
@@ -371,12 +292,12 @@ interface CwwwProps extends _LightRgbLight {
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the cold white channel. ...
      * @yamlKey cold_white_color_temperature
      */
-    coldWhiteColorTemperature?: unknown;
+    coldWhiteColorTemperature?: number;
     /**
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the warm white channel. ...
      * @yamlKey warm_white_color_temperature
      */
-    warmWhiteColorTemperature?: unknown;
+    warmWhiteColorTemperature?: number;
     /**
      * boolean: When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting...
      * @yamlKey constant_brightness
@@ -405,7 +326,7 @@ interface Esp32RmtLedStripProps extends _LightAddressableLight, _CoreComponent {
      * [Time](/guides/configuration-types#time): A time interval used to limit the number of commands a light can handle per...
      * @yamlKey max_refresh_rate
      */
-    maxRefreshRate?: Esp32RmtLedStripMaxRefreshRateProps;
+    maxRefreshRate?: TimePeriod;
     /** enum: The name of the chipset used; determines signal timing. Not required if [specifying the timings manually](https... */
     chipset?: "WS2811" | "WS2812" | "SK6812" | "APA106" | "SM16703";
     /**
@@ -432,32 +353,32 @@ interface Esp32RmtLedStripProps extends _LightAddressableLight, _CoreComponent {
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `0` bit.
      * @yamlKey bit0_high
      */
-    bit0High?: Esp32RmtLedStripBit0HighProps;
+    bit0High?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line low for a `0` bit.
      * @yamlKey bit0_low
      */
-    bit0Low?: Esp32RmtLedStripBit0LowProps;
+    bit0Low?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `1` bit.
      * @yamlKey bit1_high
      */
-    bit1High?: Esp32RmtLedStripBit1HighProps;
+    bit1High?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line low for a `1` bit.
      * @yamlKey bit1_low
      */
-    bit1Low?: Esp32RmtLedStripBit1LowProps;
+    bit1Low?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line high after writing the state. Defaults to `0...
      * @yamlKey reset_high
      */
-    resetHigh?: Esp32RmtLedStripResetHighProps;
+    resetHigh?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line low after writing the state. Defaults to `0 ...
      * @yamlKey reset_low
      */
-    resetLow?: Esp32RmtLedStripResetLowProps;
+    resetLow?: TimePeriod;
 }
 interface FastledClocklessProps {
     /** string: Set a chipset to use. See [Supported Chipsets](https://esphome.io/components/light/fastled#fastled_spi-chipse... */
@@ -480,11 +401,11 @@ interface MonochromaticProps extends _LightBrightnessOnlyLight {
 }
 interface NeopixelbusProps extends _LightAddressableLight, _CoreComponent {
     /** string: The type of light. This is used to specify if it is an RGBW or RGB light and in which order the colors are. D... */
-    type?: unknown;
+    type?: string;
     /** string: The chipset of the light. The following options are supported: */
     variant: "ws2811" | "ws2812" | "ws2812x" | "ws2813" | "sk6812" | "tm1814" | "tm1829" | "tm1914" | "800kbps" | "400kbps" | "apa106" | "lc8812" | "dotstar" | "ws2801" | "lpd6803" | "lpd8806" | "p9813";
     /** string: The method used to transmit the data. By default, ESPHome will try to use the best method available for this ... */
-    method?: unknown;
+    method?: string;
     /** boolean: Invert data output, for use with n-type transistors. Defaults to `no`. */
     invert?: boolean;
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the light. */
@@ -538,12 +459,12 @@ interface RgbctProps extends _LightRgbLight {
      * float: The coldest color temperature supported by this light. This is the lowest value when expressed in [mireds](htt...
      * @yamlKey cold_white_color_temperature
      */
-    coldWhiteColorTemperature: unknown;
+    coldWhiteColorTemperature: number;
     /**
      * float: The warmest color temperature supported by this light. This is the highest value when expressed in [mireds](ht...
      * @yamlKey warm_white_color_temperature
      */
-    warmWhiteColorTemperature: unknown;
+    warmWhiteColorTemperature: number;
     /**
      * boolean: When enabled, this will prevent white leds being on at the same time as RGB leds. See [Color Interlock](/com...
      * @yamlKey color_interlock
@@ -586,12 +507,12 @@ interface RgbwwProps extends _LightRgbLight {
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the cold white channel. ...
      * @yamlKey cold_white_color_temperature
      */
-    coldWhiteColorTemperature?: unknown;
+    coldWhiteColorTemperature?: number;
     /**
      * float: The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the warm white channel. ...
      * @yamlKey warm_white_color_temperature
      */
-    warmWhiteColorTemperature?: unknown;
+    warmWhiteColorTemperature?: number;
     /**
      * boolean: When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting...
      * @yamlKey constant_brightness
@@ -629,22 +550,22 @@ interface Rp2040PioLedStripProps extends _LightAddressableLight {
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `0` bit.
      * @yamlKey bit0_high
      */
-    bit0High?: unknown;
+    bit0High?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line low for a `0` bit.
      * @yamlKey bit0_low
      */
-    bit0Low?: unknown;
+    bit0Low?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `1` bit.
      * @yamlKey bit1_high
      */
-    bit1High?: unknown;
+    bit1High?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line low for a `1` bit.
      * @yamlKey bit1_low
      */
-    bit1Low?: unknown;
+    bit1Low?: TimePeriod;
 }
 interface ShellyDimmerProps extends _LightBrightnessOnlyLight, _CoreComponent {
     firmware?: ShellyDimmerFirmwareProps;

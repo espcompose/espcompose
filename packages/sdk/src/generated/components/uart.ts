@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { uart_UARTComponent } from "../markers";
-export interface UartFlushTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface UartProps extends _CoreComponent {
     /**
      * int: The baud rate of the UART bus.
@@ -36,12 +28,12 @@ export interface UartProps extends _CoreComponent {
      */
     flowControlPin?: Pin;
     /** string: Host platform only. Unix style name of the port to use. */
-    port?: unknown;
+    port?: string;
     /**
      * int: The size of the buffer used for receiving UART messages. Increase if you use an integration that needs to read b...
      * @yamlKey rx_buffer_size
      */
-    rxBufferSize?: unknown;
+    rxBufferSize?: number;
     /**
      * int: ESP32 only. After receiving this number of bytes, the data becomes available for processing. The default is calc...
      * @yamlKey rx_full_threshold
@@ -56,7 +48,7 @@ export interface UartProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): ESP32 only. The maximum time to wait for the TX FIFO to drain when `flush()...
      * @yamlKey flush_timeout
      */
-    flushTimeout?: UartFlushTimeoutProps;
+    flushTimeout?: TimePeriod;
     /**
      * int: The number of stop bits to send. Options: 1, 2. Defaults to 1.
      * @yamlKey stop_bits

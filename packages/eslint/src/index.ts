@@ -8,6 +8,7 @@
 import tseslint from 'typescript-eslint';
 import type { ESLint, Linter } from 'eslint';
 import jsxChildrenIntents from './rules/jsx-children-intents';
+import noNestedFunctions from './rules/no-nested-functions';
 
 const plugin: ESLint.Plugin = {
   meta: {
@@ -17,6 +18,8 @@ const plugin: ESLint.Plugin = {
   rules: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'jsx-children-intents': jsxChildrenIntents as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'no-nested-functions': noNestedFunctions as any,
   },
 };
 
@@ -50,6 +53,10 @@ const recommended: Linter.Config[] = [
 
       // Enforce valid parent-child component nesting based on declared intents.
       '@esphome/compose-eslint/jsx-children-intents': 'error',
+
+      // Prevent nested function declarations — only top-level functions become
+      // ESPHome scripts; nested ones are silently ignored by the compiler.
+      '@esphome/compose-eslint/no-nested-functions': 'error',
     },
   },
   {

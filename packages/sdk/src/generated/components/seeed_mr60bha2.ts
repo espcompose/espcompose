@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { seeed_mr60bha2_MR60BHA2Component, uart_UARTComponent } from "../markers";
 export interface SeeedMr60bha2Props extends _CoreComponent {

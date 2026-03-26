@@ -27,9 +27,9 @@ function resolvePaths(projectDir?: string) {
 }
 
 /** Run the transpile step (TSX → YAML). */
-async function transpileProject(resolvedDir: string, yamlPath: string): Promise<void> {
+async function transpileProject(resolvedDir: string, yamlPath: string, options?: { debug?: boolean }): Promise<void> {
   console.log(`Transpiling ${resolvedDir} → .espcompose/esphome.yaml`);
-  await build(resolvedDir);
+  await build(resolvedDir, { debug: options?.debug });
   console.log(`✓ Written to ${yamlPath}`);
 }
 
@@ -59,10 +59,11 @@ program
     'Transpile a TSX project to ESPHome YAML, writing output to ' +
     '<projectDir>/.espcompose/esphome.yaml. Defaults to the current working directory.',
   )
-  .action(async (projectDir?: string) => {
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { debug?: boolean }) => {
     const { resolvedDir, yamlPath } = resolvePaths(projectDir);
     try {
-      await transpileProject(resolvedDir, yamlPath);
+      await transpileProject(resolvedDir, yamlPath, { debug: opts?.debug });
     } catch (err) {
       console.error('Transpile failed:', err instanceof Error ? err.message : err);
       process.exit(1);
@@ -78,11 +79,12 @@ program
     'Prints the validated/merged ESPHome configuration to stdout.',
   )
   .allowUnknownOption()
-  .action(async (projectDir?: string) => {
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { debug?: boolean }) => {
     const { resolvedDir, yamlPath } = resolvePaths(projectDir);
     const extraArgs = extractPassthroughArgs();
     try {
-      await transpileProject(resolvedDir, yamlPath);
+      await transpileProject(resolvedDir, yamlPath, { debug: opts?.debug });
       console.log('Validating with esphome config…');
       const output = await esphomeConfig(yamlPath, extraArgs);
       console.log(output);
@@ -101,11 +103,12 @@ program
     'Generates a firmware binary without uploading to the device.',
   )
   .allowUnknownOption()
-  .action(async (projectDir?: string) => {
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { debug?: boolean }) => {
     const { resolvedDir, yamlPath } = resolvePaths(projectDir);
     const extraArgs = extractPassthroughArgs();
     try {
-      await transpileProject(resolvedDir, yamlPath);
+      await transpileProject(resolvedDir, yamlPath, { debug: opts?.debug });
       console.log('Compiling firmware…');
       await esphomeCompile(yamlPath, extraArgs);
     } catch (err) {
@@ -123,11 +126,12 @@ program
     'Pass extra flags after `--` (e.g. `espcompose run -- --device /dev/ttyUSB0`).',
   )
   .allowUnknownOption()
-  .action(async (projectDir?: string) => {
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { debug?: boolean }) => {
     const { resolvedDir, yamlPath } = resolvePaths(projectDir);
     const extraArgs = extractPassthroughArgs();
     try {
-      await transpileProject(resolvedDir, yamlPath);
+      await transpileProject(resolvedDir, yamlPath, { debug: opts?.debug });
       console.log('Running esphome run…');
       await esphomeRun(yamlPath, extraArgs);
     } catch (err) {
@@ -145,11 +149,12 @@ program
     'Pass extra flags after `--` (e.g. `espcompose logs -- --device /dev/ttyUSB0`).',
   )
   .allowUnknownOption()
-  .action(async (projectDir?: string) => {
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { debug?: boolean }) => {
     const { resolvedDir, yamlPath } = resolvePaths(projectDir);
     const extraArgs = extractPassthroughArgs();
     try {
-      await transpileProject(resolvedDir, yamlPath);
+      await transpileProject(resolvedDir, yamlPath, { debug: opts?.debug });
       console.log('Opening serial monitor…');
       await esphomeLogs(yamlPath, extraArgs);
     } catch (err) {

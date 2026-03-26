@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _As3935, _CoreComponent } from "../bases";
 import type { as3935_spi_SPIAS3935Component, spi_SPIComponent } from "../markers";
 export interface As3935SpiProps extends _As3935, _CoreComponent {

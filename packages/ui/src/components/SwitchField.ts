@@ -6,7 +6,7 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
 import { STYLE_TEXT_PRIMARY } from '../theme/style-ids';
 
@@ -16,7 +16,7 @@ interface SwitchFieldProps {
   /** Bound value (sensor or entity reference). */
   value?: unknown;
   /** Change handler (ESPHome action). */
-  onChange?: unknown;
+  onChange?: TriggerHandler<{ x: boolean }>;
   /** Width of the field container. */
   width?: number | string;
 }

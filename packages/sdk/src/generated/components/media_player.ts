@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { i2s_audio_I2SAudioComponent, i2s_audio_I2SAudioMediaPlayer, media_source_MediaSource, speaker_Speaker, speaker_SpeakerMediaPlayer, speaker_source_SpeakerSourceMediaPlayer } from "../markers";
 interface SpeakerAnnouncementPipelineProps {
@@ -40,7 +40,7 @@ interface SpeakerMediaPipelineProps {
 }
 interface SpeakerFilesProps {
     /** string: Path to audio file. Can be a local file path or a URL. */
-    file: unknown;
+    file: string;
 }
 interface SpeakerSourceAnnouncementPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
@@ -80,25 +80,25 @@ interface SpeakerSourceMediaPipelineProps {
 }
 interface MediaPlayerBaseProps extends _CoreEntityBase {
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_idle */
-    onIdle?: () => void;
+    onIdle?: TriggerHandler;
     /** @yamlKey on_play */
-    onPlay?: () => void;
+    onPlay?: TriggerHandler;
     /** @yamlKey on_pause */
-    onPause?: () => void;
+    onPause?: TriggerHandler;
     /** @yamlKey on_announcement */
-    onAnnouncement?: () => void;
+    onAnnouncement?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when media_player is turned on, implements the `supports_turn_of...
      * @yamlKey on_turn_on
      */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when media_player is turned off, implements the `supports_turn_o...
      * @yamlKey on_turn_off
      */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
 }
 interface SpeakerProps {
     /**
@@ -132,59 +132,59 @@ interface SpeakerProps {
      * percentage: Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase o...
      * @yamlKey volume_increment
      */
-    volumeIncrement?: unknown;
+    volumeIncrement?: number;
     /**
      * percentage: The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Def...
      * @yamlKey volume_initial
      */
-    volumeInitial?: unknown;
+    volumeInitial?: number;
     /**
      * percentage: The maximum volume allowed. Defaults to `100%`.
      * @yamlKey volume_max
      */
-    volumeMax?: unknown;
+    volumeMax?: number;
     /**
      * percentage: The minimum volume allowed. Defaults to `0%`.
      * @yamlKey volume_min
      */
-    volumeMin?: unknown;
+    volumeMin?: number;
     /**
      * [Automation](/automations): An automation to perform when muted.
      * @yamlKey on_mute
      */
-    onMute?: () => void;
+    onMute?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when unmuted.
      * @yamlKey on_unmute
      */
-    onUnmute?: () => void;
+    onUnmute?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the volume is changed.
      * @yamlKey on_volume
      */
-    onVolume?: () => void;
+    onVolume?: TriggerHandler;
 }
 interface SpeakerSourceProps extends _CoreComponent {
     /**
      * percentage: Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase o...
      * @yamlKey volume_increment
      */
-    volumeIncrement?: unknown;
+    volumeIncrement?: number;
     /**
      * percentage: The default volume used on first boot when no volume has been previously saved. Defaults to `50%`.
      * @yamlKey volume_initial
      */
-    volumeInitial?: unknown;
+    volumeInitial?: number;
     /**
      * percentage: The maximum volume allowed. Defaults to `100%`.
      * @yamlKey volume_max
      */
-    volumeMax?: unknown;
+    volumeMax?: number;
     /**
      * percentage: The minimum volume allowed. Defaults to `0%`.
      * @yamlKey volume_min
      */
-    volumeMin?: unknown;
+    volumeMin?: number;
     /**
      * Pipeline Schema: Configuration settings for the announcement pipeline. Same options as `media_pipeline`. Must use a d...
      * @yamlKey announcement_pipeline
@@ -199,17 +199,17 @@ interface SpeakerSourceProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when muted.
      * @yamlKey on_mute
      */
-    onMute?: () => void;
+    onMute?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when unmuted.
      * @yamlKey on_unmute
      */
-    onUnmute?: () => void;
+    onUnmute?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the volume is changed.
      * @yamlKey on_volume
      */
-    onVolume?: () => void;
+    onVolume?: TriggerHandler;
 }
 interface I2sAudioInternalProps extends _CoreComponent {
     /** @yamlKey i2s_audio_id */

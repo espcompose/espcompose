@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { rf_bridge_RFBridgeComponent, uart_UARTComponent } from "../markers";
 export interface RfBridgeProps extends _CoreComponent {
     /** @yamlKey on_code_received */
-    onCodeReceived?: () => void;
+    onCodeReceived?: TriggerHandler;
     /** @yamlKey on_advanced_code_received */
-    onAdvancedCodeReceived?: () => void;
+    onAdvancedCodeReceived?: TriggerHandler;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
 }

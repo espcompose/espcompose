@@ -5,7 +5,7 @@
  * Label uses `ds-text-primary` style reference.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
 import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
@@ -19,7 +19,7 @@ interface DropdownFieldProps {
   /** Bound selection index. */
   value?: unknown;
   /** Change handler (ESPHome action). */
-  onChange?: unknown;
+  onChange?: TriggerHandler<{ x: number }>;
   /** Gap between label and dropdown. Default: 'xs'. */
   gap?: SpacingToken | number;
   /** Width of the field container. */

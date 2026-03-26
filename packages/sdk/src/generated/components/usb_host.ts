@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { usb_host_USBHost } from "../markers";
 export interface UsbHostDevicesProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
-    vid: unknown;
-    pid: unknown;
+    vid: number;
+    pid: number;
 }
 export interface UsbHostProps extends _CoreComponent {
     /**

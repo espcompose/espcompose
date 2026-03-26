@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface Esp32HostedProps {
     /** string: The variant of the ESP32 co-processor that is used by the host. One of `ESP32`, `ESP32S2`, `ESP32S3`, `ESP32C... */
     variant: "ESP32" | "ESP32C2" | "ESP32C3" | "ESP32C5" | "ESP32C6" | "ESP32C61" | "ESP32H2" | "ESP32P4" | "ESP32S2" | "ESP32S3";

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { esp32_camera_ESP32Camera, i2c_InternalI2CBus } from "../markers";
 export interface Esp32CameraExternalClockProps {
@@ -138,12 +138,12 @@ export interface Esp32CameraProps extends _CoreEntityBase, _CoreComponent {
      * float: The maximum framerate the camera will generate images at. Up to 60Hz is possible (with reduced frame sizes), b...
      * @yamlKey max_framerate
      */
-    maxFramerate?: unknown;
+    maxFramerate?: number;
     /**
      * float: The framerate to capture images at when no client is requesting a full stream. Defaults to `0.1 fps`.
      * @yamlKey idle_framerate
      */
-    idleFramerate?: unknown;
+    idleFramerate?: number;
     /**
      * int: The number of frame buffers to use when reading from the camera sensor. Must be between 1 and 2. Defaults to `1`.
      * @yamlKey frame_buffer_count
@@ -158,17 +158,17 @@ export interface Esp32CameraProps extends _CoreEntityBase, _CoreComponent {
      * [Automation](/automations): An automation to perform when a stream starts.
      * @yamlKey on_stream_start
      */
-    onStreamStart?: () => void;
+    onStreamStart?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a stream stops.
      * @yamlKey on_stream_stop
      */
-    onStreamStop?: () => void;
+    onStreamStop?: TriggerHandler;
     /**
      * [Automation](/automations): An automation called when image taken. Image is available as `image` variable of type <AP...
      * @yamlKey on_image
      */
-    onImage?: () => void;
+    onImage?: TriggerHandler;
 }
 declare global {
     namespace JSX {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { zigbee_ZigbeeComponent } from "../markers";
 export interface ZigbeeProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface ZigbeeProps extends _CoreComponent {
      * [Automation](/automations#automation): Automation to run when the device joins the network.
      * @yamlKey on_join
      */
-    onJoin?: () => void;
+    onJoin?: TriggerHandler;
     /**
      * Erases all non-volatile memory data on boot, including Zigbee network pairing and preferences (e.g., last switch stat...
      * @yamlKey wipe_on_boot

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { time_RealTimeClock, tuya_Tuya, uart_UARTComponent } from "../markers";
 export interface TuyaProps extends _CoreComponent {
@@ -26,7 +26,7 @@ export interface TuyaProps extends _CoreComponent {
      * An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](https://esphome.io/com...
      * @yamlKey on_datapoint_update
      */
-    onDatapointUpdate?: () => void;
+    onDatapointUpdate?: TriggerHandler;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
 }

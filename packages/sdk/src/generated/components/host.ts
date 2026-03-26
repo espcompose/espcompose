@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, MACAddress, Pin, TriggerHandler } from "../../types";
 export interface HostProps {
     /**
      * MAC address: A dummy MAC address to use when communicating with HA.
      * @yamlKey mac_address
      */
-    macAddress?: unknown;
+    macAddress?: MACAddress;
 }
 declare global {
     namespace JSX {

@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { modbus_Modbus, modbus_controller_ModbusController } from "../markers";
-export interface ModbusControllerCommandThrottleProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface ModbusControllerServerCourtesyResponseProps {
     /** boolean: Whether to enable the courtesy response feature. Defaults to `false`. */
     enabled?: boolean;
@@ -21,12 +13,12 @@ export interface ModbusControllerServerCourtesyResponseProps {
      * integer: The highest Modbus register address (inclusive) up to which undefined registers are allowed to be read and w...
      * @yamlKey register_last_address
      */
-    registerLastAddress?: unknown;
+    registerLastAddress?: number;
     /**
      * integer: The 16-bit value (range: 0–65535) to return for undefined registers within the address range defined by `reg...
      * @yamlKey register_value
      */
-    registerValue?: unknown;
+    registerValue?: number;
 }
 export interface ModbusControllerServerRegistersProps {
     /** integer: start address of the first register in a range */
@@ -57,7 +49,7 @@ export interface ModbusControllerProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): minimum time in between 2 requests to the device. Default is `0ms`. Some Mo...
      * @yamlKey command_throttle
      */
-    commandThrottle?: ModbusControllerCommandThrottleProps;
+    commandThrottle?: TimePeriod;
     /**
      * Configuration block to enable the courtesy response feature when the device is acting as a Modbus server.
      * @yamlKey server_courtesy_response
@@ -82,29 +74,29 @@ export interface ModbusControllerProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when a modbus command has been sent. See [`on_command_sent`](htt...
      * @yamlKey on_command_sent
      */
-    onCommandSent?: () => void;
+    onCommandSent?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a modbus controller goes online. See [`on_online`](https://...
      * @yamlKey on_online
      */
-    onOnline?: () => void;
+    onOnline?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a modbus controller goes offline. See [`on_offline`](https:...
      * @yamlKey on_offline
      */
-    onOffline?: () => void;
+    onOffline?: TriggerHandler;
     /**
      * [Time](/guides/configuration-types#time): The interval that the sensors should be checked. Defaults to 60 seconds.
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the `modbus` hub.
      * @yamlKey modbus_id
      */
     modbusId?: RefProp<modbus_Modbus>;
     /** int: start address of the first register in a range (can be decimal or hexadecimal). */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

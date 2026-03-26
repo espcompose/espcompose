@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { spi_SPIComponent, weikai_spi_WeikaiComponentSPI } from "../markers";
 export interface Wk2168SpiProps {
     /** @yamlKey spi_id */

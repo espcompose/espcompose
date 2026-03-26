@@ -462,6 +462,81 @@ logger:
 "
 `;
 
+exports[`ESPHome Compose Build > ha-binding-device 1`] = `
+"esphome:
+  name: ha-binding-device
+  comment: HA entity binding demo
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - label:
+            x: 10
+            y: 10
+            text: !lambda "return std::string(id(ha_light_kitchen_floods).state ? \\"on\\" :
+              \\"off\\");"
+            id: rw_ref1
+        - button:
+            x: 10
+            y: 40
+            width: 120
+            height: 50
+            on_release:
+              - homeassistant.action:
+                  action: light.toggle
+                  data:
+                    entity_id: light.kitchen_floods
+            widgets:
+              - label:
+                  text: Toggle
+                  align: CENTER
+        - label:
+            x: 10
+            y: 100
+            text: !lambda "return to_string(id(ha_sensor_living_room_temperature).state);"
+            id: rw_ref2
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_kitchen_floods
+  entity_id: light.kitchen_floods
+  trigger_on_initial_state: true
+  on_state:
+    lvgl.label.update:
+      id: rw_ref1
+      text: !lambda "return std::string(x ? \\"on\\" : \\"off\\");"
+sensor:
+  platform: homeassistant
+  id: ha_sensor_living_room_temperature
+  entity_id: sensor.living_room_temperature
+  on_value:
+    lvgl.label.update:
+      id: rw_ref2
+      text: !lambda "return to_string(x);"
+"
+`;
+
 exports[`ESPHome Compose Build > lvgl-device 1`] = `
 "esphome:
   name: lvgl-device
@@ -502,6 +577,71 @@ lvgl:
               - label:
                   text: Click me
                   align: CENTER
+"
+`;
+
+exports[`ESPHome Compose Build > reactive-device 1`] = `
+"esphome:
+  name: reactive-device
+  comment: Local ref reactive binding demo
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+sensor:
+  id: r_ref0
+  platform: internal_temperature
+  name: ESP Temperature
+  on_value:
+    lvgl.label.update:
+      id: rw_ref1
+      text: !lambda "return x;"
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref2
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref2
+  pages:
+    - widgets:
+        - label:
+            x: 10
+            y: 10
+            text: !lambda "return id(r_ref0).state;"
+            id: rw_ref1
+        - button:
+            x: 10
+            y: 50
+            width: 120
+            height: 50
+            on_release:
+              - homeassistant.action:
+                  action: switch.toggle
+                  data:
+                    entity_id: switch.space_heater
+            widgets:
+              - label:
+                  text: Heater
+                  align: CENTER
+binary_sensor:
+  platform: homeassistant
+  id: ha_switch_space_heater
+  entity_id: switch.space_heater
+  trigger_on_initial_state: true
 "
 `;
 

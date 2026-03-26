@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { Area } from "../markers";
 export interface EsphomeProjectProps {
     /** string: Name of the project */
@@ -14,7 +14,7 @@ export interface EsphomeProjectProps {
      * [Automation](/automations): An automation to perform when the device firmware is updated. This compares the above `ve...
      * @yamlKey on_update
      */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
 }
 export interface EsphomeAreasProps {
     name: unknown;
@@ -31,7 +31,7 @@ export interface EsphomeProps {
      * string: This name is sent to the frontend and used by Home Assistant as the integration and device name. It also gets...
      * @yamlKey friendly_name
      */
-    friendlyName?: unknown;
+    friendlyName?: string;
     /** string or [Area Configuration](https://esphome.io/components/esphome#esphome-area): The area configuration for this d... */
     area?: unknown;
     /** string: Additional text information about this node. Only for display in UI. */
@@ -55,17 +55,17 @@ export interface EsphomeProps {
      * [Automation](/automations): An automation to perform when the node starts. See [`on_boot`](https://esphome.io/compone...
      * @yamlKey on_boot
      */
-    onBoot?: () => void;
+    onBoot?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform right before the node shuts down. See [`on_shutdown`](https://es...
      * @yamlKey on_shutdown
      */
-    onShutdown?: () => void;
+    onShutdown?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform on each `loop()` iteration. See [`on_loop`](https://esphome.io/c...
      * @yamlKey on_loop
      */
-    onLoop?: () => void;
+    onLoop?: TriggerHandler;
     /** list of files: A list of C/C++ files to include in the (auto-generated) `main` file. The paths in this list are relat... */
     includes?: Array<unknown>;
     /**
@@ -91,7 +91,7 @@ export interface EsphomeProps {
      * string: The minimum ESPHome version required to compile this configuration. See [Minimum ESPHome version](https://esp...
      * @yamlKey min_version
      */
-    minVersion?: unknown;
+    minVersion?: string;
     /**
      * int: The maximum number of simultaneous compile processes to run. Defaults to the number of cores of the CPU which is...
      * @yamlKey compile_process_limit

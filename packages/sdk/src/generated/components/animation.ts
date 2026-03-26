@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { animation_Animation } from "../markers";
 export interface AnimationLoopProps {
     /**
@@ -23,7 +23,7 @@ export interface AnimationProps {
     /** string: The path (relative to where the .yaml file is) of the gif file. */
     file: unknown;
     /** string: If set, this will resize all the frames to fit inside the given dimensions `WIDTHxHEIGHT` and preserve the as... */
-    resize?: unknown;
+    resize?: string;
     dither?: "NONE" | "FLOYDSTEINBERG";
     /** @yamlKey invert_alpha */
     invertAlpha?: boolean;

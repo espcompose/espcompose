@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { cd74hc4067_CD74HC4067Component } from "../markers";
-export interface Cd74hc4067DelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Cd74hc4067Props extends _CoreComponent {
     /** @yamlKey pin_s0 */
     pinS0: Pin;
@@ -24,7 +16,7 @@ export interface Cd74hc4067Props extends _CoreComponent {
     /** @yamlKey pin_s3 */
     pinS3: Pin;
     /** [Time](/guides/configuration-types#time): A small delay duration needed for the chip to switch inputs, defaults to 2ms. */
-    delay?: Cd74hc4067DelayProps;
+    delay?: TimePeriod;
 }
 declare global {
     namespace JSX {

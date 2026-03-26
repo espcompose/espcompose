@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { copy_CopyLock, lock_Lock, output_BinaryOutput, output_OutputLock, template__TemplateLock, web_server_WebServer } from "../markers";
 interface LockWebServerProps {
@@ -18,9 +18,9 @@ interface LockBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: LockWebServerProps;
     /** @yamlKey on_lock */
-    onLock?: () => void;
+    onLock?: TriggerHandler;
     /** @yamlKey on_unlock */
-    onUnlock?: () => void;
+    onUnlock?: TriggerHandler;
 }
 interface CopyProps extends _CoreComponent {
     /**
@@ -47,14 +47,14 @@ interface TemplateProps extends _CoreComponent {
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey unlock_action
      */
-    unlockAction?: () => void;
+    unlockAction?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey lock_action
      */
-    lockAction?: () => void;
+    lockAction?: TriggerHandler;
     /** @yamlKey open_action */
-    openAction?: () => void;
+    openAction?: TriggerHandler;
 }
 export type LockProps = (LockBaseProps & {
     platform: "copy";

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { template__TemplateValve, web_server_WebServer } from "../markers";
 interface ValveWebServerProps {
@@ -24,9 +24,9 @@ interface ValveBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey position_state_topic */
     positionStateTopic?: unknown;
     /** @yamlKey on_open */
-    onOpen?: () => void;
+    onOpen?: TriggerHandler;
     /** @yamlKey on_closed */
-    onClosed?: () => void;
+    onClosed?: TriggerHandler;
 }
 interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state of the valve. */
@@ -47,24 +47,24 @@ interface TemplateProps extends _CoreComponent {
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey open_action
      */
-    openAction?: () => void;
+    openAction?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the valve to...
      * @yamlKey close_action
      */
-    closeAction?: () => void;
+    closeAction?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the valve to...
      * @yamlKey stop_action
      */
-    stopAction?: () => void;
+    stopAction?: TriggerHandler;
     /** @yamlKey toggle_action */
-    toggleAction?: () => void;
+    toggleAction?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey position_action
      */
-    positionAction?: () => void;
+    positionAction?: TriggerHandler;
     /**
      * enum: Control how the valve attempts to restore state on bootup.
      * @yamlKey restore_mode

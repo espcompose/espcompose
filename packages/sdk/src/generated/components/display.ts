@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _DisplayBasicDisplay, _DisplayFullDisplay, _QspiDbiDisplayBase } from "../bases";
 import type { _esphome_hub75_HUB75Display, addressable_light_AddressableLightDisplay, i2c_I2CBus, ili9xxx_ILI9XXXDisplay, inkplate_Inkplate, lcd_gpio_GPIOLCDDisplay, lcd_pcf8574_PCF8574LCDDisplay, light_AddressableLightState, max7219_MAX7219Component, max7219digit_MAX7219Component, nextion_Nextion, pcd8544_PCD8544, power_supply_PowerSupply, pvvx_mithermometer_PVVXDisplay, rpi_dpi_rgb_RpiDpiRgb, sdl_Sdl, spi_SPIComponent, ssd1306_i2c_I2CSSD1306, ssd1306_spi_SPISSD1306, ssd1322_spi_SPISSD1322, ssd1325_spi_SPISSD1325, ssd1327_i2c_I2CSSD1327, ssd1327_spi_SPISSD1327, ssd1331_spi_SPISSD1331, ssd1351_spi_SPISSD1351, st7567_i2c_I2CST7567, st7567_spi_SPIST7567, st7701s_ST7701S, st7735_ST7735, st7789v_ST7789V, st7920_ST7920, time_RealTimeClock, tm1621_TM1621Display, tm1637_TM1637Display, tm1638_TM1638Component, uart_UARTComponent, waveshare_epaper_WaveshareEPaperBase } from "../markers";
 interface Ili9xxxDimensionsProps {
@@ -44,46 +44,6 @@ interface InkplateTransformProps {
     mirrorX?: boolean;
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
-}
-interface Max7219digitScrollSpeedProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Max7219digitScrollDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface Max7219digitScrollDwellProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface PvvxMithermometerDisconnectDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface PvvxMithermometerValidityPeriodProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface QspiDbiRM67162TransformProps {
     /**
@@ -236,54 +196,6 @@ interface St7701sDataPinsProps {
     green: unknown;
     /** [Pin Schema](/guides/configuration-types#pin-schema): Exactly 5 pin numbers for the blue databits, listed from least ... */
     blue: unknown;
-}
-interface WaveshareEpaperResetDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface NextionCommandSpacingProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface NextionMaxQueueAgeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface NextionStartupOverrideMsProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface NextionTftUploadHttpTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface NextionTftUploadWatchdogTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface SdlDimensionsProps {
     width: number;
@@ -648,7 +560,7 @@ interface InkplateProps extends _DisplayFullDisplay, _CoreComponent {
     displayData7Pin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface LcdGpioProps {
     /**
@@ -676,7 +588,7 @@ interface LcdPcf8574Props {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The [I²C](/components/i2c) address of the PCF8574 chip, defaults to `0x3F`. */
-    address?: unknown;
+    address?: number;
 }
 interface Max7219Props extends _DisplayBasicDisplay, _CoreComponent {
     /**
@@ -745,17 +657,17 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
      * [Time](/guides/configuration-types#time): Set scroll speed. Defaults to `250ms`
      * @yamlKey scroll_speed
      */
-    scrollSpeed?: Max7219digitScrollSpeedProps;
+    scrollSpeed?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): Set delay time before scroll starts. Defaults to `1s`.
      * @yamlKey scroll_delay
      */
-    scrollDelay?: Max7219digitScrollDelayProps;
+    scrollDelay?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): Sets the wait time at the end of the scroll before starting over. This is o...
      * @yamlKey scroll_dwell
      */
-    scrollDwell?: Max7219digitScrollDwellProps;
+    scrollDwell?: TimePeriod;
     /**
      * boolean: For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("...
      * @yamlKey reverse_enable
@@ -825,12 +737,12 @@ interface PvvxMithermometerProps extends _DisplayBasicDisplay, _BleClient, _Core
      * [Time](/guides/configuration-types#time): The amount of time the BLE connection is maintained before being disconnect...
      * @yamlKey disconnect_delay
      */
-    disconnectDelay?: PvvxMithermometerDisconnectDelayProps;
+    disconnectDelay?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time periode for which the pvvx device should display the information. ...
      * @yamlKey validity_period
      */
-    validityPeriod?: PvvxMithermometerValidityPeriodProps;
+    validityPeriod?: TimePeriod;
 }
 interface QspiDbiRM67162Props extends _QspiDbiDisplayBase {
     /**
@@ -847,7 +759,7 @@ interface QspiDbiRM67162Props extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiRM67162TransformProps;
 }
@@ -866,7 +778,7 @@ interface QspiDbiRM690B0Props extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiRM690B0TransformProps;
 }
@@ -885,7 +797,7 @@ interface QspiDbiAXS15231Props extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiAXS15231TransformProps;
 }
@@ -904,7 +816,7 @@ interface QspiDbiJC4832W535Props extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiJC4832W535TransformProps;
 }
@@ -923,7 +835,7 @@ interface QspiDbiJC3636W518Props extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiJC3636W518TransformProps;
 }
@@ -942,7 +854,7 @@ interface QspiDbiCUSTOMProps extends _QspiDbiDisplayBase {
      * int: Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be...
      * @yamlKey draw_rounding
      */
-    drawRounding?: unknown;
+    drawRounding?: number;
     /** Transform the display presentation using hardware. All defaults are `false`. This option cannot be used with `rotation`. */
     transform?: QspiDbiCUSTOMTransformProps;
 }
@@ -1039,7 +951,7 @@ interface Ssd1306I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3C. */
-    address?: unknown;
+    address?: number;
 }
 interface Ssd1306SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
@@ -1119,7 +1031,7 @@ interface Ssd1327I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3D. */
-    address?: unknown;
+    address?: number;
 }
 interface Ssd1327SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
@@ -1187,7 +1099,7 @@ interface St7567I2cProps extends _CoreComponent {
      */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3F. */
-    address?: unknown;
+    address?: number;
 }
 interface St7567SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
@@ -1504,7 +1416,7 @@ interface WaveshareEpaperProps extends _DisplayFullDisplay, _CoreComponent {
      * [Time](/guides/configuration-types#time): Duration for the display reset operation. Defaults to `200ms`. Setting this...
      * @yamlKey reset_duration
      */
-    resetDuration?: WaveshareEpaperResetDurationProps;
+    resetDuration?: TimePeriod;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
@@ -1529,12 +1441,12 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      */
     autoWakeOnTouch?: boolean;
     /** percentage: When specified, the display brightness will be set to this value at boot. */
-    brightness?: unknown;
+    brightness?: number;
     /**
      * [Time](/guides/configuration-types#time): Sets the minimum time between commands sent to the Nextion display. A highe...
      * @yamlKey command_spacing
      */
-    commandSpacing?: NextionCommandSpacingProps;
+    commandSpacing?: TimePeriod;
     /**
      * boolean: Shows device information (model, firmware version, serial number, flash size) in the configuration dump. Whe...
      * @yamlKey dump_device_info
@@ -1549,7 +1461,7 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [Time](/guides/configuration-types#time): Maximum age in milliseconds for queued commands before they are automatical...
      * @yamlKey max_queue_age
      */
-    maxQueueAge?: NextionMaxQueueAgeProps;
+    maxQueueAge?: TimePeriod;
     /**
      * integer: Limits the number of commands processed per loop cycle. This helps prevent stack overflows when a large numb...
      * @yamlKey max_commands_per_loop
@@ -1564,32 +1476,32 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [Action](/automations/actions#all-actions): An action to be performed when the Nextion reports a buffer overflow. See...
      * @yamlKey on_buffer_overflow
      */
-    onBufferOverflow?: () => void;
+    onBufferOverflow?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed after a page change. See [Nextion Automation](h...
      * @yamlKey on_page
      */
-    onPage?: () => void;
+    onPage?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed after ESPHome connects to the Nextion. See [Nex...
      * @yamlKey on_setup
      */
-    onSetup?: () => void;
+    onSetup?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed when the Nextion goes to sleep. See [Nextion Au...
      * @yamlKey on_sleep
      */
-    onSleep?: () => void;
+    onSleep?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed after a touch event (press or release). See [Ne...
      * @yamlKey on_touch
      */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed when the Nextion wakes up. See [Nextion Automat...
      * @yamlKey on_wake
      */
-    onWake?: () => void;
+    onWake?: TriggerHandler;
     /**
      * boolean: Sets whether the initial display connection handshake process is skipped. When set to `true`, the connection...
      * @yamlKey skip_connection_handshake
@@ -1599,7 +1511,7 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [Time](/guides/configuration-types#time): Time in milliseconds to wait before forcing the display to be marked as rea...
      * @yamlKey startup_override_ms
      */
-    startupOverrideMs?: NextionStartupOverrideMsProps;
+    startupOverrideMs?: TimePeriod;
     /**
      * int: Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
      * @yamlKey start_up_page
@@ -1614,17 +1526,17 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [Time](/guides/configuration-types#time): HTTP request timeout for TFT upload transfers. Applies to each individual H...
      * @yamlKey tft_upload_http_timeout
      */
-    tftUploadHttpTimeout?: NextionTftUploadHttpTimeoutProps;
+    tftUploadHttpTimeout?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): Temporarily adjusts the system watchdog timeout for the duration of the TFT...
      * @yamlKey tft_upload_watchdog_timeout
      */
-    tftUploadWatchdogTimeout?: NextionTftUploadWatchdogTimeoutProps;
+    tftUploadWatchdogTimeout?: TimePeriod;
     /**
      * string: The URL from which to download the TFT file for display firmware updates (Nextion OTA). See [Nextion Upload](...
      * @yamlKey tft_url
      */
-    tftUrl?: unknown;
+    tftUrl?: string;
     /**
      * int: Sets internal No-touch-then-sleep timer in seconds. Range: 0 (disabled) or 3-65535 seconds (max: ~18 hours). Val...
      * @yamlKey touch_sleep_timeout
@@ -1646,7 +1558,7 @@ interface SdlProps extends _DisplayFullDisplay {
      * string: Build arguments if required to specify include or library paths. Should not be required if SDL2 is properly i...
      * @yamlKey sdl_options
      */
-    sdlOptions?: unknown;
+    sdlOptions?: string;
     dimensions: SdlDimensionsProps;
     /**
      * Options that affect how the display renders on the host system. All default to false, except position, which defaults...

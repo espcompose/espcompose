@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { spi_SPIComponent, sx126x_SX126x } from "../markers";
-export interface Sx126xTcxoDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Sx126xProps extends _CoreComponent {
     /** enum: Bandwidth can be `4_8kHz`, `5_8kHz`, `7_3kHz`, `9_7kHz`, `11_7kHz`, `14_6kHz`, `19_5kHz`, `23_4kHz`, `29_3kHz`,... */
     bandwidth?: "4_8kHz" | "5_8kHz" | "7_3kHz" | "9_7kHz" | "11_7kHz" | "14_6kHz" | "19_5kHz" | "23_4kHz" | "29_3kHz" | "39_0kHz" | "46_9kHz" | "58_6kHz" | "78_2kHz" | "93_8kHz" | "117_3kHz" | "156_2kHz" | "187_2kHz" | "234_3kHz" | "312_0kHz" | "373_6kHz" | "467_0kHz" | "7_8kHz" | "10_4kHz" | "15_6kHz" | "20_8kHz" | "31_3kHz" | "41_7kHz" | "62_5kHz" | "125_0kHz" | "250_0kHz" | "500_0kHz";
@@ -48,12 +40,12 @@ export interface Sx126xProps extends _CoreComponent {
      * int: CRC polynomial as a hex integer. Defaults to 0x1021.
      * @yamlKey crc_polynomial
      */
-    crcPolynomial?: unknown;
+    crcPolynomial?: number;
     /**
      * int: Initial CRC value as a hex integer. Defaults to 0x1D0F.
      * @yamlKey crc_initial
      */
-    crcInitial?: unknown;
+    crcInitial?: number;
     /** frequency: Transmitter FSK frequency deviation, values range from 0 to 100 kHz. Defaults to `5kHz`. */
     deviation?: unknown;
     /**
@@ -74,7 +66,7 @@ export interface Sx126xProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when a packet has been decoded. Variable x of type `std::vector<...
      * @yamlKey on_packet
      */
-    onPacket?: () => void;
+    onPacket?: TriggerHandler;
     /**
      * int: Transmitter power, range is from -3 to 15 dBm when `hw_version` is `sx1261` and from -3 to 22 dBm otherwise.
      * @yamlKey pa_power
@@ -126,7 +118,7 @@ export interface Sx126xProps extends _CoreComponent {
      * list: Synchronization bytes, list of 1 to 8 bytes, found after the preamble and before the payload.
      * @yamlKey sync_value
      */
-    syncValue?: Array<unknown>;
+    syncValue?: Array<number>;
     /**
      * enum: Reference voltage of the external TCXO controlled by DIO3. If there is no TCXO this should be set to `NONE`. Va...
      * @yamlKey tcxo_voltage
@@ -136,7 +128,7 @@ export interface Sx126xProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The time needed for the TCXO to stabilize.
      * @yamlKey tcxo_delay
      */
-    tcxoDelay?: Sx126xTcxoDelayProps;
+    tcxoDelay?: TimePeriod;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */

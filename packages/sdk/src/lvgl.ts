@@ -15,7 +15,10 @@
 import type { EspComposeElement, FunctionComponent } from './types';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
+import { isExpression } from './expression';
+import { registerReactiveBinding } from './hooks/useReactiveScope';
 import {
+  camelToSnake,
   extractElementProps,
   flattenFragments,
   keysToSnakeCase,
@@ -65,6 +68,11 @@ function resolveLvglChildren(
  *   { widget_type: { ...props, widgets?: [...] } }
  *
  * Recursively processes nested lvgl-* children into a `widgets` array.
+ *
+ * When Expression<T> instances are detected in props:
+ * 1. An auto-generated `id` is assigned if the widget doesn't already have one.
+ * 2. Each Expression prop is registered as a ReactiveBinding so the compiler
+ *    can emit on_state/on_value trigger wiring later.
  */
 export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown> {
   const { allProps, children } = extractElementProps(el);
@@ -79,6 +87,34 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   }
 
   const yamlKey = toYamlKey(el.type as string);
+
+  // Detect Expression props and register reactive bindings.
+  // Auto-assign an ID if the widget has Expression props but no explicit id.
+  let widgetId = typeof data.id === 'string' ? data.id : undefined;
+  const expressionProps: { propName: string; expression: import('./expression').Expression }[] = [];
+
+  for (const [key, value] of Object.entries(data)) {
+    if (key !== 'widgets' && key !== 'children' && isExpression(value)) {
+      expressionProps.push({ propName: key, expression: value });
+    }
+  }
+
+  if (expressionProps.length > 0) {
+    if (!widgetId) {
+      widgetId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+      data.id = widgetId;
+    }
+
+    for (const { propName, expression } of expressionProps) {
+      registerReactiveBinding({
+        targetId: widgetId,
+        targetType: yamlKey,
+        targetProp: camelToSnake(propName),
+        expression,
+      });
+    }
+  }
+
   return { [yamlKey]: stripUndefined(keysToSnakeCase(data)) };
 }
 

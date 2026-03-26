@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { matrix_keypad_MatrixKeypad } from "../markers";
 export interface MatrixKeypadRowsProps {
@@ -32,7 +32,7 @@ export interface MatrixKeypadProps extends _CoreComponent {
      */
     hasPulldowns?: boolean;
     /** @yamlKey on_key */
-    onKey?: () => void;
+    onKey?: TriggerHandler;
 }
 declare global {
     namespace JSX {

@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { http_request_HttpRequestComponent } from "../markers";
-export interface HttpRequestTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface HttpRequestWatchdogTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface HttpRequestProps extends _CoreComponent {
     /** string: User-Agent header for requests. Defaults to `ESPHome/<version> (https://esphome.io)` where `<version>` is the... */
     useragent?: string;
@@ -36,7 +20,7 @@ export interface HttpRequestProps extends _CoreComponent {
      */
     redirectLimit?: number;
     /** [Time](/guides/configuration-types#time): Timeout for request. Defaults to `4.5s`. */
-    timeout?: HttpRequestTimeoutProps;
+    timeout?: TimePeriod;
     /**
      * boolean: Determines whether to include HTTPS/SSL support in the firmware binary. Excluding the SSL libraries from you...
      * @yamlKey esp8266_disable_ssl_support
@@ -51,7 +35,7 @@ export interface HttpRequestProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): Change the watchdog timeout during connection/data transfer. May be useful ...
      * @yamlKey watchdog_timeout
      */
-    watchdogTimeout?: HttpRequestWatchdogTimeoutProps;
+    watchdogTimeout?: TimePeriod;
     /**
      * integer: Change HTTP receive buffer size. Defaults to `512`.
      * @yamlKey buffer_size_rx
@@ -76,7 +60,7 @@ export interface HttpRequestProps extends _CoreComponent {
      * file path: Path to a CA certificate bundle. Not required on MacOS (the inbuilt CA bundle is used and SSL enabled by d...
      * @yamlKey ca_certificate_path
      */
-    caCertificatePath?: unknown;
+    caCertificatePath?: string;
 }
 declare global {
     namespace JSX {

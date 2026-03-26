@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { apds9960_APDS9960, i2c_I2CBus } from "../markers";
 export interface Apds9960Props extends _CoreComponent {
@@ -41,11 +41,11 @@ export interface Apds9960Props extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the sensor. Defaults to `0x39`. */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

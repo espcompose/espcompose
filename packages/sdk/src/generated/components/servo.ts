@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { output_FloatOutput, servo_Servo } from "../markers";
-export interface ServoAutoDetachTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface ServoTransitionLengthProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface ServoProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the [output component](/components/output/) to use for this servo. */
     output: RefProp<output_FloatOutput>;
@@ -29,29 +13,29 @@ export interface ServoProps extends _CoreComponent {
      * percentage: The PWM duty cycle the minimum value (-100%) will map to. Defaults to `3%`.
      * @yamlKey min_level
      */
-    minLevel?: unknown;
+    minLevel?: number;
     /**
      * percentage: The PWM duty cycle the idle value (0%) will map to. This is also the state of the servo at startup. Defau...
      * @yamlKey idle_level
      */
-    idleLevel?: unknown;
+    idleLevel?: number;
     /**
      * percentage: The PWM duty cycle the maximum value (100%) will map to. Defaults to `12.0%`.
      * @yamlKey max_level
      */
-    maxLevel?: unknown;
+    maxLevel?: number;
     /** boolean: Whether to restore the state of the servo motor at startup. This is useful if you have an absolute servo mot... */
     restore?: boolean;
     /**
      * [Time](/guides/configuration-types#time): The time after reaching the target value when the servo will be detached`, ...
      * @yamlKey auto_detach_time
      */
-    autoDetachTime?: ServoAutoDetachTimeProps;
+    autoDetachTime?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time needed for a full movement (-1.0 to 1.0). This will effectively li...
      * @yamlKey transition_length
      */
-    transitionLength?: ServoTransitionLengthProps;
+    transitionLength?: TimePeriod;
 }
 declare global {
     namespace JSX {

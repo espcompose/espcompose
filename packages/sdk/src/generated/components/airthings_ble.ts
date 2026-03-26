@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { airthings_ble_AirthingsListener, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface AirthingsBleProps {
     /** @yamlKey esp32_ble_id */

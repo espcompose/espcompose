@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _Stepper } from "../bases";
 import type { a4988_A4988, uln2003_ULN2003 } from "../markers";
 interface A4988Props extends _Stepper, _CoreComponent {

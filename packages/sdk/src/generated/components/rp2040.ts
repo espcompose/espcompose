@@ -3,20 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, Pin, TimePeriod, TriggerHandler } from "../../types";
 export interface Rp2040FrameworkProps {
     version?: string;
     source?: string;
     /** @yamlKey platform_version */
     platformVersion?: unknown;
-}
-export interface Rp2040WatchdogTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 export interface Rp2040Props {
     /** string: The PlatformIO board identifier. Common boards include `rpipicow` (Raspberry Pi Pico W), `rpipico` (Raspberry... */
@@ -26,7 +18,7 @@ export interface Rp2040Props {
      * [Time](/guides/configuration-types#time): The timeout to apply to the RP2040 watchdog. When the device hangs for that...
      * @yamlKey watchdog_timeout
      */
-    watchdogTimeout?: Rp2040WatchdogTimeoutProps;
+    watchdogTimeout?: TimePeriod;
     /**
      * boolean: Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()`...
      * @yamlKey enable_full_printf

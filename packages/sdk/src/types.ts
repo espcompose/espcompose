@@ -2,6 +2,9 @@ import type { Context } from './hooks/useContext';
 import type {
   InferActions,
 } from './generated/actions';
+import type { InferReactiveProperties } from './reactive-properties';
+import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
+import { Expression } from './expression';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,6 +14,53 @@ export interface EspComposeElement {
   type: string | FunctionComponent;
   props: Record<string, unknown> & { children?: EspComposeElement[] };
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Trigger type — typed ESPHome trigger / event handler callbacks
+//
+// ESPHome triggers fire automations when component events occur (e.g.
+// on_press, on_value, on_state). Some triggers provide lambda variables
+// (e.g. `x` with the new sensor value) while others fire with no arguments.
+//
+// Usage:
+//   onPress?: Trigger                        // no variables
+//   onValue?: Trigger<{ x: number }>         // sensor value trigger
+//   onState?: Trigger<{ x: boolean }>        // binary sensor state trigger
+//
+// At compile time, trigger props accept either:
+//   - A named script function:  onPress={toggleLight}
+//   - An inline arrow function: onPress={() => { lightRef.toggle(); }}
+// The compiler transformer rewrites these into ESPHome YAML action lists.
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * An ESPHome trigger / event handler callback.
+ *
+ * `T` describes the variables available inside the trigger's lambda scope.
+ * Use `void` (the default) for triggers that provide no variables.
+ */
+export type TriggerHandler<T = void> = (args: T) => void;
+
+/**
+ * ESPHome time period value.
+ *
+ * Accepts shorthand strings ("500ms", "5min", "never") or a decomposed
+ * object form used by many ESPHome schemas.
+ */
+export type TimePeriod = string | {
+  days?: number;
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+  milliseconds?: number;
+  microseconds?: number;
+};
+
+/** Basic MAC address shape, e.g. "AA:BB:CC:DD:EE:FF". */
+export type MACAddress = `${string}:${string}:${string}:${string}:${string}:${string}`;
+
+/** Basic IPv4 shape, e.g. "192.168.1.10". */
+export type IPv4Address = `${number}.${number}.${number}.${number}`;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Ref types — typed cross-component ID references
@@ -57,7 +107,7 @@ interface BaseRef<T = unknown> {
  * Uses intersection-based InferActions<T> so derived markers inherit all
  * ancestor actions (e.g. FloatOutput gets BinaryOutput + FloatOutput methods).
  */
-export type Ref<T = unknown> = BaseRef<T> & InferActions<T>;
+export type Ref<T = unknown> = BaseRef<T> & InferActions<T> & InferReactiveProperties<T>;
 
 /**
  * Prop-side ref type — accepts any `Ref<U>` whose marker `U` is a structural
@@ -85,15 +135,33 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
     // sufficient for a single device config file.
     this._token = `r_${Math.random().toString(36).slice(2, 11)}`;
 
-    // Return a Proxy that intercepts property access for action methods.
-    // Any property not on the RefHandle prototype returns a no-op function,
-    // preventing runtime errors when action methods are called.
-    // The compiler transformer rewrites these calls at compile time.
+    // Return a Proxy that intercepts property access for action methods
+    // and reactive property accessors.
+    // - Action methods: any property not on RefHandle prototype returns a no-op
+    //   function (the compiler transformer rewrites these at compile time).
+    // - Reactive properties: known property names (value, isOn, brightness, etc.)
+    //   return Expression<T> instances configured for the appropriate source
+    //   domain and trigger type.
     return new Proxy(this, {
       get(target, prop, receiver) {
         if (prop in target || typeof prop === 'symbol') {
           return Reflect.get(target, prop, receiver);
         }
+
+        // Check reactive property map — return Expression if matched.
+        if (typeof prop === 'string') {
+          const reactiveConfig = REACTIVE_PROPERTY_MAP[prop];
+          if (reactiveConfig) {
+            return new Expression({
+              sourceId: target._token,
+              property: reactiveConfig.property,
+              triggerType: reactiveConfig.triggerType,
+              sourceDomain: reactiveConfig.sourceDomain,
+            });
+          }
+        }
+
+        // Fallback: action method no-op.
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return function actionMarker(..._args: unknown[]): void {
           // No-op at runtime. The compiler transformer rewrites these calls.

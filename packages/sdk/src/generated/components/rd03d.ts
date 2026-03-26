@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { rd03d_RD03DComponent, uart_UARTComponent } from "../markers";
-export interface Rd03dThrottleProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Rd03dProps extends _CoreComponent {
     /**
      * string: The tracking mode to configure. If not specified, no command is sent and the radar uses its default mode (typ...
@@ -21,7 +13,7 @@ export interface Rd03dProps extends _CoreComponent {
      */
     trackingMode?: "single" | "multi";
     /** [Time](/guides/configuration-types#time): Minimum time between sensor updates. The radar sends data very frequently; ... */
-    throttle?: Rd03dThrottleProps;
+    throttle?: TimePeriod;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) to use. Requi...
      * @yamlKey uart_id

@@ -3,20 +3,15 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _I2sAudioSpeakerBase, _Speaker } from "../bases";
 import type { audio_dac_AudioDac, mixer_speaker_MixerSpeaker, resampler_ResamplerSpeaker, speaker_Speaker } from "../markers";
-interface MixerSourceSpeakersPropsBufferDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface MixerSourceSpeakersProps {
-    /** @yamlKey bits_per_sample */
-    bitsPerSample?: unknown | "8bit" | "16bit" | "24bit" | "32bit";
+    /**
+     * positive integer: The audio sample bit depth after resampling. Defaults to the output speaker's bits per sample.
+     * @yamlKey bits_per_sample
+     */
+    bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
     numChannels?: number;
     /**
@@ -33,17 +28,9 @@ interface MixerSourceSpeakersProps {
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values can reduce stutteri...
      * @yamlKey buffer_duration
      */
-    bufferDuration?: MixerSourceSpeakersPropsBufferDurationProps;
+    bufferDuration?: TimePeriod;
     /** [Time](/guides/configuration-types#time): How long to wait after finishing playback before releasing the bus. Set to ... */
     timeout?: "never";
-}
-interface ResamplerBufferDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface MixerProps {
     /**
@@ -82,7 +69,7 @@ interface ResamplerProps extends _Speaker, _CoreComponent {
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values may reduce stutteri...
      * @yamlKey buffer_duration
      */
-    bufferDuration?: ResamplerBufferDurationProps;
+    bufferDuration?: TimePeriod;
     /**
      * boolean: Run the audio tasks in external memory. Defaults to `false`.
      * @yamlKey task_stack_in_psram
@@ -91,7 +78,7 @@ interface ResamplerProps extends _Speaker, _CoreComponent {
     /** positive integer: The number of windowed sinc interpolation filters to use. Must be between `2` and `1024`. Defaults ... */
     filters?: number;
     /** positive integer: The number of taps per windowed sinc interpolation filter. Must between `16` and `128` and divisibl... */
-    taps?: unknown;
+    taps?: number;
 }
 interface I2sAudioInternalProps extends _I2sAudioSpeakerBase {
     mode: "left" | "right" | "stereo";

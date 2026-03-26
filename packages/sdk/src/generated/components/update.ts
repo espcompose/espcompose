@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _Esp32HostedUpdateBase } from "../bases";
 import type { http_request_HttpRequestComponent, http_request_HttpRequestUpdate, http_request_OtaHttpRequestComponent, mqtt_MQTTUpdateComponent, web_server_WebServer } from "../markers";
 interface UpdateWebServerProps {
@@ -20,9 +20,7 @@ interface UpdateBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey device_class */
     deviceClass?: "" | "firmware";
     /** @yamlKey on_update_available */
-    onUpdateAvailable?: () => void;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    onUpdateAvailable?: TriggerHandler;
 }
 interface Esp32HostedEmbeddedProps extends _Esp32HostedUpdateBase {
     path: unknown;

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { mqtt_MQTTClientComponent } from "../markers";
 export interface MqttBirthMessageProps {
     topic: unknown;
@@ -29,22 +29,6 @@ export interface MqttLogTopicProps {
     retain?: boolean;
     /** string: The log level to use for MQTT logs. See [Log Levels](/components/logger#logger-log_levels) for options. */
     level?: "NONE" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "VERBOSE" | "VERY_VERBOSE";
-}
-export interface MqttKeepaliveProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface MqttRebootTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 export interface MqttProps {
     /** string: The host of your MQTT broker. */
@@ -111,7 +95,7 @@ export interface MqttProps {
      * string: The prefix to use for Home Assistant's MQTT discovery. Should not contain trailing slash. Defaults to `homeas...
      * @yamlKey discovery_prefix
      */
-    discoveryPrefix?: unknown;
+    discoveryPrefix?: string;
     /**
      * string: The unique_id generator to use. Can be one of `legacy` or `mac`. Defaults to `legacy`, which generates unique...
      * @yamlKey discovery_unique_id_generator
@@ -146,39 +130,39 @@ export interface MqttProps {
      * string: The prefix used for all MQTT messages. Should not contain trailing slash. Defaults to `<APP_NAME>`. Use `null...
      * @yamlKey topic_prefix
      */
-    topicPrefix?: unknown;
+    topicPrefix?: string;
     /**
      * [MQTTMessage](https://esphome.io/components/mqtt#mqtt-message): The topic to send MQTT log messages to. Use `null` if...
      * @yamlKey log_topic
      */
     logTopic?: MqttLogTopicProps;
     /** [Time](/guides/configuration-types#time): The time to keep the MQTT socket alive, decreasing this can help with overa... */
-    keepalive?: MqttKeepaliveProps;
+    keepalive?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when no MQTT connection exists....
      * @yamlKey reboot_timeout
      */
-    rebootTimeout?: MqttRebootTimeoutProps;
+    rebootTimeout?: TimePeriod;
     /**
      * [Automation](/automations): An action to be performed when a connection to the broker is established.
      * @yamlKey on_connect
      */
-    onConnect?: () => void;
+    onConnect?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when the connection to the broker is dropped.
      * @yamlKey on_disconnect
      */
-    onDisconnect?: () => void;
+    onDisconnect?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when a message on a specific MQTT topic is received. See [`on_m...
      * @yamlKey on_message
      */
-    onMessage?: () => void;
+    onMessage?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when a JSON message on a specific MQTT topic is received. See [...
      * @yamlKey on_json_message
      */
-    onJsonMessage?: () => void;
+    onJsonMessage?: TriggerHandler;
     /**
      * bool: Publish `None` instead of `NaN` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to `fal...
      * @yamlKey publish_nan_as_none

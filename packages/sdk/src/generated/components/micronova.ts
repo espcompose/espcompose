@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { micronova_MicroNova, uart_UARTComponent } from "../markers";
 export interface MicronovaProps {
     /**

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { Color, display_Display, font_Font, graphical_display_menu_GraphicalDisplayMenu } from "../markers";
 export interface GraphicalDisplayMenuProps {
     /** [ID](/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://esphome.io/componen... */
@@ -29,7 +29,7 @@ export interface GraphicalDisplayMenuProps {
      * [Automation](/automations): An automation to perform when the menu needs to be redrawn. This can be useful if your di...
      * @yamlKey on_redraw
      */
-    onRedraw?: () => void;
+    onRedraw?: TriggerHandler;
 }
 declare global {
     namespace JSX {

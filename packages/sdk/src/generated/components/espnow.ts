@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { espnow_ESPNowComponent } from "../markers";
 export interface EspnowProps extends _CoreComponent {
     /** int: The Wi-Fi channel that the esp-now communication will use to send/receive data packets. Cannot be set when the [... */
-    channel?: unknown;
+    channel?: number;
     /**
      * boolean: Enable the esp-now component on boot. Defaults to `true`.
      * @yamlKey enable_on_boot
@@ -25,17 +25,17 @@ export interface EspnowProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when data is received from an unknown peer. See [`on_unknown_pee...
      * @yamlKey on_unknown_peer
      */
-    onUnknownPeer?: () => void;
+    onUnknownPeer?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when data is received. See [`on_receive`](https://esphome.io/com...
      * @yamlKey on_receive
      */
-    onReceive?: () => void;
+    onReceive?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a broadcast packet is received. See [`on_broadcast`](https:...
      * @yamlKey on_broadcast
      */
-    onBroadcast?: () => void;
+    onBroadcast?: TriggerHandler;
 }
 declare global {
     namespace JSX {

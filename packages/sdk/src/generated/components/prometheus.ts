@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { prometheus_PrometheusHandler, web_server_base_WebServerBase } from "../markers";
 export interface PrometheusProps extends _CoreComponent {

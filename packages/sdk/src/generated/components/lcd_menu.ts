@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { lcd_base_LCDDisplay, lcd_menu_LCDCharacterMenuComponent } from "../markers";
 export interface LcdMenuProps {
     /**

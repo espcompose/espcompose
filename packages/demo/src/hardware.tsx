@@ -118,13 +118,13 @@ export const Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 = (props: Waveshare_ESP32P4_
             ref={es8311_dac}
             platform="es8311"
             i2cId={i2c_bus}
-            address="0x18"
+            address={0x18}
         />
 
         <audio_adc
             platform="es7210"
             i2cId={i2c_bus}
-            address="0x40"
+            address={0x40}
         />
 
         <microphone

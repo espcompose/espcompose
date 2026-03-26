@@ -24,7 +24,7 @@ export {
   themeToStyleDefinitions,
   themeToLvglTheme,
   createLvglThemeProps,
-  createThemeSwitchActions,
+  applyTheme,
 } from './theme/bridge';
 export type { StyleDefinition } from './theme/bridge';
 export {

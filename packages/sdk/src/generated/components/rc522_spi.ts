@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Rc522 } from "../bases";
 import type { rc522_spi_RC522Spi, spi_SPIComponent } from "../markers";
 export interface Rc522SpiProps extends _Rc522 {

@@ -87,6 +87,7 @@ export default (
   // ── .gitignore ────────────────────────────────────────────────────────
   const gitignore = `node_modules/
 .espcompose/
+.espcompose-build/
 dist/
 `;
   fs.writeFileSync(path.join(targetDir, '.gitignore'), gitignore);

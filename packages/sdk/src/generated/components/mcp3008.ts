@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { mcp3008_MCP3008, spi_SPIComponent } from "../markers";
 export interface Mcp3008Props {
     /** @yamlKey spi_id */

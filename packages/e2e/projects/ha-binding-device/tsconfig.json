@@ -1,0 +1,5 @@
+{
+  "extends": "@esphome/compose/tsconfig.sdk.json",
+  "include": ["index.tsx"],
+  "exclude": ["node_modules"]
+}

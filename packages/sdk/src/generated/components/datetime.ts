@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreEntityBase, _CoreMqttCommandComponent, _TemplateDatetime_Base } from "../bases";
 import type { template__TemplateDate, template__TemplateDateTime, template__TemplateTime, time_RealTimeClock, web_server_WebServer } from "../markers";
 interface DatetimeWebServerProps {
@@ -16,7 +16,7 @@ interface DatetimeWebServerProps {
 }
 interface DatetimeBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey time_id */
     timeId?: RefProp<time_RealTimeClock>;
     /** @yamlKey web_server */
@@ -28,27 +28,27 @@ interface TemplateDATEProps extends _TemplateDatetime_Base {
      * string: The value to set the state to on setup if not restored with `restore_value`. Can be one of:
      * @yamlKey initial_value
      */
-    initialValue?: unknown;
+    initialValue?: string;
 }
 interface TemplateTIMEProps extends _TemplateDatetime_Base {
     type?: "TIME";
     /** @yamlKey on_time */
-    onTime?: () => void;
+    onTime?: TriggerHandler;
     /**
      * string: The value to set the state to on setup if not restored with `restore_value`. Can be one of:
      * @yamlKey initial_value
      */
-    initialValue?: unknown;
+    initialValue?: string;
 }
 interface TemplateDATETIMEProps extends _TemplateDatetime_Base {
     type?: "DATETIME";
     /** @yamlKey on_time */
-    onTime?: () => void;
+    onTime?: TriggerHandler;
     /**
      * string: The value to set the state to on setup if not restored with `restore_value`. Can be one of:
      * @yamlKey initial_value
      */
-    initialValue?: unknown;
+    initialValue?: string;
 }
 export type DatetimeProps = (DatetimeBaseProps & {
     platform: "template";

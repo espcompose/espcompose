@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { modbus_Modbus, uart_UARTComponent } from "../markers";
-export interface ModbusSendWaitTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface ModbusTurnaroundTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface ModbusProps extends _CoreComponent {
     /** string: The role of this component, `client` or `server`. Defaults to `client`. */
     role?: "client" | "server";
@@ -34,12 +18,12 @@ export interface ModbusProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): Time in milliseconds before the next ModBUS command is sent when an answer ...
      * @yamlKey send_wait_time
      */
-    sendWaitTime?: ModbusSendWaitTimeProps;
+    sendWaitTime?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): Time in milliseconds before the next ModBUS command is sent after last resp...
      * @yamlKey turnaround_time
      */
-    turnaroundTime?: ModbusTurnaroundTimeProps;
+    turnaroundTime?: TimePeriod;
     /**
      * boolean: If set to `true`, invalid CRC values are ignored. This will reduce error messages but will not fix communica...
      * @yamlKey disable_crc

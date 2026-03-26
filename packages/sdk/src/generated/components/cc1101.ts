@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { cc1101_CC1101Component, spi_SPIComponent } from "../markers";
 export interface Cc1101Props {
     /**
@@ -12,7 +12,7 @@ export interface Cc1101Props {
      */
     gdo0Pin?: Pin;
     /** @yamlKey on_packet */
-    onPacket?: () => void;
+    onPacket?: TriggerHandler;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -30,7 +30,7 @@ export interface Cc1101Props {
      * float: The transmission power in dBm. Range: `-30` to `11`. Defaults to `10`.
      * @yamlKey output_power
      */
-    outputPower?: unknown;
+    outputPower?: number;
     /**
      * enum: Internal RX attenuation. Options: `0dB`, `6dB`, `12dB`, `18dB`. Defaults to `0dB`.
      * @yamlKey rx_attenuation
@@ -74,7 +74,7 @@ export interface Cc1101Props {
      * int: The symbol rate in Baud. Range: `600` to `500000`. Defaults to `5000`.
      * @yamlKey symbol_rate
      */
-    symbolRate?: unknown;
+    symbolRate?: number;
     /**
      * enum: Sync word detection mode. Options: `None`, `15/16`, `16/16`, `30/32`. Defaults to `16/16`.
      * @yamlKey sync_mode
@@ -98,9 +98,9 @@ export interface Cc1101Props {
      */
     numPreamble?: number;
     /** hex: Upper sync word byte. Defaults to `0xD3`. */
-    sync1?: unknown;
+    sync1?: number;
     /** hex: Lower sync word byte. Defaults to `0x91`. */
-    sync0?: unknown;
+    sync0?: number;
     /**
      * dB: Target signal amplitude for the AGC loop. Higher values increase sensitivity but may cause clipping on strong sig...
      * @yamlKey magn_target

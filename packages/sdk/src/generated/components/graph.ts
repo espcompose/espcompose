@@ -3,24 +3,8 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { Color, font_Font, graph_Graph, sensor_Sensor } from "../markers";
-export interface GraphDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface GraphXGridProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface GraphTracesProps {
     sensor: RefProp<sensor_Sensor>;
     name?: string;
@@ -49,7 +33,7 @@ export interface GraphLegendProps {
 }
 export interface GraphProps {
     /** [Time](/guides/configuration-types#time): The total graph history duration. */
-    duration: GraphDurationProps;
+    duration: TimePeriod;
     /** int: Legend width in pixels. If not specified, width is automatically calculated. */
     width: number;
     /** int: Legend height in pixels. If not specified, height is automatically calculated. */
@@ -58,12 +42,12 @@ export interface GraphProps {
      * Specifies the time per division. If not specified, no vertical grid will be drawn.
      * @yamlKey x_grid
      */
-    xGrid?: GraphXGridProps;
+    xGrid?: TimePeriod;
     /**
      * float: Specifies the number of units per division. If not specified, no horizontal grid will be drawn.
      * @yamlKey y_grid
      */
-    yGrid?: unknown;
+    yGrid?: number;
     /** boolean: Draw a border around the legend. Defaults to `true`. */
     border?: boolean;
     /** [ID](/guides/configuration-types#id): The sensor value to plot */

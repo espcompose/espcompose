@@ -227,14 +227,9 @@ export function createLvglThemeProps(theme: Theme): {
  * Generate a list of `lvgl.style.update` actions that switch every style
  * definition to the target theme's values.
  *
- * Usage:
- * ```tsx
- * <Button text="Light mode" onPress={createThemeSwitchActions(lightTheme)} />
- * ```
- *
- * Compiles to an ESPHome action list in the YAML output.
+ * @see {@link applyTheme} for use inside trigger functions.
  */
-export function createThemeSwitchActions(
+function createThemeSwitchActions(
   theme: Theme,
 ): Array<Record<string, unknown>> {
   const defs = themeToStyleDefinitions(theme);
@@ -242,4 +237,27 @@ export function createThemeSwitchActions(
     const { id, ...props } = def;
     return { 'lvgl.style.update': { id, ...props } };
   });
+}
+
+/**
+ * Apply a theme at runtime inside a trigger function.
+ *
+ * The ESPCompose compiler recognises `applyTheme()` calls inside trigger
+ * bodies and spreads the resulting `lvgl.style.update` actions into the
+ * action list.
+ *
+ * @example
+ * ```tsx
+ * <Button
+ *   text="Dark mode"
+ *   onPress={() => { applyTheme(darkTheme); }}
+ * />
+ * ```
+ *
+ * @espcomposeAction applyTheme
+ */
+export function applyTheme(
+  theme: Theme,
+): Array<Record<string, unknown>> {
+  return createThemeSwitchActions(theme);
 }

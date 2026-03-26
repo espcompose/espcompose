@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { remote_transmitter_RemoteTransmitterComponent } from "../markers";
 export interface RemoteTransmitterProps extends _CoreComponent {
@@ -13,12 +13,12 @@ export interface RemoteTransmitterProps extends _CoreComponent {
      * int: How much of the time the remote is on. For example, infrared protocols modulate the signal using a carrier signa...
      * @yamlKey carrier_duty_percent
      */
-    carrierDutyPercent: unknown;
+    carrierDutyPercent: number;
     /**
      * int: The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
      * @yamlKey clock_resolution
      */
-    clockResolution?: unknown;
+    clockResolution?: number;
     /**
      * boolean: Overrides the default end of transmit level. Defaults to `false` unless `pin` is set to inverted or open-drain.
      * @yamlKey eot_level
@@ -43,12 +43,12 @@ export interface RemoteTransmitterProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform before data is sent. Useful if the radio / IR hardware needs to ...
      * @yamlKey on_transmit
      */
-    onTransmit?: () => void;
+    onTransmit?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform after data has been sent. Useful if the radio / IR hardware need...
      * @yamlKey on_complete
      */
-    onComplete?: () => void;
+    onComplete?: TriggerHandler;
 }
 declare global {
     namespace JSX {

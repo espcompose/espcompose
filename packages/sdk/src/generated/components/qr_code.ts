@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { qr_code_QrCode } from "../markers";
 export interface QrCodeProps {
     /** string: The string which you want to encode in the QR-code. */

@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus } from "../markers";
-export interface I2cTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface I2cProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the I²C bus. Defaults to the default of your boa... */
     sda?: Pin;
@@ -32,7 +24,7 @@ export interface I2cProps extends _CoreComponent {
     /** frequency: Set the frequency the I²C bus should operate on. Defaults to `50kHz`. Default for NRF52 is `100kHz`. Value... */
     frequency?: unknown;
     /** [Time](/guides/configuration-types#time): Set the I²C bus timeout. Defaults to the framework defaults (`100us` on `es... */
-    timeout?: I2cTimeoutProps;
+    timeout?: TimePeriod;
     /** boolean: If ESPHome should do a search of the I²C address space on startup. Defaults to `true`. */
     scan?: boolean;
     /**

@@ -1,12 +1,14 @@
 /**
- * Phase 1: TypeScript AST transformation entry point.
+ * Phase 1: TypeScript AST transformation.
  *
- * Reads the user's entry file, applies the script transformer, and writes
- * the transformed source to a temporary file next to the original. Returns
- * the path to the temporary file for Phase 2 bundling.
+ * Transforms every user source file in the ts.Program and writes the
+ * results to an output directory (`<projectDir>/.espcompose-build/`),
+ * preserving the original directory structure. This mirrors the Resolut CLI
+ * pattern where individual transformed files are inspectable on disk.
  *
- * The temporary file is named `.espcompose-transformed-<pid>-<ts>.tsx` so it
- * won't collide with the user's sources even when watch mode is added later.
+ * After writing, esbuild bundles from the build directory to produce a
+ * single CJS file. Because the transformed sources are real files, esbuild
+ * resolves imports normally — no load-plugin needed.
  */
 
 import * as fs from 'fs';
@@ -16,61 +18,71 @@ import { transformScriptFile, type TransformDiagnostic } from './script-transfor
 
 export type { TransformDiagnostic };
 
-export interface Phase1Options {
-  /** Absolute path to the user's entry file. */
+export interface TransformResult {
+  /** Absolute path to the transformed entry file inside the build directory. */
   entryFile: string;
-  /** The pre-built TypeScript program (reused from Phase 0). */
-  program: ts.Program;
-}
-
-export interface Phase1Result {
-  /** Absolute path to the (potentially) transformed file — input to Phase 2. */
-  entryFile: string;
-  /** Path of the temp file created, if any — caller must clean it up. */
-  tempFile: string | null;
   /** Any transform diagnostics (errors / warnings). */
   diagnostics: TransformDiagnostic[];
 }
 
 /**
- * Apply Phase 1 (script transformation) to the entry file.
+ * Transform all user source files in the TypeScript program and write
+ * them to `buildDir`, preserving directory structure relative to `sourceDir`.
  *
- * If no `function` declarations are found, returns the original entry file
- * path unchanged and `tempFile: null` (no disk write needed).
+ * Files inside `node_modules` are skipped — only project source files are
+ * transformed and written. Unchanged files are copied verbatim so esbuild
+ * can resolve all imports from within the build directory.
+ *
+ * @param program   - The TypeScript program (from Phase 0 type-check).
+ * @param entryFile - Absolute path to the original entry file.
+ * @param sourceDir - The project's source root directory.
+ * @param buildDir  - The output directory (`.espcompose-build/`).
+ * @returns The path to the transformed entry file + any diagnostics.
  */
-export async function applyTransform(options: Phase1Options): Promise<Phase1Result> {
-  const { entryFile, program } = options;
+export function writeTransformedFiles(
+  program: ts.Program,
+  entryFile: string,
+  sourceDir: string,
+  buildDir: string,
+): TransformResult {
+  const diagnostics: TransformDiagnostic[] = [];
+  let transformedEntryFile = '';
 
-  const sourceFile = program.getSourceFile(entryFile);
-  if (!sourceFile) {
-    // Defensive: if the source file isn't in the program, skip transformation
-    return { entryFile, tempFile: null, diagnostics: [] };
+  for (const sourceFile of program.getSourceFiles()) {
+    const filePath = sourceFile.fileName;
+
+    // Skip dependencies — only transform user source files
+    if (filePath.includes('node_modules')) continue;
+
+    // Only transform files under the project source directory
+    const rel = path.relative(sourceDir, filePath);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) continue;
+
+    const originalText = sourceFile.getFullText();
+    const result = transformScriptFile(sourceFile, program);
+    diagnostics.push(...result.diagnostics);
+
+    // Use transformed text if it changed, otherwise copy original
+    const outputText = result.sourceText !== originalText
+      ? result.sourceText
+      : originalText;
+
+    const outputPath = path.join(buildDir, rel);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, outputText, 'utf8');
+
+    // Track the entry file's new location
+    if (path.normalize(filePath) === path.normalize(entryFile)) {
+      transformedEntryFile = outputPath;
+    }
   }
 
-  const { sourceText, diagnostics } = transformScriptFile(sourceFile, program);
-
-  // Check if the transformer actually changed anything (function declarations detected)
-  // by comparing source text length as a quick proxy. The real check is whether
-  // any function declarations exist in the original file.
-  const hasScripts = hasFunctionDeclarations(sourceFile);
-
-  if (!hasScripts && diagnostics.length === 0) {
-    // Nothing to transform — pass original file straight to bundler
-    return { entryFile, tempFile: null, diagnostics };
+  if (!transformedEntryFile) {
+    // Entry file wasn't in the program's source files — fall back to
+    // mirroring its relative position
+    const rel = path.relative(sourceDir, entryFile);
+    transformedEntryFile = path.join(buildDir, rel);
   }
 
-  // Write transformed source to a temp file
-  const tempFile = path.join(
-    path.dirname(entryFile),
-    `.espcompose-transformed-${process.pid}-${Date.now()}.tsx`,
-  );
-  fs.writeFileSync(tempFile, sourceText, 'utf8');
-
-  return { entryFile: tempFile, tempFile, diagnostics };
-}
-
-function hasFunctionDeclarations(sourceFile: ts.SourceFile): boolean {
-  return sourceFile.statements.some(
-    (stmt) => ts.isFunctionDeclaration(stmt) && stmt.name != null,
-  );
+  return { entryFile: transformedEntryFile, diagnostics };
 }

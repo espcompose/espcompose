@@ -3,46 +3,30 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { remote_receiver_RemoteReceiverComponent } from "../markers";
-export interface RemoteReceiverFilterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface RemoteReceiverIdleProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface RemoteReceiverProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin to receive the remote signal on. */
     pin: Pin;
     /** list: Decode and dump these remote codes in the logs (at log.level=DEBUG). Set to `all` to dump all available codecs: */
     dump?: unknown;
     /** int: The percentage or time that the remote signal lengths can deviate in the decoding process. Defaults to `25%`. */
-    tolerance?: unknown;
+    tolerance?: number;
     /**
      * int: The size of the internal buffer for storing the remote codes. Defaults to `10kB` on the ESP32 and `1kB` on the E...
      * @yamlKey buffer_size
      */
-    bufferSize?: unknown;
+    bufferSize?: number;
     /** [Time](/guides/configuration-types#time): Filter any pulses that are shorter than this. Useful for removing glitches ... */
-    filter?: RemoteReceiverFilterProps;
+    filter?: TimePeriod;
     /**
      * int: The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
      * @yamlKey clock_resolution
      */
-    clockResolution?: unknown;
+    clockResolution?: number;
     /** [Time](/guides/configuration-types#time): The amount of time that a signal should remain stable/unchanged for it to b... */
-    idle?: RemoteReceiverIdleProps;
+    idle?: TimePeriod;
     /**
      * int: When `use_dma` is enabled, this sets the size of the driver's internal DMA buffer. When DMA is disabled, it spec...
      * @yamlKey rmt_symbols
@@ -67,7 +51,7 @@ export interface RemoteReceiverProps extends _CoreComponent {
      * int: The carrier duty cycle for signal demodulation in the RMT peripheral in Hz. Defaults to `100`.
      * @yamlKey carrier_duty_percent
      */
-    carrierDutyPercent?: unknown;
+    carrierDutyPercent?: number;
     /**
      * int: The carrier frequency for signal demodulation in the RMT peripheral in Hz. Defaults to `0Hz` (carrier demodulati...
      * @yamlKey carrier_frequency
@@ -77,177 +61,177 @@ export interface RemoteReceiverProps extends _CoreComponent {
      * [Automation](/automations): An automation to perform when a B&O Beo4 infrared remote code has been decoded. A variabl...
      * @yamlKey on_beo4
      */
-    onBeo4?: () => void;
+    onBeo4?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Byron SX doorbell RF code has been decoded. A variable `x...
      * @yamlKey on_byronsx
      */
-    onByronsx?: () => void;
+    onByronsx?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a CanalSat remote code has been decoded. A variable `x` of ...
      * @yamlKey on_canalsat
      */
-    onCanalsat?: () => void;
+    onCanalsat?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a CanalSatLD remote code has been decoded. A variable `x` o...
      * @yamlKey on_canalsatld
      */
-    onCanalsatld?: () => void;
+    onCanalsatld?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Coolix remote code has been decoded. A variable `x` of ty...
      * @yamlKey on_coolix
      */
-    onCoolix?: () => void;
+    onCoolix?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a dish network remote code has been decoded. A variable `x`...
      * @yamlKey on_dish
      */
-    onDish?: () => void;
+    onDish?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Dooya RF remote code has been decoded. A variable `x` of ...
      * @yamlKey on_dooya
      */
-    onDooya?: () => void;
+    onDooya?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Dyson cool AM07 code has been decoded. A variable `x` of ...
      * @yamlKey on_dyson
      */
-    onDyson?: () => void;
+    onDyson?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a JVC remote code has been decoded. A variable `x` of type ...
      * @yamlKey on_jvc
      */
-    onJvc?: () => void;
+    onJvc?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a LG remote code has been decoded. A variable `x` of type <...
      * @yamlKey on_lg
      */
-    onLg?: () => void;
+    onLg?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a MagiQuest wand remote code has been decoded. A variable `...
      * @yamlKey on_magiquest
      */
-    onMagiquest?: () => void;
+    onMagiquest?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a KeeLoq RF code has been decoded. A variable `x` of type <...
      * @yamlKey on_keeloq
      */
-    onKeeloq?: () => void;
+    onKeeloq?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a NEC remote code has been decoded. A variable `x` of type ...
      * @yamlKey on_nec
      */
-    onNec?: () => void;
+    onNec?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a pioneer remote code has been decoded. A variable `x` of t...
      * @yamlKey on_pioneer
      */
-    onPioneer?: () => void;
+    onPioneer?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Pronto remote code has been decoded. A variable `x` of ty...
      * @yamlKey on_pronto
      */
-    onPronto?: () => void;
+    onPronto?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Go-Box remote code has been decoded. A variable `x` of ty...
      * @yamlKey on_gobox
      */
-    onGobox?: () => void;
+    onGobox?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Roomba remote code has been decoded. A variable `x` of ty...
      * @yamlKey on_roomba
      */
-    onRoomba?: () => void;
+    onRoomba?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Sony remote code has been decoded. A variable `x` of type...
      * @yamlKey on_sony
      */
-    onSony?: () => void;
+    onSony?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Symphony remote code has been decoded. A variable `x` of ...
      * @yamlKey on_symphony
      */
-    onSymphony?: () => void;
+    onSymphony?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a raw remote code has been decoded. A variable `x` of type ...
      * @yamlKey on_raw
      */
-    onRaw?: () => void;
+    onRaw?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Drayton Digistat RF code has been decoded. A variable `x`...
      * @yamlKey on_drayton
      */
-    onDrayton?: () => void;
+    onDrayton?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a RC5 remote code has been decoded. A variable `x` of type ...
      * @yamlKey on_rc5
      */
-    onRc5?: () => void;
+    onRc5?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a RC6 remote code has been decoded. A variable `x` of type ...
      * @yamlKey on_rc6
      */
-    onRc6?: () => void;
+    onRc6?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a RCSwitch RF code has been decoded. A variable `x` of type...
      * @yamlKey on_rc_switch
      */
-    onRcSwitch?: () => void;
+    onRcSwitch?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Samsung remote code has been decoded. A variable `x` of t...
      * @yamlKey on_samsung
      */
-    onSamsung?: () => void;
+    onSamsung?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Samsung36 remote code has been decoded. A variable `x` of...
      * @yamlKey on_samsung36
      */
-    onSamsung36?: () => void;
+    onSamsung36?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Toshiba AC remote code has been decoded. A variable `x` o...
      * @yamlKey on_toshiba_ac
      */
-    onToshibaAc?: () => void;
+    onToshibaAc?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Panasonic remote code has been decoded. A variable `x` of...
      * @yamlKey on_panasonic
      */
-    onPanasonic?: () => void;
+    onPanasonic?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Nexa RF code has been decoded. A variable `x` of type <AP...
      * @yamlKey on_nexa
      */
-    onNexa?: () => void;
+    onNexa?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Midea remote code has been decoded. A variable `x` of typ...
      * @yamlKey on_midea
      */
-    onMidea?: () => void;
+    onMidea?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a AEHA remote code has been decoded. A variable `x` of type...
      * @yamlKey on_aeha
      */
-    onAeha?: () => void;
+    onAeha?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Haier remote code has been decoded. A variable `x` of typ...
      * @yamlKey on_haier
      */
-    onHaier?: () => void;
+    onHaier?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a ABB-Welcome code has been decoded. A variable `x` of type...
      * @yamlKey on_abbwelcome
      */
-    onAbbwelcome?: () => void;
+    onAbbwelcome?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Mirage remote code has been decoded. A variable `x` of ty...
      * @yamlKey on_mirage
      */
-    onMirage?: () => void;
+    onMirage?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when a Toto remote code has been decoded. A variable `x` of type...
      * @yamlKey on_toto
      */
-    onToto?: () => void;
+    onToto?: TriggerHandler;
 }
 declare global {
     namespace JSX {

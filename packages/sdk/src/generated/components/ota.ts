@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _OtaBaseOta } from "../bases";
 import type { esphome_ESPHomeOTAComponent, http_request_HttpRequestComponent, http_request_OtaHttpRequestComponent, web_server_WebServerOTAComponent, zephyr_CdcAcm, zephyr_mcumgr_OTAComponent } from "../markers";
 interface ZephyrMcumgrTransportProps {

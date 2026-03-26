@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { mcp23s08_MCP23S08, spi_SPIComponent } from "../markers";
 export interface Mcp23s08Props extends _CoreComponent {

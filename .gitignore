@@ -142,6 +142,7 @@ vite.config.ts.timestamp-*
 .turbo/
 
 .espcompose/
+.espcompose-build/
 .pnpm-store/
 .cache/
 

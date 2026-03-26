@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { bedjet_BedJetFan, binary_BinaryFan, copy_CopyFan, fan_Fan, hbridge_HBridgeFan, output_BinaryOutput, output_FloatOutput, speed_SpeedFan, template__TemplateFan, tuya_Tuya, tuya_TuyaFan, web_server_WebServer } from "../markers";
 interface FanWebServerProps {
@@ -36,19 +36,19 @@ interface FanBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey speed_command_topic */
     speedCommandTopic?: unknown;
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey on_direction_set */
-    onDirectionSet?: () => void;
+    onDirectionSet?: TriggerHandler;
     /** @yamlKey on_oscillating_set */
-    onOscillatingSet?: () => void;
+    onOscillatingSet?: TriggerHandler;
     /** @yamlKey on_speed_set */
-    onSpeedSet?: () => void;
+    onSpeedSet?: TriggerHandler;
     /** @yamlKey on_preset_set */
-    onPresetSet?: () => void;
+    onPresetSet?: TriggerHandler;
 }
 interface BinaryProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the binary output component to use for this fan. */

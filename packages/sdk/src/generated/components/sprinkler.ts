@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sprinkler_Sprinkler, switch__Switch, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 export interface SprinklerAutoAdvanceSwitchPropsAvailabilityProps {
@@ -23,7 +23,7 @@ export interface SprinklerAutoAdvanceSwitchPropsWebServerProps {
 }
 export interface SprinklerAutoAdvanceSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -32,9 +32,12 @@ export interface SprinklerAutoAdvanceSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -55,13 +58,13 @@ export interface SprinklerAutoAdvanceSwitchProps {
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
-    restoreMode?: unknown;
+    restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
 }
@@ -82,7 +85,7 @@ export interface SprinklerMainSwitchPropsWebServerProps {
 }
 export interface SprinklerMainSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -91,12 +94,12 @@ export interface SprinklerMainSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -119,11 +122,11 @@ export interface SprinklerMainSwitchProps {
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
 }
@@ -144,7 +147,7 @@ export interface SprinklerQueueEnableSwitchPropsWebServerProps {
 }
 export interface SprinklerQueueEnableSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -153,9 +156,12 @@ export interface SprinklerQueueEnableSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -176,13 +182,13 @@ export interface SprinklerQueueEnableSwitchProps {
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
-    restoreMode?: unknown;
+    restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
 }
@@ -203,7 +209,7 @@ export interface SprinklerReverseSwitchPropsWebServerProps {
 }
 export interface SprinklerReverseSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -212,9 +218,12 @@ export interface SprinklerReverseSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -235,13 +244,13 @@ export interface SprinklerReverseSwitchProps {
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
-    restoreMode?: unknown;
+    restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
 }
@@ -262,7 +271,7 @@ export interface SprinklerStandbySwitchPropsWebServerProps {
 }
 export interface SprinklerStandbySwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -271,9 +280,12 @@ export interface SprinklerStandbySwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -294,23 +306,15 @@ export interface SprinklerStandbySwitchProps {
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
-    restoreMode?: unknown;
+    restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
-}
-export interface SprinklerManualSelectionDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 export interface SprinklerMultiplierNumberPropsAvailabilityProps {
     topic: unknown;
@@ -329,7 +333,7 @@ export interface SprinklerMultiplierNumberPropsWebServerProps {
 }
 export interface SprinklerMultiplierNumberProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -338,9 +342,12 @@ export interface SprinklerMultiplierNumberProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -360,9 +367,9 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     mode?: "AUTO" | "BOX" | "SLIDER";
@@ -371,16 +378,16 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey initial_value */
-    initialValue?: unknown;
+    initialValue?: number;
     /** @yamlKey max_value */
-    maxValue?: unknown;
+    maxValue?: number;
     /** @yamlKey min_value */
-    minValue?: unknown;
+    minValue?: number;
     /** @yamlKey restore_value */
     restoreValue?: boolean;
-    step?: unknown;
+    step?: number;
     /** @yamlKey set_action */
-    setAction?: () => void;
+    setAction?: TriggerHandler;
 }
 export interface SprinklerRepeatNumberPropsAvailabilityProps {
     topic: unknown;
@@ -399,7 +406,7 @@ export interface SprinklerRepeatNumberPropsWebServerProps {
 }
 export interface SprinklerRepeatNumberProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -408,9 +415,12 @@ export interface SprinklerRepeatNumberProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -430,9 +440,9 @@ export interface SprinklerRepeatNumberProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     mode?: "AUTO" | "BOX" | "SLIDER";
@@ -450,55 +460,7 @@ export interface SprinklerRepeatNumberProps {
     restoreValue?: boolean;
     step?: number;
     /** @yamlKey set_action */
-    setAction?: () => void;
-}
-export interface SprinklerPumpStartPumpDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SprinklerPumpStopPumpDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SprinklerPumpStartValveDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SprinklerPumpStopValveDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SprinklerValveOverlapProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SprinklerValveOpenDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
+    setAction?: TriggerHandler;
 }
 export interface SprinklerValvesPropsEnableSwitchPropsAvailabilityProps {
     topic: unknown;
@@ -517,7 +479,7 @@ export interface SprinklerValvesPropsEnableSwitchPropsWebServerProps {
 }
 export interface SprinklerValvesPropsEnableSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -526,9 +488,12 @@ export interface SprinklerValvesPropsEnableSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -549,23 +514,15 @@ export interface SprinklerValvesPropsEnableSwitchProps {
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
-    restoreMode?: unknown;
+    restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
-}
-export interface SprinklerValvesPropsRunDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 export interface SprinklerValvesPropsRunDurationNumberPropsAvailabilityProps {
     topic: unknown;
@@ -584,7 +541,7 @@ export interface SprinklerValvesPropsRunDurationNumberPropsWebServerProps {
 }
 export interface SprinklerValvesPropsRunDurationNumberProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -593,9 +550,12 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
+    icon?: string;
+    /**
+     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -615,9 +575,9 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     /** @yamlKey on_value_range */
-    onValueRange?: () => void;
+    onValueRange?: TriggerHandler;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: "min" | "s";
     mode?: "AUTO" | "BOX" | "SLIDER";
@@ -635,7 +595,7 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     restoreValue?: boolean;
     step?: number;
     /** @yamlKey set_action */
-    setAction?: () => void;
+    setAction?: TriggerHandler;
 }
 export interface SprinklerValvesPropsValveSwitchPropsAvailabilityProps {
     topic: unknown;
@@ -654,7 +614,7 @@ export interface SprinklerValvesPropsValveSwitchPropsWebServerProps {
 }
 export interface SprinklerValvesPropsValveSwitchProps {
     /** string: The name for the sensor. */
-    name?: unknown;
+    name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
     internal?: boolean;
     /**
@@ -663,12 +623,12 @@ export interface SprinklerValvesPropsValveSwitchProps {
      */
     disabledByDefault?: boolean;
     /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: unknown;
+    icon?: string;
     /**
      * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
      * @yamlKey entity_category
      */
-    entityCategory?: unknown;
+    entityCategory?: string;
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
@@ -691,11 +651,11 @@ export interface SprinklerValvesPropsValveSwitchProps {
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
-    onState?: () => void;
+    onState?: TriggerHandler;
     /** @yamlKey on_turn_on */
-    onTurnOn?: () => void;
+    onTurnOn?: TriggerHandler;
     /** @yamlKey on_turn_off */
-    onTurnOff?: () => void;
+    onTurnOff?: TriggerHandler;
     /** @yamlKey device_class */
     deviceClass?: "" | "outlet" | "switch";
 }
@@ -714,7 +674,7 @@ export interface SprinklerValvesProps {
      * [Time](/guides/configuration-types#time): Required when `run_duration_number` is not provided. The duration in second...
      * @yamlKey run_duration
      */
-    runDuration?: SprinklerValvesPropsRunDurationProps;
+    runDuration?: TimePeriod;
     /**
      * *string*: The name of the [number](/components/number/) component that should be presented to the front end (Home Ass...
      * @yamlKey run_duration_number
@@ -767,7 +727,7 @@ export interface SprinklerProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The amount of time the controller should wait to activate a valve after the...
      * @yamlKey manual_selection_delay
      */
-    manualSelectionDelay?: SprinklerManualSelectionDelayProps;
+    manualSelectionDelay?: TimePeriod;
     /**
      * *string*: The name of the [number](/components/number/) component that should be presented to the front end (Home Ass...
      * @yamlKey multiplier_number
@@ -784,12 +744,12 @@ export interface SprinklerProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The delay in seconds from when a distribution valve is opened to when the a...
      * @yamlKey pump_start_pump_delay
      */
-    pumpStartPumpDelay?: SprinklerPumpStartPumpDelayProps;
+    pumpStartPumpDelay?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The delay in seconds from when a distribution valve is closed to when the r...
      * @yamlKey pump_stop_pump_delay
      */
-    pumpStopPumpDelay?: SprinklerPumpStopPumpDelayProps;
+    pumpStopPumpDelay?: TimePeriod;
     /**
      * boolean: If set to `true`, the pump will be switched off during the `valve_open_delay` interval; otherwise, it remain...
      * @yamlKey pump_switch_off_during_valve_open_delay
@@ -799,22 +759,22 @@ export interface SprinklerProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The delay in seconds from when a pump is started to when the associated dis...
      * @yamlKey pump_start_valve_delay
      */
-    pumpStartValveDelay?: SprinklerPumpStartValveDelayProps;
+    pumpStartValveDelay?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The delay in seconds from when a pump is deactivated to when the respective...
      * @yamlKey pump_stop_valve_delay
      */
-    pumpStopValveDelay?: SprinklerPumpStopValveDelayProps;
+    pumpStopValveDelay?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The amount of time in seconds that the current valve and the next valve sho...
      * @yamlKey valve_overlap
      */
-    valveOverlap?: SprinklerValveOverlapProps;
+    valveOverlap?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The *minimum* delay in seconds that should be inserted between (distributio...
      * @yamlKey valve_open_delay
      */
-    valveOpenDelay?: SprinklerValveOpenDelayProps;
+    valveOpenDelay?: TimePeriod;
     /** *list*: A list of valves the controller should use. Each valve consists of: */
     valves: Array<SprinklerValvesProps>;
 }

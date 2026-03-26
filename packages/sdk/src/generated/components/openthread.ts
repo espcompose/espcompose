@@ -3,16 +3,8 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { mdns_MDNSComponent, openthread_OpenThreadComponent } from "../markers";
-export interface OpenthreadPollPeriodProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface OpenthreadProps {
     /** @yamlKey mdns_id */
     mdnsId?: RefProp<mdns_MDNSComponent>;
@@ -37,36 +29,36 @@ export interface OpenthreadProps {
      * [Time](/guides/configuration-types#config-time): When Poll_Period is set on an MTD device, the parent router will enq...
      * @yamlKey poll_period
      */
-    pollPeriod?: OpenthreadPollPeriodProps;
+    pollPeriod?: TimePeriod;
     /**
      * integer: The amount of TX power for the Thread 802.15.4 radio in dBm. Range depends on the chip variant: ESP32-C5/C6 ...
      * @yamlKey output_power
      */
-    outputPower?: unknown;
+    outputPower?: number;
     /**
      * string: 2-byte Personal Area Network ID (PAN ID)
      * @yamlKey pan_id
      */
-    panId?: unknown;
+    panId?: string;
     /** int: Channel number from 11 to 26 */
     channel?: number;
     /**
      * string: OpenThread network key
      * @yamlKey network_key
      */
-    networkKey?: unknown;
+    networkKey?: string;
     /**
      * string: 8-byte Extended Personal Area Network ID (XPAN ID)
      * @yamlKey ext_pan_id
      */
-    extPanId?: unknown;
+    extPanId?: string;
     /**
      * string: A human-readable Network Name
      * @yamlKey network_name
      */
     networkName?: string;
     /** string: PSKc is used to authenticate an external Thread Commissioner to a Thread network */
-    pskc?: unknown;
+    pskc?: string;
     /**
      * ipv6network: Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the net...
      * @yamlKey mesh_local_prefix

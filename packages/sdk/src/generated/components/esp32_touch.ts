@@ -3,33 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_touch_ESP32TouchComponent } from "../markers";
-export interface Esp32TouchSleepDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface Esp32TouchMeasurementDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface Esp32TouchIirFilterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Esp32TouchProps extends _CoreComponent {
     /**
      * boolean: Whether debug messages with the touch pad value should
@@ -40,12 +16,12 @@ export interface Esp32TouchProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): Set a time period denoting the amount of time the touch peripheral should s...
      * @yamlKey sleep_duration
      */
-    sleepDuration?: Esp32TouchSleepDurationProps;
+    sleepDuration?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): Set the conversion time for all touch pads. A longer conversion time means ...
      * @yamlKey measurement_duration
      */
-    measurementDuration?: Esp32TouchMeasurementDurationProps;
+    measurementDuration?: TimePeriod;
     /**
      * The low voltage reference to use for the charge cycles. One of `0.5V`, `0.6V`, `0.7V`, `0.8V`. Default is `0.5V`.
      * @yamlKey low_voltage_reference
@@ -65,7 +41,7 @@ export interface Esp32TouchProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): Optionally set up an [Infinite Impulse Response](https://en.wikipedia.org/w...
      * @yamlKey iir_filter
      */
-    iirFilter?: Esp32TouchIirFilterProps;
+    iirFilter?: TimePeriod;
     /**
      * `int` range 0-7: Sets the debounce count; if the measured values continue to exceed the threshold for `n + 1` times, ...
      * @yamlKey debounce_count

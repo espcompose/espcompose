@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE, esp32_ble_beacon_ESP32BLEBeacon } from "../markers";
-export interface Esp32BleBeaconMinIntervalProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface Esp32BleBeaconMaxIntervalProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Esp32BleBeaconProps extends _CoreComponent {
     /** @yamlKey ble_id */
     bleId?: RefProp<esp32_ble_ESP32BLE>;
@@ -37,12 +21,12 @@ export interface Esp32BleBeaconProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The iBeacon minimum transmit interval in milliseconds from 20 to 10240. Set...
      * @yamlKey min_interval
      */
-    minInterval?: Esp32BleBeaconMinIntervalProps;
+    minInterval?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The iBeacon maximum transmit interval in milliseconds from 20 to 10240. Set...
      * @yamlKey max_interval
      */
-    maxInterval?: Esp32BleBeaconMaxIntervalProps;
+    maxInterval?: TimePeriod;
     /**
      * int: The RSSI of the iBeacon as measured 1 meter from the device. This is used to calibrate the ranging calculations ...
      * @yamlKey measured_power

@@ -3,22 +3,22 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { wifi_WiFiComponent } from "../markers";
 export interface WifiNetworksPropsManualIpProps {
     /** IPv4 address: The main DNS server to use. */
-    dns1?: unknown;
+    dns1?: IPv4Address;
     /** IPv4 address: The backup DNS server to use. */
-    dns2?: unknown;
+    dns2?: IPv4Address;
     /**
      * IPv4 address: The static IP of your node.
      * @yamlKey static_ip
      */
-    staticIp: unknown;
+    staticIp: IPv4Address;
     /** IPv4 address: The gateway of the local network. */
-    gateway: unknown;
+    gateway: IPv4Address;
     /** IPv4 address: The subnet of the local network. */
-    subnet: unknown;
+    subnet: IPv4Address;
 }
 export interface WifiNetworksPropsEapProps {
     identity?: string;
@@ -44,18 +44,18 @@ export interface WifiNetworksProps {
 }
 export interface WifiManualIpProps {
     /** IPv4 address: The main DNS server to use. */
-    dns1?: unknown;
+    dns1?: IPv4Address;
     /** IPv4 address: The backup DNS server to use. */
-    dns2?: unknown;
+    dns2?: IPv4Address;
     /**
      * IPv4 address: The static IP of your node.
      * @yamlKey static_ip
      */
-    staticIp: unknown;
+    staticIp: IPv4Address;
     /** IPv4 address: The gateway of the local network. */
-    gateway: unknown;
+    gateway: IPv4Address;
     /** IPv4 address: The subnet of the local network. */
-    subnet: unknown;
+    subnet: IPv4Address;
 }
 export interface WifiEapProps {
     identity?: string;
@@ -68,21 +68,13 @@ export interface WifiEapProps {
     certificate?: unknown;
     key?: unknown;
 }
-export interface WifiRebootTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface WifiProps {
     /** Configure multiple WiFi networks to connect to, the best one that is reachable will be connected to. See [Connecting ... */
     networks?: Array<WifiNetworksProps>;
     /** string: The SSID or WiFi network name. */
-    ssid?: unknown;
+    ssid?: string;
     /** string: The password to present to the authentication server. For EAP-TLS this password may be set to decrypt to priv... */
-    password?: unknown;
+    password?: string;
     /**
      * Manually configure the static IP of the node when using this network. Note that when using different static IP addres...
      * @yamlKey manual_ip
@@ -93,12 +85,12 @@ export interface WifiProps {
     /** Enable an access point mode on the node. */
     ap?: unknown;
     /** string: Set the domain of the node hostname used for uploading. For example, if it's set to `.local`, all uploads wil... */
-    domain?: unknown;
+    domain?: string;
     /**
      * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when no WiFi connection exists....
      * @yamlKey reboot_timeout
      */
-    rebootTimeout?: WifiRebootTimeoutProps;
+    rebootTimeout?: TimePeriod;
     /**
      * string: The power save mode for the WiFi interface. See [Power Save Mode](https://esphome.io/components/wifi#wifi-pow...
      * @yamlKey power_save_mode
@@ -123,7 +115,7 @@ export interface WifiProps {
      * string: The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default for ESP8266 is 20dB, 20.5dB might...
      * @yamlKey output_power
      */
-    outputPower?: unknown;
+    outputPower?: string;
     /**
      * bool: Only on `esp32`. Enable 802.11v BSS Transition Management support.
      * @yamlKey enable_btm
@@ -158,12 +150,12 @@ export interface WifiProps {
      * [Automation](/automations): An action to be performed when a connection is established.
      * @yamlKey on_connect
      */
-    onConnect?: () => void;
+    onConnect?: TriggerHandler;
     /**
      * [Automation](/automations): An action to be performed when the connection is dropped.
      * @yamlKey on_disconnect
      */
-    onDisconnect?: () => void;
+    onDisconnect?: TriggerHandler;
     /**
      * boolean: For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM. Defaults to `false`. Req...
      * @yamlKey use_psram

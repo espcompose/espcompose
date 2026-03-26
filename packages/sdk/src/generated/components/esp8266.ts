@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface Esp8266FrameworkProps {
     /** string: The base framework version number to use, from [esp8266 arduino releases](https://github.com/esp8266/Arduino/... */
     version?: string;
@@ -13,7 +13,7 @@ export interface Esp8266FrameworkProps {
      * string: The version of the [platformio/espressif8266](https://github.com/platformio/platform-espressif8266/releases/)...
      * @yamlKey platform_version
      */
-    platformVersion?: unknown;
+    platformVersion?: string;
 }
 export interface Esp8266Props {
     /** string: The PlatformIO board ID that should be used. Choose the appropriate board from [this list](https://registry.p... */

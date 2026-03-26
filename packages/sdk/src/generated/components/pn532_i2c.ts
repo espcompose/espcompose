@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Pn532 } from "../bases";
 import type { i2c_I2CBus, pn532_i2c_PN532I2C } from "../markers";
 export interface Pn532I2cProps extends _Pn532 {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

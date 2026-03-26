@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { gp8403_GP8403Component, i2c_I2CBus } from "../markers";
 export interface Gp8403Props extends _CoreComponent {
@@ -13,7 +13,7 @@ export interface Gp8403Props extends _CoreComponent {
     voltage: "5V" | "10V";
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

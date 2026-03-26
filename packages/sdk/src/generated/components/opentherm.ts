@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { opentherm_OpenthermHub, sensor_Sensor } from "../markers";
 export interface OpenthermProps extends _CoreComponent {
@@ -37,9 +37,9 @@ export interface OpenthermProps extends _CoreComponent {
      */
     syncMode?: boolean;
     /** @yamlKey before_send */
-    beforeSend?: () => void;
+    beforeSend?: TriggerHandler;
     /** @yamlKey before_process_response */
-    beforeProcessResponse?: () => void;
+    beforeProcessResponse?: TriggerHandler;
     /** @yamlKey t_set */
     tSet?: RefProp<sensor_Sensor>;
     /** @yamlKey t_set_ch2 */
@@ -74,7 +74,7 @@ export interface OpenthermProps extends _CoreComponent {
      * float: Version of OpenTherm implemented by controller
      * @yamlKey opentherm_version_controller
      */
-    openthermVersionController?: unknown;
+    openthermVersionController?: number;
     /**
      * byte [0-255]: Controller configuration
      * @yamlKey controller_configuration

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent } from "../bases";
 import type { copy_CopyText, lvgl_LVGLText, template__TemplateText, text_Text, web_server_WebServer } from "../markers";
 interface TextWebServerProps {
@@ -18,7 +18,7 @@ interface TextBaseProps extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey web_server */
     webServer?: TextWebServerProps;
     /** @yamlKey on_value */
-    onValue?: () => void;
+    onValue?: TriggerHandler;
     mode: "TEXT" | "PASSWORD";
 }
 interface CopyProps extends _CoreComponent {
@@ -51,7 +51,7 @@ interface TemplateProps extends _CoreComponent {
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey set_action
      */
-    setAction?: () => void;
+    setAction?: TriggerHandler;
     /**
      * String: The value to set the state to on setup if not restored with `restore_value`. Cannot be used with `lambda`. De...
      * @yamlKey initial_value
@@ -66,7 +66,7 @@ interface TemplateProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The interval on which to update the text by executing the `lambda`. Default...
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
 }
 export type TextProps = (TextBaseProps & {
     platform: "copy";

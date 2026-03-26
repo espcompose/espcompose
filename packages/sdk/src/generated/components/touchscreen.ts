@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _Touchscreen } from "../bases";
 import type { axs15231_AXS15231Touchscreen, chsc6x_CHSC6XTouchscreen, cst226_CST226Touchscreen, cst816_CST816Touchscreen, display_Display, ektf2232_EKTF2232Touchscreen, ft5x06_FT5x06Touchscreen, ft63x6_FT63X6Touchscreen, gt911_GT911Touchscreen, i2c_I2CBus, lilygo_t5_47_LilygoT547Touchscreen, sdl_Sdl, sdl_SdlTouchscreen, spi_SPIComponent, tt21100_TT21100Touchscreen, xpt2046_XPT2046Component } from "../markers";
 interface Axs15231TransformProps {
@@ -13,14 +13,6 @@ interface Axs15231TransformProps {
     mirrorX?: boolean;
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
-}
-interface Axs15231TouchTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface Axs15231CalibrationProps {
     /**
@@ -52,14 +44,6 @@ interface Chsc6xTransformProps {
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
 }
-interface Chsc6xTouchTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface Chsc6xCalibrationProps {
     /**
      * int: The raw value corresponding to the left
@@ -89,14 +73,6 @@ interface LilygoT547TransformProps {
     mirrorX?: boolean;
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
-}
-interface LilygoT547TouchTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface LilygoT547CalibrationProps {
     /**
@@ -128,14 +104,6 @@ interface Cst226TransformProps {
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
 }
-interface Cst226TouchTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface Cst226CalibrationProps {
     /**
      * int: The raw value corresponding to the left
@@ -165,14 +133,6 @@ interface Xpt2046TransformProps {
     mirrorX?: boolean;
     /** @yamlKey mirror_y */
     mirrorY?: boolean;
-}
-interface Xpt2046TouchTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
 }
 interface Xpt2046CalibrationProps {
     /**
@@ -214,20 +174,20 @@ interface Cst816Props extends _Touchscreen {
     skipProbe?: boolean;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Axs15231Props extends _CoreComponent {
     display?: RefProp<display_Display>;
     transform?: Axs15231TransformProps;
     /** @yamlKey touch_timeout */
-    touchTimeout?: Axs15231TouchTimeoutProps;
+    touchTimeout?: TimePeriod;
     calibration?: Axs15231CalibrationProps;
     /** @yamlKey on_touch */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /** @yamlKey on_update */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
     /** @yamlKey on_release */
-    onRelease?: () => void;
+    onRelease?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**
@@ -242,20 +202,20 @@ interface Axs15231Props extends _CoreComponent {
     resetPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Chsc6xProps extends _CoreComponent {
     display?: RefProp<display_Display>;
     transform?: Chsc6xTransformProps;
     /** @yamlKey touch_timeout */
-    touchTimeout?: Chsc6xTouchTimeoutProps;
+    touchTimeout?: TimePeriod;
     calibration?: Chsc6xCalibrationProps;
     /** @yamlKey on_touch */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /** @yamlKey on_update */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
     /** @yamlKey on_release */
-    onRelease?: () => void;
+    onRelease?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**
@@ -265,7 +225,7 @@ interface Chsc6xProps extends _CoreComponent {
     interruptPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Ektf2232Props extends _Touchscreen {
     /**
@@ -280,7 +240,7 @@ interface Ektf2232Props extends _Touchscreen {
     resetPin: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Ft5x06Props extends _Touchscreen {
     /**
@@ -290,7 +250,7 @@ interface Ft5x06Props extends _Touchscreen {
     interruptPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Ft63x6Props extends _Touchscreen {
     /**
@@ -306,20 +266,20 @@ interface Ft63x6Props extends _Touchscreen {
     threshold?: number;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface LilygoT547Props extends _CoreComponent {
     display?: RefProp<display_Display>;
     transform?: LilygoT547TransformProps;
     /** @yamlKey touch_timeout */
-    touchTimeout?: LilygoT547TouchTimeoutProps;
+    touchTimeout?: TimePeriod;
     calibration?: LilygoT547CalibrationProps;
     /** @yamlKey on_touch */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /** @yamlKey on_update */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
     /** @yamlKey on_release */
-    onRelease?: () => void;
+    onRelease?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**
@@ -329,20 +289,20 @@ interface LilygoT547Props extends _CoreComponent {
     interruptPin: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Cst226Props extends _CoreComponent {
     display?: RefProp<display_Display>;
     transform?: Cst226TransformProps;
     /** @yamlKey touch_timeout */
-    touchTimeout?: Cst226TouchTimeoutProps;
+    touchTimeout?: TimePeriod;
     calibration?: Cst226CalibrationProps;
     /** @yamlKey on_touch */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /** @yamlKey on_update */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
     /** @yamlKey on_release */
-    onRelease?: () => void;
+    onRelease?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**
@@ -357,7 +317,7 @@ interface Cst226Props extends _CoreComponent {
     resetPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Gt911Props extends _Touchscreen {
     /**
@@ -372,7 +332,7 @@ interface Gt911Props extends _Touchscreen {
     resetPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface SdlProps extends _Touchscreen {
     /** @yamlKey sdl_id */
@@ -391,20 +351,20 @@ interface Tt21100Props extends _Touchscreen {
     resetPin?: Pin;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
-    address?: unknown;
+    address?: number;
 }
 interface Xpt2046Props extends _CoreComponent {
     display?: RefProp<display_Display>;
     transform?: Xpt2046TransformProps;
     /** @yamlKey touch_timeout */
-    touchTimeout?: Xpt2046TouchTimeoutProps;
+    touchTimeout?: TimePeriod;
     calibration: Xpt2046CalibrationProps;
     /** @yamlKey on_touch */
-    onTouch?: () => void;
+    onTouch?: TriggerHandler;
     /** @yamlKey on_update */
-    onUpdate?: () => void;
+    onUpdate?: TriggerHandler;
     /** @yamlKey on_release */
-    onRelease?: () => void;
+    onRelease?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /** @yamlKey interrupt_pin */

@@ -3,55 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { deep_sleep_DeepSleepComponent } from "../markers";
-export interface DeepSleepRunDurationPropsDefaultProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface DeepSleepRunDurationPropsTouchWakeupReasonProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface DeepSleepRunDurationPropsGpioWakeupReasonProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface DeepSleepRunDurationProps {
-    /** [Time](/guides/configuration-types#time): default run duration for timer wakeup and any unspecified wakeup reason. */
-    default: DeepSleepRunDurationPropsDefaultProps;
-    /**
-     * [Time](/guides/configuration-types#time): run duration if woken up by touch.
-     * @yamlKey touch_wakeup_reason
-     */
-    touchWakeupReason?: DeepSleepRunDurationPropsTouchWakeupReasonProps;
-    /**
-     * [Time](/guides/configuration-types#time): run duration if woken up by GPIO.
-     * @yamlKey gpio_wakeup_reason
-     */
-    gpioWakeupReason?: DeepSleepRunDurationPropsGpioWakeupReasonProps;
-}
-export interface DeepSleepSleepDurationProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface DeepSleepEsp32Ext1WakeupProps {
     /** list of pin numbers: The pins to wake up on. */
     pins: Array<Pin>;
@@ -63,12 +17,12 @@ export interface DeepSleepProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The time duration the node should be active, i.e. run code. Only on ESP32, ...
      * @yamlKey run_duration
      */
-    runDuration?: DeepSleepRunDurationProps;
+    runDuration?: TimePeriod;
     /**
      * [Time](/guides/configuration-types#time): The time duration to stay in deep sleep mode. On BK72xx, the maximum is 36 ...
      * @yamlKey sleep_duration
      */
-    sleepDuration?: DeepSleepSleepDurationProps;
+    sleepDuration?: TimePeriod;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema) / list: Only on ESP32/BK72xx. A single pin to wake up to once in...
      * @yamlKey wakeup_pin

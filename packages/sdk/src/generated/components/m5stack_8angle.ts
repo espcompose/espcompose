@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { i2c_I2CBus, m5stack_8angle_M5Stack8AngleComponent } from "../markers";
 export interface M5stack8angleProps {
     /**
@@ -12,7 +12,7 @@ export interface M5stack8angleProps {
      */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I²C address of the device. Defaults to `0x43`. */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

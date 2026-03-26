@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { adc128s102_ADC128S102, spi_SPIComponent } from "../markers";
 export interface Adc128s102Props {
     /** @yamlKey spi_id */

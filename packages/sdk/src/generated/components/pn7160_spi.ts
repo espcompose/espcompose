@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { pn7160_spi_PN7160Spi, spi_SPIComponent } from "../markers";
 export interface Pn7160SpiProps {
     /**

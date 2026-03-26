@@ -9,7 +9,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry } from './schema-types.js';
-import { toCamelCase } from './type-mapper.js';
+import { inferDocTypeString } from './doc-type-inference.js';
+import { toCamelCase, DATA_TYPE_TO_TS } from './type-mapper.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -59,28 +60,53 @@ export type ClassActionMap = Map<string, ActionEntry[]>;
 // Schema parameter type resolution
 // ────────────────────────────────────────────────────────────────────────────
 
+function wrapListType(tsType: string, isList: boolean | undefined): string {
+  if (!isList) return tsType;
+  if (tsType.endsWith('[]')) return tsType;
+  if (tsType === 'string | number[]' || tsType === 'string | string[]') return tsType;
+  return tsType.includes(' | ') ? `(${tsType})[]` : `${tsType}[]`;
+}
+
 function resolveParamType(varDef: SchemaConfigVar): string {
+  const inferredFromDocs = inferDocTypeString(varDef.docs);
+
+  if (inferredFromDocs) {
+    return wrapListType(inferredFromDocs, varDef.is_list);
+  }
+
+  let baseType: string;
+
   switch (varDef.type) {
     case 'string':
-      return 'string';
+      baseType = 'string';
+      break;
     case 'boolean':
-      return 'boolean';
+      baseType = 'boolean';
+      break;
     case 'integer':
     case 'float':
-      return 'number';
+      baseType = 'number';
+      break;
     case 'enum': {
       const vals = Object.keys(varDef.values ?? {});
-      return vals.length > 0 ? vals.map(v => JSON.stringify(v)).join(' | ') : 'string';
+      baseType = vals.length > 0 ? vals.map(v => JSON.stringify(v)).join(' | ') : 'string';
+      break;
     }
     case 'schema':
       // Nested object params — use Record for now; complex schemas are rare in action params
-      return 'Record<string, unknown>';
-    default:
-      // Untyped params (common for templatable fields like brightness, level)
-      // These are typically numbers in ESPHome
-      if (varDef.templatable) return 'number';
-      return 'unknown';
+      baseType = 'Record<string, unknown>';
+      break;
+    case 'trigger':
+      baseType = 'TriggerHandler';
+      break;
+    default: {
+      const fromDataType = varDef.data_type ? DATA_TYPE_TO_TS.get(varDef.data_type) : undefined;
+      baseType = fromDataType ?? 'unknown';
+      break;
+    }
   }
+
+  return wrapListType(baseType, varDef.is_list);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -98,17 +124,57 @@ function resolveExtends(
 ): Record<string, SchemaConfigVar> {
   const merged: Record<string, SchemaConfigVar> = {};
 
+  function mergeConfigVarDef(base: SchemaConfigVar, override: SchemaConfigVar): SchemaConfigVar {
+    const next: SchemaConfigVar = { ...base, ...override };
+    if (base.values || override.values) {
+      next.values = { ...(base.values ?? {}), ...(override.values ?? {}) };
+    }
+    if (base.schema || override.schema) {
+      next.schema = mergeSchemaDefinition(base.schema, override.schema);
+    }
+    return next;
+  }
+
+  function mergeConfigVarMaps(
+    base: Record<string, SchemaConfigVar>,
+    override: Record<string, SchemaConfigVar>,
+  ): Record<string, SchemaConfigVar> {
+    const next: Record<string, SchemaConfigVar> = { ...base };
+    for (const [k, v] of Object.entries(override)) {
+      next[k] = next[k] ? mergeConfigVarDef(next[k], v) : v;
+    }
+    return next;
+  }
+
+  function mergeSchemaDefinition(
+    base: SchemaDefinition | undefined,
+    override: SchemaDefinition | undefined,
+  ): SchemaDefinition | undefined {
+    if (!base && !override) return undefined;
+    if (!base) return override;
+    if (!override) return base;
+
+    const next: SchemaDefinition = { ...base, ...override };
+    if (base.config_vars || override.config_vars) {
+      next.config_vars = mergeConfigVarMaps(base.config_vars ?? {}, override.config_vars ?? {});
+    }
+    if (base.extends || override.extends) {
+      const combined = [...(base.extends ?? []), ...(override.extends ?? [])];
+      next.extends = [...new Set(combined)];
+    }
+    return next;
+  }
+
   for (const ref of schema.extends ?? []) {
     if (visited.has(ref)) continue;
     visited.add(ref);
     const refDef = schemaRegistry.get(ref);
     if (!refDef) continue;
     const inherited = resolveExtends(refDef, schemaRegistry, visited);
-    Object.assign(merged, inherited);
+    Object.assign(merged, mergeConfigVarMaps(merged, inherited));
   }
 
-  Object.assign(merged, schema.config_vars ?? {});
-  return merged;
+  return mergeConfigVarMaps(merged, schema.config_vars ?? {});
 }
 
 // ────────────────────────────────────────────────────────────────────────────

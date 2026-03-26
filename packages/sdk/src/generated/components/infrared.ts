@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { ir_rf_proxy_IrRfProxy, remote_receiver_RemoteReceiverComponent, remote_transmitter_RemoteTransmitterComponent } from "../markers";
 interface IrRfProxyProps extends _CoreEntityBase, _CoreComponent {

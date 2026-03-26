@@ -3,31 +3,15 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { safe_mode_SafeModeComponent } from "../markers";
-export interface SafeModeBootIsGoodAfterProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface SafeModeRebootTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface SafeModeProps extends _CoreComponent {
     /**
      * [Time](/guides/configuration-types#time): The amount of time after which the boot is considered successful.
      * @yamlKey boot_is_good_after
      */
-    bootIsGoodAfter?: SafeModeBootIsGoodAfterProps;
+    bootIsGoodAfter?: TimePeriod;
     /** boolean: Set to `true` to disable safe_mode. [Ota](/components/ota/) automatically */
     disabled?: boolean;
     /**
@@ -39,12 +23,12 @@ export interface SafeModeProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when in safe mode.
      * @yamlKey reboot_timeout
      */
-    rebootTimeout?: SafeModeRebootTimeoutProps;
+    rebootTimeout?: TimePeriod;
     /**
      * [Automation](/automations): An action to be performed once when safe mode is invoked.
      * @yamlKey on_safe_mode
      */
-    onSafeMode?: () => void;
+    onSafeMode?: TriggerHandler;
 }
 declare global {
     namespace JSX {

@@ -139,6 +139,23 @@ export function voidFunctionType(): ts.FunctionTypeNode {
   return ts.factory.createFunctionTypeNode(undefined, [], keyword('void'));
 }
 
+/**
+ * `Trigger` or `Trigger<{ x: T }>`.
+ *
+ * @param variables - Trigger lambda variables from the trigger registry.
+ *   Empty array or undefined → plain `Trigger` (no type argument).
+ */
+export function triggerType(variables?: ReadonlyArray<{ name: string; tsType: string }>): ts.TypeReferenceNode {
+  if (!variables || variables.length === 0) {
+    return typeRef('TriggerHandler');
+  }
+  // Build object literal type: { x: number } etc.
+  const members = variables.map(v =>
+    propSig(v.name, keyword(v.tsType as 'string' | 'number' | 'boolean'), false),
+  );
+  return typeRef('TriggerHandler', [typeLiteral(members)]);
+}
+
 /** `ComponentProps` or `ComponentProps<T>` */
 export function componentPropsType(markerName?: string): ts.TypeReferenceNode {
   if (markerName) return typeRef('ComponentProps', [typeRef(markerName)]);

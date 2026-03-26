@@ -4,13 +4,16 @@ import * as path from 'path';
 import { createRequire } from 'module';
 import ts from 'typescript';
 import { ESLint } from 'eslint';
-import { applyTransform } from './transform/index.js';
+import { writeTransformedFiles } from './transform/index.js';
+import { injectReactiveBindings } from './reactive-injector.js';
 
 export interface CompileOptions {
   /** Absolute path to the TSX/TS entry file. */
   entryFile: string;
   /** Absolute path to the YAML output file. */
   outFile: string;
+  /** When true, keep the `.espcompose-build/` intermediate folder for inspection. */
+  debug?: boolean;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -151,45 +154,46 @@ export async function lint(entryFile: string): Promise<void> {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Phase 1: Transform  (TypeScript AST transformation)
+// Phase 1: Transform (write transformed files to .espcompose-build/)
+//
+// Every user source file is transformed via the TypeScript AST and written
+// to the build directory preserving directory structure. This mirrors the
+// Resolut CLI pattern — individual transformed files are inspectable on
+// disk (especially useful with --debug).
 // ────────────────────────────────────────────────────────────────────────────
 
-interface TransformResult {
-  /** Resolved path of the (potentially transformed) entry file to bundle. */
-  entryFile: string;
-  /** Temp file path created by the transform, if any — cleaned up by caller. */
-  tempFile: string | null;
-}
+function transform(
+  program: ts.Program,
+  entryFile: string,
+  sourceDir: string,
+  buildDir: string,
+): string {
+  const { entryFile: transformedEntry, diagnostics } = writeTransformedFiles(
+    program,
+    entryFile,
+    sourceDir,
+    buildDir,
+  );
 
-/**
- * Apply the TypeScript AST transformation step (Phase 1).
- *
- * Detects top-level `function` declarations and rewrites them as ESPHome
- * `<script>` elements. Trigger props (those starting with `on`) referencing
- * function declarations or inline arrow functions are also rewritten into
- * ESPHome action arrays.
- *
- * If no function declarations are detected the original entry file is
- * returned unchanged and no temp file is written.
- */
-async function transform(options: CompileOptions, program: ts.Program): Promise<TransformResult> {
-  const result = await applyTransform({ entryFile: options.entryFile, program });
-
-  if (result.diagnostics.length > 0) {
-    const formatted = result.diagnostics.map((d) => {
+  if (diagnostics.length > 0) {
+    const formatted = diagnostics.map((d) => {
       const loc = d.line != null ? `:${d.line}:${d.character ?? 1}` : '';
       return `  transform ${d.file}${loc} - ${d.message}`;
     });
     throw new Error(
-      `Script transformation failed with ${result.diagnostics.length} error(s):\n${formatted.join('\n')}`,
+      `Script transformation failed with ${diagnostics.length} error(s):\n${formatted.join('\n')}`,
     );
   }
 
-  return { entryFile: result.entryFile, tempFile: result.tempFile };
+  return transformedEntry;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Phase 2: Bundle
+// Phase 2: Bundle (esbuild reads from .espcompose-build/)
+//
+// esbuild bundles the pre-transformed files from the build directory into
+// a single CJS file. Because the sources are real files on disk, esbuild
+// resolves imports normally — no load plugin needed.
 // ────────────────────────────────────────────────────────────────────────────
 
 async function bundle(entryFile: string, outFile: string): Promise<void> {
@@ -235,32 +239,44 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cjsSDK = (_require('@esphome/compose') as any).ESPCompose;
 
-  // Wrap the bundle load in a script scope.  useScript hook calls fire during
-  // module evaluation (when JSX prop values like `onPress={greet()}` are
-  // computed), so the scope only needs to be active during `_require(bundleFile)`.
-  const { result: mod, scripts } = cjsSDK.withScriptScope(() => {
-    return _require(bundleFile) as { default?: unknown };
+  // Clear HA entity binding cache for a fresh render pass.
+  cjsSDK.clearHAEntityCache();
+
+  // Wrap the bundle load and render in both a script scope and a reactive scope.
+  // - useHAEntity() calls fire during module evaluation (inside withScriptScope)
+  //   and register HA entities in the reactive scope.
+  // - Expression<T> props are detected during render() and register reactive
+  //   bindings in the reactive scope.
+  const { result: reactiveResult, bindings, entities } = cjsSDK.withReactiveScope(() => {
+    const { result: mod, scripts } = cjsSDK.withScriptScope(() => {
+      return _require(bundleFile) as { default?: unknown };
+    });
+
+    const rootElement = mod.default;
+
+    if (rootElement == null) {
+      throw new Error(
+        `Entry module does not have a default export. ` +
+          `Make sure your TSX file exports a default ESPCompose element tree.`
+      );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const config = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+
+    // Prepend any registered scripts as a top-level `script:` section.
+    const withScripts: Record<string, unknown> =
+      scripts.length > 0
+        ? { ...config, script: scripts }
+        : config;
+
+    return withScripts;
   });
 
-  const rootElement = mod.default;
+  // Inject reactive bindings: auto-generated HA sensor imports + trigger wiring
+  const finalConfig = injectReactiveBindings(reactiveResult, bindings, entities);
 
-  if (rootElement == null) {
-    throw new Error(
-      `Entry module does not have a default export. ` +
-        `Make sure your TSX file exports a default ESPCompose element tree.`
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const config = cjsSDK.render(rootElement as any) as Record<string, unknown>;
-
-  // Prepend any registered scripts as a top-level `script:` section.
-  const withScripts: Record<string, unknown> =
-    scripts.length > 0
-      ? { ...config, script: scripts }
-      : config;
-
-  const yamlOutput = cjsSDK.toYAML(withScripts);
+  const yamlOutput = cjsSDK.toYAML(finalConfig);
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, yamlOutput, 'utf8');
@@ -274,47 +290,45 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
  * Compile a TSX entry file into an ESPHome YAML configuration file.
  *
  * Pipeline:
- *   [type-check] → [lint] → [transform] → [esbuild bundle] → [require + render] → [write YAML]
+ *   [type-check] → [lint] → [transform to .espcompose-build/] → [esbuild bundle] → [require + render] → [write YAML]
  */
 export async function compile(options: CompileOptions): Promise<void> {
-  const { entryFile, outFile } = options;
+  const { entryFile, outFile, debug = false } = options;
 
   // Phase 0: Type-check — fail fast on any TypeScript errors before bundling.
-  // Returns the ts.Program so Phase 1 can reuse it without a second parse.
+  // Returns the ts.Program so Phase 1 can reuse it.
   const program = await typeCheck(entryFile);
 
   // Phase 0.5: Lint — enforce ESLint rules on the original source.
   await lint(entryFile);
 
-  // Phase 1: Transform — rewrite function declarations into <script> elements
-  // and trigger props into ESPHome action arrays.
-  const { entryFile: transformedEntry, tempFile: transformTempFile } = await transform(
-    options,
-    program,
-  );
+  // Establish the build directory next to the entry file.
+  const sourceDir = path.dirname(entryFile);
+  const buildDir = path.join(sourceDir, '.espcompose-build');
+  const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
 
-  // Phase 2: Bundle to a temp CJS file that lives next to the entry file.
-  // This is important: @esphome/compose is marked external, so the bundle will
-  // emit a require('@esphome/compose') call. Node resolves that require from
-  // the bundle file's own directory — placing it next to the user's source
-  // ensures the workspace package is reachable via the project's node_modules.
-  const tmpBundle = path.join(
-    path.dirname(transformedEntry),
-    `.espcompose-tmp-${process.pid}-${Date.now()}.cjs`,
-  );
+  // Force-clean the build directory before each build
+  if (fs.existsSync(buildDir)) {
+    fs.rmSync(buildDir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(buildDir, { recursive: true });
 
   try {
-    await bundle(transformedEntry, tmpBundle);
+    // Phase 1: Transform — write every user source file into the build
+    // directory, preserving directory structure. Each file is individually
+    // inspectable with --debug.
+    const transformedEntry = transform(program, entryFile, sourceDir, buildDir);
+
+    // Phase 2: Bundle — esbuild reads the pre-transformed files from the
+    // build directory and produces a single CJS bundle.
+    await bundle(transformedEntry, bundlePath);
 
     // Phase 3: Execute the bundle and emit YAML
-    await execute(tmpBundle, outFile);
+    await execute(bundlePath, outFile);
   } finally {
-    if (fs.existsSync(tmpBundle)) {
-      fs.rmSync(tmpBundle);
-    }
-    // Clean up the Phase 1 temp file (if one was written)
-    if (transformTempFile && fs.existsSync(transformTempFile)) {
-      fs.rmSync(transformTempFile);
+    // Clean up the build directory unless --debug is set
+    if (!debug && fs.existsSync(buildDir)) {
+      fs.rmSync(buildDir, { recursive: true, force: true });
     }
   }
 }
@@ -331,7 +345,7 @@ export async function compile(options: CompileOptions): Promise<void> {
  *
  * @param projectDir  Absolute path to the project directory.
  */
-export async function build(projectDir: string): Promise<void> {
+export async function build(projectDir: string, options?: { debug?: boolean }): Promise<void> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -345,5 +359,5 @@ export async function build(projectDir: string): Promise<void> {
   const entryFile = path.resolve(projectDir, pkg.main);
   const outFile = path.join(projectDir, '.espcompose', 'esphome.yaml');
 
-  await compile({ entryFile, outFile });
+  await compile({ entryFile, outFile, debug: options?.debug });
 }

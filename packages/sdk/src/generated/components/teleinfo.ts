@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { teleinfo_TeleInfo, uart_UARTComponent } from "../markers";
 export interface TeleinfoProps extends _CoreComponent {
@@ -16,7 +16,7 @@ export interface TeleinfoProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
      * @yamlKey uart_id

@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _Emc2101Component, _ModbusControllerModbusitembaseschema, _OutputBinaryOutput, _OutputFloatOutput, _PipsolarComponent } from "../bases";
 import type { ac_dimmer_AcDimmer, ble_client_BLEBinaryOutput, bp1658cj_BP1658CJ, bp1658cj_BP1658CJ_Channel, bp5758d_BP5758D, bp5758d_BP5758D_Channel, dac7678_DAC7678Channel, dac7678_DAC7678Output, emc2101_EMC2101Output, esp32_dac_ESP32DAC, esp8266_pwm_ESP8266PWM, gp8403_GP8403Component, gp8403_GP8403Output, gpio_GPIOBinaryOutput, i2c_I2CBus, ledc_LEDCOutput, libretiny_pwm_LibreTinyPWM, max6956_MAX6956, max6956_MAX6956LedChannel, mcp4461_Mcp4461Component, mcp4461_Mcp4461Wiper, mcp4725_MCP4725, mcp4728_MCP4728Channel, mcp4728_MCP4728Component, mcp47a1_MCP47A1, modbus_controller_ModbusBinaryOutput, modbus_controller_ModbusFloatOutput, my9231_MY9231OutputComponent, my9231_MY9231OutputComponent_Channel, opentherm_OpenthermHub, pca9685_PCA9685Channel, pca9685_PCA9685Output, power_supply_PowerSupply, rp2040_pwm_RP2040PWM, sigma_delta_output_SigmaDeltaOutput, slow_pwm_SlowPWMOutput, sm16716_SM16716, sm16716_SM16716_Channel, sm2135_SM2135, sm2135_SM2135_Channel, sm2235_SM2235, sm2235_SM2235_Channel, sm2335_SM2335, sm2335_SM2335_Channel, sx1509_SX1509Component, sx1509_SX1509FloatOutputChannel, template__TemplateBinaryOutput, template__TemplateFloatOutput, tlc59208f_TLC59208FChannel, tlc59208f_TLC59208FOutput, tlc5947_TLC5947, tlc5947_TLC5947Channel, tlc5971_TLC5971, tlc5971_TLC5971Channel, tm1638_TM1638Component, tm1638_TM1638OutputLed, x9c_X9cOutput } from "../markers";
-interface SlowPwmPeriodProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-interface X9cStepDelayProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface OpenthermTSetProps {
     /** @yamlKey power_supply */
     powerSupply?: RefProp<power_supply_PowerSupply>;
@@ -232,7 +216,7 @@ interface PipsolarBatteryRechargeVoltageProps {
      * list: a list of possible values default: 44.0,45.0,46.0,47.0,48.0,49.0,50.0,51.0
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarBatteryUnderVoltageProps {
     /** @yamlKey power_supply */
@@ -248,7 +232,7 @@ interface PipsolarBatteryUnderVoltageProps {
      * list: a list of possible values default: 40.0,40.1,42,43,44,45,46,47,48.0
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarBatteryFloatVoltageProps {
     /** @yamlKey power_supply */
@@ -264,7 +248,7 @@ interface PipsolarBatteryFloatVoltageProps {
      * list: a list of possible values default: 48.0,49.0,50.0,51.0
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarBatteryTypeProps {
     /** @yamlKey power_supply */
@@ -280,7 +264,7 @@ interface PipsolarBatteryTypeProps {
      * list: a list of possible values default: 0,1,2
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarCurrentMaxAcChargingCurrentProps {
     /** @yamlKey power_supply */
@@ -296,7 +280,7 @@ interface PipsolarCurrentMaxAcChargingCurrentProps {
      * list: a list of possible values default: 2,10,20
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarCurrentMaxChargingCurrentProps {
     /** @yamlKey power_supply */
@@ -312,7 +296,7 @@ interface PipsolarCurrentMaxChargingCurrentProps {
      * list: a list of possible values default: 10,20,30,40
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarOutputSourcePriorityProps {
     /** @yamlKey power_supply */
@@ -328,7 +312,7 @@ interface PipsolarOutputSourcePriorityProps {
      * list: a list of possible values default: 0,1,2
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarChargerSourcePriorityProps {
     /** @yamlKey power_supply */
@@ -344,7 +328,7 @@ interface PipsolarChargerSourcePriorityProps {
      * list: a list of possible values default: 0,1,2,3
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface PipsolarBatteryRedischargeVoltageProps {
     /** @yamlKey power_supply */
@@ -360,7 +344,7 @@ interface PipsolarBatteryRedischargeVoltageProps {
      * list: a list of possible values default: 00.0,48.0,49,50.0,51.0,52,53,54,55,56,57,58
      * @yamlKey possible_values
      */
-    possibleValues?: Array<unknown>;
+    possibleValues?: Array<number>;
 }
 interface AcDimmerProps extends _OutputFloatOutput, _CoreComponent {
     /**
@@ -389,7 +373,7 @@ interface Esp8266PwmProps extends _OutputFloatOutput, _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to use PWM on. */
     pin: Pin;
     /** frequency: The frequency to run the PWM with. Lower frequencies have more visual artifacts, but can represent much mo... */
-    frequency?: unknown;
+    frequency?: number;
 }
 interface LedcProps extends _OutputFloatOutput, _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin to use LEDC on. Can only be GPIO0-GPIO33. */
@@ -402,7 +386,7 @@ interface LedcProps extends _OutputFloatOutput, _CoreComponent {
      * float: Set a phase angle to the other channel of this timer. Range 0-360°, defaults to 0°
      * @yamlKey phase_angle
      */
-    phaseAngle?: unknown;
+    phaseAngle?: number;
 }
 interface LibretinyPwmProps extends _OutputFloatOutput, _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to use PWM on. */
@@ -414,41 +398,41 @@ interface Mcp4725Props extends _OutputFloatOutput, _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I2C address of the DAC. Defaults to `0x60`. */
-    address?: unknown;
+    address?: number;
 }
 interface Mcp47a1Props extends _OutputFloatOutput, _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I²C address of the DAC. Defaults to `0x2E`. */
-    address?: unknown;
+    address?: number;
 }
 interface Rp2040PwmProps extends _OutputFloatOutput, _CoreComponent {
     pin: Pin;
-    frequency?: unknown;
+    frequency?: number;
 }
 interface SigmaDeltaOutputProps extends _OutputFloatOutput, _CoreComponent {
     /**
      * [Time](/guides/configuration-types#time): The cycle interval at which the output is recalculated. Defaults to `60s`.
      * @yamlKey update_interval
      */
-    updateInterval?: unknown;
+    updateInterval?: TimePeriod;
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to pulse. */
     pin?: Pin;
     /**
      * [Automation](/automations): An automation to perform when the load is switched. If a lambda is used the boolean `stat...
      * @yamlKey state_change_action
      */
-    stateChangeAction?: () => void;
+    stateChangeAction?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the load is turned on. Can be used to control for example a...
      * @yamlKey turn_on_action
      */
-    turnOnAction?: () => void;
+    turnOnAction?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_acti...
      * @yamlKey turn_off_action
      */
-    turnOffAction?: () => void;
+    turnOffAction?: TriggerHandler;
 }
 interface SlowPwmProps extends _OutputFloatOutput, _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to pulse. */
@@ -457,19 +441,19 @@ interface SlowPwmProps extends _OutputFloatOutput, _CoreComponent {
      * [Automation](/automations): An automation to perform when the load is turned on. Can be used to control for example a...
      * @yamlKey turn_on_action
      */
-    turnOnAction?: () => void;
+    turnOnAction?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_acti...
      * @yamlKey turn_off_action
      */
-    turnOffAction?: () => void;
+    turnOffAction?: TriggerHandler;
     /**
      * [Automation](/automations): An automation to perform when the load is switched. If a lambda is used the boolean `stat...
      * @yamlKey state_change_action
      */
-    stateChangeAction?: () => void;
+    stateChangeAction?: TriggerHandler;
     /** [Time](/guides/configuration-types#time): The duration of each cycle. (i.e. a 10s period at 50% duty would result in ... */
-    period: SlowPwmPeriodProps;
+    period: TimePeriod;
     /**
      * boolean: Restart a timer of a cycle when new state is set. Defaults to `false`.
      * @yamlKey restart_cycle_on_state_change
@@ -496,12 +480,12 @@ interface X9cProps extends _OutputFloatOutput {
      * float: Manually specify the initial potentiometer value, between `0.01` and `1.0`. Defaults to `1.0`.
      * @yamlKey initial_value
      */
-    initialValue?: unknown;
+    initialValue?: number;
     /**
      * int: Manually specify the delay between steps (in microseconds) between `1us` and `100us`. Defaults to `1us`.
      * @yamlKey step_delay
      */
-    stepDelay?: X9cStepDelayProps;
+    stepDelay?: number;
 }
 interface BleClientProps extends _OutputBinaryOutput, _CoreComponent, _BleClient {
     /** @yamlKey service_uuid */
@@ -586,7 +570,7 @@ interface Mcp4461Props extends _OutputFloatOutput {
      * float: Set initial wiper value, valid range is `0 - 1.0`
      * @yamlKey initial_value
      */
-    initialValue?: unknown;
+    initialValue?: number;
 }
 interface Mcp4728Props extends _OutputFloatOutput {
     /**
@@ -756,14 +740,14 @@ interface TemplateBinaryProps extends _OutputBinaryOutput {
      * [Automation](/automations): An automation to perform when the state of the output is updated.
      * @yamlKey write_action
      */
-    writeAction: () => void;
+    writeAction: TriggerHandler;
 }
 interface TemplateFloatProps extends _OutputFloatOutput {
     /**
      * [Automation](/automations): An automation to perform when the state of the output is updated.
      * @yamlKey write_action
      */
-    writeAction: () => void;
+    writeAction: TriggerHandler;
 }
 interface Tlc59208fProps extends _OutputFloatOutput {
     /**

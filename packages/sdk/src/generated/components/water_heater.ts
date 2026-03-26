@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { template__TemplateWaterHeater } from "../markers";
 interface WaterHeaterVisualProps {
@@ -24,7 +24,7 @@ interface TemplateProps extends _CoreComponent {
      * [Action](/automations/actions#all-actions): The action to perform when the water heater receives a command (mode chan...
      * @yamlKey set_action
      */
-    setAction?: () => void;
+    setAction?: TriggerHandler;
     /**
      * enum: Control how the water heater attempts to restore state on bootup.
      * @yamlKey restore_mode

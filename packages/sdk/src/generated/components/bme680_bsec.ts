@@ -3,22 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { bme680_bsec_BME680BSECComponent, i2c_I2CBus } from "../markers";
-export interface Bme680BsecStateSaveIntervalProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Bme680BsecProps {
     /**
      * float: Temperature offset if device is in enclosure and reads too high. This value is subtracted from the reading (e....
      * @yamlKey temperature_offset
      */
-    temperatureOffset?: unknown;
+    temperatureOffset?: number;
     /**
      * string: IAQ calculation mode. Default is `static` for static applications (e.g. fixed indoor devices). Can be `mobile...
      * @yamlKey iaq_mode
@@ -38,11 +30,11 @@ export interface Bme680BsecProps {
      * [Time](/guides/configuration-types#time): The minimum interval at which to save calibrated BSEC algorithm state to fl...
      * @yamlKey state_save_interval
      */
-    stateSaveInterval?: Bme680BsecStateSaveIntervalProps;
+    stateSaveInterval?: TimePeriod;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address can be `0x77`. */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { hlk_fm22x_HlkFm22xComponent, uart_UARTComponent } from "../markers";
 export interface HlkFm22xProps extends _CoreComponent {
@@ -11,32 +11,32 @@ export interface HlkFm22xProps extends _CoreComponent {
      * [Automation](/automations/): An action to be performed when an enrolled face is scanned and recognized. See [`on_face...
      * @yamlKey on_face_scan_matched
      */
-    onFaceScanMatched?: () => void;
+    onFaceScanMatched?: TriggerHandler;
     /**
      * [Automation](/automations/): An action to be performed when an unknown face is scanned. See [`on_face_scan_unmatched`...
      * @yamlKey on_face_scan_unmatched
      */
-    onFaceScanUnmatched?: () => void;
+    onFaceScanUnmatched?: TriggerHandler;
     /**
      * [Automation](/automations/): An action to be performed when the face scan failed. See [`on_face_scan_invalid`](https:...
      * @yamlKey on_face_scan_invalid
      */
-    onFaceScanInvalid?: () => void;
+    onFaceScanInvalid?: TriggerHandler;
     /**
      * [Automation](/automations/): An action to be performed when face information is available. See [`on_face_info`](https...
      * @yamlKey on_face_info
      */
-    onFaceInfo?: () => void;
+    onFaceInfo?: TriggerHandler;
     /**
      * [Automation](/automations/): An action to be performed when a face enrollment step is successful. See [`on_enrollment...
      * @yamlKey on_enrollment_done
      */
-    onEnrollmentDone?: () => void;
+    onEnrollmentDone?: TriggerHandler;
     /**
      * [Automation](/automations/): An action to be performed when a face enrollment step failed. See [`on_enrollment_failed...
      * @yamlKey on_enrollment_failed
      */
-    onEnrollmentFailed?: () => void;
+    onEnrollmentFailed?: TriggerHandler;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /**

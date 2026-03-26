@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { logger_Logger } from "../markers";
 export interface LoggerProps extends _CoreComponent {
@@ -31,7 +31,7 @@ export interface LoggerProps extends _CoreComponent {
      * string: The Hardware UART to use for logging. The default varies depending on
      * @yamlKey hardware_uart
      */
-    hardwareUart?: unknown;
+    hardwareUart?: string;
     /** string: The global log level. Any log message */
     level?: "NONE" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "VERBOSE" | "VERY_VERBOSE";
     /** mapping: Manually set the log level for a */
@@ -50,7 +50,7 @@ export interface LoggerProps extends _CoreComponent {
      * [Automation](/automations): An action to be
      * @yamlKey on_message
      */
-    onMessage?: () => void;
+    onMessage?: TriggerHandler;
     /**
      * boolean: If set to false, disables storing
      * @yamlKey esp8266_store_log_strings_in_flash

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { serial_proxy_SerialProxy, uart_UARTComponent } from "../markers";
 export interface SerialProxyProps extends _CoreComponent {

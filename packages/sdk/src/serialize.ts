@@ -1,5 +1,6 @@
 import type { EspComposeElement } from './types';
 import { isRef } from './types';
+import { isExpression } from './expression';
 import { Scalar } from 'yaml';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -71,6 +72,9 @@ const YAML11_BOOL = new Set([
  * All other values are passed through unchanged.
  */
 export function serializeValue(v: unknown): unknown {
+  if (isExpression(v)) {
+    return createLambdaScalar(v.toLambdaInit());
+  }
   if (isRef(v)) return v.toString();
   if (typeof v === 'string') {
     const m = HEX_COLOR_RE.exec(v);
@@ -91,6 +95,17 @@ export function serializeValue(v: unknown): unknown {
 
 export function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+}
+
+/**
+ * Create a YAML `!lambda` tagged scalar from a C++ lambda body string.
+ * Used by the serializer and reactive injector to produce lambda values.
+ */
+export function createLambdaScalar(body: string): unknown {
+  const s = new Scalar(body);
+  s.type = Scalar.QUOTE_DOUBLE;
+  s.tag = '!lambda';
+  return s;
 }
 
 /**

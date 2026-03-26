@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin } from "../../types";
+import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface DashboardImportProps {
     /** @yamlKey package_import_url */
     packageImportUrl: unknown;

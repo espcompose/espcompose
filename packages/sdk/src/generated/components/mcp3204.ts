@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { mcp3204_MCP3204, spi_SPIComponent } from "../markers";
 export interface Mcp3204Props {
     /**
      * float: The reference voltage. Defaults to `3.3V`.
      * @yamlKey reference_voltage
      */
-    referenceVoltage?: unknown;
+    referenceVoltage?: number;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */

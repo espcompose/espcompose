@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { micro_wake_word_MicroWakeWord, microphone_Microphone } from "../markers";
 export interface MicroWakeWordMicrophoneProps {
@@ -29,7 +29,7 @@ export interface MicroWakeWordProps extends _CoreComponent {
     /** list: The models to use. Only the first model is enabled by default on the first boot. Each model's enabled state is ... */
     models: Array<MicroWakeWordModelsProps>;
     /** @yamlKey on_wake_word_detected */
-    onWakeWordDetected?: () => void;
+    onWakeWordDetected?: TriggerHandler;
     vad?: unknown;
     /**
      * boolean: Whether to stop the component after detecting a wake word. Defaults to `true`.

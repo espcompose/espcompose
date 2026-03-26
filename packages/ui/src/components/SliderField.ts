@@ -6,7 +6,7 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
 import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
@@ -18,7 +18,7 @@ interface SliderFieldProps {
   /** Bound value (sensor or entity reference). */
   value?: unknown;
   /** Change handler (ESPHome action). */
-  onChange?: unknown;
+  onChange?: TriggerHandler<{ x: number }>;
   /** Minimum value. Default: 0. */
   min?: number;
   /** Maximum value. Default: 100. */

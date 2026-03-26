@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Pn532 } from "../bases";
 import type { pn532_spi_PN532Spi, spi_SPIComponent } from "../markers";
 export interface Pn532SpiProps extends _Pn532 {

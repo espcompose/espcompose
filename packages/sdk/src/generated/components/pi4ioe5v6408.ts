@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, pi4ioe5v6408_PI4IOE5V6408Component } from "../markers";
 export interface Pi4ioe5v6408Props extends _CoreComponent {
@@ -12,7 +12,7 @@ export interface Pi4ioe5v6408Props extends _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the device. Defaults to `0x43`. */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

@@ -36,4 +36,12 @@ describe('ESPHome Compose Build', () => {
   it('trigger-device', async () => {
     await createProjectTest(projectsDir, 'trigger-device');
   });
+
+  it('ha-binding-device', async () => {
+    await createProjectTest(projectsDir, 'ha-binding-device');
+  });
+
+  it('reactive-device', async () => {
+    await createProjectTest(projectsDir, 'reactive-device');
+  });
 });

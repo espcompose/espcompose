@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, mcp4728_MCP4728Component } from "../markers";
 export interface Mcp4728Props extends _CoreComponent {
@@ -15,7 +15,7 @@ export interface Mcp4728Props extends _CoreComponent {
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I2C address of the DAC. Defaults to `0x60`. */
-    address?: unknown;
+    address?: number;
 }
 declare global {
     namespace JSX {

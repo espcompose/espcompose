@@ -3,17 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _Canbus } from "../bases";
 import type { esp32_can_ESP32Can, mcp2515_MCP2515, spi_SPIComponent } from "../markers";
-interface Esp32CanTxEnqueueTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 interface Esp32CanProps extends _Canbus {
     /**
      * [Pin](/guides/configuration-types#pin): Receive pin.
@@ -41,7 +33,7 @@ interface Esp32CanProps extends _Canbus {
      * [Time](/guides/configuration-types#time): Maximum time to wait when the TX queue is full before dropping the message ...
      * @yamlKey tx_enqueue_timeout
      */
-    txEnqueueTimeout?: Esp32CanTxEnqueueTimeoutProps;
+    txEnqueueTimeout?: TimePeriod;
 }
 interface Mcp2515Props extends _Canbus {
     /** enum: The frequency of the clock crystal used on the MCP2515 device. One of `8MHZ`, `12MHZ`, `16MHZ` or `20MHZ`. Defa... */

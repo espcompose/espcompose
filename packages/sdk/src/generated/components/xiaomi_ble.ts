@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BthomeMithermometerBleDevice } from "../bases";
 import type { xiaomi_ble_XiaomiListener } from "../markers";
 export interface XiaomiBleProps extends _BthomeMithermometerBleDevice {

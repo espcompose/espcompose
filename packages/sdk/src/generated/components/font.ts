@@ -3,17 +3,17 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { font_Glyph } from "../markers";
 export interface FontExtrasProps {
     /** string: The path of the font file with the extra glyphs. */
-    file: unknown;
+    file: string;
     /** list: A list of glyphs you want to include. Can't repeat the same glyph codepoint if it was declared in the level above. */
     glyphs: Array<string>;
 }
 export interface FontProps {
     /** string: The path (relative to where the .yaml file is) of the font file. You can also use the `gfonts://` short form ... */
-    file: unknown;
+    file: string;
     /** list: A list of characters you plan to use, in addition to the characters defined by the glyphsets option above. Adju... */
     glyphs?: Array<string>;
     /** list: A list of glyphsets you plan to use. Defaults to `GF_Latin_Kernel`, which contains the basic characters and nec... */

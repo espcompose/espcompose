@@ -3,25 +3,9 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp } from "../../types";
+import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE } from "../markers";
-export interface Esp32BleAdvertisingCycleTimeProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
-export interface Esp32BleConnectionTimeoutProps {
-    days?: unknown;
-    hours?: unknown;
-    minutes?: unknown;
-    seconds?: unknown;
-    milliseconds?: unknown;
-    microseconds?: unknown;
-}
 export interface Esp32BleProps extends _CoreComponent {
     /** string: The name of the BLE device. */
     name?: string;
@@ -56,7 +40,7 @@ export interface Esp32BleProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The time interval for cycling through multiple advertisements. Only applica...
      * @yamlKey advertising_cycle_time
      */
-    advertisingCycleTime?: Esp32BleAdvertisingCycleTimeProps;
+    advertisingCycleTime?: TimePeriod;
     /**
      * boolean: When enabled, disables Bluetooth logging categories that are not used by the configured components. This sav...
      * @yamlKey disable_bt_logs
@@ -66,7 +50,7 @@ export interface Esp32BleProps extends _CoreComponent {
      * [Time](/guides/configuration-types#time): The maximum time to wait for a BLE connection to be established. Defaults t...
      * @yamlKey connection_timeout
      */
-    connectionTimeout?: Esp32BleConnectionTimeoutProps;
+    connectionTimeout?: TimePeriod;
     /**
      * integer: The maximum number of BLE characteristics that can have notifications enabled across all connections. Defaul...
      * @yamlKey max_notifications

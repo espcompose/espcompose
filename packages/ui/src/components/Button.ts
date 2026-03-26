@@ -6,7 +6,7 @@
  * Visual styles come from style definition references; structural props inline.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
 import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
 import { resolveSize, fontDefToLvgl, resolveStatus } from '../theme/resolvers';
 import type { StatusToken, SizeToken } from '../theme/types';
@@ -32,8 +32,8 @@ interface ButtonProps {
   width?: number | string;
   /** Height override. */
   height?: number | string;
-  /** Press handler (ESPHome action). */
-  onPress?: unknown;
+  /** Press handler (ESPHome trigger function). */
+  onPress?: TriggerHandler;
 }
 
 /**
