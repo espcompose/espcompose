@@ -1,5 +1,17 @@
 # @esphome/compose-cli
 
+## 0.4.0
+
+### Minor Changes
+
+- [#41](https://github.com/xmlguy74/espcompose/pull/41) [`57f5b38`](https://github.com/xmlguy74/espcompose/commit/57f5b38a37bd30b5b0db435630a4dc704f329f40) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Major refactor of compiler, ui and sdk codebases.
+
+### Patch Changes
+
+- Updated dependencies [[`57f5b38`](https://github.com/xmlguy74/espcompose/commit/57f5b38a37bd30b5b0db435630a4dc704f329f40)]:
+  - @esphome/compose-eslint@0.4.0
+  - @esphome/compose@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
