@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, IPv4Address, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, IPv4Address, Pin, RefProp, TriggerHandler } from "../../types";
 import type { udp_UDPComponent } from "../markers";
 export interface UdpProps {
     /** int: The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specifi... */
-    port?: number;
+    port?: number | EmbedValue<number>;
     /**
      * IPv4 address: Changes to multicast, adding an address to listen to. Defaults to no multicast address, just local netw...
      * @yamlKey listen_address

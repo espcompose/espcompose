@@ -6,7 +6,7 @@
  */
 import {
   Display,
-  ESPCompose,
+  createElement,
   useRef,
   type Ref,
   type i2c_I2CBus,
@@ -127,7 +127,7 @@ export function Hardware({ displayRef }: { displayRef: Ref<Display> }) {
       />
 
       {/* ── Microphone (i2s_audio platform — no typed props in SDK) ──── */}
-      {ESPCompose.createElement('microphone', {
+      {createElement('microphone', {
         platform: 'i2s_audio',
         i2sAudioId: audioBus,
         i2sDinPin: 11,
@@ -138,7 +138,7 @@ export function Hardware({ displayRef }: { displayRef: Ref<Display> }) {
 
       {/* ── Speakers ────────────────────────────────────────────────── */}
       {/* i2s_audio speaker platform — no typed props in SDK */}
-      {ESPCompose.createElement('speaker', {
+      {createElement('speaker', {
         platform: 'i2s_audio',
         ref: mainSpeaker,
         i2sAudioId: audioBus,

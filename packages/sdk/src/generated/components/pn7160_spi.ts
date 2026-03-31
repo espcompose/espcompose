@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { pn7160_spi_PN7160Spi, spi_SPIComponent } from "../markers";
 export interface Pn7160SpiProps {
     /**
@@ -16,12 +16,12 @@ export interface Pn7160SpiProps {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to the PN7160's `NSS` (chip select) line.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 declare global {
     namespace JSX {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { lightwaverf_LightWaveRF } from "../markers";
 export interface LightwaverfProps extends _CoreComponent {
@@ -11,12 +11,12 @@ export interface LightwaverfProps extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin that the receiver is connected to
      * @yamlKey read_pin
      */
-    readPin?: Pin;
+    readPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin that the transmitter is connected to
      * @yamlKey write_pin
      */
-    writePin?: Pin;
+    writePin?: Pin | EmbedValue<Pin>;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }

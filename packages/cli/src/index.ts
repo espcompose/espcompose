@@ -9,6 +9,8 @@
 export { program } from 'commander';
 export { compile, build, lint } from './compiler/index.js';
 export type { CompileOptions } from './compiler/index.js';
+export { transformLib, buildLibrary } from './transform-lib.js';
+export type { TransformLibOptions, TransformLibResult, BuildLibraryOptions, BuildLibraryResult } from './transform-lib.js';
 export {
   resolveEsphome,
   esphomeConfig,

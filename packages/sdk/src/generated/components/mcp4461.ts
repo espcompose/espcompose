@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, mcp4461_Mcp4461Component } from "../markers";
 export interface Mcp4461Props extends _CoreComponent {
@@ -11,22 +11,22 @@ export interface Mcp4461Props extends _CoreComponent {
      * bool: Disable wiper 0. Defaults to `false`.
      * @yamlKey disable_wiper_0
      */
-    disableWiper0?: boolean;
+    disableWiper0?: boolean | EmbedValue<boolean>;
     /**
      * bool: Disable wiper 1. Defaults to `false`.
      * @yamlKey disable_wiper_1
      */
-    disableWiper1?: boolean;
+    disableWiper1?: boolean | EmbedValue<boolean>;
     /**
      * bool: Disable wiper 2. Defaults to `false`.
      * @yamlKey disable_wiper_2
      */
-    disableWiper2?: boolean;
+    disableWiper2?: boolean | EmbedValue<boolean>;
     /**
      * bool: Disable wiper 3. Defaults to `false`.
      * @yamlKey disable_wiper_3
      */
-    disableWiper3?: boolean;
+    disableWiper3?: boolean | EmbedValue<boolean>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: Manually specify the I2C address of the digipot. Defaults to `0x2C`. */

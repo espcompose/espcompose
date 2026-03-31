@@ -1,13 +1,13 @@
 /**
  * Sample project: ha-binding-device
  *
- * Demonstrates the useHAEntity() hook binding Home Assistant entities to
+ * Demonstrates the bind.haEntity() function binding Home Assistant entities to
  * LVGL widgets with automatic two-way reactive wiring, plus using LVGL
  * button events to trigger HA entity actions.
  *
  * The compiler should:
  *   1. Auto-generate `binary_sensor platform: homeassistant` imports for
- *      each entity referenced via useHAEntity().
+ *      each entity referenced via bind.haEntity().
  *   2. Serialize Expression<T> props as `!lambda` initial values.
  *   3. Inject `on_state:` / `on_value:` triggers on the auto-generated
  *      sensors that push state updates into bound LVGL widgets via
@@ -15,7 +15,7 @@
  *   4. Compile `kitchenLight.toggle()` inside an LVGL button's onRelease
  *      into a `homeassistant.action` YAML block.
  */
-import { Display, ESPCompose, useRef, useHAEntity } from '@esphome/compose';
+import { Display, defineProject, useRef, bind } from '@esphome/compose';
 import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
@@ -34,14 +34,14 @@ function ActionButton(props: {
   );
 }
 
-export default (() => {
-  const displayRef = useRef<Display>();
+const displayRef = useRef<Display>();
 
-  // Bind two HA entities
-  const kitchenLight = useHAEntity('light.kitchen_floods');
-  const tempSensor = useHAEntity('sensor.living_room_temperature');
+// Bind two HA entities
+const kitchenLight = bind.haEntity('light.kitchen_floods');
+const tempSensor = bind.haEntity('sensor.living_room_temperature');
 
-  return (
+export default defineProject({
+  device: (
     <esphome name="ha-binding-device" comment="HA entity binding demo">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
       <wifi ssid="HomeWifi" password="s3cr3t!!" />
@@ -91,5 +91,5 @@ export default (() => {
         </lvgl-page>
       </lvgl>
     </esphome>
-  );
-})();
+  ),
+});

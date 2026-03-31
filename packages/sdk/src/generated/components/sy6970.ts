@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, sy6970_SY6970Component } from "../markers";
 export interface Sy6970Props extends _CoreComponent {
@@ -11,31 +11,31 @@ export interface Sy6970Props extends _CoreComponent {
      * boolean: Enable or disable the status LED on the IC. Defaults to `true`.
      * @yamlKey enable_status_led
      */
-    enableStatusLed?: boolean;
+    enableStatusLed?: boolean | EmbedValue<boolean>;
     /**
      * int: Input current in milliamps. Accepts values between 100 and 3200. Defaults to `500`.
      * @yamlKey input_current_limit
      */
-    inputCurrentLimit?: number;
+    inputCurrentLimit?: number | EmbedValue<number>;
     /**
      * int: Charge voltage in millivolts. Accepts values between 3840 and 4608. Defaults to `4208`.
      * @yamlKey charge_voltage
      */
-    chargeVoltage?: number;
+    chargeVoltage?: number | EmbedValue<number>;
     /** @yamlKey charge_current */
-    chargeCurrent?: number;
+    chargeCurrent?: number | EmbedValue<number>;
     /** @yamlKey precharge_current */
-    prechargeCurrent?: number;
+    prechargeCurrent?: number | EmbedValue<number>;
     /**
      * boolean: Enable or disable charging. Defaults to `true`.
      * @yamlKey charge_enabled
      */
-    chargeEnabled?: boolean;
+    chargeEnabled?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Enable or disable the ADC. Defaults to `true`.
      * @yamlKey enable_adc
      */
-    enableAdc?: boolean;
+    enableAdc?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#config-time): The interval to check the sensor. Defaults to `5s`.
      * @yamlKey update_interval

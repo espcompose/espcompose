@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { runtime_stats_RuntimeStatsCollector } from "../markers";
 export interface RuntimeStatsProps {
     /**

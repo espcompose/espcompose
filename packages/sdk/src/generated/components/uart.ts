@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { uart_UARTComponent } from "../markers";
 export interface UartProps extends _CoreComponent {
@@ -11,12 +11,12 @@ export interface UartProps extends _CoreComponent {
      * int: The baud rate of the UART bus.
      * @yamlKey baud_rate
      */
-    baudRate: number;
+    baudRate: number | EmbedValue<number>;
     /**
      * [Pin](/guides/configuration-types#pin): The pin to send data to from the ESP's perspective. Use the full pin schema a...
      * @yamlKey tx_pin
      */
-    txPin?: Pin;
+    txPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The pin to receive data on from the ESP's perspective. Use the full pin schem...
      * @yamlKey rx_pin
@@ -26,7 +26,7 @@ export interface UartProps extends _CoreComponent {
      * [Pin](/guides/configuration-types#pin): ESP32 only. The pin used to for hardware RS485 flow control. Use of this sett...
      * @yamlKey flow_control_pin
      */
-    flowControlPin?: Pin;
+    flowControlPin?: Pin | EmbedValue<Pin>;
     /** string: Host platform only. Unix style name of the port to use. */
     port?: string;
     /**
@@ -38,12 +38,12 @@ export interface UartProps extends _CoreComponent {
      * int: ESP32 only. After receiving this number of bytes, the data becomes available for processing. The default is calc...
      * @yamlKey rx_full_threshold
      */
-    rxFullThreshold?: number;
+    rxFullThreshold?: number | EmbedValue<number>;
     /**
      * int: ESP32 only. This value specifies a number of bytes used to determine the duration of the timeout. The duration o...
      * @yamlKey rx_timeout
      */
-    rxTimeout?: number;
+    rxTimeout?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): ESP32 only. The maximum time to wait for the TX FIFO to drain when `flush()...
      * @yamlKey flush_timeout
@@ -58,7 +58,7 @@ export interface UartProps extends _CoreComponent {
      * int: The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
      * @yamlKey data_bits
      */
-    dataBits?: number;
+    dataBits?: number | EmbedValue<number>;
     /** The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`. */
     parity?: "NONE" | "EVEN" | "ODD";
     /** mapping: Options for debugging communication on the UART hub, see [Debugging](https://esphome.io/components/uart#uart... */

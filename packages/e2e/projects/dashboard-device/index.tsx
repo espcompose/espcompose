@@ -7,16 +7,16 @@
  * Hardware definitions live in hardware.tsx (mirroring the YAML packages
  * pattern).
  */
-import { Display, ESPCompose, logger, useRef } from '@esphome/compose';
+import { Display, defineProject, logger, useRef, createScript } from '@esphome/compose';
 import { Hardware } from './hardware';
 
 /**
  * Named script: play_click_sound
  * Plays a click feedback sound (currently a log placeholder).
  */
-function play_click_sound(): void {
+const play_click_sound = createScript(async () => {
   logger.log('Click sound disabled for testing');
-}
+});
 
 function ConnectivityConfig() {
   return (
@@ -78,9 +78,10 @@ function HomeAssistantSensors() {
   );
 }
 
-export default (() => {
-  const displayRef = useRef<Display>();
-  return (
+const displayRef = useRef<Display>();
+
+export default defineProject({
+  device: (
     <esphome
       name="living-room-dashboard"
       friendlyName="Living Room Dashboard"
@@ -93,5 +94,5 @@ export default (() => {
 
       <lvgl displays={[displayRef]} />
     </esphome>
-  );
-})();
+  ),
+});

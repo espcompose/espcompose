@@ -5,6 +5,7 @@
   "description": "TypeScript to ESPHome YAML transpiler toolset",
   "scripts": {
     "build": "turbo build",
+    "typecheck": "turbo typecheck",
     "clean": "turbo clean",
     "codegen:schemas": "tsx scripts/codegen/build-schemas.ts",
     "codegen": "npm run codegen:schemas && tsx scripts/codegen/generate.ts",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.30.0",
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",

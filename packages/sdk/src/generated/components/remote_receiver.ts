@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { remote_receiver_RemoteReceiverComponent } from "../markers";
 export interface RemoteReceiverProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin to receive the remote signal on. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /** list: Decode and dump these remote codes in the logs (at log.level=DEBUG). Set to `all` to dump all available codecs: */
     dump?: unknown;
     /** int: The percentage or time that the remote signal lengths can deviate in the decoding process. Defaults to `25%`. */
@@ -31,22 +31,22 @@ export interface RemoteReceiverProps extends _CoreComponent {
      * int: When `use_dma` is enabled, this sets the size of the driver's internal DMA buffer. When DMA is disabled, it spec...
      * @yamlKey rmt_symbols
      */
-    rmtSymbols?: number;
+    rmtSymbols?: number | EmbedValue<number>;
     /**
      * int: Filter out any data received with a length in symbols less than `filter_symbols`. Useful for filtering out short...
      * @yamlKey filter_symbols
      */
-    filterSymbols?: number;
+    filterSymbols?: number | EmbedValue<number>;
     /**
      * int: Maximum receive length in symbols. On some variants the maximum receive is limited to `rmt_symbols`.
      * @yamlKey receive_symbols
      */
-    receiveSymbols?: number;
+    receiveSymbols?: number | EmbedValue<number>;
     /**
      * boolean: Enable DMA on variants that support it. If enabled `rmt_symbols` controls the DMA buffer size and can be set...
      * @yamlKey use_dma
      */
-    useDma?: boolean;
+    useDma?: boolean | EmbedValue<boolean>;
     /**
      * int: The carrier duty cycle for signal demodulation in the RMT peripheral in Hz. Defaults to `100`.
      * @yamlKey carrier_duty_percent
@@ -56,7 +56,7 @@ export interface RemoteReceiverProps extends _CoreComponent {
      * int: The carrier frequency for signal demodulation in the RMT peripheral in Hz. Defaults to `0Hz` (carrier demodulati...
      * @yamlKey carrier_frequency
      */
-    carrierFrequency?: number;
+    carrierFrequency?: number | EmbedValue<number>;
     /**
      * [Automation](/automations): An automation to perform when a B&O Beo4 infrared remote code has been decoded. A variabl...
      * @yamlKey on_beo4

@@ -1,19 +1,7 @@
-import { RuleTester } from '@typescript-eslint/rule-tester';
-import { describe, it, afterAll } from 'vitest';
+import { createRuleTester } from './shared-setup';
 import rule from '../src/rules/jsx-children-intents';
 
-// Wire RuleTester into vitest
-RuleTester.afterAll = afterAll;
-RuleTester.describe = describe;
-RuleTester.it = it;
-
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      ecmaFeatures: { jsx: true },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run('jsx-children-intents', rule, {
   valid: [

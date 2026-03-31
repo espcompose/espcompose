@@ -3,19 +3,19 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { tm1651_TM1651Display } from "../markers";
 export interface Tm1651Props {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): CLK pin
      * @yamlKey clk_pin
      */
-    clkPin: Pin;
+    clkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): DIO pin
      * @yamlKey dio_pin
      */
-    dioPin: Pin;
+    dioPin: Pin | EmbedValue<Pin>;
 }
 declare global {
     namespace JSX {

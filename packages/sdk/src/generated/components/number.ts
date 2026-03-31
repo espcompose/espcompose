@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _HomeassistantHomeAssistantImportControl, _ModbusControllerModbusitembaseschema } from "../bases";
 import type { EntityBase, atm90e32_ATM90E32Component, bl0940_BL0940, bl0940_BL0940Number, copy_CopyNumber, homeassistant_HomeassistantNumber, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, lvgl_LVGLNumber, micronova_MicroNova, modbus_controller_ModbusNumber, number_Number, opentherm_OpenthermHub, seeed_mr24hpc1_MR24HPC1Component, template__TemplateNumber, tuya_Tuya, tuya_TuyaNumber, web_server_WebServer, zigbee_ZigbeeComponent, zigbee_ZigbeeNumber } from "../markers";
 interface NumberWebServerProps {
@@ -33,12 +33,12 @@ interface Atm90e32ReferenceVoltagePropsPhaseAProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -49,8 +49,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseAProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -59,7 +59,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseAProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseAPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -73,8 +73,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseAProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -102,12 +102,12 @@ interface Atm90e32ReferenceVoltagePropsPhaseBProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -118,8 +118,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseBProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -128,7 +128,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseBProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseBPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -142,8 +142,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseBProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -171,12 +171,12 @@ interface Atm90e32ReferenceVoltagePropsPhaseCProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -187,8 +187,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseCProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -197,7 +197,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseCProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseCPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -211,8 +211,8 @@ interface Atm90e32ReferenceVoltagePropsPhaseCProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -257,12 +257,12 @@ interface Atm90e32ReferenceCurrentPropsPhaseAProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -273,8 +273,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseAProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -283,7 +283,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseAProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseAPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -297,8 +297,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseAProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -326,12 +326,12 @@ interface Atm90e32ReferenceCurrentPropsPhaseBProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -342,8 +342,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseBProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -352,7 +352,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseBProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseBPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -366,8 +366,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseBProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -395,12 +395,12 @@ interface Atm90e32ReferenceCurrentPropsPhaseCProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -411,8 +411,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseCProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -421,7 +421,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseCProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseCPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -435,8 +435,8 @@ interface Atm90e32ReferenceCurrentPropsPhaseCProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
-    mode?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
+    mode?: string | EmbedValue<string>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey min_value */
@@ -481,12 +481,12 @@ interface Bl0940CurrentCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -497,8 +497,8 @@ interface Bl0940CurrentCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -507,7 +507,7 @@ interface Bl0940CurrentCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Bl0940CurrentCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -521,7 +521,7 @@ interface Bl0940CurrentCalibrationProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -533,7 +533,7 @@ interface Bl0940CurrentCalibrationProps {
     minValue?: unknown;
     step?: number;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface Bl0940VoltageCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -554,12 +554,12 @@ interface Bl0940VoltageCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -570,8 +570,8 @@ interface Bl0940VoltageCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -580,7 +580,7 @@ interface Bl0940VoltageCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Bl0940VoltageCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -594,7 +594,7 @@ interface Bl0940VoltageCalibrationProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -606,7 +606,7 @@ interface Bl0940VoltageCalibrationProps {
     minValue?: unknown;
     step?: number;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface Bl0940PowerCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -627,12 +627,12 @@ interface Bl0940PowerCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -643,8 +643,8 @@ interface Bl0940PowerCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -653,7 +653,7 @@ interface Bl0940PowerCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Bl0940PowerCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -667,7 +667,7 @@ interface Bl0940PowerCalibrationProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -679,7 +679,7 @@ interface Bl0940PowerCalibrationProps {
     minValue?: unknown;
     step?: number;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface Bl0940EnergyCalibrationPropsAvailabilityProps {
     topic: unknown;
@@ -700,12 +700,12 @@ interface Bl0940EnergyCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -716,8 +716,8 @@ interface Bl0940EnergyCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -726,7 +726,7 @@ interface Bl0940EnergyCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Bl0940EnergyCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -740,7 +740,7 @@ interface Bl0940EnergyCalibrationProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -752,7 +752,7 @@ interface Bl0940EnergyCalibrationProps {
     minValue?: unknown;
     step?: number;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface Ld2410G0PropsMoveThresholdPropsAvailabilityProps {
     topic: unknown;
@@ -773,12 +773,12 @@ interface Ld2410G0PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -789,8 +789,8 @@ interface Ld2410G0PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -799,7 +799,7 @@ interface Ld2410G0PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -813,7 +813,7 @@ interface Ld2410G0PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -837,12 +837,12 @@ interface Ld2410G0PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -853,8 +853,8 @@ interface Ld2410G0PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -863,7 +863,7 @@ interface Ld2410G0PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -877,7 +877,7 @@ interface Ld2410G0PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -907,12 +907,12 @@ interface Ld2410G1PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -923,8 +923,8 @@ interface Ld2410G1PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -933,7 +933,7 @@ interface Ld2410G1PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -947,7 +947,7 @@ interface Ld2410G1PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -971,12 +971,12 @@ interface Ld2410G1PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -987,8 +987,8 @@ interface Ld2410G1PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -997,7 +997,7 @@ interface Ld2410G1PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1011,7 +1011,7 @@ interface Ld2410G1PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1041,12 +1041,12 @@ interface Ld2410G2PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1057,8 +1057,8 @@ interface Ld2410G2PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1067,7 +1067,7 @@ interface Ld2410G2PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1081,7 +1081,7 @@ interface Ld2410G2PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1105,12 +1105,12 @@ interface Ld2410G2PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1121,8 +1121,8 @@ interface Ld2410G2PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1131,7 +1131,7 @@ interface Ld2410G2PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1145,7 +1145,7 @@ interface Ld2410G2PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1175,12 +1175,12 @@ interface Ld2410G3PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1191,8 +1191,8 @@ interface Ld2410G3PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1201,7 +1201,7 @@ interface Ld2410G3PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1215,7 +1215,7 @@ interface Ld2410G3PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1239,12 +1239,12 @@ interface Ld2410G3PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1255,8 +1255,8 @@ interface Ld2410G3PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1265,7 +1265,7 @@ interface Ld2410G3PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1279,7 +1279,7 @@ interface Ld2410G3PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1309,12 +1309,12 @@ interface Ld2410G4PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1325,8 +1325,8 @@ interface Ld2410G4PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1335,7 +1335,7 @@ interface Ld2410G4PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1349,7 +1349,7 @@ interface Ld2410G4PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1373,12 +1373,12 @@ interface Ld2410G4PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1389,8 +1389,8 @@ interface Ld2410G4PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1399,7 +1399,7 @@ interface Ld2410G4PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1413,7 +1413,7 @@ interface Ld2410G4PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1443,12 +1443,12 @@ interface Ld2410G5PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1459,8 +1459,8 @@ interface Ld2410G5PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1469,7 +1469,7 @@ interface Ld2410G5PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1483,7 +1483,7 @@ interface Ld2410G5PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1507,12 +1507,12 @@ interface Ld2410G5PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1523,8 +1523,8 @@ interface Ld2410G5PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1533,7 +1533,7 @@ interface Ld2410G5PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1547,7 +1547,7 @@ interface Ld2410G5PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1577,12 +1577,12 @@ interface Ld2410G6PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1593,8 +1593,8 @@ interface Ld2410G6PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1603,7 +1603,7 @@ interface Ld2410G6PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1617,7 +1617,7 @@ interface Ld2410G6PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1641,12 +1641,12 @@ interface Ld2410G6PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1657,8 +1657,8 @@ interface Ld2410G6PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1667,7 +1667,7 @@ interface Ld2410G6PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1681,7 +1681,7 @@ interface Ld2410G6PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1711,12 +1711,12 @@ interface Ld2410G7PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1727,8 +1727,8 @@ interface Ld2410G7PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1737,7 +1737,7 @@ interface Ld2410G7PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1751,7 +1751,7 @@ interface Ld2410G7PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1775,12 +1775,12 @@ interface Ld2410G7PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1791,8 +1791,8 @@ interface Ld2410G7PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1801,7 +1801,7 @@ interface Ld2410G7PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1815,7 +1815,7 @@ interface Ld2410G7PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1845,12 +1845,12 @@ interface Ld2410G8PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1861,8 +1861,8 @@ interface Ld2410G8PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1871,7 +1871,7 @@ interface Ld2410G8PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1885,7 +1885,7 @@ interface Ld2410G8PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1909,12 +1909,12 @@ interface Ld2410G8PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1925,8 +1925,8 @@ interface Ld2410G8PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1935,7 +1935,7 @@ interface Ld2410G8PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410G8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -1949,7 +1949,7 @@ interface Ld2410G8PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1979,12 +1979,12 @@ interface Ld2412Gate0PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1995,8 +1995,8 @@ interface Ld2412Gate0PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2005,7 +2005,7 @@ interface Ld2412Gate0PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2019,7 +2019,7 @@ interface Ld2412Gate0PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2043,12 +2043,12 @@ interface Ld2412Gate0PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2059,8 +2059,8 @@ interface Ld2412Gate0PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2069,7 +2069,7 @@ interface Ld2412Gate0PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2083,7 +2083,7 @@ interface Ld2412Gate0PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2113,12 +2113,12 @@ interface Ld2412Gate1PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2129,8 +2129,8 @@ interface Ld2412Gate1PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2139,7 +2139,7 @@ interface Ld2412Gate1PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2153,7 +2153,7 @@ interface Ld2412Gate1PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2177,12 +2177,12 @@ interface Ld2412Gate1PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2193,8 +2193,8 @@ interface Ld2412Gate1PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2203,7 +2203,7 @@ interface Ld2412Gate1PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2217,7 +2217,7 @@ interface Ld2412Gate1PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2247,12 +2247,12 @@ interface Ld2412Gate2PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2263,8 +2263,8 @@ interface Ld2412Gate2PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2273,7 +2273,7 @@ interface Ld2412Gate2PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2287,7 +2287,7 @@ interface Ld2412Gate2PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2311,12 +2311,12 @@ interface Ld2412Gate2PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2327,8 +2327,8 @@ interface Ld2412Gate2PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2337,7 +2337,7 @@ interface Ld2412Gate2PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2351,7 +2351,7 @@ interface Ld2412Gate2PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2381,12 +2381,12 @@ interface Ld2412Gate3PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2397,8 +2397,8 @@ interface Ld2412Gate3PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2407,7 +2407,7 @@ interface Ld2412Gate3PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2421,7 +2421,7 @@ interface Ld2412Gate3PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2445,12 +2445,12 @@ interface Ld2412Gate3PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2461,8 +2461,8 @@ interface Ld2412Gate3PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2471,7 +2471,7 @@ interface Ld2412Gate3PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2485,7 +2485,7 @@ interface Ld2412Gate3PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2515,12 +2515,12 @@ interface Ld2412Gate4PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2531,8 +2531,8 @@ interface Ld2412Gate4PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2541,7 +2541,7 @@ interface Ld2412Gate4PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2555,7 +2555,7 @@ interface Ld2412Gate4PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2579,12 +2579,12 @@ interface Ld2412Gate4PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2595,8 +2595,8 @@ interface Ld2412Gate4PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2605,7 +2605,7 @@ interface Ld2412Gate4PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2619,7 +2619,7 @@ interface Ld2412Gate4PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2649,12 +2649,12 @@ interface Ld2412Gate5PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2665,8 +2665,8 @@ interface Ld2412Gate5PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2675,7 +2675,7 @@ interface Ld2412Gate5PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2689,7 +2689,7 @@ interface Ld2412Gate5PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2713,12 +2713,12 @@ interface Ld2412Gate5PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2729,8 +2729,8 @@ interface Ld2412Gate5PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2739,7 +2739,7 @@ interface Ld2412Gate5PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2753,7 +2753,7 @@ interface Ld2412Gate5PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2783,12 +2783,12 @@ interface Ld2412Gate6PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2799,8 +2799,8 @@ interface Ld2412Gate6PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2809,7 +2809,7 @@ interface Ld2412Gate6PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2823,7 +2823,7 @@ interface Ld2412Gate6PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2847,12 +2847,12 @@ interface Ld2412Gate6PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2863,8 +2863,8 @@ interface Ld2412Gate6PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2873,7 +2873,7 @@ interface Ld2412Gate6PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2887,7 +2887,7 @@ interface Ld2412Gate6PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2917,12 +2917,12 @@ interface Ld2412Gate7PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2933,8 +2933,8 @@ interface Ld2412Gate7PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2943,7 +2943,7 @@ interface Ld2412Gate7PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -2957,7 +2957,7 @@ interface Ld2412Gate7PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -2981,12 +2981,12 @@ interface Ld2412Gate7PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2997,8 +2997,8 @@ interface Ld2412Gate7PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3007,7 +3007,7 @@ interface Ld2412Gate7PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3021,7 +3021,7 @@ interface Ld2412Gate7PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3051,12 +3051,12 @@ interface Ld2412Gate8PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3067,8 +3067,8 @@ interface Ld2412Gate8PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3077,7 +3077,7 @@ interface Ld2412Gate8PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3091,7 +3091,7 @@ interface Ld2412Gate8PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3115,12 +3115,12 @@ interface Ld2412Gate8PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3131,8 +3131,8 @@ interface Ld2412Gate8PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3141,7 +3141,7 @@ interface Ld2412Gate8PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3155,7 +3155,7 @@ interface Ld2412Gate8PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3185,12 +3185,12 @@ interface Ld2412Gate9PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3201,8 +3201,8 @@ interface Ld2412Gate9PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3211,7 +3211,7 @@ interface Ld2412Gate9PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate9PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3225,7 +3225,7 @@ interface Ld2412Gate9PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3249,12 +3249,12 @@ interface Ld2412Gate9PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3265,8 +3265,8 @@ interface Ld2412Gate9PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3275,7 +3275,7 @@ interface Ld2412Gate9PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate9PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3289,7 +3289,7 @@ interface Ld2412Gate9PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3319,12 +3319,12 @@ interface Ld2412Gate10PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3335,8 +3335,8 @@ interface Ld2412Gate10PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3345,7 +3345,7 @@ interface Ld2412Gate10PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate10PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3359,7 +3359,7 @@ interface Ld2412Gate10PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3383,12 +3383,12 @@ interface Ld2412Gate10PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3399,8 +3399,8 @@ interface Ld2412Gate10PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3409,7 +3409,7 @@ interface Ld2412Gate10PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate10PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3423,7 +3423,7 @@ interface Ld2412Gate10PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3453,12 +3453,12 @@ interface Ld2412Gate11PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3469,8 +3469,8 @@ interface Ld2412Gate11PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3479,7 +3479,7 @@ interface Ld2412Gate11PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate11PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3493,7 +3493,7 @@ interface Ld2412Gate11PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3517,12 +3517,12 @@ interface Ld2412Gate11PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3533,8 +3533,8 @@ interface Ld2412Gate11PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3543,7 +3543,7 @@ interface Ld2412Gate11PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate11PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3557,7 +3557,7 @@ interface Ld2412Gate11PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3587,12 +3587,12 @@ interface Ld2412Gate12PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3603,8 +3603,8 @@ interface Ld2412Gate12PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3613,7 +3613,7 @@ interface Ld2412Gate12PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate12PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3627,7 +3627,7 @@ interface Ld2412Gate12PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3651,12 +3651,12 @@ interface Ld2412Gate12PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3667,8 +3667,8 @@ interface Ld2412Gate12PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3677,7 +3677,7 @@ interface Ld2412Gate12PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate12PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3691,7 +3691,7 @@ interface Ld2412Gate12PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3721,12 +3721,12 @@ interface Ld2412Gate13PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3737,8 +3737,8 @@ interface Ld2412Gate13PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3747,7 +3747,7 @@ interface Ld2412Gate13PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate13PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3761,7 +3761,7 @@ interface Ld2412Gate13PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3785,12 +3785,12 @@ interface Ld2412Gate13PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3801,8 +3801,8 @@ interface Ld2412Gate13PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3811,7 +3811,7 @@ interface Ld2412Gate13PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412Gate13PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3825,7 +3825,7 @@ interface Ld2412Gate13PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3855,12 +3855,12 @@ interface Ld2420PresenceTimeoutProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3871,8 +3871,8 @@ interface Ld2420PresenceTimeoutProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3881,7 +3881,7 @@ interface Ld2420PresenceTimeoutProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420PresenceTimeoutPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3895,7 +3895,7 @@ interface Ld2420PresenceTimeoutProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3919,12 +3919,12 @@ interface Ld2420MinGateDistanceProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3935,8 +3935,8 @@ interface Ld2420MinGateDistanceProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3945,7 +3945,7 @@ interface Ld2420MinGateDistanceProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420MinGateDistancePropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -3959,7 +3959,7 @@ interface Ld2420MinGateDistanceProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -3983,12 +3983,12 @@ interface Ld2420MaxGateDistanceProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3999,8 +3999,8 @@ interface Ld2420MaxGateDistanceProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4009,7 +4009,7 @@ interface Ld2420MaxGateDistanceProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420MaxGateDistancePropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4023,7 +4023,7 @@ interface Ld2420MaxGateDistanceProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4047,12 +4047,12 @@ interface Ld2420GateSelectProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4063,8 +4063,8 @@ interface Ld2420GateSelectProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4073,7 +4073,7 @@ interface Ld2420GateSelectProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420GateSelectPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4087,7 +4087,7 @@ interface Ld2420GateSelectProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4111,12 +4111,12 @@ interface Ld2420StillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4127,8 +4127,8 @@ interface Ld2420StillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4137,7 +4137,7 @@ interface Ld2420StillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420StillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4151,7 +4151,7 @@ interface Ld2420StillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4175,12 +4175,12 @@ interface Ld2420MoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4191,8 +4191,8 @@ interface Ld2420MoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4201,7 +4201,7 @@ interface Ld2420MoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420MoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4215,7 +4215,7 @@ interface Ld2420MoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4239,12 +4239,12 @@ interface Ld2420GateMoveSensitivityProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4255,8 +4255,8 @@ interface Ld2420GateMoveSensitivityProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4265,7 +4265,7 @@ interface Ld2420GateMoveSensitivityProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420GateMoveSensitivityPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4279,7 +4279,7 @@ interface Ld2420GateMoveSensitivityProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4303,12 +4303,12 @@ interface Ld2420GateStillSensitivityProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4319,8 +4319,8 @@ interface Ld2420GateStillSensitivityProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4329,7 +4329,7 @@ interface Ld2420GateStillSensitivityProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420GateStillSensitivityPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4343,7 +4343,7 @@ interface Ld2420GateStillSensitivityProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4367,12 +4367,12 @@ interface Ld2420Gate0PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4383,8 +4383,8 @@ interface Ld2420Gate0PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4393,7 +4393,7 @@ interface Ld2420Gate0PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4407,7 +4407,7 @@ interface Ld2420Gate0PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4431,12 +4431,12 @@ interface Ld2420Gate0PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4447,8 +4447,8 @@ interface Ld2420Gate0PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4457,7 +4457,7 @@ interface Ld2420Gate0PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4471,7 +4471,7 @@ interface Ld2420Gate0PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4501,12 +4501,12 @@ interface Ld2420Gate1PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4517,8 +4517,8 @@ interface Ld2420Gate1PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4527,7 +4527,7 @@ interface Ld2420Gate1PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4541,7 +4541,7 @@ interface Ld2420Gate1PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4565,12 +4565,12 @@ interface Ld2420Gate1PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4581,8 +4581,8 @@ interface Ld2420Gate1PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4591,7 +4591,7 @@ interface Ld2420Gate1PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4605,7 +4605,7 @@ interface Ld2420Gate1PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4635,12 +4635,12 @@ interface Ld2420Gate2PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4651,8 +4651,8 @@ interface Ld2420Gate2PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4661,7 +4661,7 @@ interface Ld2420Gate2PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4675,7 +4675,7 @@ interface Ld2420Gate2PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4699,12 +4699,12 @@ interface Ld2420Gate2PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4715,8 +4715,8 @@ interface Ld2420Gate2PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4725,7 +4725,7 @@ interface Ld2420Gate2PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4739,7 +4739,7 @@ interface Ld2420Gate2PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4769,12 +4769,12 @@ interface Ld2420Gate3PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4785,8 +4785,8 @@ interface Ld2420Gate3PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4795,7 +4795,7 @@ interface Ld2420Gate3PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4809,7 +4809,7 @@ interface Ld2420Gate3PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4833,12 +4833,12 @@ interface Ld2420Gate3PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4849,8 +4849,8 @@ interface Ld2420Gate3PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4859,7 +4859,7 @@ interface Ld2420Gate3PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4873,7 +4873,7 @@ interface Ld2420Gate3PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4903,12 +4903,12 @@ interface Ld2420Gate4PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4919,8 +4919,8 @@ interface Ld2420Gate4PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4929,7 +4929,7 @@ interface Ld2420Gate4PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -4943,7 +4943,7 @@ interface Ld2420Gate4PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -4967,12 +4967,12 @@ interface Ld2420Gate4PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4983,8 +4983,8 @@ interface Ld2420Gate4PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4993,7 +4993,7 @@ interface Ld2420Gate4PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5007,7 +5007,7 @@ interface Ld2420Gate4PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5037,12 +5037,12 @@ interface Ld2420Gate5PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5053,8 +5053,8 @@ interface Ld2420Gate5PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5063,7 +5063,7 @@ interface Ld2420Gate5PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5077,7 +5077,7 @@ interface Ld2420Gate5PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5101,12 +5101,12 @@ interface Ld2420Gate5PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5117,8 +5117,8 @@ interface Ld2420Gate5PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5127,7 +5127,7 @@ interface Ld2420Gate5PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5141,7 +5141,7 @@ interface Ld2420Gate5PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5171,12 +5171,12 @@ interface Ld2420Gate6PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5187,8 +5187,8 @@ interface Ld2420Gate6PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5197,7 +5197,7 @@ interface Ld2420Gate6PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5211,7 +5211,7 @@ interface Ld2420Gate6PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5235,12 +5235,12 @@ interface Ld2420Gate6PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5251,8 +5251,8 @@ interface Ld2420Gate6PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5261,7 +5261,7 @@ interface Ld2420Gate6PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5275,7 +5275,7 @@ interface Ld2420Gate6PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5305,12 +5305,12 @@ interface Ld2420Gate7PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5321,8 +5321,8 @@ interface Ld2420Gate7PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5331,7 +5331,7 @@ interface Ld2420Gate7PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5345,7 +5345,7 @@ interface Ld2420Gate7PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5369,12 +5369,12 @@ interface Ld2420Gate7PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5385,8 +5385,8 @@ interface Ld2420Gate7PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5395,7 +5395,7 @@ interface Ld2420Gate7PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5409,7 +5409,7 @@ interface Ld2420Gate7PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5439,12 +5439,12 @@ interface Ld2420Gate8PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5455,8 +5455,8 @@ interface Ld2420Gate8PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5465,7 +5465,7 @@ interface Ld2420Gate8PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5479,7 +5479,7 @@ interface Ld2420Gate8PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5503,12 +5503,12 @@ interface Ld2420Gate8PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5519,8 +5519,8 @@ interface Ld2420Gate8PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5529,7 +5529,7 @@ interface Ld2420Gate8PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5543,7 +5543,7 @@ interface Ld2420Gate8PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5573,12 +5573,12 @@ interface Ld2420Gate9PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5589,8 +5589,8 @@ interface Ld2420Gate9PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5599,7 +5599,7 @@ interface Ld2420Gate9PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate9PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5613,7 +5613,7 @@ interface Ld2420Gate9PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5637,12 +5637,12 @@ interface Ld2420Gate9PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5653,8 +5653,8 @@ interface Ld2420Gate9PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5663,7 +5663,7 @@ interface Ld2420Gate9PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate9PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5677,7 +5677,7 @@ interface Ld2420Gate9PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5707,12 +5707,12 @@ interface Ld2420Gate10PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5723,8 +5723,8 @@ interface Ld2420Gate10PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5733,7 +5733,7 @@ interface Ld2420Gate10PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate10PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5747,7 +5747,7 @@ interface Ld2420Gate10PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5771,12 +5771,12 @@ interface Ld2420Gate10PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5787,8 +5787,8 @@ interface Ld2420Gate10PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5797,7 +5797,7 @@ interface Ld2420Gate10PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate10PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5811,7 +5811,7 @@ interface Ld2420Gate10PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5841,12 +5841,12 @@ interface Ld2420Gate11PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5857,8 +5857,8 @@ interface Ld2420Gate11PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5867,7 +5867,7 @@ interface Ld2420Gate11PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate11PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5881,7 +5881,7 @@ interface Ld2420Gate11PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5905,12 +5905,12 @@ interface Ld2420Gate11PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5921,8 +5921,8 @@ interface Ld2420Gate11PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5931,7 +5931,7 @@ interface Ld2420Gate11PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate11PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -5945,7 +5945,7 @@ interface Ld2420Gate11PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -5975,12 +5975,12 @@ interface Ld2420Gate12PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5991,8 +5991,8 @@ interface Ld2420Gate12PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6001,7 +6001,7 @@ interface Ld2420Gate12PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate12PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6015,7 +6015,7 @@ interface Ld2420Gate12PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6039,12 +6039,12 @@ interface Ld2420Gate12PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6055,8 +6055,8 @@ interface Ld2420Gate12PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6065,7 +6065,7 @@ interface Ld2420Gate12PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate12PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6079,7 +6079,7 @@ interface Ld2420Gate12PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6109,12 +6109,12 @@ interface Ld2420Gate13PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6125,8 +6125,8 @@ interface Ld2420Gate13PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6135,7 +6135,7 @@ interface Ld2420Gate13PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate13PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6149,7 +6149,7 @@ interface Ld2420Gate13PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6173,12 +6173,12 @@ interface Ld2420Gate13PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6189,8 +6189,8 @@ interface Ld2420Gate13PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6199,7 +6199,7 @@ interface Ld2420Gate13PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate13PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6213,7 +6213,7 @@ interface Ld2420Gate13PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6243,12 +6243,12 @@ interface Ld2420Gate14PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6259,8 +6259,8 @@ interface Ld2420Gate14PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6269,7 +6269,7 @@ interface Ld2420Gate14PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate14PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6283,7 +6283,7 @@ interface Ld2420Gate14PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6307,12 +6307,12 @@ interface Ld2420Gate14PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6323,8 +6323,8 @@ interface Ld2420Gate14PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6333,7 +6333,7 @@ interface Ld2420Gate14PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate14PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6347,7 +6347,7 @@ interface Ld2420Gate14PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6377,12 +6377,12 @@ interface Ld2420Gate15PropsMoveThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6393,8 +6393,8 @@ interface Ld2420Gate15PropsMoveThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6403,7 +6403,7 @@ interface Ld2420Gate15PropsMoveThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate15PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6417,7 +6417,7 @@ interface Ld2420Gate15PropsMoveThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6441,12 +6441,12 @@ interface Ld2420Gate15PropsStillThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6457,8 +6457,8 @@ interface Ld2420Gate15PropsStillThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6467,7 +6467,7 @@ interface Ld2420Gate15PropsStillThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420Gate15PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6481,7 +6481,7 @@ interface Ld2420Gate15PropsStillThresholdProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6511,12 +6511,12 @@ interface Ld2450Zone1PropsX1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6527,8 +6527,8 @@ interface Ld2450Zone1PropsX1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6537,7 +6537,7 @@ interface Ld2450Zone1PropsX1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6551,7 +6551,7 @@ interface Ld2450Zone1PropsX1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6575,12 +6575,12 @@ interface Ld2450Zone1PropsY1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6591,8 +6591,8 @@ interface Ld2450Zone1PropsY1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6601,7 +6601,7 @@ interface Ld2450Zone1PropsY1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6615,7 +6615,7 @@ interface Ld2450Zone1PropsY1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6639,12 +6639,12 @@ interface Ld2450Zone1PropsX2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6655,8 +6655,8 @@ interface Ld2450Zone1PropsX2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6665,7 +6665,7 @@ interface Ld2450Zone1PropsX2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6679,7 +6679,7 @@ interface Ld2450Zone1PropsX2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6703,12 +6703,12 @@ interface Ld2450Zone1PropsY2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6719,8 +6719,8 @@ interface Ld2450Zone1PropsY2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6729,7 +6729,7 @@ interface Ld2450Zone1PropsY2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6743,7 +6743,7 @@ interface Ld2450Zone1PropsY2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6773,12 +6773,12 @@ interface Ld2450Zone2PropsX1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6789,8 +6789,8 @@ interface Ld2450Zone2PropsX1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6799,7 +6799,7 @@ interface Ld2450Zone2PropsX1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6813,7 +6813,7 @@ interface Ld2450Zone2PropsX1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6837,12 +6837,12 @@ interface Ld2450Zone2PropsY1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6853,8 +6853,8 @@ interface Ld2450Zone2PropsY1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6863,7 +6863,7 @@ interface Ld2450Zone2PropsY1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6877,7 +6877,7 @@ interface Ld2450Zone2PropsY1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6901,12 +6901,12 @@ interface Ld2450Zone2PropsX2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6917,8 +6917,8 @@ interface Ld2450Zone2PropsX2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6927,7 +6927,7 @@ interface Ld2450Zone2PropsX2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -6941,7 +6941,7 @@ interface Ld2450Zone2PropsX2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -6965,12 +6965,12 @@ interface Ld2450Zone2PropsY2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6981,8 +6981,8 @@ interface Ld2450Zone2PropsY2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6991,7 +6991,7 @@ interface Ld2450Zone2PropsY2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7005,7 +7005,7 @@ interface Ld2450Zone2PropsY2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7035,12 +7035,12 @@ interface Ld2450Zone3PropsX1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7051,8 +7051,8 @@ interface Ld2450Zone3PropsX1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7061,7 +7061,7 @@ interface Ld2450Zone3PropsX1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7075,7 +7075,7 @@ interface Ld2450Zone3PropsX1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7099,12 +7099,12 @@ interface Ld2450Zone3PropsY1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7115,8 +7115,8 @@ interface Ld2450Zone3PropsY1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7125,7 +7125,7 @@ interface Ld2450Zone3PropsY1Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7139,7 +7139,7 @@ interface Ld2450Zone3PropsY1Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7163,12 +7163,12 @@ interface Ld2450Zone3PropsX2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7179,8 +7179,8 @@ interface Ld2450Zone3PropsX2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7189,7 +7189,7 @@ interface Ld2450Zone3PropsX2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7203,7 +7203,7 @@ interface Ld2450Zone3PropsX2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7227,12 +7227,12 @@ interface Ld2450Zone3PropsY2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7243,8 +7243,8 @@ interface Ld2450Zone3PropsY2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7253,7 +7253,7 @@ interface Ld2450Zone3PropsY2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7267,7 +7267,7 @@ interface Ld2450Zone3PropsY2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7297,12 +7297,12 @@ interface MicronovaThermostatTemperatureProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7313,8 +7313,8 @@ interface MicronovaThermostatTemperatureProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7323,7 +7323,7 @@ interface MicronovaThermostatTemperatureProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: MicronovaThermostatTemperaturePropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7337,7 +7337,7 @@ interface MicronovaThermostatTemperatureProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7372,12 +7372,12 @@ interface MicronovaPowerLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7388,8 +7388,8 @@ interface MicronovaPowerLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7398,7 +7398,7 @@ interface MicronovaPowerLevelProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: MicronovaPowerLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7412,7 +7412,7 @@ interface MicronovaPowerLevelProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7446,12 +7446,12 @@ interface OpenthermTSetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7462,8 +7462,8 @@ interface OpenthermTSetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7472,7 +7472,7 @@ interface OpenthermTSetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7486,7 +7486,7 @@ interface OpenthermTSetProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7496,13 +7496,13 @@ interface OpenthermTSetProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
     maxValue?: unknown;
     /** @yamlKey auto_max_value */
-    autoMaxValue?: boolean;
+    autoMaxValue?: boolean | EmbedValue<boolean>;
 }
 interface OpenthermTSetCh2PropsAvailabilityProps {
     topic: unknown;
@@ -7523,12 +7523,12 @@ interface OpenthermTSetCh2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7539,8 +7539,8 @@ interface OpenthermTSetCh2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7549,7 +7549,7 @@ interface OpenthermTSetCh2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTSetCh2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7563,7 +7563,7 @@ interface OpenthermTSetCh2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7573,13 +7573,13 @@ interface OpenthermTSetCh2Props {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
     maxValue?: unknown;
     /** @yamlKey auto_max_value */
-    autoMaxValue?: boolean;
+    autoMaxValue?: boolean | EmbedValue<boolean>;
 }
 interface OpenthermCoolingControlPropsAvailabilityProps {
     topic: unknown;
@@ -7600,12 +7600,12 @@ interface OpenthermCoolingControlProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7616,8 +7616,8 @@ interface OpenthermCoolingControlProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7626,7 +7626,7 @@ interface OpenthermCoolingControlProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingControlPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7640,7 +7640,7 @@ interface OpenthermCoolingControlProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7650,7 +7650,7 @@ interface OpenthermCoolingControlProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
@@ -7675,12 +7675,12 @@ interface OpenthermTDhwSetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7691,8 +7691,8 @@ interface OpenthermTDhwSetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7701,7 +7701,7 @@ interface OpenthermTDhwSetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTDhwSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7715,7 +7715,7 @@ interface OpenthermTDhwSetProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7725,15 +7725,15 @@ interface OpenthermTDhwSetProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
     maxValue?: unknown;
     /** @yamlKey auto_min_value */
-    autoMinValue?: boolean;
+    autoMinValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey auto_max_value */
-    autoMaxValue?: boolean;
+    autoMaxValue?: boolean | EmbedValue<boolean>;
 }
 interface OpenthermMaxTSetPropsAvailabilityProps {
     topic: unknown;
@@ -7754,12 +7754,12 @@ interface OpenthermMaxTSetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7770,8 +7770,8 @@ interface OpenthermMaxTSetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7780,7 +7780,7 @@ interface OpenthermMaxTSetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermMaxTSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7794,7 +7794,7 @@ interface OpenthermMaxTSetProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7804,15 +7804,15 @@ interface OpenthermMaxTSetProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
     maxValue?: unknown;
     /** @yamlKey auto_min_value */
-    autoMinValue?: boolean;
+    autoMinValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey auto_max_value */
-    autoMaxValue?: boolean;
+    autoMaxValue?: boolean | EmbedValue<boolean>;
 }
 interface OpenthermTRoomSetPropsAvailabilityProps {
     topic: unknown;
@@ -7833,12 +7833,12 @@ interface OpenthermTRoomSetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7849,8 +7849,8 @@ interface OpenthermTRoomSetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7859,7 +7859,7 @@ interface OpenthermTRoomSetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7873,7 +7873,7 @@ interface OpenthermTRoomSetProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7883,7 +7883,7 @@ interface OpenthermTRoomSetProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
@@ -7908,12 +7908,12 @@ interface OpenthermTRoomSetCh2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7924,8 +7924,8 @@ interface OpenthermTRoomSetCh2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7934,7 +7934,7 @@ interface OpenthermTRoomSetCh2Props {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomSetCh2PropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -7948,7 +7948,7 @@ interface OpenthermTRoomSetCh2Props {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -7958,7 +7958,7 @@ interface OpenthermTRoomSetCh2Props {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
@@ -7983,12 +7983,12 @@ interface OpenthermTRoomProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7999,8 +7999,8 @@ interface OpenthermTRoomProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8009,7 +8009,7 @@ interface OpenthermTRoomProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -8023,7 +8023,7 @@ interface OpenthermTRoomProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -8033,7 +8033,7 @@ interface OpenthermTRoomProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
@@ -8058,12 +8058,12 @@ interface OpenthermMaxRelModLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8074,8 +8074,8 @@ interface OpenthermMaxRelModLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8084,7 +8084,7 @@ interface OpenthermMaxRelModLevelProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermMaxRelModLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -8098,7 +8098,7 @@ interface OpenthermMaxRelModLevelProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -8108,7 +8108,7 @@ interface OpenthermMaxRelModLevelProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
@@ -8133,12 +8133,12 @@ interface OpenthermOtcHcRatioProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8149,8 +8149,8 @@ interface OpenthermOtcHcRatioProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8159,7 +8159,7 @@ interface OpenthermOtcHcRatioProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermOtcHcRatioPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -8173,7 +8173,7 @@ interface OpenthermOtcHcRatioProps {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -8183,15 +8183,15 @@ interface OpenthermOtcHcRatioProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
     minValue?: unknown;
     /** @yamlKey max_value */
     maxValue?: unknown;
     /** @yamlKey auto_min_value */
-    autoMinValue?: boolean;
+    autoMinValue?: boolean | EmbedValue<boolean>;
     /** @yamlKey auto_max_value */
-    autoMaxValue?: boolean;
+    autoMaxValue?: boolean | EmbedValue<boolean>;
 }
 interface TuyaDatapointHiddenProps {
     /** @yamlKey datapoint_type */
@@ -8199,7 +8199,7 @@ interface TuyaDatapointHiddenProps {
     /** @yamlKey initial_value */
     initialValue?: unknown;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface NumberBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
@@ -8215,7 +8215,7 @@ interface NumberBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -8444,9 +8444,9 @@ interface LvglProps {
     widget: RefProp<unknown>;
     animated?: unknown;
     /** @yamlKey update_on_release */
-    updateOnRelease?: boolean;
+    updateOnRelease?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface MicronovaProps {
     /** @yamlKey micronova_id */
@@ -8470,7 +8470,7 @@ interface ModbusControllerProps extends _ModbusControllerModbusitembaseschema {
     step?: number;
     multiply?: unknown;
     /** @yamlKey use_write_multiple */
-    useWriteMultiple?: boolean;
+    useWriteMultiple?: boolean | EmbedValue<boolean>;
 }
 interface OpenthermProps extends _CoreComponent {
     /** @yamlKey opentherm_id */
@@ -8548,7 +8548,7 @@ interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current value... */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template number will imme... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey set_action
@@ -8563,7 +8563,7 @@ interface TemplateProps extends _CoreComponent {
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The interval on which to update the number by executing the `lambda`. Defau...
      * @yamlKey update_interval
@@ -8574,7 +8574,7 @@ interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey number_datapoint */
-    numberDatapoint: number;
+    numberDatapoint: number | EmbedValue<number>;
     /** @yamlKey max_value */
     maxValue: unknown;
     /** @yamlKey min_value */

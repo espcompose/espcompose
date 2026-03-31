@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _Canbus } from "../bases";
 import type { esp32_can_ESP32Can, mcp2515_MCP2515, spi_SPIComponent } from "../markers";
 interface Esp32CanProps extends _Canbus {
@@ -11,24 +11,24 @@ interface Esp32CanProps extends _Canbus {
      * [Pin](/guides/configuration-types#pin): Receive pin.
      * @yamlKey rx_pin
      */
-    rxPin: Pin;
+    rxPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): Transmit pin.
      * @yamlKey tx_pin
      */
-    txPin: Pin;
+    txPin: Pin | EmbedValue<Pin>;
     /** enum: Operating mode. One of: */
     mode?: "NORMAL" | "LISTENONLY";
     /**
      * int: Length of RX queue.
      * @yamlKey rx_queue_len
      */
-    rxQueueLen?: number;
+    rxQueueLen?: number | EmbedValue<number>;
     /**
      * int: Length of TX queue, 0 to disable.
      * @yamlKey tx_queue_len
      */
-    txQueueLen?: number;
+    txQueueLen?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): Maximum time to wait when the TX queue is full before dropping the message ...
      * @yamlKey tx_enqueue_timeout
@@ -47,12 +47,12 @@ interface Mcp2515Props extends _Canbus {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Is used to signal to a SPI device when it should listen for dat...
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 export type CanbusProps = ({
     platform: "esp32_can";

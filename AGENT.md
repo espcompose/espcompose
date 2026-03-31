@@ -13,14 +13,21 @@ The compilation happens at build time only — the TSX component tree is evaluat
 and ESPHome YAML is emitted. The compiled YAML then becomes firmware via the
 normal ESPHome toolchain. There is no JavaScript runtime on the device.
 
-The compiler pipeline has four phases:
+The compiler pipeline has five phases:
 1. **Type-check** — Run the TypeScript compiler to catch errors early
-2. **Transform** — Rewrite top-level `function` declarations into `useScript()` hook
-   calls and convert trigger props into ESPHome action arrays (TypeScript AST transform)
-3. **Bundle** — esbuild bundles the transformed TSX into a single CJS module
+2. **Transform** — Two-pass AST transformation: (a) the reactive transformer
+   auto-wraps Signal<T> expressions in JSX attributes with `bind.__compiled()`,
+   and (b) the script transformer compiles `createScript()` / trigger handler
+   arrow function bodies into action tree IR (ref actions, delays, logger calls,
+   HA entity actions, etc.) and injects compiled metadata via `Object.assign`
+3. **Bundle** — esbuild bundles the source into a single CJS module
    (with `@esphome/compose` kept external)
-4. **Execute + Emit** — The bundle is `require()`'d in a script scope, the JSX
-   tree is rendered to a plain object, and YAML is written to disk
+4. **Execute + Emit** — The bundle is `require()`'d, the JSX
+   tree is rendered to a plain object, reactive bindings are injected,
+   and YAML is written to disk
+5. **IR Round-trip** — After rendering, the config object is lifted into a typed
+   IR tree (`buildIR`), then lowered back (`lowerIR`). This enables future IR
+   analysis and transformations (e.g. hybrid reactive lowering).
 
 ## Monorepo Structure
 
@@ -29,10 +36,11 @@ following packages:
 
 | Package | npm name | Purpose |
 |---------|----------|---------|
-| `packages/sdk` | `@esphome/compose` | Core SDK — JSX runtime, hooks (`useRef`, `useScript`, `useContext`), action primitives (`delay`, `logger`), generated component types |
-| `packages/cli` | `@esphome/compose-cli` / `espcompose` | CLI binary & compiler pipeline — type-check, AST transform, esbuild bundle, execute & emit YAML, ESPHome CLI wrappers |
-| `packages/eslint` | `@esphome/compose-eslint` | ESLint plugin with custom rules for ESPHome Compose projects |
+| `packages/sdk` | `@esphome/compose` | Core SDK — JSX runtime, hooks (`useRef`, `useScript`, `useContext`), build/embed/bind/device namespaces, reactive nodes, action primitives (`delay`, `logger`), generated component types |
+| `packages/cli` | `@esphome/compose-cli` / `espcompose` | CLI binary & compiler pipeline — type-check, AST transform, esbuild bundle, IR construction/lowering, execute & emit YAML, ESPHome CLI wrappers |
+| `packages/eslint` | `@esphome/compose-eslint` | ESLint plugin with custom rules for ESPHome Compose projects (including phase enforcement rules) |
 | `packages/e2e` | `@esphome/compose-e2e` (private) | End-to-end snapshot tests — builds sample projects and verifies YAML output |
+| `packages/ui` | `@esphome/compose-ui` | Design system — reusable LVGL components (Screen, Button, Card, etc.) and themes |
 
 ## Core Design Decisions
 
@@ -78,71 +86,168 @@ export default (
 );
 ```
 
-### Scripts (function-as-script pattern)
-Top-level `function` declarations in the entry file are automatically
-transformed by the compiler into ESPHome `script:` components via the
-`useScript()` hook. Arrow function constants (`const fn = () => {}`) are NOT
-treated as scripts — they remain compile-time helpers.
+### defineProject() — Project Descriptor
+The preferred way to define a device project is via `defineProject()`, which
+wraps the root JSX element in a typed descriptor:
 
-The compiler's AST transformer:
-1. Converts the function body into an ESPHome action list
-2. Rewrites the function to call `useScript()` with the action metadata
-3. Rewrites trigger props (props starting with `on`) that reference function
-   names from identifiers to call expressions (e.g. `onPress={greet}` →
-   `onPress={greet()}`)
-4. Converts inline arrow functions in trigger props to inline action lists
+```tsx
+import { defineProject } from '@esphome/compose';
+
+export default defineProject({
+  device: (
+    <esphome name="my-device">
+      <esp32 board="esp32dev" framework={{ type: 'arduino' }} />
+      <wifi ssid="HomeWifi" password="secret" />
+      <api />
+      <logger />
+    </esphome>
+  ),
+});
+```
+
+The compiler detects `ProjectDefinition` via `isProjectDefinition()` and
+extracts the `.device` property. The bare `export default <esphome>` pattern
+is still supported for backward compatibility.
+
+### build.run() — Compile-Time Node.js Execution
+`build.run()` executes arbitrary Node.js code at compile time and captures the
+return value as a `BuildValue<T>`. Properties of the underlying value are
+accessible via a Proxy. Must be called at module top level (module phase).
+
+```tsx
+const env = build.run(() => ({
+  deviceName: 'my-device',
+  apiKey: process.env.API_KEY ?? 'default-key',
+}));
+// env.deviceName and env.apiKey are accessible at compile time
+```
+
+### embed.*() — Build→Device Value Crossing
+`embed.*()` functions transfer compile-time values into the generated YAML:
+- `embed.string(value)` → literal YAML string
+- `embed.number(value)` → literal YAML number
+- `embed.secret(value)` → `!secret` reference + entry in secrets.yaml
+- `embed.json(value)` → inline YAML object/array
+
+```tsx
+<esphome name={embed.string(env.deviceName)} />
+<api encryption={{ key: embed.string(env.apiKey) }} />
+```
+
+### createScript() — Named Scripts
+`createScript()` declares named ESPHome scripts from async arrow function
+bodies. The AST-based action tree compiler compiles the function body at
+build time — it is never executed at runtime. Returns a `ScriptHandle`
+for calling the script from trigger handlers.
+
+```tsx
+import { createScript, delay, logger, defineProject, useRef } from '@esphome/compose';
+import type { Switch } from '@esphome/compose';
+
+const switchRef = useRef<Switch>();
+
+const blink = createScript(async () => {
+  switchRef.toggle();
+  await delay(500);
+  switchRef.toggle();
+});
+
+export default defineProject({
+  device: (
+    <esphome name="script-demo">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <api />
+      <switch platform="gpio" ref={switchRef} pin={2} name="LED" />
+      <binary_sensor platform="gpio" pin={4} name="Button"
+        onPress={async () => { await blink(); }}
+      />
+    </esphome>
+  ),
+});
+```
+
+### Compilation Phase Model
+The compiler enforces a three-phase execution model:
+- **module** — `build.run()` is allowed; `bind.*` is forbidden
+- **render** — `bind.*` and `embed.*` are allowed; `build.run()` is forbidden
+- **idle** — no phase-restricted APIs are active
+
+Phase enforcement is implemented at three layers:
+1. **TypeScript types** — API signatures restrict usage at the type level
+2. **ESLint rules** — `no-build-in-component` (error) and `no-node-in-reactive` (warn)
+3. **Runtime assertions** — `assertPhase()` throws `PhaseError` at runtime
+
+### IR (Intermediate Representation) Layer
+After rendering, the config object is lifted into a typed IR tree and lowered
+back. The IR types include `IRRoot`, `IRSection`, `IRScalar`, `IRObject`,
+`IRArray`, `IRLambda`, and `IRNull`. This enables future optimizations and
+analysis passes (e.g. hybrid reactive lowering for multi-source bindings).
+
+### Reactive Bindings
+`bind.memo()` and `bind.effect()` create reactive computations that track
+dependencies automatically via `ReactiveNode<T>`. Single-source bindings
+lower to ESPHome-native `on_state:`/`on_value:` triggers. Multi-source
+bindings can use a C++ reactive runtime (`espcompose_reactive.h`) with
+`Signal<T>`, `Memo<T>`, `Effect`, and `Scheduler` primitives.
+
+### Scripts and Trigger Handlers (Action Tree Compiler)
+`createScript()` creates named ESPHome `script:` components. Trigger handler
+arrow functions on props like `onPress`, `onRelease`, etc. define inline
+action sequences. Both are compiled at the AST level by the action tree
+compiler — function bodies are analyzed statically and emitted as ESPHome
+YAML action sequences. They are never executed at runtime.
+
+Trigger props (props starting with `on`) accept `TriggerHandler<T>` — an
+async arrow function whose body is compiled to ESPHome actions.
 
 Supported action primitives (imported from `@esphome/compose`):
-- `delay(ms)` → `delay: <ms>ms`
+- `await delay(ms)` → `delay: <ms>ms`
 - `logger.log(message, level?)` → `logger.log: { message, level? }`
-- Calling another script function → `script.execute: <id>`
+- `await waitUntil(() => condition)` → `wait_until: { condition: !lambda ... }`
+- Ref actions: `lightRef.toggle()` → `light.toggle: { id: <token> }`
+- HA entity actions: `entity.toggle()` → `homeassistant.action: { action: light.toggle, data: { entity_id: ... } }`
+- Script calls: `await myScript()` → `script.execute` + `script.wait`
 
-Supported control flow in script bodies:
-- `if/else` → `if:` action with `condition`, `then`, `else`
-- `while` → `while:` action
-- `for (let i=0; i<N; i++)` → `repeat:` action (literal count only)
-- `const` variables → inlined into expressions (not emitted as actions)
-- `return` statements → compile error (scripts are void procedures)
-- `let`/`var` declarations → compile error (use `const`)
-
-TypeScript expressions in conditions are converted to C++ via the
-expression-to-cpp transformer, supporting binary operators, prefix unary,
-identifiers, literals, and template literals.
-
-Script parameters with TypeScript type annotations are mapped to C++ types:
-- `number` → `int`
-- `string` → `std::string`
-- `boolean` → `bool`
+Named scripts are emitted in the `script:` YAML section and referenced via
+`script.execute`. Inline trigger handlers emit their actions directly into
+the trigger prop.
 
 Example:
 ```tsx
-import { ESPCompose, delay, logger } from '@esphome/compose';
+import { createScript, delay, logger, useRef } from '@esphome/compose';
+import type { Switch } from '@esphome/compose';
 
-function greet(): void {
+const switchRef = useRef<Switch>();
+
+const greet = createScript(async () => {
   logger.log('Hello from ESPCompose!');
-  delay(500);
-}
+  await delay(500);
+});
 
-export default (
-  <esphome name="script-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
-    <api />
-    <logger level="INFO" />
-    <binary_sensor
-      platform="gpio"
-      pin={4}
-      name="Button"
-      onPress={greet}
-      onRelease={() => { delay(100); }}
-    />
-  </esphome>
-);
+export default defineProject({
+  device: (
+    <esphome name="script-device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <api />
+      <logger level="INFO" />
+      <switch platform="gpio" ref={switchRef} pin={2} name="LED" />
+      <binary_sensor
+        platform="gpio"
+        pin={4}
+        name="Button"
+        onPress={async () => { await greet(); }}
+        onRelease={async () => { switchRef.toggle(); }}
+      />
+    </esphome>
+  ),
+});
 ```
 
 This compiles to YAML with a `script:` section for `greet` and
-`on_press: [script.execute: greet]` on the binary_sensor, plus an inline
-`on_release: [delay: 100ms]`.
+`on_press: [script.execute: <id>, script.wait: <id>]` on the binary_sensor,
+plus an inline `on_release: [switch.toggle: { id: <ref> }]`.
 
 ### ID Namespacing via Refs
 All ESPHome IDs are in a single global flat namespace. The `useRef()` hook
@@ -181,7 +286,7 @@ arbitrary key-value pairs directly into the component's YAML output:
 }} />
 ```
 
-Alternatively, `ESPCompose.createElement()` can be called directly with
+Alternatively, `createElement()` can be called directly with
 untyped props for components that lack SDK type definitions entirely.
 
 ### Conditional Rendering
@@ -208,14 +313,11 @@ package.json under `esphome.version`.
 The following features are part of the design vision but have NOT been
 implemented yet. Do not assume these exist in the current codebase:
 
-- **Reactive Expressions** (`Expression<T>`, `useEntityState()`,
-  `useSensorValue()`, `useBinarySensor()`, `useGlobal()`) — typed AST nodes
-  for runtime state with operations like `.eq()`, `.gt()`, `.ternary()` that
-  compile to C++ lambda expressions
-- **Reactive Dependency Tracking** — automatic emission of subscription blocks,
-  `on_state:`/`on_value:` trigger handlers, and `lvgl.widget.update:` actions
-- **useEffect()** — compile-time reactive automation hook (when dependencies
-  change, run actions)
+- **Multi-source reactive lowering** — When `bind.memo()` tracks dependencies
+  from multiple ESPHome sources simultaneously, the C++ reactive runtime
+  (`espcompose_reactive.h`) manages the subscription graph. The hybrid lowering
+  decision (`analyzeReactiveStrategy`) is implemented but always returns
+  'native' for now.
 - **State Machines** (`useStateMachine()`) — XState-inspired construct that
   compiles to globals + entry/exit scripts + event guards
 - **`cpp\`\`` tagged template literal** — raw C++ escape hatch for any action
@@ -263,5 +365,5 @@ generated YAML is snapshot-tested and validated via `esphome config`.
 | `basic-device` | Minimal device with core infrastructure (esp32, wifi, api, ota, logger) |
 | `sensor-device` | Multiple sensor and binary_sensor sections |
 | `function-component-device` | Custom function components with props and fragments |
-| `script-device` | Function-as-script pattern with `delay()`, `logger.log()`, trigger props (`onPress`, `onRelease`) |
-| `dashboard-device` | Complex real-world device: cross-component refs, nested hardware module, `x:custom` escape hatch, `ESPCompose.createElement()` for untyped components |
+| `script-device` | Named scripts with `createScript()`, `delay()`, `logger.log()`, trigger props (`onPress`, `onRelease`) |
+| `dashboard-device` | Complex real-world device: cross-component refs, nested hardware module, `x:custom` escape hatch, `createElement()` for untyped components |

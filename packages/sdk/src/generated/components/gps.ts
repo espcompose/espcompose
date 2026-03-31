@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { gps_GPS, uart_UARTComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 export interface GpsLatitudePropsAvailabilityProps {
@@ -25,12 +25,12 @@ export interface GpsLatitudeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -41,8 +41,8 @@ export interface GpsLatitudeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -53,15 +53,15 @@ export interface GpsLatitudeProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -91,12 +91,12 @@ export interface GpsLongitudeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -107,8 +107,8 @@ export interface GpsLongitudeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -119,15 +119,15 @@ export interface GpsLongitudeProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -157,12 +157,12 @@ export interface GpsSpeedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -173,8 +173,8 @@ export interface GpsSpeedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -185,15 +185,15 @@ export interface GpsSpeedProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -223,12 +223,12 @@ export interface GpsCourseProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -239,8 +239,8 @@ export interface GpsCourseProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -251,15 +251,15 @@ export interface GpsCourseProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -289,12 +289,12 @@ export interface GpsAltitudeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -305,8 +305,8 @@ export interface GpsAltitudeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -317,15 +317,15 @@ export interface GpsAltitudeProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -355,12 +355,12 @@ export interface GpsSatellitesProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -371,8 +371,8 @@ export interface GpsSatellitesProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -383,15 +383,15 @@ export interface GpsSatellitesProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -421,12 +421,12 @@ export interface GpsHdopProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -437,8 +437,8 @@ export interface GpsHdopProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -449,15 +449,15 @@ export interface GpsHdopProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;

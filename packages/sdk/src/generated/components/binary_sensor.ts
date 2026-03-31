@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, IPv4Address, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, IPv4Address, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BthomeMithermometerBleDevice, _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _HomeassistantHomeAssistantImport, _ModbusControllerModbusitembaseschema, _Msa3xxMsaSensor, _NextionBinarySensorConfigBinarySensor, _PacketTransportBinarySensorStatusSensor, _PipsolarComponent, _Touchscreen } from "../bases";
 import type { EntityBase, analog_threshold_AnalogThresholdBinarySensor, apds9960_APDS9960, as3935_AS3935Component, binary_sensor_BinarySensor, ble_presence_BLEPresenceDevice, cap1188_CAP1188Channel, cap1188_CAP1188Component, copy_CopyBinarySensor, cst226_CST226Button, cst226_CST226Touchscreen, cst816_CST816Touchscreen, daly_bms_DalyBmsComponent, dfrobot_sen0395_DfrobotSen0395Component, display_DisplayPage, esp32_ble_tracker_ESP32BLETracker, esp32_touch_ESP32TouchBinarySensor, esp32_touch_ESP32TouchComponent, ezo_pmp_EzoPMP, fingerprint_grow_FingerprintGrowComponent, gdk101_GDK101Component, gpio_GPIOBinarySensor, gt911_GT911Button, gt911_GT911Touchscreen, haier_HonClimate, hlk_fm22x_HlkFm22xComponent, homeassistant_HomeassistantBinarySensor, hydreon_rgxx_HydreonRGxxBinaryComponent, hydreon_rgxx_HydreonRGxxComponent, i2c_I2CBus, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420BinarySensor, ld2420_LD2420Component, ld2450_LD2450Component, lvgl_LvPseudoButton, m5stack_8angle_M5Stack8AngleComponent, m5stack_8angle_M5Stack8AngleSwitchBinarySensor, matrix_keypad_MatrixKeypad, matrix_keypad_MatrixKeypadBinarySensor, modbus_controller_ModbusBinarySensor, mpr121_MPR121BinarySensor, mpr121_MPR121Component, nextion_NextionBinarySensor, nfc_NfcTagBinarySensor, nfc_Nfcc, opentherm_OpenthermHub, packet_transport_PacketTransport, pn532_PN532, pn532_PN532BinarySensor, qwiic_pir_QwiicPIRComponent, rc522_RC522, rc522_RC522BinarySensor, rd03d_RD03DComponent, rdm6300_RDM6300BinarySensor, rdm6300_RDM6300Component, remote_base_RemoteReceiverBase, sdl_Sdl, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60bha2_MR60BHA2Component, seeed_mr60fda2_MR60FDA2Component, sensor_Sensor, sim800l_Sim800LComponent, status_StatusBinarySensor, switch__Switch, switch__SwitchBinarySensor, sx1509_SX1509BinarySensor, sx1509_SX1509Component, sy6970_SY6970Component, template__TemplateBinarySensor, tm1637_TM1637Display, tm1637_TM1637Key, tm1638_TM1638Component, tm1638_TM1638Key, touchscreen_Touchscreen, touchscreen_TouchscreenBinarySensor, tt21100_TT21100Button, tt21100_TT21100Touchscreen, ttp229_bsf_TTP229BSFChannel, ttp229_bsf_TTP229BSFComponent, ttp229_lsf_TTP229Channel, ttp229_lsf_TTP229LSFComponent, tuya_Tuya, tuya_TuyaBinarySensor, udp_UDPComponent, vbus_DeltaSolBS2009BSensor, vbus_DeltaSolBS2BSensor, vbus_DeltaSolBSPlusBSensor, vbus_DeltaSolCBSensor, vbus_DeltaSolCS2BSensor, vbus_DeltaSolCSPlusBSensor, vbus_VBus, vbus_VBusCustomBSensor, web_server_WebServer, wireguard_Wireguard, xiaomi_cgpr1_XiaomiCGPR1, xiaomi_mjyd02yla_XiaomiMJYD02YLA, xiaomi_mue4094rt_XiaomiMUE4094RT, xiaomi_rtcgq02lm_XiaomiRTCGQ02LM, xiaomi_wx08zm_XiaomiWX08ZM, zigbee_ZigbeeComponent } from "../markers";
 interface BinarySensorWebServerProps {
@@ -33,12 +33,12 @@ interface HaierOutdoorFanStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -49,8 +49,8 @@ interface HaierOutdoorFanStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -63,7 +63,7 @@ interface HaierOutdoorFanStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -103,12 +103,12 @@ interface HaierDefrostStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -119,8 +119,8 @@ interface HaierDefrostStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -133,7 +133,7 @@ interface HaierDefrostStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -173,12 +173,12 @@ interface HaierCompressorStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -189,8 +189,8 @@ interface HaierCompressorStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -203,7 +203,7 @@ interface HaierCompressorStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -243,12 +243,12 @@ interface HaierIndoorFanStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -259,8 +259,8 @@ interface HaierIndoorFanStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -273,7 +273,7 @@ interface HaierIndoorFanStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -313,12 +313,12 @@ interface HaierFourWayValveStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -329,8 +329,8 @@ interface HaierFourWayValveStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -343,7 +343,7 @@ interface HaierFourWayValveStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -383,12 +383,12 @@ interface HaierIndoorElectricHeatingStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -399,8 +399,8 @@ interface HaierIndoorElectricHeatingStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -413,7 +413,7 @@ interface HaierIndoorElectricHeatingStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -453,12 +453,12 @@ interface HydreonRgxxTooColdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -469,8 +469,8 @@ interface HydreonRgxxTooColdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -483,7 +483,7 @@ interface HydreonRgxxTooColdProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -523,12 +523,12 @@ interface HydreonRgxxLensBadProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -539,8 +539,8 @@ interface HydreonRgxxLensBadProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -553,7 +553,7 @@ interface HydreonRgxxLensBadProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -593,12 +593,12 @@ interface HydreonRgxxEmSatProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -609,8 +609,8 @@ interface HydreonRgxxEmSatProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -623,7 +623,7 @@ interface HydreonRgxxEmSatProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -663,12 +663,12 @@ interface XiaomiCgpr1BatteryLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -679,8 +679,8 @@ interface XiaomiCgpr1BatteryLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -691,15 +691,15 @@ interface XiaomiCgpr1BatteryLevelProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -729,12 +729,12 @@ interface XiaomiCgpr1IdleTimeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -745,8 +745,8 @@ interface XiaomiCgpr1IdleTimeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -757,15 +757,15 @@ interface XiaomiCgpr1IdleTimeProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -795,12 +795,12 @@ interface XiaomiCgpr1IlluminanceProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -811,8 +811,8 @@ interface XiaomiCgpr1IlluminanceProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -823,15 +823,15 @@ interface XiaomiCgpr1IlluminanceProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -861,12 +861,12 @@ interface XiaomiMjyd02ylaIdleTimeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -877,8 +877,8 @@ interface XiaomiMjyd02ylaIdleTimeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -889,15 +889,15 @@ interface XiaomiMjyd02ylaIdleTimeProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -927,12 +927,12 @@ interface XiaomiMjyd02ylaBatteryLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -943,8 +943,8 @@ interface XiaomiMjyd02ylaBatteryLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -955,15 +955,15 @@ interface XiaomiMjyd02ylaBatteryLevelProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -993,12 +993,12 @@ interface XiaomiMjyd02ylaIlluminanceProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1009,8 +1009,8 @@ interface XiaomiMjyd02ylaIlluminanceProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1021,15 +1021,15 @@ interface XiaomiMjyd02ylaIlluminanceProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -1059,12 +1059,12 @@ interface XiaomiMjyd02ylaLightProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1075,8 +1075,8 @@ interface XiaomiMjyd02ylaLightProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1089,7 +1089,7 @@ interface XiaomiMjyd02ylaLightProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1129,12 +1129,12 @@ interface XiaomiWx08zmTabletProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1145,8 +1145,8 @@ interface XiaomiWx08zmTabletProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1157,15 +1157,15 @@ interface XiaomiWx08zmTabletProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -1195,12 +1195,12 @@ interface XiaomiWx08zmBatteryLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1211,8 +1211,8 @@ interface XiaomiWx08zmBatteryLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1223,15 +1223,15 @@ interface XiaomiWx08zmBatteryLevelProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -1261,12 +1261,12 @@ interface DalyBmsChargingMosEnabledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1277,8 +1277,8 @@ interface DalyBmsChargingMosEnabledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1291,7 +1291,7 @@ interface DalyBmsChargingMosEnabledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1331,12 +1331,12 @@ interface DalyBmsDischargingMosEnabledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1347,8 +1347,8 @@ interface DalyBmsDischargingMosEnabledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1361,7 +1361,7 @@ interface DalyBmsDischargingMosEnabledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1401,12 +1401,12 @@ interface EzoPmpPumpStateProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1417,8 +1417,8 @@ interface EzoPmpPumpStateProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1431,7 +1431,7 @@ interface EzoPmpPumpStateProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1471,12 +1471,12 @@ interface EzoPmpIsPausedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1487,8 +1487,8 @@ interface EzoPmpIsPausedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1501,7 +1501,7 @@ interface EzoPmpIsPausedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1541,12 +1541,12 @@ interface Gdk101VibrationsProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1557,8 +1557,8 @@ interface Gdk101VibrationsProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1571,7 +1571,7 @@ interface Gdk101VibrationsProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1611,12 +1611,12 @@ interface Ld2410HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1627,8 +1627,8 @@ interface Ld2410HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1641,7 +1641,7 @@ interface Ld2410HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1681,12 +1681,12 @@ interface Ld2410HasMovingTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1697,8 +1697,8 @@ interface Ld2410HasMovingTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1711,7 +1711,7 @@ interface Ld2410HasMovingTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1751,12 +1751,12 @@ interface Ld2410HasStillTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1767,8 +1767,8 @@ interface Ld2410HasStillTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1781,7 +1781,7 @@ interface Ld2410HasStillTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1821,12 +1821,12 @@ interface Ld2410OutPinPresenceStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1837,8 +1837,8 @@ interface Ld2410OutPinPresenceStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1851,7 +1851,7 @@ interface Ld2410OutPinPresenceStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1891,12 +1891,12 @@ interface Ld2412DynamicBackgroundCorrectionStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1907,8 +1907,8 @@ interface Ld2412DynamicBackgroundCorrectionStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1921,7 +1921,7 @@ interface Ld2412DynamicBackgroundCorrectionStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -1961,12 +1961,12 @@ interface Ld2412HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1977,8 +1977,8 @@ interface Ld2412HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1991,7 +1991,7 @@ interface Ld2412HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2031,12 +2031,12 @@ interface Ld2412HasMovingTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2047,8 +2047,8 @@ interface Ld2412HasMovingTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2061,7 +2061,7 @@ interface Ld2412HasMovingTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2101,12 +2101,12 @@ interface Ld2412HasStillTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2117,8 +2117,8 @@ interface Ld2412HasStillTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2131,7 +2131,7 @@ interface Ld2412HasStillTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2171,12 +2171,12 @@ interface Ld2420HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2187,8 +2187,8 @@ interface Ld2420HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2201,7 +2201,7 @@ interface Ld2420HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2241,12 +2241,12 @@ interface Ld2450HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2257,8 +2257,8 @@ interface Ld2450HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2271,7 +2271,7 @@ interface Ld2450HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2311,12 +2311,12 @@ interface Ld2450HasMovingTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2327,8 +2327,8 @@ interface Ld2450HasMovingTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2341,7 +2341,7 @@ interface Ld2450HasMovingTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2381,12 +2381,12 @@ interface Ld2450HasStillTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2397,8 +2397,8 @@ interface Ld2450HasStillTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2411,7 +2411,7 @@ interface Ld2450HasStillTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2451,12 +2451,12 @@ interface Msa3xxTapProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2467,8 +2467,8 @@ interface Msa3xxTapProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2481,7 +2481,7 @@ interface Msa3xxTapProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2521,12 +2521,12 @@ interface Msa3xxDoubleTapProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2537,8 +2537,8 @@ interface Msa3xxDoubleTapProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2551,7 +2551,7 @@ interface Msa3xxDoubleTapProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2591,12 +2591,12 @@ interface Msa3xxActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2607,8 +2607,8 @@ interface Msa3xxActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2621,7 +2621,7 @@ interface Msa3xxActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2661,12 +2661,12 @@ interface OpenthermFaultIndicationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2677,8 +2677,8 @@ interface OpenthermFaultIndicationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2691,7 +2691,7 @@ interface OpenthermFaultIndicationProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2731,12 +2731,12 @@ interface OpenthermChActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2747,8 +2747,8 @@ interface OpenthermChActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2761,7 +2761,7 @@ interface OpenthermChActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2801,12 +2801,12 @@ interface OpenthermDhwActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2817,8 +2817,8 @@ interface OpenthermDhwActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2831,7 +2831,7 @@ interface OpenthermDhwActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2871,12 +2871,12 @@ interface OpenthermFlameOnProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2887,8 +2887,8 @@ interface OpenthermFlameOnProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2901,7 +2901,7 @@ interface OpenthermFlameOnProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -2941,12 +2941,12 @@ interface OpenthermCoolingActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -2957,8 +2957,8 @@ interface OpenthermCoolingActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -2971,7 +2971,7 @@ interface OpenthermCoolingActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3011,12 +3011,12 @@ interface OpenthermCh2ActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3027,8 +3027,8 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3041,7 +3041,7 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3081,12 +3081,12 @@ interface OpenthermDiagnosticIndicationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3097,8 +3097,8 @@ interface OpenthermDiagnosticIndicationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3111,7 +3111,7 @@ interface OpenthermDiagnosticIndicationProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3151,12 +3151,12 @@ interface OpenthermElectricityProductionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3167,8 +3167,8 @@ interface OpenthermElectricityProductionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3181,7 +3181,7 @@ interface OpenthermElectricityProductionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3221,12 +3221,12 @@ interface OpenthermDhwPresentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3237,8 +3237,8 @@ interface OpenthermDhwPresentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3251,7 +3251,7 @@ interface OpenthermDhwPresentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3291,12 +3291,12 @@ interface OpenthermControlTypeOnOffProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3307,8 +3307,8 @@ interface OpenthermControlTypeOnOffProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3321,7 +3321,7 @@ interface OpenthermControlTypeOnOffProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3361,12 +3361,12 @@ interface OpenthermCoolingSupportedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3377,8 +3377,8 @@ interface OpenthermCoolingSupportedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3391,7 +3391,7 @@ interface OpenthermCoolingSupportedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3431,12 +3431,12 @@ interface OpenthermDhwStorageTankProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3447,8 +3447,8 @@ interface OpenthermDhwStorageTankProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3461,7 +3461,7 @@ interface OpenthermDhwStorageTankProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3501,12 +3501,12 @@ interface OpenthermControllerPumpControlAllowedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3517,8 +3517,8 @@ interface OpenthermControllerPumpControlAllowedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3531,7 +3531,7 @@ interface OpenthermControllerPumpControlAllowedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3571,12 +3571,12 @@ interface OpenthermCh2PresentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3587,8 +3587,8 @@ interface OpenthermCh2PresentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3601,7 +3601,7 @@ interface OpenthermCh2PresentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3641,12 +3641,12 @@ interface OpenthermWaterFillingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3657,8 +3657,8 @@ interface OpenthermWaterFillingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3671,7 +3671,7 @@ interface OpenthermWaterFillingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3711,12 +3711,12 @@ interface OpenthermHeatModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3727,8 +3727,8 @@ interface OpenthermHeatModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3741,7 +3741,7 @@ interface OpenthermHeatModeProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3781,12 +3781,12 @@ interface OpenthermDhwSetpointTransferEnabledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3797,8 +3797,8 @@ interface OpenthermDhwSetpointTransferEnabledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3811,7 +3811,7 @@ interface OpenthermDhwSetpointTransferEnabledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3851,12 +3851,12 @@ interface OpenthermMaxChSetpointTransferEnabledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3867,8 +3867,8 @@ interface OpenthermMaxChSetpointTransferEnabledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3881,7 +3881,7 @@ interface OpenthermMaxChSetpointTransferEnabledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3921,12 +3921,12 @@ interface OpenthermDhwSetpointRwProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -3937,8 +3937,8 @@ interface OpenthermDhwSetpointRwProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -3951,7 +3951,7 @@ interface OpenthermDhwSetpointRwProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -3991,12 +3991,12 @@ interface OpenthermMaxChSetpointRwProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4007,8 +4007,8 @@ interface OpenthermMaxChSetpointRwProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4021,7 +4021,7 @@ interface OpenthermMaxChSetpointRwProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4061,12 +4061,12 @@ interface OpenthermServiceRequestProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4077,8 +4077,8 @@ interface OpenthermServiceRequestProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4091,7 +4091,7 @@ interface OpenthermServiceRequestProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4131,12 +4131,12 @@ interface OpenthermLockoutResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4147,8 +4147,8 @@ interface OpenthermLockoutResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4161,7 +4161,7 @@ interface OpenthermLockoutResetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4201,12 +4201,12 @@ interface OpenthermLowWaterPressureProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4217,8 +4217,8 @@ interface OpenthermLowWaterPressureProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4231,7 +4231,7 @@ interface OpenthermLowWaterPressureProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4271,12 +4271,12 @@ interface OpenthermFlameFaultProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4287,8 +4287,8 @@ interface OpenthermFlameFaultProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4301,7 +4301,7 @@ interface OpenthermFlameFaultProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4341,12 +4341,12 @@ interface OpenthermAirPressureFaultProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4357,8 +4357,8 @@ interface OpenthermAirPressureFaultProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4371,7 +4371,7 @@ interface OpenthermAirPressureFaultProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4411,12 +4411,12 @@ interface OpenthermWaterOverTempProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4427,8 +4427,8 @@ interface OpenthermWaterOverTempProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4441,7 +4441,7 @@ interface OpenthermWaterOverTempProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4481,12 +4481,12 @@ interface PipsolarAddSbuPriorityVersionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4497,8 +4497,8 @@ interface PipsolarAddSbuPriorityVersionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4511,7 +4511,7 @@ interface PipsolarAddSbuPriorityVersionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4551,12 +4551,12 @@ interface PipsolarConfigurationStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4567,8 +4567,8 @@ interface PipsolarConfigurationStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4581,7 +4581,7 @@ interface PipsolarConfigurationStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4621,12 +4621,12 @@ interface PipsolarSccFirmwareVersionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4637,8 +4637,8 @@ interface PipsolarSccFirmwareVersionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4651,7 +4651,7 @@ interface PipsolarSccFirmwareVersionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4691,12 +4691,12 @@ interface PipsolarLoadStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4707,8 +4707,8 @@ interface PipsolarLoadStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4721,7 +4721,7 @@ interface PipsolarLoadStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4761,12 +4761,12 @@ interface PipsolarBatteryVoltageToSteadyWhileChargingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4777,8 +4777,8 @@ interface PipsolarBatteryVoltageToSteadyWhileChargingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4791,7 +4791,7 @@ interface PipsolarBatteryVoltageToSteadyWhileChargingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4831,12 +4831,12 @@ interface PipsolarChargingStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4847,8 +4847,8 @@ interface PipsolarChargingStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4861,7 +4861,7 @@ interface PipsolarChargingStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4901,12 +4901,12 @@ interface PipsolarSccChargingStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4917,8 +4917,8 @@ interface PipsolarSccChargingStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -4931,7 +4931,7 @@ interface PipsolarSccChargingStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -4971,12 +4971,12 @@ interface PipsolarAcChargingStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -4987,8 +4987,8 @@ interface PipsolarAcChargingStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5001,7 +5001,7 @@ interface PipsolarAcChargingStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5041,12 +5041,12 @@ interface PipsolarChargingToFloatingModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5057,8 +5057,8 @@ interface PipsolarChargingToFloatingModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5071,7 +5071,7 @@ interface PipsolarChargingToFloatingModeProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5111,12 +5111,12 @@ interface PipsolarSwitchOnProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5127,8 +5127,8 @@ interface PipsolarSwitchOnProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5141,7 +5141,7 @@ interface PipsolarSwitchOnProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5181,12 +5181,12 @@ interface PipsolarDustproofInstalledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5197,8 +5197,8 @@ interface PipsolarDustproofInstalledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5211,7 +5211,7 @@ interface PipsolarDustproofInstalledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5251,12 +5251,12 @@ interface PipsolarSilenceBuzzerOpenBuzzerProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5267,8 +5267,8 @@ interface PipsolarSilenceBuzzerOpenBuzzerProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5281,7 +5281,7 @@ interface PipsolarSilenceBuzzerOpenBuzzerProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5321,12 +5321,12 @@ interface PipsolarOverloadBypassFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5337,8 +5337,8 @@ interface PipsolarOverloadBypassFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5351,7 +5351,7 @@ interface PipsolarOverloadBypassFunctionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5391,12 +5391,12 @@ interface PipsolarLcdEscapeToDefaultProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5407,8 +5407,8 @@ interface PipsolarLcdEscapeToDefaultProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5421,7 +5421,7 @@ interface PipsolarLcdEscapeToDefaultProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5461,12 +5461,12 @@ interface PipsolarOverloadRestartFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5477,8 +5477,8 @@ interface PipsolarOverloadRestartFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5491,7 +5491,7 @@ interface PipsolarOverloadRestartFunctionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5531,12 +5531,12 @@ interface PipsolarOverTemperatureRestartFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5547,8 +5547,8 @@ interface PipsolarOverTemperatureRestartFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5561,7 +5561,7 @@ interface PipsolarOverTemperatureRestartFunctionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5601,12 +5601,12 @@ interface PipsolarBacklightOnProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5617,8 +5617,8 @@ interface PipsolarBacklightOnProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5631,7 +5631,7 @@ interface PipsolarBacklightOnProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5671,12 +5671,12 @@ interface PipsolarAlarmOnWhenPrimarySourceInterruptProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5687,8 +5687,8 @@ interface PipsolarAlarmOnWhenPrimarySourceInterruptProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5701,7 +5701,7 @@ interface PipsolarAlarmOnWhenPrimarySourceInterruptProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5741,12 +5741,12 @@ interface PipsolarFaultCodeRecordProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5757,8 +5757,8 @@ interface PipsolarFaultCodeRecordProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5771,7 +5771,7 @@ interface PipsolarFaultCodeRecordProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5811,12 +5811,12 @@ interface PipsolarPowerSavingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5827,8 +5827,8 @@ interface PipsolarPowerSavingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5841,7 +5841,7 @@ interface PipsolarPowerSavingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5881,12 +5881,12 @@ interface PipsolarWarningsPresentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5897,8 +5897,8 @@ interface PipsolarWarningsPresentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5911,7 +5911,7 @@ interface PipsolarWarningsPresentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -5951,12 +5951,12 @@ interface PipsolarFaultsPresentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -5967,8 +5967,8 @@ interface PipsolarFaultsPresentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -5981,7 +5981,7 @@ interface PipsolarFaultsPresentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6021,12 +6021,12 @@ interface PipsolarWarningPowerLossProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6037,8 +6037,8 @@ interface PipsolarWarningPowerLossProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6051,7 +6051,7 @@ interface PipsolarWarningPowerLossProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6091,12 +6091,12 @@ interface PipsolarFaultInverterFaultProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6107,8 +6107,8 @@ interface PipsolarFaultInverterFaultProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6121,7 +6121,7 @@ interface PipsolarFaultInverterFaultProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6161,12 +6161,12 @@ interface PipsolarFaultBusOverProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6177,8 +6177,8 @@ interface PipsolarFaultBusOverProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6191,7 +6191,7 @@ interface PipsolarFaultBusOverProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6231,12 +6231,12 @@ interface PipsolarFaultBusUnderProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6247,8 +6247,8 @@ interface PipsolarFaultBusUnderProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6261,7 +6261,7 @@ interface PipsolarFaultBusUnderProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6301,12 +6301,12 @@ interface PipsolarFaultBusSoftFailProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6317,8 +6317,8 @@ interface PipsolarFaultBusSoftFailProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6331,7 +6331,7 @@ interface PipsolarFaultBusSoftFailProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6371,12 +6371,12 @@ interface PipsolarWarningLineFailProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6387,8 +6387,8 @@ interface PipsolarWarningLineFailProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6401,7 +6401,7 @@ interface PipsolarWarningLineFailProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6441,12 +6441,12 @@ interface PipsolarFaultOpvshortProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6457,8 +6457,8 @@ interface PipsolarFaultOpvshortProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6471,7 +6471,7 @@ interface PipsolarFaultOpvshortProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6511,12 +6511,12 @@ interface PipsolarFaultInverterVoltageTooLowProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6527,8 +6527,8 @@ interface PipsolarFaultInverterVoltageTooLowProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6541,7 +6541,7 @@ interface PipsolarFaultInverterVoltageTooLowProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6581,12 +6581,12 @@ interface PipsolarFaultInverterVoltageTooHighProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6597,8 +6597,8 @@ interface PipsolarFaultInverterVoltageTooHighProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6611,7 +6611,7 @@ interface PipsolarFaultInverterVoltageTooHighProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6651,12 +6651,12 @@ interface PipsolarWarningOverTemperatureProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6667,8 +6667,8 @@ interface PipsolarWarningOverTemperatureProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6681,7 +6681,7 @@ interface PipsolarWarningOverTemperatureProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6721,12 +6721,12 @@ interface PipsolarWarningFanLockProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6737,8 +6737,8 @@ interface PipsolarWarningFanLockProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6751,7 +6751,7 @@ interface PipsolarWarningFanLockProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6791,12 +6791,12 @@ interface PipsolarWarningBatteryVoltageHighProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6807,8 +6807,8 @@ interface PipsolarWarningBatteryVoltageHighProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6821,7 +6821,7 @@ interface PipsolarWarningBatteryVoltageHighProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6861,12 +6861,12 @@ interface PipsolarWarningBatteryLowAlarmProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6877,8 +6877,8 @@ interface PipsolarWarningBatteryLowAlarmProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6891,7 +6891,7 @@ interface PipsolarWarningBatteryLowAlarmProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -6931,12 +6931,12 @@ interface PipsolarWarningBatteryUnderShutdownProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -6947,8 +6947,8 @@ interface PipsolarWarningBatteryUnderShutdownProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -6961,7 +6961,7 @@ interface PipsolarWarningBatteryUnderShutdownProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7001,12 +7001,12 @@ interface PipsolarWarningBatteryDeratingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7017,8 +7017,8 @@ interface PipsolarWarningBatteryDeratingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7031,7 +7031,7 @@ interface PipsolarWarningBatteryDeratingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7071,12 +7071,12 @@ interface PipsolarWarningOverLoadProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7087,8 +7087,8 @@ interface PipsolarWarningOverLoadProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7101,7 +7101,7 @@ interface PipsolarWarningOverLoadProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7141,12 +7141,12 @@ interface PipsolarWarningEepromFailedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7157,8 +7157,8 @@ interface PipsolarWarningEepromFailedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7171,7 +7171,7 @@ interface PipsolarWarningEepromFailedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7211,12 +7211,12 @@ interface PipsolarFaultInverterOverCurrentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7227,8 +7227,8 @@ interface PipsolarFaultInverterOverCurrentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7241,7 +7241,7 @@ interface PipsolarFaultInverterOverCurrentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7281,12 +7281,12 @@ interface PipsolarFaultInverterSoftFailedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7297,8 +7297,8 @@ interface PipsolarFaultInverterSoftFailedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7311,7 +7311,7 @@ interface PipsolarFaultInverterSoftFailedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7351,12 +7351,12 @@ interface PipsolarFaultSelfTestFailedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7367,8 +7367,8 @@ interface PipsolarFaultSelfTestFailedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7381,7 +7381,7 @@ interface PipsolarFaultSelfTestFailedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7421,12 +7421,12 @@ interface PipsolarFaultOpDcVoltageOverProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7437,8 +7437,8 @@ interface PipsolarFaultOpDcVoltageOverProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7451,7 +7451,7 @@ interface PipsolarFaultOpDcVoltageOverProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7491,12 +7491,12 @@ interface PipsolarFaultBatteryOpenProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7507,8 +7507,8 @@ interface PipsolarFaultBatteryOpenProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7521,7 +7521,7 @@ interface PipsolarFaultBatteryOpenProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7561,12 +7561,12 @@ interface PipsolarFaultCurrentSensorFailedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7577,8 +7577,8 @@ interface PipsolarFaultCurrentSensorFailedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7591,7 +7591,7 @@ interface PipsolarFaultCurrentSensorFailedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7631,12 +7631,12 @@ interface PipsolarFaultBatteryShortProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7647,8 +7647,8 @@ interface PipsolarFaultBatteryShortProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7661,7 +7661,7 @@ interface PipsolarFaultBatteryShortProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7701,12 +7701,12 @@ interface PipsolarWarningPowerLimitProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7717,8 +7717,8 @@ interface PipsolarWarningPowerLimitProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7731,7 +7731,7 @@ interface PipsolarWarningPowerLimitProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7771,12 +7771,12 @@ interface PipsolarWarningPvVoltageHighProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7787,8 +7787,8 @@ interface PipsolarWarningPvVoltageHighProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7801,7 +7801,7 @@ interface PipsolarWarningPvVoltageHighProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7841,12 +7841,12 @@ interface PipsolarFaultMpptOverloadProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7857,8 +7857,8 @@ interface PipsolarFaultMpptOverloadProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7871,7 +7871,7 @@ interface PipsolarFaultMpptOverloadProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7911,12 +7911,12 @@ interface PipsolarWarningMpptOverloadProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7927,8 +7927,8 @@ interface PipsolarWarningMpptOverloadProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -7941,7 +7941,7 @@ interface PipsolarWarningMpptOverloadProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -7981,12 +7981,12 @@ interface PipsolarWarningBatteryTooLowToChargeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -7997,8 +7997,8 @@ interface PipsolarWarningBatteryTooLowToChargeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8011,7 +8011,7 @@ interface PipsolarWarningBatteryTooLowToChargeProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8051,12 +8051,12 @@ interface PipsolarFaultDcDcOverCurrentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8067,8 +8067,8 @@ interface PipsolarFaultDcDcOverCurrentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8081,7 +8081,7 @@ interface PipsolarFaultDcDcOverCurrentProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8121,12 +8121,12 @@ interface PipsolarFaultCodeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8137,8 +8137,8 @@ interface PipsolarFaultCodeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8151,7 +8151,7 @@ interface PipsolarFaultCodeProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8191,12 +8191,12 @@ interface PipsolarWarningLowPvEnergyProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8207,8 +8207,8 @@ interface PipsolarWarningLowPvEnergyProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8221,7 +8221,7 @@ interface PipsolarWarningLowPvEnergyProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8261,12 +8261,12 @@ interface PipsolarWarningHighAcInputDuringBusSoftStartProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8277,8 +8277,8 @@ interface PipsolarWarningHighAcInputDuringBusSoftStartProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8291,7 +8291,7 @@ interface PipsolarWarningHighAcInputDuringBusSoftStartProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8331,12 +8331,12 @@ interface PipsolarWarningBatteryEqualizationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8347,8 +8347,8 @@ interface PipsolarWarningBatteryEqualizationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8361,7 +8361,7 @@ interface PipsolarWarningBatteryEqualizationProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8401,12 +8401,12 @@ interface Rd03dTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8417,8 +8417,8 @@ interface Rd03dTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8431,7 +8431,7 @@ interface Rd03dTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8471,12 +8471,12 @@ interface Rd03dTarget1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8487,8 +8487,8 @@ interface Rd03dTarget1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8501,7 +8501,7 @@ interface Rd03dTarget1Props {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8541,12 +8541,12 @@ interface Rd03dTarget2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8557,8 +8557,8 @@ interface Rd03dTarget2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8571,7 +8571,7 @@ interface Rd03dTarget2Props {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8611,12 +8611,12 @@ interface Rd03dTarget3Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8627,8 +8627,8 @@ interface Rd03dTarget3Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -8641,7 +8641,7 @@ interface Rd03dTarget3Props {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -8668,7 +8668,7 @@ interface RemoteReceiverBeo4Props {
     /** int: The 8-bit command to listen for, e.g. 0x00=number0, 0x0C=standby,..., see dumper output for more info. */
     command: number;
     /** @yamlKey command_repeats */
-    commandRepeats?: number;
+    commandRepeats?: number | EmbedValue<number>;
 }
 interface RemoteReceiverByronsxProps {
     /** int: The 8-bit ID code to trigger on, see dumper output for more info. */
@@ -8684,9 +8684,9 @@ interface RemoteReceiverCoolixProps {
 }
 interface RemoteReceiverDishProps {
     /** int: The number of the receiver to target, between 1 and 16 inclusive. Defaults to `1`. */
-    address?: number;
+    address?: number | EmbedValue<number>;
     /** int: The Dish command to listen for, between 0 and 63 inclusive. */
-    command: number;
+    command: number | EmbedValue<number>;
 }
 interface RemoteReceiverDooyaProps {
     /** int: The 24-bit ID code to trigger on. */
@@ -8729,7 +8729,7 @@ interface RemoteReceiverKeeloqProps {
     code: unknown;
     /** int: The 8-bit switch/command to listen for. If omitted, will match on any command/button. */
     command?: number;
-    level?: boolean;
+    level?: boolean | EmbedValue<boolean>;
 }
 interface RemoteReceiverNecProps {
     /** int: The address to trigger on, see dumper output for more info. */
@@ -8737,7 +8737,7 @@ interface RemoteReceiverNecProps {
     /** int: The NEC command to listen for. */
     command: number;
     /** @yamlKey command_repeats */
-    commandRepeats?: number;
+    commandRepeats?: number | EmbedValue<number>;
 }
 interface RemoteReceiverPioneerProps {
     /**
@@ -8750,13 +8750,13 @@ interface RemoteReceiverPioneerProps {
 }
 interface RemoteReceiverProntoProps {
     /** string: The code to listen for, see [transmitter description](/components/remote_transmitter#remote_transmitter-trans... */
-    data: string;
+    data: string | EmbedValue<string>;
     /** integer: This parameter allows you to manually specify the allowed difference between what Pronto code is specified, ... */
-    delta?: number;
+    delta?: number | EmbedValue<number>;
 }
 interface RemoteReceiverGoboxProps {
     /** int: The Go-Box code to trigger on, see dumper output for more info. */
-    code: number;
+    code: number | EmbedValue<number>;
 }
 interface RemoteReceiverRoombaProps {
     /** int: The Roomba code to trigger on, see dumper output for more info. */
@@ -8772,9 +8772,9 @@ interface RemoteReceiverSymphonyProps {
     /** int: The Symphony code to trigger on, see dumper output for more info. */
     data: number;
     /** int: The number of bits of the remote code. Typical values: `8`, `12`, or `16`. */
-    nbits: number;
+    nbits: number | EmbedValue<number>;
     /** @yamlKey command_repeats */
-    commandRepeats?: number;
+    commandRepeats?: number | EmbedValue<number>;
 }
 interface RemoteReceiverRawProps {
     /** list: The code to listen for, see [transmitter description](/components/remote_transmitter#remote_transmitter-transmi... */
@@ -8812,17 +8812,17 @@ interface RemoteReceiverRcSwitchTypeAProps {
     /** string: The device in the group, binary string. */
     device: string;
     /** boolean: The on/off state to trigger on. */
-    state: boolean;
+    state: boolean | EmbedValue<boolean>;
     /** The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#remote_transmitter-rc_switch-p... */
     protocol?: Record<string, unknown>;
 }
 interface RemoteReceiverRcSwitchTypeBProps {
     /** int: The address, int from 1 to 4. */
-    address: number;
+    address: number | EmbedValue<number>;
     /** int: The channel, int from 1 to 4. */
-    channel: number;
+    channel: number | EmbedValue<number>;
     /** boolean: The on/off state to trigger on. */
-    state: boolean;
+    state: boolean | EmbedValue<boolean>;
     /** The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#remote_transmitter-rc_switch-p... */
     protocol?: Record<string, unknown>;
 }
@@ -8830,16 +8830,16 @@ interface RemoteReceiverRcSwitchTypeCProps {
     /** string: The family. Range is `a` to `p`. */
     family: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p";
     /** int: The group. Range is 1 to 4. */
-    group: number;
+    group: number | EmbedValue<number>;
     /** int: The device. Range is 1 to 4. */
-    device: number;
+    device: number | EmbedValue<number>;
     /** boolean: The on/off state to trigger on. */
-    state: boolean;
+    state: boolean | EmbedValue<boolean>;
     /** The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#remote_transmitter-rc_switch-p... */
     protocol?: Record<string, unknown>;
 }
 interface RemoteReceiverRcSwitchTypeDPropsRepeatProps {
-    times: number;
+    times: number | EmbedValue<number>;
     /** @yamlKey wait_time */
     waitTime?: TimePeriod;
 }
@@ -8847,9 +8847,9 @@ interface RemoteReceiverRcSwitchTypeDProps {
     /** int: The group. Range is 1 to 4. */
     group: "a" | "b" | "c" | "d";
     /** int: The device. Range is 1 to 3. */
-    device: number;
+    device: number | EmbedValue<number>;
     /** boolean: The on/off state to trigger on. */
-    state: boolean;
+    state: boolean | EmbedValue<boolean>;
     /** The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#remote_transmitter-rc_switch-p... */
     protocol?: Record<string, unknown>;
     repeat?: RemoteReceiverRcSwitchTypeDPropsRepeatProps;
@@ -8858,7 +8858,7 @@ interface RemoteReceiverSamsungProps {
     /** int: The data to trigger on, see dumper output for more info. */
     data: number;
     /** int: The number of bits of the remote code. Defaults to `32`. */
-    nbits?: number;
+    nbits?: number | EmbedValue<number>;
 }
 interface RemoteReceiverSamsung36Props {
     /** int: The address to trigger on, see dumper output for more info. */
@@ -8922,12 +8922,12 @@ interface RemoteReceiverAbbwelcomeProps {
      */
     destinationAddress: number;
     /** boolean: `true` if the message was re-transmitted. Defaults to `false`. */
-    retransmission?: boolean;
+    retransmission?: boolean | EmbedValue<boolean>;
     /**
      * boolean: The length of the source and destination address. `false` means two bytes and `true` means three bytes. Defa...
      * @yamlKey three_byte_address
      */
-    threeByteAddress?: boolean;
+    threeByteAddress?: boolean | EmbedValue<boolean>;
     /**
      * int: The message type to trigger on.
      * @yamlKey message_type
@@ -8978,12 +8978,12 @@ interface SeeedMr24hpc1HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -8994,8 +8994,8 @@ interface SeeedMr24hpc1HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9008,7 +9008,7 @@ interface SeeedMr24hpc1HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9048,12 +9048,12 @@ interface SeeedMr60bha2HasTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9064,8 +9064,8 @@ interface SeeedMr60bha2HasTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9078,7 +9078,7 @@ interface SeeedMr60bha2HasTargetProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9118,12 +9118,12 @@ interface SeeedMr60fda2PeopleExistProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9134,8 +9134,8 @@ interface SeeedMr60fda2PeopleExistProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9148,7 +9148,7 @@ interface SeeedMr60fda2PeopleExistProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9188,12 +9188,12 @@ interface SeeedMr60fda2FallDetectedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9204,8 +9204,8 @@ interface SeeedMr60fda2FallDetectedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9218,7 +9218,7 @@ interface SeeedMr60fda2FallDetectedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9258,12 +9258,12 @@ interface Sim800lRegisteredProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9274,8 +9274,8 @@ interface Sim800lRegisteredProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9288,7 +9288,7 @@ interface Sim800lRegisteredProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9328,12 +9328,12 @@ interface Sy6970VbusConnectedProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9344,8 +9344,8 @@ interface Sy6970VbusConnectedProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9358,7 +9358,7 @@ interface Sy6970VbusConnectedProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9398,12 +9398,12 @@ interface Sy6970ChargingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9414,8 +9414,8 @@ interface Sy6970ChargingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9428,7 +9428,7 @@ interface Sy6970ChargingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9468,12 +9468,12 @@ interface Sy6970ChargeDoneProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9484,8 +9484,8 @@ interface Sy6970ChargeDoneProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9498,7 +9498,7 @@ interface Sy6970ChargeDoneProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9538,12 +9538,12 @@ interface VbusDeltasolBsPlusRelay1Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9554,8 +9554,8 @@ interface VbusDeltasolBsPlusRelay1Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9568,7 +9568,7 @@ interface VbusDeltasolBsPlusRelay1Props {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9608,12 +9608,12 @@ interface VbusDeltasolBsPlusRelay2Props {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9624,8 +9624,8 @@ interface VbusDeltasolBsPlusRelay2Props {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9638,7 +9638,7 @@ interface VbusDeltasolBsPlusRelay2Props {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9678,12 +9678,12 @@ interface VbusDeltasolBsPlusSensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9694,8 +9694,8 @@ interface VbusDeltasolBsPlusSensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9708,7 +9708,7 @@ interface VbusDeltasolBsPlusSensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9748,12 +9748,12 @@ interface VbusDeltasolBsPlusSensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9764,8 +9764,8 @@ interface VbusDeltasolBsPlusSensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9778,7 +9778,7 @@ interface VbusDeltasolBsPlusSensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9818,12 +9818,12 @@ interface VbusDeltasolBsPlusSensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9834,8 +9834,8 @@ interface VbusDeltasolBsPlusSensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9848,7 +9848,7 @@ interface VbusDeltasolBsPlusSensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9888,12 +9888,12 @@ interface VbusDeltasolBsPlusSensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9904,8 +9904,8 @@ interface VbusDeltasolBsPlusSensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9918,7 +9918,7 @@ interface VbusDeltasolBsPlusSensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -9958,12 +9958,12 @@ interface VbusDeltasolBsPlusCollectorMaxProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -9974,8 +9974,8 @@ interface VbusDeltasolBsPlusCollectorMaxProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -9988,7 +9988,7 @@ interface VbusDeltasolBsPlusCollectorMaxProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10028,12 +10028,12 @@ interface VbusDeltasolBsPlusCollectorMinProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10044,8 +10044,8 @@ interface VbusDeltasolBsPlusCollectorMinProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10058,7 +10058,7 @@ interface VbusDeltasolBsPlusCollectorMinProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10098,12 +10098,12 @@ interface VbusDeltasolBsPlusCollectorFrostProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10114,8 +10114,8 @@ interface VbusDeltasolBsPlusCollectorFrostProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10128,7 +10128,7 @@ interface VbusDeltasolBsPlusCollectorFrostProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10168,12 +10168,12 @@ interface VbusDeltasolBsPlusTubeCollectorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10184,8 +10184,8 @@ interface VbusDeltasolBsPlusTubeCollectorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10198,7 +10198,7 @@ interface VbusDeltasolBsPlusTubeCollectorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10238,12 +10238,12 @@ interface VbusDeltasolBsPlusRecoolingProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10254,8 +10254,8 @@ interface VbusDeltasolBsPlusRecoolingProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10268,7 +10268,7 @@ interface VbusDeltasolBsPlusRecoolingProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10308,12 +10308,12 @@ interface VbusDeltasolBsPlusHqmProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10324,8 +10324,8 @@ interface VbusDeltasolBsPlusHqmProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10338,7 +10338,7 @@ interface VbusDeltasolBsPlusHqmProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10378,12 +10378,12 @@ interface VbusDeltasolBs2009Sensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10394,8 +10394,8 @@ interface VbusDeltasolBs2009Sensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10408,7 +10408,7 @@ interface VbusDeltasolBs2009Sensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10448,12 +10448,12 @@ interface VbusDeltasolBs2009Sensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10464,8 +10464,8 @@ interface VbusDeltasolBs2009Sensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10478,7 +10478,7 @@ interface VbusDeltasolBs2009Sensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10518,12 +10518,12 @@ interface VbusDeltasolBs2009Sensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10534,8 +10534,8 @@ interface VbusDeltasolBs2009Sensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10548,7 +10548,7 @@ interface VbusDeltasolBs2009Sensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10588,12 +10588,12 @@ interface VbusDeltasolBs2009Sensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10604,8 +10604,8 @@ interface VbusDeltasolBs2009Sensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10618,7 +10618,7 @@ interface VbusDeltasolBs2009Sensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10658,12 +10658,12 @@ interface VbusDeltasolBs2009FrostProtectionActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10674,8 +10674,8 @@ interface VbusDeltasolBs2009FrostProtectionActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10688,7 +10688,7 @@ interface VbusDeltasolBs2009FrostProtectionActiveProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10728,12 +10728,12 @@ interface VbusDeltasolBs2Sensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10744,8 +10744,8 @@ interface VbusDeltasolBs2Sensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10758,7 +10758,7 @@ interface VbusDeltasolBs2Sensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10798,12 +10798,12 @@ interface VbusDeltasolBs2Sensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10814,8 +10814,8 @@ interface VbusDeltasolBs2Sensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10828,7 +10828,7 @@ interface VbusDeltasolBs2Sensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10868,12 +10868,12 @@ interface VbusDeltasolBs2Sensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10884,8 +10884,8 @@ interface VbusDeltasolBs2Sensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10898,7 +10898,7 @@ interface VbusDeltasolBs2Sensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -10938,12 +10938,12 @@ interface VbusDeltasolBs2Sensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -10954,8 +10954,8 @@ interface VbusDeltasolBs2Sensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -10968,7 +10968,7 @@ interface VbusDeltasolBs2Sensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11008,12 +11008,12 @@ interface VbusDeltasolCSensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11024,8 +11024,8 @@ interface VbusDeltasolCSensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11038,7 +11038,7 @@ interface VbusDeltasolCSensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11078,12 +11078,12 @@ interface VbusDeltasolCSensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11094,8 +11094,8 @@ interface VbusDeltasolCSensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11108,7 +11108,7 @@ interface VbusDeltasolCSensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11148,12 +11148,12 @@ interface VbusDeltasolCSensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11164,8 +11164,8 @@ interface VbusDeltasolCSensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11178,7 +11178,7 @@ interface VbusDeltasolCSensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11218,12 +11218,12 @@ interface VbusDeltasolCSensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11234,8 +11234,8 @@ interface VbusDeltasolCSensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11248,7 +11248,7 @@ interface VbusDeltasolCSensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11288,12 +11288,12 @@ interface VbusDeltasolCs2Sensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11304,8 +11304,8 @@ interface VbusDeltasolCs2Sensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11318,7 +11318,7 @@ interface VbusDeltasolCs2Sensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11358,12 +11358,12 @@ interface VbusDeltasolCs2Sensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11374,8 +11374,8 @@ interface VbusDeltasolCs2Sensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11388,7 +11388,7 @@ interface VbusDeltasolCs2Sensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11428,12 +11428,12 @@ interface VbusDeltasolCs2Sensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11444,8 +11444,8 @@ interface VbusDeltasolCs2Sensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11458,7 +11458,7 @@ interface VbusDeltasolCs2Sensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11498,12 +11498,12 @@ interface VbusDeltasolCs2Sensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11514,8 +11514,8 @@ interface VbusDeltasolCs2Sensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11528,7 +11528,7 @@ interface VbusDeltasolCs2Sensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11568,12 +11568,12 @@ interface VbusDeltasolCsPlusSensor1ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11584,8 +11584,8 @@ interface VbusDeltasolCsPlusSensor1ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11598,7 +11598,7 @@ interface VbusDeltasolCsPlusSensor1ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11638,12 +11638,12 @@ interface VbusDeltasolCsPlusSensor2ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11654,8 +11654,8 @@ interface VbusDeltasolCsPlusSensor2ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11668,7 +11668,7 @@ interface VbusDeltasolCsPlusSensor2ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11708,12 +11708,12 @@ interface VbusDeltasolCsPlusSensor3ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11724,8 +11724,8 @@ interface VbusDeltasolCsPlusSensor3ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11738,7 +11738,7 @@ interface VbusDeltasolCsPlusSensor3ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11778,12 +11778,12 @@ interface VbusDeltasolCsPlusSensor4ErrorProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11794,8 +11794,8 @@ interface VbusDeltasolCsPlusSensor4ErrorProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11808,7 +11808,7 @@ interface VbusDeltasolCsPlusSensor4ErrorProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11848,12 +11848,12 @@ interface VbusCustomBinarySensorsProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11864,8 +11864,8 @@ interface VbusCustomBinarySensorsProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11878,7 +11878,7 @@ interface VbusCustomBinarySensorsProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11919,12 +11919,12 @@ interface WireguardStatusProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -11935,8 +11935,8 @@ interface WireguardStatusProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -11949,7 +11949,7 @@ interface WireguardStatusProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -11989,12 +11989,12 @@ interface WireguardEnabledProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -12005,8 +12005,8 @@ interface WireguardEnabledProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -12019,7 +12019,7 @@ interface WireguardEnabledProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -12059,12 +12059,12 @@ interface XiaomiRtcgq02lmMotionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -12075,8 +12075,8 @@ interface XiaomiRtcgq02lmMotionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -12089,7 +12089,7 @@ interface XiaomiRtcgq02lmMotionProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -12130,12 +12130,12 @@ interface XiaomiRtcgq02lmLightProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -12146,8 +12146,8 @@ interface XiaomiRtcgq02lmLightProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -12160,7 +12160,7 @@ interface XiaomiRtcgq02lmLightProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -12200,12 +12200,12 @@ interface XiaomiRtcgq02lmButtonProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -12216,8 +12216,8 @@ interface XiaomiRtcgq02lmButtonProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -12230,7 +12230,7 @@ interface XiaomiRtcgq02lmButtonProps {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -12260,7 +12260,7 @@ interface BinarySensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -12311,12 +12311,12 @@ interface BlePresenceProps extends _CoreComponent {
      * int: The iBeacon major identifier of the beacon that needs
      * @yamlKey ibeacon_major
      */
-    ibeaconMajor?: number;
+    ibeaconMajor?: number | EmbedValue<number>;
     /**
      * int: The iBeacon minor identifier of the beacon that needs
      * @yamlKey ibeacon_minor
      */
-    ibeaconMinor?: number;
+    ibeaconMinor?: number | EmbedValue<number>;
     /**
      * string: The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
      * @yamlKey ibeacon_uuid
@@ -12328,7 +12328,7 @@ interface BlePresenceProps extends _CoreComponent {
      * int: at which minimum RSSI level would the component report the device be present.
      * @yamlKey min_rssi
      */
-    minRssi?: number;
+    minRssi?: number | EmbedValue<number>;
     /** @yamlKey esp32_ble_id */
     esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
 }
@@ -12348,12 +12348,12 @@ interface Cst226Props {
 }
 interface GpioProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin to monitor. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /**
      * boolean: Use hardware interrupts instead of polling for better performance and lower CPU usage. Defaults to `true` fo...
      * @yamlKey use_interrupt
      */
-    useInterrupt?: boolean;
+    useInterrupt?: boolean | EmbedValue<boolean>;
     /**
      * string: The type of interrupt to use. One of:
      * @yamlKey interrupt_type
@@ -12367,7 +12367,7 @@ interface Gt911Props {
      */
     gt911Id?: RefProp<gt911_GT911Touchscreen>;
     /** int: Internal index of the touch button, between 0 and 3. The default is 0. */
-    index?: number;
+    index?: number | EmbedValue<number>;
 }
 interface HaierProps {
     /**
@@ -12435,12 +12435,12 @@ interface NextionProps extends _NextionBinarySensorConfigBinarySensor, _CoreComp
      * string: The ID of the page the component is on. Use `0` for the default page.
      * @yamlKey page_id
      */
-    pageId?: number;
+    pageId?: number | EmbedValue<number>;
     /**
      * string: The ID (the number, not name!) of the component to track.
      * @yamlKey component_id
      */
-    componentId?: number;
+    componentId?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): The duration to update the sensor. If using a [Nextion Custom Binary Sensor...
      * @yamlKey update_interval
@@ -12454,12 +12454,12 @@ interface NfcProps extends _CoreComponent {
      * string: A (sub)string that must appear in the tag's NDEF message. May not be used with `tag_id` and/or `uid` (below).
      * @yamlKey ndef_contains
      */
-    ndefContains?: string;
+    ndefContains?: string | EmbedValue<string>;
     /**
      * string: A string that identifies the tag; in effect, its name. Specifically, this looks for the Home Assistant URI en...
      * @yamlKey tag_id
      */
-    tagId?: string;
+    tagId?: string | EmbedValue<string>;
     /** string: The unique ID of the NFC tag. This is a hyphen-separated list of hexadecimal values. For example: `74-10-37-9... */
     uid?: string;
 }
@@ -12470,7 +12470,7 @@ interface PacketTransportDataProps {
      * [ID](/guides/configuration-types#id): The ID of the original binary sensor in the provider device. If not specified d...
      * @yamlKey remote_id
      */
-    remoteId?: string;
+    remoteId?: string | EmbedValue<string>;
     /** string: The name of the provider node. */
     provider: string;
 }
@@ -12527,26 +12527,26 @@ interface Tm1637Props {
      */
     tm1637Id?: RefProp<tm1637_TM1637Display>;
     /** integer: The keycode for the connected key (Seg0 = 0, Seg1 = 1 etc,). Range is from 0 to 15. */
-    key: number;
+    key: number | EmbedValue<number>;
 }
 interface Tm1638Props {
     /** @yamlKey tm1638_id */
     tm1638Id?: RefProp<tm1638_TM1638Component>;
-    key: number;
+    key: number | EmbedValue<number>;
 }
 interface TouchscreenProps extends _CoreComponent {
     /** @yamlKey touchscreen_id */
     touchscreenId?: RefProp<touchscreen_Touchscreen>;
     /** @yamlKey use_raw */
-    useRaw?: boolean;
+    useRaw?: boolean | EmbedValue<boolean>;
     /** @yamlKey x_min */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /** @yamlKey x_max */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /** @yamlKey y_min */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /** @yamlKey y_max */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
     /** @yamlKey page_id */
     pageId?: RefProp<display_DisplayPage>;
     pages?: Array<RefProp<display_DisplayPage>>;
@@ -12558,7 +12558,7 @@ interface Tt21100Props {
      */
     tt21100Id?: RefProp<tt21100_TT21100Touchscreen>;
     /** int: Internal index of the touch button, between 0 and 3. */
-    index: number;
+    index: number | EmbedValue<number>;
 }
 interface XiaomiCgpr1Props extends _BthomeMithermometerBleDevice, _CoreComponent {
     /** @yamlKey device_class */
@@ -12614,24 +12614,24 @@ interface Cap1188Props {
      */
     cap1188Id?: RefProp<cap1188_CAP1188Component>;
     /** int: The channel number the CAP1188 the touchkey is connected to. */
-    channel: number;
+    channel: number | EmbedValue<number>;
 }
 interface Cst816Props extends _Touchscreen {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The chip reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * boolean: Skip reading the chip ID on startup. May be required for some variants (e.g. CST816S) that do not respond to...
      * @yamlKey skip_probe
      */
-    skipProbe?: boolean;
+    skipProbe?: boolean | EmbedValue<boolean>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -12665,12 +12665,12 @@ interface Esp32TouchProps {
     /** [Pin](/guides/configuration-types#pin): The pin to detect touch */
     pin: unknown;
     /** `int`: The threshold to use to detect touch events. See */
-    threshold: number;
+    threshold: number | EmbedValue<number>;
     /**
      * `int`: The threshold to use to detect touch events to wake-up from deep sleep.
      * @yamlKey wakeup_threshold
      */
-    wakeupThreshold?: number;
+    wakeupThreshold?: number | EmbedValue<number>;
 }
 interface EzoPmpProps {
     id?: RefProp<ezo_pmp_EzoPMP>;
@@ -12797,11 +12797,11 @@ interface MatrixKeypadProps {
      */
     keypadId?: RefProp<matrix_keypad_MatrixKeypad>;
     /** integer: The row of the key. */
-    row?: number;
+    row?: number | EmbedValue<number>;
     /** integer: The column of the key. */
-    col?: number;
+    col?: number | EmbedValue<number>;
     /** string: The key from `keys` configuration entry above. */
-    key?: string;
+    key?: string | EmbedValue<string>;
 }
 interface ModbusControllerProps extends _CoreComponent, _ModbusControllerModbusitembaseschema {
     /** @yamlKey register_type */
@@ -12814,17 +12814,17 @@ interface Mpr121Props {
      */
     mpr121Id?: RefProp<mpr121_MPR121Component>;
     /** int: The channel number at the MPR121 the touchkey is connected to. */
-    channel: number;
+    channel: number | EmbedValue<number>;
     /**
      * int: A per-channel override of the global touch_threshold value. If not specified, uses the global value.
      * @yamlKey touch_threshold
      */
-    touchThreshold?: number;
+    touchThreshold?: number | EmbedValue<number>;
     /**
      * int: A per-channel override of the global release_threshold value. If not specified, uses the global value.
      * @yamlKey release_threshold
      */
-    releaseThreshold?: number;
+    releaseThreshold?: number | EmbedValue<number>;
 }
 interface Msa3xxProps extends _Msa3xxMsaSensor {
     /** Single tap detection. */
@@ -13204,7 +13204,7 @@ interface Rdm6300Props {
     /** @yamlKey rdm6300_id */
     rdm6300Id?: RefProp<rdm6300_RDM6300Component>;
     /** int: The unique ID of the NFC/RFID tag. */
-    uid: number;
+    uid: number | EmbedValue<number>;
 }
 interface RemoteReceiverProps extends _CoreComponent {
     /** Trigger on a decoded B&O Beo4 infrared remote code with the given data. */
@@ -13351,9 +13351,9 @@ interface Sx1509Props {
     /** @yamlKey sx1509_id */
     sx1509Id?: RefProp<sx1509_SX1509Component>;
     /** int: The row number for this key on the keypad. */
-    row: number;
+    row: number | EmbedValue<number>;
     /** int: The column number for this key on the keypad. */
-    col: number;
+    col: number | EmbedValue<number>;
 }
 interface Sy6970Props {
     /** @yamlKey sy6970_id */
@@ -13372,22 +13372,22 @@ interface TemplateProps extends _CoreComponent {
 interface Ttp229BsfProps {
     /** @yamlKey ttp229_id */
     ttp229Id?: RefProp<ttp229_bsf_TTP229BSFComponent>;
-    channel: number;
+    channel: number | EmbedValue<number>;
 }
 interface Ttp229LsfProps {
     /** @yamlKey ttp229_id */
     ttp229Id?: RefProp<ttp229_lsf_TTP229LSFComponent>;
-    channel: number;
+    channel: number | EmbedValue<number>;
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey sensor_datapoint */
-    sensorDatapoint: number;
+    sensorDatapoint: number | EmbedValue<number>;
 }
 interface UdpProps {
     /** int: The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specifi... */
-    port?: number;
+    port?: number | EmbedValue<number>;
     /**
      * IPv4 address: Changes to multicast, adding an address to listen to. Defaults to no multicast address, just local netw...
      * @yamlKey listen_address
@@ -13496,9 +13496,9 @@ interface VbusDeltasolCsPlusProps extends _CoreComponent {
 interface VbusCustomProps extends _CoreComponent {
     /** @yamlKey vbus_id */
     vbusId?: RefProp<vbus_VBus>;
-    command?: number;
-    source?: number;
-    dest?: number;
+    command?: number | EmbedValue<number>;
+    source?: number | EmbedValue<number>;
+    dest?: number | EmbedValue<number>;
     /** @yamlKey binary_sensors */
     binarySensors?: Array<VbusCustomBinarySensorsProps>;
 }

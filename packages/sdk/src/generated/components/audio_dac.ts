@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { aic3204_AIC3204, es8156_ES8156, es8311_ES8311, es8388_ES8388, i2c_I2CBus } from "../markers";
 interface Aic3204Props extends _CoreComponent {
@@ -39,17 +39,17 @@ interface Es8311Props extends _CoreComponent {
      * positive integer: I2S sample rate. Defaults to `16000`.
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * bool: Use the MCLK signal to control the clock. Defaults to `True`.
      * @yamlKey use_mclk
      */
-    useMclk?: boolean;
+    useMclk?: boolean | EmbedValue<boolean>;
     /**
      * bool: Configure the codec's ADC to use PDM microphone input instead of analog. Defaults to False.
      * @yamlKey use_microphone
      */
-    useMicrophone?: boolean;
+    useMicrophone?: boolean | EmbedValue<boolean>;
     /**
      * The ID of the [I²C bus](/components/i2c) the ES8311 is connected to.
      * @yamlKey i2c_id

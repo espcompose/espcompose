@@ -3,24 +3,24 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { binary_sensor_BinarySensor, sensor_Sensor, statsd_StatsdComponent } from "../markers";
 export interface StatsdSensorsProps {
     id: RefProp<sensor_Sensor>;
-    name: string;
+    name: string | EmbedValue<string>;
 }
 export interface StatsdBinarySensorsProps {
     id: RefProp<binary_sensor_BinarySensor>;
-    name: string;
+    name: string | EmbedValue<string>;
 }
 export interface StatsdProps extends _CoreComponent {
     /** ip: The Host IP of your StatsD Server. */
-    host: string;
+    host: string | EmbedValue<string>;
     /** uint16: The Port of your StatsD Server. Defaults to `8125`. */
-    port?: number;
+    port?: number | EmbedValue<number>;
     /** string: The prefix to automatically prepend every metric with. Defaults to `""`. */
-    prefix?: string;
+    prefix?: string | EmbedValue<string>;
     sensors?: Array<StatsdSensorsProps>;
     /** @yamlKey binary_sensors */
     binarySensors?: Array<StatsdBinarySensorsProps>;

@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { serial_proxy_SerialProxy, uart_UARTComponent } from "../markers";
 export interface SerialProxyProps extends _CoreComponent {
     /** string: A human-readable name for this serial port, used to identify it to API clients. */
-    name: string;
+    name: string | EmbedValue<string>;
     /**
      * string: The electrical type of the serial port. One of:
      * @yamlKey port_type
@@ -18,12 +18,12 @@ export interface SerialProxyProps extends _CoreComponent {
      * [Pin](/guides/configuration-types#pin): GPIO pin to use as the RTS (Request to Send) modem control output. The state ...
      * @yamlKey rts_pin
      */
-    rtsPin?: Pin;
+    rtsPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): GPIO pin to use as the DTR (Data Terminal Ready) modem control output. The st...
      * @yamlKey dtr_pin
      */
-    dtrPin?: Pin;
+    dtrPin?: Pin | EmbedValue<Pin>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [UART](/components/uart/) component this proxy is attached to.
      * @yamlKey uart_id

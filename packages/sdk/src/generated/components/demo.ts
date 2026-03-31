@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, TriggerHandler } from "../../types";
 export interface DemoProps {
     /** @yamlKey alarm_control_panels */
     alarmControlPanels?: unknown;

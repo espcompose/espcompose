@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _UartDevice } from "../bases";
 import type { template__TemplateEvent, uart_UARTEvent, web_server_WebServer } from "../markers";
 interface EventWebServerProps {

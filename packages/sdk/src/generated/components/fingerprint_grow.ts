@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { fingerprint_grow_FingerprintGrowComponent, uart_UARTComponent } from "../markers";
 export interface FingerprintGrowProps extends _CoreComponent {
@@ -11,24 +11,24 @@ export interface FingerprintGrowProps extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): Pin connected to the reader's finger detection signal (WAKEUP) ...
      * @yamlKey sensing_pin
      */
-    sensingPin?: Pin;
+    sensingPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Output pin responsible for toogling the sensor power on and off.
      * @yamlKey sensor_power_pin
      */
-    sensorPowerPin?: Pin;
+    sensorPowerPin?: Pin | EmbedValue<Pin>;
     /**
      * [Time](/guides/configuration-types#time): The sensor idle period to wait before powering it off (sleep). Defaults to ...
      * @yamlKey idle_period_to_sleep
      */
     idlePeriodToSleep?: TimePeriod;
     /** int: Password to use for authentication. Defaults to `0x00`. */
-    password?: number;
+    password?: number | EmbedValue<number>;
     /**
      * int: Sets a new password to use for authentication. See [Setting a New Password](https://esphome.io/components/finger...
      * @yamlKey new_password
      */
-    newPassword?: number;
+    newPassword?: number | EmbedValue<number>;
     /**
      * [Automation](/automations): An action to be performed when the finger touches the sensor. See [`on_finger_scan_start`...
      * @yamlKey on_finger_scan_start

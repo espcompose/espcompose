@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _Esp32HostedUpdateBase } from "../bases";
 import type { http_request_HttpRequestComponent, http_request_HttpRequestUpdate, http_request_OtaHttpRequestComponent, mqtt_MQTTUpdateComponent, web_server_WebServer } from "../markers";
 interface UpdateWebServerProps {

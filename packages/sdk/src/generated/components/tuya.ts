@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { time_RealTimeClock, tuya_Tuya, uart_UARTComponent } from "../markers";
 export interface TuyaProps extends _CoreComponent {
@@ -21,7 +21,7 @@ export interface TuyaProps extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): Some Tuya devices support WiFi status reporting ONLY through gp...
      * @yamlKey status_pin
      */
-    statusPin?: Pin;
+    statusPin?: Pin | EmbedValue<Pin>;
     /**
      * An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](https://esphome.io/com...
      * @yamlKey on_datapoint_update

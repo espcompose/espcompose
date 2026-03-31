@@ -7,3 +7,12 @@ export {
   esphomeRun,
   esphomeLogs,
 } from './esphome';
+
+// IR layer
+export {
+  buildIR,
+  lowerIR,
+  type IRRoot,
+  type IRSection,
+  type IRValue,
+} from './ir/index';

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { rp2040_ble_RP2040BLE } from "../markers";
 export interface Rp2040BleProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface Rp2040BleProps extends _CoreComponent {
      * boolean: If enabled, the BLE interface will be enabled on boot. Defaults to `true`.
      * @yamlKey enable_on_boot
      */
-    enableOnBoot?: boolean;
+    enableOnBoot?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

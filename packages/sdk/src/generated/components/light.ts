@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _LightAddressableLight, _LightBinaryLight, _LightBrightnessOnlyLight, _LightRgbLight } from "../bases";
 import type { beken_spi_led_strip_BekenSPILEDStripLightOutput, binary_BinaryLightOutput, color_temperature_CTLightOutput, cwww_CWWWLightOutput, esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput, hbridge_HBridgeLightOutput, light_AddressableLightState, light_LightState, lv_led_t, lvgl_LVLight, m5stack_8angle_M5Stack8AngleComponent, m5stack_8angle_M5Stack8AngleLightOutput, monochromatic_MonochromaticLightOutput, neopixelbus_NeoPixelBusLightOutputBase, output_BinaryOutput, output_FloatOutput, partition_PartitionLightOutput, rgb_RGBLightOutput, rgbct_RGBCTLightOutput, rgbw_RGBWLightOutput, rgbww_RGBWWLightOutput, rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput, shelly_dimmer_ShellyDimmer, sonoff_d1_SonoffD1Output, spi_SPIComponent, spi_led_strip_SpiLedStrip, status_led_StatusLEDLightOutput, tuya_Tuya, tuya_TuyaLight, uart_UARTComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 interface PartitionSegmentsProps {
@@ -12,11 +12,11 @@ interface PartitionSegmentsProps {
     /** [ID](/guides/configuration-types#id): The ID of the addressable light to be controlled by this segment. */
     id: RefProp<light_AddressableLightState>;
     /** int: The index of the first LED to address in the segment. Counting starts with 0, so first LED is 0. */
-    from: number;
+    from: number | EmbedValue<number>;
     /** int: The index of the last LED to address in this segment. */
-    to: number;
+    to: number | EmbedValue<number>;
     /** boolean: Whether to reverse the order of LEDs in this segment. Defaults to `false`. */
-    reversed?: boolean;
+    reversed?: boolean | EmbedValue<boolean>;
     /**
      * [ID](/guides/configuration-types#id): The ID of a single addressable or non-addressable light. If an addressable ligh...
      * @yamlKey single_light_id
@@ -27,7 +27,7 @@ interface ShellyDimmerFirmwareProps {
     url?: unknown;
     sha256?: unknown;
     version: unknown;
-    update?: boolean;
+    update?: boolean | EmbedValue<boolean>;
 }
 interface ShellyDimmerPowerPropsAvailabilityProps {
     topic: unknown;
@@ -48,12 +48,12 @@ interface ShellyDimmerPowerProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -64,8 +64,8 @@ interface ShellyDimmerPowerProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -76,15 +76,15 @@ interface ShellyDimmerPowerProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -114,12 +114,12 @@ interface ShellyDimmerVoltageProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -130,8 +130,8 @@ interface ShellyDimmerVoltageProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -142,15 +142,15 @@ interface ShellyDimmerVoltageProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -180,12 +180,12 @@ interface ShellyDimmerCurrentProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -196,8 +196,8 @@ interface ShellyDimmerCurrentProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -208,15 +208,15 @@ interface ShellyDimmerCurrentProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -229,12 +229,12 @@ interface ShellyDimmerCurrentProps {
 }
 interface BekenSpiLedStripProps extends _LightAddressableLight {
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the light. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /**
      * int: The number of LEDs in the strip.
      * @yamlKey num_leds
      */
-    numLeds: number;
+    numLeds: number | EmbedValue<number>;
     /**
      * string: The RGB order of the strip.
      * @yamlKey rgb_order
@@ -251,12 +251,12 @@ interface BekenSpiLedStripProps extends _LightAddressableLight {
      * boolean: Set to `true` if the strip is RGBW. Defaults to `false`.
      * @yamlKey is_rgbw
      */
-    isRgbw?: boolean;
+    isRgbw?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Set to `true` if the strip is WRGB. Defaults to `false`.
      * @yamlKey is_wrgb
      */
-    isWrgb?: boolean;
+    isWrgb?: boolean | EmbedValue<boolean>;
 }
 interface ColorTemperatureProps extends _LightRgbLight {
     /**
@@ -302,16 +302,16 @@ interface CwwwProps extends _LightRgbLight {
      * boolean: When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting...
      * @yamlKey constant_brightness
      */
-    constantBrightness?: boolean;
+    constantBrightness?: boolean | EmbedValue<boolean>;
 }
 interface Esp32RmtLedStripProps extends _LightAddressableLight, _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin for the data line of the light. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /**
      * int: The number of LEDs in the strip.
      * @yamlKey num_leds
      */
-    numLeds: number;
+    numLeds: number | EmbedValue<number>;
     /**
      * string: The RGB order of the strip.
      * @yamlKey rgb_order
@@ -321,7 +321,7 @@ interface Esp32RmtLedStripProps extends _LightAddressableLight, _CoreComponent {
      * int: When `use_dma` is enabled, this sets the size of the driver's internal DMA buffer. When DMA is disabled, it spec...
      * @yamlKey rmt_symbols
      */
-    rmtSymbols?: number;
+    rmtSymbols?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): A time interval used to limit the number of commands a light can handle per...
      * @yamlKey max_refresh_rate
@@ -333,22 +333,22 @@ interface Esp32RmtLedStripProps extends _LightAddressableLight, _CoreComponent {
      * boolean: Set to `true` if the strip is RGBW. Defaults to `false`.
      * @yamlKey is_rgbw
      */
-    isRgbw?: boolean;
+    isRgbw?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Set to `true` if the strip is WRGB. Defaults to `false`.
      * @yamlKey is_wrgb
      */
-    isWrgb?: boolean;
+    isWrgb?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Enable DMA on variants that support it. If enabled `rmt_symbols` controls the DMA buffer size and can be set...
      * @yamlKey use_dma
      */
-    useDma?: boolean;
+    useDma?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Set to `false` to force internal RAM allocation even if you have the PSRAM component enabled. This can be us...
      * @yamlKey use_psram
      */
-    usePsram?: boolean;
+    usePsram?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `0` bit.
      * @yamlKey bit0_high
@@ -384,14 +384,14 @@ interface FastledClocklessProps {
     /** string: Set a chipset to use. See [Supported Chipsets](https://esphome.io/components/light/fastled#fastled_spi-chipse... */
     chipset: "NEOPIXEL" | "TM1829" | "TM1809" | "TM1804" | "TM1803" | "UCS1903" | "UCS1903B" | "UCS1904" | "UCS2903" | "WS2812" | "WS2852" | "WS2812B" | "SK6812" | "SK6822" | "APA106" | "PL9823" | "WS2811" | "WS2813" | "APA104" | "WS2811_400" | "GW6205" | "GW6205_400" | "LPD1886" | "LPD1886_8BIT" | "SM16703";
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the FastLED light. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
 }
 interface FastledSpiProps {
     chipset: "LPD8806" | "WS2801" | "WS2803" | "SM16716" | "P9813" | "APA102" | "SK9822" | "DOTSTAR";
     /** @yamlKey data_pin */
-    dataPin: Pin;
+    dataPin: Pin | EmbedValue<Pin>;
     /** @yamlKey clock_pin */
-    clockPin: Pin;
+    clockPin: Pin | EmbedValue<Pin>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
 }
@@ -407,24 +407,24 @@ interface NeopixelbusProps extends _LightAddressableLight, _CoreComponent {
     /** string: The method used to transmit the data. By default, ESPHome will try to use the best method available for this ... */
     method?: string;
     /** boolean: Invert data output, for use with n-type transistors. Defaults to `no`. */
-    invert?: boolean;
+    invert?: boolean | EmbedValue<boolean>;
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the light. */
-    pin?: Pin;
+    pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The pin for the clock line of the light, for two-wire lights.
      * @yamlKey clock_pin
      */
-    clockPin?: Pin;
+    clockPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The pin for the data line of the light, for two-wire lights.
      * @yamlKey data_pin
      */
-    dataPin?: Pin;
+    dataPin?: Pin | EmbedValue<Pin>;
     /**
      * int: The number of LEDs attached.
      * @yamlKey num_leds
      */
-    numLeds: number;
+    numLeds: number | EmbedValue<number>;
 }
 interface PartitionProps extends _LightAddressableLight {
     /** list: A list of segments included in this partition. *For addressable segments:* */
@@ -469,7 +469,7 @@ interface RgbctProps extends _LightRgbLight {
      * boolean: When enabled, this will prevent white leds being on at the same time as RGB leds. See [Color Interlock](/com...
      * @yamlKey color_interlock
      */
-    colorInterlock?: boolean;
+    colorInterlock?: boolean | EmbedValue<boolean>;
 }
 interface RgbwProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
@@ -484,7 +484,7 @@ interface RgbwProps extends _LightRgbLight {
      * boolean: When enabled, this will prevent white leds being on at the same time as RGB leds. See [Color Interlock](http...
      * @yamlKey color_interlock
      */
-    colorInterlock?: boolean;
+    colorInterlock?: boolean | EmbedValue<boolean>;
 }
 interface RgbwwProps extends _LightRgbLight {
     /** [ID](/guides/configuration-types#id): The id of the float [Output Component](/components/output/) to use for the red ... */
@@ -517,21 +517,21 @@ interface RgbwwProps extends _LightRgbLight {
      * boolean: When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting...
      * @yamlKey constant_brightness
      */
-    constantBrightness?: boolean;
+    constantBrightness?: boolean | EmbedValue<boolean>;
     /**
      * boolean: When enabled, this will prevent white leds being on at the same time as RGB leds. See [Color Interlock](/com...
      * @yamlKey color_interlock
      */
-    colorInterlock?: boolean;
+    colorInterlock?: boolean | EmbedValue<boolean>;
 }
 interface Rp2040PioLedStripProps extends _LightAddressableLight {
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the light. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /**
      * int: The number of LEDs in the strip.
      * @yamlKey num_leds
      */
-    numLeds: number;
+    numLeds: number | EmbedValue<number>;
     /**
      * string: The RGB order of the strip.
      * @yamlKey rgb_order
@@ -545,7 +545,7 @@ interface Rp2040PioLedStripProps extends _LightAddressableLight {
      * boolean: Set to `true` if the strip is RGBW. Defaults to `false`.
      * @yamlKey is_rgbw
      */
-    isRgbw?: boolean;
+    isRgbw?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The time to hold the data line high for a `0` bit.
      * @yamlKey bit0_high
@@ -573,32 +573,32 @@ interface ShellyDimmerProps extends _LightBrightnessOnlyLight, _CoreComponent {
      * [Pin](/guides/configuration-types#pin): Pin connected with "NRST" of STM32. The default is "GPIO5".
      * @yamlKey nrst_pin
      */
-    nrstPin?: Pin;
+    nrstPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
      * @yamlKey boot0_pin
      */
-    boot0Pin?: Pin;
+    boot0Pin?: Pin | EmbedValue<Pin>;
     /**
      * boolean: [Dimming mode](https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer): `true` means leading edge, `false` ...
      * @yamlKey leading_edge
      */
-    leadingEdge?: boolean;
+    leadingEdge?: boolean | EmbedValue<boolean>;
     /**
      * int: Brightness threshold below which the dimmer switches on later in mains current cycle. [This might help with dimm...
      * @yamlKey warmup_brightness
      */
-    warmupBrightness?: number;
+    warmupBrightness?: number | EmbedValue<number>;
     /**
      * int: Minimum brightness value on a scale from 0..1000, the default is 0.
      * @yamlKey min_brightness
      */
-    minBrightness?: number;
+    minBrightness?: number | EmbedValue<number>;
     /**
      * int: Maximum brightness value on a scale from 0..1000, the default is 1000.
      * @yamlKey max_brightness
      */
-    maxBrightness?: number;
+    maxBrightness?: number | EmbedValue<number>;
     /** Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](/components/sen... */
     power?: ShellyDimmerPowerProps;
     /** Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](/components/sensor). */
@@ -618,17 +618,17 @@ interface SonoffD1Props extends _LightBrightnessOnlyLight, _CoreComponent {
      * boolean: Set to `True` if your setup uses Sonoff RM433 or any other radio remote control. Properly setting this param...
      * @yamlKey use_rm433_remote
      */
-    useRm433Remote?: boolean;
+    useRm433Remote?: boolean | EmbedValue<boolean>;
     /**
      * int: The lowest dimmer value allowed. Acceptable value for your setup will depend on actual light bulbs installed and...
      * @yamlKey min_value
      */
-    minValue?: number;
+    minValue?: number | EmbedValue<number>;
     /**
      * int: The highest dimmer value allowed. Use this to hard-limit light intensity for your setup. For some bulbs this par...
      * @yamlKey max_value
      */
-    maxValue?: number;
+    maxValue?: number | EmbedValue<number>;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
 }
@@ -637,7 +637,7 @@ interface SpiLedStripProps extends _LightAddressableLight {
      * int: The number of LEDs attached. The default is 1.
      * @yamlKey num_leds
      */
-    numLeds?: number;
+    numLeds?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /**
@@ -648,9 +648,9 @@ interface SpiLedStripProps extends _LightAddressableLight {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 interface BinaryProps extends _LightBinaryLight {
     /** [ID](/guides/configuration-types#id): The id of the binary [Output Component](/components/output/) to use for this li... */
@@ -676,36 +676,36 @@ interface M5stack8angleProps extends _LightAddressableLight {
     m5stack8angleId?: RefProp<m5stack_8angle_M5Stack8AngleComponent>;
 }
 interface StatusLedProps extends _LightBinaryLight {
-    pin?: Pin;
+    pin?: Pin | EmbedValue<Pin>;
     output?: RefProp<output_BinaryOutput>;
 }
 interface TuyaProps extends _LightBrightnessOnlyLight, _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey dimmer_datapoint */
-    dimmerDatapoint?: number;
+    dimmerDatapoint?: number | EmbedValue<number>;
     /** @yamlKey min_value_datapoint */
-    minValueDatapoint?: number;
+    minValueDatapoint?: number | EmbedValue<number>;
     /** @yamlKey switch_datapoint */
-    switchDatapoint?: number;
+    switchDatapoint?: number | EmbedValue<number>;
     /** @yamlKey color_datapoint */
-    colorDatapoint?: number;
+    colorDatapoint?: number | EmbedValue<number>;
     /** @yamlKey color_type */
     colorType?: "RGB" | "HSV" | "RGBHSV";
     /** @yamlKey color_type_lowercase */
-    colorTypeLowercase?: boolean;
+    colorTypeLowercase?: boolean | EmbedValue<boolean>;
     /** @yamlKey color_interlock */
-    colorInterlock?: boolean;
+    colorInterlock?: boolean | EmbedValue<boolean>;
     /** @yamlKey color_temperature_datapoint */
-    colorTemperatureDatapoint?: number;
+    colorTemperatureDatapoint?: number | EmbedValue<number>;
     /** @yamlKey color_temperature_invert */
-    colorTemperatureInvert?: boolean;
+    colorTemperatureInvert?: boolean | EmbedValue<boolean>;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: number | EmbedValue<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: number | EmbedValue<number>;
     /** @yamlKey color_temperature_max_value */
-    colorTemperatureMaxValue?: number;
+    colorTemperatureMaxValue?: number | EmbedValue<number>;
     /** @yamlKey cold_white_color_temperature */
     coldWhiteColorTemperature?: unknown;
     /** @yamlKey warm_white_color_temperature */

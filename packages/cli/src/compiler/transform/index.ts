@@ -15,6 +15,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import ts from 'typescript';
 import { transformScriptFile, type TransformDiagnostic } from './script-transformer.js';
+import { transformReactiveExpressions } from './reactive-transformer.js';
 
 export type { TransformDiagnostic };
 
@@ -59,13 +60,34 @@ export function writeTransformedFiles(
     if (rel.startsWith('..') || path.isAbsolute(rel)) continue;
 
     const originalText = sourceFile.getFullText();
-    const result = transformScriptFile(sourceFile, program);
+
+    // Pass 1: Auto-wrap reactive JSX attribute expressions in bind.memo()
+    const reactiveResult = transformReactiveExpressions(sourceFile, program);
+    diagnostics.push(...reactiveResult.diagnostics);
+
+    // Pass 2: Compile trigger handler / createScript() bodies to action trees.
+    // If the reactive pass modified the source, re-parse so positions are valid.
+    let scriptInput: ts.SourceFile;
+    if (reactiveResult.sourceText !== originalText) {
+      scriptInput = ts.createSourceFile(
+        sourceFile.fileName,
+        reactiveResult.sourceText,
+        sourceFile.languageVersion,
+        true,
+        ts.ScriptKind.TSX,
+      );
+    } else {
+      scriptInput = sourceFile;
+    }
+    const result = transformScriptFile(scriptInput, program);
     diagnostics.push(...result.diagnostics);
 
     // Use transformed text if it changed, otherwise copy original
-    const outputText = result.sourceText !== originalText
+    const outputText = result.sourceText !== reactiveResult.sourceText
       ? result.sourceText
-      : originalText;
+      : reactiveResult.sourceText !== originalText
+        ? reactiveResult.sourceText
+        : originalText;
 
     const outputPath = path.join(buildDir, rel);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });

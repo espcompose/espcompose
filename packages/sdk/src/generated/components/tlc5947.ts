@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { tlc5947_TLC5947 } from "../markers";
 export interface Tlc5947Props extends _CoreComponent {
@@ -11,27 +11,27 @@ export interface Tlc5947Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to DIN.
      * @yamlKey data_pin
      */
-    dataPin: Pin;
+    dataPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to CLK.
      * @yamlKey clock_pin
      */
-    clockPin: Pin;
+    clockPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to LAT.
      * @yamlKey lat_pin
      */
-    latPin: Pin;
+    latPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to /OE (BLANK).
      * @yamlKey oe_pin
      */
-    oePin?: Pin;
+    oePin?: Pin | EmbedValue<Pin>;
     /**
      * int: Number of chips in the chain. Must be
      * @yamlKey num_chips
      */
-    numChips?: number;
+    numChips?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

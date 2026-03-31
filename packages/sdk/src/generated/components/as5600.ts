@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { as5600_AS5600Component, i2c_I2CBus } from "../markers";
 export interface As5600Props extends _CoreComponent {
@@ -11,11 +11,11 @@ export interface As5600Props extends _CoreComponent {
      * int: The pin connected to the AS5600's direction pin. See [Direction](https://esphome.io/components/sensor/as5600#as5...
      * @yamlKey dir_pin
      */
-    dirPin?: Pin;
+    dirPin?: Pin | EmbedValue<Pin>;
     /** string: The direction that the magnet should rotate to increase values. Used in combination with the dir_pin. */
     direction?: "CLOCKWISE" | "COUNTERCLOCKWISE";
     /** boolean: Whether to enable the watchdog that puts the chip into low power mode 3. Check the datasheet for more inform... */
-    watchdog?: boolean;
+    watchdog?: boolean | EmbedValue<boolean>;
     /**
      * string: The power mode to run the sensor. Note: When watchdog is enabled, it will switch the device to `low3` when th...
      * @yamlKey power_mode

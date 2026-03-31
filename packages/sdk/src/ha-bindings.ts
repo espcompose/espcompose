@@ -1,13 +1,14 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Home Assistant Entity Binding Types
 //
-// Domain-specific binding interfaces returned by useHAEntity().
+// Domain-specific binding interfaces returned by importHAEntity().
 // Each binding provides:
-//   - Expression<T> properties for reactive state access
+//   - Signal<T> properties for reactive state access
 //   - Action methods for controlling the entity (compile-time no-ops)
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Expression } from './expression';
+import type { Signal } from './reactive-node';
+import type { ACTION_BRAND } from './types';
 
 /**
  * Binding for `light.*` entities.
@@ -16,12 +17,13 @@ import type { Expression } from './expression';
  * and optionally a `sensor platform: homeassistant` (for brightness).
  */
 export interface LightBinding {
+  readonly [ACTION_BRAND]?: true;
   /** Whether the light is currently on. */
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
   /** Current brightness (0–255). Available when the light supports brightness. */
-  readonly brightness: Expression<number>;
+  readonly brightness: Signal<number>;
   /** String representation of the state (`"on"`, `"off"`, `"unavailable"`). */
-  readonly stateText: Expression<string>;
+  readonly stateText: Signal<string>;
 
   /** Toggle the light on/off. */
   toggle(): void;
@@ -37,9 +39,9 @@ export interface LightBinding {
  */
 export interface SensorBinding {
   /** Current numeric value of the sensor. */
-  readonly value: Expression<number>;
+  readonly value: Signal<number>;
   /** String representation of the sensor state. */
-  readonly stateText: Expression<string>;
+  readonly stateText: Signal<string>;
 }
 
 /**
@@ -48,17 +50,18 @@ export interface SensorBinding {
  */
 export interface BinarySensorBinding {
   /** Whether the binary sensor is currently on. */
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
   /** String representation of the state. */
-  readonly stateText: Expression<string>;
+  readonly stateText: Signal<string>;
 }
 
 /**
  * Binding for `switch.*` entities.
  */
 export interface SwitchBinding {
+  readonly [ACTION_BRAND]?: true;
   /** Whether the switch is currently on. */
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
 
   /** Toggle the switch. */
   toggle(): void;
@@ -72,8 +75,9 @@ export interface SwitchBinding {
  * Binding for `fan.*` entities.
  */
 export interface FanBinding {
+  readonly [ACTION_BRAND]?: true;
   /** Whether the fan is currently on. */
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
 
   /** Toggle the fan. */
   toggle(): void;
@@ -87,8 +91,9 @@ export interface FanBinding {
  * Binding for `cover.*` entities.
  */
 export interface CoverBinding {
+  readonly [ACTION_BRAND]?: true;
   /** Whether the cover is currently open. */
-  readonly isOpen: Expression<boolean>;
+  readonly isOpen: Signal<boolean>;
 
   /** Open the cover. */
   open(): void;

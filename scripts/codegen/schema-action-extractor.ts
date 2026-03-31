@@ -11,6 +11,7 @@ import * as path from 'path';
 import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry } from './schema-types.js';
 import { inferDocTypeString } from './doc-type-inference.js';
 import { toCamelCase, DATA_TYPE_TO_TS } from './type-mapper.js';
+import { mergeExtends } from './schema-merge-utils.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -110,74 +111,6 @@ function resolveParamType(varDef: SchemaConfigVar): string {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Extends resolution
-// ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Resolve `extends` chains in an action schema to produce a flat config_vars map.
- * Merges inherited config_vars with the action's own, own vars taking precedence.
- */
-function resolveExtends(
-  schema: SchemaDefinition,
-  schemaRegistry: SchemaRegistry,
-  visited: Set<string> = new Set(),
-): Record<string, SchemaConfigVar> {
-  const merged: Record<string, SchemaConfigVar> = {};
-
-  function mergeConfigVarDef(base: SchemaConfigVar, override: SchemaConfigVar): SchemaConfigVar {
-    const next: SchemaConfigVar = { ...base, ...override };
-    if (base.values || override.values) {
-      next.values = { ...(base.values ?? {}), ...(override.values ?? {}) };
-    }
-    if (base.schema || override.schema) {
-      next.schema = mergeSchemaDefinition(base.schema, override.schema);
-    }
-    return next;
-  }
-
-  function mergeConfigVarMaps(
-    base: Record<string, SchemaConfigVar>,
-    override: Record<string, SchemaConfigVar>,
-  ): Record<string, SchemaConfigVar> {
-    const next: Record<string, SchemaConfigVar> = { ...base };
-    for (const [k, v] of Object.entries(override)) {
-      next[k] = next[k] ? mergeConfigVarDef(next[k], v) : v;
-    }
-    return next;
-  }
-
-  function mergeSchemaDefinition(
-    base: SchemaDefinition | undefined,
-    override: SchemaDefinition | undefined,
-  ): SchemaDefinition | undefined {
-    if (!base && !override) return undefined;
-    if (!base) return override;
-    if (!override) return base;
-
-    const next: SchemaDefinition = { ...base, ...override };
-    if (base.config_vars || override.config_vars) {
-      next.config_vars = mergeConfigVarMaps(base.config_vars ?? {}, override.config_vars ?? {});
-    }
-    if (base.extends || override.extends) {
-      const combined = [...(base.extends ?? []), ...(override.extends ?? [])];
-      next.extends = [...new Set(combined)];
-    }
-    return next;
-  }
-
-  for (const ref of schema.extends ?? []) {
-    if (visited.has(ref)) continue;
-    visited.add(ref);
-    const refDef = schemaRegistry.get(ref);
-    if (!refDef) continue;
-    const inherited = resolveExtends(refDef, schemaRegistry, visited);
-    Object.assign(merged, mergeConfigVarMaps(merged, inherited));
-  }
-
-  return mergeConfigVarMaps(merged, schema.config_vars ?? {});
-}
-
-// ────────────────────────────────────────────────────────────────────────────
 // Main extraction
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -239,7 +172,7 @@ export function extractSchemaActions(
         }
 
         // Resolve extends to get all config_vars
-        const allVars = resolveExtends(schemaBlock, schemaRegistry);
+        const allVars = mergeExtends(schemaBlock, schemaRegistry);
 
         // Find the use_id field — any config_var with type: "use_id" and a use_id_type
         let targetClass: string | undefined;

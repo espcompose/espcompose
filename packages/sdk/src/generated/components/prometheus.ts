@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { prometheus_PrometheusHandler, web_server_base_WebServerBase } from "../markers";
 export interface PrometheusProps extends _CoreComponent {
@@ -13,7 +13,7 @@ export interface PrometheusProps extends _CoreComponent {
      * boolean: Whether `internal` entities should be displayed on the web interface. Defaults to `false`.
      * @yamlKey include_internal
      */
-    includeInternal?: boolean;
+    includeInternal?: boolean | EmbedValue<boolean>;
     /** Override metric labels. See [`relabel`](https://esphome.io/components/prometheus#prometheus-relabel) */
     relabel?: Record<string, unknown>;
 }

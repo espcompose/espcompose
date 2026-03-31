@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { binary_sensor_BinarySensor, esp32_improv_ESP32ImprovComponent, output_BinaryOutput } from "../markers";
 export interface Esp32ImprovProps extends _CoreComponent {

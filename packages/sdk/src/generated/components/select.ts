@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { EntityBase, copy_CopySelect, es8388_ES8388, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, logger_Logger, logger_LoggerLevelSelect, lvgl_LVGLSelect, modbus_controller_ModbusController, modbus_controller_ModbusSelect, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60fda2_MR60FDA2Component, select_Select, template__TemplateSelect, tuya_Tuya, tuya_TuyaSelect, web_server_WebServer } from "../markers";
 interface SelectWebServerProps {
@@ -33,12 +33,12 @@ interface Es8388DacOutputProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -49,8 +49,8 @@ interface Es8388DacOutputProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -59,7 +59,7 @@ interface Es8388DacOutputProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Es8388DacOutputPropsWebServerProps;
     /** @yamlKey on_value */
@@ -86,12 +86,12 @@ interface Es8388AdcInputMicProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -102,8 +102,8 @@ interface Es8388AdcInputMicProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -112,7 +112,7 @@ interface Es8388AdcInputMicProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Es8388AdcInputMicPropsWebServerProps;
     /** @yamlKey on_value */
@@ -139,12 +139,12 @@ interface Ld2410DistanceResolutionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -155,8 +155,8 @@ interface Ld2410DistanceResolutionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -165,7 +165,7 @@ interface Ld2410DistanceResolutionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410DistanceResolutionPropsWebServerProps;
     /** @yamlKey on_value */
@@ -192,12 +192,12 @@ interface Ld2410LightFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -208,8 +208,8 @@ interface Ld2410LightFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -218,7 +218,7 @@ interface Ld2410LightFunctionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410LightFunctionPropsWebServerProps;
     /** @yamlKey on_value */
@@ -245,12 +245,12 @@ interface Ld2410OutPinLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -261,8 +261,8 @@ interface Ld2410OutPinLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -271,7 +271,7 @@ interface Ld2410OutPinLevelProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410OutPinLevelPropsWebServerProps;
     /** @yamlKey on_value */
@@ -298,12 +298,12 @@ interface Ld2410BaudRateProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -314,8 +314,8 @@ interface Ld2410BaudRateProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -324,7 +324,7 @@ interface Ld2410BaudRateProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410BaudRatePropsWebServerProps;
     /** @yamlKey on_value */
@@ -351,12 +351,12 @@ interface Ld2412BaudRateProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -367,8 +367,8 @@ interface Ld2412BaudRateProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -377,7 +377,7 @@ interface Ld2412BaudRateProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412BaudRatePropsWebServerProps;
     /** @yamlKey on_value */
@@ -404,12 +404,12 @@ interface Ld2412DistanceResolutionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -420,8 +420,8 @@ interface Ld2412DistanceResolutionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -430,7 +430,7 @@ interface Ld2412DistanceResolutionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412DistanceResolutionPropsWebServerProps;
     /** @yamlKey on_value */
@@ -457,12 +457,12 @@ interface Ld2412LightFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -473,8 +473,8 @@ interface Ld2412LightFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -483,7 +483,7 @@ interface Ld2412LightFunctionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412LightFunctionPropsWebServerProps;
     /** @yamlKey on_value */
@@ -510,12 +510,12 @@ interface Ld2412OutPinLevelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -526,8 +526,8 @@ interface Ld2412OutPinLevelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -536,7 +536,7 @@ interface Ld2412OutPinLevelProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412OutPinLevelPropsWebServerProps;
     /** @yamlKey on_value */
@@ -563,12 +563,12 @@ interface Ld2420OperatingModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -579,8 +579,8 @@ interface Ld2420OperatingModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -589,7 +589,7 @@ interface Ld2420OperatingModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420OperatingModePropsWebServerProps;
     /** @yamlKey on_value */
@@ -616,12 +616,12 @@ interface Ld2450BaudRateProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -632,8 +632,8 @@ interface Ld2450BaudRateProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -642,7 +642,7 @@ interface Ld2450BaudRateProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450BaudRatePropsWebServerProps;
     /** @yamlKey on_value */
@@ -669,12 +669,12 @@ interface Ld2450ZoneTypeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -685,8 +685,8 @@ interface Ld2450ZoneTypeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -695,7 +695,7 @@ interface Ld2450ZoneTypeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450ZoneTypePropsWebServerProps;
     /** @yamlKey on_value */
@@ -722,12 +722,12 @@ interface SeeedMr24hpc1SceneModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -738,8 +738,8 @@ interface SeeedMr24hpc1SceneModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -748,7 +748,7 @@ interface SeeedMr24hpc1SceneModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1SceneModePropsWebServerProps;
     /** @yamlKey on_value */
@@ -775,12 +775,12 @@ interface SeeedMr24hpc1UnmanTimeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -791,8 +791,8 @@ interface SeeedMr24hpc1UnmanTimeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -801,7 +801,7 @@ interface SeeedMr24hpc1UnmanTimeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1UnmanTimePropsWebServerProps;
     /** @yamlKey on_value */
@@ -828,12 +828,12 @@ interface SeeedMr24hpc1ExistenceBoundaryProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -844,8 +844,8 @@ interface SeeedMr24hpc1ExistenceBoundaryProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -854,7 +854,7 @@ interface SeeedMr24hpc1ExistenceBoundaryProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1ExistenceBoundaryPropsWebServerProps;
     /** @yamlKey on_value */
@@ -881,12 +881,12 @@ interface SeeedMr24hpc1MotionBoundaryProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -897,8 +897,8 @@ interface SeeedMr24hpc1MotionBoundaryProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -907,7 +907,7 @@ interface SeeedMr24hpc1MotionBoundaryProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1MotionBoundaryPropsWebServerProps;
     /** @yamlKey on_value */
@@ -934,12 +934,12 @@ interface SeeedMr60fda2InstallHeightProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -950,8 +950,8 @@ interface SeeedMr60fda2InstallHeightProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -960,7 +960,7 @@ interface SeeedMr60fda2InstallHeightProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2InstallHeightPropsWebServerProps;
     /** @yamlKey on_value */
@@ -987,12 +987,12 @@ interface SeeedMr60fda2HeightThresholdProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1003,8 +1003,8 @@ interface SeeedMr60fda2HeightThresholdProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1013,7 +1013,7 @@ interface SeeedMr60fda2HeightThresholdProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2HeightThresholdPropsWebServerProps;
     /** @yamlKey on_value */
@@ -1040,12 +1040,12 @@ interface SeeedMr60fda2SensitivityProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1056,8 +1056,8 @@ interface SeeedMr60fda2SensitivityProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1066,7 +1066,7 @@ interface SeeedMr60fda2SensitivityProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2SensitivityPropsWebServerProps;
     /** @yamlKey on_value */
@@ -1195,26 +1195,26 @@ interface LoggerProps {
 }
 interface LvglProps {
     widget: RefProp<unknown>;
-    animated?: boolean;
+    animated?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
 }
 interface ModbusControllerProps extends _CoreComponent {
     /** @yamlKey modbus_controller_id */
     modbusControllerId?: RefProp<modbus_controller_ModbusController>;
-    address: number;
+    address: number | EmbedValue<number>;
     /** @yamlKey value_type */
     valueType?: "RAW" | "U_WORD" | "S_WORD" | "U_DWORD" | "U_DWORD_R" | "S_DWORD" | "S_DWORD_R" | "U_QWORD" | "U_QWORD_R" | "S_QWORD" | "S_QWORD_R";
     /** @yamlKey register_count */
-    registerCount?: number;
+    registerCount?: number | EmbedValue<number>;
     /** @yamlKey skip_updates */
-    skipUpdates?: number;
+    skipUpdates?: number | EmbedValue<number>;
     /** @yamlKey force_new_range */
-    forceNewRange?: boolean;
+    forceNewRange?: boolean | EmbedValue<boolean>;
     optionsmap: unknown;
     /** @yamlKey use_write_multiple */
-    useWriteMultiple?: boolean;
-    optimistic?: boolean;
+    useWriteMultiple?: boolean | EmbedValue<boolean>;
+    optimistic?: boolean | EmbedValue<boolean>;
     lambda?: unknown;
     /** @yamlKey write_lambda */
     writeLambda?: unknown;
@@ -1265,7 +1265,7 @@ interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current optio... */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the Template Select will imme... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey set_action
@@ -1275,12 +1275,12 @@ interface TemplateProps extends _CoreComponent {
      * string: The option to set the option to on setup if not restored with `restore_value`. Cannot be used with `lambda`. ...
      * @yamlKey initial_option
      */
-    initialOption?: string;
+    initialOption?: string | EmbedValue<string>;
     /**
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The interval on which to update the select by executing the `lambda`. Defau...
      * @yamlKey update_interval
@@ -1291,11 +1291,11 @@ interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey enum_datapoint */
-    enumDatapoint?: number;
+    enumDatapoint?: number | EmbedValue<number>;
     /** @yamlKey int_datapoint */
-    intDatapoint?: number;
+    intDatapoint?: number | EmbedValue<number>;
     options: unknown;
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
 }
 export type SelectProps = (SelectBaseProps & {
     platform: "copy";

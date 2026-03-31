@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Context mechanism — ported from Resolut useContext.tsx
 //
-// A global push/pop stack per context ID lets _withScriptScope establish a
+// A global push/pop stack per context ID lets withScriptScope establish a
 // scope frame and restore it after the render pass completes.
 //
 // Providers are implemented as function components that render a <context>

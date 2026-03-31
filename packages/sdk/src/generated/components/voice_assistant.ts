@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { media_player_MediaPlayer, micro_wake_word_MicroWakeWord, microphone_Microphone, speaker_Speaker, voice_assistant_VoiceAssistant } from "../markers";
 export interface VoiceAssistantMicrophoneProps {
@@ -12,7 +12,7 @@ export interface VoiceAssistantMicrophoneProps {
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
     /** @yamlKey gain_factor */
-    gainFactor?: number;
+    gainFactor?: number | EmbedValue<number>;
 }
 export interface VoiceAssistantProps extends _CoreComponent {
     /** [Microphone Source Configuration](/components/microphone#config-microphone-source): The [microphone](/components/micr... */
@@ -28,7 +28,7 @@ export interface VoiceAssistantProps extends _CoreComponent {
      * boolean: Enable wake word on the assist pipeline. Defaults to `false`.
      * @yamlKey use_wake_word
      */
-    useWakeWord?: boolean;
+    useWakeWord?: boolean | EmbedValue<boolean>;
     /**
      * [ID](/guides/configuration-types#id): The [micro_wake_word](/components/micro_wake_word/) component used for wake wor...
      * @yamlKey micro_wake_word
@@ -38,12 +38,12 @@ export interface VoiceAssistantProps extends _CoreComponent {
      * integer: The noise suppression level to apply to the assist pipeline. Between 0 and 4 inclusive. Defaults to 0 (disab...
      * @yamlKey noise_suppression_level
      */
-    noiseSuppressionLevel?: number;
+    noiseSuppressionLevel?: number | EmbedValue<number>;
     /**
      * dBFS: Auto gain level to apply to the assist pipeline. Between 0dBFS and 31dBFS inclusive. Defaults to 0 (disabled).
      * @yamlKey auto_gain
      */
-    autoGain?: number;
+    autoGain?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): How long to wait before resetting the `conversation_id` sent to the voice a...
      * @yamlKey conversation_timeout

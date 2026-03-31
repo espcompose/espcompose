@@ -1,15 +1,15 @@
-import { ESPCompose } from "@esphome/compose";
 
-type ButtonProps = {
+type MyButtonProps = {
     text?: string,
+    bgColor?: string,
 }
 
-export const Button = (props: ButtonProps) => {
+export const MyButton = (props: MyButtonProps) => {
     return (
         <lvgl-button
             lineRounded={true}
             text={props.text}
-            bgColor="0x510121"
+            bgColor={props.bgColor}
             textColor="0xAAAAAA"
             height="80"
             width="160"

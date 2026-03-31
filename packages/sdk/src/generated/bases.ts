@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 
-import type { IPv4Address, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../types";
+import type { EmbedValue, IPv4Address, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../types";
 import type { Color, audio_dac_AudioDac, bedjet_BedJetHub, binary_sensor_BinarySensor, ble_client_BLEClient, display_Display, emc2101_Emc2101Component, esp32_ble_tracker_ESP32BLETracker, i2s_audio_I2SAudioComponent, modbus_controller_ModbusController, msa3xx_MSA3xxComponent, nextion_Nextion, packet_transport_PacketTransport, pipsolar_Pipsolar, power_supply_PowerSupply, pylontech_PylontechComponent, sensor_Sensor, spi_QuadSPIComponent, teleinfo_TeleInfo, time_RealTimeClock, uart_UARTComponent, udp_UDPComponent, uponor_smatrix_UponorSmatrixComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "./markers";
 export interface EthernetBaseManualIpProps {
     /**
@@ -25,7 +25,7 @@ export interface EthernetBaseManualIpProps {
 }
 export interface EthernetRmiiClkProps {
     mode: "CLK_EXT_IN" | "CLK_OUT";
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
 }
 export interface EthernetRmiiPhyRegistersProps {
     /** hex: The register address as a hex number (e.g. `0x10` for address 16) */
@@ -39,8 +39,8 @@ export interface EthernetRmiiPhyRegistersProps {
     pageId?: unknown;
 }
 export interface Bk72xxConfigFrameworkProps {
-    version?: string;
-    source?: string;
+    version?: string | EmbedValue<string>;
+    source?: string | EmbedValue<string>;
     loglevel?: "VERBOSE" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "NONE";
     debug?: Array<"NONE" | "WIFI" | "CLIENT" | "SERVER" | "SSL" | "OTA" | "FDB" | "MDNS" | "LWIP" | "LWIP_ASSERT">;
     /** @yamlKey sdk_silent */
@@ -48,7 +48,7 @@ export interface Bk72xxConfigFrameworkProps {
     /** @yamlKey uart_port */
     uartPort?: "0" | "1" | "2";
     /** @yamlKey gpio_recover */
-    gpioRecover?: boolean;
+    gpioRecover?: boolean | EmbedValue<boolean>;
     options?: Record<string, string>;
 }
 export interface Msa3xxCommonCalibrationProps {
@@ -61,13 +61,13 @@ export interface Msa3xxCommonCalibrationProps {
 }
 export interface Msa3xxCommonTransformProps {
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_z */
-    mirrorZ?: boolean;
+    mirrorZ?: boolean | EmbedValue<boolean>;
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
 }
 export interface PackagesPackageFilesProps {
     path: unknown;
@@ -101,39 +101,39 @@ export interface TouchscreenTransformProps {
      * boolean: If true, exchange the x and y axes.
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 export interface TouchscreenCalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 export interface ButtonWebServerProps {
     /** @yamlKey web_server_id */
@@ -210,7 +210,7 @@ export interface LightInitialStateProps {
     /** @yamlKey color_mode */
     colorMode?: "ON_OFF" | "BRIGHTNESS" | "WHITE" | "COLOR_TEMPERATURE" | "COLD_WARM_WHITE" | "RGB" | "RGB_WHITE" | "RGB_COLOR_TEMPERATURE" | "RGB_COLD_WARM_WHITE";
     /** boolean: The ON/OFF state for the light. */
-    state?: boolean;
+    state?: boolean | EmbedValue<boolean>;
     brightness?: unknown;
     /** @yamlKey color_brightness */
     colorBrightness?: unknown;
@@ -274,7 +274,7 @@ export interface NumberWebServerProps {
     sortingGroupId?: number;
 }
 export interface PacketTransportEncryptionEncryptionProps {
-    key: string;
+    key: string | EmbedValue<string>;
 }
 export interface PacketTransportTransportSensorsProps {
     id: RefProp<sensor_Sensor>;
@@ -287,7 +287,7 @@ export interface PacketTransportTransportBinarySensorsProps {
     broadcastId?: unknown;
 }
 export interface PacketTransportTransportProvidersPropsEncryptionProps {
-    key: string;
+    key: string | EmbedValue<string>;
 }
 export interface PacketTransportTransportProvidersProps {
     encryption?: PacketTransportTransportProvidersPropsEncryptionProps;
@@ -352,24 +352,24 @@ export interface _As3935 {
      * [Pin](/guides/configuration-types#pin): The IRQ pin, which indicates if a lightning strike has been detected.
      * @yamlKey irq_pin
      */
-    irqPin: Pin;
+    irqPin: Pin | EmbedValue<Pin>;
     /** boolean: Indicates if the sensor is used indoor. Defaults to `true`. */
-    indoor?: boolean;
+    indoor?: boolean | EmbedValue<boolean>;
     /**
      * int: Noise floor level is compared to known reference voltage. If this level is exceeded the chip will issue an inter...
      * @yamlKey noise_level
      */
-    noiseLevel?: number;
+    noiseLevel?: number | EmbedValue<number>;
     /**
      * int: Determines the threshold for events that trigger the IRQ pin. Defaults to `2`.
      * @yamlKey watchdog_threshold
      */
-    watchdogThreshold?: number;
+    watchdogThreshold?: number | EmbedValue<number>;
     /**
      * int: Helps to differentiate between false events and actual lightning. Increasing this value increases robustness at ...
      * @yamlKey spike_rejection
      */
-    spikeRejection?: number;
+    spikeRejection?: number | EmbedValue<number>;
     /**
      * int: The number of lightnings that must appear in a 15-minute time window before a lightning storm is detected. 15 mi...
      * @yamlKey lightning_threshold
@@ -379,33 +379,33 @@ export interface _As3935 {
      * boolean: This setting will return whether or not disturbers trigger the IRQ Pin. Defaults to `false`.
      * @yamlKey mask_disturber
      */
-    maskDisturber?: boolean;
+    maskDisturber?: boolean | EmbedValue<boolean>;
     /**
      * int: The antenna is designed to resonate at 500kHz and so can be tuned with the following setting. The accuracy of th...
      * @yamlKey div_ratio
      */
     divRatio?: "0" | "16" | "32" | "64" | "128";
     /** int: This setting will add capacitance to the series RLC antenna on the product to help tune its resonance. The datas... */
-    capacitance?: number;
+    capacitance?: number | EmbedValue<number>;
     /**
      * boolean: Start sensor in antenna tuning mode. It will emit oscillator frequency to be read on the INT pin. Please fol...
      * @yamlKey tune_antenna
      */
-    tuneAntenna?: boolean;
+    tuneAntenna?: boolean | EmbedValue<boolean>;
     /** boolean: Enable/disable oscillator calibration on startup. It is recommended to perform antenna tuning procedure firs... */
-    calibration?: boolean;
+    calibration?: boolean | EmbedValue<boolean>;
 }
 //  core.ENTITY_BASE_SCHEMA
 export interface _CoreEntityBase {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -422,12 +422,12 @@ export interface _EthernetRmii extends _EthernetBase {
      * [Pin](/guides/configuration-types#pin): The MDC pin of the board. Usually this is `GPIO23`.
      * @yamlKey mdc_pin
      */
-    mdcPin: Pin;
+    mdcPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The MDIO pin of the board. Usually this is `GPIO18`.
      * @yamlKey mdio_pin
      */
-    mdioPin: Pin;
+    mdioPin: Pin | EmbedValue<Pin>;
     /** @yamlKey clk_mode */
     clkMode?: "GPIO0_IN" | "GPIO0_OUT" | "GPIO16_OUT" | "GPIO17_OUT";
     clk?: EthernetRmiiClkProps;
@@ -435,12 +435,12 @@ export interface _EthernetRmii extends _EthernetBase {
      * int: The PHY addr type of the Ethernet controller. Defaults to 0.
      * @yamlKey phy_addr
      */
-    phyAddr?: number;
+    phyAddr?: number | EmbedValue<number>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin controlling the power/reset status of the Ethernet cont...
      * @yamlKey power_pin
      */
-    powerPin?: Pin;
+    powerPin?: Pin | EmbedValue<Pin>;
     /**
      * mapping: Arbitrary PHY register values to set after Ethernet initialization.
      * @yamlKey phy_registers
@@ -460,7 +460,7 @@ export interface _EthernetBase extends _CoreComponent {
      * string: Manually override what address to use to connect to the ESP. Defaults to auto-generated value. For example, i...
      * @yamlKey use_address
      */
-    useAddress?: string;
+    useAddress?: string | EmbedValue<string>;
     /**
      * MAC Address: Set the MAC address of the ethernet interface.
      * @yamlKey mac_address
@@ -483,37 +483,37 @@ export interface _EthernetSpi extends _EthernetBase {
      * [Pin](/guides/configuration-types#pin): The SPI clock pin.
      * @yamlKey clk_pin
      */
-    clkPin: Pin;
+    clkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The SPI MISO pin.
      * @yamlKey miso_pin
      */
-    misoPin: Pin;
+    misoPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The SPI MOSI pin.
      * @yamlKey mosi_pin
      */
-    mosiPin: Pin;
+    mosiPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The SPI chip select pin.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The interrupt pin. This variable is required for older frameworks. See below.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * float: The SPI clock speed. Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division of ...
      * @yamlKey clock_speed
      */
-    clockSpeed?: number;
+    clockSpeed?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): If `interrupt_pin` is not set, set the time interval for periodic polling. ...
      * @yamlKey polling_interval
@@ -522,7 +522,7 @@ export interface _EthernetSpi extends _EthernetBase {
 }
 //  bk72xx.CONFIG_SCHEMA
 export interface _Bk72xxConfig {
-    board: string;
+    board: string | EmbedValue<string>;
     family?: "BK7231N" | "BK7231Q" | "BK7231T" | "BK7251" | "LN882H" | "RTL8710B" | "RTL8720C";
     framework?: Bk72xxConfigFrameworkProps;
 }
@@ -558,18 +558,18 @@ export interface _PackagesPackage {
     /** string: The URL for the repository. */
     url: string;
     /** string: Base common path of included files. */
-    path?: string;
+    path?: string | EmbedValue<string>;
     /** string: Username to be used for authentication, if required. */
-    username?: string;
+    username?: string | EmbedValue<string>;
     /** string: Password to be used for authentication, if required. */
-    password?: string;
+    password?: string | EmbedValue<string>;
     file?: unknown;
     /** List of files to include. Can be one of: */
     files?: Array<PackagesPackageFilesProps>;
     /** string: The Git ref(erence) to be used when pulling content from the repository. */
     ref?: string;
     /** [Time](/guides/configuration-types#time): The interval at which the content from the repository should be refreshed. */
-    refresh?: string;
+    refresh?: string | EmbedValue<string>;
 }
 //  pn532.PN532_SCHEMA
 export interface _Pn532 extends _CoreComponent {
@@ -597,7 +597,7 @@ export interface _Rc522 extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to the RST line. Some tests shows the RC522 w...
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * [Automation](/automations): An automation to perform when a tag is read. See [`on_tag` Trigger](https://esphome.io/co...
      * @yamlKey on_tag
@@ -620,17 +620,17 @@ export interface _Sn74hc595Common {
      * [Pin Schema](/guides/configuration-types#pin-schema): Pin connected to SN74HC595 RCLK (ST_CP) pin
      * @yamlKey latch_pin
      */
-    latchPin: Pin;
+    latchPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Pin connected to SN74HC595 OE pin
      * @yamlKey oe_pin
      */
-    oePin?: Pin;
+    oePin?: Pin | EmbedValue<Pin>;
     /**
      * int: Number of daisy-chained shift registers, up to 256. Defaults to `1`.
      * @yamlKey sr_count
      */
-    srCount?: number;
+    srCount?: number | EmbedValue<number>;
 }
 //  uart.UART_DEVICE_SCHEMA
 export interface _UartDevice {
@@ -672,13 +672,13 @@ export interface _CoreMqttCommandComponent extends _CoreMqttComponent {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
 }
 //  core.MQTT_COMPONENT_SCHEMA
 export interface _CoreMqttComponent {
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -694,7 +694,7 @@ export interface _BinarySensor extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
-    triggerOnInitialState?: boolean;
+    triggerOnInitialState?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "battery" | "battery_charging" | "carbon_monoxide" | "cold" | "connectivity" | "door" | "" | "garage_door" | "gas" | "heat" | "light" | "lock" | "moisture" | "motion" | "moving" | "occupancy" | "opening" | "plug" | "power" | "presence" | "problem" | "running" | "safety" | "smoke" | "sound" | "tamper" | "update" | "vibration" | "window";
     filters?: Array<unknown>;
@@ -723,8 +723,8 @@ export interface _HomeassistantHomeAssistantImport {
      */
     entityId: string;
     /** string: The name of the state attribute to import from the specified entity. The entity state is used when this optio... */
-    attribute?: string;
-    internal?: boolean;
+    attribute?: string | EmbedValue<string>;
+    internal?: boolean | EmbedValue<boolean>;
 }
 //  nextion.binary_sensor.CONFIG_BINARY_SENSOR_SCHEMA
 export interface _NextionBinarySensorConfigBinarySensor {
@@ -744,7 +744,7 @@ export interface _NextionBinarySensorConfigBinarySensor {
      */
     foregroundColor?: RefProp<Color>;
     /** boolean: Visible or not */
-    visible?: boolean;
+    visible?: boolean | EmbedValue<boolean>;
     /**
      * string: The name of the Nextion component.
      * @yamlKey component_name
@@ -801,20 +801,20 @@ export interface _Touchscreen extends _CoreComponent {
 export interface _ModbusControllerModbusitembaseschema {
     /** @yamlKey modbus_controller_id */
     modbusControllerId?: RefProp<modbus_controller_ModbusController>;
-    address?: number;
+    address?: number | EmbedValue<number>;
     /** @yamlKey custom_command */
     customCommand?: Array<number>;
-    offset?: number;
+    offset?: number | EmbedValue<number>;
     /** @yamlKey byte_offset */
-    byteOffset?: number;
+    byteOffset?: number | EmbedValue<number>;
     bitmask?: number;
     /** @yamlKey skip_updates */
-    skipUpdates?: number;
+    skipUpdates?: number | EmbedValue<number>;
     /** @yamlKey force_new_range */
-    forceNewRange?: boolean;
+    forceNewRange?: boolean | EmbedValue<boolean>;
     lambda?: unknown;
     /** @yamlKey response_size */
-    responseSize?: number;
+    responseSize?: number | EmbedValue<number>;
 }
 //  msa3xx.MSA_SENSOR_SCHEMA
 export interface _Msa3xxMsaSensor {
@@ -838,11 +838,11 @@ export interface _Button extends _CoreEntityBase, _CoreMqttCommandComponent {
 //  canbus.CANBUS_SCHEMA
 export interface _Canbus extends _CoreComponent {
     /** @yamlKey can_id */
-    canId: number;
+    canId: number | EmbedValue<number>;
     /** @yamlKey bit_rate */
     bitRate?: "1KBPS" | "5KBPS" | "10KBPS" | "12K5BPS" | "16KBPS" | "20KBPS" | "25KBPS" | "31K25BPS" | "33KBPS" | "40KBPS" | "50KBPS" | "80KBPS" | "83K3BPS" | "95KBPS" | "100KBPS" | "125KBPS" | "200KBPS" | "250KBPS" | "500KBPS" | "800KBPS" | "1000KBPS";
     /** @yamlKey use_extended_id */
-    useExtendedId?: boolean;
+    useExtendedId?: boolean | EmbedValue<boolean>;
     /** @yamlKey on_frame */
     onFrame?: TriggerHandler;
 }
@@ -921,7 +921,7 @@ export interface _Cover extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: CoverWebServerProps;
     /** @yamlKey mqtt_json_state_payload */
-    mqttJsonStatePayload?: boolean;
+    mqttJsonStatePayload?: boolean | EmbedValue<boolean>;
     /** @yamlKey device_class */
     deviceClass?: "awning" | "blind" | "curtain" | "damper" | "door" | "" | "garage" | "gate" | "shade" | "shutter" | "window";
     /** @yamlKey position_command_topic */
@@ -959,7 +959,7 @@ export interface _DisplayFullDisplay extends _DisplayBasicDisplay {
      */
     autoClearEnabled?: boolean;
     /** @yamlKey show_test_card */
-    showTestCard?: boolean;
+    showTestCard?: boolean | EmbedValue<boolean>;
 }
 //  display.BASIC_DISPLAY_SCHEMA
 export interface _DisplayBasicDisplay extends _CoreComponent {
@@ -992,19 +992,19 @@ export interface _QspiDbiDisplayBase extends _DisplayFullDisplay {
      * boolean: When set, all partial display updates will start at the origin (0,0). Defaults to false.
      * @yamlKey draw_from_origin
      */
-    drawFromOrigin?: boolean;
+    drawFromOrigin?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The display enable pin.
      * @yamlKey enable_pin
      */
-    enablePin?: Pin;
+    enablePin?: Pin | EmbedValue<Pin>;
     /** int: A brightness value in the range 0-255 */
-    brightness?: number;
+    brightness?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_QuadSPIComponent>;
     /**
@@ -1018,12 +1018,12 @@ export interface _QspiDbiDisplayBase extends _DisplayFullDisplay {
      */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The chip select pin.
      * @yamlKey cs_pin
      */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 //  fan._FAN_SCHEMA
 export interface _Fan extends _CoreEntityBase, _CoreMqttCommandComponent {
@@ -1161,13 +1161,13 @@ export interface _OutputFloatOutput extends _OutputBinaryOutput {
     /** @yamlKey min_power */
     minPower?: unknown;
     /** @yamlKey zero_means_zero */
-    zeroMeansZero?: boolean;
+    zeroMeansZero?: boolean | EmbedValue<boolean>;
 }
 //  output.BINARY_OUTPUT_SCHEMA
 export interface _OutputBinaryOutput {
     /** @yamlKey power_supply */
     powerSupply?: RefProp<power_supply_PowerSupply>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
 }
 //  emc2101.EMC2101_COMPONENT_SCHEMA
 export interface _Emc2101Component {
@@ -1181,15 +1181,15 @@ export interface _Sensor extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -1209,7 +1209,7 @@ export interface _Sensor extends _CoreEntityBase, _CoreMqttComponent {
 //  nextion.sensor.CONFIG_SENSOR_COMPONENT_SCHEMA
 export interface _NextionSensorConfigSensorComponent extends _NextionBinarySensorConfigBinarySensor {
     /** @yamlKey font_id */
-    fontId?: number;
+    fontId?: number | EmbedValue<number>;
 }
 //  pylontech.PYLONTECH_COMPONENT_SCHEMA
 export interface _PylontechComponent {
@@ -1219,14 +1219,14 @@ export interface _PylontechComponent {
      */
     pylontechId?: RefProp<pylontech_PylontechComponent>;
     /** Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries. */
-    battery: number;
+    battery: number | EmbedValue<number>;
 }
 //  teleinfo.TELEINFO_LISTENER_SCHEMA
 export interface _TeleinfoListener {
     /** @yamlKey teleinfo_id */
     teleinfoId?: RefProp<teleinfo_TeleInfo>;
     /** @yamlKey tag_name */
-    tagName: string;
+    tagName: string | EmbedValue<string>;
 }
 //  speaker.SPEAKER_SCHEMA
 export interface _Speaker {
@@ -1236,12 +1236,12 @@ export interface _Speaker {
      */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
     /**
      * positive integer: Sample rate to convert to. Must be between `8000` and `48000`. Defaults to the output speaker's sam...
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * [ID](/guides/configuration-types#id): The [audio DAC](/components/audio_dac/) to use for volume control.
      * @yamlKey audio_dac
@@ -1256,7 +1256,7 @@ export interface _I2sAudioSpeakerBase extends _Speaker, _CoreComponent {
     /** @yamlKey i2s_mode */
     i2sMode?: "primary" | "secondary";
     /** @yamlKey use_apll */
-    useApll?: boolean;
+    useApll?: boolean | EmbedValue<boolean>;
     /** @yamlKey bits_per_channel */
     bitsPerChannel?: "8" | "16" | "24" | "32" | "default";
     /** @yamlKey mclk_multiple */
@@ -1327,7 +1327,7 @@ export interface _TemplateDatetime_Base extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current value... */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template datetime will im... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey set_action
@@ -1337,7 +1337,7 @@ export interface _TemplateDatetime_Base extends _CoreComponent {
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The interval on which to update the datetime by executing the `lambda`. Def...
      * @yamlKey update_interval
@@ -1370,13 +1370,13 @@ export interface _I2sAudioMicrophoneBase extends _Microphone, _CoreComponent {
     /** @yamlKey i2s_mode */
     i2sMode?: "primary" | "secondary";
     /** @yamlKey use_apll */
-    useApll?: boolean;
+    useApll?: boolean | EmbedValue<boolean>;
     /** @yamlKey bits_per_channel */
     bitsPerChannel?: "8" | "16" | "24" | "32" | "default";
     /** @yamlKey mclk_multiple */
     mclkMultiple?: "128" | "256" | "384" | "512";
     /** @yamlKey correct_dc_offset */
-    correctDcOffset?: boolean;
+    correctDcOffset?: boolean | EmbedValue<boolean>;
 }
 //  microphone.MICROPHONE_SCHEMA
 export interface _Microphone {
@@ -1386,9 +1386,9 @@ export interface _Microphone {
      */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     /** @yamlKey num_channels */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
     /** @yamlKey sample_rate */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * [Automation](/automations): An automation to perform when new data is received.
      * @yamlKey on_data
@@ -1410,7 +1410,7 @@ export interface _Number extends _CoreEntityBase, _CoreMqttCommandComponent {
         x: number;
     }>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -1422,16 +1422,16 @@ export interface _HomeassistantHomeAssistantImportControl {
      * @yamlKey entity_id
      */
     entityId: string;
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
 }
 //  packet_transport.TRANSPORT_SCHEMA
 export interface _PacketTransportTransport extends _CoreComponent, _PacketTransportEncryption {
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /** @yamlKey rolling_code_enable */
-    rollingCodeEnable?: boolean;
+    rollingCodeEnable?: boolean | EmbedValue<boolean>;
     /** @yamlKey ping_pong_enable */
-    pingPongEnable?: boolean;
+    pingPongEnable?: boolean | EmbedValue<boolean>;
     /** @yamlKey ping_pong_recycle_time */
     pingPongRecycleTime?: TimePeriod;
     sensors?: Array<PacketTransportTransportSensorsProps>;
@@ -1463,7 +1463,7 @@ export interface _Switch extends _CoreEntityBase, _CoreMqttCommandComponent {
     webServer?: SwitchWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */

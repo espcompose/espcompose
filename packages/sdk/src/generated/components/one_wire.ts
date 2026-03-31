@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ds2484_DS2484OneWireBus, gpio_GPIOOneWireBus, i2c_I2CBus } from "../markers";
 interface Ds2484Props extends _CoreComponent {
@@ -11,12 +11,12 @@ interface Ds2484Props extends _CoreComponent {
      * defaults to `false`: enables DS2484 `active_pullup`.
      * @yamlKey active_pullup
      */
-    activePullup?: boolean;
+    activePullup?: boolean | EmbedValue<boolean>;
     /**
      * defaults to `false`: enables DS2484 `strong_pullup`.
      * @yamlKey strong_pullup
      */
-    strongPullup?: boolean;
+    strongPullup?: boolean | EmbedValue<boolean>;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I2C](/components/i2c/). Required if you have co...
      * @yamlKey i2c_id
@@ -27,7 +27,7 @@ interface Ds2484Props extends _CoreComponent {
 }
 interface GpioProps extends _CoreComponent {
     /** number: The pin which will be use for bus communication. Note that 1-wire is a bi-directional bus so the selected GPI... */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
 }
 export type OneWireProps = ({
     platform: "ds2484";

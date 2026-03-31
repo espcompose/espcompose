@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { opentherm_OpenthermHub, sensor_Sensor } from "../markers";
 export interface OpenthermProps extends _CoreComponent {
@@ -11,31 +11,31 @@ export interface OpenthermProps extends _CoreComponent {
      * number: The pin of the OpenTherm hardware bridge which is usually labeled `out` on the board.
      * @yamlKey in_pin
      */
-    inPin: Pin;
+    inPin: Pin | EmbedValue<Pin>;
     /**
      * number: The pin of the OpenTherm hardware bridge which is usually labeled `in` on the board.
      * @yamlKey out_pin
      */
-    outPin: Pin;
+    outPin: Pin | EmbedValue<Pin>;
     /** @yamlKey ch_enable */
-    chEnable?: boolean;
+    chEnable?: boolean | EmbedValue<boolean>;
     /** @yamlKey dhw_enable */
-    dhwEnable?: boolean;
+    dhwEnable?: boolean | EmbedValue<boolean>;
     /** @yamlKey cooling_enable */
-    coolingEnable?: boolean;
+    coolingEnable?: boolean | EmbedValue<boolean>;
     /** @yamlKey otc_active */
-    otcActive?: boolean;
+    otcActive?: boolean | EmbedValue<boolean>;
     /** @yamlKey ch2_active */
-    ch2Active?: boolean;
+    ch2Active?: boolean | EmbedValue<boolean>;
     /** @yamlKey summer_mode_active */
-    summerModeActive?: boolean;
+    summerModeActive?: boolean | EmbedValue<boolean>;
     /** @yamlKey dhw_block */
-    dhwBlock?: boolean;
+    dhwBlock?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Synchronous communication mode prevents other components from disabling interrupts while we are talking to t...
      * @yamlKey sync_mode
      */
-    syncMode?: boolean;
+    syncMode?: boolean | EmbedValue<boolean>;
     /** @yamlKey before_send */
     beforeSend?: TriggerHandler;
     /** @yamlKey before_process_response */
@@ -64,12 +64,12 @@ export interface OpenthermProps extends _CoreComponent {
      * byte [0-255]: Controller product type
      * @yamlKey controller_product_type
      */
-    controllerProductType?: number;
+    controllerProductType?: number | EmbedValue<number>;
     /**
      * byte [0-255]: Controller product version
      * @yamlKey controller_product_version
      */
-    controllerProductVersion?: number;
+    controllerProductVersion?: number | EmbedValue<number>;
     /**
      * float: Version of OpenTherm implemented by controller
      * @yamlKey opentherm_version_controller
@@ -79,12 +79,12 @@ export interface OpenthermProps extends _CoreComponent {
      * byte [0-255]: Controller configuration
      * @yamlKey controller_configuration
      */
-    controllerConfiguration?: number;
+    controllerConfiguration?: number | EmbedValue<number>;
     /**
      * byte [0-255]: Controller ID code
      * @yamlKey controller_id
      */
-    controllerId?: number;
+    controllerId?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

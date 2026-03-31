@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { seeed_mr24hpc1_MR24HPC1Component, uart_UARTComponent } from "../markers";
 export interface SeeedMr24hpc1Props extends _CoreComponent {

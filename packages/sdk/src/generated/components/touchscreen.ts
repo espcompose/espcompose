@@ -3,175 +3,175 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _Touchscreen } from "../bases";
 import type { axs15231_AXS15231Touchscreen, chsc6x_CHSC6XTouchscreen, cst226_CST226Touchscreen, cst816_CST816Touchscreen, display_Display, ektf2232_EKTF2232Touchscreen, ft5x06_FT5x06Touchscreen, ft63x6_FT63X6Touchscreen, gt911_GT911Touchscreen, i2c_I2CBus, lilygo_t5_47_LilygoT547Touchscreen, sdl_Sdl, sdl_SdlTouchscreen, spi_SPIComponent, tt21100_TT21100Touchscreen, xpt2046_XPT2046Component } from "../markers";
 interface Axs15231TransformProps {
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface Axs15231CalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 interface Chsc6xTransformProps {
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface Chsc6xCalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 interface LilygoT547TransformProps {
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface LilygoT547CalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 interface Cst226TransformProps {
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface Cst226CalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 interface Xpt2046TransformProps {
     /** @yamlKey swap_xy */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface Xpt2046CalibrationProps {
     /**
      * int: The raw value corresponding to the left
      * @yamlKey x_min
      */
-    xMin: number;
+    xMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the right
      * @yamlKey x_max
      */
-    xMax: number;
+    xMax: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the top
      * @yamlKey y_min
      */
-    yMin: number;
+    yMin: number | EmbedValue<number>;
     /**
      * int: The raw value corresponding to the bottom
      * @yamlKey y_max
      */
-    yMax: number;
+    yMax: number | EmbedValue<number>;
 }
 interface Cst816Props extends _Touchscreen {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The chip reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * boolean: Skip reading the chip ID on startup. May be required for some variants (e.g. CST816S) that do not respond to...
      * @yamlKey skip_probe
      */
-    skipProbe?: boolean;
+    skipProbe?: boolean | EmbedValue<boolean>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -194,12 +194,12 @@ interface Axs15231Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -222,7 +222,7 @@ interface Chsc6xProps extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -232,12 +232,12 @@ interface Ektf2232Props extends _Touchscreen {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin: Pin;
+    interruptPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The reset pin of the controller.
      * @yamlKey reset_pin
      */
-    resetPin: Pin;
+    resetPin: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -247,7 +247,7 @@ interface Ft5x06Props extends _Touchscreen {
      * [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to use as the interrupt pin. This pin is used to d...
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -257,13 +257,13 @@ interface Ft63x6Props extends _Touchscreen {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The reset pin of the controller.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
-    threshold?: number;
+    resetPin?: Pin | EmbedValue<Pin>;
+    threshold?: number | EmbedValue<number>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -286,7 +286,7 @@ interface LilygoT547Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin. Must be `GPIO13`.
      * @yamlKey interrupt_pin
      */
-    interruptPin: Pin;
+    interruptPin: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -309,12 +309,12 @@ interface Cst226Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The chip reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -324,12 +324,12 @@ interface Gt911Props extends _Touchscreen {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin if run to an on-MCU pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The reset pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -343,12 +343,12 @@ interface Tt21100Props extends _Touchscreen {
      * [Pin Schema](/guides/configuration-types#pin-schema): The touch detection pin.
      * @yamlKey interrupt_pin
      */
-    interruptPin?: Pin;
+    interruptPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The reset pin of the controller.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -368,8 +368,8 @@ interface Xpt2046Props extends _CoreComponent {
     /** @yamlKey update_interval */
     updateInterval?: unknown;
     /** @yamlKey interrupt_pin */
-    interruptPin?: Pin;
-    threshold?: number;
+    interruptPin?: Pin | EmbedValue<Pin>;
+    threshold?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -377,9 +377,9 @@ interface Xpt2046Props extends _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 export type TouchscreenProps = ({
     platform: "cst816";

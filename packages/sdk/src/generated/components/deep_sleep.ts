@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { deep_sleep_DeepSleepComponent } from "../markers";
 export interface DeepSleepEsp32Ext1WakeupProps {
@@ -42,7 +42,7 @@ export interface DeepSleepProps extends _CoreComponent {
      * boolean: Only on ESP32. Use a touch event to wakeup from deep sleep. To be able to wakeup from a touch event, [Binary...
      * @yamlKey touch_wakeup
      */
-    touchWakeup?: boolean;
+    touchWakeup?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

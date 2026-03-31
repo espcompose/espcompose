@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BthomeMithermometerBleDevice } from "../bases";
 import type { ruuvi_ble_RuuviListener } from "../markers";
 export interface RuuviBleProps extends _BthomeMithermometerBleDevice {

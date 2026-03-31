@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _HomeassistantHomeAssistantImportControl, _ModbusControllerModbusitembaseschema, _NextionSensorConfigSensorComponent, _PipsolarComponent, _UartDevice } from "../bases";
 import type { Color, EntityBase, at581x_AT581XComponent, at581x_RFSwitch, ble_client_BLEClientSwitch, copy_CopySwitch, dfrobot_sen0395_DfrobotSen0395Component, dfrobot_sen0395_Sen0395LedSwitch, dfrobot_sen0395_Sen0395PowerSwitch, dfrobot_sen0395_Sen0395StartAfterBootSwitch, dfrobot_sen0395_Sen0395UartPresenceSwitch, factory_reset_FactoryResetSwitch, gpio_GPIOSwitch, gree_GreeClimate, haier_HaierClimateBase, hbridge_HBridgeSwitch, homeassistant_HomeassistantSwitch, ld2410_LD2410Component, ld2412_LD2412Component, ld2450_LD2450Component, lvgl_LVGLSwitch, lvgl_LvPseudoButton, micronova_MicroNova, modbus_controller_ModbusSwitch, nextion_NextionSwitch, opentherm_OpenthermHub, output_BinaryOutput, output_OutputSwitch, restart_RestartSwitch, safe_mode_SafeModeComponent, safe_mode_SafeModeSwitch, seeed_mr24hpc1_MR24HPC1Component, shutdown_ShutdownSwitch, switch__Switch, template__TemplateSwitch, tm1638_TM1638Component, tm1638_TM1638SwitchLed, tuya_Tuya, tuya_TuyaSwitch, uart_UARTSwitch, web_server_WebServer, zigbee_ZigbeeComponent, zigbee_ZigbeeSwitch } from "../markers";
 interface SwitchWebServerProps {
@@ -33,12 +33,12 @@ interface GreeTurboProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -49,8 +49,8 @@ interface GreeTurboProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -59,12 +59,12 @@ interface GreeTurboProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: GreeTurboPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -97,12 +97,12 @@ interface GreeLightProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -113,8 +113,8 @@ interface GreeLightProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -123,12 +123,12 @@ interface GreeLightProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: GreeLightPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -161,12 +161,12 @@ interface GreeHealthProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -177,8 +177,8 @@ interface GreeHealthProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -187,12 +187,12 @@ interface GreeHealthProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: GreeHealthPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -225,12 +225,12 @@ interface GreeXfanProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -241,8 +241,8 @@ interface GreeXfanProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -251,12 +251,12 @@ interface GreeXfanProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: GreeXfanPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -289,12 +289,12 @@ interface HaierDisplayProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -305,8 +305,8 @@ interface HaierDisplayProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -315,12 +315,12 @@ interface HaierDisplayProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierDisplayPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -353,12 +353,12 @@ interface HaierHealthModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -369,8 +369,8 @@ interface HaierHealthModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -379,12 +379,12 @@ interface HaierHealthModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierHealthModePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -417,12 +417,12 @@ interface HaierBeeperProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -433,8 +433,8 @@ interface HaierBeeperProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -443,12 +443,12 @@ interface HaierBeeperProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierBeeperPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -481,12 +481,12 @@ interface HaierQuietModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -497,8 +497,8 @@ interface HaierQuietModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -507,12 +507,12 @@ interface HaierQuietModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierQuietModePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -545,12 +545,12 @@ interface Ld2410EngineeringModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -561,8 +561,8 @@ interface Ld2410EngineeringModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -571,12 +571,12 @@ interface Ld2410EngineeringModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410EngineeringModePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -609,12 +609,12 @@ interface Ld2410BluetoothProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -625,8 +625,8 @@ interface Ld2410BluetoothProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -635,12 +635,12 @@ interface Ld2410BluetoothProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -673,12 +673,12 @@ interface Ld2412BluetoothProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -689,8 +689,8 @@ interface Ld2412BluetoothProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -699,12 +699,12 @@ interface Ld2412BluetoothProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -737,12 +737,12 @@ interface Ld2412EngineeringModeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -753,8 +753,8 @@ interface Ld2412EngineeringModeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -763,12 +763,12 @@ interface Ld2412EngineeringModeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412EngineeringModePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -801,12 +801,12 @@ interface Ld2450BluetoothProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -817,8 +817,8 @@ interface Ld2450BluetoothProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -827,12 +827,12 @@ interface Ld2450BluetoothProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450BluetoothPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -865,12 +865,12 @@ interface Ld2450MultiTargetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -881,8 +881,8 @@ interface Ld2450MultiTargetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -891,12 +891,12 @@ interface Ld2450MultiTargetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450MultiTargetPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -929,12 +929,12 @@ interface MicronovaStoveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -945,8 +945,8 @@ interface MicronovaStoveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -955,12 +955,12 @@ interface MicronovaStoveProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: MicronovaStovePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1007,12 +1007,12 @@ interface OpenthermChEnableProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1023,8 +1023,8 @@ interface OpenthermChEnableProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1033,12 +1033,12 @@ interface OpenthermChEnableProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermChEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1073,12 +1073,12 @@ interface OpenthermDhwEnableProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1089,8 +1089,8 @@ interface OpenthermDhwEnableProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1099,12 +1099,12 @@ interface OpenthermDhwEnableProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermDhwEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1139,12 +1139,12 @@ interface OpenthermCoolingEnableProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1155,8 +1155,8 @@ interface OpenthermCoolingEnableProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1165,12 +1165,12 @@ interface OpenthermCoolingEnableProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingEnablePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1205,12 +1205,12 @@ interface OpenthermOtcActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1221,8 +1221,8 @@ interface OpenthermOtcActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1231,12 +1231,12 @@ interface OpenthermOtcActiveProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermOtcActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1271,12 +1271,12 @@ interface OpenthermCh2ActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1287,8 +1287,8 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1297,12 +1297,12 @@ interface OpenthermCh2ActiveProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermCh2ActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1337,12 +1337,12 @@ interface OpenthermSummerModeActiveProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1353,8 +1353,8 @@ interface OpenthermSummerModeActiveProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1363,12 +1363,12 @@ interface OpenthermSummerModeActiveProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermSummerModeActivePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1403,12 +1403,12 @@ interface OpenthermDhwBlockProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1419,8 +1419,8 @@ interface OpenthermDhwBlockProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1429,12 +1429,12 @@ interface OpenthermDhwBlockProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: OpenthermDhwBlockPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1469,12 +1469,12 @@ interface PipsolarOutputSourcePriorityUtilityProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1485,8 +1485,8 @@ interface PipsolarOutputSourcePriorityUtilityProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1495,12 +1495,12 @@ interface PipsolarOutputSourcePriorityUtilityProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityUtilityPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1535,12 +1535,12 @@ interface PipsolarOutputSourcePrioritySolarProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1551,8 +1551,8 @@ interface PipsolarOutputSourcePrioritySolarProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1561,12 +1561,12 @@ interface PipsolarOutputSourcePrioritySolarProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePrioritySolarPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1601,12 +1601,12 @@ interface PipsolarOutputSourcePriorityBatteryProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1617,8 +1617,8 @@ interface PipsolarOutputSourcePriorityBatteryProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1627,12 +1627,12 @@ interface PipsolarOutputSourcePriorityBatteryProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityBatteryPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1667,12 +1667,12 @@ interface PipsolarOutputSourcePriorityHybridProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1683,8 +1683,8 @@ interface PipsolarOutputSourcePriorityHybridProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1693,12 +1693,12 @@ interface PipsolarOutputSourcePriorityHybridProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarOutputSourcePriorityHybridPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1733,12 +1733,12 @@ interface PipsolarInputVoltageRangeProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1749,8 +1749,8 @@ interface PipsolarInputVoltageRangeProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1759,12 +1759,12 @@ interface PipsolarInputVoltageRangeProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarInputVoltageRangePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1799,12 +1799,12 @@ interface PipsolarPvOkConditionForParallelProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1815,8 +1815,8 @@ interface PipsolarPvOkConditionForParallelProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1825,12 +1825,12 @@ interface PipsolarPvOkConditionForParallelProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarPvOkConditionForParallelPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1865,12 +1865,12 @@ interface PipsolarPvPowerBalanceProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1881,8 +1881,8 @@ interface PipsolarPvPowerBalanceProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1891,12 +1891,12 @@ interface PipsolarPvPowerBalanceProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: PipsolarPvPowerBalancePropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1931,12 +1931,12 @@ interface SeeedMr24hpc1UnderlyingOpenFunctionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1947,8 +1947,8 @@ interface SeeedMr24hpc1UnderlyingOpenFunctionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1957,12 +1957,12 @@ interface SeeedMr24hpc1UnderlyingOpenFunctionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1UnderlyingOpenFunctionPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -1987,7 +1987,7 @@ interface SwitchBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     webServer?: SwitchWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -2064,7 +2064,7 @@ interface FactoryResetProps extends _CoreComponent {
 }
 interface GpioProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to use for the switch. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /** list: A list of other GPIO switches in an interlock group. See [Interlocking](https://esphome.io/components/switch/gp... */
     interlock?: Array<RefProp<switch__Switch>>;
     /**
@@ -2107,12 +2107,12 @@ interface HbridgeProps extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to pulse to turn on the switch.
      * @yamlKey on_pin
      */
-    onPin: Pin;
+    onPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to pulse to turn off the switch.
      * @yamlKey off_pin
      */
-    offPin: Pin;
+    offPin: Pin | EmbedValue<Pin>;
     /**
      * [Time](/guides/configuration-types#time): The length in milliseconds of the pulse sent on `on_pin` and `off_pin` to c...
      * @yamlKey pulse_length
@@ -2124,7 +2124,7 @@ interface HbridgeProps extends _CoreComponent {
      */
     waitTime?: TimePeriod;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the switch will immediately u... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
 }
 interface HomeassistantProps extends _HomeassistantHomeAssistantImportControl, _CoreComponent {
 }
@@ -2179,11 +2179,11 @@ interface ModbusControllerProps extends _CoreComponent, _ModbusControllerModbusi
     /** @yamlKey restore_mode */
     restoreMode?: unknown;
     /** @yamlKey assumed_state */
-    assumedState?: boolean;
+    assumedState?: boolean | EmbedValue<boolean>;
     /** @yamlKey register_type */
     registerType?: "custom" | "coil" | "holding" | "discrete_input" | "read";
     /** @yamlKey use_write_multiple */
-    useWriteMultiple?: boolean;
+    useWriteMultiple?: boolean | EmbedValue<boolean>;
     /** @yamlKey write_lambda */
     writeLambda?: unknown;
 }
@@ -2293,12 +2293,12 @@ interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state of the swi... */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template switch will imme... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether the true state of the switch is not known. This will make the Home Assistant frontend show buttons f...
      * @yamlKey assumed_state
      */
-    assumedState?: boolean;
+    assumedState?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey turn_off_action
@@ -2313,13 +2313,13 @@ interface TemplateProps extends _CoreComponent {
 interface Tm1638Props extends _CoreComponent {
     /** @yamlKey tm1638_id */
     tm1638Id?: RefProp<tm1638_TM1638Component>;
-    led: number;
+    led: number | EmbedValue<number>;
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey switch_datapoint */
-    switchDatapoint: number;
+    switchDatapoint: number | EmbedValue<number>;
 }
 interface UartProps extends _UartDevice, _CoreComponent {
     data: UartDataProps;

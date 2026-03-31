@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Bk72xxConfig } from "../bases";
 import type { libretiny_LTComponent } from "../markers";
 export interface Rtl87xxProps extends _Bk72xxConfig {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { wifi_WiFiComponent } from "../markers";
 export interface WifiNetworksPropsManualIpProps {
     /** IPv4 address: The main DNS server to use. */
@@ -21,9 +21,9 @@ export interface WifiNetworksPropsManualIpProps {
     subnet: IPv4Address;
 }
 export interface WifiNetworksPropsEapProps {
-    identity?: string;
-    username?: string;
-    password?: string;
+    identity?: string | EmbedValue<string>;
+    username?: string | EmbedValue<string>;
+    password?: string | EmbedValue<string>;
     /** @yamlKey certificate_authority */
     certificateAuthority?: unknown;
     /** @yamlKey ttls_phase_2 */
@@ -38,8 +38,8 @@ export interface WifiNetworksProps {
     /** @yamlKey manual_ip */
     manualIp?: WifiNetworksPropsManualIpProps;
     bssid?: unknown;
-    hidden?: boolean;
-    priority?: number;
+    hidden?: boolean | EmbedValue<boolean>;
+    priority?: number | EmbedValue<number>;
     eap?: WifiNetworksPropsEapProps;
 }
 export interface WifiManualIpProps {
@@ -58,9 +58,9 @@ export interface WifiManualIpProps {
     subnet: IPv4Address;
 }
 export interface WifiEapProps {
-    identity?: string;
-    username?: string;
-    password?: string;
+    identity?: string | EmbedValue<string>;
+    username?: string | EmbedValue<string>;
+    password?: string | EmbedValue<string>;
     /** @yamlKey certificate_authority */
     certificateAuthority?: unknown;
     /** @yamlKey ttls_phase_2 */
@@ -100,12 +100,12 @@ export interface WifiProps {
      * boolean: If enabled, directly connects to WiFi network without doing a full scan first. This can significantly improv...
      * @yamlKey fast_connect
      */
-    fastConnect?: boolean;
+    fastConnect?: boolean | EmbedValue<boolean>;
     /**
      * string: Manually override what address to use to connect to the ESP. Defaults to auto-generated value. Example, if yo...
      * @yamlKey use_address
      */
-    useAddress?: string;
+    useAddress?: string | EmbedValue<string>;
     /**
      * string: Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode that the device will accept when con...
      * @yamlKey min_auth_mode
@@ -120,12 +120,12 @@ export interface WifiProps {
      * bool: Only on `esp32`. Enable 802.11v BSS Transition Management support.
      * @yamlKey enable_btm
      */
-    enableBtm?: boolean;
+    enableBtm?: boolean | EmbedValue<boolean>;
     /**
      * bool: Only on `esp32`. Enable 802.11k Radio Resource Management support.
      * @yamlKey enable_rrm
      */
-    enableRrm?: boolean;
+    enableRrm?: boolean | EmbedValue<boolean>;
     /**
      * string: Only on `esp32-c5`. Controls which WiFi frequency band the device uses. Possible values are `AUTO` (use both ...
      * @yamlKey band_mode
@@ -135,17 +135,17 @@ export interface WifiProps {
      * boolean: If enabled, then the device will perform WiFi scans in a passive fashion. Defaults to `false`.
      * @yamlKey passive_scan
      */
-    passiveScan?: boolean;
+    passiveScan?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
      * @yamlKey enable_on_boot
      */
-    enableOnBoot?: boolean;
+    enableOnBoot?: boolean | EmbedValue<boolean>;
     /**
      * bool: Enable basic post-connect roaming for stationary devices. After connecting to a non-hidden network, the device ...
      * @yamlKey post_connect_roaming
      */
-    postConnectRoaming?: boolean;
+    postConnectRoaming?: boolean | EmbedValue<boolean>;
     /**
      * [Automation](/automations): An action to be performed when a connection is established.
      * @yamlKey on_connect
@@ -160,7 +160,7 @@ export interface WifiProps {
      * boolean: For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM. Defaults to `false`. Req...
      * @yamlKey use_psram
      */
-    usePsram?: boolean;
+    usePsram?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

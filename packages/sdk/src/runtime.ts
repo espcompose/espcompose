@@ -1,9 +1,10 @@
 import yaml from 'yaml';
 import type { EspComposeElement, FunctionComponent } from './types';
-import { useScript, withScriptScope } from './hooks';
+import { createScript, withScriptScope } from './hooks';
 import { withReactiveScope, clearHAEntityCache } from './hooks';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
+
 import {
   Fragment,
   flattenFragments,
@@ -21,7 +22,7 @@ export * from './hooks';
 // ────────────────────────────────────────────────────────────────────────────
 
 function createElement(
-  type: string | FunctionComponent,
+  type: string | symbol | FunctionComponent,
   props: Record<string, unknown> | null,
   ...children: (EspComposeElement | EspComposeElement[] | null | undefined)[]
 ): EspComposeElement {
@@ -55,6 +56,11 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     return toPlainObject(Array.isArray(result) ? result : result);
  }
 
+  // Fragment: recurse into children
+  if (el.type === Fragment) {
+    return toPlainObject(el.props.children as EspComposeElement | EspComposeElement[] | undefined);
+  }
+
   const { allProps, children } = extractElementProps(el);
 
   // Context provider: wrap child serialisation in withContext
@@ -84,8 +90,12 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     return { lvgl: Object.keys(lvglData).length > 0 ? lvglData : null };
   }
 
+  // At this point, type must be a string (fragments and function components
+  // have already been handled above).
+  const type = el.type as string;
+
   // LVGL widget elements: { widget_type: { ...props, widgets?: [...] } }
-  if (isLvglElement(el.type)) {
+  if (isLvglElement(type)) {
     return lvglWidgetToPlain(el);
   }
 
@@ -94,7 +104,7 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     children as EspComposeElement | EspComposeElement[] | undefined
   );
   const data = stripUndefined(keysToSnakeCase({ ...allProps, ...childData }));
-  return { [toYamlKey(el.type as string)]: Object.keys(data).length > 0 ? data : null };
+  return { [toYamlKey(type)]: Object.keys(data).length > 0 ? data : null };
 }
 
 /**
@@ -230,7 +240,7 @@ export const ESPCompose = {
   Fragment,
   render,
   toYAML,
-  useScript,
+  createScript,
   withScriptScope,
   withReactiveScope,
   clearHAEntityCache,

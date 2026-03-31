@@ -1,29 +1,13 @@
 /**
- * Theme context — powered by the SDK's compile-time context mechanism.
+ * Theme context — reactive edition.
  *
- * `ThemeContext` defaults to `darkTheme`.  Wrap components in
- * `<ThemeProvider value={myTheme}>` to override for a subtree.
- * Components read the active theme via `useTheme()`.
+ * The old compile-time ThemeContext/ThemeProvider/useTheme() are replaced by
+ * the SDK's reactive theme system.  useReactiveTheme() returns a proxy
+ * whose leaf properties are ReactiveNodes tied to C++ theme memos.
+ *
+ * This file re-exports the SDK hooks for convenience so existing UI
+ * component imports from '../theme/context' continue to work.
  */
 
-import { createContext, useContext, createContextProvider } from '@esphome/compose';
-import type { Theme } from './types';
-import { darkTheme } from './dark';
+export { useReactiveTheme } from '@esphome/compose';
 
-/** The theme context — defaults to `darkTheme` when no provider is present. */
-export const ThemeContext = createContext<Theme>(darkTheme);
-
-/** Read the active theme from the nearest `<ThemeProvider>`. */
-export function useTheme(): Theme {
-  return useContext(ThemeContext);
-}
-
-/**
- * Provide a theme to all descendant design-system components.
- *
- * @example
- * <ThemeProvider value={lightTheme}>
- *   <Screen padding="lg">…</Screen>
- * </ThemeProvider>
- */
-export const ThemeProvider = createContextProvider<Theme>(ThemeContext);

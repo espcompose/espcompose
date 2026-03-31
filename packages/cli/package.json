@@ -13,9 +13,10 @@
   ],
   "scripts": {
     "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @esphome/compose-eslint --external typescript-eslint",
+    "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
-    "test": "echo \"No tests yet\""
+    "test": "vitest run"
   },
   "keywords": [
     "esphome",
@@ -44,11 +45,13 @@
     "eslint": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
-    "which": "catalog:"
+    "which": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/which": "catalog:",
-    "tsup": "catalog:"
+    "tsup": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _UartDevice } from "../bases";
 import type { EntityBase, atm90e32_ATM90E32Component, bl0940_BL0940, bl0940_CalibrationResetButton, button_Button, copy_CopyButton, factory_reset_FactoryResetButton, haier_HonClimate, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, micronova_MicroNova, mqtt_MQTTButtonComponent, output_BinaryOutput, output_OutputButton, restart_RestartButton, safe_mode_SafeModeButton, safe_mode_SafeModeComponent, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60fda2_MR60FDA2Component, shutdown_ShutdownButton, template__TemplateButton, uart_UARTButton, wake_on_lan_WakeOnLanButton, web_server_WebServer } from "../markers";
 interface ButtonWebServerProps {
@@ -33,12 +33,12 @@ interface Atm90e32RunGainCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -49,8 +49,8 @@ interface Atm90e32RunGainCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -59,7 +59,7 @@ interface Atm90e32RunGainCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32RunGainCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -86,12 +86,12 @@ interface Atm90e32ClearGainCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -102,8 +102,8 @@ interface Atm90e32ClearGainCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -112,7 +112,7 @@ interface Atm90e32ClearGainCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ClearGainCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -139,12 +139,12 @@ interface Atm90e32RunOffsetCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -155,8 +155,8 @@ interface Atm90e32RunOffsetCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -165,7 +165,7 @@ interface Atm90e32RunOffsetCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32RunOffsetCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -192,12 +192,12 @@ interface Atm90e32ClearOffsetCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -208,8 +208,8 @@ interface Atm90e32ClearOffsetCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -218,7 +218,7 @@ interface Atm90e32ClearOffsetCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ClearOffsetCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -245,12 +245,12 @@ interface Atm90e32RunPowerOffsetCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -261,8 +261,8 @@ interface Atm90e32RunPowerOffsetCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -271,7 +271,7 @@ interface Atm90e32RunPowerOffsetCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32RunPowerOffsetCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -298,12 +298,12 @@ interface Atm90e32ClearPowerOffsetCalibrationProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -314,8 +314,8 @@ interface Atm90e32ClearPowerOffsetCalibrationProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -324,7 +324,7 @@ interface Atm90e32ClearPowerOffsetCalibrationProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Atm90e32ClearPowerOffsetCalibrationPropsWebServerProps;
     /** @yamlKey device_class */
@@ -351,12 +351,12 @@ interface HaierSelfCleaningProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -367,8 +367,8 @@ interface HaierSelfCleaningProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -377,7 +377,7 @@ interface HaierSelfCleaningProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierSelfCleaningPropsWebServerProps;
     /** @yamlKey device_class */
@@ -404,12 +404,12 @@ interface HaierSteriCleaningProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -420,8 +420,8 @@ interface HaierSteriCleaningProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -430,7 +430,7 @@ interface HaierSteriCleaningProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: HaierSteriCleaningPropsWebServerProps;
     /** @yamlKey device_class */
@@ -457,12 +457,12 @@ interface Ld2410FactoryResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -473,8 +473,8 @@ interface Ld2410FactoryResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -483,7 +483,7 @@ interface Ld2410FactoryResetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
@@ -510,12 +510,12 @@ interface Ld2410RestartProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -526,8 +526,8 @@ interface Ld2410RestartProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -536,7 +536,7 @@ interface Ld2410RestartProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410RestartPropsWebServerProps;
     /** @yamlKey device_class */
@@ -563,12 +563,12 @@ interface Ld2410QueryParamsProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -579,8 +579,8 @@ interface Ld2410QueryParamsProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -589,7 +589,7 @@ interface Ld2410QueryParamsProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2410QueryParamsPropsWebServerProps;
     /** @yamlKey device_class */
@@ -616,12 +616,12 @@ interface Ld2412FactoryResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -632,8 +632,8 @@ interface Ld2412FactoryResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -642,7 +642,7 @@ interface Ld2412FactoryResetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
@@ -669,12 +669,12 @@ interface Ld2412QueryParamsProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -685,8 +685,8 @@ interface Ld2412QueryParamsProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -695,7 +695,7 @@ interface Ld2412QueryParamsProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412QueryParamsPropsWebServerProps;
     /** @yamlKey device_class */
@@ -722,12 +722,12 @@ interface Ld2412RestartProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -738,8 +738,8 @@ interface Ld2412RestartProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -748,7 +748,7 @@ interface Ld2412RestartProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412RestartPropsWebServerProps;
     /** @yamlKey device_class */
@@ -775,12 +775,12 @@ interface Ld2412StartDynamicBackgroundCorrectionProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -791,8 +791,8 @@ interface Ld2412StartDynamicBackgroundCorrectionProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -801,7 +801,7 @@ interface Ld2412StartDynamicBackgroundCorrectionProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2412StartDynamicBackgroundCorrectionPropsWebServerProps;
     /** @yamlKey device_class */
@@ -828,12 +828,12 @@ interface Ld2420ApplyConfigProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -844,8 +844,8 @@ interface Ld2420ApplyConfigProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -854,7 +854,7 @@ interface Ld2420ApplyConfigProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420ApplyConfigPropsWebServerProps;
     /** @yamlKey device_class */
@@ -881,12 +881,12 @@ interface Ld2420RevertConfigProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -897,8 +897,8 @@ interface Ld2420RevertConfigProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -907,7 +907,7 @@ interface Ld2420RevertConfigProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420RevertConfigPropsWebServerProps;
     /** @yamlKey device_class */
@@ -934,12 +934,12 @@ interface Ld2420RestartModuleProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -950,8 +950,8 @@ interface Ld2420RestartModuleProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -960,7 +960,7 @@ interface Ld2420RestartModuleProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420RestartModulePropsWebServerProps;
     /** @yamlKey device_class */
@@ -987,12 +987,12 @@ interface Ld2420FactoryResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1003,8 +1003,8 @@ interface Ld2420FactoryResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1013,7 +1013,7 @@ interface Ld2420FactoryResetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2420FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1040,12 +1040,12 @@ interface Ld2450FactoryResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1056,8 +1056,8 @@ interface Ld2450FactoryResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1066,7 +1066,7 @@ interface Ld2450FactoryResetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1093,12 +1093,12 @@ interface Ld2450RestartProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1109,8 +1109,8 @@ interface Ld2450RestartProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1119,7 +1119,7 @@ interface Ld2450RestartProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: Ld2450RestartPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1146,12 +1146,12 @@ interface MicronovaCustomButtonProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1162,8 +1162,8 @@ interface MicronovaCustomButtonProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1172,7 +1172,7 @@ interface MicronovaCustomButtonProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: MicronovaCustomButtonPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1207,12 +1207,12 @@ interface SeeedMr24hpc1RestartProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1223,8 +1223,8 @@ interface SeeedMr24hpc1RestartProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1233,7 +1233,7 @@ interface SeeedMr24hpc1RestartProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1RestartPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1260,12 +1260,12 @@ interface SeeedMr24hpc1CustomSetEndProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1276,8 +1276,8 @@ interface SeeedMr24hpc1CustomSetEndProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1286,7 +1286,7 @@ interface SeeedMr24hpc1CustomSetEndProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1CustomSetEndPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1313,12 +1313,12 @@ interface SeeedMr60fda2GetRadarParametersProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1329,8 +1329,8 @@ interface SeeedMr60fda2GetRadarParametersProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1339,7 +1339,7 @@ interface SeeedMr60fda2GetRadarParametersProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2GetRadarParametersPropsWebServerProps;
     /** @yamlKey device_class */
@@ -1366,12 +1366,12 @@ interface SeeedMr60fda2FactoryResetProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -1382,8 +1382,8 @@ interface SeeedMr60fda2FactoryResetProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -1392,7 +1392,7 @@ interface SeeedMr60fda2FactoryResetProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2FactoryResetPropsWebServerProps;
     /** @yamlKey device_class */

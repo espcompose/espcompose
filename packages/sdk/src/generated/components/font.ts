@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { font_Glyph } from "../markers";
 export interface FontExtrasProps {
     /** string: The path of the font file with the extra glyphs. */
@@ -22,9 +22,9 @@ export interface FontProps {
      * boolean: By default, warnings are generated for any glyph that is included in the defined glyphsets but not present i...
      * @yamlKey ignore_missing_glyphs
      */
-    ignoreMissingGlyphs?: boolean;
+    ignoreMissingGlyphs?: boolean | EmbedValue<boolean>;
     /** int: The desired size of the font. This will be the size (height) of the font in pixels when rendered. If you want to... */
-    size?: number;
+    size?: number | EmbedValue<number>;
     /** int: The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`, `2`, `4`, `8`. Default... */
     bpp?: "1" | "2" | "4" | "8";
     /** enum: A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files ... */

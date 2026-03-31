@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { remote_transmitter_RemoteTransmitterComponent } from "../markers";
 export interface RemoteTransmitterProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin to transmit the remote signal on. */
-    pin: Pin;
+    pin: Pin | EmbedValue<Pin>;
     /**
      * int: How much of the time the remote is on. For example, infrared protocols modulate the signal using a carrier signa...
      * @yamlKey carrier_duty_percent
@@ -23,22 +23,22 @@ export interface RemoteTransmitterProps extends _CoreComponent {
      * boolean: Overrides the default end of transmit level. Defaults to `false` unless `pin` is set to inverted or open-drain.
      * @yamlKey eot_level
      */
-    eotLevel?: boolean;
+    eotLevel?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Enable DMA on variants that support it. If enabled `rmt_symbols` controls the DMA buffer size and can be set...
      * @yamlKey use_dma
      */
-    useDma?: boolean;
+    useDma?: boolean | EmbedValue<boolean>;
     /**
      * int: When `use_dma` is enabled, this sets the size of the driver's internal DMA buffer. When DMA is disabled, it spec...
      * @yamlKey rmt_symbols
      */
-    rmtSymbols?: number;
+    rmtSymbols?: number | EmbedValue<number>;
     /**
      * boolean: If enabled, any transmit will return immediately and the RMT will run in the background. The `on_complete` a...
      * @yamlKey non_blocking
      */
-    nonBlocking?: boolean;
+    nonBlocking?: boolean | EmbedValue<boolean>;
     /**
      * [Automation](/automations): An automation to perform before data is sent. Useful if the radio / IR hardware needs to ...
      * @yamlKey on_transmit

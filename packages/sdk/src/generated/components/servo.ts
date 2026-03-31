@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { output_FloatOutput, servo_Servo } from "../markers";
 export interface ServoProps extends _CoreComponent {
@@ -25,7 +25,7 @@ export interface ServoProps extends _CoreComponent {
      */
     maxLevel?: number;
     /** boolean: Whether to restore the state of the servo motor at startup. This is useful if you have an absolute servo mot... */
-    restore?: boolean;
+    restore?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The time after reaching the target value when the servo will be detached`, ...
      * @yamlKey auto_detach_time

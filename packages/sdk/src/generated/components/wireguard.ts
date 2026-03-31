@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { time_RealTimeClock, wireguard_Wireguard } from "../markers";
 export interface WireguardProps extends _CoreComponent {
@@ -22,7 +22,7 @@ export interface WireguardProps extends _CoreComponent {
      * string: The hostname of the remote peer.
      * @yamlKey peer_endpoint
      */
-    peerEndpoint: string;
+    peerEndpoint: string | EmbedValue<string>;
     /**
      * string: The public key of the remote peer.
      * @yamlKey peer_public_key
@@ -32,7 +32,7 @@ export interface WireguardProps extends _CoreComponent {
      * UDP port: The port where remote peer is listening on. The WireGuard® default is `51820`.
      * @yamlKey peer_port
      */
-    peerPort?: number;
+    peerPort?: number | EmbedValue<number>;
     /**
      * string: The chosen pre-shared key between local device and remote peer.
      * @yamlKey peer_preshared_key
@@ -57,7 +57,7 @@ export interface WireguardProps extends _CoreComponent {
      * boolean: Set to `true` to wait for the remote peer to be up before continuing to boot the device. Default to `false`....
      * @yamlKey require_connection_to_proceed
      */
-    requireConnectionToProceed?: boolean;
+    requireConnectionToProceed?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): How often to check the connection status and the latest handshake value. De...
      * @yamlKey update_interval

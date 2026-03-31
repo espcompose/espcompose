@@ -58,8 +58,6 @@ pnpm build
 Create a new project directory with an `index.tsx` entry file:
 
 ```tsx
-import { ESPCompose } from '@esphome/compose';
-
 export default (
   <esphome name="my-device" comment="My first ESPCompose device">
     <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
@@ -128,7 +126,7 @@ export default (
 Top-level functions automatically compile to ESPHome `script:` components. Reference them in trigger props and the compiler handles the wiring:
 
 ```tsx
-import { ESPCompose, delay, logger } from '@esphome/compose';
+import { delay, logger } from '@esphome/compose';
 
 function greet(): void {
   logger.log('Hello from ESPCompose!');
@@ -159,7 +157,7 @@ Supported control flow in scripts: `if/else`, `while`, `for` loops (literal coun
 Use `useRef()` to create typed references between components — no manual ID strings needed:
 
 ```tsx
-import { ESPCompose, useRef, type i2c_I2CBus } from '@esphome/compose';
+import { useRef, type i2c_I2CBus } from '@esphome/compose';
 
 const i2cBus = useRef<i2c_I2CBus>();
 

@@ -3,11 +3,11 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { qr_code_QrCode } from "../markers";
 export interface QrCodeProps {
     /** string: The string which you want to encode in the QR-code. */
-    value: string;
+    value: string | EmbedValue<string>;
     /** string: The error correction code level you want to use. Defaults to `LOW`. You can use one of the following values: */
     ecc?: "LOW" | "MEDIUM" | "QUARTILE" | "HIGH";
 }

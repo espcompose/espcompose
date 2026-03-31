@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { modbus_Modbus, modbus_controller_ModbusController } from "../markers";
 export interface ModbusControllerServerCourtesyResponseProps {
     /** boolean: Whether to enable the courtesy response feature. Defaults to `false`. */
-    enabled?: boolean;
+    enabled?: boolean | EmbedValue<boolean>;
     /**
      * integer: The highest Modbus register address (inclusive) up to which undefined registers are allowed to be read and w...
      * @yamlKey register_last_address
@@ -22,7 +22,7 @@ export interface ModbusControllerServerCourtesyResponseProps {
 }
 export interface ModbusControllerServerRegistersProps {
     /** integer: start address of the first register in a range */
-    address: number;
+    address: number | EmbedValue<number>;
     /**
      * datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (net...
      * @yamlKey value_type
@@ -44,7 +44,7 @@ export interface ModbusControllerProps extends _CoreComponent {
      * boolean: Whether to allow duplicate commands in the queue. Defaults to `false`.
      * @yamlKey allow_duplicate_commands
      */
-    allowDuplicateCommands?: boolean;
+    allowDuplicateCommands?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): minimum time in between 2 requests to the device. Default is `0ms`. Some Mo...
      * @yamlKey command_throttle
@@ -59,12 +59,12 @@ export interface ModbusControllerProps extends _CoreComponent {
      * integer: How many times a command will be retried if no response is received. It doesn't include the initial transmit...
      * @yamlKey max_cmd_retries
      */
-    maxCmdRetries?: number;
+    maxCmdRetries?: number | EmbedValue<number>;
     /**
      * integer: When a slave doesn't respond to a command, it is marked as offline, you can specify how many updates will be...
      * @yamlKey offline_skip_updates
      */
-    offlineSkipUpdates?: number;
+    offlineSkipUpdates?: number | EmbedValue<number>;
     /**
      * A list of registers that are responded to when acting as a server.
      * @yamlKey server_registers

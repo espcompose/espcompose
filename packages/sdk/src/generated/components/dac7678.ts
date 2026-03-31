@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { dac7678_DAC7678Output, i2c_I2CBus } from "../markers";
 export interface Dac7678Props extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface Dac7678Props extends _CoreComponent {
      * bool: State of the internal reference.
      * @yamlKey internal_reference
      */
-    internalReference?: boolean;
+    internalReference?: boolean | EmbedValue<boolean>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     /** int: The I²C address of the driver. */

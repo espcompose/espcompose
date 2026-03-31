@@ -9,6 +9,12 @@ export default tseslint.config(
         sourceType: 'module',
       },
     },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
+    },
   },
   {
     ignores: ['**/dist/**', '**/node_modules/**', '**/.espcompose/**', '**/generated/**'],

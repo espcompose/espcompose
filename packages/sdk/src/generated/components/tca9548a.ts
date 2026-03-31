@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, tca9548a_TCA9548AComponent } from "../markers";
 export interface Tca9548aChannelsProps {
     /** The channel (0-7) to use for this virtual I2C Bus. */
-    channel: number;
+    channel: number | EmbedValue<number>;
 }
 export interface Tca9548aProps extends _CoreComponent {
     /** The I²C Bus Channels */

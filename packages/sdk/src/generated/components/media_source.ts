@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, TriggerHandler } from "../../types";
 export type MediaSourceProps = {
     platform: "audio_file";
 } & ComponentProps;

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { bedjet_BedJetFan, binary_BinaryFan, copy_CopyFan, fan_Fan, hbridge_HBridgeFan, output_BinaryOutput, output_FloatOutput, speed_SpeedFan, template__TemplateFan, tuya_Tuya, tuya_TuyaFan, web_server_WebServer } from "../markers";
 interface FanWebServerProps {
@@ -84,7 +84,7 @@ interface HbridgeProps extends _CoreComponent {
      * int: Set the number of supported discrete speed levels. The value is used to calculate the percentages for each speed...
      * @yamlKey speed_count
      */
-    speedCount?: number;
+    speedCount?: number | EmbedValue<number>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to the Enable pin o...
      * @yamlKey enable_pin
@@ -113,7 +113,7 @@ interface SpeedProps extends _CoreComponent {
      * int: Set the number of supported discrete speed levels. The value is used to calculate the percentages for each speed...
      * @yamlKey speed_count
      */
-    speedCount?: number;
+    speedCount?: number | EmbedValue<number>;
     /**
      * A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set` ).
      * @yamlKey preset_modes
@@ -136,17 +136,17 @@ interface TemplateProps extends _CoreComponent {
      * boolean: Indicates if there should be a control for direction. Default is `false`.
      * @yamlKey has_direction
      */
-    hasDirection?: boolean;
+    hasDirection?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Indicates if there should be a control for oscillating. Default is `false`.
      * @yamlKey has_oscillating
      */
-    hasOscillating?: boolean;
+    hasOscillating?: boolean | EmbedValue<boolean>;
     /**
      * int: Set the number of supported discrete speed levels. Default is only on/off.
      * @yamlKey speed_count
      */
-    speedCount?: number;
+    speedCount?: number | EmbedValue<number>;
     /**
      * A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set` ).
      * @yamlKey preset_modes
@@ -157,15 +157,15 @@ interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey oscillation_datapoint */
-    oscillationDatapoint?: number;
+    oscillationDatapoint?: number | EmbedValue<number>;
     /** @yamlKey speed_datapoint */
-    speedDatapoint?: number;
+    speedDatapoint?: number | EmbedValue<number>;
     /** @yamlKey switch_datapoint */
-    switchDatapoint?: number;
+    switchDatapoint?: number | EmbedValue<number>;
     /** @yamlKey direction_datapoint */
-    directionDatapoint?: number;
+    directionDatapoint?: number | EmbedValue<number>;
     /** @yamlKey speed_count */
-    speedCount?: number;
+    speedCount?: number | EmbedValue<number>;
 }
 export type FanProps = (FanBaseProps & {
     platform: "binary";

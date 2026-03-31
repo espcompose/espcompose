@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { hlk_fm22x_HlkFm22xComponent, uart_UARTComponent } from "../markers";
 export interface HlkFm22xProps extends _CoreComponent {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { i2c_I2CBus, i2c_device_I2CDeviceComponent } from "../markers";
 export interface I2cDeviceProps {
     /** @yamlKey i2c_id */

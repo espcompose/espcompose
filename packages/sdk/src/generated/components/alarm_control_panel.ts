@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { binary_sensor_BinarySensor, template__TemplateAlarmControlPanel, web_server_WebServer } from "../markers";
 interface AlarmControlPanelWebServerProps {
@@ -21,19 +21,19 @@ interface TemplateBinarySensorsProps {
      * boolean: This binary sensor will not trigger the alarm when in `armed_home` state.
      * @yamlKey bypass_armed_home
      */
-    bypassArmedHome?: boolean;
+    bypassArmedHome?: boolean | EmbedValue<boolean>;
     /**
      * boolean: This binary sensor will not trigger the alarm when in `armed_night` state.
      * @yamlKey bypass_armed_night
      */
-    bypassArmedNight?: boolean;
+    bypassArmedNight?: boolean | EmbedValue<boolean>;
     /**
      * boolean: This binary sensor will be automatically bypassed if left on/open at the time of arming.
      * @yamlKey bypass_auto
      */
-    bypassAuto?: boolean;
+    bypassAuto?: boolean | EmbedValue<boolean>;
     /** boolean: When set `true`, the chime callback will be called whenever the sensor goes from closed to open. (`false` is... */
-    chime?: boolean;
+    chime?: boolean | EmbedValue<boolean>;
     /**
      * string: Sets the trigger mode for this sensor. One of `delayed`, `instant`, `instant_always`, or `delayed_follower`. ...
      * @yamlKey trigger_mode
@@ -73,7 +73,7 @@ interface TemplateProps extends _CoreComponent {
      * boolean: Code required for arming the alarm, *codes* must be provided.
      * @yamlKey requires_code_to_arm
      */
-    requiresCodeToArm?: boolean;
+    requiresCodeToArm?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The exit delay before the alarm is armed to home mode.
      * @yamlKey arming_home_time

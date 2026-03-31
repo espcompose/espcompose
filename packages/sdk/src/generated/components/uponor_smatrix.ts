@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _UartDevice } from "../bases";
 import type { time_RealTimeClock, uponor_smatrix_UponorSmatrixComponent } from "../markers";
 export interface UponorSmatrixProps extends _CoreComponent, _UartDevice {

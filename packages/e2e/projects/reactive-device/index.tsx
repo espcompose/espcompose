@@ -12,7 +12,7 @@
  *   3. Compile `heater.toggle()` inside an LVGL button's onRelease into
  *      a `homeassistant.action` YAML block.
  */
-import { Display, ESPCompose, useRef, useHAEntity } from '@esphome/compose';
+import { Display, defineProject, useRef, bind } from '@esphome/compose';
 import type { internal_temperature_InternalTemperatureSensor, EspComposeElement, TriggerHandler } from '@esphome/compose';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
@@ -31,12 +31,12 @@ function ActionButton(props: {
   );
 }
 
-export default (() => {
-  const displayRef = useRef<Display>();
-  const tempRef = useRef<internal_temperature_InternalTemperatureSensor>();
-  const heater = useHAEntity('switch.space_heater');
+const displayRef = useRef<Display>();
+const tempRef = useRef<internal_temperature_InternalTemperatureSensor>();
+const heater = bind.haEntity('switch.space_heater');
 
-  return (
+export default defineProject({
+  device: (
     <esphome name="reactive-device" comment="Local ref reactive binding demo">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
       <wifi ssid="HomeWifi" password="s3cr3t!!" />
@@ -83,8 +83,33 @@ export default (() => {
           >
             <lvgl-label text="Heater" align="CENTER" />
           </ActionButton>
+
+          {/* Part-specific reactive binding: slider indicator color bound to HA entity */}
+          <lvgl-slider
+            x={10}
+            y={120}
+            width={200}
+            indicator={{ bgOpa: heater.isOn ? 'COVER' : 'TRANSP' }}
+          />
+
+          {/* State-specific reactive binding: button pressed bg_opa bound to HA entity */}
+          <lvgl-button
+            x={10}
+            y={160}
+            pressed={{ bgOpa: heater.isOn ? 'COVER' : 'TRANSP' }}
+          >
+            <lvgl-label text="Styled" align="CENTER" />
+          </lvgl-button>
+
+          {/* Part+state combo: slider indicator pressed bg_opa */}
+          <lvgl-slider
+            x={10}
+            y={210}
+            width={200}
+            indicator={{ pressed: { bgOpa: heater.isOn ? 'COVER' : 'TRANSP' } }}
+          />
         </lvgl-page>
       </lvgl>
     </esphome>
-  );
-})();
+  ),
+});

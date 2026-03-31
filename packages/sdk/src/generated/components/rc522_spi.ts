@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Rc522 } from "../bases";
 import type { rc522_spi_RC522Spi, spi_SPIComponent } from "../markers";
 export interface Rc522SpiProps extends _Rc522 {
@@ -17,12 +17,12 @@ export interface Rc522SpiProps extends _Rc522 {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin on the ESP that the chip select line is connected to.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 declare global {
     namespace JSX {

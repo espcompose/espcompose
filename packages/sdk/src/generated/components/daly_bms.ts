@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { daly_bms_DalyBmsComponent, uart_UARTComponent } from "../markers";
 export interface DalyBmsProps extends _CoreComponent {
     /** int: Address to use, defaults to `0x80`. */
-    address?: number;
+    address?: number | EmbedValue<number>;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
     /**

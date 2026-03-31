@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { safe_mode_SafeModeComponent } from "../markers";
 export interface SafeModeProps extends _CoreComponent {
@@ -13,12 +13,12 @@ export interface SafeModeProps extends _CoreComponent {
      */
     bootIsGoodAfter?: TimePeriod;
     /** boolean: Set to `true` to disable safe_mode. [Ota](/components/ota/) automatically */
-    disabled?: boolean;
+    disabled?: boolean | EmbedValue<boolean>;
     /**
      * int: The number of failed boot attempts which must occur before invoking safe mode.
      * @yamlKey num_attempts
      */
-    numAttempts?: number;
+    numAttempts?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when in safe mode.
      * @yamlKey reboot_timeout

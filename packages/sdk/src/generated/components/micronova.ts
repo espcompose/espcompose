@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { micronova_MicroNova, uart_UARTComponent } from "../markers";
 export interface MicronovaProps {
     /**
      * [Pin](/guides/configuration-types#pin): Output pin to be used to switch the line between RX and TX.
      * @yamlKey enable_rx_pin
      */
-    enableRxPin: Pin;
+    enableRxPin: Pin | EmbedValue<Pin>;
     /** @yamlKey uart_id */
     uartId?: RefProp<uart_UARTComponent>;
 }

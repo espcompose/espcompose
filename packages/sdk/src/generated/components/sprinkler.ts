@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sprinkler_Sprinkler, switch__Switch, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
 export interface SprinklerAutoAdvanceSwitchPropsAvailabilityProps {
@@ -25,12 +25,12 @@ export interface SprinklerAutoAdvanceSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -41,8 +41,8 @@ export interface SprinklerAutoAdvanceSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -51,12 +51,12 @@ export interface SprinklerAutoAdvanceSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerAutoAdvanceSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -87,12 +87,12 @@ export interface SprinklerMainSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -103,8 +103,8 @@ export interface SprinklerMainSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -113,12 +113,12 @@ export interface SprinklerMainSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerMainSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -149,12 +149,12 @@ export interface SprinklerQueueEnableSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -165,8 +165,8 @@ export interface SprinklerQueueEnableSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -175,12 +175,12 @@ export interface SprinklerQueueEnableSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerQueueEnableSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -211,12 +211,12 @@ export interface SprinklerReverseSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -227,8 +227,8 @@ export interface SprinklerReverseSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -237,12 +237,12 @@ export interface SprinklerReverseSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerReverseSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -273,12 +273,12 @@ export interface SprinklerStandbySwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -289,8 +289,8 @@ export interface SprinklerStandbySwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -299,12 +299,12 @@ export interface SprinklerStandbySwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerStandbySwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -335,12 +335,12 @@ export interface SprinklerMultiplierNumberProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -351,8 +351,8 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -361,7 +361,7 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerMultiplierNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -371,7 +371,7 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey on_value_range */
     onValueRange?: TriggerHandler;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
@@ -384,7 +384,7 @@ export interface SprinklerMultiplierNumberProps {
     /** @yamlKey min_value */
     minValue?: number;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     step?: number;
     /** @yamlKey set_action */
     setAction?: TriggerHandler;
@@ -408,12 +408,12 @@ export interface SprinklerRepeatNumberProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -424,8 +424,8 @@ export interface SprinklerRepeatNumberProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -434,7 +434,7 @@ export interface SprinklerRepeatNumberProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerRepeatNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -444,21 +444,21 @@ export interface SprinklerRepeatNumberProps {
     /** @yamlKey on_value_range */
     onValueRange?: TriggerHandler;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     mode?: "AUTO" | "BOX" | "SLIDER";
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey initial_value */
-    initialValue?: number;
+    initialValue?: number | EmbedValue<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: number | EmbedValue<number>;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: number | EmbedValue<number>;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
-    step?: number;
+    restoreValue?: boolean | EmbedValue<boolean>;
+    step?: number | EmbedValue<number>;
     /** @yamlKey set_action */
     setAction?: TriggerHandler;
 }
@@ -481,12 +481,12 @@ export interface SprinklerValvesPropsEnableSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -497,8 +497,8 @@ export interface SprinklerValvesPropsEnableSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -507,12 +507,12 @@ export interface SprinklerValvesPropsEnableSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsEnableSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -543,12 +543,12 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -559,8 +559,8 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -569,7 +569,7 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsRunDurationNumberPropsWebServerProps;
     /** @yamlKey zigbee_id */
@@ -586,14 +586,14 @@ export interface SprinklerValvesPropsRunDurationNumberProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey initial_value */
-    initialValue?: number;
+    initialValue?: number | EmbedValue<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: number | EmbedValue<number>;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: number | EmbedValue<number>;
     /** @yamlKey restore_value */
-    restoreValue?: boolean;
-    step?: number;
+    restoreValue?: boolean | EmbedValue<boolean>;
+    step?: number | EmbedValue<number>;
     /** @yamlKey set_action */
     setAction?: TriggerHandler;
 }
@@ -616,12 +616,12 @@ export interface SprinklerValvesPropsValveSwitchProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -632,8 +632,8 @@ export interface SprinklerValvesPropsValveSwitchProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -642,12 +642,12 @@ export interface SprinklerValvesPropsValveSwitchProps {
     /** @yamlKey command_topic */
     commandTopic?: unknown;
     /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    commandRetain?: boolean | EmbedValue<boolean>;
     /** @yamlKey web_server */
     webServer?: SprinklerValvesPropsValveSwitchPropsWebServerProps;
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";
     /** @yamlKey on_state */
@@ -692,7 +692,7 @@ export interface SprinklerValvesProps {
     valveSwitchId?: RefProp<switch__Switch>;
 }
 export interface SprinklerProps extends _CoreComponent {
-    name?: string;
+    name?: string | EmbedValue<string>;
     /**
      * *string*: Required with more than one valve. The name for the sprinkler controller's "auto-advance" switch as it will...
      * @yamlKey auto_advance_switch
@@ -722,7 +722,7 @@ export interface SprinklerProps extends _CoreComponent {
      * boolean: Set to `true` to cause [`sprinkler.next_valve` action](https://esphome.io/components/sprinkler#sprinkler-con...
      * @yamlKey next_prev_ignore_disabled
      */
-    nextPrevIgnoreDisabled?: boolean;
+    nextPrevIgnoreDisabled?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time the controller should wait to activate a valve after the...
      * @yamlKey manual_selection_delay
@@ -734,7 +734,7 @@ export interface SprinklerProps extends _CoreComponent {
      */
     multiplierNumber?: SprinklerMultiplierNumberProps;
     /** int: The number of times a full cycle should be repeated. Defaults to 0. May not be used with `repeat_number`. */
-    repeat?: number;
+    repeat?: number | EmbedValue<number>;
     /**
      * *string*: The name of the [number](/components/number/) component that should be presented to the front end (Home Ass...
      * @yamlKey repeat_number
@@ -754,7 +754,7 @@ export interface SprinklerProps extends _CoreComponent {
      * boolean: If set to `true`, the pump will be switched off during the `valve_open_delay` interval; otherwise, it remain...
      * @yamlKey pump_switch_off_during_valve_open_delay
      */
-    pumpSwitchOffDuringValveOpenDelay?: boolean;
+    pumpSwitchOffDuringValveOpenDelay?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The delay in seconds from when a pump is started to when the associated dis...
      * @yamlKey pump_start_valve_delay

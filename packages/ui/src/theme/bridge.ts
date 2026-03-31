@@ -8,7 +8,7 @@
  */
 
 import type { Theme, TextVariant, ThemeParts } from './types';
-import { fontDefToLvgl } from './resolvers';
+import { resolveFont } from './resolvers';
 import {
   STYLE_BG,
   STYLE_SURFACE,
@@ -60,7 +60,7 @@ export interface StyleDefinition {
  */
 export function themeToStyleDefinitions(theme: Theme): StyleDefinition[] {
   const defs: StyleDefinition[] = [];
-  const bodyFont = fontDefToLvgl(theme.typography.body);
+  const bodyFont = resolveFont(theme.typography.body);
 
   // ── Surface / background ──────────────────────────────────────────────
   defs.push({ id: STYLE_BG, bg_color: theme.colors.background });
@@ -75,7 +75,7 @@ export function themeToStyleDefinitions(theme: Theme): StyleDefinition[] {
 
   // ── Typography variants ───────────────────────────────────────────────
   for (const variant of ['title', 'subtitle', 'body', 'caption'] as TextVariant[]) {
-    const font = fontDefToLvgl(theme.typography[variant]);
+    const font = resolveFont(theme.typography[variant]);
     defs.push({
       id: STYLE_TEXT_VARIANT[variant],
       text_color: theme.colors.textPrimary,
@@ -142,7 +142,7 @@ export function themeToStyleDefinitions(theme: Theme): StyleDefinition[] {
  * (via `lvgl.style.update`) support runtime switching.
  */
 export function themeToLvglTheme(theme: Theme): Record<string, unknown> {
-  const bodyFont = fontDefToLvgl(theme.typography.body);
+  const bodyFont = resolveFont(theme.typography.body);
   const parts = resolveParts(theme);
 
   return {

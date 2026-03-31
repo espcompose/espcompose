@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { Color, display_Display, font_Font, graphical_display_menu_GraphicalDisplayMenu } from "../markers";
 export interface GraphicalDisplayMenuProps {
     /** [ID](/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://esphome.io/componen... */
@@ -14,7 +14,7 @@ export interface GraphicalDisplayMenuProps {
      * string: Specifies how to render values for menu items that have values (eg. Selects, numbers). Defaults to rendering ...
      * @yamlKey menu_item_value
      */
-    menuItemValue?: string;
+    menuItemValue?: string | EmbedValue<string>;
     /**
      * [Color](/components/display#config-color): Specifies the foreground color to use. Defaults to COLOR_ON
      * @yamlKey foreground_color

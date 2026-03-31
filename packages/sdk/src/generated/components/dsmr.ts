@@ -3,21 +3,21 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { esphome_dsmr_Dsmr, uart_UARTComponent } from "../markers";
 export interface DsmrProps {
     /** @yamlKey decryption_key */
     decryptionKey?: unknown;
     /** @yamlKey crc_check */
-    crcCheck?: boolean;
+    crcCheck?: boolean | EmbedValue<boolean>;
     /** @yamlKey gas_mbus_id */
-    gasMbusId?: number;
+    gasMbusId?: number | EmbedValue<number>;
     /** @yamlKey water_mbus_id */
-    waterMbusId?: number;
+    waterMbusId?: number | EmbedValue<number>;
     /** @yamlKey max_telegram_length */
-    maxTelegramLength?: number;
+    maxTelegramLength?: number | EmbedValue<number>;
     /** @yamlKey request_pin */
-    requestPin?: Pin;
+    requestPin?: Pin | EmbedValue<Pin>;
     /** @yamlKey request_interval */
     requestInterval?: TimePeriod;
     /** @yamlKey receive_timeout */

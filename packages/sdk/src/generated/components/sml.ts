@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { sml_Sml, uart_UARTComponent } from "../markers";
 export interface SmlProps {
     /** @yamlKey on_data */

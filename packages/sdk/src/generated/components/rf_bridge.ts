@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { rf_bridge_RFBridgeComponent, uart_UARTComponent } from "../markers";
 export interface RfBridgeProps extends _CoreComponent {

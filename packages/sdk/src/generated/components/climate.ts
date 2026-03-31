@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _UponorSmatrixDevice } from "../bases";
 import type { anova_Anova, ballu_BalluClimate, bang_bang_BangBangClimate, bedjet_BedJetClimate, ble_client_BLEClient, climate_ir_lg_LgIrClimate, coolix_CoolixClimate, daikin_DaikinClimate, daikin_arc_DaikinArcClimate, daikin_brc_DaikinBrcClimate, delonghi_DelonghiClimate, emmeti_EmmetiClimate, fujitsu_general_FujitsuGeneralClimate, gree_GreeClimate, haier_HonClimate, haier_Smartair2Climate, heatpumpir_HeatpumpIRClimate, hitachi_ac344_HitachiClimate, hitachi_ac424_HitachiClimate, midea_ac_AirConditioner, midea_ir_MideaIR, mitsubishi_MitsubishiClimate, mqtt_MQTTClimateComponent, noblex_NoblexClimate, output_FloatOutput, pid_PIDClimate, remote_base_RemoteReceiverBase, remote_base_RemoteTransmitterBase, remote_transmitter_RemoteTransmitterComponent, sensor_Sensor, tcl112_Tcl112Climate, thermostat_ThermostatClimate, toshiba_ToshibaClimate, tuya_Tuya, tuya_TuyaClimate, uart_UARTComponent, uponor_smatrix_UponorSmatrixClimate, web_server_WebServer, whirlpool_WhirlpoolClimate, whynter_Whynter, yashima_YashimaClimate, zhlt01_ZHLT01Climate, zigbee_ZigbeeComponent } from "../markers";
 interface ClimateWebServerProps {
@@ -57,12 +57,12 @@ interface MideaOutdoorTemperatureProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -73,8 +73,8 @@ interface MideaOutdoorTemperatureProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -85,15 +85,15 @@ interface MideaOutdoorTemperatureProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -123,12 +123,12 @@ interface MideaPowerUsageProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -139,8 +139,8 @@ interface MideaPowerUsageProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -151,15 +151,15 @@ interface MideaPowerUsageProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -189,12 +189,12 @@ interface MideaHumiditySetpointProps {
     /** string: The name for the sensor. */
     name?: string;
     /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    internal?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
-    disabledByDefault?: boolean;
+    disabledByDefault?: boolean | EmbedValue<boolean>;
     /** icon: Manually set the icon to use for the light in the frontend. */
     icon?: string;
     /**
@@ -205,8 +205,8 @@ interface MideaHumiditySetpointProps {
     /** @yamlKey device_id */
     deviceId?: unknown;
     qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
+    retain?: boolean | EmbedValue<boolean>;
+    discovery?: boolean | EmbedValue<boolean>;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
     /** @yamlKey state_topic */
@@ -217,15 +217,15 @@ interface MideaHumiditySetpointProps {
     /** @yamlKey zigbee_id */
     zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
-    unitOfMeasurement?: string;
+    unitOfMeasurement?: string | EmbedValue<string>;
     /** @yamlKey accuracy_decimals */
-    accuracyDecimals?: number;
+    accuracyDecimals?: number | EmbedValue<number>;
     /** @yamlKey device_class */
     deviceClass?: "absolute_humidity" | "apparent_power" | "aqi" | "area" | "atmospheric_pressure" | "battery" | "blood_glucose_concentration" | "carbon_dioxide" | "carbon_monoxide" | "conductivity" | "current" | "data_rate" | "data_size" | "date" | "distance" | "duration" | "" | "energy" | "energy_distance" | "energy_storage" | "frequency" | "gas" | "humidity" | "illuminance" | "irradiance" | "moisture" | "monetary" | "nitrogen_dioxide" | "nitrogen_monoxide" | "nitrous_oxide" | "ozone" | "ph" | "pm1" | "pm10" | "pm25" | "pm4" | "power" | "power_factor" | "precipitation" | "precipitation_intensity" | "pressure" | "reactive_energy" | "reactive_power" | "signal_strength" | "sound_pressure" | "speed" | "sulphur_dioxide" | "temperature" | "temperature_delta" | "timestamp" | "volatile_organic_compounds" | "volatile_organic_compounds_parts" | "voltage" | "volume" | "volume_flow_rate" | "volume_storage" | "water" | "weight" | "wind_direction" | "wind_speed";
     /** @yamlKey state_class */
     stateClass?: "" | "measurement" | "total_increasing" | "total" | "measurement_angle";
     /** @yamlKey force_update */
-    forceUpdate?: boolean;
+    forceUpdate?: boolean | EmbedValue<boolean>;
     /** @yamlKey expire_after */
     expireAfter?: TimePeriod;
     filters?: Array<unknown>;
@@ -260,7 +260,7 @@ interface PidDeadbandParametersProps {
      * int: Typically when inside the deadband the PID Controller has reached a state of equilibrium, so it advantageous to ...
      * @yamlKey deadband_output_averaging_samples
      */
-    deadbandOutputAveragingSamples?: number;
+    deadbandOutputAveragingSamples?: number | EmbedValue<number>;
 }
 interface PidControlParametersProps {
     /** float: The factor for the proportional term of the PID controller. */
@@ -288,12 +288,12 @@ interface PidControlParametersProps {
      * int: average the derivative term over this many samples. Many controllers don't use the derivative term because it is...
      * @yamlKey derivative_averaging_samples
      */
-    derivativeAveragingSamples?: number;
+    derivativeAveragingSamples?: number | EmbedValue<number>;
     /**
      * int: average the output over this many samples. PID controllers can be quite sensitive to small changes on the input ...
      * @yamlKey output_averaging_samples
      */
-    outputAveragingSamples?: number;
+    outputAveragingSamples?: number | EmbedValue<number>;
 }
 interface ThermostatAwayConfigProps {
     /** @yamlKey default_target_temperature_high */
@@ -303,7 +303,7 @@ interface ThermostatAwayConfigProps {
 }
 interface ThermostatPresetProps {
     /** string: Name of the preset. If this is one of the *standard* presets (`eco`, `away`, `boost`, `comfort`, `home`, `sle... */
-    name: string;
+    name: string | EmbedValue<string>;
     /** climate mode: The mode the thermostat should switch to when this preset is activated. If not specified, the thermosta... */
     mode?: "OFF" | "HEAT_COOL" | "COOL" | "HEAT" | "DRY" | "FAN_ONLY" | "AUTO";
     /**
@@ -328,45 +328,45 @@ interface ThermostatPresetProps {
     swingMode?: "OFF" | "BOTH" | "VERTICAL" | "HORIZONTAL";
 }
 interface TuyaActiveStateProps {
-    datapoint: number;
+    datapoint: number | EmbedValue<number>;
     /** @yamlKey heating_value */
-    heatingValue?: number;
+    heatingValue?: number | EmbedValue<number>;
     /** @yamlKey cooling_value */
-    coolingValue?: number;
+    coolingValue?: number | EmbedValue<number>;
     /** @yamlKey drying_value */
-    dryingValue?: number;
+    dryingValue?: number | EmbedValue<number>;
     /** @yamlKey fanonly_value */
-    fanonlyValue?: number;
+    fanonlyValue?: number | EmbedValue<number>;
 }
 interface TuyaPresetPropsEcoProps {
-    datapoint: number;
+    datapoint: number | EmbedValue<number>;
     temperature?: unknown;
 }
 interface TuyaPresetPropsSleepProps {
-    datapoint: number;
+    datapoint: number | EmbedValue<number>;
 }
 interface TuyaPresetProps {
     eco?: TuyaPresetPropsEcoProps;
     sleep?: TuyaPresetPropsSleepProps;
 }
 interface TuyaFanModeProps {
-    datapoint: number;
+    datapoint: number | EmbedValue<number>;
     /** @yamlKey auto_value */
-    autoValue?: number;
+    autoValue?: number | EmbedValue<number>;
     /** @yamlKey low_value */
-    lowValue?: number;
+    lowValue?: number | EmbedValue<number>;
     /** @yamlKey medium_value */
-    mediumValue?: number;
+    mediumValue?: number | EmbedValue<number>;
     /** @yamlKey middle_value */
-    middleValue?: number;
+    middleValue?: number | EmbedValue<number>;
     /** @yamlKey high_value */
-    highValue?: number;
+    highValue?: number | EmbedValue<number>;
 }
 interface TuyaSwingModeProps {
     /** @yamlKey vertical_datapoint */
-    verticalDatapoint?: number;
+    verticalDatapoint?: number | EmbedValue<number>;
     /** @yamlKey horizontal_datapoint */
-    horizontalDatapoint?: number;
+    horizontalDatapoint?: number | EmbedValue<number>;
 }
 interface ClimateBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
@@ -435,9 +435,9 @@ interface AnovaProps extends _CoreComponent {
 }
 interface BalluProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -487,9 +487,9 @@ interface BangBangProps extends _CoreComponent {
 }
 interface ClimateIrLgProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -510,9 +510,9 @@ interface ClimateIrLgProps extends _CoreComponent {
 }
 interface CoolixProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -523,9 +523,9 @@ interface CoolixProps extends _CoreComponent {
 }
 interface DaikinProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -536,9 +536,9 @@ interface DaikinProps extends _CoreComponent {
 }
 interface DaikinArcProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -549,9 +549,9 @@ interface DaikinArcProps extends _CoreComponent {
 }
 interface DaikinBrcProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -560,13 +560,13 @@ interface DaikinBrcProps extends _CoreComponent {
     /** @yamlKey receiver_id */
     receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
-    useFahrenheit?: boolean;
+    useFahrenheit?: boolean | EmbedValue<boolean>;
 }
 interface DelonghiProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -577,9 +577,9 @@ interface DelonghiProps extends _CoreComponent {
 }
 interface EmmetiProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -590,9 +590,9 @@ interface EmmetiProps extends _CoreComponent {
 }
 interface FujitsuGeneralProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -603,9 +603,9 @@ interface FujitsuGeneralProps extends _CoreComponent {
 }
 interface GreeProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -617,9 +617,9 @@ interface GreeProps extends _CoreComponent {
 }
 interface HeatpumpirProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -639,9 +639,9 @@ interface HeatpumpirProps extends _CoreComponent {
 }
 interface HitachiAc344Props extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -652,9 +652,9 @@ interface HitachiAc344Props extends _CoreComponent {
 }
 interface HitachiAc424Props extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -672,16 +672,16 @@ interface MideaProps extends _CoreComponent {
      * int: Number of request attempts between 1 and 5 inclusive. Defaults to `3`.
      * @yamlKey num_attempts
      */
-    numAttempts?: number;
+    numAttempts?: number | EmbedValue<number>;
     /**
      * [ID](/guides/configuration-types#id): Defined and used automatically when using [Remote Transmitter](/components/remo...
      * @yamlKey transmitter_id
      */
     transmitterId?: RefProp<remote_transmitter_RemoteTransmitterComponent>;
     /** boolean: Beeper feedback on command. Defaults to `False`. */
-    beeper?: boolean;
+    beeper?: boolean | EmbedValue<boolean>;
     /** boolean: Get capabilities automatically. Allows you not to manually define most of the capabilities of the appliance.... */
-    autoconf?: boolean;
+    autoconf?: boolean | EmbedValue<boolean>;
     /**
      * list: List of supported modes. Possible values are: `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
      * @yamlKey supported_modes
@@ -730,9 +730,9 @@ interface MideaProps extends _CoreComponent {
 }
 interface MideaIrProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -741,13 +741,13 @@ interface MideaIrProps extends _CoreComponent {
     /** @yamlKey receiver_id */
     receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
-    useFahrenheit?: boolean;
+    useFahrenheit?: boolean | EmbedValue<boolean>;
 }
 interface MitsubishiProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -758,9 +758,9 @@ interface MitsubishiProps extends _CoreComponent {
     /** @yamlKey set_fan_mode */
     setFanMode?: "quiet_4levels" | "4levels" | "3levels";
     /** @yamlKey supports_dry */
-    supportsDry?: boolean;
+    supportsDry?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_fan_only */
-    supportsFanOnly?: boolean;
+    supportsFanOnly?: boolean | EmbedValue<boolean>;
     /** @yamlKey horizontal_default */
     horizontalDefault?: "left" | "middle-left" | "middle" | "middle-right" | "right" | "split";
     /** @yamlKey vertical_default */
@@ -768,9 +768,9 @@ interface MitsubishiProps extends _CoreComponent {
 }
 interface NoblexProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -815,9 +815,9 @@ interface PidProps {
 }
 interface Tcl112Props extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -1008,7 +1008,7 @@ interface ThermostatProps extends _CoreComponent {
      * string: The name of the preset to use by default. Must match a preset as per [preset](https://esphome.io/components/c...
      * @yamlKey default_preset
      */
-    defaultPreset?: string;
+    defaultPreset?: string | EmbedValue<string>;
     /** @yamlKey default_target_temperature_high */
     defaultTargetTemperatureHigh?: unknown;
     /** @yamlKey default_target_temperature_low */
@@ -1102,27 +1102,27 @@ interface ThermostatProps extends _CoreComponent {
      * boolean: If set to `true`, the `fan_only_action` will share the same delay timer used for all `fan_mode` actions. The...
      * @yamlKey fan_only_action_uses_fan_mode_timer
      */
-    fanOnlyActionUsesFanModeTimer?: boolean;
+    fanOnlyActionUsesFanModeTimer?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If set to `true`, when in the `fan_only_mode` climate mode, the `fan_only_action` will only be called when t...
      * @yamlKey fan_only_cooling
      */
-    fanOnlyCooling?: boolean;
+    fanOnlyCooling?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If set to `true`, `fan_only_action` will be called whenever `cool_action` is called. This is useful for forc...
      * @yamlKey fan_with_cooling
      */
-    fanWithCooling?: boolean;
+    fanWithCooling?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If set to `true`, `fan_only_action` will be called whenever `heat_action` is called. This is useful for forc...
      * @yamlKey fan_with_heating
      */
-    fanWithHeating?: boolean;
+    fanWithHeating?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If set to `true`, when ESPHome starts, `min_cooling_off_time`, `min_fanning_off_time`, and `min_heating_off_...
      * @yamlKey startup_delay
      */
-    startupDelay?: boolean;
+    startupDelay?: boolean | EmbedValue<boolean>;
     /** @yamlKey away_config */
     awayConfig?: ThermostatAwayConfigProps;
     /** (*Optional*, list) */
@@ -1140,9 +1140,9 @@ interface ThermostatProps extends _CoreComponent {
 }
 interface ToshibaProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -1152,9 +1152,9 @@ interface ToshibaProps extends _CoreComponent {
 }
 interface WhirlpoolProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -1164,31 +1164,31 @@ interface WhirlpoolProps extends _CoreComponent {
 }
 interface WhynterProps extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
     /** @yamlKey receiver_id */
     receiverId?: RefProp<remote_base_RemoteReceiverBase>;
     /** @yamlKey use_fahrenheit */
-    useFahrenheit?: boolean;
+    useFahrenheit?: boolean | EmbedValue<boolean>;
 }
 interface YashimaProps extends _CoreComponent {
     /** @yamlKey transmitter_id */
     transmitterId?: RefProp<remote_transmitter_RemoteTransmitterComponent>;
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
 }
 interface Zhlt01Props extends _CoreComponent {
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     sensor?: RefProp<sensor_Sensor>;
     /** @yamlKey humidity_sensor */
     humiditySensor?: RefProp<sensor_Sensor>;
@@ -1224,9 +1224,9 @@ interface HaierSMARTAIR2Props extends _CoreComponent {
      * boolean: If `true` - send wifi signal level to AC.
      * @yamlKey wifi_signal
      */
-    wifiSignal?: boolean;
+    wifiSignal?: boolean | EmbedValue<boolean>;
     /** boolean: Can be used to set the AC display off. */
-    display?: boolean;
+    display?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Responce timeout. The default value is `200ms`.
      * @yamlKey answer_timeout
@@ -1246,7 +1246,7 @@ interface HaierSMARTAIR2Props extends _CoreComponent {
      * boolean: (supported by smartAir2 only) If `true` - use alternative values to control swing mode. Use only if the orig...
      * @yamlKey alternative_swing_control
      */
-    alternativeSwingControl?: boolean;
+    alternativeSwingControl?: boolean | EmbedValue<boolean>;
     /**
      * list: Can be used to disable some presets. Possible values for smartair2 are: `AWAY`, `BOOST`, `COMFORT`. Possible va...
      * @yamlKey supported_presets
@@ -1268,9 +1268,9 @@ interface HaierHONProps extends _CoreComponent {
      * boolean: If `true` - send wifi signal level to AC.
      * @yamlKey wifi_signal
      */
-    wifiSignal?: boolean;
+    wifiSignal?: boolean | EmbedValue<boolean>;
     /** boolean: Can be used to set the AC display off. */
-    display?: boolean;
+    display?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Responce timeout. The default value is `200ms`.
      * @yamlKey answer_timeout
@@ -1295,17 +1295,17 @@ interface HaierHONProps extends _CoreComponent {
      * int: (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use b...
      * @yamlKey control_packet_size
      */
-    controlPacketSize?: number;
+    controlPacketSize?: number | EmbedValue<number>;
     /**
      * int: (supported only by hOn) Define the size of the sensor packet of the status message. Can help with some models of...
      * @yamlKey sensors_packet_size
      */
-    sensorsPacketSize?: number;
+    sensorsPacketSize?: number | EmbedValue<number>;
     /**
      * int: (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variat...
      * @yamlKey status_message_header_size
      */
-    statusMessageHeaderSize?: number;
+    statusMessageHeaderSize?: number | EmbedValue<number>;
     /**
      * list: Can be used to disable some presets. Possible values for smartair2 are: `AWAY`, `BOOST`, `COMFORT`. Possible va...
      * @yamlKey supported_presets
@@ -1326,21 +1326,21 @@ interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
     tuyaId?: RefProp<tuya_Tuya>;
     /** @yamlKey supports_heat */
-    supportsHeat?: boolean;
+    supportsHeat?: boolean | EmbedValue<boolean>;
     /** @yamlKey supports_cool */
-    supportsCool?: boolean;
+    supportsCool?: boolean | EmbedValue<boolean>;
     /** @yamlKey switch_datapoint */
-    switchDatapoint?: number;
+    switchDatapoint?: number | EmbedValue<number>;
     /** @yamlKey active_state */
     activeState?: TuyaActiveStateProps;
     /** @yamlKey heating_state_pin */
-    heatingStatePin?: Pin;
+    heatingStatePin?: Pin | EmbedValue<Pin>;
     /** @yamlKey cooling_state_pin */
-    coolingStatePin?: Pin;
+    coolingStatePin?: Pin | EmbedValue<Pin>;
     /** @yamlKey target_temperature_datapoint */
-    targetTemperatureDatapoint?: number;
+    targetTemperatureDatapoint?: number | EmbedValue<number>;
     /** @yamlKey current_temperature_datapoint */
-    currentTemperatureDatapoint?: number;
+    currentTemperatureDatapoint?: number | EmbedValue<number>;
     /** @yamlKey temperature_multiplier */
     temperatureMultiplier?: number;
     /** @yamlKey current_temperature_multiplier */
@@ -1348,7 +1348,7 @@ interface TuyaProps extends _CoreComponent {
     /** @yamlKey target_temperature_multiplier */
     targetTemperatureMultiplier?: number;
     /** @yamlKey reports_fahrenheit */
-    reportsFahrenheit?: boolean;
+    reportsFahrenheit?: boolean | EmbedValue<boolean>;
     preset?: TuyaPresetProps;
     /** @yamlKey fan_mode */
     fanMode?: TuyaFanModeProps;

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { grove_tb6612fng_GroveMotorDriveTB6612FNG, i2c_I2CBus } from "../markers";
 export interface GroveTb6612fngProps extends _CoreComponent {

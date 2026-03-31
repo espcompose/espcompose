@@ -46,28 +46,35 @@ The generated YAML is written to `.espcompose/esphome.yaml`.
 The scaffolded `index.tsx` is a minimal device configuration:
 
 ```tsx
-import { ESPCompose } from '@esphome/compose';
+import { defineProject } from '@esphome/compose';
 
-export default (
-  <esphome name="my-device" comment="An ESPHome Compose device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="!secret wifi_ssid" password="!secret wifi_password" />
-    <api />
-    <ota platform="esphome" />
-    <logger level="DEBUG" />
-  </esphome>
-);
+export default defineProject({
+  device: (
+    <esphome name="my-device" comment="An ESPHome Compose device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="!secret wifi_ssid" password="!secret wifi_password" />
+      <api />
+      <ota platform="esphome" />
+      <logger level="DEBUG" />
+    </esphome>
+  ),
+});
 ```
 
-The default export is the JSX element tree that gets compiled to YAML. Each intrinsic element (`<esphome>`, `<esp32>`, `<wifi>`, etc.) maps directly to an ESPHome YAML section. Props are written in camelCase and automatically converted to snake_case in the output.
+The `defineProject()` wrapper creates a typed project descriptor that the
+compiler uses as the entry point. The `device` property contains the JSX element
+tree that gets compiled to YAML. Each intrinsic element (`<esphome>`, `<esp32>`,
+`<wifi>`, etc.) maps directly to an ESPHome YAML section. Props are written in
+camelCase and automatically converted to snake_case in the output.
+
+> **Note:** The bare `export default <esphome>...</esphome>` pattern is still supported
+> for backward compatibility, but `defineProject()` is the recommended approach.
 
 ## Function Components
 
 Just like React, you can extract reusable pieces into function components:
 
 ```tsx
-import { ESPCompose } from '@esphome/compose';
-
 interface WifiConfigProps {
   ssid: string;
   password: string;
@@ -105,7 +112,7 @@ ESPHome uses string IDs to link components together (e.g. a light referencing an
 Call `useRef<T>()` to create a typed reference, pass it to an element's `ref` prop to assign it, and pass it to other elements' ID props to reference it:
 
 ```tsx
-import { ESPCompose, useRef } from '@esphome/compose';
+import { useRef } from '@esphome/compose';
 import type { output_FloatOutput, light_LightOutput } from '@esphome/compose';
 
 const outputRef = useRef<output_FloatOutput>();
@@ -168,32 +175,34 @@ binary_sensor:
     - delay: 100ms
 ```
 
-### Named Script Functions
+### Named Scripts
 
-Top-level `function` declarations are automatically compiled into ESPHome `script:` components. You can reference them in trigger props by name:
+Use `createScript()` to create named ESPHome `script:` components. The async arrow function body is compiled at the AST level by the action tree compiler — it is never executed at runtime:
 
 ```tsx
-import { ESPCompose, delay, logger } from '@esphome/compose';
+import { createScript, delay, logger, defineProject } from '@esphome/compose';
 
-function greet(): void {
+const greet = createScript(async () => {
   logger.log('Hello from ESPCompose!');
-  delay(500);
-}
+  await delay(500);
+});
 
-export default (
-  <esphome name="script-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
-    <api />
-    <logger level="INFO" />
-    <binary_sensor
-      platform="gpio"
-      pin={4}
-      name="Button"
-      onPress={greet}
-    />
-  </esphome>
-);
+export default defineProject({
+  device: (
+    <esphome name="script-device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <api />
+      <logger level="INFO" />
+      <binary_sensor
+        platform="gpio"
+        pin={4}
+        name="Button"
+        onPress={async () => { await greet(); }}
+      />
+    </esphome>
+  ),
+});
 ```
 
 This compiles to:
@@ -204,94 +213,89 @@ binary_sensor:
   pin: 4
   name: Button
   on_press:
-    - script.execute: greet
+    - script.execute: <auto-id>
+    - script.wait: <auto-id>
 script:
-  - id: greet
+  - id: <auto-id>
     then:
       - logger.log: Hello from ESPCompose!
       - delay: 500ms
 ```
 
-> **Note:** Only top-level `function` declarations become scripts. Arrow function constants (`const fn = () => {}`) are treated as compile-time helpers and do not generate script components.
+### Inline Trigger Handlers
+
+Use async arrow functions directly on trigger props for one-off handlers:
+
+```tsx
+<binary_sensor
+  platform="gpio"
+  pin={4}
+  name="Button"
+  onRelease={async () => { await delay(100); }}
+/>
+```
 
 ### Action Primitives
 
-Import action primitives from `@esphome/compose` to use inside script bodies and inline handlers:
+Import action primitives from `@esphome/compose` to use inside script bodies and trigger handlers:
 
 | Function | YAML Output |
 |----------|-------------|
-| `delay(ms)` | `delay: <ms>ms` |
+| `await delay(ms)` | `delay: <ms>ms` |
 | `logger.log(message, level?)` | `logger.log: { message, level }` |
+| `await waitUntil(() => cond)` | `wait_until: { condition: !lambda ... }` |
 
 ### Ref Actions
 
-Refs to actionable components (lights, switches, etc.) provide typed action methods that compile to ESPHome actions:
+Refs to actionable components (lights, switches, etc.) provide typed action methods. Inside `createScript()` or trigger handlers, calling these methods emits the corresponding ESPHome actions:
 
 ```tsx
-import { ESPCompose, delay, logger, useRef } from '@esphome/compose';
+import { createScript, delay, logger, useRef, defineProject } from '@esphome/compose';
 import type { light_LightOutput, switch__Switch, output_FloatOutput } from '@esphome/compose';
 
 const lightRef = useRef<light_LightOutput>();
 const switchRef = useRef<switch__Switch>();
 const outputRef = useRef<output_FloatOutput>();
 
-function toggleAll(): void {
+const toggleAll = createScript(async () => {
   lightRef.toggle();
-  delay(200);
+  await delay(200);
   switchRef.toggle();
-}
+});
 
-function dimLight(): void {
+const dimLight = createScript(async () => {
   lightRef.turnOn({ brightness: 0.5 });
   logger.log('Light dimmed to 50%');
-}
+});
 
-export default (
-  <esphome name="trigger-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
-    <api />
-    <logger level="DEBUG" />
-    <output platform="ledc" ref={outputRef} pin={19} frequency="1000Hz" />
-    <light ref={lightRef} platform="monochromatic" name="Desk Light" output={outputRef} />
-    <switch ref={switchRef} platform="gpio" pin={5} name="Relay" />
-    <binary_sensor
-      platform="gpio"
-      pin={4}
-      name="Button"
-      onPress={toggleAll}
-      onRelease={() => {
-        lightRef.turnOff();
-        delay(100);
-        switchRef.turnOff();
-      }}
-      onDoubleClick={dimLight}
-    />
-  </esphome>
-);
+export default defineProject({
+  device: (
+    <esphome name="trigger-device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <api />
+      <logger level="DEBUG" />
+      <output platform="ledc" ref={outputRef} pin={19} frequency="1000Hz" />
+      <light ref={lightRef} platform="monochromatic" name="Desk Light" output={outputRef} />
+      <switch ref={switchRef} platform="gpio" pin={5} name="Relay" />
+      <binary_sensor
+        platform="gpio"
+        pin={4}
+        name="Button"
+        onPress={async () => { await toggleAll(); }}
+        onRelease={async () => {
+          lightRef.turnOff();
+          await delay(100);
+          switchRef.turnOff();
+        }}
+        onDoubleClick={async () => { await dimLight(); }}
+      />
+    </esphome>
+  ),
+});
 ```
 
 This compiles `toggleAll` into a script that emits `light.toggle`, `delay`, and `switch.toggle` actions, and wires the inline `onRelease` handler directly into the binary sensor's `on_release` trigger.
-
-### Control Flow in Scripts
-
-Script bodies support standard control flow that compiles to ESPHome action equivalents:
-
-| TypeScript | ESPHome |
-|------------|---------|
-| `if / else` | `if:` action with `condition`, `then`, `else` |
-| `while` | `while:` action |
-| `for (let i = 0; i < N; i++)` | `repeat:` action (literal count only) |
-
-```tsx
-function startUp(): void {
-  logger.log('Device starting up', 'INFO');
-  if (1 > 0) {
-    delay(100);
-    logger.log('System ready');
-  }
-}
-```
 
 ## CLI Commands
 
@@ -310,3 +314,65 @@ Pass extra flags to ESPHome after `--`:
 ```bash
 espcompose run ./my-device -- --device /dev/ttyUSB0
 ```
+
+## Compile-Time Build Values
+
+Use `build.run()` to execute arbitrary Node.js code at compile time and capture
+the results for use in your device configuration:
+
+```tsx
+import { build, embed, defineProject } from '@esphome/compose';
+
+const env = build.run(() => ({
+  deviceName: 'my-device',
+  apiKey: process.env.API_KEY ?? 'default-key',
+}));
+
+export default defineProject({
+  device: (
+    <esphome name={embed.string(env.deviceName)}>
+      <esp32 board="esp32dev" framework={{ type: 'arduino' }} />
+      <api encryption={{ key: embed.string(env.apiKey) }} />
+    </esphome>
+  ),
+});
+```
+
+`build.run()` must be called at the module top level — not inside components or
+render functions. The `embed.*()` functions transfer the values into the YAML:
+
+| Function | Output |
+|----------|--------|
+| `embed.string(value)` | Literal YAML string |
+| `embed.number(value)` | Literal YAML number |
+| `embed.secret(value)` | `!secret` reference + secrets.yaml entry |
+| `embed.json(value)` | Inline YAML object/array |
+
+## Scripts with defineProject
+
+`createScript()` integrates naturally with the `defineProject()` authoring model:
+
+```tsx
+import { createScript, delay, logger, defineProject } from '@esphome/compose';
+
+const blink = createScript(async () => {
+  logger.log('Blink!');
+  await delay(500);
+  logger.log('Done');
+});
+
+export default defineProject({
+  device: (
+    <esphome name="my-device">
+      <esp32 board="esp32dev" framework={{ type: 'arduino' }} />
+      <binary_sensor platform="gpio" pin={4} name="Button"
+        onPress={async () => { await blink(); }}
+      />
+    </esphome>
+  ),
+});
+```
+
+`createScript()` returns a `ScriptHandle` that can be called from trigger
+handlers. The compiler collects the scripts and emits them as YAML `script:`
+sections automatically.

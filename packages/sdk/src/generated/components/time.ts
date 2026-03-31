@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _Time } from "../bases";
 import type { bm8563_BM8563, ds1307_DS1307Component, gps_GPS, gps_GPSTime, homeassistant_HomeassistantTime, host_HostTime, i2c_I2CBus, pcf85063_PCF85063Component, pcf8563_PCF8563Component, rx8130_RX8130Component, sntp_SNTPComponent, zigbee_ZigbeeComponent, zigbee_ZigbeeTime } from "../markers";
 interface Bm8563Props extends _Time, _CoreComponent {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { template__TemplateWaterHeater } from "../markers";
 interface WaterHeaterVisualProps {
@@ -19,7 +19,7 @@ interface WaterHeaterBaseProps extends _CoreEntityBase {
 }
 interface TemplateProps extends _CoreComponent {
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template water heater wil... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action to perform when the water heater receives a command (mode chan...
      * @yamlKey set_action

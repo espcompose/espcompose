@@ -3,155 +3,155 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _DisplayBasicDisplay, _DisplayFullDisplay, _QspiDbiDisplayBase } from "../bases";
 import type { _esphome_hub75_HUB75Display, addressable_light_AddressableLightDisplay, i2c_I2CBus, ili9xxx_ILI9XXXDisplay, inkplate_Inkplate, lcd_gpio_GPIOLCDDisplay, lcd_pcf8574_PCF8574LCDDisplay, light_AddressableLightState, max7219_MAX7219Component, max7219digit_MAX7219Component, nextion_Nextion, pcd8544_PCD8544, power_supply_PowerSupply, pvvx_mithermometer_PVVXDisplay, rpi_dpi_rgb_RpiDpiRgb, sdl_Sdl, spi_SPIComponent, ssd1306_i2c_I2CSSD1306, ssd1306_spi_SPISSD1306, ssd1322_spi_SPISSD1322, ssd1325_spi_SPISSD1325, ssd1327_i2c_I2CSSD1327, ssd1327_spi_SPISSD1327, ssd1331_spi_SPISSD1331, ssd1351_spi_SPISSD1351, st7567_i2c_I2CST7567, st7567_spi_SPIST7567, st7701s_ST7701S, st7735_ST7735, st7789v_ST7789V, st7920_ST7920, time_RealTimeClock, tm1621_TM1621Display, tm1637_TM1637Display, tm1638_TM1638Component, uart_UARTComponent, waveshare_epaper_WaveshareEPaperBase } from "../markers";
 interface Ili9xxxDimensionsProps {
     /** int: Specifies width of display. */
-    width: number;
+    width: number | EmbedValue<number>;
     /** int: Specifies height of display in pixels. */
-    height: number;
+    height: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the y-direction of the display. Default is 0.
      * @yamlKey offset_height
      */
-    offsetHeight?: number;
+    offsetHeight?: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum sup...
      * @yamlKey offset_width
      */
-    offsetWidth?: number;
+    offsetWidth?: number | EmbedValue<number>;
 }
 interface Ili9xxxTransformProps {
     /**
      * boolean: If true, exchange the x and y axes.
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface InkplateTransformProps {
     /** @yamlKey mirror_x */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /** @yamlKey mirror_y */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiRM67162TransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, exchange the x and y axes. Not available for some chips
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiRM690B0TransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, exchange the x and y axes. Not available for some chips
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiAXS15231TransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiJC4832W535TransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiJC3636W518TransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, exchange the x and y axes. Not available for some chips
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
 }
 interface QspiDbiCUSTOMTransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, exchange the x and y axes. Not available for some chips
      * @yamlKey swap_xy
      */
-    swapXy?: boolean;
+    swapXy?: boolean | EmbedValue<boolean>;
 }
 interface RpiDpiRgbDimensionsProps {
     /** int: Specifies width of display. */
-    width: number;
+    width: number | EmbedValue<number>;
     /** int: Specifies height of display in pixels. */
-    height: number;
+    height: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the y-direction of the display. Default is 0.
      * @yamlKey offset_height
      */
-    offsetHeight?: number;
+    offsetHeight?: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum sup...
      * @yamlKey offset_width
      */
-    offsetWidth?: number;
+    offsetWidth?: number | EmbedValue<number>;
 }
 interface RpiDpiRgbDataPinsProps {
     /** [Pin Schema](/guides/configuration-types#pin-schema): Exactly 5 pin numbers for the red databits, listed from least t... */
@@ -163,31 +163,31 @@ interface RpiDpiRgbDataPinsProps {
 }
 interface St7701sDimensionsProps {
     /** int: Specifies width of display. */
-    width: number;
+    width: number | EmbedValue<number>;
     /** int: Specifies height of display in pixels. */
-    height: number;
+    height: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the y-direction of the display. Default is 0.
      * @yamlKey offset_height
      */
-    offsetHeight?: number;
+    offsetHeight?: number | EmbedValue<number>;
     /**
      * int: Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum sup...
      * @yamlKey offset_width
      */
-    offsetWidth?: number;
+    offsetWidth?: number | EmbedValue<number>;
 }
 interface St7701sTransformProps {
     /**
      * boolean: If true, mirror the x axis.
      * @yamlKey mirror_x
      */
-    mirrorX?: boolean;
+    mirrorX?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If true, mirror the y axis.
      * @yamlKey mirror_y
      */
-    mirrorY?: boolean;
+    mirrorY?: boolean | EmbedValue<boolean>;
 }
 interface St7701sDataPinsProps {
     /** [Pin Schema](/guides/configuration-types#pin-schema): Exactly 5 pin numbers for the red databits, listed from least t... */
@@ -198,31 +198,31 @@ interface St7701sDataPinsProps {
     blue: unknown;
 }
 interface SdlDimensionsProps {
-    width: number;
-    height: number;
+    width: number | EmbedValue<number>;
+    height: number | EmbedValue<number>;
 }
 interface SdlWindowOptionsPropsPositionProps {
-    x: number;
-    y: number;
+    x: number | EmbedValue<number>;
+    y: number | EmbedValue<number>;
 }
 interface SdlWindowOptionsProps {
     position?: SdlWindowOptionsPropsPositionProps;
     /** boolean: Whether to draw the display window with or without borders */
-    borderless?: boolean;
+    borderless?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether to always draw the display window above other windows or not
      * @yamlKey always_on_top
      */
-    alwaysOnTop?: boolean;
+    alwaysOnTop?: boolean | EmbedValue<boolean>;
     /** boolean: Whether to draw the display window in fullscreen or not. This may resize the resolution of the host display ... */
-    fullscreen?: boolean;
+    fullscreen?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether to skip adding a taskbar icon for the display window or not
      * @yamlKey skip_taskbar
      */
-    skipTaskbar?: boolean;
+    skipTaskbar?: boolean | EmbedValue<boolean>;
     /** boolean: Whether the display window can be manually resized */
-    resizable?: boolean;
+    resizable?: boolean | EmbedValue<boolean>;
 }
 interface AddressableLightProps extends _DisplayFullDisplay {
     /**
@@ -231,9 +231,9 @@ interface AddressableLightProps extends _DisplayFullDisplay {
      */
     addressableLightId: RefProp<light_AddressableLightState>;
     /** int: The width of the LED matrix in pixels. */
-    width: number;
+    width: number | EmbedValue<number>;
     /** int: The height of the LED matrix in pixels. */
-    height: number;
+    height: number | EmbedValue<number>;
     /**
      * [lambda](/automations/templates#config-lambda): A lambda that returns the integer address of the LED given the suppli...
      * @yamlKey pixel_mapper
@@ -247,22 +247,22 @@ interface Hub75Props extends _DisplayFullDisplay {
      * int: Width of a single panel in pixels (e.g., `64`).
      * @yamlKey panel_width
      */
-    panelWidth: number;
+    panelWidth: number | EmbedValue<number>;
     /**
      * int: Height of a single panel in pixels (e.g., `32`).
      * @yamlKey panel_height
      */
-    panelHeight: number;
+    panelHeight: number | EmbedValue<number>;
     /**
      * int: Number of panels arranged vertically. Defaults to `1`.
      * @yamlKey layout_rows
      */
-    layoutRows?: number;
+    layoutRows?: number | EmbedValue<number>;
     /**
      * int: Number of panels arranged horizontally. Defaults to `1`.
      * @yamlKey layout_cols
      */
-    layoutCols?: number;
+    layoutCols?: number | EmbedValue<number>;
     /** enum: Physical panel chaining pattern. Defaults to `HORIZONTAL`. One of: */
     layout?: "HORIZONTAL" | "TOP_LEFT_DOWN" | "TOP_RIGHT_DOWN" | "BOTTOM_LEFT_UP" | "BOTTOM_RIGHT_UP" | "TOP_LEFT_DOWN_ZIGZAG" | "TOP_RIGHT_DOWN_ZIGZAG" | "BOTTOM_LEFT_UP_ZIGZAG" | "BOTTOM_RIGHT_UP_ZIGZAG";
     /**
@@ -279,14 +279,14 @@ interface Hub75Props extends _DisplayFullDisplay {
      * boolean: Enable double buffering to prevent tearing. Defaults to `false`. Set to `false` when using LVGL.
      * @yamlKey double_buffer
      */
-    doubleBuffer?: boolean;
+    doubleBuffer?: boolean | EmbedValue<boolean>;
     /** int: Initial brightness level (0-255). Defaults to `128`. */
-    brightness?: number;
+    brightness?: number | EmbedValue<number>;
     /**
      * int: Color bit depth (4-12). Higher values = better color accuracy but slower refresh. Defaults to `8`.
      * @yamlKey bit_depth
      */
-    bitDepth?: number;
+    bitDepth?: number | EmbedValue<number>;
     /**
      * enum: Gamma correction mode. One of:
      * @yamlKey gamma_correct
@@ -296,77 +296,77 @@ interface Hub75Props extends _DisplayFullDisplay {
      * int: Minimum panel refresh rate in Hz (40-200). The panel may refresh faster than this, but won't go slower. Auto-cal...
      * @yamlKey min_refresh_rate
      */
-    minRefreshRate?: number;
+    minRefreshRate?: number | EmbedValue<number>;
     /**
      * Red data pin for top half.
      * @yamlKey r1_pin
      */
-    r1Pin?: Pin;
+    r1Pin?: Pin | EmbedValue<Pin>;
     /**
      * Green data pin for top half.
      * @yamlKey g1_pin
      */
-    g1Pin?: Pin;
+    g1Pin?: Pin | EmbedValue<Pin>;
     /**
      * Blue data pin for top half.
      * @yamlKey b1_pin
      */
-    b1Pin?: Pin;
+    b1Pin?: Pin | EmbedValue<Pin>;
     /**
      * Red data pin for bottom half.
      * @yamlKey r2_pin
      */
-    r2Pin?: Pin;
+    r2Pin?: Pin | EmbedValue<Pin>;
     /**
      * Green data pin for bottom half.
      * @yamlKey g2_pin
      */
-    g2Pin?: Pin;
+    g2Pin?: Pin | EmbedValue<Pin>;
     /**
      * Blue data pin for bottom half.
      * @yamlKey b2_pin
      */
-    b2Pin?: Pin;
+    b2Pin?: Pin | EmbedValue<Pin>;
     /**
      * Row address bit 0.
      * @yamlKey a_pin
      */
-    aPin?: Pin;
+    aPin?: Pin | EmbedValue<Pin>;
     /**
      * Row address bit 1.
      * @yamlKey b_pin
      */
-    bPin?: Pin;
+    bPin?: Pin | EmbedValue<Pin>;
     /**
      * Row address bit 2.
      * @yamlKey c_pin
      */
-    cPin?: Pin;
+    cPin?: Pin | EmbedValue<Pin>;
     /**
      * Row address bit 3.
      * @yamlKey d_pin
      */
-    dPin?: Pin;
+    dPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Row address bit 4. Required for 1/32 scan panels (32+ rows), om...
      * @yamlKey e_pin
      */
-    ePin?: Pin;
+    ePin?: Pin | EmbedValue<Pin>;
     /**
      * Latch/strobe pin.
      * @yamlKey lat_pin
      */
-    latPin?: Pin;
+    latPin?: Pin | EmbedValue<Pin>;
     /**
      * Output enable pin.
      * @yamlKey oe_pin
      */
-    oePin?: Pin;
+    oePin?: Pin | EmbedValue<Pin>;
     /**
      * Clock pin.
      * @yamlKey clk_pin
      */
-    clkPin?: Pin;
+    clkPin?: Pin | EmbedValue<Pin>;
     /**
      * enum: Output clock speed. Defaults to `20MHZ`. One of:
      * @yamlKey clock_speed
@@ -376,12 +376,12 @@ interface Hub75Props extends _DisplayFullDisplay {
      * int: Number of clock cycles OE is blanked during LAT pulse. Defaults to `1`.
      * @yamlKey latch_blanking
      */
-    latchBlanking?: number;
+    latchBlanking?: number | EmbedValue<number>;
     /**
      * boolean: Invert clock phase. Defaults to `false`. Required to be `true` for MBI5124 driver.
      * @yamlKey clock_phase
      */
-    clockPhase?: boolean;
+    clockPhase?: boolean | EmbedValue<boolean>;
 }
 interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
     /** The model of the display. Options are: */
@@ -397,12 +397,12 @@ interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * When using 8 bit colors, this controls the type of color palette that will be used in the ESP's internal 8-bits-per-p...
      * @yamlKey color_palette
@@ -417,7 +417,7 @@ interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
      * Specifies whether the display colors should be inverted. Options are `true` or `false` - if you are unsure, use `fals...
      * @yamlKey invert_colors
      */
-    invertColors: boolean;
+    invertColors: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `bgr` (default) or `rgb`.
      * @yamlKey color_order
@@ -437,127 +437,127 @@ interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin.
      * @yamlKey cs_pin
      */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 interface InkplateProps extends _DisplayFullDisplay, _CoreComponent {
     /** boolean: Makes the screen display 3 bit colors. Defaults to `false` */
-    greyscale?: boolean;
+    greyscale?: boolean | EmbedValue<boolean>;
     /**
      * int: Sets a custom predefined waveform for the display. Accepts values from 1 to 4. Useful if the greyscale of the im...
      * @yamlKey custom_waveform
      */
-    customWaveform?: number;
+    customWaveform?: number | EmbedValue<number>;
     /** Transform the display presentation. */
     transform?: InkplateTransformProps;
     /**
      * boolean: Makes the screen update partially, which is faster, but leaves burnin. Defaults to `false`
      * @yamlKey partial_updating
      */
-    partialUpdating?: boolean;
+    partialUpdating?: boolean | EmbedValue<boolean>;
     /**
      * int: When partial updating is enabled, forces a full screen update after chosen number of updates. Defaults to `10`
      * @yamlKey full_update_every
      */
-    fullUpdateEvery?: number;
+    fullUpdateEvery?: number | EmbedValue<number>;
     /** enum: Specify the model. Defaults to `inkplate_6`. */
     model?: "inkplate_6" | "inkplate_10" | "inkplate_6_plus" | "inkplate_6_v2" | "inkplate_5" | "inkplate_5_v2";
     /**
      * [Pin](/guides/configuration-types#pin): The CKV pin for the Inkplate display.
      * @yamlKey ckv_pin
      */
-    ckvPin: Pin;
+    ckvPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The GMOD pin for the Inkplate display.
      * @yamlKey gmod_pin
      */
-    gmodPin: Pin;
+    gmodPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The GPIO0 Enable pin for the Inkplate display.
      * @yamlKey gpio0_enable_pin
      */
-    gpio0EnablePin: Pin;
+    gpio0EnablePin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The OE pin for the Inkplate display.
      * @yamlKey oe_pin
      */
-    oePin: Pin;
+    oePin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Powerup pin for the Inkplate display.
      * @yamlKey powerup_pin
      */
-    powerupPin: Pin;
+    powerupPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The SPH pin for the Inkplate display.
      * @yamlKey sph_pin
      */
-    sphPin: Pin;
+    sphPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The SPV pin for the Inkplate display.
      * @yamlKey spv_pin
      */
-    spvPin: Pin;
+    spvPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The VCOM pin for the Inkplate display.
      * @yamlKey vcom_pin
      */
-    vcomPin: Pin;
+    vcomPin: Pin | EmbedValue<Pin>;
     /** @yamlKey wakeup_pin */
-    wakeupPin: Pin;
+    wakeupPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The CL pin for the Inkplate display. Defaults to GPIO0.
      * @yamlKey cl_pin
      */
-    clPin?: Pin;
+    clPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The LE pin for the Inkplate display. Defaults to GPIO2.
      * @yamlKey le_pin
      */
-    lePin?: Pin;
+    lePin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 0 pin for the Inkplate display. Defaults to GPIO4.
      * @yamlKey display_data_0_pin
      */
-    displayData0Pin?: Pin;
+    displayData0Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 1 pin for the Inkplate display. Defaults to GPIO5.
      * @yamlKey display_data_1_pin
      */
-    displayData1Pin?: Pin;
+    displayData1Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 2 pin for the Inkplate display. Defaults to GPIO18.
      * @yamlKey display_data_2_pin
      */
-    displayData2Pin?: Pin;
+    displayData2Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 3 pin for the Inkplate display. Defaults to GPIO19.
      * @yamlKey display_data_3_pin
      */
-    displayData3Pin?: Pin;
+    displayData3Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 4 pin for the Inkplate display. Defaults to GPIO23.
      * @yamlKey display_data_4_pin
      */
-    displayData4Pin?: Pin;
+    displayData4Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 5 pin for the Inkplate display. Defaults to GPIO25.
      * @yamlKey display_data_5_pin
      */
-    displayData5Pin?: Pin;
+    displayData5Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 6 pin for the Inkplate display. Defaults to GPIO26.
      * @yamlKey display_data_6_pin
      */
-    displayData6Pin?: Pin;
+    displayData6Pin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin](/guides/configuration-types#pin): The Data 7 pin for the Inkplate display. Defaults to GPIO27.
      * @yamlKey display_data_7_pin
      */
-    displayData7Pin?: Pin;
+    displayData7Pin?: Pin | EmbedValue<Pin>;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<i2c_I2CBus>;
     address?: number;
@@ -572,17 +572,17 @@ interface LcdGpioProps {
      * [pin](/guides/configuration-types#pin-schema): The pin you have `E` (`06` ) hooked up to.
      * @yamlKey enable_pin
      */
-    enablePin: Pin;
+    enablePin: Pin | EmbedValue<Pin>;
     /**
      * [pin](/guides/configuration-types#pin-schema): The pin you have `RS` (`04` ) hooked up to.
      * @yamlKey rs_pin
      */
-    rsPin: Pin;
+    rsPin: Pin | EmbedValue<Pin>;
     /**
      * [pin](/guides/configuration-types#pin-schema): Optionally set the pin you have `R/W` (`05` ) hooked up to. You can al...
      * @yamlKey rw_pin
      */
-    rwPin?: Pin;
+    rwPin?: Pin | EmbedValue<Pin>;
 }
 interface LcdPcf8574Props {
     /** @yamlKey i2c_id */
@@ -595,14 +595,14 @@ interface Max7219Props extends _DisplayBasicDisplay, _CoreComponent {
      * int: The number of chips you wish to use for daisy chaining. Defaults to `1`.
      * @yamlKey num_chips
      */
-    numChips?: number;
+    numChips?: number | EmbedValue<number>;
     /** int: The intensity with which the MAX7219 should drive the outputs. Range is from 0 (least intense) to 15 (the default). */
-    intensity?: number;
+    intensity?: number | EmbedValue<number>;
     /**
      * boolean: For some displays the order of the chips is reversed so you'll see "56781234" instead of "12345678". This op...
      * @yamlKey reverse_enable
      */
-    reverseEnable?: boolean;
+    reverseEnable?: boolean | EmbedValue<boolean>;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
@@ -613,31 +613,31 @@ interface Max7219Props extends _DisplayBasicDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the CS line hooked up to.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
     /**
      * int: The number of chips you wish to use for daisy chaining. Defaults to `4`.
      * @yamlKey num_chips
      */
-    numChips?: number;
+    numChips?: number | EmbedValue<number>;
     /**
      * int: Number of lines if you want to use the displays in Multiline Mode. Defaults to `1` Example: [https://github.com/...
      * @yamlKey num_chip_lines
      */
-    numChipLines?: number;
+    numChipLines?: number | EmbedValue<number>;
     /**
      * How are the lines in Multiline Mode connected? Possible values are `zigzag` and `snake`. Defaults to `snake`
      * @yamlKey chip_lines_style
      */
     chipLinesStyle?: "ZIGZAG" | "SNAKE";
     /** int: The intensity with which the MAX7219 should drive the outputs. Range is from `0`, least intense to `15` the brig... */
-    intensity?: number;
+    intensity?: number | EmbedValue<number>;
     /**
      * Rotates every 8x8 chip. Valid values are `0`, `90`, `180` and `270`. Defaults to `0`.
      * @yamlKey rotate_chip
@@ -652,7 +652,7 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
      * boolean: Turn scroll mode on when content does not fit. Defaults to `true`.
      * @yamlKey scroll_enable
      */
-    scrollEnable?: boolean;
+    scrollEnable?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Set scroll speed. Defaults to `250ms`
      * @yamlKey scroll_speed
@@ -672,12 +672,12 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
      * boolean: For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("...
      * @yamlKey reverse_enable
      */
-    reverseEnable?: boolean;
+    reverseEnable?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Flip the horizontal axis on the screen. Defaults to `false`.
      * @yamlKey flip_x
      */
-    flipX?: boolean;
+    flipX?: boolean | EmbedValue<boolean>;
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
@@ -688,31 +688,31 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the CS line hooked up to.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface Pcd8544Props extends _DisplayFullDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin: Pin;
+    resetPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /** int: Set screen contrast (0-255). Defaults to `0x7f`. */
-    contrast?: number;
+    contrast?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -720,7 +720,7 @@ interface Pcd8544Props extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
 }
 interface PvvxMithermometerProps extends _DisplayBasicDisplay, _BleClient, _CoreComponent {
     /**
@@ -732,7 +732,7 @@ interface PvvxMithermometerProps extends _DisplayBasicDisplay, _BleClient, _Core
      * boolean: Whether to automatically clear the display data before each lambda call, or to keep the existing display con...
      * @yamlKey auto_clear_enabled
      */
-    autoClearEnabled?: boolean;
+    autoClearEnabled?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time the BLE connection is maintained before being disconnect...
      * @yamlKey disconnect_delay
@@ -749,7 +749,7 @@ interface QspiDbiRM67162Props extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -768,7 +768,7 @@ interface QspiDbiRM690B0Props extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -787,7 +787,7 @@ interface QspiDbiAXS15231Props extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -806,7 +806,7 @@ interface QspiDbiJC4832W535Props extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -825,7 +825,7 @@ interface QspiDbiJC3636W518Props extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -844,7 +844,7 @@ interface QspiDbiCUSTOMProps extends _QspiDbiDisplayBase {
      * boolean: With this boolean option you can invert the display colors.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * Should be one of `rgb` (default) or `bgr`.
      * @yamlKey color_order
@@ -870,7 +870,7 @@ interface RpiDpiRgbProps extends _DisplayFullDisplay {
      * bool: If the pclk is active negative (default is True)
      * @yamlKey pclk_inverted
      */
-    pclkInverted?: boolean;
+    pclkInverted?: boolean | EmbedValue<boolean>;
     /**
      * A list of pins used for the databus. Specified in 3 groups:
      * @yamlKey data_pins
@@ -885,67 +885,67 @@ interface RpiDpiRgbProps extends _DisplayFullDisplay {
      * With this boolean option you can invert the display colors. Note some of the displays have this option set automatica...
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DE pin
      * @yamlKey de_pin
      */
-    dePin: Pin;
+    dePin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The PCLK pin.
      * @yamlKey pclk_pin
      */
-    pclkPin: Pin;
+    pclkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The Horizontal sync pin.
      * @yamlKey hsync_pin
      */
-    hsyncPin: Pin;
+    hsyncPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The Vertical sync pin.
      * @yamlKey vsync_pin
      */
-    vsyncPin: Pin;
+    vsyncPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The ENABLE pin.
      * @yamlKey enable_pin
      */
-    enablePin?: Pin;
+    enablePin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * int: The horizontal sync pulse width.
      * @yamlKey hsync_pulse_width
      */
-    hsyncPulseWidth?: number;
+    hsyncPulseWidth?: number | EmbedValue<number>;
     /**
      * int: The horizontal back porch length.
      * @yamlKey hsync_back_porch
      */
-    hsyncBackPorch?: number;
+    hsyncBackPorch?: number | EmbedValue<number>;
     /**
      * int: The horizontal front porch length.
      * @yamlKey hsync_front_porch
      */
-    hsyncFrontPorch?: number;
+    hsyncFrontPorch?: number | EmbedValue<number>;
     /**
      * int: The vertical sync pulse width.
      * @yamlKey vsync_pulse_width
      */
-    vsyncPulseWidth?: number;
+    vsyncPulseWidth?: number | EmbedValue<number>;
     /**
      * int: The vertical back porch length.
      * @yamlKey vsync_back_porch
      */
-    vsyncBackPorch?: number;
+    vsyncBackPorch?: number | EmbedValue<number>;
     /**
      * int: The vertical front porch length.
      * @yamlKey vsync_front_porch
      */
-    vsyncFrontPorch?: number;
+    vsyncFrontPorch?: number | EmbedValue<number>;
 }
 interface Ssd1306I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
@@ -955,7 +955,7 @@ interface Ssd1306I2cProps extends _CoreComponent {
 }
 interface Ssd1306SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -963,16 +963,16 @@ interface Ssd1306SpiProps extends _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface Ssd1322SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -980,29 +980,29 @@ interface Ssd1322SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin.
      * @yamlKey cs_pin
      */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
     /** The model of the display. At present, only one option is available: */
     model: "SSD1322_256X64";
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     brightness?: unknown;
     /** @yamlKey external_vcc */
-    externalVcc?: boolean;
+    externalVcc?: boolean | EmbedValue<boolean>;
 }
 interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1010,22 +1010,22 @@ interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin on the ESP that the CS line is connected to. The CS lin...
      * @yamlKey cs_pin
      */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
     /** The model of the display. Options are: */
     model: "SSD1325_128X32" | "SSD1325_128X64" | "SSD1325_96X16" | "SSD1325_64X48" | "SSD1327_128X128";
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     brightness?: unknown;
     /** @yamlKey external_vcc */
-    externalVcc?: boolean;
+    externalVcc?: boolean | EmbedValue<boolean>;
 }
 interface Ssd1327I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
@@ -1035,7 +1035,7 @@ interface Ssd1327I2cProps extends _CoreComponent {
 }
 interface Ssd1327SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1043,13 +1043,13 @@ interface Ssd1327SpiProps extends _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 interface Ssd1331SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey dc_pin */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1057,11 +1057,11 @@ interface Ssd1331SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /** @yamlKey reset_pin */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     brightness?: unknown;
 }
 interface Ssd1351SpiProps extends _DisplayFullDisplay, _CoreComponent {
@@ -1069,7 +1069,7 @@ interface Ssd1351SpiProps extends _DisplayFullDisplay, _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1077,19 +1077,19 @@ interface Ssd1351SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin on the ESP that the CS line is connected to.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /** The model of the display. Options are: */
     model: "SSD1351_128X96" | "SSD1351_128X128";
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     brightness?: unknown;
 }
 interface St7567I2cProps extends _CoreComponent {
@@ -1103,7 +1103,7 @@ interface St7567I2cProps extends _CoreComponent {
 }
 interface St7567SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1111,9 +1111,9 @@ interface St7567SpiProps extends _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface St7701sProps extends _DisplayFullDisplay {
     /** Dimensions of the screen, specified either as *width* x *height* (e.g `320x240` ) or with separate config keys. */
@@ -1144,72 +1144,72 @@ interface St7701sProps extends _DisplayFullDisplay {
      * bool: If the pclk is active negative (default is True)
      * @yamlKey pclk_inverted
      */
-    pclkInverted?: boolean;
+    pclkInverted?: boolean | EmbedValue<boolean>;
     /**
      * With this boolean option you can invert the display colors. Note some of the displays have this option set automatica...
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DE pin.
      * @yamlKey de_pin
      */
-    dePin: Pin;
+    dePin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The PCLK pin.
      * @yamlKey pclk_pin
      */
-    pclkPin: Pin;
+    pclkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The Horizontal sync pin.
      * @yamlKey hsync_pin
      */
-    hsyncPin: Pin;
+    hsyncPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The Vertical sync pin.
      * @yamlKey vsync_pin
      */
-    vsyncPin: Pin;
+    vsyncPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin?: Pin;
+    dcPin?: Pin | EmbedValue<Pin>;
     /**
      * int: The horizontal sync pulse width.
      * @yamlKey hsync_pulse_width
      */
-    hsyncPulseWidth?: number;
+    hsyncPulseWidth?: number | EmbedValue<number>;
     /**
      * int: The horizontal back porch length.
      * @yamlKey hsync_back_porch
      */
-    hsyncBackPorch?: number;
+    hsyncBackPorch?: number | EmbedValue<number>;
     /**
      * int: The horizontal front porch length.
      * @yamlKey hsync_front_porch
      */
-    hsyncFrontPorch?: number;
+    hsyncFrontPorch?: number | EmbedValue<number>;
     /**
      * int: The vertical sync pulse width.
      * @yamlKey vsync_pulse_width
      */
-    vsyncPulseWidth?: number;
+    vsyncPulseWidth?: number | EmbedValue<number>;
     /**
      * int: The vertical back porch length.
      * @yamlKey vsync_back_porch
      */
-    vsyncBackPorch?: number;
+    vsyncBackPorch?: number | EmbedValue<number>;
     /**
      * int: The vertical front porch length.
      * @yamlKey vsync_front_porch
      */
-    vsyncFrontPorch?: number;
+    vsyncFrontPorch?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /**
@@ -1223,51 +1223,51 @@ interface St7701sProps extends _DisplayFullDisplay {
      */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 interface St7735Props extends _DisplayFullDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /**
      * int: The device width. 128 is default
      * @yamlKey device_width
      */
-    deviceWidth: number;
+    deviceWidth: number | EmbedValue<number>;
     /**
      * int: The device height. 160 is default
      * @yamlKey device_height
      */
-    deviceHeight: number;
+    deviceHeight: number | EmbedValue<number>;
     /**
      * int: The starting column offset. Default value depends on model.
      * @yamlKey col_start
      */
-    colStart: number;
+    colStart: number | EmbedValue<number>;
     /**
      * int: The starting row offset. Default value depends on model.
      * @yamlKey row_start
      */
-    rowStart: number;
+    rowStart: number | EmbedValue<number>;
     /**
      * boolean: 8bit mode. Default is false. This saves 50% of the buffer required for the display.
      * @yamlKey eight_bit_color
      */
-    eightBitColor?: boolean;
+    eightBitColor?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Use BGR mode. Default is false.
      * @yamlKey use_bgr
      */
-    useBgr?: boolean;
+    useBgr?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Invert LCD colors. Default is false.
      * @yamlKey invert_colors
      */
-    invertColors?: boolean;
+    invertColors?: boolean | EmbedValue<boolean>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1275,19 +1275,19 @@ interface St7735Props extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /** string: The model to use, one of the following options: */
     model: "INITR_GREENTAB" | "INITR_REDTAB" | "INITR_BLACKTAB" | "INITR_MINI160X80" | "INITR_18BLACKTAB" | "INITR_18REDTAB";
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
 }
 interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
     /** string: The display model to use. One of the following options: */
@@ -1296,38 +1296,38 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin. Default depends on `model`.
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin. Default depends on `model`.
      * @yamlKey dc_pin
      */
-    dcPin?: Pin;
+    dcPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The display's backlight pin. May be required depending on the h...
      * @yamlKey backlight_pin
      */
-    backlightPin?: Pin;
+    backlightPin?: Pin | EmbedValue<Pin>;
     /**
      * [ID](/guides/configuration-types#id): The [power supply](/components/power_supply/) to connect to this display if req...
      * @yamlKey power_supply
      */
     powerSupply?: RefProp<power_supply_PowerSupply>;
     /** boolean: Limits the supported color depth to eight bits. May be useful on memory-constrained devices. Defaults to `fa... */
-    eightbitcolor?: boolean;
+    eightbitcolor?: boolean | EmbedValue<boolean>;
     /** int: Sets height of display in pixels. Default depends on `model`. */
-    height?: number;
+    height?: number | EmbedValue<number>;
     /** int: Sets width of display. Default depends on `model`. */
-    width?: number;
+    width?: number | EmbedValue<number>;
     /**
      * int: When `model` is set to "Custom", use this to specify the display's vertical offset in pixels. This option may no...
      * @yamlKey offset_height
      */
-    offsetHeight?: number;
+    offsetHeight?: number | EmbedValue<number>;
     /**
      * int: When `model` is set to "Custom", use this to specify the display's horizontal offset in pixels. This option may ...
      * @yamlKey offset_width
      */
-    offsetWidth?: number;
+    offsetWidth?: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /**
@@ -1341,18 +1341,18 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin. Default depends on `model`.
      * @yamlKey cs_pin
      */
-    csPin?: Pin;
+    csPin?: Pin | EmbedValue<Pin>;
 }
 interface St7920Props extends _DisplayFullDisplay, _CoreComponent {
     /** int: The "width" of a screen. Defaults to 128. */
-    width: number;
+    width: number | EmbedValue<number>;
     /** int: The "height" of a screen. Defaults to 64; */
-    height: number;
+    height: number | EmbedValue<number>;
     /** @yamlKey spi_id */
     spiId?: RefProp<spi_SPIComponent>;
     /** @yamlKey data_rate */
@@ -1360,58 +1360,58 @@ interface St7920Props extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Sometimes also called `RS`. For ST7920 should be inverted.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface Tm1621Props extends _DisplayBasicDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the CS line.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the DATA line.
      * @yamlKey data_pin
      */
-    dataPin: Pin;
+    dataPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the READ line.
      * @yamlKey read_pin
      */
-    readPin: Pin;
+    readPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the WRITE line.
      * @yamlKey write_pin
      */
-    writePin: Pin;
+    writePin: Pin | EmbedValue<Pin>;
 }
 interface WaveshareEpaperProps extends _DisplayFullDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The DC pin.
      * @yamlKey dc_pin
      */
-    dcPin: Pin;
+    dcPin: Pin | EmbedValue<Pin>;
     /** The model of the E-Paper display. Options are: */
     model: "1.54in" | "1.54inv2" | "1.54inv2-b" | "2.13in" | "2.13inv2" | "2.13in-ttgo" | "2.13in-ttgo-b1" | "2.13in-ttgo-b73" | "2.13in-ttgo-b74" | "2.90in" | "2.90inv2" | "gdew029t5" | "2.70in" | "2.70in-b" | "2.70in-bv2" | "2.70inv2" | "2.90in-b" | "2.90in-bv3" | "gdey029t94" | "2.90inv2-r2" | "2.90in-d" | "2.90in-dke" | "gdey042t81" | "4.20in" | "4.20in-bv2" | "4.20in-bv2-bwr" | "5.65in-f" | "5.83in" | "5.83inv2" | "gdey0583t81" | "7.30in-f" | "7.50in" | "7.50in-bv2" | "7.50in-bv3" | "7.50in-bv3-bwr" | "7.50in-bc" | "7.50inv2" | "7.50inv2alt" | "7.50inv2p" | "7.50in-hd-b" | "2.13in-ttgo-dke" | "2.13inv3" | "1.54in-m5coreink-m09" | "13.3in-k";
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The RESET pin. Defaults to not connected. Make sure you pull th...
      * @yamlKey reset_pin
      */
-    resetPin?: Pin;
+    resetPin?: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The BUSY pin. Defaults to not connected.
      * @yamlKey busy_pin
      */
-    busyPin?: Pin;
+    busyPin?: Pin | EmbedValue<Pin>;
     /**
      * int: E-Paper displays have two modes of switching to the next image: A partial update that only changes the pixels th...
      * @yamlKey full_update_every
      */
-    fullUpdateEvery?: number;
+    fullUpdateEvery?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): Duration for the display reset operation. Defaults to `200ms`. Setting this...
      * @yamlKey reset_duration
@@ -1427,19 +1427,19 @@ interface WaveshareEpaperProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The CS pin.
      * @yamlKey cs_pin
      */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
     /**
      * boolean: If set to `true`, the Nextion will be configured to wake from sleep when touched.
      * @yamlKey auto_wake_on_touch
      */
-    autoWakeOnTouch?: boolean;
+    autoWakeOnTouch?: boolean | EmbedValue<boolean>;
     /** percentage: When specified, the display brightness will be set to this value at boot. */
     brightness?: number;
     /**
@@ -1451,12 +1451,12 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * boolean: Shows device information (model, firmware version, serial number, flash size) in the configuration dump. Whe...
      * @yamlKey dump_device_info
      */
-    dumpDeviceInfo?: boolean;
+    dumpDeviceInfo?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to `false`.
      * @yamlKey exit_reparse_on_start
      */
-    exitReparseOnStart?: boolean;
+    exitReparseOnStart?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Maximum age in milliseconds for queued commands before they are automatical...
      * @yamlKey max_queue_age
@@ -1466,12 +1466,12 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * integer: Limits the number of commands processed per loop cycle. This helps prevent stack overflows when a large numb...
      * @yamlKey max_commands_per_loop
      */
-    maxCommandsPerLoop?: number;
+    maxCommandsPerLoop?: number | EmbedValue<number>;
     /**
      * integer: Sets the maximum number of commands that can be queued at once. When the limit is reached, new commands will...
      * @yamlKey max_queue_size
      */
-    maxQueueSize?: number;
+    maxQueueSize?: number | EmbedValue<number>;
     /**
      * [Action](/automations/actions#all-actions): An action to be performed when the Nextion reports a buffer overflow. See...
      * @yamlKey on_buffer_overflow
@@ -1506,7 +1506,7 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * boolean: Sets whether the initial display connection handshake process is skipped. When set to `true`, the connection...
      * @yamlKey skip_connection_handshake
      */
-    skipConnectionHandshake?: boolean;
+    skipConnectionHandshake?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Time in milliseconds to wait before forcing the display to be marked as rea...
      * @yamlKey startup_override_ms
@@ -1516,12 +1516,12 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * int: Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
      * @yamlKey start_up_page
      */
-    startUpPage?: number;
+    startUpPage?: number | EmbedValue<number>;
     /**
      * int: Number of retries for transient HTTP failures during TFT upload. On Arduino, this applies to the initial connect...
      * @yamlKey tft_upload_http_retries
      */
-    tftUploadHttpRetries?: number;
+    tftUploadHttpRetries?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): HTTP request timeout for TFT upload transfers. Applies to each individual H...
      * @yamlKey tft_upload_http_timeout
@@ -1541,12 +1541,12 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * int: Sets internal No-touch-then-sleep timer in seconds. Range: 0 (disabled) or 3-65535 seconds (max: ~18 hours). Val...
      * @yamlKey touch_sleep_timeout
      */
-    touchSleepTimeout?: number;
+    touchSleepTimeout?: number | EmbedValue<number>;
     /**
      * int: Sets the page to display after waking up
      * @yamlKey wake_up_page
      */
-    wakeUpPage?: number;
+    wakeUpPage?: number | EmbedValue<number>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the [UART Bus](/components/uart) you wish to use for this display. Sp...
      * @yamlKey uart_id
@@ -1568,40 +1568,40 @@ interface SdlProps extends _DisplayFullDisplay {
 }
 interface Tm1637Props extends _DisplayBasicDisplay, _CoreComponent {
     /** int: The intensity with which the TM1637 should drive the outputs. Range is from 0 (least intense) to 7 (the default). */
-    intensity?: number;
+    intensity?: number | EmbedValue<number>;
     /** bool: Invert character rendering to the TM1637 so you can physically flip the display around. */
-    inverted?: boolean;
+    inverted?: boolean | EmbedValue<boolean>;
     /** int: The amount of digits your TM1637 is driving. Only used when `inverted: true` Range is from 1 to 6 (the default). */
-    length?: number;
+    length?: number | EmbedValue<number>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the CLK line hooked up to.
      * @yamlKey clk_pin
      */
-    clkPin: Pin;
+    clkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the DIO line hooked up to.
      * @yamlKey dio_pin
      */
-    dioPin: Pin;
+    dioPin: Pin | EmbedValue<Pin>;
 }
 interface Tm1638Props extends _DisplayBasicDisplay, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the CLK line hooked up to.
      * @yamlKey clk_pin
      */
-    clkPin: Pin;
+    clkPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the STB line hooked up to.
      * @yamlKey stb_pin
      */
-    stbPin: Pin;
+    stbPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin you have the DIO line hooked up to.
      * @yamlKey dio_pin
      */
-    dioPin: Pin;
+    dioPin: Pin | EmbedValue<Pin>;
     /** int: The intensity with which the TM1638 should drive the outputs. Range is from 0 (least intense) to 7 (the default)... */
-    intensity?: number;
+    intensity?: number | EmbedValue<number>;
 }
 export type DisplayProps = ({
     platform: "addressable_light";

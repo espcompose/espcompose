@@ -4,14 +4,14 @@ import type {
 } from './generated/actions';
 import type { InferReactiveProperties } from './reactive-properties';
 import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
-import { Expression } from './expression';
+import { ReactiveNode } from './reactive-node';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = Record<string, any>> = (props: P) => EspComposeElement | null;
 
 export interface EspComposeElement {
-  type: string | FunctionComponent;
+  type: string | symbol | FunctionComponent;
   props: Record<string, unknown> & { children?: EspComposeElement[] };
 }
 
@@ -23,23 +23,27 @@ export interface EspComposeElement {
 // (e.g. `x` with the new sensor value) while others fire with no arguments.
 //
 // Usage:
-//   onPress?: Trigger                        // no variables
-//   onValue?: Trigger<{ x: number }>         // sensor value trigger
-//   onState?: Trigger<{ x: boolean }>        // binary sensor state trigger
+//   onPress?: TriggerHandler                   // no variables
+//   onValue?: TriggerHandler<{ x: number }>    // sensor value trigger
+//   onState?: TriggerHandler<{ x: boolean }>   // binary sensor state trigger
 //
-// At compile time, trigger props accept either:
-//   - A named script function:  onPress={toggleLight}
-//   - An inline arrow function: onPress={() => { lightRef.toggle(); }}
-// The compiler transformer rewrites these into ESPHome YAML action lists.
+// Trigger props accept bare arrow functions:
+//   onPress={() => { lightRef.toggle(); }}
+//   onPress={async () => { await delay(500); lightRef.toggle(); }}
+//   onValue={(args) => { lightRef.turnOn({ brightness: args.x }); }}
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * An ESPHome trigger / event handler callback.
+ * An ESPHome trigger / event handler.
  *
- * `T` describes the variables available inside the trigger's lambda scope.
- * Use `void` (the default) for triggers that provide no variables.
+ * Accepts a bare arrow function (sync or async) whose body is compiled to
+ * an ESPHome action tree. The type parameter `T` describes the trigger
+ * variables available (e.g. `{ x: number }` for sensor value triggers).
  */
-export type TriggerHandler<T = void> = (args: T) => void;
+export type TriggerHandler<T = void> =
+  T extends void
+    ? (() => void) | (() => Promise<void>)
+    : ((args: T) => void) | ((args: T) => Promise<void>);
 
 /**
  * ESPHome time period value.
@@ -82,6 +86,15 @@ export type IPv4Address = `${number}.${number}.${number}.${number}`;
 declare const REF_BRAND: unique symbol;
 
 /**
+ * Phantom brand for action-providing types.
+ *
+ * Types branded with ACTION_BRAND are recognized by the ESLint rule
+ * `no-unsupported-trigger-body` as legitimate action sources when
+ * called inside trigger handler bodies.
+ */
+export declare const ACTION_BRAND: unique symbol;
+
+/**
  * Base ref interface — a branded, toString-able reference.
  *
  * The phantom uses a **function-property** signature so that the type
@@ -92,6 +105,7 @@ declare const REF_BRAND: unique symbol;
  */
 interface BaseRef<T = unknown> {
   readonly [REF_BRAND]?: (phantom: T) => void;
+  readonly [ACTION_BRAND]?: true;
   toString(): string;
 }
 
@@ -148,24 +162,33 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
           return Reflect.get(target, prop, receiver);
         }
 
-        // Check reactive property map — return Expression if matched.
+        // Check reactive property map — return ReactiveNode if matched.
         if (typeof prop === 'string') {
           const reactiveConfig = REACTIVE_PROPERTY_MAP[prop];
           if (reactiveConfig) {
-            return new Expression({
+            return new ReactiveNode({
+              kind: 'expression',
+              dependencies: [{
+                sourceId: target._token,
+                triggerType: reactiveConfig.triggerType,
+                sourceDomain: reactiveConfig.sourceDomain,
+                cppSignalName: `sig_${target._token}`,
+                cppType: reactiveConfig.cppType,
+              }],
+              cppExpression: reactiveConfig.property,
               sourceId: target._token,
               property: reactiveConfig.property,
               triggerType: reactiveConfig.triggerType,
               sourceDomain: reactiveConfig.sourceDomain,
+              cppSignalName: `sig_${target._token}`,
+              cppType: reactiveConfig.cppType,
             });
           }
         }
 
-        // Fallback: action method no-op.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        return function actionMarker(..._args: unknown[]): void {
-          // No-op at runtime. The compiler transformer rewrites these calls.
-        };
+        // Action method — no-op at runtime; the AST compiler handles
+        // ref action calls (ref.toggle(), ref.turnOn(), etc.) at build time.
+        return function actionMethod() {};
       },
     });
   }
@@ -273,6 +296,10 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 
 export type AnyProps = BaseProps & Record<string, unknown>;
+
+// Re-export phase-aware types for use by generated code
+export type { EmbedValue } from './embed';
+export type { BindProp } from './bind';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX namespace — base declaration only.

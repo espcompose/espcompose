@@ -3,16 +3,16 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, TimePeriod, TriggerHandler } from "../../types";
 export interface Rp2040FrameworkProps {
-    version?: string;
-    source?: string;
+    version?: string | EmbedValue<string>;
+    source?: string | EmbedValue<string>;
     /** @yamlKey platform_version */
     platformVersion?: unknown;
 }
 export interface Rp2040Props {
     /** string: The PlatformIO board identifier. Common boards include `rpipicow` (Raspberry Pi Pico W), `rpipico` (Raspberry... */
-    board: string;
+    board: string | EmbedValue<string>;
     framework?: Rp2040FrameworkProps;
     /**
      * [Time](/guides/configuration-types#time): The timeout to apply to the RP2040 watchdog. When the device hangs for that...
@@ -23,7 +23,7 @@ export interface Rp2040Props {
      * boolean: Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()`...
      * @yamlKey enable_full_printf
      */
-    enableFullPrintf?: boolean;
+    enableFullPrintf?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

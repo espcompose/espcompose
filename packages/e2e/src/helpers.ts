@@ -38,10 +38,10 @@ export async function createProjectTest(
   // Use word boundaries to avoid matching substrings like ds_slider_indicator.
   let counter = 0;
   const tokenMap = new Map<string, string>();
-  const stableYaml = yamlContent.replace(/\b(?:r_|rw_)[a-z0-9]{8,11}\b/g, (tok) => {
+  const stableYaml = yamlContent.replace(/\b(?:r_|rw_|script_)[a-z0-9]{8,11}\b/g, (tok) => {
     let stable = tokenMap.get(tok);
     if (!stable) {
-      const prefix = tok.startsWith('rw_') ? 'rw_ref' : 'r_ref';
+      const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('script_') ? 'script_ref' : 'r_ref';
       stable = `${prefix}${counter++}`;
       tokenMap.set(tok, stable);
     }

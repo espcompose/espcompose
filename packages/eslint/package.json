@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
+    "typecheck": "tsc --noEmit -p tsconfig.check.json",
     "clean": "rimraf dist",
     "lint": "eslint src",
     "test": "vitest run"

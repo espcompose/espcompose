@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { wiegand_Wiegand } from "../markers";
 export interface WiegandProps {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin where the `D0` output of the Wiegand's interface connects. */
-    d0: Pin;
+    d0: Pin | EmbedValue<Pin>;
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin where the `D1` output of the Wiegand's interface connects. */
-    d1: Pin;
+    d1: Pin | EmbedValue<Pin>;
     /**
      * [Automation](/automations): An automation to perform when a Wiegand-compatible card or a tag has been read by the dev...
      * @yamlKey on_tag

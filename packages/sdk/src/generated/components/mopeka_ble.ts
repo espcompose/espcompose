@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BthomeMithermometerBleDevice } from "../bases";
 import type { mopeka_ble_MopekaListener } from "../markers";
 export interface MopekaBleProps extends _BthomeMithermometerBleDevice {
     /** @yamlKey show_sensors_without_sync */
-    showSensorsWithoutSync?: boolean;
+    showSensorsWithoutSync?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

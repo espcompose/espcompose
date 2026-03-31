@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, TriggerHandler } from "../../types";
 export interface DashboardImportProps {
     /** @yamlKey package_import_url */
     packageImportUrl: unknown;
     /** @yamlKey import_full_config */
-    importFullConfig?: boolean;
+    importFullConfig?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

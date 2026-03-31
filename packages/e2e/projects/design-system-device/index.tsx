@@ -6,7 +6,7 @@
  */
 import {
   Display,
-  ESPCompose,
+  defineProject,
   useRef,
 } from '@esphome/compose';
 import {
@@ -20,13 +20,12 @@ import {
   SwitchField,
   ThemeProvider,
   darkTheme,
-  createLvglThemeProps,
 } from '@esphome/compose-ui';
 
-export default (() => {
-  const displayRef = useRef<Display>();
+const displayRef = useRef<Display>();
 
-  return (
+export default defineProject({
+  device: (
     <esphome name="design-system-device" comment="Design system demo">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
       <wifi ssid="HomeWifi" password="s3cr3t!!" />
@@ -46,14 +45,14 @@ export default (() => {
         resetPin={33}
       />
 
-      <lvgl displays={[displayRef]} {...createLvglThemeProps(darkTheme)}>
-        <ThemeProvider value={darkTheme}>
+      <lvgl displays={[displayRef]}>
+        <ThemeProvider themes={{ dark: darkTheme }}>
           <Screen padding="lg">
             <VStack>
-              <Text variant="title">Smart Home</Text>
+              <Text variant="title" text="Smart Home" />
 
               <Card>
-                <Text variant="subtitle">Living Room</Text>
+                <Text variant="subtitle" text="Living Room" />
                 <SliderField label="Brightness" min={0} max={255} />
                 <SwitchField label="Power" />
               </Card>
@@ -67,5 +66,5 @@ export default (() => {
         </ThemeProvider>
       </lvgl>
     </esphome>
-  );
-})();
+  ),
+});

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { template__TemplateValve, web_server_WebServer } from "../markers";
 interface ValveWebServerProps {
@@ -32,17 +32,17 @@ interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state of the valve. */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template valve will immed... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether the true state of the valve is not known. This will make the Home Assistant frontend show buttons fo...
      * @yamlKey assumed_state
      */
-    assumedState?: boolean;
+    assumedState?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether this valve will publish its position as a floating point number. By default (`false` ), the valve on...
      * @yamlKey has_position
      */
-    hasPosition?: boolean;
+    hasPosition?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey open_action

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { factory_reset_FactoryResetComponent } from "../markers";
 export interface FactoryResetProps extends _CoreComponent {
@@ -16,7 +16,7 @@ export interface FactoryResetProps extends _CoreComponent {
      * integer: The number of power cycles after which the device will be reset. No default, if not configured the power cyc...
      * @yamlKey resets_required
      */
-    resetsRequired?: number;
+    resetsRequired?: number | EmbedValue<number>;
     /** @yamlKey on_increment */
     onIncrement?: TriggerHandler;
 }

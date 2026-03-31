@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { output_FloatOutput, rtttl_Rtttl, speaker_Speaker } from "../markers";
 export interface RtttlProps extends _CoreComponent {

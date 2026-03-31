@@ -3,25 +3,27 @@
  *
  * A device with multiple sensor and binary_sensor sections.
  */
-import { ESPCompose } from '@esphome/compose';
+import { defineProject } from '@esphome/compose';
 
-export default (
-  <esphome name="sensor-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
-    <sensor
-      platform="dht"
-      pin={4}
-      model="DHT22"
-      temperature={{ name: 'Temperature' }}
-      humidity={{ name: 'Humidity' }}
-    />
-    <binary_sensor
-      platform="gpio"
-      pin={5}
-      name="Motion Sensor"
-      deviceClass="motion"
-    />
-    <logger level="INFO" />
-  </esphome>
-);
+export default defineProject({
+  device: (
+    <esphome name="sensor-device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <sensor
+        platform="dht"
+        pin={4}
+        model="DHT22"
+        temperature={{ name: 'Temperature' }}
+        humidity={{ name: 'Humidity' }}
+      />
+      <binary_sensor
+        platform="gpio"
+        pin={5}
+        name="Motion Sensor"
+        deviceClass="motion"
+      />
+      <logger level="INFO" />
+    </esphome>
+  ),
+});

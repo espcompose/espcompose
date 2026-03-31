@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { lcd_base_LCDDisplay, lcd_menu_LCDCharacterMenuComponent } from "../markers";
 export interface LcdMenuProps {
     /**
@@ -15,22 +15,22 @@ export interface LcdMenuProps {
      * 0-255: Code of the character used to mark menu item selected. Defaults to `0x3e` (`>` ).
      * @yamlKey mark_selected
      */
-    markSelected?: number;
+    markSelected?: number | EmbedValue<number>;
     /**
      * 0-255: Code of the character used to mark menu item editing mode. Defaults to `0x2a` (`*` ).
      * @yamlKey mark_editing
      */
-    markEditing?: number;
+    markEditing?: number | EmbedValue<number>;
     /**
      * 0-255: Code of the character used to mark menu item leading to a submenu. Defaults to `0x7e` (a right arrow).
      * @yamlKey mark_submenu
      */
-    markSubmenu?: number;
+    markSubmenu?: number | EmbedValue<number>;
     /**
      * 0-255: Code of the character used to mark menu items going back one level. As the character set lacks a good looking ...
      * @yamlKey mark_back
      */
-    markBack?: number;
+    markBack?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

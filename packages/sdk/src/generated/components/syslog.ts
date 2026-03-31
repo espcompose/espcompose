@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { syslog_Syslog, time_RealTimeClock, udp_UDPComponent } from "../markers";
 export interface SyslogProps {
     /**
@@ -17,12 +17,12 @@ export interface SyslogProps {
      */
     timeId?: RefProp<time_RealTimeClock>;
     /** int: The port to send logs to. Defaults to `514`. */
-    port?: number;
+    port?: number | EmbedValue<number>;
     /** string: The highest log level to send to the syslog server. Defaults to `DEBUG`. */
     level?: "NONE" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "VERBOSE" | "VERY_VERBOSE";
-    strip?: boolean;
+    strip?: boolean | EmbedValue<boolean>;
     /** int: The syslog facility to use. Defaults to `16` (corresponding to `local0` ). */
-    facility?: number;
+    facility?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

@@ -5,7 +5,10 @@ import { createRequire } from 'module';
 import ts from 'typescript';
 import { ESLint } from 'eslint';
 import { writeTransformedFiles } from './transform/index.js';
-import { injectReactiveBindings } from './reactive-injector.js';
+import { injectHASensorImports } from './reactive-injector.js';
+import { buildIR, lowerIR } from './ir/index.js';
+import { generateBindingsHeader, getRuntimeHeaderContent } from './reactive-runtime/codegen.js';
+import { buildRuntimeConfig, injectReactiveBindingsRuntime } from './reactive-config.js';
 
 export interface CompileOptions {
   /** Absolute path to the TSX/TS entry file. */
@@ -51,9 +54,8 @@ async function typeCheck(entryFile: string): Promise<ts.Program> {
     compilerOptions = {
       target: ts.ScriptTarget.ES2022,
       moduleResolution: ts.ModuleResolutionKind.Bundler,
-      jsx: ts.JsxEmit.React,
-      jsxFactory: 'ESPCompose.createElement',
-      jsxFragmentFactory: 'ESPCompose.Fragment',
+      jsx: ts.JsxEmit.ReactJSX,
+      jsxImportSource: '@esphome/compose',
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
@@ -203,9 +205,8 @@ async function bundle(entryFile: string, outFile: string): Promise<void> {
     platform: 'node',
     format: 'cjs',
     target: 'node18',
-    jsx: 'transform',
-    jsxFactory: 'ESPCompose.createElement',
-    jsxFragment: 'ESPCompose.Fragment',
+    jsx: 'automatic',
+    jsxImportSource: '@esphome/compose',
     // Keep the SDK external — it will be require()'d from the host process
     external: ['@esphome/compose'],
     outfile: outFile,
@@ -232,25 +233,43 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
   delete _require.cache[_require.resolve(bundleFile)];
 
   // Load the SDK via the same CommonJS require that the bundle will use.
-  // This ensures _withScriptScope and useScript share the same module-level
+  // This ensures withScriptScope and createScript share the same module-level
   // state, avoiding the ESM / CJS dual-instance problem where the compiler's
   // statically-imported ESM copy and the user bundle's CJS copy would have
-  // separate hook state and never communicate.
+  // separate state and never communicate.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cjsSDK = (_require('@esphome/compose') as any).ESPCompose;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sdkModule = _require('@esphome/compose') as any;
 
   // Clear HA entity binding cache for a fresh render pass.
   cjsSDK.clearHAEntityCache();
+  sdkModule.clearRefRegistry();
+
+  // Clear theme state from any previous compile run.
+  if (typeof sdkModule.clearThemeRegistry === 'function') {
+    sdkModule.clearThemeRegistry();
+  }
+  if (typeof sdkModule.clearReactiveThemeProxy === 'function') {
+    sdkModule.clearReactiveThemeProxy();
+  }
+  if (typeof sdkModule.clearThemeNodeCache === 'function') {
+    sdkModule.clearThemeNodeCache();
+  }
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
-  // - useHAEntity() calls fire during module evaluation (inside withScriptScope)
-  //   and register HA entities in the reactive scope.
-  // - Expression<T> props are detected during render() and register reactive
+  // - bind.haEntity() calls fire during module evaluation and register HA
+  //   entities in the reactive scope.
+  // - Expression<T> props are detected during render and register reactive
   //   bindings in the reactive scope.
-  const { result: reactiveResult, bindings, entities } = cjsSDK.withReactiveScope(() => {
+  let collectedScripts: Array<{ id: string; then: unknown[] }> = [];
+  const { result: reactiveResult, bindings, entities, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: mod, scripts } = cjsSDK.withScriptScope(() => {
+      // Phase: module — build.run() is allowed, bind.* is forbidden
+      sdkModule.setPhase('module');
       return _require(bundleFile) as { default?: unknown };
     });
+    collectedScripts = scripts;
 
     const rootElement = mod.default;
 
@@ -261,20 +280,108 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
       );
     }
 
+    // Require ProjectDefinition (defineProject() wrapper)
+    if (!sdkModule.isProjectDefinition(rootElement)) {
+      throw new Error(
+        `Default export must use defineProject(). ` +
+          `Replace \`export default (<esphome ...>)\` with ` +
+          `\`export default defineProject({ device: (<esphome ...>) })\`.`
+      );
+    }
+    const element = rootElement.device;
+
+    // Phase: render — bind.* is allowed, build.run() is forbidden
+    sdkModule.setPhase('render');
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const config = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+    const config = cjsSDK.render(element as any) as Record<string, unknown>;
 
-    // Prepend any registered scripts as a top-level `script:` section.
-    const withScripts: Record<string, unknown> =
-      scripts.length > 0
-        ? { ...config, script: scripts }
-        : config;
+    // Phase: back to idle
+    sdkModule.setPhase('idle');
 
-    return withScripts;
+    return config;
   });
 
-  // Inject reactive bindings: auto-generated HA sensor imports + trigger wiring
-  const finalConfig = injectReactiveBindings(reactiveResult, bindings, entities);
+  // ── IR construction + lowering ───────────────────────────────────────────
+  // Build a typed IR tree from the rendered config, then lower it back.
+  const irTree = buildIR(reactiveResult);
+  const loweredConfig = lowerIR(irTree);
+
+  // ── Extract theme data from the SDK registry ─────────────────────────────
+  let themeData: import('./reactive-config.js').ThemeData | undefined;
+  const getThemeRegistry = sdkModule.getThemeRegistry;
+  if (typeof getThemeRegistry === 'function') {
+    const registry = getThemeRegistry();
+    const themeNames: string[] = registry.getThemeNames();
+    if (themeNames.length > 0) {
+      const signalPaths: string[] = registry.getSignalPaths();
+      const leafData = new Map<string, { values: unknown[]; cppType: string }>();
+      for (const path of signalPaths) {
+        const values: unknown[] = [];
+        let cppType = 'int32_t';
+        for (const name of themeNames) {
+          const themes = registry.getThemes();
+          const theme = themes.get(name);
+          if (theme) {
+            const val = theme.values[path];
+            if (val) {
+              values.push(val.value);
+              cppType = val.cppType;
+            } else {
+              values.push(0);
+            }
+          }
+        }
+        leafData.set(path, { values, cppType });
+      }
+      themeData = {
+        themeNames,
+        defaultIndex: registry.getDefaultIndex(),
+        leafData,
+      };
+    }
+  }
+
+  // Check if any reactive bindings or nodes exist — if so we need the C++ runtime.
+  const hasReactiveContent = (bindings?.length ?? 0) > 0
+    || (reactiveNodes?.length ?? 0) > 0
+    || (themeData != null);
+
+  let finalConfig: Record<string, unknown>;
+
+  if (hasReactiveContent) {
+    // ── C++ reactive runtime path ────────────────────────────────────────
+    // Build the runtime config from collected data.
+    const runtimeConfig = buildRuntimeConfig(reactiveNodes, bindings, entities, themeData, []);
+
+    // Generate and write espcompose_bindings.h.
+    const bindingsHeaderContent = generateBindingsHeader(runtimeConfig);
+    const outDir = path.dirname(outFile);
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'espcompose_bindings.h'), bindingsHeaderContent, 'utf8');
+
+    // Write espcompose_reactive.h (embedded content).
+    fs.writeFileSync(path.join(outDir, 'espcompose_reactive.h'), getRuntimeHeaderContent(), 'utf8');
+
+    // Inject HA sensor imports + signal.set() triggers (runtime-aware).
+    finalConfig = injectReactiveBindingsRuntime(
+      loweredConfig,
+      bindings,
+      entities,
+      runtimeConfig,
+    );
+  } else {
+    // ── No reactive bindings — just inject HA sensor imports if any ─────
+    finalConfig = injectHASensorImports(loweredConfig, entities);
+  }
+
+  // ── Inject createScript() definitions as top-level script: section ──────
+  if (collectedScripts.length > 0) {
+    finalConfig['script'] = collectedScripts.map((s) => ({
+      id: s.id,
+      then: s.then,
+    }));
+  }
 
   const yamlOutput = cjsSDK.toYAML(finalConfig);
 

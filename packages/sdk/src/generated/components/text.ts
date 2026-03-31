@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent } from "../bases";
 import type { copy_CopyText, lvgl_LVGLText, template__TemplateText, text_Text, web_server_WebServer } from "../markers";
 interface TextWebServerProps {
@@ -36,17 +36,17 @@ interface TemplateProps extends _CoreComponent {
      * int: The minimum length this text can be. Defaults to `0`.
      * @yamlKey min_length
      */
-    minLength?: number;
+    minLength?: number | EmbedValue<number>;
     /**
      * int: The maximum length this text can be. Defaults to `255`.
      * @yamlKey max_length
      */
-    maxLength?: number;
-    pattern?: string;
+    maxLength?: number | EmbedValue<number>;
+    pattern?: string | EmbedValue<string>;
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current value... */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template text will immedi... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey set_action
@@ -56,12 +56,12 @@ interface TemplateProps extends _CoreComponent {
      * String: The value to set the state to on setup if not restored with `restore_value`. Cannot be used with `lambda`. De...
      * @yamlKey initial_value
      */
-    initialValue?: string;
+    initialValue?: string | EmbedValue<string>;
     /**
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
-    restoreValue?: boolean;
+    restoreValue?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The interval on which to update the text by executing the `lambda`. Default...
      * @yamlKey update_interval

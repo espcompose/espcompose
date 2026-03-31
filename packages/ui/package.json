@@ -15,8 +15,12 @@
   "files": [
     "dist"
   ],
+  "espcompose": {
+    "library": true
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --tsconfig tsconfig.json",
+    "build": "espcompose library",
+    "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
     "test": "vitest run --passWithNoTests"
@@ -44,10 +48,13 @@
     "@esphome/compose": "workspace:*"
   },
   "devDependencies": {
+    "@esphome/compose-cli": "workspace:*",
+    "@esphome/compose-eslint": "workspace:*",
     "@types/node": "catalog:",
-    "tsup": "catalog:",
+    "eslint": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "rimraf": "catalog:",
     "vitest": "catalog:"
   }

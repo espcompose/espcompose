@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { micro_wake_word_MicroWakeWord, microphone_Microphone } from "../markers";
 export interface MicroWakeWordMicrophoneProps {
@@ -12,7 +12,7 @@ export interface MicroWakeWordMicrophoneProps {
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
     /** @yamlKey gain_factor */
-    gainFactor?: number;
+    gainFactor?: number | EmbedValue<number>;
 }
 export interface MicroWakeWordModelsProps {
     /** string: This can be one of: */
@@ -20,8 +20,8 @@ export interface MicroWakeWordModelsProps {
     /** @yamlKey probability_cutoff */
     probabilityCutoff?: unknown;
     /** @yamlKey sliding_window_size */
-    slidingWindowSize?: number;
-    internal?: boolean;
+    slidingWindowSize?: number | EmbedValue<number>;
+    internal?: boolean | EmbedValue<boolean>;
 }
 export interface MicroWakeWordProps extends _CoreComponent {
     /** [Microphone Source Configuration](/components/microphone#config-microphone-source): The [microphone](/components/micr... */
@@ -35,7 +35,7 @@ export interface MicroWakeWordProps extends _CoreComponent {
      * boolean: Whether to stop the component after detecting a wake word. Defaults to `true`.
      * @yamlKey stop_after_detection
      */
-    stopAfterDetection?: boolean;
+    stopAfterDetection?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

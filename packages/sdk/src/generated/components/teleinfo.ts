@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { teleinfo_TeleInfo, uart_UARTComponent } from "../markers";
 export interface TeleinfoProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface TeleinfoProps extends _CoreComponent {
      * Whether to use historical mode or standard mode. With historical mode, baudrate of 1200 must be used whereas 9600 mus...
      * @yamlKey historical_mode
      */
-    historicalMode?: boolean;
+    historicalMode?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
      * @yamlKey update_interval

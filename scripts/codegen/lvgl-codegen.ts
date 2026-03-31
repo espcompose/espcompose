@@ -20,6 +20,7 @@ import {
   interfaceDecl, typeAliasDecl,
   importTypeDecl,
   globalJsxAugmentation,
+  bindPropType,
 } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -114,6 +115,21 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
   }
 }
 
+import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../packages/sdk/src/lvgl-actions.js';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Known type overrides for widget props
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Widget props whose schema type is 'unknown' but whose actual type is known.
+ * Keyed by prop name; value is the TypeScript type node to use instead.
+ */
+const WIDGET_PROP_TYPE_OVERRIDES: Record<string, () => ts.TypeNode> = {
+  // text accepts string | number — the C++ runtime converts via to_string()
+  text: () => unionType([keyword('string'), keyword('number')]),
+};
+
 // ────────────────────────────────────────────────────────────────────────────
 // Code generation
 // ────────────────────────────────────────────────────────────────────────────
@@ -121,10 +137,41 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
 /** Build property signatures from a prop definition map. */
 function buildProps(
   props: Record<string, LvglPropDef>,
+  options?: {
+    /** Widget name (e.g. 'label', 'button') for reactive prop lookup. */
+    widgetName?: string;
+    /** When true, wrap reactive-updatable style props with BindProp<T>. */
+    isStyleProps?: boolean;
+  },
 ): ts.PropertySignature[] {
+  const widgetName = options?.widgetName;
+  const isStyleProps = options?.isStyleProps ?? false;
+
+  const updatableProps = widgetName
+    ? LVGL_UPDATABLE_WIDGETS[widgetName] ?? []
+    : [];
+
   return Object.entries(props).map(([name, def]) => {
     const camel = toCamelCase(name);
-    const tsType = lvglTypeToTs(def);
+
+    // Apply type overrides for props with known types
+    let tsType = (def.type === 'unknown' && WIDGET_PROP_TYPE_OVERRIDES[name])
+      ? WIDGET_PROP_TYPE_OVERRIDES[name]()
+      : lvglTypeToTs(def);
+
+    // Wrap with BindProp<T> if:
+    // - widget-specific updatable prop, OR
+    // - style prop that the reactive runtime can update
+    const shouldBind = updatableProps.includes(name) || (isStyleProps && LVGL_REACTIVE_STYLE_PROPS.has(name));
+    if (shouldBind) {
+      // For enum props (e.g. text_font with literal font names), widen to
+      // include `string` so computed values from the reactive theme are accepted.
+      if (def.type === 'enum' && def.values && def.values.length > 0) {
+        tsType = unionType([keyword('string'), tsType]);
+      }
+      tsType = bindPropType(tsType);
+    }
+
     const optional = def.key !== 'Required';
     const sig = propSig(camel, tsType, optional);
     // Add @yamlKey annotation if camelCase differs from snake_case
@@ -145,10 +192,10 @@ export function buildLvglFileContent(schemaPath: string): string {
   const statements: ts.Statement[] = [];
 
   // ── Import ────────────────────────────────────────────────────────────────
-  statements.push(importTypeDecl(['ComponentProps'], '../../types'));
+  statements.push(importTypeDecl(['ComponentProps', 'BindProp'], '../../types'));
 
   // ── LvglStyleProps ────────────────────────────────────────────────────────
-  const styleMembers = buildProps(schema.style_props);
+  const styleMembers = buildProps(schema.style_props, { isStyleProps: true });
 
   // Add state-variant style overrides:  checked?: LvglStyleProps; etc.
   for (const state of schema.states) {
@@ -189,7 +236,7 @@ export function buildLvglFileContent(schemaPath: string): string {
     const members: ts.TypeElement[] = [];
 
     // Widget-specific props
-    members.push(...buildProps(widget.schema));
+    members.push(...buildProps(widget.schema, { widgetName }));
 
     // Part-specific style overrides (e.g. indicator?: LvglStyleProps)
     // Skip "main" — main part styles are at the top level via LvglStyleProps

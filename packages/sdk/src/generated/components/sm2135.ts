@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { sm2135_SM2135 } from "../markers";
 export interface Sm2135Props extends _CoreComponent {
@@ -11,12 +11,12 @@ export interface Sm2135Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin used for MOSI.
      * @yamlKey data_pin
      */
-    dataPin: Pin;
+    dataPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin which SCLK is
      * @yamlKey clock_pin
      */
-    clockPin: Pin;
+    clockPin: Pin | EmbedValue<Pin>;
     /**
      * current: The current used for the RGB channel. Defaults to `20mA`. Can be one of `10mA`, `15mA`, `20mA`, `25mA`, `30m...
      * @yamlKey rgb_current
@@ -31,7 +31,7 @@ export interface Sm2135Props extends _CoreComponent {
      * bool: Use separate RGB/CW modes instead of writing all 5 values as RGB. Defaults to `true`, keep it at `true` if your...
      * @yamlKey separate_modes
      */
-    separateModes?: boolean;
+    separateModes?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

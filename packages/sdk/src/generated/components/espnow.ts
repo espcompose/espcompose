@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { espnow_ESPNowComponent } from "../markers";
 export interface EspnowProps extends _CoreComponent {
@@ -13,12 +13,12 @@ export interface EspnowProps extends _CoreComponent {
      * boolean: Enable the esp-now component on boot. Defaults to `true`.
      * @yamlKey enable_on_boot
      */
-    enableOnBoot?: boolean;
+    enableOnBoot?: boolean | EmbedValue<boolean>;
     /**
      * boolean: This will allow the esp-now component to automatically add any new incoming device as a peer. See [Peers](ht...
      * @yamlKey auto_add_peer
      */
-    autoAddPeer?: boolean;
+    autoAddPeer?: boolean | EmbedValue<boolean>;
     /** list: A peer is the name for devices that use esp-now. The list will have all MAC addresses from the devices where th... */
     peers?: Array<unknown>;
     /**

@@ -3,33 +3,33 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { zephyr_CdcAcm } from "../markers";
 export interface Nrf52DfuProps {
     /** @yamlKey reset_pin */
-    resetPin: Pin;
+    resetPin: Pin | EmbedValue<Pin>;
 }
 export interface Nrf52Reg0Props {
     voltage: "1.8" | "2.1" | "2.4" | "2.7" | "3.0" | "3.3";
     /** @yamlKey uicr_erase */
-    uicrErase?: boolean;
+    uicrErase?: boolean | EmbedValue<boolean>;
 }
 export interface Nrf52FrameworkPropsAdvancedProps {
     /** @yamlKey enable_ota_rollback */
-    enableOtaRollback?: boolean;
+    enableOtaRollback?: boolean | EmbedValue<boolean>;
 }
 export interface Nrf52FrameworkProps {
-    version?: string;
+    version?: string | EmbedValue<string>;
     advanced?: Nrf52FrameworkPropsAdvancedProps;
 }
 export interface Nrf52Props {
     /** string: The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Oth... */
-    board: string;
+    board: string | EmbedValue<string>;
     /** string: Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, ... */
     bootloader?: "adafruit" | "adafruit_nrf52_sd132" | "adafruit_nrf52_sd140_v6" | "adafruit_nrf52_sd140_v7" | "mcuboot";
     dfu?: Nrf52DfuProps;
     /** boolean: Enable DC/DC converter for REG1 stage. Defaults to `true`. */
-    dcdc?: boolean;
+    dcdc?: boolean | EmbedValue<boolean>;
     reg0?: Nrf52Reg0Props;
     framework?: Nrf52FrameworkProps;
 }

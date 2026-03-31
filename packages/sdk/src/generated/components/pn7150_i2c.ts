@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { i2c_I2CBus, pn7150_PN7150 } from "../markers";
 export interface Pn7150I2cProps extends _CoreComponent {
@@ -19,11 +19,11 @@ export interface Pn7150I2cProps extends _CoreComponent {
     /** @yamlKey on_tag_removed */
     onTagRemoved?: TriggerHandler;
     /** @yamlKey irq_pin */
-    irqPin: Pin;
+    irqPin: Pin | EmbedValue<Pin>;
     /** @yamlKey ven_pin */
-    venPin: Pin;
+    venPin: Pin | EmbedValue<Pin>;
     /** @yamlKey emulation_message */
-    emulationMessage?: string;
+    emulationMessage?: string | EmbedValue<string>;
     /** @yamlKey tag_ttl */
     tagTtl?: TimePeriod;
 }

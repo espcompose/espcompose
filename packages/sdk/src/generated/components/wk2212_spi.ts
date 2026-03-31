@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { spi_SPIComponent, weikai_spi_WeikaiComponentSPI } from "../markers";
 export interface Wk2212SpiProps {
     /** @yamlKey spi_id */
@@ -13,9 +13,9 @@ export interface Wk2212SpiProps {
     /** @yamlKey spi_mode */
     spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
     /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    releaseDevice?: boolean | EmbedValue<boolean>;
     /** @yamlKey cs_pin */
-    csPin: Pin;
+    csPin: Pin | EmbedValue<Pin>;
 }
 declare global {
     namespace JSX {

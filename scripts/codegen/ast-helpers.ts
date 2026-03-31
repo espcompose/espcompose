@@ -163,6 +163,27 @@ export function componentPropsType(markerName?: string): ts.TypeReferenceNode {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Phase-aware prop type helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Wrap a type in `T | EmbedValue<T>` for props that accept build-time values.
+ * Example: `string` → `string | EmbedValue<string>`
+ */
+export function embedPropType(baseType: ts.TypeNode): ts.TypeNode {
+  return unionType([baseType, typeRef('EmbedValue', [baseType])]);
+}
+
+/**
+ * Wrap a type in `BindProp<T>` for props that accept reactive bindings.
+ * `BindProp<T>` is already a union of `T | (() => T) | ReactiveNode<T>`.
+ * Example: `string` → `BindProp<string>`
+ */
+export function bindPropType(baseType: ts.TypeNode): ts.TypeReferenceNode {
+  return typeRef('BindProp', [baseType]);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Property signatures
 // ────────────────────────────────────────────────────────────────────────────
 

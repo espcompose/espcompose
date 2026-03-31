@@ -4,12 +4,12 @@
  * A minimal device with a single-page LVGL layout containing a button widget
  * that wraps a label. Demonstrates the low-level <lvgl-*> intrinsic elements.
  */
-import { Display, ESPCompose, useRef } from '@esphome/compose';
+import { Display, defineProject, useRef } from '@esphome/compose';
 
-export default (() => {
-  const displayRef = useRef<Display>();
+const displayRef = useRef<Display>();
 
-  return (
+export default defineProject({
+  device: (
     <esphome name="lvgl-device" comment="LVGL single-page button demo">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
       <wifi ssid="HomeWifi" password="s3cr3t!!" />
@@ -37,5 +37,5 @@ export default (() => {
         </lvgl-page>
       </lvgl>
     </esphome>
-  );
-})();
+  ),
+});

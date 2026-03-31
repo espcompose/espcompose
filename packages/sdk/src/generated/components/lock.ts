@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { copy_CopyLock, lock_Lock, output_BinaryOutput, output_OutputLock, template__TemplateLock, web_server_WebServer } from "../markers";
 interface LockWebServerProps {
@@ -37,12 +37,12 @@ interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state of the lock. */
     lambda?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template lock will immedi... */
-    optimistic?: boolean;
+    optimistic?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Whether the true state of the lock is not known. This will make the Home Assistant frontend show buttons for...
      * @yamlKey assumed_state
      */
-    assumedState?: boolean;
+    assumedState?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
      * @yamlKey unlock_action

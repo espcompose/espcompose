@@ -10,6 +10,7 @@ import {
   esphomeLogs,
 } from './compiler';
 import { initProject } from './init';
+import { transformLib, buildLibrary } from './transform-lib';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageJson = require('../package.json') as { version: string };
@@ -42,9 +43,10 @@ program
     'Sets up the SDK, CLI, ESLint plugin, and TypeScript configuration.',
   )
   .option('-b, --board <board>', 'ESP32 board identifier', 'esp32dev')
-  .action((name: string, opts: { board: string }) => {
+  .option('--library', 'Create a component library project instead of a device project')
+  .action((name: string, opts: { board: string; library?: boolean }) => {
     try {
-      initProject(name, { board: opts.board });
+      initProject(name, { board: opts.board, library: opts.library });
     } catch (err) {
       console.error('Init failed:', err instanceof Error ? err.message : err);
       process.exit(1);
@@ -162,7 +164,78 @@ program
       process.exit(1);
     }
   });
+// ── transform-lib ────────────────────────────────────────────────────────
 
+program
+  .command('transform-lib [srcDir]')
+  .description(
+    'Pre-compile reactive expressions in a component library.\n' +
+    'Runs the same AST transforms used for user projects, but writes\n' +
+    'transformed TypeScript source files instead of bundling.\n' +
+    'The library\'s own bundler (tsup, rollup, etc.) then compiles\n' +
+    'the transformed sources into publishable JS.',
+  )
+  .option('--entry <file>', 'Entry .ts/.tsx file relative to srcDir', 'src/index.ts')
+  .option('--outDir <dir>', 'Output directory for transformed sources', '.espcompose-build')
+  .option('--tsconfig <file>', 'Path to tsconfig.json (default: auto-detect)')
+  .action((srcDir?: string, opts?: { entry?: string; outDir?: string; tsconfig?: string }) => {
+    const resolvedSrcDir = path.resolve(srcDir ?? '.');
+    const entryFile = path.resolve(resolvedSrcDir, opts?.entry ?? 'src/index.ts');
+    const sourceDir = path.dirname(entryFile);
+    const outDir = path.resolve(resolvedSrcDir, opts?.outDir ?? '.espcompose-build');
+    const tsconfigPath = opts?.tsconfig ? path.resolve(resolvedSrcDir, opts.tsconfig) : undefined;
+
+    try {
+      console.log(`Transforming library: ${sourceDir} → ${path.relative(resolvedSrcDir, outDir)}/`);
+      const result = transformLib({ entryFile, sourceDir, outDir, tsconfigPath });
+      console.log(`✓ ${result.filesWritten} file(s) written, ${result.filesTransformed} transformed`);
+      if (result.diagnostics.length > 0) {
+        for (const d of result.diagnostics) {
+          const loc = d.file && d.line ? `${path.relative(process.cwd(), d.file)}:${d.line}` : 'unknown';
+          console.warn(`  ⚠ ${loc} — ${d.message}`);
+        }
+      }
+    } catch (err) {
+      console.error('Transform failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+// ── library ──────────────────────────────────────────────────────────────
+
+program
+  .command('library [rootDir]')
+  .description(
+    'Build a component library for distribution.\n' +
+    'Transforms reactive expressions, bundles CJS + ESM via esbuild,\n' +
+    'and emits .d.ts declarations — no extra config or bundler needed.',
+  )
+  .option('--entry <file>', 'Entry file relative to rootDir', 'src/index.ts')
+  .option('--outDir <dir>', 'Output directory relative to rootDir', 'dist')
+  .option('--tsconfig <file>', 'Path to tsconfig.json (default: auto-detect)')
+  .action(async (rootDir?: string, opts?: { entry?: string; outDir?: string; tsconfig?: string }) => {
+    const resolvedRoot = path.resolve(rootDir ?? '.');
+    try {
+      console.log(`Building library in ${resolvedRoot}`);
+      const result = await buildLibrary({
+        rootDir: resolvedRoot,
+        entry: opts?.entry,
+        outDir: opts?.outDir,
+        tsconfig: opts?.tsconfig,
+      });
+      const t = result.transform;
+      console.log(`✓ ${t.filesWritten} file(s) processed, ${t.filesTransformed} transformed`);
+      console.log(`✓ Bundled CJS + ESM + DTS → ${opts?.outDir ?? 'dist'}/`);
+      if (t.diagnostics.length > 0) {
+        for (const d of t.diagnostics) {
+          const loc = d.file && d.line ? `${path.relative(process.cwd(), d.file)}:${d.line}` : 'unknown';
+          console.warn(`  ⚠ ${loc} — ${d.message}`);
+        }
+      }
+    } catch (err) {
+      console.error('Library build failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 /**

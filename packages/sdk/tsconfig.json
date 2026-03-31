@@ -3,9 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsx": "react",
-    "jsxFactory": "ESPCompose.createElement",
-    "jsxFragmentFactory": "ESPCompose.Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@esphome/compose",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -14,7 +13,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "paths": {
+      "@esphome/compose/jsx-runtime": ["./src/jsx-runtime.ts"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

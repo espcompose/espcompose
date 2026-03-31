@@ -1,11 +1,11 @@
 // ────────────────────────────────────────────────────────────────────────────
-// useHAEntity() — Home Assistant entity binding hook
+// importHAEntity() — Home Assistant entity import
 //
 // Creates a typed binding object for a HA entity. The binding provides:
-//   - Expression<T> properties for reactive state reads
+//   - ReactiveNode<T> properties for reactive state reads
 //   - Action methods (compile-time no-ops) for entity control
 //
-// The hook registers the HA entity in the reactive scope so the compiler
+// Registers the HA entity in the reactive scope so the compiler
 // can auto-generate the `platform: homeassistant` sensor import and
 // reactive trigger wiring in the final YAML.
 //
@@ -13,8 +13,10 @@
 // same render pass return a cached binding and register only once.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { Expression } from '../expression';
+import { ReactiveNode, isReactiveNode } from '../reactive-node';
+import type { Signal } from '../reactive-node';
 import { registerHAEntity } from './useReactiveScope';
+import { isTracking, trackDependency } from '../reactive-node';
 import type {
   LightBinding,
   SensorBinding,
@@ -82,44 +84,62 @@ export function clearHAEntityCache(): void {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Expression factory helpers
+// Tracking proxy — intercept reactive property reads during memo/effect
 // ────────────────────────────────────────────────────────────────────────────
 
-function makeBinaryExpression(sourceId: string, sourceDomain: string): Expression<boolean> {
-  return new Expression<boolean>({
-    sourceId,
-    property: '.state',
-    triggerType: 'on_state',
-    sourceDomain,
+/**
+ * Wrap a binding object in a Proxy that intercepts reads of ReactiveNode-valued
+ * properties. When dependency tracking is active (inside bind.memo/effect),
+ * the proxy calls trackDependency() and recordAccess() so the dependency
+ * graph and C++ codegen substitution table are populated automatically.
+ */
+function createTrackingProxy<T extends object>(binding: T): T {
+  return new Proxy(binding, {
+    get(target, prop, receiver) {
+      const val = Reflect.get(target, prop, receiver);
+
+      // Only intercept ReactiveNode-valued properties when tracking
+      if (isReactiveNode(val) && typeof prop === 'string' && isTracking()) {
+        // Record dependency for the reactive graph
+        for (const dep of val.dependencies) {
+          trackDependency(dep);
+        }
+      }
+
+      return val;
+    },
   });
 }
 
-function makeNumericExpression(
+// ────────────────────────────────────────────────────────────────────────────
+// ReactiveNode factory
+// ────────────────────────────────────────────────────────────────────────────
+
+function makeExpressionNode<T>(
   sourceId: string,
   sourceDomain: string,
+  cppType: string,
+  triggerType = 'on_state',
   property = '.state',
-  triggerType = 'on_value',
-): Expression<number> {
-  return new Expression<number>({
+): Signal<T> {
+  return new ReactiveNode<T>({
+    kind: 'expression',
+    dependencies: [{
+      sourceId,
+      triggerType,
+      sourceDomain,
+      cppSignalName: `sig_${sourceId}`,
+      cppType,
+    }],
+    cppExpression: property,
+    ...(cppType === 'std::string' ? { cppReturnType: 'std::string' } : {}),
     sourceId,
     property,
     triggerType,
     sourceDomain,
-  });
-}
-
-function makeTextExpression(
-  sourceId: string,
-  sourceDomain: string,
-  triggerType = 'on_value',
-): Expression<string> {
-  return new Expression<string>({
-    sourceId,
-    property: '.state',
-    triggerType,
-    sourceDomain,
-    cppReturnType: 'std::string',
-  });
+    cppSignalName: `sig_${sourceId}`,
+    cppType,
+  }) as unknown as Signal<T>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -127,92 +147,91 @@ function makeTextExpression(
 // ────────────────────────────────────────────────────────────────────────────
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
-  // A HA light entity is imported as a single binary_sensor.
-  // All Expressions must target that binary_sensor with on_state trigger.
+  const brightnessId = `${sourceId}_brightness`;
+
+  // Register a separate sensor import for the brightness attribute
+  registerHAEntity({
+    entityId,
+    domain: 'light',
+    sensorType: 'sensor',
+    generatedId: brightnessId,
+    attribute: 'brightness',
+  });
+
   const binding: LightBinding = {
-    isOn: makeBinaryExpression(sourceId, 'binary_sensor'),
-    brightness: makeNumericExpression(sourceId, 'binary_sensor', '.state', 'on_state'),
-    stateText: makeTextExpression(sourceId, 'binary_sensor', 'on_state'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'bool'),
+    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'float', 'on_value'),
+    stateText: makeExpressionNode<string>(sourceId, 'binary_sensor', 'std::string', 'on_state'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
   };
 
-  return createActionProxy(binding, entityId, 'light');
+  return createTrackingProxy(createActionProxy(binding, entityId, 'light'));
 }
 
 function createSensorBinding(sourceId: string): SensorBinding {
-  // A HA sensor entity is imported as a single sensor.
-  // All Expressions must target that sensor with on_value trigger.
-  return {
-    value: makeNumericExpression(sourceId, 'sensor'),
-    stateText: makeTextExpression(sourceId, 'sensor', 'on_value'),
-  };
+  return createTrackingProxy({
+    value: makeExpressionNode<number>(sourceId, 'sensor', 'float', 'on_value'),
+    stateText: makeExpressionNode<string>(sourceId, 'sensor', 'std::string', 'on_value'),
+  });
 }
 
 function createBinarySensorBinding(sourceId: string): BinarySensorBinding {
-  // A HA binary_sensor entity is imported as a single binary_sensor.
-  return {
-    isOn: makeBinaryExpression(sourceId, 'binary_sensor'),
-    stateText: makeTextExpression(sourceId, 'binary_sensor', 'on_state'),
-  };
+  return createTrackingProxy({
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'bool'),
+    stateText: makeExpressionNode<string>(sourceId, 'binary_sensor', 'std::string', 'on_state'),
+  });
 }
 
 function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding {
   const binding: SwitchBinding = {
-    isOn: makeBinaryExpression(sourceId, 'binary_sensor'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'bool'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
   };
 
-  return createActionProxy(binding, entityId, 'switch');
+  return createTrackingProxy(createActionProxy(binding, entityId, 'switch'));
 }
 
 function createFanBinding(sourceId: string, entityId: string): FanBinding {
   const binding: FanBinding = {
-    isOn: makeBinaryExpression(sourceId, 'binary_sensor'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'bool'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
   };
 
-  return createActionProxy(binding, entityId, 'fan');
+  return createTrackingProxy(createActionProxy(binding, entityId, 'fan'));
 }
 
 function createCoverBinding(sourceId: string, entityId: string): CoverBinding {
   const binding: CoverBinding = {
-    isOpen: makeBinaryExpression(sourceId, 'binary_sensor'),
+    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'bool'),
     open() { /* no-op */ },
     close() { /* no-op */ },
     stop() { /* no-op */ },
   };
 
-  return createActionProxy(binding, entityId, 'cover');
+  return createTrackingProxy(createActionProxy(binding, entityId, 'cover'));
 }
 
 /**
  * Wraps a binding in a Proxy that intercepts action method calls.
- * The proxy stores metadata on the function objects so the compiler
- * transformer can identify them and emit the correct YAML actions.
  *
- * At runtime these are no-ops. The compiler replaces them at build time.
+ * The AST compiler handles HA entity action calls (entity.toggle(), etc.)
+ * at build time. This proxy ensures the methods exist as callable no-ops
+ * at runtime.
  */
-function createActionProxy<T extends object>(binding: T, entityId: string, domain: string): T {
+function createActionProxy<T extends object>(binding: T, _entityId: string, _domain: string): T {
   return new Proxy(binding, {
     get(target, prop, receiver) {
       const val = Reflect.get(target, prop, receiver);
-      if (typeof val === 'function') {
-        // Attach metadata for the compiler's action converter.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const marker = function actionMarker(..._args: unknown[]): void {
-          // No-op at runtime. The compiler transformer rewrites these calls.
-        };
-        Object.defineProperty(marker, '__haEntityId', { value: entityId });
-        Object.defineProperty(marker, '__haDomain', { value: domain });
-        Object.defineProperty(marker, '__haMethodName', { value: prop });
-        return marker;
+      if (typeof val === 'function' && typeof prop === 'string') {
+        // No-op at runtime — the AST compiler handles HA entity actions.
+        return function actionMethod() {};
       }
       return val;
     },
@@ -220,18 +239,18 @@ function createActionProxy<T extends object>(binding: T, entityId: string, domai
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Public API — useHAEntity() with domain-typed overloads
+// Public API — importHAEntity() with domain-typed overloads
 // ────────────────────────────────────────────────────────────────────────────
 
-export function useHAEntity(entityId: `light.${string}`): LightBinding;
-export function useHAEntity(entityId: `sensor.${string}`): SensorBinding;
-export function useHAEntity(entityId: `binary_sensor.${string}`): BinarySensorBinding;
-export function useHAEntity(entityId: `switch.${string}`): SwitchBinding;
-export function useHAEntity(entityId: `fan.${string}`): FanBinding;
-export function useHAEntity(entityId: `cover.${string}`): CoverBinding;
-export function useHAEntity(entityId: string): unknown;
+export function importHAEntity(entityId: `light.${string}`): LightBinding;
+export function importHAEntity(entityId: `sensor.${string}`): SensorBinding;
+export function importHAEntity(entityId: `binary_sensor.${string}`): BinarySensorBinding;
+export function importHAEntity(entityId: `switch.${string}`): SwitchBinding;
+export function importHAEntity(entityId: `fan.${string}`): FanBinding;
+export function importHAEntity(entityId: `cover.${string}`): CoverBinding;
+export function importHAEntity(entityId: string): unknown;
 
-export function useHAEntity(entityId: string): unknown {
+export function importHAEntity(entityId: string): unknown {
   // Deduplication: return cached binding if already created.
   const cached = bindingCache.get(entityId);
   if (cached) return cached;

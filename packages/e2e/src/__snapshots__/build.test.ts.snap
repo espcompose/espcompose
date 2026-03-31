@@ -1,5 +1,133 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`ESPHome Compose Build > action-tree-device 1`] = `
+"esphome:
+  name: action-tree-device
+  comment: Action tree compiler test
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: TestWifi
+  password: testpass
+api:
+logger:
+  level: INFO
+switch:
+  id: r_ref0
+  platform: gpio
+  pin: 12
+  name: Test Switch
+binary_sensor:
+  - platform: gpio
+    pin: 13
+    name: Simple Toggle
+    on_press:
+      - switch.toggle: r_ref0
+  - platform: gpio
+    pin: 14
+    name: Sequence Actions
+    on_press:
+      - switch.toggle: r_ref0
+      - delay: 500ms
+      - switch.toggle: r_ref0
+  - platform: gpio
+    pin: 15
+    name: Logger
+    on_press:
+      - logger.log: Button pressed!
+"
+`;
+
+exports[`ESPHome Compose Build > auto-reactive-device 1`] = `
+"esphome:
+  name: auto-reactive-device
+  comment: Auto-reactive transform demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - label:
+            x: 10
+            y: 10
+            text: !lambda "return std::string(id(ha_light_office).state ? \\"on\\" : \\"off\\");"
+            id: rw_ref1
+        - label:
+            x: 10
+            y: 40
+            text: !lambda "return espcompose::memo_1.get().c_str();"
+            id: rw_ref2
+        - slider:
+            x: 10
+            y: 70
+            width: 200
+            value: !lambda "return espcompose::memo_2.get();"
+            id: rw_ref3
+        - label:
+            x: 10
+            y: 100
+            text: !lambda "return espcompose::memo_3.get().c_str();"
+            id: rw_ref4
+        - label:
+            x: 10
+            y: 130
+            text: !lambda "return espcompose::memo_0.get().c_str();"
+            id: rw_ref5
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_office
+  entity_id: light.office
+  trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_light_office.set(x);
+        espcompose::Scheduler::instance().flush();"
+sensor:
+  - platform: homeassistant
+    id: ha_light_office_brightness
+    entity_id: light.office
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_office_brightness.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_sensor_temp_inside
+    entity_id: sensor.temp_inside
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside.set(x);
+          espcompose::Scheduler::instance().flush();"
+"
+`;
+
 exports[`ESPHome Compose Build > basic-device 1`] = `
 "esphome:
   name: basic-device
@@ -184,6 +312,10 @@ binary_sensor:
 lvgl:
   displays:
     - r_ref1
+script:
+  - id: play_click_sound
+    then:
+      - logger.log: Click sound disabled for testing
 "
 `;
 
@@ -191,6 +323,18 @@ exports[`ESPHome Compose Build > design-system-device 1`] = `
 "esphome:
   name: design-system-device
   comment: Design system demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+  platformio_options:
+    build_flags:
+      - -DLV_FONT_MONTSERRAT_16=1
+      - -DLV_FONT_MONTSERRAT_20=1
+      - -DLV_FONT_MONTSERRAT_28=1
 esp32:
   board: esp32dev
   framework:
@@ -216,138 +360,10 @@ display:
 lvgl:
   displays:
     - r_ref0
-  style_definitions:
-    - id: ds_bg
-      bg_color: "0x121212"
-    - id: ds_surface
-      bg_color: "0x1E1E1E"
-    - id: ds_surface_alt
-      bg_color: "0x2C2C2C"
-    - id: ds_border
-      border_color: "0x3A3A3A"
-    - id: ds_text_primary
-      text_color: "0xE0E0E0"
-      text_font: montserrat_16
-    - id: ds_text_secondary
-      text_color: "0x9E9E9E"
-      text_font: montserrat_16
-    - id: ds_text_disabled
-      text_color: "0x616161"
-      text_font: montserrat_16
-    - id: ds_text_title
-      text_color: "0xE0E0E0"
-      text_font: montserrat_28
-    - id: ds_text_subtitle
-      text_color: "0xE0E0E0"
-      text_font: montserrat_20
-    - id: ds_text_body
-      text_color: "0xE0E0E0"
-      text_font: montserrat_16
-    - id: ds_text_caption
-      text_color: "0xE0E0E0"
-      text_font: montserrat_12
-    - id: ds_status_primary_solid
-      bg_color: "0x1E88E5"
-    - id: ds_status_primary_solid_text
-      text_color: "0xFFFFFF"
-    - id: ds_status_primary_outline
-      bg_opa: TRANSP
-      border_color: "0x1E88E5"
-      border_width: 2
-    - id: ds_status_primary_outline_text
-      text_color: "0x1E88E5"
-    - id: ds_status_secondary_solid
-      bg_color: "0x546E7A"
-    - id: ds_status_secondary_solid_text
-      text_color: "0xFFFFFF"
-    - id: ds_status_secondary_outline
-      bg_opa: TRANSP
-      border_color: "0x546E7A"
-      border_width: 2
-    - id: ds_status_secondary_outline_text
-      text_color: "0x546E7A"
-    - id: ds_status_success_solid
-      bg_color: "0x43A047"
-    - id: ds_status_success_solid_text
-      text_color: "0xFFFFFF"
-    - id: ds_status_success_outline
-      bg_opa: TRANSP
-      border_color: "0x43A047"
-      border_width: 2
-    - id: ds_status_success_outline_text
-      text_color: "0x43A047"
-    - id: ds_status_warning_solid
-      bg_color: "0xFB8C00"
-    - id: ds_status_warning_solid_text
-      text_color: "0x000000"
-    - id: ds_status_warning_outline
-      bg_opa: TRANSP
-      border_color: "0xFB8C00"
-      border_width: 2
-    - id: ds_status_warning_outline_text
-      text_color: "0xFB8C00"
-    - id: ds_status_danger_solid
-      bg_color: "0xE53935"
-    - id: ds_status_danger_solid_text
-      text_color: "0xFFFFFF"
-    - id: ds_status_danger_outline
-      bg_opa: TRANSP
-      border_color: "0xE53935"
-      border_width: 2
-    - id: ds_status_danger_outline_text
-      text_color: "0xE53935"
-    - id: ds_slider_indicator
-      bg_color: "0x1E88E5"
-    - id: ds_slider_knob
-      bg_color: "0xE0E0E0"
-    - id: ds_switch_indicator
-      bg_color: "0x1E88E5"
-    - id: ds_switch_knob
-      bg_color: "0xE0E0E0"
-    - id: ds_arc_indicator
-      bg_color: "0x1E88E5"
-    - id: ds_arc_knob
-      bg_color: "0xE0E0E0"
-  theme:
-    label:
-      text_color: "0xE0E0E0"
-      text_font: montserrat_16
-    button:
-      bg_color: "0x1E88E5"
-      border_width: 0
-      pressed:
-        bg_color: "0x1565C0"
-    obj:
-      border_width: 0
-      bg_opa: TRANSP
-    slider:
-      bg_color: "0x2C2C2C"
-      indicator:
-        bg_color: "0x1E88E5"
-      knob:
-        bg_color: "0xE0E0E0"
-    switch:
-      bg_color: "0x2C2C2C"
-      indicator:
-        bg_color: "0x1E88E5"
-      knob:
-        bg_color: "0xE0E0E0"
-    arc:
-      arc_color: "0x2C2C2C"
-      indicator:
-        arc_color: "0x1E88E5"
-      knob:
-        bg_color: "0xE0E0E0"
-    dropdown:
-      text_color: "0xE0E0E0"
-      text_font: montserrat_16
-      bg_color: "0x1E1E1E"
-      border_color: "0x3A3A3A"
-      border_width: 1
   pages:
-    - styles: ds_bg
+    - bg_color: !lambda "return espcompose::thm_colors_background.get();"
       border_width: 0
-      pad_all: 24
+      pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
       scrollbar_mode: 'OFF'
       widgets:
         - obj:
@@ -361,11 +377,14 @@ lvgl:
               flex_flow: COLUMN
             widgets:
               - label:
-                  styles: ds_text_title
+                  text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                  text_font: !lambda "return espcompose::memo_0.get();"
+                  text: Smart Home
+                  id: rw_ref1
               - obj:
-                  styles: ds_surface_alt
-                  pad_all: 16
-                  radius: 8
+                  bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
+                  pad_all: !lambda "return espcompose::thm_spacing_md.get();"
+                  radius: !lambda "return espcompose::thm_radii_md.get();"
                   border_width: 0
                   width: 100%
                   height: SIZE_CONTENT
@@ -375,7 +394,10 @@ lvgl:
                     flex_flow: COLUMN
                   widgets:
                     - label:
-                        styles: ds_text_subtitle
+                        text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                        text_font: !lambda "return espcompose::memo_1.get();"
+                        text: Living Room
+                        id: rw_ref2
                     - obj:
                         bg_opa: TRANSP
                         width: 100%
@@ -385,8 +407,10 @@ lvgl:
                           flex_flow: COLUMN
                         widgets:
                           - label:
-                              styles: ds_text_primary
+                              text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                              text_font: !lambda "return espcompose::memo_2.get();"
                               text: Brightness
+                              id: rw_ref3
                           - slider:
                               min_value: 0
                               max_value: 255
@@ -401,9 +425,12 @@ lvgl:
                           flex_align_cross: CENTER
                         widgets:
                           - label:
-                              styles: ds_text_primary
+                              text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                              text_font: !lambda "return espcompose::memo_3.get();"
                               text: Power
+                              id: rw_ref4
                           - switch: {}
+                  id: rw_ref5
               - obj:
                   width: 100%
                   height: SIZE_CONTENT
@@ -416,30 +443,107 @@ lvgl:
                     flex_align_main: SPACE_BETWEEN
                   widgets:
                     - button:
-                        styles: ds_status_success_solid
-                        width: 104
-                        height: 36
+                        bg_color: !lambda "return espcompose::thm_colors_success_bg.get();"
+                        border_width: 0
+                        width: !lambda "return espcompose::memo_5.get();"
+                        height: !lambda "return espcompose::thm_sizes_sm_height.get();"
                         pressed:
-                          bg_color: "0x2E7D32"
+                          bg_color: !lambda "return espcompose::thm_colors_success_bgPressed.get();"
                         widgets:
                           - label:
-                              styles: ds_status_success_solid_text
                               text: Turn On
-                              text_font: montserrat_14
+                              text_color: !lambda "return espcompose::thm_colors_success_text.get();"
+                              text_font: !lambda "return espcompose::memo_4.get();"
                               align: CENTER
+                              id: rw_ref6
+                        id: rw_ref7
                     - button:
-                        styles: ds_status_danger_outline
-                        width: 104
-                        height: 36
+                        bg_opa: TRANSP
+                        border_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
+                        border_width: 2
+                        width: !lambda "return espcompose::memo_7.get();"
+                        height: !lambda "return espcompose::thm_sizes_sm_height.get();"
                         pressed:
-                          bg_color: "0xE53935"
+                          bg_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                           bg_opa: COVER
                         widgets:
                           - label:
-                              styles: ds_status_danger_outline_text
                               text: Turn Off
-                              text_font: montserrat_14
+                              text_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
+                              text_font: !lambda "return espcompose::memo_6.get();"
                               align: CENTER
+                              id: rw_ref8
+                        id: rw_ref9
+      id: rw_ref10
+"
+`;
+
+exports[`ESPHome Compose Build > device-script-device 1`] = `
+"esphome:
+  name: device-script-demo
+  comment: Device script demo
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+wifi:
+  ssid: TestNet
+  password: testpass
+api:
+logger:
+binary_sensor:
+  platform: gpio
+  pin: 4
+  name: Button
+  on_press:
+    - script.execute:
+        id: blink
+    - script.wait:
+        id: blink
+  on_release:
+    - script.execute:
+        id: start_up
+    - script.wait:
+        id: start_up
+script:
+  - id: blink
+    then:
+      - logger.log: Starting blink sequence
+      - delay: 1000ms
+      - logger.log: Blink done
+  - id: start_up
+    then:
+      - logger.log:
+          format: Device booting up
+          level: INFO
+      - delay: 2000ms
+      - logger.log: Boot complete
+"
+`;
+
+exports[`ESPHome Compose Build > embed-device 1`] = `
+"esphome:
+  name: embed-demo
+  comment: Embed device demo
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+wifi:
+  ssid: TestNetwork
+  password: test-password
+api:
+  encryption:
+    key: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY=
+ota:
+  platform: esphome
+logger:
+  level: DEBUG
+sensor:
+  platform: adc
+  pin: 36
+  name: Analog Reading
+  update_interval: 5s
 "
 `;
 
@@ -466,6 +570,13 @@ exports[`ESPHome Compose Build > ha-binding-device 1`] = `
 "esphome:
   name: ha-binding-device
   comment: HA entity binding demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
 esp32:
   board: esp32dev
   framework:
@@ -506,8 +617,6 @@ lvgl:
             on_release:
               - homeassistant.action:
                   action: light.toggle
-                  data:
-                    entity_id: light.kitchen_floods
             widgets:
               - label:
                   text: Toggle
@@ -523,17 +632,22 @@ binary_sensor:
   entity_id: light.kitchen_floods
   trigger_on_initial_state: true
   on_state:
-    lvgl.label.update:
-      id: rw_ref1
-      text: !lambda "return std::string(x ? \\"on\\" : \\"off\\");"
+    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x);
+        espcompose::Scheduler::instance().flush();"
 sensor:
-  platform: homeassistant
-  id: ha_sensor_living_room_temperature
-  entity_id: sensor.living_room_temperature
-  on_value:
-    lvgl.label.update:
-      id: rw_ref2
-      text: !lambda "return to_string(x);"
+  - platform: homeassistant
+    id: ha_light_kitchen_floods_brightness
+    entity_id: light.kitchen_floods
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_sensor_living_room_temperature
+    entity_id: sensor.living_room_temperature
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x);
+          espcompose::Scheduler::instance().flush();"
 "
 `;
 
@@ -580,10 +694,112 @@ lvgl:
 "
 `;
 
+exports[`ESPHome Compose Build > multi-source-reactive-device 1`] = `
+"esphome:
+  name: multi-source-reactive-device
+  comment: Multi-source reactive runtime demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - label:
+            x: 10
+            y: 10
+            text: !lambda "return espcompose::memo_0.get().c_str();"
+            id: rw_ref1
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_kitchen_floods
+  entity_id: light.kitchen_floods
+  trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x);
+        espcompose::Scheduler::instance().flush();"
+sensor:
+  - platform: homeassistant
+    id: ha_light_kitchen_floods_brightness
+    entity_id: light.kitchen_floods
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_sensor_temp_inside
+    entity_id: sensor.temp_inside
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside.set(x);
+          espcompose::Scheduler::instance().flush();"
+"
+`;
+
+exports[`ESPHome Compose Build > project-device 1`] = `
+"esphome:
+  name: project-demo
+  comment: Project structure demo
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+wifi:
+  ssid: TestNet
+  password: testpass
+api:
+ota:
+  platform: esphome
+logger:
+  level: DEBUG
+sensor:
+  - platform: adc
+    pin: 32
+    name: ADC Sensor 1
+    update_interval: 10s
+  - platform: adc
+    pin: 33
+    name: ADC Sensor 2
+    update_interval: 10s
+"
+`;
+
 exports[`ESPHome Compose Build > reactive-device 1`] = `
 "esphome:
   name: reactive-device
   comment: Local ref reactive binding demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
 esp32:
   board: esp32dev
   framework:
@@ -598,15 +814,11 @@ sensor:
   id: r_ref0
   platform: internal_temperature
   name: ESP Temperature
-  on_value:
-    lvgl.label.update:
-      id: rw_ref1
-      text: !lambda "return x;"
 spi:
   clk_pin: 18
   mosi_pin: 23
 display:
-  id: r_ref2
+  id: r_ref1
   platform: ili9xxx
   model: ILI9341
   invert_colors: false
@@ -615,14 +827,14 @@ display:
   reset_pin: 33
 lvgl:
   displays:
-    - r_ref2
+    - r_ref1
   pages:
     - widgets:
         - label:
             x: 10
             y: 10
             text: !lambda "return id(r_ref0).state;"
-            id: rw_ref1
+            id: rw_ref2
         - button:
             x: 10
             y: 50
@@ -631,24 +843,50 @@ lvgl:
             on_release:
               - homeassistant.action:
                   action: switch.toggle
-                  data:
-                    entity_id: switch.space_heater
             widgets:
               - label:
                   text: Heater
                   align: CENTER
+        - slider:
+            x: 10
+            y: 120
+            width: 200
+            indicator:
+              bg_opa: !lambda "return espcompose::memo_0.get().c_str();"
+            id: rw_ref3
+        - button:
+            x: 10
+            y: 160
+            pressed:
+              bg_opa: !lambda "return espcompose::memo_1.get().c_str();"
+            widgets:
+              - label:
+                  text: Styled
+                  align: CENTER
+            id: rw_ref4
+        - slider:
+            x: 10
+            y: 210
+            width: 200
+            indicator:
+              pressed:
+                bg_opa: !lambda "return espcompose::memo_2.get().c_str();"
+            id: rw_ref5
 binary_sensor:
   platform: homeassistant
   id: ha_switch_space_heater
   entity_id: switch.space_heater
   trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_switch_space_heater.set(x);
+        espcompose::Scheduler::instance().flush();"
 "
 `;
 
 exports[`ESPHome Compose Build > script-device 1`] = `
 "esphome:
   name: script-device
-  comment: Device using function-as-script authoring
+  comment: Device using action tree authoring
 esp32:
   board: esp32dev
   framework:
@@ -664,7 +902,10 @@ binary_sensor:
   pin: 4
   name: Button
   on_press:
-    - script.execute: greet
+    - script.execute:
+        id: greet
+    - script.wait:
+        id: greet
   on_release:
     - delay: 100ms
 script:
@@ -737,13 +978,19 @@ binary_sensor:
   pin: 4
   name: Button
   on_press:
-    - script.execute: toggle_all
+    - script.execute:
+        id: toggle_all
+    - script.wait:
+        id: toggle_all
   on_release:
     - light.turn_off: r_ref1
     - delay: 100ms
     - switch.turn_off: r_ref2
   on_double_click:
-    - script.execute: dim_light
+    - script.execute:
+        id: dim_light
+    - script.wait:
+        id: dim_light
 script:
   - id: toggle_all
     then:

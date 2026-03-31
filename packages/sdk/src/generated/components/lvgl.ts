@@ -3,149 +3,149 @@
 
 /* eslint-disable */
 
-import type { ComponentProps } from "../../types";
+import type { BindProp, ComponentProps } from "../../types";
 /** Shared style properties available on every LVGL widget and on per-part / per-state overrides. */
 //
 export interface LvglStyleProps {
     align?: "TOP_LEFT" | "TOP_MID" | "TOP_RIGHT" | "LEFT_MID" | "CENTER" | "RIGHT_MID" | "BOTTOM_LEFT" | "BOTTOM_MID" | "BOTTOM_RIGHT";
     /** @yamlKey arc_opa */
-    arcOpa?: "TRANSP" | "COVER";
+    arcOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey arc_color */
-    arcColor?: string;
+    arcColor?: BindProp<string | string>;
     /** @yamlKey arc_rounded */
-    arcRounded?: boolean;
+    arcRounded?: BindProp<boolean>;
     /** @yamlKey arc_width */
-    arcWidth?: number | string;
+    arcWidth?: BindProp<number | string>;
     /** @yamlKey anim_time */
-    animTime?: number;
+    animTime?: BindProp<number>;
     /** @yamlKey bg_color */
-    bgColor?: string;
+    bgColor?: BindProp<string | string>;
     /** @yamlKey bg_grad */
     bgGrad?: unknown;
     /** @yamlKey bg_grad_color */
-    bgGradColor?: string;
+    bgGradColor?: BindProp<string | string>;
     /** @yamlKey bg_dither_mode */
     bgDitherMode?: "NONE" | "ORDERED" | "ERR_DIFF";
     /** @yamlKey bg_grad_dir */
-    bgGradDir?: "NONE" | "HOR" | "VER";
+    bgGradDir?: BindProp<string | ("NONE" | "HOR" | "VER")>;
     /** @yamlKey bg_grad_stop */
-    bgGradStop?: unknown;
+    bgGradStop?: BindProp<unknown>;
     /** @yamlKey bg_image_opa */
-    bgImageOpa?: "TRANSP" | "COVER";
+    bgImageOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_recolor */
-    bgImageRecolor?: string;
+    bgImageRecolor?: BindProp<string | string>;
     /** @yamlKey bg_image_recolor_opa */
-    bgImageRecolorOpa?: "TRANSP" | "COVER";
+    bgImageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
     bgImageSrc?: string;
     /** @yamlKey bg_image_tiled */
-    bgImageTiled?: boolean;
+    bgImageTiled?: BindProp<boolean>;
     /** @yamlKey bg_main_stop */
-    bgMainStop?: unknown;
+    bgMainStop?: BindProp<unknown>;
     /** @yamlKey bg_opa */
-    bgOpa?: "TRANSP" | "COVER";
+    bgOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_color */
-    borderColor?: string;
+    borderColor?: BindProp<string | string>;
     /** @yamlKey border_opa */
-    borderOpa?: "TRANSP" | "COVER";
+    borderOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_post */
-    borderPost?: boolean;
+    borderPost?: BindProp<boolean>;
     /** @yamlKey border_side */
-    borderSide?: "NONE" | "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | "INTERNAL";
+    borderSide?: BindProp<string | ("NONE" | "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | "INTERNAL")>;
     /** @yamlKey border_width */
-    borderWidth?: number;
+    borderWidth?: BindProp<number>;
     /** @yamlKey clip_corner */
-    clipCorner?: boolean;
+    clipCorner?: BindProp<boolean>;
     /** @yamlKey color_filter_opa */
-    colorFilterOpa?: "TRANSP" | "COVER";
-    height?: number | string | "SIZE_CONTENT";
+    colorFilterOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    height?: BindProp<string | (number | string | "SIZE_CONTENT")>;
     /** @yamlKey image_recolor */
-    imageRecolor?: string;
+    imageRecolor?: BindProp<string | string>;
     /** @yamlKey image_recolor_opa */
-    imageRecolorOpa?: "TRANSP" | "COVER";
+    imageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey line_width */
-    lineWidth?: number;
+    lineWidth?: BindProp<number>;
     /** @yamlKey line_dash_width */
-    lineDashWidth?: number;
+    lineDashWidth?: BindProp<number>;
     /** @yamlKey line_dash_gap */
-    lineDashGap?: number;
+    lineDashGap?: BindProp<number>;
     /** @yamlKey line_rounded */
-    lineRounded?: boolean;
+    lineRounded?: BindProp<boolean>;
     /** @yamlKey line_color */
-    lineColor?: string;
-    opa?: "TRANSP" | "COVER";
+    lineColor?: BindProp<string | string>;
+    opa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey opa_layered */
     opaLayered?: "TRANSP" | "COVER";
     /** @yamlKey outline_color */
-    outlineColor?: string;
+    outlineColor?: BindProp<string | string>;
     /** @yamlKey outline_opa */
-    outlineOpa?: "TRANSP" | "COVER";
+    outlineOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey outline_pad */
-    outlinePad?: number | string;
+    outlinePad?: BindProp<number | string>;
     /** @yamlKey outline_width */
-    outlineWidth?: number | string;
+    outlineWidth?: BindProp<number | string>;
     /** @yamlKey pad_all */
-    padAll?: number | string;
+    padAll?: BindProp<number | string>;
     /** @yamlKey pad_bottom */
-    padBottom?: number | string;
+    padBottom?: BindProp<number | string>;
     /** @yamlKey pad_left */
-    padLeft?: number | string;
+    padLeft?: BindProp<number | string>;
     /** @yamlKey pad_right */
-    padRight?: number | string;
+    padRight?: BindProp<number | string>;
     /** @yamlKey pad_top */
-    padTop?: number | string;
+    padTop?: BindProp<number | string>;
     /** @yamlKey shadow_color */
-    shadowColor?: string;
+    shadowColor?: BindProp<string | string>;
     /** @yamlKey shadow_ofs_x */
-    shadowOfsX?: number;
+    shadowOfsX?: BindProp<number>;
     /** @yamlKey shadow_ofs_y */
-    shadowOfsY?: number;
+    shadowOfsY?: BindProp<number>;
     /** @yamlKey shadow_opa */
-    shadowOpa?: "TRANSP" | "COVER";
+    shadowOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey shadow_spread */
-    shadowSpread?: number;
+    shadowSpread?: BindProp<number>;
     /** @yamlKey shadow_width */
-    shadowWidth?: number;
+    shadowWidth?: BindProp<number>;
     /** @yamlKey text_align */
-    textAlign?: "LEFT" | "CENTER" | "RIGHT" | "AUTO";
+    textAlign?: BindProp<string | ("LEFT" | "CENTER" | "RIGHT" | "AUTO")>;
     /** @yamlKey text_color */
-    textColor?: string;
+    textColor?: BindProp<string | string>;
     /** @yamlKey text_decor */
-    textDecor?: "NONE" | "UNDERLINE" | "STRIKETHROUGH";
+    textDecor?: BindProp<string | ("NONE" | "UNDERLINE" | "STRIKETHROUGH")>;
     /** @yamlKey text_font */
-    textFont?: "montserrat_8" | "montserrat_10" | "montserrat_12" | "montserrat_14" | "montserrat_16" | "montserrat_18" | "montserrat_20" | "montserrat_22" | "montserrat_24" | "montserrat_26" | "montserrat_28" | "montserrat_30" | "montserrat_32" | "montserrat_34" | "montserrat_36" | "montserrat_38" | "montserrat_40" | "montserrat_42" | "montserrat_44" | "montserrat_46" | "montserrat_48" | "dejavu_16_persian_hebrew" | "simsun_16_cjk" | "unscii_8" | "unscii_16";
+    textFont?: BindProp<string | ("montserrat_8" | "montserrat_10" | "montserrat_12" | "montserrat_14" | "montserrat_16" | "montserrat_18" | "montserrat_20" | "montserrat_22" | "montserrat_24" | "montserrat_26" | "montserrat_28" | "montserrat_30" | "montserrat_32" | "montserrat_34" | "montserrat_36" | "montserrat_38" | "montserrat_40" | "montserrat_42" | "montserrat_44" | "montserrat_46" | "montserrat_48" | "dejavu_16_persian_hebrew" | "simsun_16_cjk" | "unscii_8" | "unscii_16")>;
     /** @yamlKey text_letter_space */
-    textLetterSpace?: number;
+    textLetterSpace?: BindProp<number>;
     /** @yamlKey text_line_space */
-    textLineSpace?: number;
+    textLineSpace?: BindProp<number>;
     /** @yamlKey text_opa */
-    textOpa?: "TRANSP" | "COVER";
+    textOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey transform_angle */
-    transformAngle?: number;
+    transformAngle?: BindProp<number>;
     /** @yamlKey transform_height */
-    transformHeight?: number | string;
+    transformHeight?: BindProp<number | string>;
     /** @yamlKey transform_pivot_x */
     transformPivotX?: number | string;
     /** @yamlKey transform_pivot_y */
     transformPivotY?: number | string;
     /** @yamlKey transform_zoom */
-    transformZoom?: unknown;
+    transformZoom?: BindProp<unknown>;
     /** @yamlKey translate_x */
-    translateX?: number | string;
+    translateX?: BindProp<number | string>;
     /** @yamlKey translate_y */
-    translateY?: number | string;
+    translateY?: BindProp<number | string>;
     /** @yamlKey max_height */
-    maxHeight?: number | string;
+    maxHeight?: BindProp<number | string>;
     /** @yamlKey max_width */
-    maxWidth?: number | string;
+    maxWidth?: BindProp<number | string>;
     /** @yamlKey min_height */
-    minHeight?: number | string;
+    minHeight?: BindProp<number | string>;
     /** @yamlKey min_width */
-    minWidth?: number | string;
-    radius?: "CIRCLE";
-    width?: number | string | "SIZE_CONTENT";
-    x?: number | string;
-    y?: number | string;
+    minWidth?: BindProp<number | string>;
+    radius?: BindProp<string | "CIRCLE">;
+    width?: BindProp<string | (number | string | "SIZE_CONTENT")>;
+    x?: BindProp<number | string>;
+    y?: BindProp<number | string>;
     /** State-variant style override. */
     checked?: LvglStyleProps;
     /** State-variant style override. */
@@ -195,7 +195,7 @@ export interface LvglObjProps extends LvglStyleProps {
 }
 //
 export interface LvglLabelProps extends LvglStyleProps {
-    text?: unknown;
+    text?: BindProp<string | number>;
     recolor?: boolean;
     /** @yamlKey long_mode */
     longMode?: "WRAP" | "DOT" | "SCROLL" | "SCROLL_CIRCULAR" | "CLIP";
@@ -206,7 +206,7 @@ export interface LvglLabelProps extends LvglStyleProps {
 }
 //
 export interface LvglButtonProps extends LvglStyleProps {
-    text?: unknown;
+    text?: BindProp<string | number>;
 }
 //
 export interface LvglBtnmatrixBtnProps extends LvglStyleProps {
@@ -260,7 +260,7 @@ export interface LvglAnimimgProps extends LvglStyleProps {
 }
 //
 export interface LvglArcProps extends LvglStyleProps {
-    value?: number;
+    value?: BindProp<number>;
     /** @yamlKey min_value */
     minValue?: number;
     /** @yamlKey max_value */
@@ -291,7 +291,7 @@ export interface LvglCanvasProps extends LvglStyleProps {
 }
 //
 export interface LvglCheckboxProps extends LvglStyleProps {
-    text?: unknown;
+    text?: BindProp<string | number>;
     /** @yamlKey pad_column */
     padColumn?: number | string;
     /** Style overrides for the "indicator" part. */
@@ -320,14 +320,14 @@ export interface LvglDropdownProps extends LvglStyleProps {
     selectedText?: string;
     /** @yamlKey dropdown_list */
     dropdownList?: unknown;
-    options: unknown;
+    options: BindProp<unknown>;
     dir?: "LEFT" | "RIGHT" | "BOTTOM" | "TOP";
     /** Style overrides for the "indicator" part. */
     indicator?: LvglStyleProps;
 }
 //
 export interface LvglTextareaProps extends LvglStyleProps {
-    text?: unknown;
+    text?: BindProp<string | number>;
     /** @yamlKey placeholder_text */
     placeholderText?: string;
     /** @yamlKey accepted_chars */
@@ -359,12 +359,12 @@ export interface LvglKeyboardProps extends LvglStyleProps {
 }
 //
 export interface LvglLedProps extends LvglStyleProps {
-    color?: string;
-    brightness?: unknown;
+    color?: BindProp<string | string>;
+    brightness?: BindProp<unknown>;
 }
 //
 export interface LvglBarProps extends LvglStyleProps {
-    value?: number;
+    value?: BindProp<number>;
     /** @yamlKey start_value */
     startValue?: number;
     /** @yamlKey min_value */
@@ -388,7 +388,7 @@ export interface LvglMeterProps extends LvglStyleProps {
 }
 //
 export interface LvglQrcodeProps extends LvglStyleProps {
-    text?: unknown;
+    text?: string | number;
     /** @yamlKey dark_color */
     darkColor?: string;
     /** @yamlKey light_color */
@@ -410,7 +410,7 @@ export interface LvglRollerProps extends LvglStyleProps {
 }
 //
 export interface LvglSliderProps extends LvglStyleProps {
-    value?: number;
+    value?: BindProp<number>;
     /** @yamlKey min_value */
     minValue?: number;
     /** @yamlKey max_value */
@@ -424,7 +424,7 @@ export interface LvglSliderProps extends LvglStyleProps {
 }
 //
 export interface LvglSpinboxProps extends LvglStyleProps {
-    value?: number;
+    value?: BindProp<number>;
     /** @yamlKey range_from */
     rangeFrom?: number;
     /** @yamlKey range_to */

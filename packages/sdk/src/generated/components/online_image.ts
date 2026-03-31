@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { http_request_HttpRequestComponent, image_Image, online_image_OnlineImage } from "../markers";
 export interface OnlineImageProps extends _CoreComponent {
@@ -30,7 +30,7 @@ export interface OnlineImageProps extends _CoreComponent {
      * int: Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The defaul...
      * @yamlKey buffer_size
      */
-    bufferSize?: number;
+    bufferSize?: number | EmbedValue<number>;
     /**
      * mapping: Map of HTTP headers. Values are [templatable](/automations/templates).
      * @yamlKey request_headers

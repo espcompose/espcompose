@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreEntityBase, _CoreMqttCommandComponent, _TemplateDatetime_Base } from "../bases";
 import type { template__TemplateDate, template__TemplateDateTime, template__TemplateTime, time_RealTimeClock, web_server_WebServer } from "../markers";
 interface DatetimeWebServerProps {

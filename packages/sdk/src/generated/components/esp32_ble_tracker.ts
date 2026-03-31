@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface Esp32BleTrackerScanParametersProps {
@@ -14,9 +14,9 @@ export interface Esp32BleTrackerScanParametersProps {
     /** [Time](/guides/configuration-types#time): The time the ESP is actively listening for packets on a channel during each... */
     window?: TimePeriod;
     /** boolean: Whether to actively send scan requests to request more data after having received an advertising packet. Wit... */
-    active?: boolean;
+    active?: boolean | EmbedValue<boolean>;
     /** boolean: Whether to scan continuously (forever) or to only scan when asked to start a scan (with start_scan action). ... */
-    continuous?: boolean;
+    continuous?: boolean | EmbedValue<boolean>;
 }
 export interface Esp32BleTrackerProps extends _CoreComponent {
     /** @yamlKey ble_id */
@@ -25,7 +25,7 @@ export interface Esp32BleTrackerProps extends _CoreComponent {
      * int: DEPRECATED - This option has been moved to the [Esp32 Ble](/components/esp32_ble/) component. Please configure `...
      * @yamlKey max_connections
      */
-    maxConnections?: number;
+    maxConnections?: number | EmbedValue<number>;
     /**
      * Advanced parameters for configuring the scan behavior of the ESP32. See also [this guide by Texas Instruments](https:...
      * @yamlKey scan_parameters

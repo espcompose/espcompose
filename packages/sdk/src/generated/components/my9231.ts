@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { my9231_MY9231OutputComponent } from "../markers";
 export interface My9231Props extends _CoreComponent {
@@ -11,22 +11,22 @@ export interface My9231Props extends _CoreComponent {
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin which DI is connected
      * @yamlKey data_pin
      */
-    dataPin: Pin;
+    dataPin: Pin | EmbedValue<Pin>;
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin which DCKI is
      * @yamlKey clock_pin
      */
-    clockPin: Pin;
+    clockPin: Pin | EmbedValue<Pin>;
     /**
      * int: Total number of channels of the whole
      * @yamlKey num_channels
      */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
     /**
      * int: Number of chips in the chain. Must be
      * @yamlKey num_chips
      */
-    numChips?: number;
+    numChips?: number | EmbedValue<number>;
     /**
      * int: The bit depth to use for all output
      * @yamlKey bit_depth

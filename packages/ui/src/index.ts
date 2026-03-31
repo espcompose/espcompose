@@ -6,45 +6,18 @@
  */
 
 // Theme system
-export { useTheme, ThemeContext, ThemeProvider } from './theme/context';
+export { useReactiveTheme } from './theme/context';
+export { ThemeProvider } from './theme/ThemeProvider';
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
-export { themeToJSON, themeFromJSON } from './theme/json';
 export {
   resolveSpacing,
   resolveSize,
   resolveStatus,
   resolveTypography,
   resolveRadius,
-  fontDefToLvgl,
+  resolveFont as fontDefToLvgl,
 } from './theme/resolvers';
-
-// Theme bridge (LVGL native integration)
-export {
-  themeToStyleDefinitions,
-  themeToLvglTheme,
-  createLvglThemeProps,
-  applyTheme,
-} from './theme/bridge';
-export type { StyleDefinition } from './theme/bridge';
-export {
-  STYLE_BG,
-  STYLE_SURFACE,
-  STYLE_SURFACE_ALT,
-  STYLE_BORDER,
-  STYLE_TEXT_PRIMARY,
-  STYLE_TEXT_SECONDARY,
-  STYLE_TEXT_DISABLED,
-  STYLE_TEXT_VARIANT,
-  STYLE_SLIDER_INDICATOR,
-  STYLE_SLIDER_KNOB,
-  STYLE_SWITCH_INDICATOR,
-  STYLE_SWITCH_KNOB,
-  STYLE_ARC_INDICATOR,
-  STYLE_ARC_KNOB,
-  statusStyleId,
-  statusTextStyleId,
-} from './theme/style-ids';
 
 // Theme types
 export type {

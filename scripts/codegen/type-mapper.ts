@@ -1,9 +1,10 @@
 import ts from 'typescript';
 import type { SchemaConfigVar, SchemaDefinition, SchemaRegistry } from './schema-types.js';
 import { OPTIONAL_FIELD_OVERRIDES, TYPE_OVERRIDES } from './overrides.js';
-import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refPropType, triggerType, propSig, addJsDoc } from './ast-helpers.js';
+import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refPropType, triggerType, propSig, addJsDoc, embedPropType } from './ast-helpers.js';
 import { inferDocTypeString } from './doc-type-inference.js';
 import { TRIGGER_REGISTRY } from '../../packages/sdk/src/trigger-registry.js';
+import { mergeExtends } from './schema-merge-utils.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -91,9 +92,17 @@ export function buildInterfaceBody(
 
     const typeOverride = TYPE_OVERRIDES.get(varName);
     const { typeNode: schemaType, required } = resolveConfigVar(varName, varDef, interfaceNamePrefix, acc, markerRefs, registry, domain);
-    const typeNode = typeOverride
+    let typeNode = typeOverride
       ? unionType([schemaType, ...typeOverride.map((v) => stringLiteralType(v))])
       : schemaType;
+
+    // Wrap embeddable types (string, number) with EmbedValue<T> union.
+    // This allows props to accept build-time values via embed.*().
+    // Skip trigger props, refs, objects, arrays, and enums — they're not embeddable.
+    if (isEmbeddableType(varDef) && !typeOverride) {
+      typeNode = embedPropType(typeNode);
+    }
+
     const isOverriddenOptional = OPTIONAL_FIELD_OVERRIDES.has(`${interfaceNamePrefix}.${varName}`);
     const optional = !(required && varDef.key !== 'GeneratedID' && !isOverriddenOptional);
 
@@ -103,6 +112,28 @@ export function buildInterfaceBody(
   }
 
   return members;
+}
+
+/**
+ * Determine if a config var type is embeddable (can accept EmbedValue<T>).
+ * Only simple value types (string, number, boolean, pin) are embeddable.
+ * Trigger props, refs, enums, schemas, and complex types are not.
+ */
+function isEmbeddableType(varDef: SchemaConfigVar): boolean {
+  if (varDef.type === 'trigger') return false;
+  if (varDef.type === 'use_id') return false;
+  if (varDef.type === 'enum') return false;
+  if (varDef.type === 'schema') return false;
+  if (varDef.type === 'typed') return false;
+  if (varDef.is_list) return false;
+  // Simple value types
+  return (
+    varDef.type === 'string' ||
+    varDef.type === 'boolean' ||
+    varDef.type === 'integer' ||
+    varDef.type === 'float' ||
+    varDef.type === 'pin'
+  );
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -286,53 +317,6 @@ function inferUntypedType(docs?: string, isList = false): ts.TypeNode | null {
   }
 }
 
-function mergeConfigVarDef(base: SchemaConfigVar, override: SchemaConfigVar): SchemaConfigVar {
-  const merged: SchemaConfigVar = { ...base, ...override };
-
-  if (base.values || override.values) {
-    merged.values = { ...(base.values ?? {}), ...(override.values ?? {}) };
-  }
-
-  if (base.schema || override.schema) {
-    merged.schema = mergeSchemaDefinition(base.schema, override.schema);
-  }
-
-  return merged;
-}
-
-function mergeConfigVarMaps(
-  base: Record<string, SchemaConfigVar>,
-  override: Record<string, SchemaConfigVar>,
-): Record<string, SchemaConfigVar> {
-  const merged: Record<string, SchemaConfigVar> = { ...base };
-  for (const [k, v] of Object.entries(override)) {
-    merged[k] = merged[k] ? mergeConfigVarDef(merged[k], v) : v;
-  }
-  return merged;
-}
-
-function mergeSchemaDefinition(
-  base: SchemaDefinition | undefined,
-  override: SchemaDefinition | undefined,
-): SchemaDefinition | undefined {
-  if (!base && !override) return undefined;
-  if (!base) return override;
-  if (!override) return base;
-
-  const merged: SchemaDefinition = { ...base, ...override };
-
-  if (base.config_vars || override.config_vars) {
-    merged.config_vars = mergeConfigVarMaps(base.config_vars ?? {}, override.config_vars ?? {});
-  }
-
-  if (base.extends || override.extends) {
-    const combined = [...(base.extends ?? []), ...(override.extends ?? [])];
-    merged.extends = [...new Set(combined)];
-  }
-
-  return merged;
-}
-
 function generateNestedInterface(
   varName: string,
   schema: SchemaDefinition,
@@ -358,25 +342,40 @@ function generateNestedInterface(
   return interfaceName;
 }
 
-/**
- * Recursively flatten `extends` references in a schema definition,
- * merging all inherited config_vars with own config_vars (own wins).
- */
-export function mergeExtends(
-  schema: SchemaDefinition,
-  registry: SchemaRegistry,
-  _visited: Set<string> = new Set(),
-): Record<string, SchemaConfigVar> {
-  const merged: Record<string, SchemaConfigVar> = {};
-  for (const ref of schema.extends ?? []) {
-    if (_visited.has(ref)) continue;
-    _visited.add(ref);
-    const refDef = registry.get(ref);
-    if (!refDef) continue;
-    const inherited = mergeExtends(refDef, registry, _visited);
-    Object.assign(merged, mergeConfigVarMaps(merged, inherited));
+// Re-export mergeExtends so existing importers continue to work.
+export { mergeExtends } from './schema-merge-utils.js';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Special prop type helpers — used by extends-resolver and file-generators
+// ────────────────────────────────────────────────────────────────────────────
+
+function nodeUsesTypeRef(node: ts.Node, typeName: string): boolean {
+  if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && node.typeName.text === typeName) {
+    return true;
   }
-  return mergeConfigVarMaps(merged, schema.config_vars ?? {});
+  let found = false;
+  ts.forEachChild(node, (child) => {
+    if (!found && nodeUsesTypeRef(child, typeName)) found = true;
+  });
+  return found;
+}
+
+function membersUseTypeRef(members: ts.TypeElement[], typeName: string): boolean {
+  return members.some((m) => nodeUsesTypeRef(m, typeName));
+}
+
+function nestedInterfacesUseTypeRef(nested: InterfaceAccumulator, typeName: string): boolean {
+  return nested.some((ni) => membersUseTypeRef(ni.members, typeName));
+}
+
+const SPECIAL_PROP_TYPES = ['TimePeriod', 'MACAddress', 'IPv4Address'] as const;
+
+export function collectSpecialPropTypesFromMembers(members: ts.TypeElement[]): string[] {
+  return SPECIAL_PROP_TYPES.filter((typeName) => membersUseTypeRef(members, typeName));
+}
+
+export function collectSpecialPropTypesFromNested(nested: InterfaceAccumulator): string[] {
+  return SPECIAL_PROP_TYPES.filter((typeName) => nestedInterfacesUseTypeRef(nested, typeName));
 }
 
 function resolveStringMapValueType(varDef: SchemaConfigVar): ts.TypeNode {

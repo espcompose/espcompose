@@ -1,13 +1,12 @@
 import 'dotenv/config';
-import { Display, ESPCompose, useRef } from '@esphome/compose';
+import { Display, defineProject, useRef } from '@esphome/compose';
 import { UI } from './lvgl';
 import { Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 } from './hardware';
 
-export default (() => {
+const display = useRef<Display>();
 
-  const display = useRef<Display>();
-
-  return (
+export default defineProject({
+  device: (
     <esphome
       name="espcompose-demo"
       comment="An ESPHome Compose device"
@@ -31,5 +30,5 @@ export default (() => {
       <UI display={display} />
 
     </esphome>
-  );
-})();
+  ),
+});

@@ -2,57 +2,57 @@
 // Reactive Property Mapping for Ref<T>
 //
 // Maps reactive property names (e.g. `.value`, `.isOn`, `.brightness`) to the
-// Expression configuration needed to generate ESPHome lambdas and trigger
+// ReactiveNode configuration needed to generate ESPHome lambdas and trigger
 // wiring.
 //
 // Two layers:
 //
 //   Type level — InferReactiveProperties<T> uses the phantom brands on
 //   marker types to narrow which reactive properties are available:
-//     Ref<sensor_Sensor>.value      → Expression<number>
-//     Ref<binary_sensor_BinarySensor>.isOn → Expression<boolean>
-//     Ref<light_LightState>.brightness     → Expression<number>
+//     Ref<sensor_Sensor>.value      → ReactiveNode<number>
+//     Ref<binary_sensor_BinarySensor>.isOn → ReactiveNode<boolean>
+//     Ref<light_LightState>.brightness     → ReactiveNode<number>
 //
 //   Runtime level — REACTIVE_PROPERTY_MAP is consulted by the RefHandle
-//   Proxy to create Expression instances when a reactive property is
+//   Proxy to create ReactiveNode instances when a reactive property is
 //   accessed.  Since markers are phantom types erased at runtime, the
-//   Proxy can't check brands — it simply returns an Expression for any
+//   Proxy can't check brands — it simply returns a ReactiveNode for any
 //   known reactive property name.  Type-safety is enforced at compile
 //   time by InferReactiveProperties<T>.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Expression } from './expression';
+import type { Signal } from './reactive-node';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Type-level reactive property interfaces
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface SensorReactiveProps {
-  readonly value: Expression<number>;
-  readonly stateText: Expression<string>;
+  readonly value: Signal<number>;
+  readonly stateText: Signal<string>;
 }
 
 export interface BinarySensorReactiveProps {
-  readonly isOn: Expression<boolean>;
-  readonly stateText: Expression<string>;
+  readonly isOn: Signal<boolean>;
+  readonly stateText: Signal<string>;
 }
 
 export interface LightReactiveProps {
-  readonly isOn: Expression<boolean>;
-  readonly brightness: Expression<number>;
-  readonly stateText: Expression<string>;
+  readonly isOn: Signal<boolean>;
+  readonly brightness: Signal<number>;
+  readonly stateText: Signal<string>;
 }
 
 export interface SwitchReactiveProps {
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
 }
 
 export interface FanReactiveProps {
-  readonly isOn: Expression<boolean>;
+  readonly isOn: Signal<boolean>;
 }
 
 export interface CoverReactiveProps {
-  readonly isOpen: Expression<boolean>;
+  readonly isOpen: Signal<boolean>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -89,12 +89,14 @@ export interface ReactivePropertyConfig {
   triggerType: string;
   /** Component domain for trigger registry lookup (e.g. `sensor`). */
   sourceDomain: string;
+  /** C++ value type for the reactive runtime (e.g. `bool`, `float`, `std::string`). */
+  cppType: string;
 }
 
 export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {
-  value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor' },
-  isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor' },
-  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover' },
-  stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor' },
-  brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light' },
+  value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor',        cppType: 'float' },
+  isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor', cppType: 'bool' },
+  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         cppType: 'bool' },
+  stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor',   cppType: 'std::string' },
+  brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light',         cppType: 'float' },
 };

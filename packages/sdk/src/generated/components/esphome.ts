@@ -3,13 +3,13 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { Area } from "../markers";
 export interface EsphomeProjectProps {
     /** string: Name of the project */
-    name: string;
+    name: string | EmbedValue<string>;
     /** string: Version of the project */
-    version: string;
+    version: string | EmbedValue<string>;
     /**
      * [Automation](/automations): An automation to perform when the device firmware is updated. This compares the above `ve...
      * @yamlKey on_update
@@ -26,7 +26,7 @@ export interface EsphomeDevicesProps {
 }
 export interface EsphomeProps {
     /** string: This is the name of the node. It should always be unique in your ESPHome network. May only contain lowercase ... */
-    name: string;
+    name: string | EmbedValue<string>;
     /**
      * string: This name is sent to the frontend and used by Home Assistant as the integration and device name. It also gets...
      * @yamlKey friendly_name
@@ -35,12 +35,12 @@ export interface EsphomeProps {
     /** string or [Area Configuration](https://esphome.io/components/esphome#esphome-area): The area configuration for this d... */
     area?: unknown;
     /** string: Additional text information about this node. Only for display in UI. */
-    comment?: string;
+    comment?: string | EmbedValue<string>;
     /**
      * string: Customize where ESPHome will store the build files for your node. By default, ESPHome puts the PlatformIO pro...
      * @yamlKey build_path
      */
-    buildPath?: string;
+    buildPath?: string | EmbedValue<string>;
     /**
      * mapping: Additional options to pass over to PlatformIO in the platformio.ini file. See [`platformio_options`](https:/...
      * @yamlKey platformio_options
@@ -79,12 +79,12 @@ export interface EsphomeProps {
      * boolean: Appends the last 3 bytes of the mac address of the device to the name in the form `<name>-aabbcc`. Defaults ...
      * @yamlKey name_add_mac_suffix
      */
-    nameAddMacSuffix?: boolean;
+    nameAddMacSuffix?: boolean | EmbedValue<boolean>;
     /**
      * boolean: If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
      * @yamlKey debug_scheduler
      */
-    debugScheduler?: boolean;
+    debugScheduler?: boolean | EmbedValue<boolean>;
     /** ESPHome Creator's Project information. See [Project information](https://esphome.io/components/esphome#esphome-creato... */
     project?: EsphomeProjectProps;
     /**
@@ -96,7 +96,7 @@ export interface EsphomeProps {
      * int: The maximum number of simultaneous compile processes to run. Defaults to the number of cores of the CPU which is...
      * @yamlKey compile_process_limit
      */
-    compileProcessLimit?: number;
+    compileProcessLimit?: number | EmbedValue<number>;
     /** list of [Area Configuration](https://esphome.io/components/esphome#esphome-area): Additional areas that can be refere... */
     areas?: Array<EsphomeAreasProps>;
     /** list of [Sub-Devices](https://esphome.io/components/esphome#esphome-devices): Sub-devices to group entities under. */

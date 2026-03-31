@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_touch_ESP32TouchComponent } from "../markers";
 export interface Esp32TouchProps extends _CoreComponent {
@@ -11,7 +11,7 @@ export interface Esp32TouchProps extends _CoreComponent {
      * boolean: Whether debug messages with the touch pad value should
      * @yamlKey setup_mode
      */
-    setupMode?: boolean;
+    setupMode?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): Set a time period denoting the amount of time the touch peripheral should s...
      * @yamlKey sleep_duration
@@ -46,7 +46,7 @@ export interface Esp32TouchProps extends _CoreComponent {
      * `int` range 0-7: Sets the debounce count; if the measured values continue to exceed the threshold for `n + 1` times, ...
      * @yamlKey debounce_count
      */
-    debounceCount?: number;
+    debounceCount?: number | EmbedValue<number>;
     /**
      * Sets the filter mode. Must be one of `IIR_4`, `IIR_8`, `IIR_16`, `IIR_32`, `IIR_64`, `IIR_128`, `IIR_256` (S2/S3 only...
      * @yamlKey filter_mode
@@ -56,12 +56,12 @@ export interface Esp32TouchProps extends _CoreComponent {
      * `int` range 0-3: Noise threshold coefficient. Higher = More noise resistance. The actual noise should be less than (n...
      * @yamlKey noise_threshold
      */
-    noiseThreshold?: number;
+    noiseThreshold?: number | EmbedValue<number>;
     /**
      * `int` range 0-15: Set jitter filter step size.
      * @yamlKey jitter_step
      */
-    jitterStep?: number;
+    jitterStep?: number | EmbedValue<number>;
     /**
      * Level of filter applied on the original data against large noise interference. Must be one of `OFF`, `IIR_2`, `IIR_4`...
      * @yamlKey smooth_mode
@@ -86,7 +86,7 @@ export interface Esp32TouchProps extends _CoreComponent {
      * Shield channel drive capability configuration; the larger the parasitic capacitance on the shielding channel, the hig...
      * @yamlKey waterproof_shield_driver
      */
-    waterproofShieldDriver?: number;
+    waterproofShieldDriver?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

@@ -3,6 +3,7 @@ import * as path from 'path';
 
 export interface InitOptions {
   board?: string;
+  library?: boolean;
 }
 
 /**
@@ -13,6 +14,7 @@ export interface InitOptions {
  */
 export function initProject(name: string, options: InitOptions = {}): void {
   const board = options.board ?? 'esp32dev';
+  const isLibrary = options.library ?? false;
   const targetDir = path.resolve(name);
 
   if (fs.existsSync(targetDir)) {
@@ -25,36 +27,73 @@ export function initProject(name: string, options: InitOptions = {}): void {
   fs.mkdirSync(targetDir, { recursive: true });
 
   // ── package.json ───────────────────────────────────────────────────────
-  const packageJson = {
-    name,
-    version: '1.0.0',
-    private: true,
-    main: 'index.tsx',
-    scripts: {
-      build: 'espcompose transpile',
-      lint: 'eslint .',
-    },
-    dependencies: {
-      '@esphome/compose': 'latest',
-    },
-    devDependencies: {
-      '@esphome/compose-cli': 'latest',
-      '@esphome/compose-eslint': 'latest',
-      eslint: '^9.0.0',
-      'typescript-eslint': '^8.0.0',
-    },
-  };
+  const packageJson = isLibrary
+    ? {
+        name,
+        version: '1.0.0',
+        main: 'dist/index.js',
+        module: 'dist/index.mjs',
+        types: 'dist/index.d.ts',
+        exports: {
+          '.': {
+            types: './dist/index.d.ts',
+            import: './dist/index.mjs',
+            require: './dist/index.js',
+          },
+        },
+        files: ['dist'],
+        espcompose: { library: true },
+        scripts: {
+          build: 'espcompose library',
+          typecheck: 'tsc --noEmit',
+          lint: 'eslint src',
+        },
+        dependencies: {
+          '@esphome/compose': 'latest',
+        },
+        devDependencies: {
+          '@esphome/compose-cli': 'latest',
+          '@esphome/compose-eslint': 'latest',
+          eslint: '^9.0.0',
+          'typescript-eslint': '^8.0.0',
+        },
+      }
+    : {
+        name,
+        version: '1.0.0',
+        private: true,
+        main: 'index.tsx',
+        scripts: {
+          build: 'espcompose transpile',
+          lint: 'eslint .',
+        },
+        dependencies: {
+          '@esphome/compose': 'latest',
+        },
+        devDependencies: {
+          '@esphome/compose-cli': 'latest',
+          '@esphome/compose-eslint': 'latest',
+          eslint: '^9.0.0',
+          'typescript-eslint': '^8.0.0',
+        },
+      };
   fs.writeFileSync(
     path.join(targetDir, 'package.json'),
     JSON.stringify(packageJson, null, 2) + '\n',
   );
 
   // ── tsconfig.json ─────────────────────────────────────────────────────
-  const tsconfig = {
-    extends: '@esphome/compose/tsconfig.sdk.json',
-    include: ['*.tsx'],
-    exclude: ['node_modules'],
-  };
+  const tsconfig = isLibrary
+    ? {
+        extends: '@esphome/compose/tsconfig.sdk.json',
+        include: ['src/**/*.ts', 'src/**/*.tsx'],
+        exclude: ['node_modules', 'dist', '.espcompose-build'],
+      }
+    : {
+        extends: '@esphome/compose/tsconfig.sdk.json',
+        include: ['*.tsx'],
+        exclude: ['node_modules'],
+      };
   fs.writeFileSync(
     path.join(targetDir, 'tsconfig.json'),
     JSON.stringify(tsconfig, null, 2) + '\n',
@@ -69,10 +108,42 @@ export default [
 `;
   fs.writeFileSync(path.join(targetDir, 'eslint.config.mjs'), eslintConfig);
 
-  // ── index.tsx ─────────────────────────────────────────────────────────
-  const indexTsx = `import { ESPCompose } from '@esphome/compose';
+  // ── source files ───────────────────────────────────────────────────────
+  if (isLibrary) {
+    // Library: create src/ directory with a starter component
+    fs.mkdirSync(path.join(targetDir, 'src'), { recursive: true });
+    const indexTs = `/**
+ * ${name} — ESPCompose component library.
+ *
+ * Export your components from this file.
+ */
+export { MyComponent } from './MyComponent';
+`;
+    fs.writeFileSync(path.join(targetDir, 'src', 'index.ts'), indexTs);
 
-export default (
+    const componentTsx = `import type { EspComposeElement } from '@esphome/compose';
+import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
+
+interface MyComponentProps {
+  text?: string;
+}
+
+export const MyComponent = createIntentComponent(
+  (props: MyComponentProps): EspComposeElement => {
+    return (
+      <lvgl-label text={props.text ?? 'Hello from ${name}!'} />
+    );
+  },
+  {
+    intents: [LVGL_INTENTS.WIDGET] as const,
+    allowedChildIntents: [] as const,
+  },
+);
+`;
+    fs.writeFileSync(path.join(targetDir, 'src', 'MyComponent.tsx'), componentTsx);
+  } else {
+    // Device project: single index.tsx entry file
+    const indexTsx = `export default (
   <esphome name="${name}" comment="An ESPHome Compose device">
     <esp32 board="${board}" framework={{ type: 'esp-idf' }} />
     <wifi ssid="!secret wifi_ssid" password="!secret wifi_password" />
@@ -82,19 +153,29 @@ export default (
   </esphome>
 );
 `;
-  fs.writeFileSync(path.join(targetDir, 'index.tsx'), indexTsx);
+    fs.writeFileSync(path.join(targetDir, 'index.tsx'), indexTsx);
+  }
 
   // ── .gitignore ────────────────────────────────────────────────────────
-  const gitignore = `node_modules/
+  const gitignore = isLibrary
+    ? `node_modules/
+dist/
+.espcompose-build/
+`
+    : `node_modules/
 .espcompose/
 .espcompose-build/
 dist/
 `;
   fs.writeFileSync(path.join(targetDir, '.gitignore'), gitignore);
 
-  console.log(`✓ Created project "${name}" in ./${name}/\n`);
+  console.log(`✓ Created ${isLibrary ? 'library' : 'project'} "${name}" in ./${name}/\n`);
   console.log('Next steps:');
   console.log(`  cd ${name}`);
   console.log('  npm install');
-  console.log('  npx espcompose transpile');
+  if (isLibrary) {
+    console.log('  npx espcompose library');
+  } else {
+    console.log('  npx espcompose transpile');
+  }
 }

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { i2s_audio_I2SAudioComponent, i2s_audio_I2SAudioMediaPlayer, media_source_MediaSource, speaker_Speaker, speaker_SpeakerMediaPlayer, speaker_source_SpeakerSourceMediaPlayer } from "../markers";
 interface SpeakerAnnouncementPipelineProps {
@@ -15,12 +15,12 @@ interface SpeakerAnnouncementPipelineProps {
      * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
 }
 interface SpeakerMediaPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
@@ -31,12 +31,12 @@ interface SpeakerMediaPipelineProps {
      * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
 }
 interface SpeakerFilesProps {
     /** string: Path to audio file. Can be a local file path or a URL. */
@@ -53,12 +53,12 @@ interface SpeakerSourceAnnouncementPipelineProps {
      * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
 }
 interface SpeakerSourceMediaPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
@@ -71,12 +71,12 @@ interface SpeakerSourceMediaPipelineProps {
      * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
-    numChannels?: number;
+    numChannels?: number | EmbedValue<number>;
 }
 interface MediaPlayerBaseProps extends _CoreEntityBase {
     /** @yamlKey on_state */
@@ -115,7 +115,7 @@ interface SpeakerProps {
      * positive integer: The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000...
      * @yamlKey buffer_size
      */
-    bufferSize?: number;
+    bufferSize?: number | EmbedValue<number>;
     /**
      * enum: Controls which audio codecs (MP3, FLAC, Opus) are compiled. One of `ALL` (all available codecs are supported), ...
      * @yamlKey codec_support_enabled
@@ -127,7 +127,7 @@ interface SpeakerProps {
      * boolean: Run the audio tasks in external memory. Defaults to `false`.
      * @yamlKey task_stack_in_psram
      */
-    taskStackInPsram?: boolean;
+    taskStackInPsram?: boolean | EmbedValue<boolean>;
     /**
      * percentage: Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase o...
      * @yamlKey volume_increment
@@ -220,9 +220,9 @@ interface I2sAudioExternalProps extends _CoreComponent {
     /** @yamlKey i2s_audio_id */
     i2sAudioId?: RefProp<i2s_audio_I2SAudioComponent>;
     /** @yamlKey i2s_dout_pin */
-    i2sDoutPin: Pin;
+    i2sDoutPin: Pin | EmbedValue<Pin>;
     /** @yamlKey mute_pin */
-    mutePin?: Pin;
+    mutePin?: Pin | EmbedValue<Pin>;
     mode?: "mono" | "stereo";
     /** @yamlKey i2s_comm_fmt */
     i2sCommFmt?: "lsb" | "msb";

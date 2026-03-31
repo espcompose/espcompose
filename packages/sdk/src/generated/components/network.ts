@@ -3,23 +3,23 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, TriggerHandler } from "../../types";
 export interface NetworkProps {
     /**
      * boolean: Enables IPv6 support. Defaults to `false`.
      * @yamlKey enable_ipv6
      */
-    enableIpv6?: boolean;
+    enableIpv6?: boolean | EmbedValue<boolean>;
     /**
      * integer: ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses...
      * @yamlKey min_ipv6_addr_count
      */
-    minIpv6AddrCount?: number;
+    minIpv6AddrCount?: number | EmbedValue<number>;
     /**
      * boolean: Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. W...
      * @yamlKey enable_high_performance
      */
-    enableHighPerformance?: boolean;
+    enableHighPerformance?: boolean | EmbedValue<boolean>;
 }
 declare global {
     namespace JSX {

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, MACAddress, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, MACAddress, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ble_client_BLEClient, esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface BleClientProps extends _CoreComponent {
@@ -12,12 +12,12 @@ export interface BleClientProps extends _CoreComponent {
      * @yamlKey mac_address
      */
     macAddress: MACAddress;
-    name?: string;
+    name?: string | EmbedValue<string>;
     /**
      * boolean: If true the device will be automatically connected when found by the [Esp32 Ble Tracker](/components/esp32_b...
      * @yamlKey auto_connect
      */
-    autoConnect?: boolean;
+    autoConnect?: boolean | EmbedValue<boolean>;
     /**
      * [Automation](/automations): An automation to perform when the client connects to a device. See [`on_connect`](https:/...
      * @yamlKey on_connect

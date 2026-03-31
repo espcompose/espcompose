@@ -3,14 +3,14 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { ttp229_bsf_TTP229BSFComponent } from "../markers";
 export interface Ttp229BsfProps extends _CoreComponent {
     /** @yamlKey sdo_pin */
-    sdoPin: Pin;
+    sdoPin: Pin | EmbedValue<Pin>;
     /** @yamlKey scl_pin */
-    sclPin: Pin;
+    sclPin: Pin | EmbedValue<Pin>;
 }
 declare global {
     namespace JSX {

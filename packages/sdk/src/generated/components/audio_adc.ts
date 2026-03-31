@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { es7210_ES7210, es7243e_ES7243E, i2c_I2CBus } from "../markers";
 interface Es7210Props extends _CoreComponent {
@@ -21,7 +21,7 @@ interface Es7210Props extends _CoreComponent {
      * positive integer: I2S sample rate. Defaults to `16000`.
      * @yamlKey sample_rate
      */
-    sampleRate?: number;
+    sampleRate?: number | EmbedValue<number>;
     /**
      * The ID of the [I²C bus](/components/i2c) the ES7210 is connected to.
      * @yamlKey i2c_id

@@ -2,8 +2,20 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "typecheck"],
       "outputs": ["dist/**"]
+    },
+    "@esphome/compose-e2e#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "espcompose-demo#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".espcompose/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "cache": true
     },
     "clean": {
       "cache": false
@@ -14,7 +26,7 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "cache": true
+      "cache": false
     }
   }
 }

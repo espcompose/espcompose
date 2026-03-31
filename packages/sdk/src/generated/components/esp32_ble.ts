@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_ble_ESP32BLE } from "../markers";
 export interface Esp32BleProps extends _CoreComponent {
     /** string: The name of the BLE device. */
-    name?: string;
+    name?: string | EmbedValue<string>;
     /**
      * enum: The IO capability of this ESP32, used for securely connecting to other BLE devices. Defaults to `none`.
      * @yamlKey io_capability
@@ -23,19 +23,19 @@ export interface Esp32BleProps extends _CoreComponent {
      * integer: Maximum encryption key size to support. Must be between `7` and `16`. Leave unspecified to use the ESP32 def...
      * @yamlKey max_key_size
      */
-    maxKeySize?: number;
+    maxKeySize?: number | EmbedValue<number>;
     /**
      * integer: Minimum encryption key size requirement from peer. Must be between `7` and `16`. Leave unspecified to use th...
      * @yamlKey min_key_size
      */
-    minKeySize?: number;
+    minKeySize?: number | EmbedValue<number>;
     /**
      * boolean: If enabled, the BLE interface will be enabled on boot. Defaults to `true`.
      * @yamlKey enable_on_boot
      */
-    enableOnBoot?: boolean;
+    enableOnBoot?: boolean | EmbedValue<boolean>;
     /** boolean: Manually enable BLE advertising support. This is automatically enabled when using [Esp32 Ble Server](/compon... */
-    advertising?: boolean;
+    advertising?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The time interval for cycling through multiple advertisements. Only applica...
      * @yamlKey advertising_cycle_time
@@ -45,7 +45,7 @@ export interface Esp32BleProps extends _CoreComponent {
      * boolean: When enabled, disables Bluetooth logging categories that are not used by the configured components. This sav...
      * @yamlKey disable_bt_logs
      */
-    disableBtLogs?: boolean;
+    disableBtLogs?: boolean | EmbedValue<boolean>;
     /**
      * [Time](/guides/configuration-types#time): The maximum time to wait for a BLE connection to be established. Defaults t...
      * @yamlKey connection_timeout
@@ -55,12 +55,12 @@ export interface Esp32BleProps extends _CoreComponent {
      * integer: The maximum number of BLE characteristics that can have notifications enabled across all connections. Defaul...
      * @yamlKey max_notifications
      */
-    maxNotifications?: number;
+    maxNotifications?: number | EmbedValue<number>;
     /**
      * integer: The maximum number of simultaneous BLE connections (client + server combined). Defaults to `3`.
      * @yamlKey max_connections
      */
-    maxConnections?: number;
+    maxConnections?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

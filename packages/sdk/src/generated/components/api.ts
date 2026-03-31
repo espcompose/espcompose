@@ -3,20 +3,20 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { api_APIServer } from "../markers";
 export interface ApiServicesProps {
-    service?: string;
-    action?: string;
+    service?: string | EmbedValue<string>;
+    action?: string | EmbedValue<string>;
     variables?: Record<string, unknown>;
     /** @yamlKey supports_response */
     supportsResponse?: "none" | "optional" | "only" | "status";
     then?: TriggerHandler;
 }
 export interface ApiActionsProps {
-    service?: string;
-    action?: string;
+    service?: string | EmbedValue<string>;
+    action?: string | EmbedValue<string>;
     variables?: Record<string, unknown>;
     /** @yamlKey supports_response */
     supportsResponse?: "none" | "optional" | "only" | "status";
@@ -24,7 +24,7 @@ export interface ApiActionsProps {
 }
 export interface ApiProps extends _CoreComponent {
     /** int: The port to run the API server on. Defaults to `6053`. */
-    port?: number;
+    port?: number | EmbedValue<number>;
     /**
      * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when no client connects to the ...
      * @yamlKey reboot_timeout
@@ -44,17 +44,17 @@ export interface ApiProps extends _CoreComponent {
      * boolean: Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice` class. ...
      * @yamlKey custom_services
      */
-    customServices?: boolean;
+    customServices?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAP...
      * @yamlKey homeassistant_services
      */
-    homeassistantServices?: boolean;
+    homeassistantServices?: boolean | EmbedValue<boolean>;
     /**
      * boolean: Enable compilation of Home Assistant state subscription support for external components that use the C++ `Cu...
      * @yamlKey homeassistant_states
      */
-    homeassistantStates?: boolean;
+    homeassistantStates?: boolean | EmbedValue<boolean>;
     /**
      * [Action](/automations/actions#all-actions): An automation to perform when a client connects to the API. See [`on_clie...
      * @yamlKey on_client_connected
@@ -69,17 +69,17 @@ export interface ApiProps extends _CoreComponent {
      * int: The maximum number of pending connections in the listen queue. Must be between 1 and 10. Defaults to `1` for ESP...
      * @yamlKey listen_backlog
      */
-    listenBacklog?: number;
+    listenBacklog?: number | EmbedValue<number>;
     /**
      * int: The maximum number of simultaneous API connections allowed. Must be between 1 and 20. Defaults to `4` for ESP826...
      * @yamlKey max_connections
      */
-    maxConnections?: number;
+    maxConnections?: number | EmbedValue<number>;
     /**
      * int: The maximum number of messages that can be queued for sending per connection before the connection is dropped. M...
      * @yamlKey max_send_queue
      */
-    maxSendQueue?: number;
+    maxSendQueue?: number | EmbedValue<number>;
 }
 declare global {
     namespace JSX {

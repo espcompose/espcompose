@@ -3,12 +3,12 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { ComponentProps, EmbedValue, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { esp32_camera_web_server_CameraWebServer } from "../markers";
 export interface Esp32CameraWebServerProps extends _CoreComponent {
     /** string: The serving port. */
-    port: number;
+    port: number | EmbedValue<number>;
     /** string: The operation mode. One of these values: */
     mode: "STREAM" | "SNAPSHOT";
 }
