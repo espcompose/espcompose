@@ -16,6 +16,7 @@ catalog:
   vitest: ^2.0.0
   which: ^6.0.1
   yaml: ^2.4.0
+  zod: ^3.23.0
 
 onlyBuiltDependencies:
   - esbuild

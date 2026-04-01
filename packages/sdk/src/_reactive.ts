@@ -14,6 +14,36 @@ import { ReactiveNode } from './reactive-node';
 import type { ExpressionDependency } from './reactive-node';
 import { registerReactiveNode } from './hooks/useReactiveScope';
 
+// ────────────────────────────────────────────────────────────────────────────
+// Library format version validation
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Format versions this SDK can consume. */
+export const SUPPORTED_FORMAT_VERSIONS: readonly number[] = [1];
+
+/**
+ * Validate that a compiled library's format version is supported by this SDK.
+ * Throws a clear error if the version is missing or incompatible.
+ *
+ * Libraries stamp `__espcompose_format__` into their entry point at build time.
+ * Call this at import time to catch version mismatches early.
+ */
+export function validateLibraryFormat(version: unknown): void {
+  if (typeof version !== 'number') {
+    throw new Error(
+      'This ESPCompose library was not compiled with format versioning. ' +
+      'Rebuild the library with the latest ESPCompose CLI (`espcompose library`).',
+    );
+  }
+  if (!SUPPORTED_FORMAT_VERSIONS.includes(version)) {
+    throw new Error(
+      `This ESPCompose library was compiled with format v${version}, ` +
+      `but this SDK supports format v${SUPPORTED_FORMAT_VERSIONS.join(', v')}. ` +
+      'Please rebuild the library with a compatible ESPCompose CLI version.',
+    );
+  }
+}
+
 export const _reactive = {
 
   /**

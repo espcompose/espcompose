@@ -22,6 +22,7 @@ import {
   type ExprCompilerContext,
   type HAEntityInfo,
   type ScriptTransformContext,
+  type ScanDiagnostic,
 } from './expr-compiler';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -314,6 +315,61 @@ describe('expr-compiler', () => {
       const haEntities = new Map<ts.Symbol, HAEntityInfo>();
       scanForHAEntities(sourceFile, haEntities, checker);
       expect(haEntities.size).toBe(2);
+    });
+
+    it('scans dynamic entity with domain hint', () => {
+      const source = `
+        declare const entityId: string;
+        const lamp = useHAEntity(entityId, { domain: 'light' });
+      `;
+      const { sourceFile, checker } = parseSource(source);
+      const haEntities = new Map<ts.Symbol, HAEntityInfo>();
+      scanForHAEntities(sourceFile, haEntities, checker);
+      const info = getByName(haEntities, 'lamp');
+      expect(info).toBeDefined();
+      expect(info!.domain).toBe('light');
+      expect(info!.isDynamic).toBe(true);
+      expect(info!.entityId).toBe('__dynamic__');
+      expect(info!.entityIdExpr).toBe('entityId');
+    });
+
+    it('ignores dynamic entity without domain hint or type constraint', () => {
+      const source = `
+        declare const entityId: string;
+        const lamp = useHAEntity(entityId);
+      `;
+      const { sourceFile, checker } = parseSource(source);
+      const haEntities = new Map<ts.Symbol, HAEntityInfo>();
+      scanForHAEntities(sourceFile, haEntities, checker);
+      // Plain string type can't infer domain — not registered
+      expect(haEntities.size).toBe(0);
+    });
+
+    it('emits a diagnostic when domain cannot be determined', () => {
+      const source = `
+        declare const entityId: string;
+        const lamp = useHAEntity(entityId);
+      `;
+      const { sourceFile, checker } = parseSource(source);
+      const haEntities = new Map<ts.Symbol, HAEntityInfo>();
+      const diagnostics: ScanDiagnostic[] = [];
+      scanForHAEntities(sourceFile, haEntities, checker, diagnostics);
+      expect(diagnostics).toHaveLength(1);
+      expect(diagnostics[0].message).toContain('domain hint');
+      expect(diagnostics[0].message).toContain('entityId');
+    });
+
+    it('does not emit a diagnostic when domain hint is provided', () => {
+      const source = `
+        declare const entityId: string;
+        const lamp = useHAEntity(entityId, { domain: 'light' });
+      `;
+      const { sourceFile, checker } = parseSource(source);
+      const haEntities = new Map<ts.Symbol, HAEntityInfo>();
+      const diagnostics: ScanDiagnostic[] = [];
+      scanForHAEntities(sourceFile, haEntities, checker, diagnostics);
+      expect(diagnostics).toHaveLength(0);
+      expect(haEntities.size).toBe(1);
     });
   });
 

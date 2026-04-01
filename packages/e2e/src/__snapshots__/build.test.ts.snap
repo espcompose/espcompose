@@ -653,6 +653,202 @@ sensor:
 "
 `;
 
+exports[`ESPHome Compose Build > ha-dynamic-device 1`] = `
+"esphome:
+  name: ha-dynamic-device
+  comment: Dynamic HA entity binding demo
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - label:
+            x: 10
+            y: 10
+            text: !lambda "return std::string(id(ha_light_office_main).state ? \\"on\\" :
+              \\"off\\");"
+            id: rw_ref1
+        - button:
+            x: 10
+            y: 40
+            width: 120
+            height: 50
+            on_release:
+              - homeassistant.action:
+                  action: light.toggle
+                  data:
+                    entity_id: light.office_main
+            widgets:
+              - label:
+                  text: Office
+                  align: CENTER
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_office_main
+  entity_id: light.office_main
+  trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_light_office_main.set(x);
+        espcompose::Scheduler::instance().flush();"
+sensor:
+  platform: homeassistant
+  id: ha_light_office_main_brightness
+  entity_id: light.office_main
+  attribute: brightness
+  on_value:
+    - lambda: !lambda "espcompose::sig_ha_light_office_main_brightness.set(x);
+        espcompose::Scheduler::instance().flush();"
+"
+`;
+
+exports[`ESPHome Compose Build > image-font-device 1`] = `
+"esphome:
+  name: image-font-device
+  comment: useImage/useFont hook demo
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - image:
+            x: 10
+            y: 10
+            src: r_ref1
+        - image:
+            x: 50
+            y: 10
+            src: r_ref1
+        - image:
+            x: 90
+            y: 10
+            src: r_ref2
+        - label:
+            x: 10
+            y: 60
+            text: Small
+            text_font: r_ref3
+        - label:
+            x: 10
+            y: 90
+            text: Also small
+            text_font: r_ref3
+        - label:
+            x: 10
+            y: 120
+            text: Large
+            text_font: r_ref4
+image:
+  - id: r_ref1
+    file: assets/icon-5e4d533f.png
+    type: RGB
+    resize: 32x32
+    transparency: alpha_channel
+  - id: r_ref2
+    file: assets/icon-5e4d533f.png
+    type: BINARY
+font:
+  - id: r_ref3
+    file: gfonts://Roboto
+    size: 20
+  - id: r_ref4
+    file: gfonts://Roboto
+    size: 32
+"
+`;
+
+exports[`ESPHome Compose Build > library-contract-device (consumes compiled library) 1`] = `
+"esphome:
+  name: library-contract-device
+  comment: Compiled library consumption test
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+text_sensor:
+  platform: template
+  name: Light Status
+  id: light_status
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_office
+  entity_id: light.office
+  trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_light_office.set(x);
+        espcompose::Scheduler::instance().flush();"
+sensor:
+  platform: homeassistant
+  id: ha_light_office_brightness
+  entity_id: light.office
+  attribute: brightness
+  on_value:
+    - lambda: !lambda "espcompose::sig_ha_light_office_brightness.set(x);
+        espcompose::Scheduler::instance().flush();"
+"
+`;
+
 exports[`ESPHome Compose Build > lvgl-device 1`] = `
 "esphome:
   name: lvgl-device

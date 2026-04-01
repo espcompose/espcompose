@@ -361,6 +361,21 @@ function compileActionCall(
       return compileHAAction(call, haEntity, methodName, ctx);
     }
 
+    // Type-based HA entity fallback: if the variable wasn't scanned
+    // (e.g., dynamic entity from prop) but has HA entity type shape,
+    // infer domain from the type and compile as dynamic action.
+    const objType = ctx.checker.getTypeAtLocation(objNode);
+    const inferredDomain = inferHAEntityDomainFromType(objType);
+    if (inferredDomain) {
+      const dynamicEntity: HAEntityInfo = {
+        entityId: '__dynamic__',
+        domain: inferredDomain,
+        isDynamic: true,
+        entityIdExpr: objName,
+      };
+      return compileHAAction(call, dynamicEntity, methodName, ctx);
+    }
+
     // Component ref action
     const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
     if (refTag !== undefined) {
@@ -463,10 +478,17 @@ function compileHAAction(
   const snakeMethod = camelToSnake(methodName);
   const action = `${entity.domain}.${snakeMethod}`;
 
-  // Always include entity_id so HA knows which entity to target
-  const data: Record<string, IRActionParam> = {
-    entity_id: { kind: 'literal', value: entity.entityId },
-  };
+  // entity_id: static literal for known entities, runtime expression for dynamic
+  const data: Record<string, IRActionParam> = {};
+  if (entity.isDynamic && entity.entityIdExpr) {
+    // Dynamic entity: resolve entity_id at runtime from the binding's __entityId__ property
+    const varName = ts.isPropertyAccessExpression(call.expression) && ts.isIdentifier(call.expression.expression)
+      ? call.expression.expression.text
+      : entity.entityIdExpr;
+    data.entity_id = { kind: 'expression', jsExpression: `${varName}.__entityId__` };
+  } else {
+    data.entity_id = { kind: 'literal', value: entity.entityId };
+  }
 
   // Extract additional data from optional object argument
   if (call.arguments.length > 0) {
@@ -790,6 +812,47 @@ function hasRefBrand(type: ts.Type): boolean {
     }
   }
   return false;
+}
+
+/**
+ * Check if a type has the ACTION_BRAND marker (HA entity binding or similar).
+ */
+function hasActionBrand(type: ts.Type): boolean {
+  for (const prop of type.getProperties()) {
+    if (/^__@ACTION_BRAND@\d+$/.test(prop.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Infer HA entity domain from the TypeScript type structure.
+ *
+ * Distinguishes between binding types by checking for domain-specific methods
+ * and properties:
+ *   - LightBinding: has 'brightness' property → 'light'
+ *   - SwitchBinding: has 'toggle' + 'isOn', no 'brightness'/'isOpen' → 'switch'
+ *   - FanBinding: identical shape to SwitchBinding, so we also check for 'isOpen'
+ *   - CoverBinding: has 'isOpen' property → 'cover'
+ *   - SensorBinding/BinarySensorBinding: no ACTION_BRAND → not matched here
+ */
+function inferHAEntityDomainFromType(type: ts.Type): string | undefined {
+  if (!hasActionBrand(type)) return undefined;
+  // Exclude refs — they also have ACTION_BRAND-like markers but use REF_BRAND
+  if (hasRefBrand(type)) return undefined;
+
+  const propNames = new Set(type.getProperties().map(p => p.name));
+
+  if (propNames.has('brightness')) return 'light';
+  if (propNames.has('isOpen')) return 'cover';
+  // Both switch and fan have: toggle, turnOn, turnOff, isOn
+  // For now, default to 'switch' for matching shapes — the HA action name
+  // will be the same (toggle → toggle, turnOn → turn_on) regardless.
+  // The entity_id in the data payload determines the actual target.
+  if (propNames.has('toggle') && propNames.has('isOn')) return 'switch';
+
+  return undefined;
 }
 
 function emitError(

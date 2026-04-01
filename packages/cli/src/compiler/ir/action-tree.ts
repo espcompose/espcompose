@@ -21,6 +21,13 @@
 export interface LambdaMarker { __lambda__: string }
 function lambdaMarker(code: string): LambdaMarker { return { __lambda__: code }; }
 
+// ── JSON-safe expression marker ─────────────────────────────────────────
+// Similar to LambdaMarker, but for JS expressions that must be emitted
+// as raw code rather than JSON-stringified values. The script-transformer
+// replaces these markers with the actual expression text.
+export interface ExpressionMarker { __expression__: string }
+function expressionMarker(expr: string): ExpressionMarker { return { __expression__: expr }; }
+
 // ── Action Nodes ───────────────────────────────────────────────────────────
 
 /** A component-specific action (light.toggle, switch.turn_on, fan.turn_off, etc.) */
@@ -164,9 +171,17 @@ export interface IRTriggerVarParam {
   varName: string;
 }
 
+/** A JS expression — emitted as raw code for runtime resolution */
+export interface IRExpressionParam {
+  kind: 'expression';
+  /** The JS expression text, e.g. 'entity.__entityId__' */
+  jsExpression: string;
+}
+
 export type IRActionParam =
   | IRLiteralParam
-  | IRTriggerVarParam;
+  | IRTriggerVarParam
+  | IRExpressionParam;
 
 /** Config for native actions — either a simple ID or an object with params */
 export type IRActionConfig =
@@ -242,6 +257,8 @@ function lowerParam(param: IRActionParam): unknown {
       return param.value;
     case 'trigger_var':
       return lambdaMarker(`return ${param.varName};`);
+    case 'expression':
+      return expressionMarker(param.jsExpression);
   }
 }
 

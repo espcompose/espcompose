@@ -21,6 +21,7 @@ import {
   importTypeDecl,
   globalJsxAugmentation,
   bindPropType,
+  refPropType,
 } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -66,10 +67,12 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
 
     case 'string':
     case 'color':
-    case 'image':
     case 'font':
     case 'icon':
       return keyword('string');
+
+    case 'image':
+      return unionType([keyword('string'), refPropType('image_Image')]);
 
     case 'integer':
     case 'positive_integer':
@@ -192,7 +195,8 @@ export function buildLvglFileContent(schemaPath: string): string {
   const statements: ts.Statement[] = [];
 
   // ── Import ────────────────────────────────────────────────────────────────
-  statements.push(importTypeDecl(['ComponentProps', 'BindProp'], '../../types'));
+  statements.push(importTypeDecl(['ComponentProps', 'BindProp', 'RefProp'], '../../types'));
+  statements.push(importTypeDecl(['image_Image'], '../markers'));
 
   // ── LvglStyleProps ────────────────────────────────────────────────────────
   const styleMembers = buildProps(schema.style_props, { isStyleProps: true });

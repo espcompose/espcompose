@@ -55,7 +55,7 @@ export function transformReactiveExpressions(
 
   // Pass 0: Scan for useHAEntity() calls
   const haEntities = new Map<ts.Symbol, HAEntityInfo>();
-  scanForHAEntities(sourceFile, haEntities, checker);
+  scanForHAEntities(sourceFile, haEntities, checker, diagnostics);
 
   const onTransform = () => { transformCount++; };
 

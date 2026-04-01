@@ -26,6 +26,7 @@ import type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
+  HAEntityBindingMap,
 } from '../ha-bindings';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -250,16 +251,17 @@ export function useHAEntity(entityId: `binary_sensor.${string}`): BinarySensorBi
 export function useHAEntity(entityId: `switch.${string}`): SwitchBinding;
 export function useHAEntity(entityId: `fan.${string}`): FanBinding;
 export function useHAEntity(entityId: `cover.${string}`): CoverBinding;
+export function useHAEntity<D extends keyof HAEntityBindingMap>(entityId: string, options: { domain: D }): HAEntityBindingMap[D];
 export function useHAEntity(entityId: string): unknown;
 
-export function useHAEntity(entityId: string): unknown {
+export function useHAEntity(entityId: string, options?: { domain?: string }): unknown {
   assertHookContext('useHAEntity()');
 
   // Deduplication: return cached binding if already created.
   const cached = bindingCache.get(entityId);
   if (cached) return cached;
 
-  const domain = extractDomain(entityId);
+  const domain = options?.domain ?? extractDomain(entityId);
   const sensorType = sensorTypeForDomain(domain);
   const generatedId = generateSensorId(entityId);
 
@@ -298,6 +300,14 @@ export function useHAEntity(entityId: string): unknown {
       // Fallback: treat as binary sensor binding.
       binding = createBinarySensorBinding(generatedId);
       break;
+  }
+
+  // Stamp entity metadata for runtime action resolution (non-enumerable)
+  if (binding && typeof binding === 'object') {
+    Object.defineProperties(binding, {
+      __entityId__: { value: entityId, enumerable: false, configurable: false },
+      __domain__: { value: domain, enumerable: false, configurable: false },
+    });
   }
 
   bindingCache.set(entityId, binding);

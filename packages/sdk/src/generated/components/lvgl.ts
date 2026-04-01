@@ -3,7 +3,8 @@
 
 /* eslint-disable */
 
-import type { BindProp, ComponentProps } from "../../types";
+import type { BindProp, ComponentProps, RefProp } from "../../types";
+import type { image_Image } from "../markers";
 /** Shared style properties available on every LVGL widget and on per-part / per-state overrides. */
 //
 export interface LvglStyleProps {
@@ -37,7 +38,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_image_recolor_opa */
     bgImageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
-    bgImageSrc?: string;
+    bgImageSrc?: string | RefProp<image_Image>;
     /** @yamlKey bg_image_tiled */
     bgImageTiled?: BindProp<boolean>;
     /** @yamlKey bg_main_stop */
@@ -247,7 +248,7 @@ export interface LvglImageProps extends LvglStyleProps {
     offsetY?: number | string | "SIZE_CONTENT";
     antialias?: boolean;
     mode?: "VIRTUAL" | "REAL";
-    src: string;
+    src: string | RefProp<image_Image>;
 }
 //
 export interface LvglAnimimgProps extends LvglStyleProps {
@@ -521,7 +522,7 @@ export interface LvglProps {
     /** @yamlKey resume_on_input */
     resumeOnInput?: boolean;
     /** @yamlKey disp_bg_image */
-    dispBgImage?: string;
+    dispBgImage?: string | RefProp<image_Image>;
     /** @yamlKey disp_bg_color */
     dispBgColor?: string;
     /** @yamlKey disp_bg_opa */

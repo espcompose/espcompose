@@ -43,6 +43,10 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'ha-binding-device');
   });
 
+  it('ha-dynamic-device', async () => {
+    await createProjectTest(projectsDir, 'ha-dynamic-device');
+  });
+
   it('reactive-device', async () => {
     await createProjectTest(projectsDir, 'reactive-device');
   });
@@ -68,6 +72,11 @@ describe('ESPHome Compose Build', () => {
   // Auto-reactive transform test (compiler auto-wraps Signal expressions)
   it('auto-reactive-device', async () => {
     await createProjectTest(projectsDir, 'auto-reactive-device');
+  });
+
+  // useImage + useFont hook injection and deduplication
+  it('image-font-device', async () => {
+    await createProjectTest(projectsDir, 'image-font-device');
   });
 
   // Untransformed library detection — build should fail with a clear error
@@ -99,6 +108,52 @@ describe('ESPHome Compose Build', () => {
       await expect(
         build(projectPath),
       ).rejects.toThrow('reactive expression(s) that were not compiled');
+    } finally {
+      fs.rmSync(path.join(projectPath, 'node_modules'), { recursive: true, force: true });
+    }
+  });
+
+  // Compiled library with format version — build should succeed
+  it('library-contract-device (consumes compiled library)', async () => {
+    const projectPath = path.resolve(projectsDir, 'library-contract-device');
+    const fakeLibDir = path.join(projectPath, 'node_modules', '@test', 'compiled-lib');
+
+    // Create a fake pre-compiled library with __espcompose_format__ marker
+    // and _reactive.compiled() calls (as transform-lib would produce)
+    fs.mkdirSync(fakeLibDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(fakeLibDir, 'package.json'),
+      JSON.stringify({ name: '@test/compiled-lib', main: 'index.js' }),
+    );
+    fs.writeFileSync(
+      path.join(fakeLibDir, 'index.js'),
+      [
+        '"use strict";',
+        'const __espcompose_format__ = 1;',
+        'exports.__espcompose_format__ = __espcompose_format__;',
+        'const { _reactive, useHAEntity } = require("@esphome/compose");',
+        'const { jsx } = require("@esphome/compose/jsx-runtime");',
+        'function StatusSensor() {',
+        '  const light = useHAEntity("light.office");',
+        '  const text = _reactive.compiled({',
+        '    cpp: "sig_ha_light_office.get() ? std::string(\\"On\\") : std::string(\\"Off\\")",',
+        '    type: "std::string",',
+        '    deps: [{',
+        '      signalName: "sig_ha_light_office",',
+        '      sourceId: "ha_light_office",',
+        '      triggerType: "on_state",',
+        '      sourceDomain: "binary_sensor",',
+        '      cppType: "bool"',
+        '    }]',
+        '  });',
+        '  return jsx("text_sensor", { platform: "template", name: "Light Status", id: "light_status" });',
+        '}',
+        'exports.StatusSensor = StatusSensor;',
+      ].join('\n'),
+    );
+
+    try {
+      await createProjectTest(projectsDir, 'library-contract-device');
     } finally {
       fs.rmSync(path.join(projectPath, 'node_modules'), { recursive: true, force: true });
     }

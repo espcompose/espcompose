@@ -45,6 +45,18 @@ export interface ReactiveBinding {
 /**
  * Records a Home Assistant entity that needs a sensor import in the YAML config.
  */
+/**
+ * Records a component definition (image, font, etc.) to inject into the YAML config.
+ */
+export interface ComponentRegistration {
+  /** ESPHome config section to inject into (e.g. `'image'`, `'font'`). */
+  section: string;
+  /** Auto-generated or user-supplied component ID. */
+  id: string;
+  /** Full snake_case config object for the component entry. */
+  config: Record<string, unknown>;
+}
+
 export interface HAEntityRegistration {
   /** Full HA entity ID (e.g. `light.kitchen_floods`). */
   entityId: string;
@@ -71,6 +83,7 @@ export interface HAEntityRegistration {
 interface ReactiveScopeFrame {
   bindings: ReactiveBinding[];
   entities: Map<string, HAEntityRegistration>;
+  components: Map<string, ComponentRegistration>;
   reactiveNodes: ReactiveNode[];
 }
 
@@ -105,6 +118,18 @@ export function registerHAEntity(entity: HAEntityRegistration): void {
 }
 
 /**
+ * Register a component definition (image, font, etc.) for injection into the
+ * final YAML config. Deduplicates by component ID.
+ * No-op if called outside a reactive scope.
+ */
+export function registerComponent(reg: ComponentRegistration): void {
+  const frame = useContext(reactiveScopeContext);
+  if (frame && !frame.components.has(reg.id)) {
+    frame.components.set(reg.id, reg);
+  }
+}
+
+/**
  * Register a ReactiveNode (memo or effect) created during the render pass.
  * Assigns a sequential index to the node and returns it.
  * No-op (returns -1) if called outside a reactive scope.
@@ -128,6 +153,7 @@ export interface ReactiveScopeResult<T> {
   result: T;
   bindings: ReactiveBinding[];
   entities: HAEntityRegistration[];
+  components: ComponentRegistration[];
   reactiveNodes: ReactiveNode[];
 }
 
@@ -144,6 +170,7 @@ export function withReactiveScope<T>(fn: () => T): ReactiveScopeResult<T> {
   const frame: ReactiveScopeFrame = {
     bindings: [],
     entities: new Map(),
+    components: new Map(),
     reactiveNodes: [],
   };
 
@@ -153,6 +180,7 @@ export function withReactiveScope<T>(fn: () => T): ReactiveScopeResult<T> {
     result,
     bindings: frame.bindings,
     entities: Array.from(frame.entities.values()),
+    components: Array.from(frame.components.values()),
     reactiveNodes: frame.reactiveNodes,
   };
 }

@@ -16,6 +16,7 @@ import {
 import { filterOwnVars } from './schema-merge-utils.js';
 import { resolveConfigSchema, type ExtendsStub } from './extends-resolver.js';
 import type { SchemaTarget, PlatformComponent } from './schema-registry.js';
+import { COMPONENT_SCHEMA_OVERRIDES } from './overrides.js';
 import {
   printStatements, addFileHeader, addJsDoc,
   keyword, typeRef, stringLiteralType, unionType, intersectionType, typeLiteral,
@@ -134,12 +135,15 @@ export function buildStandaloneFileContent(
   const configSchemaEntry = entry?.schemas?.CONFIG_SCHEMA;
   if (!configSchemaEntry) return null;
 
+  // Check for a manually authored override before falling back to the open interface
+  const schemaOverride = COMPONENT_SCHEMA_OVERRIDES.get(target.name);
+
   const isEmptySchema = configSchemaEntry.type !== 'schema';
-  if (isEmptySchema) {
+  if (isEmptySchema && !schemaOverride) {
     return buildOpenStandaloneFileContent(target);
   }
 
-  const rawSchema = configSchemaEntry.schema as SchemaDefinition;
+  const rawSchema = schemaOverride ?? (configSchemaEntry.schema as SchemaDefinition);
   const pascalName = toPascalCase(target.name);
   const interfaceName = `${pascalName}Props`;
 

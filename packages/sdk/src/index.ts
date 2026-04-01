@@ -47,7 +47,7 @@ export * from './generated/index';
 export { secret, SecretValue, isSecretValue, getSecrets, clearSecrets } from './secret';
 
 // _reactive — compiler-internal reactive plumbing (not public API)
-export { _reactive } from './_reactive';
+export { _reactive, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './_reactive';
 
 // Reactive utilities (user-facing)
 export { resolveBindProp, reactiveIsNaN } from './reactive-utils';
@@ -59,6 +59,12 @@ export { useEffect } from './hooks/useEffect';
 
 // useHAEntity — HA entity hook (user-facing, must be called from component body)
 export { useHAEntity } from './hooks/useHAEntity';
+
+// useImage — image component hook (user-facing, must be called from component body)
+export { useImage } from './hooks/useImage';
+
+// useFont — font component hook (user-facing, must be called from component body)
+export { useFont } from './hooks/useFont';
 
 // useScript — named ESPHome script hook (user-facing, must be called from component body)
 export { useScript } from './hooks/useScript';

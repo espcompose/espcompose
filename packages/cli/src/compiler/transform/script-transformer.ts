@@ -97,7 +97,7 @@ interface TransformContext {
 // ────────────────────────────────────────────────────────────────────────────
 
 function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
-  scanForHAEntitiesShared(node, ctx.haEntities, ctx.checker);
+  scanForHAEntitiesShared(node, ctx.haEntities, ctx.checker, ctx.diagnostics);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -236,15 +236,24 @@ function compileAndInjectTriggerHandler(
   const refNameSet = symbolMapToNameSet(refTags);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
+  // Collect dynamic HA entity variable names (needed for runtime entity_id resolution)
+  const haEntityNames = collectDynamicHAEntityNames(result.actions, ctx.haEntities);
+
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
-  const metaJson = JSON.stringify(lowered);
+  const metaJson = serializeWithExpressions(lowered);
 
   // Build __refBindings object literal: { switchRef: switchRef, lightRef: lightRef }
   const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
   const refBindingsLiteral = refNames.length > 0
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
+    : '';
+
+  // Build __haBindings object literal: { entity: entity }
+  const haBindingsEntries = haEntityNames.map(name => `${name}: ${name}`);
+  const haBindingsLiteral = haEntityNames.length > 0
+    ? `, __haBindings: { ${haBindingsEntries.join(', ')} }`
     : '';
 
   edits.push({
@@ -253,7 +262,7 @@ function compileAndInjectTriggerHandler(
   });
   edits.push({
     position: arrowEnd,
-    text: `, { __compiledActions: ${metaJson}${refBindingsLiteral} })`,
+    text: `, { __compiledActions: ${metaJson}${refBindingsLiteral}${haBindingsLiteral} })`,
   });
 }
 
@@ -300,7 +309,7 @@ function compileAndInjectUseScript(
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';
 
-  const scriptMeta = JSON.stringify({ id: scriptId, then: lowered });
+  const scriptMeta = serializeWithExpressions({ id: scriptId, then: lowered });
 
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
@@ -365,4 +374,66 @@ function collectRefNamesFromActions(
   };
   walk(actions);
   return Array.from(names);
+}
+
+/**
+ * Collect HA entity variable names referenced by dynamic actions.
+ * These bindings need to be captured in the Object.assign so the
+ * serializer can read __entityId__ at runtime.
+ */
+function collectDynamicHAEntityNames(
+  actions: IRAction[],
+  haEntities: Map<ts.Symbol, HAEntityInfo>,
+): string[] {
+  // Build reverse map: variable name → entity info
+  const dynamicNames = new Set<string>();
+  for (const [sym, info] of haEntities) {
+    if (info.isDynamic) {
+      dynamicNames.add(sym.name);
+    }
+  }
+
+  const found = new Set<string>();
+  const walk = (actionList: IRAction[]): void => {
+    for (const action of actionList) {
+      if (action.kind === 'ha_service' && action.data) {
+        for (const param of Object.values(action.data)) {
+          if (param.kind === 'expression') {
+            // Extract variable name from expressions like 'entity.__entityId__'
+            const dotIdx = param.jsExpression.indexOf('.');
+            if (dotIdx > 0) {
+              const varName = param.jsExpression.slice(0, dotIdx);
+              if (dynamicNames.has(varName)) {
+                found.add(varName);
+              }
+            }
+          }
+        }
+      }
+      if (action.kind === 'if') { walk(action.then); if (action.else) walk(action.else); }
+      if (action.kind === 'while') walk(action.then);
+      if (action.kind === 'repeat') walk(action.then);
+    }
+  };
+  walk(actions);
+  return Array.from(found);
+}
+
+/**
+ * Serialize a value to a JSON-like string, replacing ExpressionMarker objects
+ * with raw JavaScript expressions instead of quoted strings.
+ *
+ * This is needed because IRExpressionParam values must be emitted as variable
+ * references (e.g., `entity.__entityId__`) rather than string literals in the
+ * injected source code.
+ */
+function serializeWithExpressions(value: unknown): string {
+  return JSON.stringify(value, (_key, val) => {
+    // ExpressionMarker objects stay as-is through JSON.stringify, then we
+    // post-process the output to replace their JSON representation with raw code.
+    return val;
+  }).replace(
+    /\{"__expression__":"([^"]+)"\}/g,
+    (_match, expr) => expr,
+  );
 }

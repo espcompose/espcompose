@@ -13,6 +13,7 @@ import noNodeInReactive from './rules/no-node-in-reactive';
 import noUntrackedSignal from './rules/no-untracked-signal';
 import noUnsupportedTriggerBody from './rules/no-unsupported-trigger-body';
 import noHookOutsideComponent from './rules/no-hook-outside-component';
+import noUnresolvableHaEntity from './rules/no-unresolvable-ha-entity';
 
 const plugin: ESLint.Plugin = {
   meta: {
@@ -32,6 +33,8 @@ const plugin: ESLint.Plugin = {
     'no-unsupported-trigger-body': noUnsupportedTriggerBody as any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'no-hook-outside-component': noHookOutsideComponent as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'no-unresolvable-ha-entity': noUnresolvableHaEntity as any,
   },
 };
 
@@ -78,6 +81,9 @@ const recommended: Linter.Config[] = [
 
       // Validate trigger handler bodies contain only ESPHome-compatible constructs.
       '@esphome/compose-eslint/no-unsupported-trigger-body': 'error',
+
+      // Prevent useHAEntity() with variable args that can't resolve to a domain.
+      '@esphome/compose-eslint/no-unresolvable-ha-entity': 'error',
     },
   },
   {

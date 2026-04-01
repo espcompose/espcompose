@@ -20,6 +20,10 @@ import ts from 'typescript';
 export interface HAEntityInfo {
   entityId: string;
   domain: string;
+  /** True when the entity ID is a variable expression (not a string literal). */
+  isDynamic?: boolean;
+  /** The JS variable name holding the entity ID (for runtime resolution). */
+  entityIdExpr?: string;
 }
 
 export interface SignalPropertyInfo {
@@ -299,7 +303,8 @@ function compilePropertyAccess(
   if (ts.isIdentifier(node.expression)) {
     const sym = ctx.checker.getSymbolAtLocation(node.expression);
     const entity = sym ? ctx.haEntities.get(sym) : undefined;
-    if (entity) {
+    if (entity && !entity.isDynamic) {
+      // Static entity: resolve to C++ signal getter
       const varName = node.expression.text;
       const signalInfo = resolveSignalProperty(varName, propName, entity);
       if (signalInfo) {
@@ -315,6 +320,8 @@ function compilePropertyAccess(
         return `${signalInfo.cppSignalName}.get()`;
       }
     }
+    // Dynamic entity: skip static resolution — fall through to slot assignment
+    // below. The runtime ReactiveNode carries the correct signal metadata.
   }
 
   // Fallback: if the type is Signal<T>, assign a slot for runtime resolution
@@ -643,16 +650,29 @@ const MATH_MAP: Record<string, string> = {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Walk the file looking for `const x = useHAEntity('entity.id')` patterns.
+ * Walk the file looking for `const x = useHAEntity(...)` patterns.
  * Records the declaration symbol → entity mapping for scope-aware lookup.
+ *
+ * Supports:
+ *   - String literal: useHAEntity('light.kitchen') → static entity
+ *   - Domain hint:    useHAEntity(expr, { domain: 'light' }) → dynamic entity
+ *   - Template literal type inference via checker
  *
  * When a checker is provided, uses ts.Symbol keys for scope-safe resolution.
  * Falls back to variable name keys (string) when checker is unavailable.
  */
+export interface ScanDiagnostic {
+  message: string;
+  file: string;
+  line?: number;
+  character?: number;
+}
+
 export function scanForHAEntities(
   node: ts.Node,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   checker?: ts.TypeChecker,
+  diagnostics?: ScanDiagnostic[],
 ): void {
   if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
     const init = node.initializer;
@@ -660,19 +680,109 @@ export function scanForHAEntities(
       const callee = init.expression;
       const isUseHAEntity = ts.isIdentifier(callee) && callee.text === 'useHAEntity';
 
-      if (isUseHAEntity &&
-          init.arguments.length >= 1 && ts.isStringLiteral(init.arguments[0])) {
-        const entityId = init.arguments[0].text;
-        const dotIdx = entityId.indexOf('.');
-        const domain = dotIdx >= 0 ? entityId.slice(0, dotIdx) : entityId;
+      if (isUseHAEntity && init.arguments.length >= 1) {
+        const firstArg = init.arguments[0];
 
-        // Use ts.Symbol for scope-safe keying when checker is available
-        const sym = checker?.getSymbolAtLocation(node.name);
-        if (sym) {
-          haEntities.set(sym, { entityId, domain });
+        if (ts.isStringLiteral(firstArg)) {
+          // Static entity ID: useHAEntity('light.kitchen')
+          const entityId = firstArg.text;
+          const dotIdx = entityId.indexOf('.');
+          const domain = dotIdx >= 0 ? entityId.slice(0, dotIdx) : entityId;
+
+          const sym = checker?.getSymbolAtLocation(node.name);
+          if (sym) {
+            haEntities.set(sym, { entityId, domain });
+          }
+        } else {
+          // Dynamic entity ID — try to extract domain from:
+          // 1. Second argument: { domain: 'light' }
+          // 2. Type of first argument via checker (template literal type)
+          let domain: string | undefined;
+          const entityIdExpr = firstArg.getText();
+
+          // Check for domain hint in second argument
+          if (init.arguments.length >= 2) {
+            const secondArg = init.arguments[1];
+            if (ts.isObjectLiteralExpression(secondArg)) {
+              for (const prop of secondArg.properties) {
+                if (ts.isPropertyAssignment(prop) &&
+                    ts.isIdentifier(prop.name) &&
+                    prop.name.text === 'domain' &&
+                    ts.isStringLiteral(prop.initializer)) {
+                  domain = prop.initializer.text;
+                }
+              }
+            }
+          }
+
+          // Fallback: try to infer domain from the TypeScript type of the first argument
+          if (!domain && checker) {
+            domain = inferDomainFromType(firstArg, checker);
+          }
+
+          if (domain) {
+            const sym = checker?.getSymbolAtLocation(node.name);
+            if (sym) {
+              haEntities.set(sym, {
+                entityId: `__dynamic__`,
+                domain,
+                isDynamic: true,
+                entityIdExpr,
+              });
+            }
+          } else if (diagnostics) {
+            // Domain cannot be determined — emit a build error
+            const sourceFile = node.getSourceFile();
+            const { line, character } = sourceFile
+              ? sourceFile.getLineAndCharacterOfPosition(init.getStart())
+              : { line: 0, character: 0 };
+            diagnostics.push({
+              message:
+                `useHAEntity() with a variable argument requires a domain hint or a ` +
+                `constrained type. Use useHAEntity(${entityIdExpr}, { domain: 'light' }) ` +
+                `or type the argument as \`light.\${string}\` so the compiler can ` +
+                `determine the HA domain.`,
+              file: sourceFile?.fileName ?? '<unknown>',
+              line: line + 1,
+              character: character + 1,
+            });
+          }
         }
       }
     }
   }
-  ts.forEachChild(node, child => scanForHAEntities(child, haEntities, checker));
+  ts.forEachChild(node, child => scanForHAEntities(child, haEntities, checker, diagnostics));
+}
+
+/**
+ * Try to infer the HA domain from the TypeScript type of an expression.
+ *
+ * Handles template literal types like `light.${string}` by extracting the
+ * prefix before the dot.
+ */
+function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): string | undefined {
+  const type = checker.getTypeAtLocation(expr);
+  // Check if it's a string literal type (e.g., from a const assertion)
+  if (type.isStringLiteral()) {
+    const dotIdx = type.value.indexOf('.');
+    return dotIdx >= 0 ? type.value.slice(0, dotIdx) : undefined;
+  }
+  // Check for template literal types — the type text looks like `light.${string}`
+  const typeStr = checker.typeToString(type);
+  const templateMatch = typeStr.match(/^`(\w+)\.$\{string\}`$/);
+  if (templateMatch) {
+    return templateMatch[1];
+  }
+  // Check for union of template literal types (e.g., `light.${string}` | `switch.${string}`)
+  // — only if all branches share the same domain prefix
+  if (type.isUnion()) {
+    const domains = new Set<string>();
+    for (const t of type.types) {
+      const tStr = checker.typeToString(t);
+      const m = tStr.match(/^`(\w+)\.$\{string\}`$/);
+      if (m) domains.add(m[1]);
+    }
+    if (domains.size === 1) return domains.values().next().value;
+  }
+  return undefined;
 }

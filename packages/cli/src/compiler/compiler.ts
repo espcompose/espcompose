@@ -9,6 +9,8 @@ import { injectHASensorImports } from './reactive-injector.js';
 import { buildIR, lowerIR } from './ir/index.js';
 import { generateBindingsHeader, getRuntimeHeaderContent } from './reactive-runtime/codegen.js';
 import { buildRuntimeConfig, injectReactiveBindingsRuntime } from './reactive-config.js';
+import { resolveAssets } from './assets.js';
+import { LIBRARY_FORMAT_VERSION } from './transform/format-version.js';
 
 export interface CompileOptions {
   /** Absolute path to the TSX/TS entry file. */
@@ -211,19 +213,79 @@ async function bundle(entryFile: string, outFile: string): Promise<void> {
     external: ['@esphome/compose'],
     outfile: outFile,
     sourcemap: false,
+    metafile: true,
   });
 
   if (result.errors.length > 0) {
     const messages = await esbuild.formatMessages(result.errors, { kind: 'error' });
     throw new Error(`Bundle failed:\n${messages.join('\n')}`);
   }
+
+  // Check format versions of any ESPCompose libraries pulled into the bundle.
+  // Libraries built with `espcompose library` stamp an `__espcompose_format__`
+  // export. We scan the bundle's resolved inputs for these markers and validate
+  // that all declared versions are compatible with this compiler.
+  if (result.metafile) {
+    validateBundledLibraryVersions(result.metafile, entryFile);
+  }
+}
+
+/**
+ * Scan esbuild metafile inputs for ESPCompose library format version markers.
+ * Reads each resolved input file (outside the project's own source tree) and
+ * checks for `__espcompose_format__` exports. Throws if any are incompatible.
+ */
+function validateBundledLibraryVersions(
+  metafile: esbuild.Metafile,
+  entryFile: string,
+): void {
+  // The entry file lives inside the build directory (.espcompose-build/).
+  // Skip everything under that tree — those are the project's own sources.
+  const buildDir = path.dirname(path.resolve(entryFile));
+
+  for (const inputPath of Object.keys(metafile.inputs)) {
+    const absPath = path.resolve(inputPath);
+
+    // Skip the project's own transformed sources
+    if (absPath.startsWith(buildDir)) continue;
+    if (!fs.existsSync(absPath)) continue;
+
+    let content: string;
+    try {
+      content = fs.readFileSync(absPath, 'utf8');
+    } catch {
+      continue;
+    }
+
+    // Look for __espcompose_format__ assignments in the source
+    const versionMatch = content.match(
+      /(?:export\s+(?:const|var|let)\s+)?__espcompose_format__\s*=\s*(\d+)/,
+    );
+    if (!versionMatch) continue;
+
+    const version = parseInt(versionMatch[1], 10);
+    if (version !== LIBRARY_FORMAT_VERSION) {
+      const libName = extractLibraryName(inputPath);
+      throw new Error(
+        `Library ${libName} was compiled with ESPCompose format v${version}, ` +
+        `but this compiler requires format v${LIBRARY_FORMAT_VERSION}. ` +
+        `Please rebuild the library with a compatible ESPCompose CLI version.`,
+      );
+    }
+  }
+}
+
+/** Extract a human-readable library name from a node_modules path. */
+function extractLibraryName(inputPath: string): string {
+  const match = inputPath.match(/node_modules\/(@[^/]+\/[^/]+|[^/]+)/);
+  return match ? match[1] : inputPath;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // Phase 3: Execute + emit YAML
 // ────────────────────────────────────────────────────────────────────────────
 
-async function execute(bundleFile: string, outFile: string): Promise<void> {
+async function execute(bundleFile: string, outFile: string, sourceDir: string): Promise<void> {
   // Use createRequire so this works correctly in both CJS and ESM contexts.
   // Rooting the require at the bundle file itself means @esphome/compose
   // resolves from the user's project node_modules (bundle sits next to source).
@@ -244,6 +306,8 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
 
   // Clear HA entity binding cache for a fresh render pass.
   cjsSDK.clearHAEntityCache();
+  cjsSDK.clearImageCache();
+  cjsSDK.clearFontCache();
   sdkModule.clearRefRegistry();
 
   // Clear theme state from any previous compile run.
@@ -264,7 +328,7 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
   // - ReactiveNode props are detected during render and register reactive
   //   bindings in the reactive scope.
   let collectedScripts: Array<{ id: string; then: unknown[] }> = [];
-  const { result: reactiveResult, bindings, entities, reactiveNodes } = cjsSDK.withReactiveScope(() => {
+  const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: config, scripts } = cjsSDK.withScriptScope(() => {
       const mod = _require(bundleFile) as { default?: unknown };
 
@@ -360,12 +424,30 @@ async function execute(bundleFile: string, outFile: string): Promise<void> {
     finalConfig = injectHASensorImports(loweredConfig, entities);
   }
 
+  // ── Inject component definitions (image, font, etc.) from hooks ─────────
+  if (components && components.length > 0) {
+    for (const comp of components) {
+      const section = comp.section;
+      if (!finalConfig[section]) {
+        finalConfig[section] = [];
+      }
+      (finalConfig[section] as unknown[]).push(comp.config);
+    }
+  }
+
   // ── Inject createScript() definitions as top-level script: section ──────
   if (collectedScripts.length > 0) {
     finalConfig['script'] = collectedScripts.map((s) => ({
       id: s.id,
       then: s.then,
     }));
+  }
+
+  // ── Resolve asset file paths and copy files to build output ────────────
+  const outDir = path.dirname(outFile);
+  const copiedAssets = resolveAssets(finalConfig as Record<string, unknown>, sourceDir, outDir);
+  if (copiedAssets.length > 0) {
+    console.log(`  Assets  → copied ${copiedAssets.length} file(s) to ${path.relative(sourceDir, outDir)}/assets/`);
   }
 
   const yamlOutput = cjsSDK.toYAML(finalConfig);
@@ -416,7 +498,7 @@ export async function compile(options: CompileOptions): Promise<void> {
     await bundle(transformedEntry, bundlePath);
 
     // Phase 3: Execute the bundle and emit YAML
-    await execute(bundlePath, outFile);
+    await execute(bundlePath, outFile, sourceDir);
   } finally {
     // Clean up the build directory unless --debug is set
     if (!debug && fs.existsSync(buildDir)) {

@@ -54,6 +54,7 @@
     "@types/node": "catalog:",
     "@types/which": "catalog:",
     "tsup": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

@@ -1,3 +1,5 @@
+import type { SchemaDefinition } from './schema-types.js';
+
 /**
  * Manual overrides for ESPHome schema fields that are incorrectly tagged in
  * the JSON schema vs. what the Python validator actually enforces.
@@ -31,4 +33,85 @@ export const OPTIONAL_FIELD_OVERRIDES = new Set<string>([
 export const TYPE_OVERRIDES = new Map<string, string[]>([
   // Some platforms (i2s_audio) expect "Nbit" strings; others (resampler) expect integers.
   ['bits_per_sample', ['8bit', '16bit', '24bit', '32bit']],
+]);
+
+/**
+ * Full component schema overrides for components whose upstream JSON schema
+ * is empty or missing.  When the codegen sees a component whose
+ * CONFIG_SCHEMA is untyped, it checks this map first.  If an override is
+ * present the synthetic SchemaDefinition is used instead, routing the
+ * component through the normal typed-interface codegen path.
+ *
+ * Key: component name (e.g. "image")
+ * Value: synthetic SchemaDefinition with config_vars describing the real props
+ *
+ * Props whose YAML value is a filesystem path should include
+ * `docs: '@filePath'` — the compiler uses this annotation to resolve
+ * relative paths and copy assets into the build output.
+ */
+export const COMPONENT_SCHEMA_OVERRIDES = new Map<string, SchemaDefinition>([
+  [
+    'image',
+    {
+      config_vars: {
+        id: {
+          key: 'GeneratedID',
+          id_type: { class: 'image::Image', parents: [] },
+        },
+        file: {
+          key: 'Required',
+          type: 'string',
+          docs: '@filePath — path (relative to YAML), MDI icon (mdi:name), or URL.',
+        },
+        type: {
+          key: 'Required',
+          type: 'enum',
+          values: {
+            BINARY: null,
+            GRAYSCALE: null,
+            RGB565: null,
+            RGB: null,
+            RGBA: null,
+            TRANSPARENT_BINARY: null,
+          },
+        },
+        resize: {
+          key: 'Optional',
+          type: 'string',
+          docs: 'Resize to fit WIDTHxHEIGHT, preserving aspect ratio.',
+        },
+        transparency: {
+          key: 'Optional',
+          type: 'enum',
+          values: { opaque: null, chroma_key: null, alpha_channel: null },
+        },
+        invert_alpha: {
+          key: 'Optional',
+          type: 'boolean',
+          docs: 'Invert colors (binary/grayscale only). Defaults to false.',
+        },
+        dither: {
+          key: 'Optional',
+          type: 'enum',
+          values: { NONE: null, FLOYDSTEINBERG: null },
+          docs: 'Dither method for GRAYSCALE/BINARY images. Defaults to NONE.',
+        },
+        byte_order: {
+          key: 'Optional',
+          type: 'enum',
+          values: { big_endian: null, little_endian: null },
+          docs: 'Pixel byte order for RGB565 images. Defaults to big_endian.',
+        },
+      },
+    },
+  ],
+]);
+
+/**
+ * Set of YAML key names whose values are filesystem paths.
+ * Used by the compiler asset pipeline to resolve relative paths
+ * from the source directory and copy files into the build output.
+ */
+export const FILE_PATH_YAML_KEYS = new Set<string>([
+  'file',
 ]);

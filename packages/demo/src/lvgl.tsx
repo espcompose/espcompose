@@ -1,8 +1,9 @@
-import { Display, Ref, useHAEntity, useScript, delay, theme } from "@esphome/compose";
+import { Display, Image, Ref, useHAEntity, useScript, delay, theme } from "@esphome/compose";
 import {
     Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
     ThemeProvider, darkTheme, lightTheme,
 } from "@esphome/compose-ui";
+import { HALight, MyButton, MyImageButton } from "./button";
 
 type UIProps = {
     display: Ref<Display>,
@@ -11,6 +12,8 @@ type UIProps = {
 export const UI = (props: UIProps) => {
 
     const officeLight = useHAEntity('light.office');
+    const gymLight = useHAEntity('light.gym');
+    const airHockeyLight = useHAEntity('light.air_hockey_light');
 
     const myScript = useScript(async () => {
         await delay(1000);
@@ -45,18 +48,15 @@ export const UI = (props: UIProps) => {
                         <Card>
                             <HStack>
                                 <lvgl-label text={officeLight.stateText} />
-                                <Button
+                                <MyButton
                                     text={officeLight.isOn ? "Office Off" : "Office On"}
                                     onPress={() => { officeLight.toggle(); }}
                                 />
-                                <Button
-                                    text={officeLight.isOn ? "Office Off" : "Office On"}
-                                    onPress={async () => {
-                                        officeLight.toggle();
-                                        await myScript();  //valid only because we know that myScript is from createScript. We can't just call any random function.
-                                        officeLight.toggle();
-                                    }}
-                                />
+                                
+                                <HALight entity="light.office" text="Office" />
+                                <HALight entity="light.gym" text="Gym" />
+                                <HALight entity="light.air_hockey_light" text="Hockey" />
+
                             </HStack>
                         </Card>
 

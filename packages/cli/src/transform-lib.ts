@@ -18,6 +18,7 @@ import * as esbuild from 'esbuild';
 import { transformReactiveExpressions } from './compiler/transform/reactive-transformer.js';
 import { transformScriptFile } from './compiler/transform/script-transformer.js';
 import type { TransformDiagnostic } from './compiler/transform/index.js';
+import { LIBRARY_FORMAT_VERSION, FORMAT_VERSION_EXPORT } from './compiler/transform/format-version.js';
 
 export interface TransformLibOptions {
   /** Absolute path to the library entry file (e.g. src/index.ts). */
@@ -129,13 +130,19 @@ export function transformLib(options: TransformLibOptions): TransformLibResult {
 
     const wasTransformed = outputText !== originalText;
 
+    // Inject format version marker into the entry file
+    const isEntryFile = path.normalize(filePath) === path.normalize(entryFile);
+    const finalText = isEntryFile
+      ? `export const ${FORMAT_VERSION_EXPORT} = ${LIBRARY_FORMAT_VERSION};\n` + outputText
+      : outputText;
+
     // Write to output directory
     const outputPath = path.join(outDir, rel);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, outputText, 'utf8');
+    fs.writeFileSync(outputPath, finalText, 'utf8');
 
     filesWritten++;
-    if (wasTransformed) filesTransformed++;
+    if (wasTransformed || isEntryFile) filesTransformed++;
   }
 
   return { filesWritten, filesTransformed, diagnostics };
