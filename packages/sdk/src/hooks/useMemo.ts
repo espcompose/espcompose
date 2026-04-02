@@ -46,18 +46,23 @@ export function useMemo<T>(fn: () => T): T | ReactiveNode<T> {
     return value;
   }
 
-  // Infer C++ return type from the JS value
-  let cppReturnType: string | undefined;
-  if (typeof value === 'string') cppReturnType = 'std::string';
-  else if (typeof value === 'number') cppReturnType = 'float';
-  else if (typeof value === 'boolean') cppReturnType = 'bool';
+  // Infer ExprType from the JS value
+  let exprType: import('../ir/expr-types').ExprType | undefined;
+  if (typeof value === 'string') exprType = 'string';
+  else if (typeof value === 'number') exprType = 'float';
+  else if (typeof value === 'boolean') exprType = 'bool';
 
   const node = new ReactiveNode<T>({
     kind: 'memo',
     dependencies: deps,
-    cppExpression: '0 /* uncompiled – AST compiler should have handled this */',
-    cppReturnType,
+    exprType,
   });
+
+  // Preserve the original JS closure and its evaluated value.
+  // The simulator's IR renderer uses these for live evaluation
+  // instead of falling back to type-based defaults.
+  node.jsClosure = fn as () => unknown;
+  node.jsValue = value;
 
   registerReactiveNode(node);
   return node;

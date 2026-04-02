@@ -14,6 +14,8 @@
 // There is NO user-facing lambda action.
 // ────────────────────────────────────────────────────────────────────────────
 
+import type { ExprNode } from '@esphome/compose';
+
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
 // Lowered actions are embedded in source via JSON.stringify (in the script
 // transformer), so we use a plain marker object instead of a YAML Scalar.
@@ -143,6 +145,8 @@ export interface IRLambdaCondition {
   kind: 'lambda';
   /** C++ expression that evaluates to bool, e.g. 'id(sensor).state > 30' */
   expression: string;
+  /** ExprNode IR for the condition (Phase E onwards) */
+  exprIR?: ExprNode;
 }
 
 /** A native ESPHome condition (future extension) */
@@ -238,8 +242,8 @@ export function irInternalLambda(code: string): IRInternalLambda {
   return { kind: 'internal_lambda', code };
 }
 
-export function irLambdaCondition(expression: string): IRLambdaCondition {
-  return { kind: 'lambda', expression };
+export function irLambdaCondition(expression: string, exprIR?: ExprNode): IRLambdaCondition {
+  return { kind: 'lambda', expression, ...(exprIR ? { exprIR } : {}) };
 }
 
 export function irNativeCondition(conditionKey: string, config: IRActionConfig): IRNativeCondition {

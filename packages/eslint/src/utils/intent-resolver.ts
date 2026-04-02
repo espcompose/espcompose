@@ -7,7 +7,8 @@
  */
 
 import type { TSESTree } from '@typescript-eslint/utils';
-import { INTRINSIC_INTENT_REGISTRY, type IntrinsicIntentMeta } from '@esphome/compose';
+import { INTRINSIC_INTENT_REGISTRY } from '@esphome/compose/internals';
+import type { IntrinsicIntentMeta } from '@esphome/compose';
 
 // Re-export for convenience
 export type { IntrinsicIntentMeta };

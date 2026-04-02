@@ -17,7 +17,7 @@ describe('ReactiveNode', () => {
           { sourceId: 'sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' },
           { sourceId: 'sensor_2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
         ],
-        cppExpression: 'sensor_1.get() + sensor_2.get()',
+        exprType: 'float',
       });
       expect(node.kind).toBe('memo');
       expect(node.dependencies).toHaveLength(2);
@@ -27,27 +27,23 @@ describe('ReactiveNode', () => {
     it('creates a single-source expression node', () => {
       const node = new ReactiveNode({
         kind: 'expression',
-        dependencies: [{ sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor', cppSignalName: 'sig_ha_light_x', cppType: 'bool' }],
-        cppExpression: '.state',
+        dependencies: [{ sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+        exprType: 'bool',
         sourceId: 'ha_light_x',
         property: '.state',
         triggerType: 'on_state',
         sourceDomain: 'binary_sensor',
-        cppSignalName: 'sig_ha_light_x',
-        cppType: 'bool',
       });
       expect(node.kind).toBe('expression');
       expect(node.sourceId).toBe('ha_light_x');
       expect(node.property).toBe('.state');
-      expect(node.cppSignalName).toBe('sig_ha_light_x');
-      expect(node.cppType).toBe('bool');
+      expect(node.exprType).toBe('bool');
     });
 
     it('isSingleSource = true for one dependency', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [{ sourceId: 'x', triggerType: 'on_state', sourceDomain: 'sensor' }],
-        cppExpression: '.state',
       });
       expect(node.isSingleSource).toBe(true);
     });
@@ -59,7 +55,7 @@ describe('ReactiveNode', () => {
           { sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
           { sourceId: 'b', triggerType: 'on_state', sourceDomain: 'sensor' },
         ],
-        cppExpression: 'a + b',
+        exprType: 'float',
       });
       expect(node.isSingleSource).toBe(false);
     });
@@ -70,8 +66,7 @@ describe('ReactiveNode', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [],
-        cppExpression: '.state',
-        cppType: 'bool',
+        exprType: 'bool',
       });
       expect(node.valueOf()).toBe(true);
       expect(node.get()).toBe(true);
@@ -81,19 +76,17 @@ describe('ReactiveNode', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [],
-        cppExpression: '.state',
-        cppType: 'float',
+        exprType: 'float',
       });
       expect(node.valueOf()).toBeNaN();
       expect(node.get()).toBeNaN();
     });
 
-    it('returns empty string for std::string type', () => {
+    it('returns empty string for string type', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [],
-        cppExpression: '.state',
-        cppType: 'std::string',
+        exprType: 'string',
       });
       expect(node.valueOf()).toBe('');
       expect(node.get()).toBe('');
@@ -103,77 +96,8 @@ describe('ReactiveNode', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [],
-        cppExpression: '.state',
       });
       expect(node.valueOf()).toBe(0);
-    });
-  });
-
-  describe('toLambdaInit()', () => {
-    it('generates lambda for single-source expression', () => {
-      const node = new ReactiveNode({
-        kind: 'expression',
-        dependencies: [{ sourceId: 'ha_sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' }],
-        cppExpression: '.state',
-        sourceId: 'ha_sensor_1',
-        property: '.state',
-        triggerType: 'on_value',
-        sourceDomain: 'sensor',
-      });
-      expect(node.toLambdaInit()).toBe('return id(ha_sensor_1).state;');
-    });
-
-    it('generates lambda with type conversion for text expression', () => {
-      const node = new ReactiveNode({
-        kind: 'expression',
-        dependencies: [{ sourceId: 'ha_sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' }],
-        cppExpression: '.state',
-        cppReturnType: 'std::string',
-        sourceId: 'ha_sensor_1',
-        property: '.state',
-        triggerType: 'on_value',
-        sourceDomain: 'sensor',
-      });
-      expect(node.toLambdaInit()).toBe('return to_string(id(ha_sensor_1).state);');
-    });
-
-    it('generates memo lambda from runtime variable', () => {
-      const node = new ReactiveNode({
-        kind: 'memo',
-        dependencies: [
-          { sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
-        ],
-        cppExpression: 'a + b',
-        cppReturnType: 'float',
-      });
-      node._index = 2;
-      expect(node.toLambdaInit()).toBe('return espcompose::memo_2.get();');
-    });
-
-    it('generates memo lambda with c_str() for string return type', () => {
-      const node = new ReactiveNode({
-        kind: 'memo',
-        dependencies: [
-          { sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
-        ],
-        cppExpression: 'a + b',
-        cppReturnType: 'std::string',
-      });
-      node._index = 0;
-      expect(node.toLambdaInit()).toBe('return espcompose::memo_0.get().c_str();');
-    });
-
-    it('generates memo lambda for pointer return type (e.g. lv_font_t*)', () => {
-      const node = new ReactiveNode({
-        kind: 'memo',
-        dependencies: [
-          { sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
-        ],
-        cppExpression: 'resolve_font(a.get(), b.get())',
-        cppReturnType: 'const lv_font_t*',
-      });
-      node._index = 3;
-      expect(node.toLambdaInit()).toBe('return espcompose::memo_3.get();');
     });
   });
 
@@ -182,7 +106,6 @@ describe('ReactiveNode', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [],
-        cppExpression: '',
       });
       expect(isReactiveNode(node)).toBe(true);
     });

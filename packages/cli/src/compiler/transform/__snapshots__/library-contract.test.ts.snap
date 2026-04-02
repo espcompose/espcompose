@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Library Contract Snapshots > reactive-fixture > transformed output matches snapshot > reactive-fixture transformed output 1`] = `
-"export const __espcompose_format__ = 1;
+"export const __espcompose_format__ = 2;
 /**
  * Library contract fixture: reactive expressions.
  *
@@ -14,7 +14,7 @@ import type { Signal } from '@esphome/compose';
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {
   const light = useHAEntity('light.office');
-  const text = _reactive.compiled({cpp:"sig_ha_light_office.get() ? std::string(\\"On\\") : std::string(\\"Off\\")",type:"std::string",deps:[{signalName:"sig_ha_light_office",sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor",cppType:"bool"}]});
+  const text = _reactive.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"ternary","test":{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},"consequent":{"kind":"literal","value":"On","type":"string"},"alternate":{"kind":"literal","value":"Off","type":"string"}}});
 
   return (
     <lvgl-label text={text as unknown as string} />
@@ -23,7 +23,7 @@ export function StatusLabel() {
 
 /** Component that passes a Signal through (slotted path via JSX attribute). */
 export function TemperatureDisplay(props: { temp: Signal<number> }) {
-  const formatted = _reactive.slotted({cpp:"__$$SLOT_0$$__.get() > 72 ? std::string(\\"Hot\\") : std::string(\\"Cold\\")",type:"std::string",slots:1}, props.temp) as any;
+  const formatted = _reactive.slotted({type:"string",slots:1,expr:{"kind":"ternary","test":{"kind":"binary","op":">","left":{"kind":"slot","slotIndex":0},"right":{"kind":"literal","value":72,"type":"float"}},"consequent":{"kind":"literal","value":"Hot","type":"string"},"alternate":{"kind":"literal","value":"Cold","type":"string"}}}, props.temp) as any;
 
   return (
     <lvgl-label text={formatted as unknown as string} />
@@ -33,7 +33,7 @@ export function TemperatureDisplay(props: { temp: Signal<number> }) {
 `;
 
 exports[`Library Contract Snapshots > script-fixture > transformed output matches snapshot > script-fixture transformed output 1`] = `
-"export const __espcompose_format__ = 1;
+"export const __espcompose_format__ = 2;
 /**
  * Library contract fixture: script / action tree compilation.
  *

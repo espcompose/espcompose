@@ -12,6 +12,8 @@
  */
 
 import ts from 'typescript';
+import type { ExprNode } from '@esphome/compose';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp } from '@esphome/compose/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -585,6 +587,129 @@ function translateScriptTemplateLiteral(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Script/trigger expression IR compiler (ExprNode output)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compile a script/trigger TS expression to an ExprNode tree.
+ * Handles the same subset as translateScriptExpr but produces ExprNode.
+ */
+export function translateScriptExprIR(
+  node: ts.Expression,
+  ctx: ScriptTransformContext,
+): ExprNode | null {
+  if (ts.isNumericLiteral(node)) {
+    return { kind: 'literal', value: Number(node.text), type: 'float' };
+  }
+  if (ts.isStringLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+  if (node.kind === ts.SyntaxKind.TrueKeyword) {
+    return { kind: 'literal', value: true, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.FalseKeyword) {
+    return { kind: 'literal', value: false, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.NullKeyword) {
+    return { kind: 'literal', value: 0, type: 'int' };
+  }
+
+  if (ts.isIdentifier(node)) {
+    if (ctx.localVars.has(node.text)) {
+      return { kind: 'trigger_var', name: node.text };
+    }
+    return null;
+  }
+
+  if (ts.isPropertyAccessExpression(node)) {
+    if (ts.isIdentifier(node.expression) && node.expression.text === ctx.triggerParamName) {
+      return { kind: 'trigger_var', name: node.name.text };
+    }
+    return null;
+  }
+
+  if (ts.isBinaryExpression(node)) {
+    const left = translateScriptExprIR(node.left, ctx);
+    const right = translateScriptExprIR(node.right, ctx);
+    if (!left || !right) return null;
+    const op = translateBinaryOp(node.operatorToken.kind);
+    if (!op) return null;
+    return { kind: 'binary', op: op as BinaryOp, left, right };
+  }
+
+  if (ts.isPrefixUnaryExpression(node)) {
+    const operand = translateScriptExprIR(node.operand, ctx);
+    if (!operand) return null;
+    const op = translatePrefixOp(node.operator);
+    if (!op) return null;
+    return { kind: 'unary', op: op as UnaryOp, operand };
+  }
+
+  if (ts.isPostfixUnaryExpression(node)) {
+    const operand = translateScriptExprIR(node.operand, ctx);
+    if (!operand) return null;
+    const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
+    return { kind: 'postfix', op: op as PostfixOp, operand };
+  }
+
+  if (ts.isParenthesizedExpression(node)) {
+    const inner = translateScriptExprIR(node.expression, ctx);
+    if (!inner) return null;
+    return { kind: 'group', expr: inner };
+  }
+
+  if (ts.isConditionalExpression(node)) {
+    const test = translateScriptExprIR(node.condition, ctx);
+    const consequent = translateScriptExprIR(node.whenTrue, ctx);
+    const alternate = translateScriptExprIR(node.whenFalse, ctx);
+    if (!test || !consequent || !alternate) return null;
+    return { kind: 'ternary', test, consequent, alternate };
+  }
+
+  if (ts.isCallExpression(node)) {
+    if (ts.isPropertyAccessExpression(node.expression) &&
+        ts.isIdentifier(node.expression.expression) &&
+        node.expression.expression.text === 'Math') {
+      const method = node.expression.name.text;
+      const builtinFn = TS_MATH_TO_BUILTIN[method];
+      if (!builtinFn) return null;
+      const args: ExprNode[] = [];
+      for (const arg of node.arguments) {
+        const compiled = translateScriptExprIR(arg, ctx);
+        if (!compiled) return null;
+        args.push(compiled);
+      }
+      return { kind: 'call', fn: builtinFn, args };
+    }
+    return null;
+  }
+
+  if (ts.isTemplateExpression(node)) {
+    const parts: ExprNode[] = [];
+    if (node.head.text) {
+      parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+    }
+    for (const span of node.templateSpans) {
+      const compiled = translateScriptExprIR(span.expression, ctx);
+      if (!compiled) return null;
+      parts.push({ kind: 'to_string', expr: compiled });
+      if (span.literal.text) {
+        parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+      }
+    }
+    return parts.length > 0
+      ? { kind: 'concat', parts }
+      : { kind: 'literal', value: '', type: 'string' };
+  }
+
+  if (ts.isNoSubstitutionTemplateLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+
+  return null;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Shared operator/utility functions
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -785,4 +910,262 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
     if (domains.size === 1) return domains.values().next().value;
   }
   return undefined;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// ExpressionIR compilation — TypeScript AST → ExprNode
+//
+// Parallels compileExpr() but produces target-agnostic ExprNode trees
+// instead of C++ strings. Used by Phase B+ of the Expression IR plan.
+// ────────────────────────────────────────────────────────────────────────────
+
+const TS_MATH_TO_BUILTIN: Record<string, BuiltinFn> = {
+  min: 'math_min', max: 'math_max',
+  abs: 'math_abs', round: 'math_round',
+  floor: 'math_floor', ceil: 'math_ceil',
+  sqrt: 'math_sqrt', pow: 'math_pow',
+  log: 'math_log', log2: 'math_log2', log10: 'math_log10',
+  sin: 'math_sin', cos: 'math_cos', tan: 'math_tan',
+};
+
+export interface ExprIRResult {
+  expr: ExprNode;
+  exprType: ExprType;
+  deps: DependencyInfo[];
+  slots?: { expr: ts.Expression }[];
+}
+
+/**
+ * Compile a TypeScript expression to a target-agnostic ExprNode tree.
+ * Returns null if the expression contains unsupported patterns.
+ */
+export function translateReactiveExprIR(
+  node: ts.Expression,
+  ctx: ExprCompilerContext,
+): ExprIRResult | null {
+  const expr = compileExprIR(node, ctx);
+  if (expr === null) return null;
+
+  const deps = Array.from(ctx.dependencies.values());
+  const exprType = inferExprType(node, ctx);
+
+  const result: ExprIRResult = { expr, exprType, deps };
+  if (ctx.slots.length > 0) {
+    result.slots = ctx.slots.map(s => ({ expr: s.expr }));
+  }
+  return result;
+}
+
+function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode | null {
+  if (ts.isNumericLiteral(node)) {
+    return { kind: 'literal', value: Number(node.text), type: 'float' };
+  }
+  if (ts.isStringLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+  if (node.kind === ts.SyntaxKind.TrueKeyword) {
+    return { kind: 'literal', value: true, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.FalseKeyword) {
+    return { kind: 'literal', value: false, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.NullKeyword) {
+    return { kind: 'literal', value: 0, type: 'int' };
+  }
+
+  if (ts.isIdentifier(node)) {
+    const type = ctx.checker.getTypeAtLocation(node);
+    if (hasSignalBrand(type)) {
+      return assignSlotIR(node, ctx);
+    }
+  }
+
+  if (ts.isPropertyAccessExpression(node)) {
+    return compilePropertyAccessIR(node, ctx);
+  }
+
+  if (ts.isBinaryExpression(node)) {
+    const left = compileExprIR(node.left, ctx);
+    const right = compileExprIR(node.right, ctx);
+    if (left === null || right === null) return null;
+    const op = translateBinaryOp(node.operatorToken.kind);
+    if (op === null) return null;
+    return { kind: 'binary', op: op as ExprNode extends { kind: 'binary' } ? ExprNode['op'] : never, left, right };
+  }
+
+  if (ts.isPrefixUnaryExpression(node)) {
+    const operand = compileExprIR(node.operand, ctx);
+    if (operand === null) return null;
+    const op = translatePrefixOp(node.operator);
+    if (op === null) return null;
+    return { kind: 'unary', op: op as ExprNode extends { kind: 'unary' } ? ExprNode['op'] : never, operand };
+  }
+
+  if (ts.isPostfixUnaryExpression(node)) {
+    const operand = compileExprIR(node.operand, ctx);
+    if (operand === null) return null;
+    const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
+    return { kind: 'postfix', op: op as '++' | '--', operand };
+  }
+
+  if (ts.isParenthesizedExpression(node)) {
+    const inner = compileExprIR(node.expression, ctx);
+    if (inner === null) return null;
+    return { kind: 'group', expr: inner };
+  }
+
+  if (ts.isConditionalExpression(node)) {
+    const test = compileExprIR(node.condition, ctx);
+    const consequent = compileExprIR(node.whenTrue, ctx);
+    const alternate = compileExprIR(node.whenFalse, ctx);
+    if (test === null || consequent === null || alternate === null) return null;
+    return { kind: 'ternary', test, consequent, alternate };
+  }
+
+  if (ts.isCallExpression(node)) {
+    return compileCallExprIR(node, ctx);
+  }
+
+  if (ts.isTemplateExpression(node)) {
+    return compileTemplateLiteralIR(node, ctx);
+  }
+
+  if (ts.isNoSubstitutionTemplateLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+
+  return null;
+}
+
+function compilePropertyAccessIR(
+  node: ts.PropertyAccessExpression,
+  ctx: ExprCompilerContext,
+): ExprNode | null {
+  const propName = node.name.text;
+
+  if (ts.isIdentifier(node.expression)) {
+    const sym = ctx.checker.getSymbolAtLocation(node.expression);
+    const entity = sym ? ctx.haEntities.get(sym) : undefined;
+    if (entity && !entity.isDynamic) {
+      const varName = node.expression.text;
+      const signalInfo = resolveSignalProperty(varName, propName, entity);
+      if (signalInfo) {
+        ctx.dependencies.set(signalInfo.cppSignalName, {
+          signalName: signalInfo.cppSignalName,
+          sourceId: signalInfo.sourceId,
+          triggerType: signalInfo.triggerType,
+          sourceDomain: signalInfo.sourceDomain,
+          cppType: signalInfo.cppType,
+          sourceType: signalInfo.sourceType,
+        });
+        const exprType = cppTypeToExprType(signalInfo.cppType);
+        return { kind: 'entity_prop', entityId: entity.entityId, property: propName, type: exprType };
+      }
+    }
+  }
+
+  const type = ctx.checker.getTypeAtLocation(node);
+  if (hasSignalBrand(type)) {
+    return assignSlotIR(node, ctx);
+  }
+
+  return null;
+}
+
+function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): ExprNode {
+  const slotIndex = ctx.slots.length;
+  ctx.slots.push({ expr, slotIndex });
+  return { kind: 'slot', slotIndex };
+}
+
+function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): ExprNode | null {
+  if (ts.isPropertyAccessExpression(node.expression) &&
+      ts.isIdentifier(node.expression.expression) &&
+      node.expression.expression.text === 'Math') {
+    const method = node.expression.name.text;
+    const builtinFn = TS_MATH_TO_BUILTIN[method];
+    if (!builtinFn) return null;
+    const args: ExprNode[] = [];
+    for (const arg of node.arguments) {
+      const compiled = compileExprIR(arg, ctx);
+      if (compiled === null) return null;
+      args.push(compiled);
+    }
+    return { kind: 'call', fn: builtinFn, args };
+  }
+
+  if (ts.isIdentifier(node.expression) && node.expression.text === 'isNaN') {
+    if (node.arguments.length === 1) {
+      const arg = compileExprIR(node.arguments[0], ctx);
+      if (arg === null) return null;
+      return { kind: 'call', fn: 'is_nan', args: [arg] };
+    }
+  }
+
+  return null;
+}
+
+function compileTemplateLiteralIR(
+  node: ts.TemplateExpression,
+  ctx: ExprCompilerContext,
+): ExprNode | null {
+  const parts: ExprNode[] = [];
+  if (node.head.text) {
+    parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+  }
+
+  for (const span of node.templateSpans) {
+    const exprIR = compileExprIR(span.expression, ctx);
+    if (exprIR === null) return null;
+
+    const exprType = ctx.checker.getTypeAtLocation(span.expression);
+    const isString = (exprType.flags & ts.TypeFlags.StringLike) !== 0
+      || (exprType.isIntersection() && exprType.types.some(t => (t.flags & ts.TypeFlags.StringLike) !== 0));
+
+    parts.push(isString ? exprIR : { kind: 'to_string', expr: exprIR });
+
+    if (span.literal.text) {
+      parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+    }
+  }
+
+  if (parts.length === 0) return { kind: 'literal', value: '', type: 'string' };
+  if (parts.length === 1) return parts[0];
+  return { kind: 'concat', parts };
+}
+
+function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType {
+  const type = ctx.checker.getTypeAtLocation(node);
+
+  if (type.flags & ts.TypeFlags.StringLike) return 'string';
+  if (type.flags & ts.TypeFlags.NumberLike) return 'float';
+  if (type.flags & ts.TypeFlags.BooleanLike) return 'bool';
+
+  if (type.isUnion()) {
+    if (type.types.some(t => t.flags & ts.TypeFlags.StringLike)) return 'string';
+    if (type.types.some(t => t.flags & ts.TypeFlags.NumberLike)) return 'float';
+    if (type.types.some(t => t.flags & ts.TypeFlags.BooleanLike)) return 'bool';
+  }
+
+  if (type.isIntersection()) {
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.StringLike) return 'string';
+      if (t.flags & ts.TypeFlags.NumberLike) return 'float';
+      if (t.flags & ts.TypeFlags.BooleanLike) return 'bool';
+    }
+  }
+
+  return 'float';
+}
+
+function cppTypeToExprType(cppType: string): ExprType {
+  switch (cppType) {
+    case 'bool': return 'bool';
+    case 'float': return 'float';
+    case 'int32_t': return 'int';
+    case 'std::string': return 'string';
+    case 'lv_color_t': return 'color';
+    case 'const lv_font_t*': return 'font_ptr';
+    default: return 'float';
+  }
 }

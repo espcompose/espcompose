@@ -27,7 +27,6 @@ describe('reactive-utils', () => {
       const node = new ReactiveNode({
         kind: 'expression',
         dependencies: [{ sourceId: 'test', triggerType: 'on_state', sourceDomain: 'sensor' }],
-        cppExpression: '.state',
       });
       const result = resolveBindProp(node);
       expect(isReactiveNode(result)).toBe(true);

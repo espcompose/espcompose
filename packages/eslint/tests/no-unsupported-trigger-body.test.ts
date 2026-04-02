@@ -184,7 +184,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'ScriptHandle.execute() — branded',
       filename: 'test.tsx',
       code: `
-        import type { ScriptHandle } from '@esphome/compose';
+        import type { ScriptHandle } from '@esphome/compose/internals';
         declare const myScript: ScriptHandle;
         <button onPress={() => { myScript.execute(); }} />;
       `,
@@ -202,7 +202,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'SwitchBinding.toggle() — branded',
       filename: 'test.tsx',
       code: `
-        import type { SwitchBinding } from '@esphome/compose';
+        import type { SwitchBinding } from '@esphome/compose/internals';
         declare const sw: SwitchBinding;
         <button onPress={() => { sw.toggle(); }} />;
       `,

@@ -1,4 +1,3 @@
-import yaml from 'yaml';
 import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
@@ -12,10 +11,14 @@ import {
   keysToSnakeCase,
   stripUndefined,
   toYamlKey,
+  startSerializationCapture,
+  stopSerializationCapture,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
-
-export * from './hooks';
+import { clearRefRegistry } from './ref-registry';
+import { getSecrets, clearSecrets } from './secret';
+import { clearThemeRegistry, getThemeRegistry } from './theme-registry';
+import { clearReactiveThemeProxy, clearThemeNodeCache } from './reactive-theme';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -231,21 +234,27 @@ function render(element: EspComposeElement | EspComposeElement[]): unknown {
   return toPlainObject(Array.isArray(element) ? element : element);
 }
 
-function toYAML(config: unknown): string {
-  return yaml.stringify(config, { aliasDuplicateObjects: false, nullStr: '' });
-}
-
 export const ESPCompose = {
   createElement,
   Fragment,
   render,
-  toYAML,
   useScript,
   withScriptScope,
   withReactiveScope,
   clearHAEntityCache,
   clearImageCache,
   clearFontCache,
+  // Compiler state management — shared via the CJS module instance.
+  // Used by the CLI compiler to reset state between compile runs.
+  clearRefRegistry,
+  clearSecrets,
+  clearThemeRegistry,
+  clearReactiveThemeProxy,
+  clearThemeNodeCache,
+  startSerializationCapture,
+  stopSerializationCapture,
+  getSecrets,
+  getThemeRegistry,
 };
 
-export { createElement, Fragment, render, toYAML };
+export { createElement, Fragment, render };

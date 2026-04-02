@@ -9,7 +9,7 @@
 // generating the `platform: homeassistant` sensor entries.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { HAEntityRegistration } from '@esphome/compose';
+import type { HAEntityRegistration } from '@esphome/compose/internals';
 
 /**
  * Inject HA entity sensor imports into the rendered config.

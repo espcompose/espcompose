@@ -11,6 +11,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
+    "./internals": {
+      "types": "./dist/internals.d.ts",
+      "import": "./dist/internals.mjs",
+      "require": "./dist/internals.js"
+    },
     "./jsx-runtime": {
       "types": "./dist/jsx-runtime.d.ts",
       "import": "./dist/jsx-runtime.mjs",
@@ -23,7 +28,7 @@
     "tsconfig.sdk.json"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/jsx-runtime.ts --format cjs,esm --dts --clean --tsconfig tsconfig.json",
+    "build": "tsup src/index.ts src/internals.ts src/jsx-runtime.ts --format cjs,esm --dts --clean --tsconfig tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -48,9 +53,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "yaml": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "typescript-eslint": "catalog:",
     "@types/node": "catalog:",

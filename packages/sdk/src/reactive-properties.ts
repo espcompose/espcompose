@@ -89,14 +89,14 @@ export interface ReactivePropertyConfig {
   triggerType: string;
   /** Component domain for trigger registry lookup (e.g. `sensor`). */
   sourceDomain: string;
-  /** C++ value type for the reactive runtime (e.g. `bool`, `float`, `std::string`). */
-  cppType: string;
+  /** Target-agnostic value type for the reactive runtime (e.g. `bool`, `float`, `string`). */
+  exprType: import('./ir/expr-types').ExprType;
 }
 
 export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {
-  value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor',        cppType: 'float' },
-  isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor', cppType: 'bool' },
-  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         cppType: 'bool' },
-  stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor',   cppType: 'std::string' },
-  brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light',         cppType: 'float' },
+  value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor',        exprType: 'float' },
+  isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor', exprType: 'bool' },
+  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         exprType: 'bool' },
+  stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor',   exprType: 'string' },
+  brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light',         exprType: 'float' },
 };

@@ -460,7 +460,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
 
 // ── LVGL widget update code generation ─────────────────────────────────────
 
-import { LVGL_STYLE_PROP_TABLE, LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '@esphome/compose';
+import { LVGL_STYLE_PROP_TABLE, LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '@esphome/compose/internals';
 
 /**
  * Compute the LVGL style selector flag from binding part/state metadata.

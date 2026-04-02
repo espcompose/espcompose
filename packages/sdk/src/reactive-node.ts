@@ -15,7 +15,7 @@
 //   - 'effect':     side-effect callback (useEffect())
 // ────────────────────────────────────────────────────────────────────────────
 
-import { getTriggerSignature } from './trigger-registry';
+import type { ExprNode, ExprType } from './ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types
@@ -31,10 +31,6 @@ export interface ExpressionDependency {
   triggerType: string;
   /** The component domain for trigger registry lookup (e.g. `binary_sensor`, `sensor`). */
   sourceDomain: string;
-  /** C++ Signal variable name in espcompose_bindings.h (e.g. `sig_ha_light_kitchen_floods`). */
-  cppSignalName?: string;
-  /** C++ value type (e.g. `bool`, `float`, `std::string`). */
-  cppType?: string;
   /**
    * Distinguishes HA entity signals from theme signals.
    * - 'ha_entity' (default): signal is fed by a Home Assistant sensor trigger
@@ -74,20 +70,16 @@ export type ReactiveNodeKind = 'expression' | 'memo' | 'effect';
 export interface ReactiveNodeConfig {
   kind: ReactiveNodeKind;
   dependencies: ExpressionDependency[];
-  cppExpression: string;
-  cppReturnType?: string;
+  /** Target-agnostic return type for this reactive value. */
+  exprType?: ExprType;
   /** ESPHome component ID of the source (set for kind='expression'). */
   sourceId?: string;
-  /** C++ property access path on the source component (set for kind='expression'). */
+  /** Semantic property name on the source entity (e.g. 'isOn', 'brightness'). */
   property?: string;
   /** Which trigger to subscribe to (set for kind='expression'). */
   triggerType?: string;
   /** Component domain for trigger registry lookup (set for kind='expression'). */
   sourceDomain?: string;
-  /** C++ Signal variable name for the reactive runtime. */
-  cppSignalName?: string;
-  /** C++ value type of the source signal. */
-  cppType?: string;
 }
 
 /**
@@ -103,24 +95,14 @@ export class ReactiveNode<T = unknown> {
 
   readonly kind: ReactiveNodeKind;
   readonly dependencies: ExpressionDependency[];
-  readonly cppExpression: string;
-  readonly cppReturnType?: string;
+  /** Target-agnostic return type for this reactive value. */
+  readonly exprType?: ExprType;
 
   // ── Single-source metadata (set for kind='expression') ─────────────────
   readonly sourceId?: string;
   readonly property?: string;
   readonly triggerType?: string;
   readonly sourceDomain?: string;
-  readonly cppSignalName?: string;
-  readonly cppType?: string;
-
-  /**
-   * Optional C++ wrapper function for the YAML lambda value.
-   * When set, toLambdaInit() wraps the get() call:
-   *   `return wrapper(espcompose::memo_N.get());`
-   * Used for font memos where the YAML expects lv_font_t*.
-   */
-  yamlLambdaWrapper?: string;
 
   /**
    * Index assigned by registerReactiveNode() during the render pass.
@@ -130,17 +112,42 @@ export class ReactiveNode<T = unknown> {
    */
   _index = -1;
 
+  /**
+   * Optional JS closure that produced this reactive value.
+   *
+   * Set by useMemo()/useEffect() to preserve the original authored function.
+   * The simulator's IR renderer uses this for live evaluation instead of
+   * falling back to type-based defaults.
+   *
+   * Not set for kind='expression' nodes (HA entity / theme leaf) or for
+   * _reactive.compiled() nodes (where the JS closure is the memo body).
+   */
+  jsClosure?: () => unknown;
+
+  /**
+   * The JS value produced by evaluating the closure at render time.
+   *
+   * Set by useMemo() when the closure is evaluated during the render pass.
+   * This captures the initial value for the simulator.
+   */
+  jsValue?: unknown;
+
+  /**
+   * Target-agnostic expression AST for this reactive node.
+   *
+   * Set by the AST compiler (_reactive.compiled) when the expression is
+   * statically analyzed. Backends lower this to target code (C++ or JS).
+   */
+  exprIR?: ExprNode;
+
   constructor(config: ReactiveNodeConfig) {
     this.kind = config.kind;
     this.dependencies = config.dependencies;
-    this.cppExpression = config.cppExpression;
-    this.cppReturnType = config.cppReturnType;
+    this.exprType = config.exprType;
     this.sourceId = config.sourceId;
     this.property = config.property;
     this.triggerType = config.triggerType;
     this.sourceDomain = config.sourceDomain;
-    this.cppSignalName = config.cppSignalName;
-    this.cppType = config.cppType;
   }
 
   /** Whether this node has a single dependency. */
@@ -158,12 +165,13 @@ export class ReactiveNode<T = unknown> {
    * This enables memo function bodies to evaluate without crashing.
    */
   valueOf(): T {
-    switch (this.cppType) {
+    switch (this.exprType) {
       case 'bool':
         return true as T;
       case 'float':
+      case 'int':
         return NaN as T;
-      case 'std::string':
+      case 'string':
         return '' as T;
       default:
         return 0 as T;
@@ -185,59 +193,6 @@ export class ReactiveNode<T = unknown> {
     return this.valueOf();
   }
 
-  /**
-   * Generate the C++ lambda body for the initial value of a prop.
-   *
-   * For kind='expression' (HA):    `"return id(source).property;"`
-   * For kind='expression' (theme): `"return espcompose::thm_X.get();"`
-   * For kind='memo':               `"return espcompose::memo_N.get();"`
-   */
-  toLambdaInit(): string {
-    if (this.kind === 'expression') {
-      // Theme-sourced expression — read from the generated theme memo
-      if (this.dependencies[0]?.sourceType === 'theme') {
-        const sigName = this.cppSignalName ?? this.dependencies[0].cppSignalName ?? '';
-        return `return espcompose::${sigName}.get();`;
-      }
-
-      // HA entity expression (existing logic)
-      if (this.sourceId && this.property) {
-        const raw = `id(${this.sourceId})${this.property}`;
-        if (this.cppReturnType) {
-          const sig = this.sourceDomain && this.triggerType
-            ? getTriggerSignature(this.sourceDomain, this.triggerType)
-            : undefined;
-          const sourceType = sig?.variables[0]?.cppType;
-          if (sourceType && sourceType !== this.cppReturnType) {
-            return `return ${wrapConversion(raw, sourceType, this.cppReturnType)};`;
-          }
-        }
-        return `return ${raw};`;
-      }
-    }
-
-    // Memo: read from runtime memo variable
-    const idx = this._index >= 0 ? this._index : 0;
-    if (this.yamlLambdaWrapper) {
-      return `return ${this.yamlLambdaWrapper}(espcompose::memo_${idx}.get());`;
-    }
-    const retType = this.cppReturnType ?? 'std::string';
-    if (retType === 'std::string') {
-      return `return espcompose::memo_${idx}.get().c_str();`;
-    }
-    return `return espcompose::memo_${idx}.get();`;
-  }
-}
-
-/**
- * Wrap a C++ expression with a type conversion when source and target types differ.
- */
-function wrapConversion(expr: string, fromType: string, toType: string): string {
-  if (toType === 'std::string') {
-    if (fromType === 'bool') return `std::string(${expr} ? "on" : "off")`;
-    if (fromType === 'float') return `to_string(${expr})`;
-  }
-  return expr;
 }
 
 /**

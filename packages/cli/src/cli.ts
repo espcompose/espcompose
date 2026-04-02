@@ -2,13 +2,14 @@
 
 import * as path from 'path';
 import { program } from 'commander';
+import { build } from './compiler';
 import {
-  build,
   esphomeConfig,
   esphomeCompile,
   esphomeRun,
   esphomeLogs,
-} from './compiler';
+  createEsphomeTarget,
+} from '@esphome/compose-target-esphome';
 import { initProject } from './init';
 import { transformLib, buildLibrary } from './transform-lib';
 
@@ -30,7 +31,7 @@ function resolvePaths(projectDir?: string) {
 /** Run the transpile step (TSX → YAML). */
 async function transpileProject(resolvedDir: string, yamlPath: string, options?: { debug?: boolean }): Promise<void> {
   console.log(`Transpiling ${resolvedDir} → .espcompose/esphome.yaml`);
-  await build(resolvedDir, { debug: options?.debug });
+  await build(resolvedDir, createEsphomeTarget(), { debug: options?.debug });
   console.log(`✓ Written to ${yamlPath}`);
 }
 
@@ -236,6 +237,36 @@ program
       process.exit(1);
     }
   });
+// ── simulate ─────────────────────────────────────────────────────────────────
+
+program
+  .command('simulate [projectDir]')
+  .description(
+    'Build a browser-based LVGL UI simulator preview.\n' +
+    'Renders the project\'s LVGL widgets in an HTML file with mock HA entity\n' +
+    'data and reactive bindings, then opens it in the default browser.\n' +
+    'No firmware build or flash required.',
+  )
+  .option('-w, --width <px>', 'Viewport width in pixels', '320')
+  .option('--height <px>', 'Viewport height in pixels', '480')
+  .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+  .action(async (projectDir?: string, opts?: { width?: string; height?: string; debug?: boolean }) => {
+    const resolvedDir = path.resolve(projectDir ?? '.');
+    try {
+      const { createSimulatorTarget } = await import('@esphome/compose-target-simulator');
+      const target = createSimulatorTarget({
+        width: Number(opts?.width ?? 320),
+        height: Number(opts?.height ?? 480),
+      });
+      console.log(`Building simulator for ${resolvedDir}…`);
+      await build(resolvedDir, target, { debug: opts?.debug });
+      console.log('✓ Simulator opened in browser');
+    } catch (err) {
+      console.error('Simulator failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 /**

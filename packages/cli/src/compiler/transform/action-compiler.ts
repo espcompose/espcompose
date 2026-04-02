@@ -15,6 +15,7 @@
 import ts from 'typescript';
 import {
   translateScriptExpr,
+  translateScriptExprIR,
   escapeStringForCpp,
   type HAEntityInfo,
   type ScriptTransformContext,
@@ -673,7 +674,8 @@ function compileConditionExpr(
     return null;
   }
 
-  return irLambdaCondition(cppExpr);
+  const exprIR = translateScriptExprIR(expr, scriptCtx) ?? undefined;
+  return irLambdaCondition(cppExpr, exprIR);
 }
 
 // ────────────────────────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { build } from '@esphome/compose-cli';
+import { createEsphomeTarget } from '@esphome/compose-target-esphome';
 import { createProjectTest } from './helpers';
 
 const projectsDir = path.resolve(__dirname, '..', 'projects');
@@ -106,7 +107,7 @@ describe('ESPHome Compose Build', () => {
 
     try {
       await expect(
-        build(projectPath),
+        build(projectPath, createEsphomeTarget()),
       ).rejects.toThrow('reactive expression(s) that were not compiled');
     } finally {
       fs.rmSync(path.join(projectPath, 'node_modules'), { recursive: true, force: true });
@@ -129,22 +130,20 @@ describe('ESPHome Compose Build', () => {
       path.join(fakeLibDir, 'index.js'),
       [
         '"use strict";',
-        'const __espcompose_format__ = 1;',
+        'const __espcompose_format__ = 2;',
         'exports.__espcompose_format__ = __espcompose_format__;',
         'const { _reactive, useHAEntity } = require("@esphome/compose");',
         'const { jsx } = require("@esphome/compose/jsx-runtime");',
         'function StatusSensor() {',
         '  const light = useHAEntity("light.office");',
         '  const text = _reactive.compiled({',
-        '    cpp: "sig_ha_light_office.get() ? std::string(\\"On\\") : std::string(\\"Off\\")",',
-        '    type: "std::string",',
+        '    type: "string",',
         '    deps: [{',
-        '      signalName: "sig_ha_light_office",',
         '      sourceId: "ha_light_office",',
         '      triggerType: "on_state",',
-        '      sourceDomain: "binary_sensor",',
-        '      cppType: "bool"',
-        '    }]',
+        '      sourceDomain: "binary_sensor"',
+        '    }],',
+        '    expr: {"kind":"ternary","test":{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},"consequent":{"kind":"literal","value":"On","type":"string"},"alternate":{"kind":"literal","value":"Off","type":"string"}}',
         '  });',
         '  return jsx("text_sensor", { platform: "template", name: "Light Status", id: "light_status" });',
         '}',

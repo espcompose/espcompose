@@ -11,7 +11,7 @@
  *   1 — Initial versioned format (reactive.compiled, reactive.slotted,
  *       __compiledActions, __compiledScript)
  */
-export const LIBRARY_FORMAT_VERSION = 1;
+export const LIBRARY_FORMAT_VERSION = 2;
 
 /** The export name injected into compiled library entry points. */
 export const FORMAT_VERSION_EXPORT = '__espcompose_format__';

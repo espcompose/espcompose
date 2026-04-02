@@ -49,11 +49,10 @@ export function resolveBindProp<T>(prop: BindProp<T>): T | ReactiveNode<T> {
  * value={useMemo(() => reactiveIsNaN(light.brightness).get() ? 0 : light.brightness.get())}
  */
 export function reactiveIsNaN(node: ReactiveNode<number>): ReactiveNode<boolean> {
-  const sigName = node.cppSignalName ?? node.dependencies[0]?.cppSignalName;
-  const getter = sigName ? `${sigName}.get()` : `memo_${(node as unknown as { _index: number })._index}.get()`;
+  const sourceIR = node.exprIR ?? { kind: 'literal' as const, value: 0, type: 'float' as const };
   return _reactive.derivedMemo<boolean>({
-    cppExpression: `std::isnan(${getter})`,
-    cppReturnType: 'bool',
+    exprType: 'bool',
     dependencies: node.dependencies,
+    exprIR: { kind: 'call', fn: 'is_nan', args: [sourceIR] },
   });
 }

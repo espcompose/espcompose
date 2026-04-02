@@ -1,0 +1,27 @@
+{
+  "name": "@esphome/compose-target-esphome",
+  "version": "0.1.0",
+  "description": "ESPHome Compose — YAML/C++ firmware target backend",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external @esphome/compose --external yaml",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "test": "vitest run"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@esphome/compose": "workspace:*",
+    "yaml": "catalog:",
+    "which": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/which": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

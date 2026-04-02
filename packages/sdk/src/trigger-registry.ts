@@ -6,7 +6,7 @@
 // inside trigger callbacks (e.g. `on_state:` provides `x` as a `bool` for
 // binary_sensor, but no variables for light).
 //
-// Used by Expression<T>.toLambdaTrigger() to decide whether a trigger
+// Used by the ESPHome backend (lower-yaml.ts) to decide whether a trigger
 // callback can use the trigger variable directly (`return x;`) or must
 // perform a full component lookup (`return id(source).property;`).
 //

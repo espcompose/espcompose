@@ -6,7 +6,54 @@ import { isSecretValue } from './secret';
 
 import { registerRefTag } from './ref-registry';
 import { isTriggerVar } from './trigger-args';
-import { Scalar } from 'yaml';
+import type { TriggerVar } from './trigger-args';
+import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
+
+// ── IR Capture ─────────────────────────────────────────────────────────────
+// When capture is active, serializeValue() records pre-serialization data
+// in WeakMaps/Maps keyed by the serialized output objects. The IR builder
+// uses these to produce a target-agnostic semantic IR that preserves
+// ReactiveNodes, Refs, action metadata, and secrets.
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface SerializationCaptures {
+  /** Serialized Scalar → original ReactiveNode */
+  reactives: WeakMap<object, ReactiveNode>;
+  /** Serialized token string → original Ref object */
+  refs: Map<string, unknown>;
+  /** Serialized action array/object → pre-resolution action metadata */
+  actions: WeakMap<object, { rawActions: unknown[]; refBindings?: Record<string, unknown> }>;
+  /** Serialized Scalar → secret key string */
+  secrets: WeakMap<object, string>;
+  /** Serialized Scalar → TriggerVar marker */
+  triggerVars: WeakMap<object, { name: string }>;
+}
+
+let _captures: SerializationCaptures | null = null;
+
+/**
+ * Begin capturing pre-serialization data during serializeValue() calls.
+ * Call stopSerializationCapture() to retrieve the captured data.
+ */
+export function startSerializationCapture(): void {
+  _captures = {
+    reactives: new WeakMap(),
+    refs: new Map(),
+    actions: new WeakMap(),
+    secrets: new WeakMap(),
+    triggerVars: new WeakMap(),
+  };
+}
+
+/**
+ * Stop capturing and return the collected data.
+ * Returns null if capture was not active.
+ */
+export function stopSerializationCapture(): SerializationCaptures | null {
+  const result = _captures;
+  _captures = null;
+  return result;
+}
 
 // ── Compiled action tree function interface ────────────────────────────────
 // Functions with pre-compiled action tree metadata (set by the AST transformer)
@@ -119,24 +166,28 @@ const YAML11_BOOL = new Set([
 ]);
 
 /**
- * Serialize a prop value for YAML output.
+ * Serialize a prop value for output.
  * Ref<T> instances (produced by useRef()) are serialized as their string token.
  * CSS-style hex colours (#RRGGBB) are converted to ESPHome's 0xRRGGBB format.
- * YAML 1.1 boolean-like strings (on, off, yes, no) are wrapped in a quoted Scalar.
+ * YAML 1.1 boolean-like strings (on, off, yes, no) are wrapped in a QuotedMarker.
  * Plain objects have their keys recursively converted to snake_case.
  * Arrays are mapped element-wise.
  * All other values are passed through unchanged.
  */
 export function serializeValue(v: unknown): unknown {
   if (isTriggerVar(v)) {
-    return createLambdaScalar(v.toLambda());
+    const result = createLambdaScalar(v.toLambda());
+    if (_captures) _captures.triggerVars.set(result as object, { name: (v as TriggerVar).name });
+    return result;
   }
   if (isReactiveNode(v)) {
-    return serializeReactiveNode(v);
+    const result = serializeReactiveNode(v);
+    if (_captures) _captures.reactives.set(result as object, v as ReactiveNode);
+    return result;
   }
   if (isSecretValue(v)) {
-    const s = new Scalar(v.key);
-    s.tag = '!secret';
+    const s = new SecretMarker(v.key);
+    if (_captures) _captures.secrets.set(s, v.key);
     return s;
   }
   // Function values with compiled action tree metadata (trigger handler path)
@@ -146,20 +197,29 @@ export function serializeValue(v: unknown): unknown {
     if (fn.__refBindings) {
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
-    return restoreLambdaMarkers(actions);
+    const result = restoreLambdaMarkers(actions);
+    if (_captures && result !== null && typeof result === 'object') {
+      _captures.actions.set(result as object, {
+        rawActions: fn.__compiledActions,
+        refBindings: fn.__refBindings,
+      });
+    }
+    return result;
   }
-  if (isRef(v)) return v.toString();
+  if (isRef(v)) {
+    const token = v.toString();
+    if (_captures) _captures.refs.set(token, v);
+    return token;
+  }
   if (typeof v === 'string') {
     const m = HEX_COLOR_RE.exec(v);
     if (m) return `0x${m[1]}`;
     if (YAML11_BOOL.has(v.toLowerCase())) {
-      const s = new Scalar(v);
-      s.type = Scalar.QUOTE_SINGLE;
-      return s;
+      return new QuotedMarker(v);
     }
   }
   if (Array.isArray(v)) return v.map(serializeValue);
-  if (v instanceof Scalar) return v;
+  if (isSerializeMarker(v)) return v;
   if (v !== null && typeof v === 'object') {
     return keysToSnakeCase(v as Record<string, unknown>);
   }
@@ -194,25 +254,25 @@ function restoreLambdaMarkers(value: unknown): unknown {
 }
 
 /**
- * Serialize a ReactiveNode as a YAML `!lambda` value.
+ * Serialize a ReactiveNode as a lambda marker.
  *
- * Uses the node's toLambdaInit() method which handles both:
- * - Single-source ('expression' kind): `return id(source).property;`
- * - Multi-source ('memo' kind): `return espcompose::memo_N.get();`
+ * Generates a placeholder lambda body; the actual target-specific code generation
+ * happens in the target's lowering layer (e.g. target-esphome's lower-yaml.ts).
  */
 function serializeReactiveNode(node: ReactiveNode): unknown {
-  return createLambdaScalar(node.toLambdaInit());
+  if (node.kind === 'expression' && node.sourceId && node.property) {
+    return createLambdaScalar(`return id(${node.sourceId})${node.property};`);
+  }
+  const idx = node._index >= 0 ? node._index : 0;
+  return createLambdaScalar(`return espcompose::memo_${idx}.get();`);
 }
 
 /**
- * Create a YAML `!lambda` tagged scalar from a C++ lambda body string.
+ * Create a lambda marker from a code body string.
  * Used by the serializer and reactive injector to produce lambda values.
  */
 export function createLambdaScalar(body: string): unknown {
-  const s = new Scalar(body);
-  s.type = Scalar.QUOTE_DOUBLE;
-  s.tag = '!lambda';
-  return s;
+  return new LambdaMarker(body);
 }
 
 /**

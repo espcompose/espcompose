@@ -17,111 +17,88 @@ describe('_reactive', () => {
     it('creates ReactiveNode from pre-computed metadata', () => {
       withReactiveScope(() => {
         const result = _reactive.compiled<string>({
-          cpp: 'sig_ha_light_office.get() ? std::string("On") : std::string("Off")',
-          type: 'std::string',
+          type: 'string',
           deps: [{
-            signalName: 'sig_ha_light_office',
             sourceId: 'ha_light_office',
             triggerType: 'on_state',
             sourceDomain: 'binary_sensor',
-            cppType: 'bool',
           }],
+          expr: { kind: 'literal', value: 'On', type: 'string' },
         });
 
         expect(isReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
         expect(result.dependencies).toHaveLength(1);
         expect(result.dependencies[0].sourceId).toBe('ha_light_office');
-        expect(result.dependencies[0].cppSignalName).toBe('sig_ha_light_office');
-        expect(result.cppExpression).toBe('sig_ha_light_office.get() ? std::string("On") : std::string("Off")');
-        expect(result.cppReturnType).toBe('std::string');
+        expect(result.exprType).toBe('string');
+        expect(result.exprIR).toEqual({ kind: 'literal', value: 'On', type: 'string' });
       });
     });
 
     it('creates ReactiveNode with multiple dependencies', () => {
       withReactiveScope(() => {
         const result = _reactive.compiled<string>({
-          cpp: 'sig_ha_light_office.get() && sig_ha_sensor_temp.get() > 72 ? std::string("Comfortable") : std::string("Adjust")',
-          type: 'std::string',
+          type: 'string',
           deps: [
-            { signalName: 'sig_ha_light_office', sourceId: 'ha_light_office', triggerType: 'on_state', sourceDomain: 'binary_sensor', cppType: 'bool' },
-            { signalName: 'sig_ha_sensor_temp', sourceId: 'ha_sensor_temp', triggerType: 'on_value', sourceDomain: 'sensor', cppType: 'float' },
+            { sourceId: 'ha_light_office', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+            { sourceId: 'ha_sensor_temp', triggerType: 'on_value', sourceDomain: 'sensor' },
           ],
+          expr: { kind: 'literal', value: 'Comfortable', type: 'string' },
         });
 
         expect(result.dependencies).toHaveLength(2);
-        expect(result.cppExpression).toContain('sig_ha_light_office.get()');
-        expect(result.cppExpression).toContain('sig_ha_sensor_temp.get()');
+        expect(result.exprIR).toBeDefined();
       });
     });
   });
 
   describe('_reactive.slotted()', () => {
-    it('substitutes single slot placeholder with signal name', () => {
+    it('resolves slots from signal arguments', () => {
       withReactiveScope(() => {
         const signal = new ReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_ha_temp', cppType: 'float' }],
-          cppExpression: 'sig_ha_temp.get()',
-          cppSignalName: 'sig_ha_temp',
-          cppType: 'float',
+          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          exprType: 'float',
         });
+        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const result = _reactive.slotted<number>(
-          { cpp: '__$$SLOT_0$$__.get() * 2 + 80', type: 'float', slots: 1 },
+          { type: 'float', slots: 1, expr: { kind: 'slot', slotIndex: 0 } },
           signal,
         );
 
         expect(isReactiveNode(result)).toBe(true);
-        expect(result.cppExpression).toBe('sig_ha_temp.get() * 2 + 80');
-        expect(result.cppReturnType).toBe('float');
+        expect(result.exprType).toBe('float');
         expect(result.dependencies).toHaveLength(1);
-        expect(result.dependencies[0].cppSignalName).toBe('sig_ha_temp');
       });
     });
 
-    it('substitutes multiple slot placeholders', () => {
+    it('resolves multiple slot placeholders', () => {
       withReactiveScope(() => {
         const sigA = new ReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_a', cppType: 'float' }],
-          cppExpression: 'sig_a.get()',
-          cppSignalName: 'sig_a',
+          dependencies: [{ sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          exprType: 'float',
         });
+        sigA.exprIR = { kind: 'signal_read', signalIndex: 0 };
+
         const sigB = new ReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_b', triggerType: 'on_state', sourceDomain: 'binary_sensor', cppSignalName: 'sig_b', cppType: 'bool' }],
-          cppExpression: 'sig_b.get()',
-          cppSignalName: 'sig_b',
+          dependencies: [{ sourceId: 'ha_b', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+          exprType: 'bool',
         });
+        sigB.exprIR = { kind: 'signal_read', signalIndex: 1 };
 
         const result = _reactive.slotted<string>(
-          { cpp: '__$$SLOT_1$$__.get() ? std::string("on") : std::to_string(__$$SLOT_0$$__.get())', type: 'std::string', slots: 2 },
+          {
+            type: 'string',
+            slots: 2,
+            expr: { kind: 'ternary', test: { kind: 'slot', slotIndex: 1 }, consequent: { kind: 'literal', value: 'on', type: 'string' }, alternate: { kind: 'literal', value: 'off', type: 'string' } },
+          },
           sigA, sigB,
         );
 
-        expect(result.cppExpression).toBe('sig_b.get() ? std::string("on") : std::to_string(sig_a.get())');
         expect(result.dependencies).toHaveLength(2);
-      });
-    });
-
-    it('resolves type placeholder from signal cppType', () => {
-      withReactiveScope(() => {
-        const signal = new ReactiveNode({
-          kind: 'expression',
-          dependencies: [{ sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', cppSignalName: 'thm_colors_primary_bg', cppType: 'lv_color_t' }],
-          cppExpression: 'thm_colors_primary_bg.get()',
-          cppSignalName: 'thm_colors_primary_bg',
-          cppType: 'lv_color_t',
-        });
-
-        const result = _reactive.slotted<unknown>(
-          { cpp: '__$$SLOT_0$$__.get()', type: '__$$SLOT_TYPE_0$$__', slots: 1 },
-          signal,
-        );
-
-        expect(result.cppReturnType).toBe('lv_color_t');
-        expect(result.cppExpression).toBe('thm_colors_primary_bg.get()');
       });
     });
 
@@ -130,23 +107,24 @@ describe('_reactive', () => {
         const sig1 = new ReactiveNode({
           kind: 'expression',
           dependencies: [
-            { sourceId: 's1', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_s1', cppType: 'float' },
+            { sourceId: 's1', triggerType: 'on_value', sourceDomain: 'sensor' },
           ],
-          cppExpression: 'sig_s1.get()',
-          cppSignalName: 'sig_s1',
+          exprType: 'float',
         });
+        sig1.exprIR = { kind: 'signal_read', signalIndex: 0 };
+
         const sig2 = new ReactiveNode({
           kind: 'expression',
           dependencies: [
-            { sourceId: 's2', triggerType: 'on_state', sourceDomain: 'binary_sensor', cppSignalName: 'sig_s2', cppType: 'bool' },
-            { sourceId: 's3', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_s3', cppType: 'float' },
+            { sourceId: 's2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+            { sourceId: 's3', triggerType: 'on_value', sourceDomain: 'sensor' },
           ],
-          cppExpression: 'sig_s2.get()',
-          cppSignalName: 'sig_s2',
+          exprType: 'bool',
         });
+        sig2.exprIR = { kind: 'signal_read', signalIndex: 1 };
 
         const result = _reactive.slotted<number>(
-          { cpp: '__$$SLOT_0$$__.get() + __$$SLOT_1$$__.get()', type: 'float', slots: 2 },
+          { type: 'float', slots: 2, expr: { kind: 'binary', op: '+', left: { kind: 'slot', slotIndex: 0 }, right: { kind: 'slot', slotIndex: 1 } } },
           sig1, sig2,
         );
 
@@ -156,20 +134,20 @@ describe('_reactive', () => {
   });
 
   describe('_reactive.derivedMemo()', () => {
-    it('creates derived memo with explicit C++ expression', () => {
+    it('creates derived memo with explicit expression IR', () => {
       withReactiveScope(() => {
         const result = _reactive.derivedMemo<string>({
-          cppExpression: 'resolve_font("montserrat", 28)',
-          cppReturnType: 'const lv_font_t*',
+          exprType: 'font_ptr',
           dependencies: [
-            { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', cppSignalName: 'thm_font', cppType: 'std::string' },
+            { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
           ],
+          exprIR: { kind: 'literal', value: 'montserrat_28', type: 'string' },
         });
 
         expect(isReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
-        expect(result.cppExpression).toBe('resolve_font("montserrat", 28)');
-        expect(result.cppReturnType).toBe('const lv_font_t*');
+        expect(result.exprType).toBe('font_ptr');
+        expect(result.exprIR).toEqual({ kind: 'literal', value: 'montserrat_28', type: 'string' });
       });
     });
   });

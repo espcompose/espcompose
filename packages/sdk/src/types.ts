@@ -173,16 +173,12 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
                 sourceId: target._token,
                 triggerType: reactiveConfig.triggerType,
                 sourceDomain: reactiveConfig.sourceDomain,
-                cppSignalName: `sig_${target._token}`,
-                cppType: reactiveConfig.cppType,
               }],
-              cppExpression: reactiveConfig.property,
+              exprType: reactiveConfig.exprType,
               sourceId: target._token,
               property: reactiveConfig.property,
               triggerType: reactiveConfig.triggerType,
               sourceDomain: reactiveConfig.sourceDomain,
-              cppSignalName: `sig_${target._token}`,
-              cppType: reactiveConfig.cppType,
             });
           }
         }

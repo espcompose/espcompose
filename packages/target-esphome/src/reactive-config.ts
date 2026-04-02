@@ -8,9 +8,12 @@
  */
 
 import { injectHASensorImports } from './reactive-injector.js';
-import { generateSignalSetLambda } from './reactive-runtime/codegen.js';
-import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './reactive-runtime/codegen.js';
+import { generateSignalSetLambda } from './bindings-codegen.js';
+import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
 import { Scalar } from 'yaml';
+import { exprToCpp, exprTypeToCpp } from './expr-to-cpp.js';
+import type { CppLoweringContext } from './expr-to-cpp.js';
+import type { ExprNode } from '@esphome/compose';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Sensor type → C++ type mapping
@@ -20,6 +23,77 @@ function mapSensorTypeToCppType(sensorType: string): string {
   if (sensorType === 'sensor') return 'float';
   if (sensorType === 'text_sensor') return 'std::string';
   return 'bool';
+}
+
+/**
+ * Derive C++ source signal/memo names from a reactive node's dependencies.
+ * Used for wiring the reactive graph (Signal → Memo → Effect).
+ */
+function deriveSourceSignals(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node: any,
+  signalMap: Map<string, SignalDecl>,
+  themeVarNames: Map<string, string>,
+): string[] {
+  const names: string[] = [];
+  for (const dep of node.dependencies ?? []) {
+    if (dep.sourceType === 'theme') {
+      // Theme dependency — derive signal name from ExprIR or dependency metadata
+      const exprIR = node.exprIR;
+      const themePaths = collectThemePaths(exprIR);
+      for (const path of themePaths) {
+        const name = themeVarNames.get(path) ?? `thm_${path}`;
+        if (!names.includes(name)) names.push(name);
+      }
+      if (themePaths.length === 0) {
+        // Fallback: use sourceId if we can't extract path from IR
+        const name = `thm_${dep.sourceId === '__theme__' ? dep.triggerType : dep.sourceId}`;
+        if (!names.includes(name)) names.push(name);
+      }
+    } else {
+      // HA entity dependency — signal name is sig_${sourceId}
+      const sigName = `sig_${dep.sourceId}`;
+      if (signalMap.has(sigName) && !names.includes(sigName)) {
+        names.push(sigName);
+      }
+    }
+  }
+  return names;
+}
+
+/**
+ * Collect all theme_read paths from an ExprNode tree.
+ */
+function collectThemePaths(node: ExprNode | undefined): string[] {
+  if (!node) return [];
+  if (node.kind === 'theme_read') return [node.path];
+  const paths: string[] = [];
+  switch (node.kind) {
+    case 'binary':
+      paths.push(...collectThemePaths(node.left), ...collectThemePaths(node.right));
+      break;
+    case 'unary':
+    case 'postfix':
+      paths.push(...collectThemePaths(node.operand));
+      break;
+    case 'ternary':
+      paths.push(...collectThemePaths(node.test), ...collectThemePaths(node.consequent), ...collectThemePaths(node.alternate));
+      break;
+    case 'call':
+      for (const arg of node.args) paths.push(...collectThemePaths(arg));
+      break;
+    case 'concat':
+      for (const part of node.parts) paths.push(...collectThemePaths(part));
+      break;
+    case 'to_string':
+    case 'group':
+      paths.push(...collectThemePaths(node.expr));
+      break;
+    case 'resolve_font':
+      paths.push(...collectThemePaths(node.family), ...collectThemePaths(node.size));
+      break;
+  }
+  return paths;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -59,14 +133,33 @@ export function buildRuntimeConfig(
     }
   }
 
+  // ── Build CppLoweringContext from entity/theme data ────────────────────
+  const entityComponentIds = new Map<string, string>();
+  for (const entity of entities) {
+    if (entity.entityId && entity.generatedId) {
+      entityComponentIds.set(entity.entityId, entity.generatedId);
+    }
+  }
+
+  const themeVarNames = new Map<string, string>();
+  if (themeData) {
+    for (const signalPath of themeData.leafData.keys()) {
+      themeVarNames.set(signalPath, `thm_${signalPath}`);
+    }
+  }
+
+  const cppCtx: CppLoweringContext = {
+    signalNames: new Map(),
+    memoNames: new Map(),
+    slotExprs: new Map(),
+    entityComponentIds,
+    themeVarNames,
+  };
+
   // ── Validate: detect untransformed reactive nodes ─────────────────────
-  // When a library ships reactive code without running `espcompose transform-lib`,
-  // `useMemo()` hits the runtime fallback path and creates ReactiveNodes with
-  // a telltale marker in cppExpression. Detect this and fail early with a clear
-  // message instead of silently generating broken C++.
   const uncompiledNodes = reactiveNodes.filter(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (n: any) => typeof n.cppExpression === 'string' && n.cppExpression.includes('uncompiled'),
+    (n: any) => n.kind === 'memo' && !n.exprIR,
   );
   if (uncompiledNodes.length > 0) {
     const summary = uncompiledNodes.map(
@@ -98,12 +191,13 @@ export function buildRuntimeConfig(
 
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
-      const sourceSignals = node.dependencies
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((d: any) => d.cppSignalName)
-        .filter(Boolean);
+      const exprIR: ExprNode | undefined = node.exprIR;
+      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : 'std::string';
+      const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
 
-      const signature = `${node.cppReturnType ?? 'std::string'}:${node.cppExpression}:${[...sourceSignals].sort().join(',')}`;
+      const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames);
+
+      const signature = `${cppReturnType}:${cppExpression}:${[...sourceSignals].sort().join(',')}`;
       const canonical = memoSignatureMap.get(signature);
 
       if (canonical !== undefined) {
@@ -112,8 +206,8 @@ export function buildRuntimeConfig(
         memoCanonical.set(thisIdx, canonical);
         memos.push({
           index: thisIdx,
-          cppReturnType: node.cppReturnType ?? 'std::string',
-          cppExpression: node.cppExpression,
+          cppReturnType,
+          cppExpression,
           sourceSignals,
           canonicalIndex: canonical,
         });
@@ -122,27 +216,26 @@ export function buildRuntimeConfig(
         memoSignatureMap.set(signature, thisIdx);
         memos.push({
           index: thisIdx,
-          cppReturnType: node.cppReturnType ?? 'std::string',
-          cppExpression: node.cppExpression,
+          cppReturnType,
+          cppExpression,
           sourceSignals,
         });
       }
+
+      // Populate memoNames for downstream memo_read references
+      cppCtx.memoNames.set(node._index ?? memoIdx - 1, `memo_${memoIdx - 1}`);
     } else if (node.kind === 'effect') {
-      const sourceNames = node.dependencies
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((d: any) => d.cppSignalName)
-        .filter(Boolean);
+      const sourceNames = deriveSourceSignals(node, signalMap, themeVarNames);
+      const cppBody = node.exprIR ? exprToCpp(node.exprIR, cppCtx) : '0 /* no ExprIR */';
       effects.push({
         index: effectIdx++,
-        cppBody: node.cppExpression,
+        cppBody,
         sourceNames,
       });
     }
   }
 
   // Build widget binding declarations from reactive bindings.
-  // In the runtime path, each binding becomes an Effect that wires
-  // signal/memo → LVGL widget update.
   const widgetBindings: WidgetBindingDecl[] = [];
   let bindingIdx = 0;
 
@@ -155,27 +248,26 @@ export function buildRuntimeConfig(
 
     if (expr.kind === 'memo') {
       // Memo-backed binding: read from the runtime memo variable.
-      // Normalize to canonical memo index if this is a duplicate.
       const mIdx = expr._index >= 0 ? expr._index : 0;
       const canonIdx = memoCanonical.get(mIdx) ?? mIdx;
       valueExpr = `memo_${canonIdx}.get()`;
-      cppType = expr.cppReturnType ?? 'std::string';
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : 'std::string';
       sourceNames = [`memo_${canonIdx}`];
     } else if (expr.dependencies?.[0]?.sourceType === 'theme') {
       // Theme-sourced binding: read from the generated theme memo
-      const sigName = expr.cppSignalName ?? expr.dependencies[0].cppSignalName;
+      const themeIR = expr.exprIR as { kind: string; path?: string; type?: string } | undefined;
+      const themePath = themeIR?.kind === 'theme_read' ? themeIR.path : undefined;
+      const sigName = themePath ? `thm_${themePath}` : `thm_unknown`;
       valueExpr = `${sigName}.get()`;
-      cppType = expr.dependencies[0].cppType ?? expr.cppType ?? 'int32_t';
+      const leafData = themePath ? themeData?.leafData.get(themePath) : undefined;
+      cppType = leafData?.cppType ?? (expr.exprType ? exprTypeToCpp(expr.exprType) : 'int32_t');
       sourceNames = [sigName];
     } else {
       // Single-source binding: read directly from signal
-      const sigName = expr.cppSignalName ?? `sig_${expr.sourceId}`;
+      const sigName = `sig_${expr.sourceId}`;
       valueExpr = `${sigName}.get()`;
-      // Use the actual signal's C++ type (from signalMap), not the expression's
-      // declared type.  e.g. stateText has cppType 'std::string' but the
-      // underlying signal for a binary_sensor is Signal<bool>.
       const signalDecl = signalMap.get(sigName);
-      cppType = signalDecl?.cppType ?? expr.cppType ?? 'bool';
+      cppType = signalDecl?.cppType ?? (expr.exprType ? exprTypeToCpp(expr.exprType) : 'bool');
       sourceNames = [sigName];
     }
 

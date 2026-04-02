@@ -22,7 +22,7 @@ import ts from 'typescript';
 import type { TransformOutput, TransformDiagnostic } from './script-transformer.js';
 import {
   hasSignalBrand,
-  translateReactiveExpr,
+  translateReactiveExprIR,
   scanForHAEntities,
   type ExprCompilerContext,
   type HAEntityInfo,
@@ -137,8 +137,8 @@ function isMemoCall(expr: ts.Expression): expr is ts.CallExpression {
 function isReactiveSkipCall(expr: ts.Expression): boolean {
   if (!ts.isCallExpression(expr)) return false;
   const callee = expr.expression;
-  // useEffect(...), useRawMemo(...)
-  if (ts.isIdentifier(callee) && (callee.text === 'useEffect' || callee.text === 'useRawMemo')) return true;
+  // useEffect(...)
+  if (ts.isIdentifier(callee) && callee.text === 'useEffect') return true;
   // resolveBindProp(...), reactiveIsNaN(...)
   if (ts.isIdentifier(callee) && (callee.text === 'resolveBindProp' || callee.text === 'reactiveIsNaN')) return true;
   if (ts.isPropertyAccessExpression(callee)) {
@@ -160,14 +160,12 @@ function isDirectSignalPassthrough(expr: ts.Expression, checker: ts.TypeChecker)
 // Compiled metadata serialization
 // ────────────────────────────────────────────────────────────────────────────
 
-function serializeCompiledCall(cpp: string, cppType: string, deps: DependencyInfo[]): string {
+function serializeCompiledCall(exprType: string, deps: DependencyInfo[], exprIR: unknown): string {
   const depsJson = deps.map(d => {
     const parts = [
-      `signalName:${JSON.stringify(d.signalName)}`,
       `sourceId:${JSON.stringify(d.sourceId)}`,
       `triggerType:${JSON.stringify(d.triggerType)}`,
       `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
-      `cppType:${JSON.stringify(d.cppType)}`,
     ];
     if (d.sourceType) {
       parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
@@ -175,19 +173,16 @@ function serializeCompiledCall(cpp: string, cppType: string, deps: DependencyInf
     return `{${parts.join(',')}}`;
   });
 
-  return `_reactive.compiled({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},deps:[${depsJson.join(',')}]})`;
+  return `_reactive.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(exprIR)}})`;
 }
 
 function serializeSlottedCall(
-  cpp: string,
-  cppType: string,
+  exprType: string,
   slotCount: number,
   slotExprs: string[],
+  exprIR: unknown,
 ): string {
-  // The `as any` cast is necessary because Signal<T> (phantom branded number)
-  // is not assignable to ReactiveNode<unknown> at the type level, even though
-  // it is at runtime. This is compiler-generated code, so the cast is safe.
-  return `_reactive.slotted({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},slots:${slotCount}}, ${slotExprs.join(', ')}) as any`;
+  return `_reactive.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(exprIR)}}, ${slotExprs.join(', ')}) as any`;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -260,7 +255,7 @@ function processJsxAttributeExpression(
   // Check if the expression sub-tree contains Signal-typed nodes
   if (!containsSignalNode(expr, checker)) return;
 
-  // AST-compile the expression to C++
+  // AST-compile the expression to ExpressionIR
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
@@ -268,8 +263,8 @@ function processJsxAttributeExpression(
     slots: [],
   };
 
-  const result = translateReactiveExpr(expr, ctx);
-  if (!result) {
+  const irResult = translateReactiveExprIR(expr, ctx);
+  if (!irResult) {
     // Fallback: wrap in useMemo() for runtime codegen
     const { line } = sourceFile.getLineAndCharacterOfPosition(expr.getStart(sourceFile));
     diagnostics.push({ message: 'could not AST-compile expression, falling back to useMemo()', file: sourceFile.fileName, line: line + 1 });
@@ -289,20 +284,20 @@ function processJsxAttributeExpression(
   const start = expr.getStart(sourceFile);
   const end = expr.getEnd();
 
-  if (result.slots && result.slots.length > 0) {
+  if (irResult.slots && irResult.slots.length > 0) {
     // Slots present — emit _reactive.slotted() with runtime signal arguments
-    const slotExprs = result.slots.map(s => s.expr.getText(sourceFile));
+    const slotExprs = irResult.slots.map(s => s.expr.getText(sourceFile));
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeSlottedCall(result.cpp, result.cppType, result.slots.length, slotExprs),
+      text: serializeSlottedCall(irResult.exprType, irResult.slots.length, slotExprs, irResult.expr),
     });
   } else {
     // Fully static — emit _reactive.compiled() with embedded deps
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeCompiledCall(result.cpp, result.cppType, result.deps),
+      text: serializeCompiledCall(irResult.exprType, irResult.deps, irResult.expr),
     });
   }
 
@@ -353,7 +348,7 @@ function processExplicitMemo(
   // Check if the body contains reactive signal references
   if (!containsSignalNode(bodyExpr, checker)) return;
 
-  // AST-compile the expression body
+  // AST-compile the expression body to ExpressionIR
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
@@ -361,8 +356,8 @@ function processExplicitMemo(
     slots: [],
   };
 
-  const result = translateReactiveExpr(bodyExpr, ctx);
-  if (!result) {
+  const irResult = translateReactiveExprIR(bodyExpr, ctx);
+  if (!irResult) {
     const { line } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
     diagnostics.push({ message: 'could not AST-compile memo() body', file: sourceFile.fileName, line: line + 1 });
     return; // Can't compile — leave as useMemo() for runtime
@@ -372,18 +367,18 @@ function processExplicitMemo(
   const start = callExpr.getStart(sourceFile);
   const end = callExpr.getEnd();
 
-  if (result.slots && result.slots.length > 0) {
-    const slotExprs = result.slots.map(s => s.expr.getText(sourceFile));
+  if (irResult.slots && irResult.slots.length > 0) {
+    const slotExprs = irResult.slots.map(s => s.expr.getText(sourceFile));
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeSlottedCall(result.cpp, result.cppType, result.slots.length, slotExprs),
+      text: serializeSlottedCall(irResult.exprType, irResult.slots.length, slotExprs, irResult.expr),
     });
   } else {
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeCompiledCall(result.cpp, result.cppType, result.deps),
+      text: serializeCompiledCall(irResult.exprType, irResult.deps, irResult.expr),
     });
   }
 

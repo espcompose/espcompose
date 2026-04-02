@@ -13,7 +13,7 @@
     "templates"
   ],
   "scripts": {
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @esphome/compose-eslint --external typescript-eslint",
+    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @esphome/compose-eslint --external @esphome/compose-target-simulator --external @esphome/compose-target-esphome --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -41,6 +41,8 @@
   "dependencies": {
     "@esphome/compose": "workspace:*",
     "@esphome/compose-eslint": "workspace:*",
+    "@esphome/compose-target-esphome": "workspace:*",
+    "@esphome/compose-target-simulator": "workspace:*",
     "commander": "catalog:",
     "esbuild": "catalog:",
     "handlebars": "^4.7.8",

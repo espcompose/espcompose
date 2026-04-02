@@ -23,44 +23,44 @@ import { serializeValue } from './serialize';
 // the protocol contract has drifted between producer and consumer.
 
 const DependencyInfoSchema = z.object({
-  signalName: z.string(),
   sourceId: z.string(),
   triggerType: z.string(),
   sourceDomain: z.string(),
-  cppType: z.string(),
   sourceType: z.string().optional(),
 });
 
+const ExprNodeSchema = z.object({
+  kind: z.string(),
+}).passthrough();
+
 const CompiledReactiveSchema = z.object({
-  cpp: z.string(),
   type: z.string(),
   deps: z.array(DependencyInfoSchema),
+  expr: ExprNodeSchema,
 });
 
 const SlottedReactiveSchema = z.object({
-  cpp: z.string(),
   type: z.string(),
   slots: z.number().int().nonnegative(),
+  expr: ExprNodeSchema,
 });
 
 // ── Test fixtures ──────────────────────────────────────────────────────────
 
 const VALID_COMPILED_META = {
-  cpp: 'sig_ha_light_office.get() ? std::string("On") : std::string("Off")',
-  type: 'std::string',
+  type: 'string' as const,
   deps: [{
-    signalName: 'sig_ha_light_office',
     sourceId: 'ha_light_office',
     triggerType: 'on_state',
     sourceDomain: 'binary_sensor',
-    cppType: 'bool',
   }],
+  expr: { kind: 'literal' as const, value: 'On', type: 'string' as const },
 };
 
 const VALID_SLOTTED_META = {
-  cpp: '__$$SLOT_0$$__.get() * 2 + 10',
-  type: 'float',
+  type: 'float' as const,
   slots: 1,
+  expr: { kind: 'slot' as const, slotIndex: 0, type: 'float' as const },
 };
 
 const VALID_COMPILED_ACTIONS = [
@@ -126,20 +126,19 @@ describe('Library Format Contract (Consumer)', () => {
         expect(node.kind).toBe('memo');
         expect(node.dependencies).toHaveLength(1);
         expect(node.dependencies[0].sourceId).toBe('ha_light_office');
-        expect(node.dependencies[0].cppSignalName).toBe('sig_ha_light_office');
-        expect(node.cppExpression).toBe(VALID_COMPILED_META.cpp);
-        expect(node.cppReturnType).toBe(VALID_COMPILED_META.type);
+        expect(node.exprType).toBe('string');
+        expect(node.exprIR).toEqual(VALID_COMPILED_META.expr);
       });
     });
 
     it('accepts metadata with multiple deps including sourceType', () => {
       const meta = {
-        cpp: 'sig_a.get() + sig_b.get()',
-        type: 'float',
+        type: 'float' as const,
         deps: [
-          { signalName: 'sig_a', sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', cppType: 'float', sourceType: 'ha_entity' },
-          { signalName: 'sig_b', sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', cppType: 'int32_t', sourceType: 'theme' },
+          { sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
         ],
+        expr: { kind: 'literal' as const, value: 0, type: 'float' as const },
       };
 
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
@@ -153,7 +152,7 @@ describe('Library Format Contract (Consumer)', () => {
     });
 
     it('accepts metadata with zero deps', () => {
-      const meta = { cpp: '42', type: 'int32_t', deps: [] };
+      const meta = { type: 'int' as const, deps: [], expr: { kind: 'literal' as const, value: 42, type: 'int' as const } };
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
 
       withReactiveScope(() => {
@@ -170,15 +169,14 @@ describe('Library Format Contract (Consumer)', () => {
       withReactiveScope(() => {
         const signal = new ReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_temp', cppType: 'float' }],
-          cppExpression: 'sig_temp.get()',
-          cppSignalName: 'sig_temp',
-          cppType: 'float',
+          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          exprType: 'float',
         });
+        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const node = _reactive.slotted<number>(VALID_SLOTTED_META, signal);
         expect(isReactiveNode(node)).toBe(true);
-        expect(node.cppExpression).toBe('sig_temp.get() * 2 + 10');
+        expect(node.exprType).toBe('float');
         expect(node.dependencies).toHaveLength(1);
       });
     });
@@ -219,29 +217,25 @@ describe('Library Format Contract (Consumer)', () => {
       // This is the exact metadata emitted by serializeCompiledCall() in
       // the reactive-fixture snapshot
       const goldenMeta = {
-        cpp: 'sig_ha_light_office.get() ? std::string("On") : std::string("Off")',
-        type: 'std::string',
+        type: 'string' as const,
         deps: [{
-          signalName: 'sig_ha_light_office',
           sourceId: 'ha_light_office',
           triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
-          cppType: 'bool',
         }],
+        expr: { kind: 'ternary' as const, test: { kind: 'signal_read' as const, signalIndex: 0 }, consequent: { kind: 'literal' as const, value: 'On', type: 'string' as const }, alternate: { kind: 'literal' as const, value: 'Off', type: 'string' as const } },
       };
 
       withReactiveScope(() => {
         const node = _reactive.compiled<string>(goldenMeta);
         expect(isReactiveNode(node)).toBe(true);
         expect(node.kind).toBe('memo');
-        expect(node.cppExpression).toBe(goldenMeta.cpp);
-        expect(node.cppReturnType).toBe('std::string');
+        expect(node.exprType).toBe('string');
+        expect(node.exprIR).toBeDefined();
         expect(node.dependencies).toHaveLength(1);
-        expect(node.dependencies[0].cppSignalName).toBe('sig_ha_light_office');
         expect(node.dependencies[0].sourceId).toBe('ha_light_office');
         expect(node.dependencies[0].triggerType).toBe('on_state');
         expect(node.dependencies[0].sourceDomain).toBe('binary_sensor');
-        expect(node.dependencies[0].cppType).toBe('bool');
       });
     });
   });
@@ -250,27 +244,23 @@ describe('Library Format Contract (Consumer)', () => {
     it('consumes exact metadata from reactive-fixture golden file', () => {
       // This is the exact metadata shape emitted by serializeSlottedCall()
       const goldenMeta = {
-        cpp: '__$$SLOT_0$$__.get() > 72 ? std::string("Hot") : std::string("Cold")',
-        type: 'std::string',
+        type: 'string' as const,
         slots: 1,
+        expr: { kind: 'binary' as const, op: '>' as const, left: { kind: 'slot' as const, slotIndex: 0, type: 'float' as const }, right: { kind: 'literal' as const, value: 72, type: 'float' as const } },
       };
 
       withReactiveScope(() => {
         const signal = new ReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor', cppSignalName: 'sig_temp', cppType: 'float' }],
-          cppExpression: 'sig_temp.get()',
-          cppSignalName: 'sig_temp',
-          cppType: 'float',
+          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          exprType: 'float',
         });
+        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const node = _reactive.slotted<string>(goldenMeta, signal);
         expect(isReactiveNode(node)).toBe(true);
-        // Slot should be substituted
-        expect(node.cppExpression).toBe('sig_temp.get() > 72 ? std::string("Hot") : std::string("Cold")');
-        expect(node.cppReturnType).toBe('std::string');
+        expect(node.exprType).toBe('string');
         expect(node.dependencies).toHaveLength(1);
-        expect(node.dependencies[0].cppSignalName).toBe('sig_temp');
       });
     });
   });

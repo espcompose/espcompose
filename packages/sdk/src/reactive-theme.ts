@@ -14,7 +14,7 @@
 import { ReactiveNode, isTracking, trackDependency } from './reactive-node';
 import type { ExpressionDependency } from './reactive-node';
 import { getThemeRegistry } from './theme-registry';
-import { themeSignalName } from './theme-signals';
+import type { ExprType } from './ir/expr-types';
 
 // ── Node cache ─────────────────────────────────────────────────────────────
 // Shared cache keyed by signal path → ReactiveNode.
@@ -81,24 +81,20 @@ function getOrCreateLeafNode(
   if (!node) {
     const leaf = registry.getDefaultLeaf(path);
     const cppType = leaf?.cppType ?? 'int32_t';
-    const sigName = themeSignalName(path);
-
+    const exprType = cppToThemeExprType(cppType);
     const dep: ExpressionDependency = {
       sourceId: '__theme__',
       triggerType: '__theme__',
       sourceDomain: '__theme__',
       sourceType: 'theme',
-      cppSignalName: sigName,
-      cppType,
     };
 
     node = new ReactiveNode({
       kind: 'expression',
       dependencies: [dep],
-      cppExpression: `${sigName}.get()`,
-      cppSignalName: sigName,
-      cppType,
+      exprType,
     });
+    node.exprIR = { kind: 'theme_read', path, type: exprType };
     nodeCache.set(path, node);
   }
 
@@ -108,6 +104,15 @@ function getOrCreateLeafNode(
   }
 
   return node;
+}
+
+function cppToThemeExprType(cppType: string): ExprType {
+  if (cppType.includes('bool')) return 'bool';
+  if (cppType.includes('string') || cppType.includes('char')) return 'string';
+  if (cppType.includes('float') || cppType.includes('double')) return 'float';
+  if (cppType.includes('color') || cppType.includes('lv_color')) return 'color';
+  if (cppType.includes('font')) return 'font_ptr';
+  return 'int';
 }
 
 // ── useReactiveTheme hook ──────────────────────────────────────────────────

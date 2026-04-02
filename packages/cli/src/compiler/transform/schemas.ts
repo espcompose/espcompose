@@ -19,28 +19,29 @@ export const LibraryFormatHeaderSchema = z.object({
 
 // ── Reactive expression metadata ───────────────────────────────────────────
 
+/** ExprType enum values. */
+const ExprTypeSchema = z.enum(['int', 'float', 'string', 'bool', 'color', 'font_ptr']);
+
 /** Single dependency in a compiled reactive expression. */
 export const DependencyInfoSchema = z.object({
-  signalName: z.string(),
   sourceId: z.string(),
   triggerType: z.string(),
   sourceDomain: z.string(),
-  cppType: z.string(),
   sourceType: z.string().optional(),
 });
 
 /** Metadata for `_reactive.compiled()` calls. */
 export const CompiledReactiveSchema = z.object({
-  cpp: z.string(),
-  type: z.string(),
+  type: ExprTypeSchema,
   deps: z.array(DependencyInfoSchema),
+  expr: z.unknown(),
 });
 
 /** Metadata for `_reactive.slotted()` calls. */
 export const SlottedReactiveSchema = z.object({
-  cpp: z.string(),
-  type: z.string(),
+  type: ExprTypeSchema,
   slots: z.number().int().nonnegative(),
+  expr: z.unknown(),
 });
 
 // ── Action/script metadata ─────────────────────────────────────────────────

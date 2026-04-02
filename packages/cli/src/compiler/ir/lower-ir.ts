@@ -8,8 +8,7 @@
 // Later phases add IR transforms between buildIR and lowerIR.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { Scalar } from 'yaml';
-import { createLambdaScalar } from '@esphome/compose';
+import { LambdaMarker, QuotedMarker } from '@esphome/compose/internals';
 import type { IRRoot, IRValue, IRObject, IRArray } from './types.js';
 
 /**
@@ -22,14 +21,12 @@ export function irValueToConfig(node: IRValue): unknown {
 
     case 'scalar':
       if (node.quoted && typeof node.value === 'string') {
-        const s = new Scalar(node.value);
-        s.type = Scalar.QUOTE_SINGLE;
-        return s;
+        return new QuotedMarker(node.value);
       }
       return node.value;
 
     case 'lambda':
-      return createLambdaScalar(node.code);
+      return new LambdaMarker(node.code);
 
     case 'array':
       return (node as IRArray).items.map(irValueToConfig);
@@ -51,7 +48,7 @@ export function irValueToConfig(node: IRValue): unknown {
  * Lower an IR tree back to a plain config object.
  *
  * The result has the same shape as the original rendered config,
- * suitable for YAML serialization via toYAML().
+ * suitable for YAML serialization.
  */
 export function lowerIR(ir: IRRoot): Record<string, unknown> {
   const config: Record<string, unknown> = {};

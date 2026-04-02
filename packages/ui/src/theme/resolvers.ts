@@ -9,8 +9,8 @@
  * value is returned directly (no reactive overhead).
  */
 
-import { useReactiveTheme, isReactiveNode, useRawMemo } from '@esphome/compose';
-import type { ReactiveNode, Signal } from '@esphome/compose';
+import { useReactiveTheme, isReactiveNode, _reactive } from '@esphome/compose';
+import type { ReactiveNode, Signal, ExprNode } from '@esphome/compose';
 import type {
   SpacingToken,
   SizeToken,
@@ -112,25 +112,25 @@ export function resolveFont(def: {
     return `${def.fontFamily}_${def.fontSize}`;
   }
 
-  // Build C++ args for resolve_font(family, size) → const lv_font_t*
-  const famExpr = famReactive
-    ? `${(def.fontFamily as unknown as ReactiveNode<string>).cppSignalName}.get()`
-    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: famReactive is false
-    : `std::string("${def.fontFamily}")`;
-  const szExpr = szReactive
-    ? `${(def.fontSize as unknown as ReactiveNode<number>).cppSignalName}.get()`
-    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: szReactive is false
-    : `${def.fontSize}`;
-
   const deps = [
     ...(famReactive ? (def.fontFamily as unknown as ReactiveNode<string>).dependencies : []),
     ...(szReactive ? (def.fontSize as unknown as ReactiveNode<number>).dependencies : []),
   ];
 
-  return useRawMemo<string>({
-    cppExpression: `resolve_font(${famExpr}, ${szExpr})`,
-    cppReturnType: 'const lv_font_t*',
+  // Build ExprResolveFont IR node
+  const famIR: ExprNode = famReactive
+    ? (def.fontFamily as unknown as ReactiveNode<string>).exprIR ?? { kind: 'literal', value: '', type: 'string' }
+    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: famReactive is false
+    : { kind: 'literal', value: def.fontFamily as string, type: 'string' };
+  const szIR: ExprNode = szReactive
+    ? (def.fontSize as unknown as ReactiveNode<number>).exprIR ?? { kind: 'literal', value: 0, type: 'float' }
+    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: szReactive is false
+    : { kind: 'literal', value: def.fontSize as number, type: 'float' };
+
+  return _reactive.derivedMemo<string>({
+    exprType: 'font_ptr',
     dependencies: deps,
+    exprIR: { kind: 'resolve_font', family: famIR, size: szIR },
   });
 }
 

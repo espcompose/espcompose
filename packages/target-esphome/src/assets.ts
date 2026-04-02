@@ -49,7 +49,7 @@ function hashedName(absSource: string): string {
  * Walk the config tree, resolve relative file paths, copy assets, and rewrite
  * paths in-place.
  *
- * @param config     The rendered config object (snake_case keys, pre-toYAML).
+ * @param config     The rendered config object (snake_case keys, pre-serialization).
  * @param sourceDir  The directory of the original TSX entry file.
  * @param outDir     The build output directory (where esphome.yaml lives).
  * @returns          List of asset files that were copied.
