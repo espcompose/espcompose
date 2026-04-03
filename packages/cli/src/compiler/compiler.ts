@@ -360,7 +360,7 @@ function executeAndBuildIR(bundleFile: string): ExecuteResult {
       const leafData = new Map<string, { values: unknown[]; valueType: string }>();
       for (const path of signalPaths) {
         const values: unknown[] = [];
-        let valueType = 'int32_t';
+        let valueType = 'int';
         for (const name of themeNames) {
           const themes = registry.getThemes();
           const theme = themes.get(name);
