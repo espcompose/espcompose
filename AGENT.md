@@ -31,7 +31,7 @@ The compiler runs six phases to turn a `.tsx` source file into target output:
      reference reactive values (signals from Home Assistant entities or theme
      variables). Extracts each into an `ExprNode` (a target-agnostic expression
      IR), infers return type as an `ExprType`, identifies upstream dependencies,
-     and replaces the code with `_reactive.compiled({ type, deps, expr })`.
+     and replaces the code with `__espcompose.compiled({ type, deps, expr })`.
    - **Script Transformer** — Finds arrow functions on trigger props (e.g.
      `onPress`, `on_state`) and `useScript()` bodies, and compiles them into
      action tree IR — a structured representation of ESPHome actions (12 action

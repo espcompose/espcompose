@@ -9,7 +9,7 @@
  * value is returned directly (no reactive overhead).
  */
 
-import { useReactiveTheme, isReactiveNode, _reactive } from '@esphome/compose';
+import { useReactiveTheme, isReactiveNode, __espcompose } from '@esphome/compose';
 import type { ReactiveNode, Signal, ExprNode } from '@esphome/compose';
 import type {
   SpacingToken,
@@ -125,7 +125,7 @@ export function resolveFont(def: {
     // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: szReactive is false
     : { kind: 'literal', value: def.fontSize as number, type: 'float' };
 
-  return _reactive.derivedMemo<string>({
+  return __espcompose.derivedMemo<string>({
     exprType: 'font_ptr',
     dependencies: deps,
     exprIR: { kind: 'resolve_font', family: famIR, size: szIR },

@@ -120,7 +120,7 @@ export class ReactiveNode<T = unknown> {
    * falling back to type-based defaults.
    *
    * Not set for kind='expression' nodes (HA entity / theme leaf) or for
-   * _reactive.compiled() nodes (where the JS closure is the memo body).
+   * __espcompose.compiled() nodes (where the JS closure is the memo body).
    */
   jsClosure?: () => unknown;
 
@@ -135,7 +135,7 @@ export class ReactiveNode<T = unknown> {
   /**
    * Target-agnostic expression AST for this reactive node.
    *
-   * Set by the AST compiler (_reactive.compiled) when the expression is
+   * Set by the AST compiler (__espcompose.compiled) when the expression is
    * statically analyzed. Backends lower this to target code (C++ or JS).
    */
   exprIR?: ExprNode;

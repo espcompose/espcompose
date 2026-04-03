@@ -22,6 +22,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { Signal } from './reactive-node';
+import type { ExprType } from './ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Type-level reactive property interfaces
@@ -90,7 +91,7 @@ export interface ReactivePropertyConfig {
   /** Component domain for trigger registry lookup (e.g. `sensor`). */
   sourceDomain: string;
   /** Target-agnostic value type for the reactive runtime (e.g. `bool`, `float`, `string`). */
-  exprType: import('./ir/expr-types').ExprType;
+  exprType: ExprType;
 }
 
 export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {

@@ -58,7 +58,7 @@ The TypeScript AST is visited file-by-file. Two transformers run on each file:
 1. Extracts the expression AST into an **ExprNode** (a target-agnostic IR tree)
 2. Identifies upstream dependencies (which HA entities or theme paths are read)
 3. Infers the expression's return type as an **ExprType** (`'int'` | `'float'` | `'string'` | `'bool'` | `'color'` | `'font_ptr'`)
-4. Replaces the original code with a `_reactive.compiled({ type, deps, expr })` call carrying this pre-computed metadata
+4. Replaces the original code with a `__espcompose.compiled({ type, deps, expr })` call carrying this pre-computed metadata
 
 **Script Transformer** — Finds arrow functions on trigger props (e.g. `onPress`, `on_state`) and compiles them into **action trees** — a structured representation of imperative ESPHome actions like `delay`, `if-then-else`, `repeat`, service calls, and ref method invocations.
 
@@ -235,7 +235,7 @@ At consumer build time, the compiler validates that imported libraries match the
 
 The compiled format stores reactive metadata inline:
 ```js
-_reactive.compiled({ type: "string", deps: [...], expr: { kind: "ternary", ... } })
+__espcompose.compiled({ type: "string", deps: [...], expr: { kind: "ternary", ... } })
 ```
 
 ## Asset Pipeline

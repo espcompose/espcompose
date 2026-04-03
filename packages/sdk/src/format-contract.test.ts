@@ -13,7 +13,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { z } from 'zod';
 import { setCurrentHookPath } from './hooks/useState';
-import { _reactive, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './_reactive';
+import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
 import { ReactiveNode, isReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
 import { serializeValue } from './serialize';
@@ -114,14 +114,14 @@ describe('Library Format Contract (Consumer)', () => {
     });
   });
 
-  describe('_reactive.compiled() consumes schema-conforming metadata', () => {
+  describe('__espcompose.compiled() consumes schema-conforming metadata', () => {
     it('accepts valid compiled reactive metadata', () => {
       // Verify metadata matches schema
       expect(CompiledReactiveSchema.safeParse(VALID_COMPILED_META).success).toBe(true);
 
       // Verify SDK consumes it correctly
       withReactiveScope(() => {
-        const node = _reactive.compiled<string>(VALID_COMPILED_META);
+        const node = __espcompose.compiled<string>(VALID_COMPILED_META);
         expect(isReactiveNode(node)).toBe(true);
         expect(node.kind).toBe('memo');
         expect(node.dependencies).toHaveLength(1);
@@ -144,7 +144,7 @@ describe('Library Format Contract (Consumer)', () => {
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
 
       withReactiveScope(() => {
-        const node = _reactive.compiled<number>(meta);
+        const node = __espcompose.compiled<number>(meta);
         expect(node.dependencies).toHaveLength(2);
         expect(node.dependencies[0].sourceType).toBe('ha_entity');
         expect(node.dependencies[1].sourceType).toBe('theme');
@@ -156,13 +156,13 @@ describe('Library Format Contract (Consumer)', () => {
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
 
       withReactiveScope(() => {
-        const node = _reactive.compiled<number>(meta);
+        const node = __espcompose.compiled<number>(meta);
         expect(node.dependencies).toHaveLength(0);
       });
     });
   });
 
-  describe('_reactive.slotted() consumes schema-conforming metadata', () => {
+  describe('__espcompose.slotted() consumes schema-conforming metadata', () => {
     it('accepts valid slotted reactive metadata', () => {
       expect(SlottedReactiveSchema.safeParse(VALID_SLOTTED_META).success).toBe(true);
 
@@ -174,7 +174,7 @@ describe('Library Format Contract (Consumer)', () => {
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
-        const node = _reactive.slotted<number>(VALID_SLOTTED_META, signal);
+        const node = __espcompose.slotted<number>(VALID_SLOTTED_META, signal);
         expect(isReactiveNode(node)).toBe(true);
         expect(node.exprType).toBe('float');
         expect(node.dependencies).toHaveLength(1);
@@ -227,7 +227,7 @@ describe('Library Format Contract (Consumer)', () => {
       };
 
       withReactiveScope(() => {
-        const node = _reactive.compiled<string>(goldenMeta);
+        const node = __espcompose.compiled<string>(goldenMeta);
         expect(isReactiveNode(node)).toBe(true);
         expect(node.kind).toBe('memo');
         expect(node.exprType).toBe('string');
@@ -257,7 +257,7 @@ describe('Library Format Contract (Consumer)', () => {
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
-        const node = _reactive.slotted<string>(goldenMeta, signal);
+        const node = __espcompose.slotted<string>(goldenMeta, signal);
         expect(isReactiveNode(node)).toBe(true);
         expect(node.exprType).toBe('string');
         expect(node.dependencies).toHaveLength(1);

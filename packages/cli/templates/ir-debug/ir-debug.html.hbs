@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESPCompose IR Debug Viewer</title>
+<style>
+{{{css}}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ESPCompose Semantic IR</h1>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search keys and values…" autocomplete="off">
+    <button onclick="expandAll()">Expand All</button>
+    <button onclick="collapseAll()">Collapse All</button>
+  </div>
+</header>
+<div id="stats"></div>
+<div id="tree"></div>
+<script>
+const IR_DATA = {{{data}}};
+{{{js}}}
+</script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 // ────────────────────────────────────────────────────────────────────────────
-// _reactive — internal compiler plumbing for reactive data binding
+// __espcompose — internal compiler plumbing for reactive data binding
 //
-// This module is NOT part of the public API. The underscore prefix signals
-// that it is reserved for compiler-generated code.
+// This module is NOT part of the public API. The double-underscore prefix
+// signals that it is reserved for compiler-generated code.
 //
 // The CLI's reactive transformer emits calls to:
-//   _reactive.compiled()     — pre-computed C++ reactive nodes
-//   _reactive.slotted()      — slot-substituted reactive nodes
-//   _reactive.derivedMemo()  — explicit C++ memo construction
+//   __espcompose.compiled()     — pre-computed C++ reactive nodes
+//   __espcompose.slotted()      — slot-substituted reactive nodes
+//   __espcompose.derivedMemo()  — explicit C++ memo construction
 // ────────────────────────────────────────────────────────────────────────────
 
 import { ReactiveNode } from './reactive-node';
@@ -45,7 +45,7 @@ export function validateLibraryFormat(version: unknown): void {
   }
 }
 
-export const _reactive = {
+export const __espcompose = {
 
   /**
    * Create a ReactiveNode from pre-computed metadata.
@@ -105,7 +105,7 @@ export const _reactive = {
       allDeps.push(...sig.dependencies);
     }
 
-    const node = _reactive.derivedMemo<R>({
+    const node = __espcompose.derivedMemo<R>({
       exprType: meta.type,
       dependencies: allDeps,
       exprIR: resolveExprSlots(meta.expr, signals as ReactiveNode[]),

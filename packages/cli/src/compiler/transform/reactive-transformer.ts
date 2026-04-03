@@ -6,16 +6,16 @@
  *
  * Example transform (auto-detected):
  *   text={officeLight.isOn ? "Off" : "On"}
- *   → text={_reactive.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
+ *   → text={__espcompose.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
  *
  * Example transform (explicit useMemo):
  *   useMemo(() => officeLight.isOn ? "Off" : "On")
- *   → _reactive.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
+ *   → __espcompose.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
  *
  * Skipped cases:
  *   - Direct passthrough: officeLight.stateText (ReactiveNode handled by runtime)
  *   - Non-reactive: static values, literal expressions
- *   - useEffect, _reactive.derivedMemo (kept as runtime calls)
+ *   - useEffect, __espcompose.derivedMemo (kept as runtime calls)
  */
 
 import ts from 'typescript';
@@ -41,7 +41,7 @@ interface SourceEdit {
 
 /**
  * Transform a TypeScript source file: compile reactive JSX attribute
- * expressions and explicit useMemo() calls to _reactive.compiled() with
+ * expressions and explicit useMemo() calls to __espcompose.compiled() with
  * pre-computed C++ metadata.
  */
 export function transformReactiveExpressions(
@@ -61,7 +61,7 @@ export function transformReactiveExpressions(
 
   walkNode(sourceFile, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
 
-  // If transforms were applied, ensure '_reactive' is importable
+  // If transforms were applied, ensure '__espcompose' is importable
   if (transformCount > 0) {
     injectReactiveImportIfNeeded(sourceFile, edits);
   }
@@ -85,7 +85,7 @@ export function transformReactiveExpressions(
 
 /**
  * Check if an expression sub-tree contains any Signal<T>-typed nodes.
- * Does NOT recurse into arrow functions, function expressions, or _reactive.* calls.
+ * Does NOT recurse into arrow functions, function expressions, or __espcompose.* calls.
  */
 function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
@@ -96,7 +96,7 @@ function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
     const callee = node.expression;
     if (ts.isPropertyAccessExpression(callee) &&
         ts.isIdentifier(callee.expression) &&
-        (callee.expression.text === '_reactive' || callee.expression.text === 'device')) {
+        (callee.expression.text === '__espcompose' || callee.expression.text === 'device')) {
       return false;
     }
   }
@@ -131,7 +131,7 @@ function isMemoCall(expr: ts.Expression): expr is ts.CallExpression {
 }
 
 /**
- * Check if an expression is a _reactive.* or useEffect() call that should be skipped entirely.
+ * Check if an expression is a __espcompose.* or useEffect() call that should be skipped entirely.
  * useMemo is NOT in this list — it gets AST-compiled.
  */
 function isReactiveSkipCall(expr: ts.Expression): boolean {
@@ -143,7 +143,7 @@ function isReactiveSkipCall(expr: ts.Expression): boolean {
   if (ts.isIdentifier(callee) && (callee.text === 'resolveBindProp' || callee.text === 'reactiveIsNaN')) return true;
   if (ts.isPropertyAccessExpression(callee)) {
     const obj = callee.expression;
-    if (ts.isIdentifier(obj) && obj.text === '_reactive') {
+    if (ts.isIdentifier(obj) && obj.text === '__espcompose') {
       return true;
     }
   }
@@ -173,7 +173,7 @@ function serializeCompiledCall(exprType: string, deps: DependencyInfo[], exprIR:
     return `{${parts.join(',')}}`;
   });
 
-  return `_reactive.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(exprIR)}})`;
+  return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(exprIR)}})`;
 }
 
 function serializeSlottedCall(
@@ -182,7 +182,7 @@ function serializeSlottedCall(
   slotExprs: string[],
   exprIR: unknown,
 ): string {
-  return `_reactive.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(exprIR)}}, ${slotExprs.join(', ')}) as any`;
+  return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(exprIR)}}, ${slotExprs.join(', ')}) as any`;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ function processJsxAttributeExpression(
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
 ): void {
-  // Skip _reactive.* calls and useEffect() that shouldn't be transformed
+  // Skip __espcompose.* calls and useEffect() that shouldn't be transformed
   if (isReactiveSkipCall(expr)) return;
 
   // useMemo() in JSX — AST-compile it
@@ -282,7 +282,7 @@ function processJsxAttributeExpression(
   const end = expr.getEnd();
 
   if (irResult.slots && irResult.slots.length > 0) {
-    // Slots present — emit _reactive.slotted() with runtime signal arguments
+    // Slots present — emit __espcompose.slotted() with runtime signal arguments
     const slotExprs = irResult.slots.map(s => s.expr.getText(sourceFile));
     edits.push({
       position: start,
@@ -290,7 +290,7 @@ function processJsxAttributeExpression(
       text: serializeSlottedCall(irResult.exprType, irResult.slots.length, slotExprs, irResult.expr),
     });
   } else {
-    // Fully static — emit _reactive.compiled() with embedded deps
+    // Fully static — emit __espcompose.compiled() with embedded deps
     edits.push({
       position: start,
       deleteEnd: end,
@@ -303,7 +303,7 @@ function processJsxAttributeExpression(
 
 /**
  * Process an explicit useMemo(() => expr) call.
- * Extract the arrow body, AST-compile it, and replace with _reactive.compiled({...}).
+ * Extract the arrow body, AST-compile it, and replace with __espcompose.compiled({...}).
  */
 function processExplicitMemo(
   callExpr: ts.CallExpression,
@@ -404,7 +404,7 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
     if (moduleSpec.text !== '@esphome/compose') continue;
 
     // Skip type-only imports — `import type { ... }` is erased at runtime,
-    // so injecting `_reactive` there would leave it undefined at bundle time.
+    // so injecting `__espcompose` there would leave it undefined at bundle time.
     if (stmt.importClause?.isTypeOnly) continue;
 
     composeImportDecl = stmt;
@@ -412,7 +412,7 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
     const namedBindings = stmt.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
       for (const spec of namedBindings.elements) {
-        if (spec.name.text === '_reactive') {
+        if (spec.name.text === '__espcompose') {
           hasReactiveImport = true;
           break;
         }
@@ -428,7 +428,7 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
       const lastElement = namedBindings.elements[namedBindings.elements.length - 1];
       if (lastElement) {
         const insertPos = lastElement.getEnd();
-        edits.push({ position: insertPos, text: ', _reactive' });
+        edits.push({ position: insertPos, text: ', __espcompose' });
         return;
       }
     }
@@ -436,6 +436,6 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   edits.push({
     position: 0,
-    text: `import { _reactive } from '@esphome/compose';\n`,
+    text: `import { __espcompose } from '@esphome/compose';\n`,
   });
 }

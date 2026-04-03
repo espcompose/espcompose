@@ -26,12 +26,12 @@ import { LIBRARY_FORMAT_VERSION } from './format-version.js';
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 /**
- * Extract the metadata JSON object from a `_reactive.compiled({...})` string.
+ * Extract the metadata JSON object from a `__espcompose.compiled({...})` string.
  * The serializer emits unquoted object keys, so we need to add quotes for JSON.parse.
  */
 function extractCompiledMeta(code: string): unknown {
-  const match = code.match(/_reactive\.compiled\((\{.+\})\)/s);
-  if (!match) throw new Error(`No _reactive.compiled() found in: ${code}`);
+  const match = code.match(/__espcompose\.compiled\((\{.+\})\)/s);
+  if (!match) throw new Error(`No __espcompose.compiled() found in: ${code}`);
   // The serializer emits JS object literal syntax (unquoted keys).
   // Convert to valid JSON by quoting bare keys.
   const jsObj = match[1];
@@ -40,11 +40,11 @@ function extractCompiledMeta(code: string): unknown {
 }
 
 /**
- * Extract the metadata object from a `_reactive.slotted({...}, ...)` string.
+ * Extract the metadata object from a `__espcompose.slotted({...}, ...)` string.
  */
 function extractSlottedMeta(code: string): unknown {
-  const match = code.match(/_reactive\.slotted\((\{.+?\}),/s);
-  if (!match) throw new Error(`No _reactive.slotted() found in: ${code}`);
+  const match = code.match(/__espcompose\.slotted\((\{.+?\}),/s);
+  if (!match) throw new Error(`No __espcompose.slotted() found in: ${code}`);
   const jsObj = match[1];
   const json = jsObj.replace(/([{,])(\w+):/g, '$1"$2":');
   return JSON.parse(json);
@@ -69,11 +69,11 @@ function buildCompiledCallString(exprType: string, deps: Array<{
     }
     return `{${parts.join(',')}}`;
   });
-  return `_reactive.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(expr)}})`;
+  return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(expr)}})`;
 }
 
 function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'slot', slotIndex: 0 }): string {
-  return `_reactive.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(expr)}}, signal0) as any`;
+  return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(expr)}}, signal0) as any`;
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────

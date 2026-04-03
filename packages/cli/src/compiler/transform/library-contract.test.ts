@@ -45,12 +45,12 @@ function extractBalancedObject(source: string, startIndex: number): string | nul
 }
 
 /**
- * Extract all _reactive.compiled({...}) metadata objects from transformed source.
+ * Extract all __espcompose.compiled({...}) metadata objects from transformed source.
  * Returns parsed objects by quoting bare JS keys into valid JSON.
  */
 function extractCompiledCalls(source: string): unknown[] {
   const results: unknown[] = [];
-  const prefix = '_reactive.compiled(';
+  const prefix = '__espcompose.compiled(';
   let idx = 0;
   while ((idx = source.indexOf(prefix, idx)) !== -1) {
     const objStart = idx + prefix.length;
@@ -67,11 +67,11 @@ function extractCompiledCalls(source: string): unknown[] {
 }
 
 /**
- * Extract all _reactive.slotted({...}, ...) metadata objects from transformed source.
+ * Extract all __espcompose.slotted({...}, ...) metadata objects from transformed source.
  */
 function extractSlottedCalls(source: string): unknown[] {
   const results: unknown[] = [];
-  const prefix = '_reactive.slotted(';
+  const prefix = '__espcompose.slotted(';
   let idx = 0;
   while ((idx = source.indexOf(prefix, idx)) !== -1) {
     const objStart = idx + prefix.length;

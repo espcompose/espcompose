@@ -4,7 +4,7 @@
  * This version number is stamped into every compiled ESPCompose library
  * and checked by the consuming project's compiler / SDK at load time.
  * Bump this version whenever the compiled metadata protocol changes
- * (e.g. new fields in _reactive.compiled() deps, new __compiled* shapes,
+ * (e.g. new fields in __espcompose.compiled() deps, new __compiled* shapes,
  * structural changes to action tree serialization).
  *
  * Version history:

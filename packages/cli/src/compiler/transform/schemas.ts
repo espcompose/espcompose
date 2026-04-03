@@ -30,14 +30,14 @@ export const DependencyInfoSchema = z.object({
   sourceType: z.string().optional(),
 });
 
-/** Metadata for `_reactive.compiled()` calls. */
+/** Metadata for `__espcompose.compiled()` calls. */
 export const CompiledReactiveSchema = z.object({
   type: ExprTypeSchema,
   deps: z.array(DependencyInfoSchema),
   expr: z.unknown(),
 });
 
-/** Metadata for `_reactive.slotted()` calls. */
+/** Metadata for `__espcompose.slotted()` calls. */
 export const SlottedReactiveSchema = z.object({
   type: ExprTypeSchema,
   slots: z.number().int().nonnegative(),

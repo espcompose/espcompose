@@ -5,7 +5,7 @@
 // Must be called inside a function component body (render pass).
 //
 // In the normal build pipeline, the CLI's reactive transformer replaces
-// useMemo() calls with _reactive.compiled() before this code runs.
+// useMemo() calls with __espcompose.compiled() before this code runs.
 // This runtime fallback handles:
 //   - Pure computations (no reactive deps) — returns the value directly
 //   - Leftover reactive calls not caught by the compiler — creates
@@ -20,6 +20,7 @@ import {
   startTracking,
   stopTracking,
 } from '../reactive-node';
+import type { ExprType } from '../ir/expr-types';
 import { registerReactiveNode } from './useReactiveScope';
 import { assertHookContext } from './useState';
 
@@ -29,7 +30,7 @@ import { assertHookContext } from './useState';
  * Must be called inside a function component body (render pass).
  *
  * In the normal build pipeline, the CLI's reactive transformer replaces
- * useMemo() calls with _reactive.compiled() before this code runs.
+ * useMemo() calls with __espcompose.compiled() before this code runs.
  * This runtime fallback handles:
  *   - Pure computations (no reactive deps) — returns the value directly
  *   - Leftover reactive calls not caught by the compiler — creates
@@ -47,7 +48,7 @@ export function useMemo<T>(fn: () => T): T | ReactiveNode<T> {
   }
 
   // Infer ExprType from the JS value
-  let exprType: import('../ir/expr-types').ExprType | undefined;
+  let exprType: ExprType | undefined;
   if (typeof value === 'string') exprType = 'string';
   else if (typeof value === 'number') exprType = 'float';
   else if (typeof value === 'boolean') exprType = 'bool';

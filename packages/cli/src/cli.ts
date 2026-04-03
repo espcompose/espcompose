@@ -10,6 +10,7 @@ import {
   esphomeLogs,
   createEsphomeTarget,
 } from '@esphome/compose-target-esphome';
+import { createSimulatorTarget } from '@esphome/compose-target-simulator';
 import { initProject } from './init';
 import { transformLib, buildLibrary } from './transform-lib';
 
@@ -253,7 +254,6 @@ program
   .action(async (projectDir?: string, opts?: { width?: string; height?: string; debug?: boolean }) => {
     const resolvedDir = path.resolve(projectDir ?? '.');
     try {
-      const { createSimulatorTarget } = await import('@esphome/compose-target-simulator');
       const target = createSimulatorTarget({
         width: Number(opts?.width ?? 320),
         height: Number(opts?.height ?? 480),

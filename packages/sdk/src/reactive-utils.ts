@@ -8,7 +8,7 @@
 
 import { ReactiveNode, isReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
-import { _reactive } from './_reactive';
+import { __espcompose } from './__espcompose';
 
 // ── BindProp<T>: the reactive prop type alias ──────────────────────────────
 
@@ -50,7 +50,7 @@ export function resolveBindProp<T>(prop: BindProp<T>): T | ReactiveNode<T> {
  */
 export function reactiveIsNaN(node: ReactiveNode<number>): ReactiveNode<boolean> {
   const sourceIR = node.exprIR ?? { kind: 'literal' as const, value: 0, type: 'float' as const };
-  return _reactive.derivedMemo<boolean>({
+  return __espcompose.derivedMemo<boolean>({
     exprType: 'bool',
     dependencies: node.dependencies,
     exprIR: { kind: 'call', fn: 'is_nan', args: [sourceIR] },

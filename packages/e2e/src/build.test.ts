@@ -120,7 +120,7 @@ describe('ESPHome Compose Build', () => {
     const fakeLibDir = path.join(projectPath, 'node_modules', '@test', 'compiled-lib');
 
     // Create a fake pre-compiled library with __espcompose_format__ marker
-    // and _reactive.compiled() calls (as transform-lib would produce)
+    // and __espcompose.compiled() calls (as transform-lib would produce)
     fs.mkdirSync(fakeLibDir, { recursive: true });
     fs.writeFileSync(
       path.join(fakeLibDir, 'package.json'),
@@ -132,11 +132,11 @@ describe('ESPHome Compose Build', () => {
         '"use strict";',
         'const __espcompose_format__ = 2;',
         'exports.__espcompose_format__ = __espcompose_format__;',
-        'const { _reactive, useHAEntity } = require("@esphome/compose");',
+        'const { __espcompose, useHAEntity } = require("@esphome/compose");',
         'const { jsx } = require("@esphome/compose/jsx-runtime");',
         'function StatusSensor() {',
         '  const light = useHAEntity("light.office");',
-        '  const text = _reactive.compiled({',
+        '  const text = __espcompose.compiled({',
         '    type: "string",',
         '    deps: [{',
         '      sourceId: "ha_light_office",',

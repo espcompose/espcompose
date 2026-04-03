@@ -42,8 +42,8 @@ export { delay, logger } from './actions';
 // Public API — Reactive utilities
 // ────────────────────────────────────────────────────────────────────────────
 
-// _reactive — compiler-internal reactive plumbing (injected into user bundles by CLI)
-export { _reactive } from './_reactive';
+// __espcompose — compiler-internal reactive plumbing (injected into user bundles by CLI)
+export { __espcompose } from './__espcompose';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Theme

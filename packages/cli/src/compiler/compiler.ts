@@ -6,7 +6,7 @@ import ts from 'typescript';
 import { ESLint } from 'eslint';
 import { writeTransformedFiles } from './transform/index.js';
 import { LIBRARY_FORMAT_VERSION } from './transform/format-version.js';
-import type { SemanticIR, ComposeTarget, BuildSemanticIRInput } from '@esphome/compose/internals';
+import type { SemanticIR, ComposeTarget, BuildSemanticIRInput, IRThemeData } from '@esphome/compose/internals';
 import { buildSemanticIR } from '@esphome/compose/internals';
 import { writeIRDebugFiles } from './ir-debug.js';
 
@@ -105,7 +105,7 @@ async function typeCheck(entryFile: string): Promise<ts.Program> {
  * `typescript-eslint` recommended rules and JSX parser options.
  */
 async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
-  const composeESLint = (await import('@esphome/compose-eslint')).default;
+  const { default: composeESLint } = await import('@esphome/compose-eslint');
   return composeESLint.recommended as ESLint.Options['overrideConfig'];
 }
 
@@ -350,7 +350,7 @@ function executeAndBuildIR(bundleFile: string): ExecuteResult {
   const serializationCaptures = cjsSDK.stopSerializationCapture();
 
   // ── Extract theme data from the SDK registry ─────────────────────────────
-  let themeData: import('@esphome/compose/internals').IRThemeData | undefined;
+  let themeData: IRThemeData | undefined;
   const getThemeRegistry = cjsSDK.getThemeRegistry;
   if (typeof getThemeRegistry === 'function') {
     const registry = getThemeRegistry();

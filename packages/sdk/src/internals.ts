@@ -95,7 +95,7 @@ export { waitUntil } from './actions';
 // ── Reactive utilities ─────────────────────────────────────────────────────
 export type { ReactiveNodeKind, ExpressionDependency, ReactiveNodeConfig } from './reactive-node';
 export { resolveBindProp, reactiveIsNaN } from './reactive-utils';
-export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './_reactive';
+export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
 
 // ── Secrets ────────────────────────────────────────────────────────────────
 export { secret, SecretValue, isSecretValue } from './secret';

@@ -61,7 +61,7 @@ export interface ExprCompilerContext {
   /**
    * Slot tracking for unresolvable Signal<T> subexpressions.
    * Each slot maps to the original AST expression that will be passed
-   * as a runtime argument to _reactive.slotted().
+   * as a runtime argument to __espcompose.slotted().
    */
   slots: { expr: ts.Expression; slotIndex: number }[];
 }

@@ -1,7 +1,7 @@
 /**
  * Library contract fixture: reactive expressions.
  *
- * Exercises _reactive.compiled() and _reactive.slotted() transform paths.
+ * Exercises __espcompose.compiled() and __espcompose.slotted() transform paths.
  * Kept minimal — just enough to produce all reactive metadata shapes.
  */
 import { useHAEntity, useMemo } from '@esphome/compose';

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { setCurrentHookPath } from './hooks/useState';
-import { _reactive } from './_reactive';
+import { __espcompose } from './__espcompose';
 import { ReactiveNode, isReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
 
-describe('_reactive', () => {
+describe('__espcompose', () => {
   beforeEach(() => {
     setCurrentHookPath('test');
   });
@@ -13,10 +13,10 @@ describe('_reactive', () => {
     setCurrentHookPath(null);
   });
 
-  describe('_reactive.compiled()', () => {
+  describe('__espcompose.compiled()', () => {
     it('creates ReactiveNode from pre-computed metadata', () => {
       withReactiveScope(() => {
-        const result = _reactive.compiled<string>({
+        const result = __espcompose.compiled<string>({
           type: 'string',
           deps: [{
             sourceId: 'ha_light_office',
@@ -37,7 +37,7 @@ describe('_reactive', () => {
 
     it('creates ReactiveNode with multiple dependencies', () => {
       withReactiveScope(() => {
-        const result = _reactive.compiled<string>({
+        const result = __espcompose.compiled<string>({
           type: 'string',
           deps: [
             { sourceId: 'ha_light_office', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
@@ -52,7 +52,7 @@ describe('_reactive', () => {
     });
   });
 
-  describe('_reactive.slotted()', () => {
+  describe('__espcompose.slotted()', () => {
     it('resolves slots from signal arguments', () => {
       withReactiveScope(() => {
         const signal = new ReactiveNode({
@@ -62,7 +62,7 @@ describe('_reactive', () => {
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
-        const result = _reactive.slotted<number>(
+        const result = __espcompose.slotted<number>(
           { type: 'float', slots: 1, expr: { kind: 'slot', slotIndex: 0 } },
           signal,
         );
@@ -89,7 +89,7 @@ describe('_reactive', () => {
         });
         sigB.exprIR = { kind: 'signal_read', signalIndex: 1 };
 
-        const result = _reactive.slotted<string>(
+        const result = __espcompose.slotted<string>(
           {
             type: 'string',
             slots: 2,
@@ -123,7 +123,7 @@ describe('_reactive', () => {
         });
         sig2.exprIR = { kind: 'signal_read', signalIndex: 1 };
 
-        const result = _reactive.slotted<number>(
+        const result = __espcompose.slotted<number>(
           { type: 'float', slots: 2, expr: { kind: 'binary', op: '+', left: { kind: 'slot', slotIndex: 0 }, right: { kind: 'slot', slotIndex: 1 } } },
           sig1, sig2,
         );
@@ -133,10 +133,10 @@ describe('_reactive', () => {
     });
   });
 
-  describe('_reactive.derivedMemo()', () => {
+  describe('__espcompose.derivedMemo()', () => {
     it('creates derived memo with explicit expression IR', () => {
       withReactiveScope(() => {
-        const result = _reactive.derivedMemo<string>({
+        const result = __espcompose.derivedMemo<string>({
           exprType: 'font_ptr',
           dependencies: [
             { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },

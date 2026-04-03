@@ -7,7 +7,7 @@
  * rollup, etc.) then compiles the transformed sources into publishable JS.
  *
  * This enables third-party ESPCompose component libraries to ship with
- * pre-compiled `_reactive.compiled()` / `_reactive.slotted()` calls, so consumers
+ * pre-compiled `__espcompose.compiled()` / `__espcompose.slotted()` calls, so consumers
  * don't need the library's TypeScript source.
  */
 
