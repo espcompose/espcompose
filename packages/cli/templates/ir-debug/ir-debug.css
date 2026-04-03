@@ -15,6 +15,7 @@ button:hover { background: #585b70; }
 /* Tree nodes */
 .node { margin-left: 16px; }
 .node-row { display: flex; align-items: flex-start; padding: 1px 4px; border-radius: 3px; cursor: default; line-height: 1.5; }
+.node-row.expandable { cursor: pointer; }
 .node-row:hover { background: #313244; }
 .node-row.match { background: #45475a; }
 .toggle { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; color: #6c7086; user-select: none; margin-top: 1px; }

@@ -141,7 +141,8 @@ export { isTriggerVar } from './trigger-args';
 // ── Semantic IR ────────────────────────────────────────────────────────────
 export { buildSemanticIR, collectFromIR, collectReactiveNodes, collectBindings } from './ir/index';
 export type {
-  SemanticIR, BuildSemanticIRInput, IRThemeData, IRScriptDefinition,
+  SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
+  BuildSemanticIRInput, IRThemeData, IRScriptDefinition,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
   IRTreeCollected,

@@ -201,7 +201,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
  */
 function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext): Record<string, unknown> {
   const config: Record<string, unknown> = {};
-  for (const section of ir.sections) {
+  for (const section of ir.esphome.sections) {
     config[section.key] = irValueToYaml(section.value, ctx);
   }
   return config;
@@ -226,21 +226,21 @@ export function lowerToYamlConfig(
 ): Record<string, unknown> {
   // Use side-channel arrays as authoritative source for reactive data
   // (hook-registered nodes may not appear in the config tree)
-  const reactiveNodes = ir.reactiveNodes;
-  const bindings = ir.bindings;
+  const reactiveNodes = [...ir.espcompose.reactive.memos, ...ir.espcompose.reactive.effects];
+  const bindings = ir.espcompose.reactive.bindings;
 
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
   if (cppResult) {
     const entityComponentIds = new Map<string, string>();
-    for (const entity of ir.entities) {
+    for (const entity of ir.esphome.haEntities) {
       if (entity.entityId && entity.generatedId) {
         entityComponentIds.set(entity.entityId, entity.generatedId);
       }
     }
     const themeVarNames = new Map<string, string>();
-    if (ir.themes) {
-      for (const signalPath of ir.themes.leafData.keys()) {
+    if (ir.espcompose.themes) {
+      for (const signalPath of ir.espcompose.themes.leafData.keys()) {
         themeVarNames.set(signalPath, `thm_${signalPath}`);
       }
     }
@@ -269,15 +269,15 @@ export function lowerToYamlConfig(
     finalConfig = injectReactiveBindingsRuntime(
       loweredConfig,
       bindings,
-      ir.entities,
+      ir.esphome.haEntities,
       cppResult.runtimeConfig,
     );
   } else {
-    finalConfig = injectHASensorImports(loweredConfig, ir.entities);
+    finalConfig = injectHASensorImports(loweredConfig, ir.esphome.haEntities);
   }
 
-  if (ir.components.length > 0) {
-    for (const comp of ir.components) {
+  if (ir.esphome.components.length > 0) {
+    for (const comp of ir.esphome.components) {
       const section = comp.section;
       if (!finalConfig[section]) {
         finalConfig[section] = [];
@@ -286,8 +286,8 @@ export function lowerToYamlConfig(
     }
   }
 
-  if (ir.scripts.length > 0) {
-    finalConfig['script'] = ir.scripts.map((s) => ({
+  if (ir.esphome.scripts.length > 0) {
+    finalConfig['script'] = ir.esphome.scripts.map((s) => ({
       id: s.id,
       then: lowerActionTree(s.then),
     }));

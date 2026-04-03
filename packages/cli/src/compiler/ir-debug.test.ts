@@ -6,15 +6,22 @@ import * as os from 'os';
 import type { SemanticIR, ReactiveBinding } from '@esphome/compose/internals';
 import { ReactiveNode } from '@esphome/compose';
 
-function makeMinimalIR(overrides?: Partial<SemanticIR>): SemanticIR {
+function makeMinimalIR(overrides?: {
+  esphome?: Partial<SemanticIR['esphome']>;
+  espcompose?: Partial<SemanticIR['espcompose']>;
+}): SemanticIR {
   return {
-    sections: [],
-    bindings: [],
-    entities: [],
-    components: [],
-    scripts: [],
-    reactiveNodes: [],
-    ...overrides,
+    esphome: {
+      sections: [],
+      haEntities: [],
+      components: [],
+      scripts: [],
+      ...overrides?.esphome,
+    },
+    espcompose: {
+      reactive: { bindings: [], memos: [], effects: [] },
+      ...overrides?.espcompose,
+    },
   };
 }
 
@@ -22,10 +29,13 @@ describe('serializeIR', () => {
   it('handles an empty IR', () => {
     const ir = makeMinimalIR();
     const result = serializeIR(ir);
-    expect(result.sections).toEqual([]);
-    expect(result.bindings).toEqual([]);
-    expect(result.reactiveNodes).toEqual([]);
-    expect(result.themes).toBeUndefined();
+    const esphome = result.esphome as Record<string, unknown>;
+    const espcompose = result.espcompose as { reactive: Record<string, unknown[]>; themes?: unknown };
+    expect(esphome.sections).toEqual([]);
+    expect(espcompose.reactive.bindings).toEqual([]);
+    expect(espcompose.reactive.memos).toEqual([]);
+    expect(espcompose.reactive.effects).toEqual([]);
+    expect(espcompose.themes).toBeUndefined();
 
     // Should be JSON-stringifiable without error
     expect(() => JSON.stringify(result)).not.toThrow();
@@ -33,22 +43,25 @@ describe('serializeIR', () => {
 
   it('preserves scalar, object, array, and null IR nodes in sections', () => {
     const ir = makeMinimalIR({
-      sections: [
-        {
-          key: 'esphome',
-          value: {
-            kind: 'object',
-            entries: [
-              { key: 'name', value: { kind: 'scalar', value: 'my-device' } },
-              { key: 'items', value: { kind: 'array', items: [{ kind: 'scalar', value: 42 }, { kind: 'null' }] } },
-            ],
+      esphome: {
+        sections: [
+          {
+            key: 'esphome',
+            value: {
+              kind: 'object',
+              entries: [
+                { key: 'name', value: { kind: 'scalar', value: 'my-device' } },
+                { key: 'items', value: { kind: 'array', items: [{ kind: 'scalar', value: 42 }, { kind: 'null' }] } },
+              ],
+            },
           },
-        },
-      ],
+        ],
+      },
     });
     const result = serializeIR(ir);
-    expect(result.sections).toHaveLength(1);
-    const section = (result.sections as Array<{ key: string; value: unknown }>)[0];
+    const esphome = result.esphome as Record<string, unknown>;
+    expect((esphome.sections as unknown[]).length).toBe(1);
+    const section = (esphome.sections as Array<{ key: string; value: unknown }>)[0];
     expect(section.key).toBe('esphome');
     expect(JSON.stringify(result)).toContain('"my-device"');
     expect(JSON.stringify(result)).toContain('42');
@@ -61,9 +74,10 @@ describe('serializeIR', () => {
       exprType: 'string',
     });
 
-    const ir = makeMinimalIR({ reactiveNodes: [node] });
+    const ir = makeMinimalIR({ espcompose: { reactive: { bindings: [], memos: [node], effects: [] } } });
     const result = serializeIR(ir);
-    const serializedNode = (result.reactiveNodes as Record<string, unknown>[])[0];
+    const espcompose = result.espcompose as { reactive: { memos: Record<string, unknown>[] } };
+    const serializedNode = espcompose.reactive.memos[0];
 
     expect(serializedNode.kind).toBe('memo');
     expect(serializedNode.dependencies).toEqual(node.dependencies);
@@ -89,11 +103,11 @@ describe('serializeIR', () => {
     };
 
     const ir = makeMinimalIR({
-      reactiveNodes: [node],
-      bindings: [binding],
+      espcompose: { reactive: { bindings: [binding], memos: [node], effects: [] } },
     });
     const result = serializeIR(ir);
-    const serializedBinding = (result.bindings as Record<string, unknown>[])[0];
+    const espcompose = result.espcompose as { reactive: { bindings: Record<string, unknown>[] } };
+    const serializedBinding = espcompose.reactive.bindings[0];
     const expr = serializedBinding.expression as Record<string, unknown>;
     expect(expr.kind).toBe('expression');
     expect(expr).not.toHaveProperty('__reactive_node__');
@@ -107,15 +121,18 @@ describe('serializeIR', () => {
     leafData.set('spacing_md', { values: [8, 12], valueType: 'int' });
 
     const ir = makeMinimalIR({
-      themes: {
-        themeNames: ['default', 'dark'],
-        defaultIndex: 0,
-        leafData,
+      espcompose: {
+        themes: {
+          themeNames: ['default', 'dark'],
+          defaultIndex: 0,
+          leafData,
+        },
       },
     });
     const result = serializeIR(ir);
-    expect(result.themes).toBeDefined();
-    const themes = result.themes as Record<string, unknown>;
+    const espcompose = result.espcompose as { themes?: Record<string, unknown> };
+    expect(espcompose.themes).toBeDefined();
+    const themes = espcompose.themes as Record<string, unknown>;
     expect(themes.themeNames).toEqual(['default', 'dark']);
     expect(themes.defaultIndex).toBe(0);
 
@@ -139,9 +156,10 @@ describe('serializeIR', () => {
       alternate: { kind: 'literal', value: 'Off', type: 'string' },
     };
 
-    const ir = makeMinimalIR({ reactiveNodes: [node] });
+    const ir = makeMinimalIR({ espcompose: { reactive: { bindings: [], memos: [node], effects: [] } } });
     const result = serializeIR(ir);
-    const serializedNode = (result.reactiveNodes as Record<string, unknown>[])[0];
+    const espcompose2 = result.espcompose as { reactive: { memos: Record<string, unknown>[] } };
+    const serializedNode = espcompose2.reactive.memos[0];
     expect(serializedNode.exprIR).toBeDefined();
     expect((serializedNode.exprIR as Record<string, unknown>).kind).toBe('ternary');
 
@@ -150,16 +168,19 @@ describe('serializeIR', () => {
 
   it('preserves entities and components as-is', () => {
     const ir = makeMinimalIR({
-      entities: [
-        { entityId: 'light.office', domain: 'light', sensorType: 'binary_sensor' as const, generatedId: 'ha_light_office' },
-      ],
-      components: [
-        { section: 'image', id: 'img_logo', config: { file: 'logo.png', resize: '64x64' } },
-      ],
+      esphome: {
+        haEntities: [
+          { entityId: 'light.office', domain: 'light', sensorType: 'binary_sensor' as const, generatedId: 'ha_light_office' },
+        ],
+        components: [
+          { section: 'image', id: 'img_logo', config: { file: 'logo.png', resize: '64x64' } },
+        ],
+      },
     });
     const result = serializeIR(ir);
-    expect(result.entities).toHaveLength(1);
-    expect(result.components).toHaveLength(1);
+    const esphome = result.esphome as { haEntities: unknown[]; components: unknown[] };
+    expect(esphome.haEntities).toHaveLength(1);
+    expect(esphome.components).toHaveLength(1);
     expect(() => JSON.stringify(result)).not.toThrow();
   });
 });
@@ -169,9 +190,11 @@ describe('writeIRDebugFiles', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ir-debug-test-'));
     try {
       const ir = makeMinimalIR({
-        sections: [
-          { key: 'esphome', value: { kind: 'object', entries: [{ key: 'name', value: { kind: 'scalar', value: 'test' } }] } },
-        ],
+        esphome: {
+          sections: [
+            { key: 'esphome', value: { kind: 'object', entries: [{ key: 'name', value: { kind: 'scalar', value: 'test' } }] } },
+          ],
+        },
       });
 
       const htmlPath = writeIRDebugFiles(ir, tmpDir);
@@ -180,8 +203,9 @@ describe('writeIRDebugFiles', () => {
       const jsonPath = path.join(tmpDir, 'ir-debug.json');
       expect(fs.existsSync(jsonPath)).toBe(true);
       const json = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      expect(json.sections).toHaveLength(1);
-      expect(json.sections[0].key).toBe('esphome');
+      const jsonEsphome = json.esphome as { sections: Array<{ key: string }> };
+      expect(jsonEsphome.sections).toHaveLength(1);
+      expect(jsonEsphome.sections[0].key).toBe('esphome');
 
       // HTML file
       expect(fs.existsSync(htmlPath)).toBe(true);

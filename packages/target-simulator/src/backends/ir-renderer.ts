@@ -618,12 +618,12 @@ export function lowerToSimulator(
   };
 
   // Register all HA entities from the IR so the MockProvider has them
-  for (const entity of ir.entities) {
+  for (const entity of ir.esphome.haEntities) {
     provider.ensureEntity(entity.entityId);
   }
 
   // Find the LVGL section
-  const lvglSection = ir.sections.find(s => s.key === 'lvgl');
+  const lvglSection = ir.esphome.sections.find(s => s.key === 'lvgl');
   if (!lvglSection) return [];
 
   return buildLvglNodesFromIR(lvglSection.value, ctx);

@@ -278,12 +278,19 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
   );
 
   return {
-    sections,
-    bindings: input.bindings,
-    entities: input.entities,
-    components: input.components,
-    scripts: input.scripts,
-    reactiveNodes: input.reactiveNodes,
-    themes: input.themes,
+    esphome: {
+      sections,
+      haEntities: input.entities,
+      components: input.components,
+      scripts: input.scripts,
+    },
+    espcompose: {
+      reactive: {
+        bindings: input.bindings,
+        memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
+        effects: input.reactiveNodes.filter(n => n.kind === 'effect'),
+      },
+      themes: input.themes,
+    },
   };
 }

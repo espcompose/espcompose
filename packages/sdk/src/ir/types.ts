@@ -39,6 +39,55 @@ export interface IRThemeData {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
+ * ESPHome-targeted data: config tree, HA entities, components, and scripts.
+ * All of this becomes ESPHome YAML or injected YAML sections.
+ */
+export interface IRESPHomeData {
+  /** Top-level config sections (esphome:, wifi:, lvgl:, sensor:, etc.) */
+  sections: IRSection[];
+
+  /** HA entity registrations for auto-generated sensor imports */
+  haEntities: HAEntityRegistration[];
+
+  /** Component registrations (images, fonts) for injection */
+  components: ComponentRegistration[];
+
+  /** Named script definitions from useScript() */
+  scripts: IRScriptDefinition[];
+}
+
+/**
+ * Reactive side-channel data: bindings, memos, and effects.
+ * Memos are derived values (useMemo / __espcompose.compiled).
+ * Effects are side-effects (useEffect) that generate C++ on_state triggers.
+ *
+ * These are the authoritative sources for reactive data — hook-registered
+ * nodes may not appear in the config tree.
+ */
+export interface IRReactiveData {
+  /** Reactive bindings linking memo/effect nodes to widget props */
+  bindings: ReactiveBinding[];
+
+  /** Memo nodes (kind === 'memo') registered during the render pass */
+  memos: ReactiveNode[];
+
+  /** Effect nodes (kind === 'effect') registered during the render pass */
+  effects: ReactiveNode[];
+}
+
+/**
+ * ESPCompose-owned data: the reactive runtime and theme system.
+ * This drives C++ header generation and is target-agnostic.
+ */
+export interface IRESPComposeData {
+  /** Reactive bindings, memos, and effects */
+  reactive: IRReactiveData;
+
+  /** Theme data from the theme registry (undefined if no themes) */
+  themes?: IRThemeData;
+}
+
+/**
  * The complete semantic IR for a device project.
  *
  * This is the central contract between the compiler frontend (TSX → IR) and
@@ -49,34 +98,13 @@ export interface IRThemeData {
  * The config tree contains semantic value nodes (IRReactive, IRRef, etc.)
  * that preserve pre-serialization data. Use collectFromIR() to extract
  * reactive nodes and bindings from the tree.
- *
- * Side-channel arrays carry data registered via hooks during the render
- * pass. Some of this data may NOT be embedded in the config tree (e.g.,
- * reactive nodes created by hooks but not used as JSX props). Backends
- * should use these arrays as the authoritative source for reactive nodes
- * and bindings rather than relying solely on tree walking.
  */
 export interface SemanticIR {
-  /** Top-level config sections (esphome:, wifi:, lvgl:, sensor:, etc.) */
-  sections: IRSection[];
+  /** ESPHome-targeted sections, HA entities, components, and scripts */
+  esphome: IRESPHomeData;
 
-  /** Reactive bindings registered via hooks during the render pass */
-  bindings: ReactiveBinding[];
-
-  /** HA entity registrations for auto-generated sensor imports */
-  entities: HAEntityRegistration[];
-
-  /** Component registrations (images, fonts) for injection */
-  components: ComponentRegistration[];
-
-  /** Named script definitions from useScript() */
-  scripts: IRScriptDefinition[];
-
-  /** Reactive nodes registered via hooks during the render pass */
-  reactiveNodes: ReactiveNode[];
-
-  /** Theme data from the theme registry (undefined if no themes) */
-  themes?: IRThemeData;
+  /** ESPCompose reactive runtime and theme data */
+  espcompose: IRESPComposeData;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

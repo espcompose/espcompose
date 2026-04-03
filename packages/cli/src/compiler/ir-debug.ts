@@ -27,22 +27,29 @@ import type { SemanticIR } from '@esphome/compose/internals';
  */
 export function serializeIR(ir: SemanticIR): Record<string, unknown> {
   return {
-    sections: ir.sections,
-    bindings: ir.bindings.map(b => ({
-      ...b,
-      expression: sanitizeReactiveNode(b.expression),
-    })),
-    entities: ir.entities,
-    components: ir.components,
-    scripts: ir.scripts,
-    reactiveNodes: ir.reactiveNodes.map(sanitizeReactiveNode),
-    themes: ir.themes
-      ? {
-          themeNames: ir.themes.themeNames,
-          defaultIndex: ir.themes.defaultIndex,
-          leafData: Object.fromEntries(ir.themes.leafData),
-        }
-      : undefined,
+    esphome: {
+      sections: ir.esphome.sections,
+      haEntities: ir.esphome.haEntities,
+      components: ir.esphome.components,
+      scripts: ir.esphome.scripts,
+    },
+    espcompose: {
+      reactive: {
+        bindings: ir.espcompose.reactive.bindings.map(b => ({
+          ...b,
+          expression: sanitizeReactiveNode(b.expression),
+        })),
+        memos: ir.espcompose.reactive.memos.map(sanitizeReactiveNode),
+        effects: ir.espcompose.reactive.effects.map(sanitizeReactiveNode),
+      },
+      themes: ir.espcompose.themes
+        ? {
+            themeNames: ir.espcompose.themes.themeNames,
+            defaultIndex: ir.espcompose.themes.defaultIndex,
+            leafData: Object.fromEntries(ir.espcompose.themes.leafData),
+          }
+        : undefined,
+    },
   };
 }
 

@@ -4,6 +4,9 @@
 
 export type {
   SemanticIR,
+  IRESPHomeData,
+  IRESPComposeData,
+  IRReactiveData,
   IRSection,
   IRValue,
   IRScalar,

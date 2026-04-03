@@ -396,7 +396,7 @@ function executeAndBuildIR(bundleFile: string): ExecuteResult {
         reactiveNodes: reactiveNodes ?? [],
         themes: themeData,
       })
-    : { sections: [], bindings: [], entities: [], components: [], scripts: [], reactiveNodes: [] };
+    : { esphome: { sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { reactive: { bindings: [], memos: [], effects: [] } } };
 
   return { ir };
 }

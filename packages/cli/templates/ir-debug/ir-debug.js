@@ -1,19 +1,8 @@
 (function() {
-  // ── Stats ──────────────────────────────────────────────────────────────
-  const stats = document.getElementById('stats');
   const data = IR_DATA;
-  const pairs = [
-    ['Sections', (data.sections || []).length],
-    ['Bindings', (data.bindings || []).length],
-    ['Reactive Nodes', (data.reactiveNodes || []).length],
-    ['Entities', (data.entities || []).length],
-    ['Components', (data.components || []).length],
-    ['Scripts', (data.scripts || []).length],
-    ['Themes', data.themes ? data.themes.themeNames.length : 0],
-  ];
-  stats.innerHTML = pairs.map(function(p) {
-    return '<span class="stat"><span>' + p[0] + '</span> <span class="stat-val">' + p[1] + '</span></span>';
-  }).join('');
+  const esphome = data.esphome || {};
+  const espcompose = data.espcompose || {};
+  const reactive = espcompose.reactive || {};
 
   // ── Tree renderer ──────────────────────────────────────────────────────
   var treeEl = document.getElementById('tree');
@@ -70,6 +59,8 @@
     } else if (isComplex) {
       expandable = true;
     }
+
+    if (expandable) row.classList.add('expandable');
 
     var toggle = document.createElement('span');
     toggle.className = 'toggle ' + (expandable ? 'collapsed' : 'leaf');
@@ -148,7 +139,7 @@
 
       wrap.appendChild(children);
 
-      toggle.addEventListener('click', function() {
+      row.addEventListener('click', function() {
         var isCollapsed = toggle.classList.contains('collapsed');
         toggle.className = 'toggle ' + (isCollapsed ? 'expanded' : 'collapsed');
         children.className = 'children' + (isCollapsed ? '' : ' hidden');
@@ -162,29 +153,52 @@
   function renderTree() {
     treeEl.innerHTML = '';
 
-    // Sections
-    if (data.sections && data.sections.length) {
-      var sectionsWrap = buildNode('sections', data.sections, 0);
-      // Replace the generic treatment: render each section with its key
-      treeEl.appendChild(buildTopGroup('sections', 'section', data.sections, function(s) { return s.key; }, function(s) { return s.value; }));
+    // esphome group
+    var esphomeChildren = [];
+    if (esphome.sections && esphome.sections.length) {
+      esphomeChildren.push(buildTopGroup('sections', 1, esphome.sections, function(s) { return s.key; }, function(s) { return s.value; }));
     }
-
-    ['bindings', 'reactiveNodes', 'entities', 'components', 'scripts'].forEach(function(field) {
-      if (data[field] && data[field].length) {
-        treeEl.appendChild(buildTopGroup(field, field === 'reactiveNodes' ? 'reactiveNode' : field.replace(/s$/, ''), data[field], null, null));
+    ['haEntities', 'components', 'scripts'].forEach(function(field) {
+      if (esphome[field] && esphome[field].length) {
+        esphomeChildren.push(buildTopGroup(field, 1, esphome[field], null, null));
       }
     });
+    if (esphomeChildren.length) {
+      treeEl.appendChild(buildGroup('esphome', 0, esphomeChildren));
+    }
 
-    if (data.themes) {
-      treeEl.appendChild(buildNode('themes', data.themes, 0));
+    // espcompose group
+    var espcomposeChildren = [];
+
+    var reactiveChildren = [];
+    if (reactive.bindings && reactive.bindings.length) {
+      reactiveChildren.push(buildTopGroup('bindings', 2, reactive.bindings, null, null));
+    }
+    if (reactive.memos && reactive.memos.length) {
+      reactiveChildren.push(buildTopGroup('memos', 2, reactive.memos, null, null));
+    }
+    if (reactive.effects && reactive.effects.length) {
+      reactiveChildren.push(buildTopGroup('effects', 2, reactive.effects, null, null));
+    }
+    if (reactiveChildren.length) {
+      espcomposeChildren.push(buildGroup('reactive', 1, reactiveChildren));
+    }
+
+    if (espcompose.themes) {
+      espcomposeChildren.push(buildNode('themes', espcompose.themes, 1));
+    }
+
+    if (espcomposeChildren.length) {
+      treeEl.appendChild(buildGroup('espcompose', 0, espcomposeChildren));
     }
   }
 
-  function buildTopGroup(label, kindClass, items, keyFn, valFn) {
+  function buildGroup(label, depth, childEls) {
     var wrap = document.createElement('div');
     wrap.className = 'node';
     var row = document.createElement('div');
-    row.className = 'node-row';
+    row.className = 'node-row expandable';
+    row.dataset.depth = depth;
 
     var toggle = document.createElement('span');
     toggle.className = 'toggle collapsed';
@@ -195,6 +209,38 @@
     keyEl.textContent = label;
     row.appendChild(keyEl);
 
+    wrap.appendChild(row);
+
+    var children = document.createElement('div');
+    children.className = 'children hidden';
+    childEls.forEach(function(el) { children.appendChild(el); });
+    wrap.appendChild(children);
+
+    row.addEventListener('click', function() {
+      var isCollapsed = toggle.classList.contains('collapsed');
+      toggle.className = 'toggle ' + (isCollapsed ? 'expanded' : 'collapsed');
+      children.className = 'children' + (isCollapsed ? '' : ' hidden');
+    });
+
+    return wrap;
+  }
+
+  function buildTopGroup(label, depth, items, keyFn, valFn) {
+    var wrap = document.createElement('div');
+    wrap.className = 'node';
+    var row = document.createElement('div');
+    row.className = 'node-row expandable';
+
+    var toggle = document.createElement('span');
+    toggle.className = 'toggle collapsed';
+    row.appendChild(toggle);
+
+    var keyEl = document.createElement('span');
+    keyEl.className = 'key';
+    keyEl.textContent = label;
+    row.appendChild(keyEl);
+
+    row.dataset.depth = depth;
     row.insertAdjacentHTML('beforeend', '<span class="count">(' + items.length + ')</span>');
     wrap.appendChild(row);
 
@@ -204,12 +250,12 @@
     items.forEach(function(item, i) {
       var k = keyFn ? keyFn(item) : '[' + i + ']';
       var v = valFn ? valFn(item) : item;
-      children.appendChild(buildNode(k, v, 1));
+      children.appendChild(buildNode(k, v, depth + 1));
     });
 
     wrap.appendChild(children);
 
-    toggle.addEventListener('click', function() {
+    row.addEventListener('click', function() {
       var isCollapsed = toggle.classList.contains('collapsed');
       toggle.className = 'toggle ' + (isCollapsed ? 'expanded' : 'collapsed');
       children.className = 'children' + (isCollapsed ? '' : ' hidden');

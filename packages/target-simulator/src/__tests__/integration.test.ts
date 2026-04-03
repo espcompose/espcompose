@@ -288,12 +288,8 @@ function irArray(items: IRValue[]): IRValue {
 
 function makeEmptyIR(sections: IRSection[]): SemanticIR {
   return {
-    sections,
-    bindings: [],
-    entities: [],
-    components: [],
-    scripts: [],
-    reactiveNodes: [],
+    esphome: { sections, haEntities: [], components: [], scripts: [] },
+    espcompose: { reactive: { bindings: [], memos: [], effects: [] } },
   };
 }
 
@@ -561,21 +557,22 @@ describe('IR-based simulator renderer', () => {
 
   it('registers entities from IR', () => {
     const ir: SemanticIR = {
-      sections: [
-        {
-          key: 'lvgl',
-          value: irObject([
-            { key: 'pages', value: irArray([irObject([{ key: 'widgets', value: irArray([]) }])]) },
-          ]),
-        },
-      ],
-      entities: [
-        { entityId: 'light.kitchen', domain: 'light', sensorType: 'binary_sensor', generatedId: 'ha_light_kitchen' },
-      ],
-      components: [],
-      scripts: [],
-      bindings: [],
-      reactiveNodes: [],
+      esphome: {
+        sections: [
+          {
+            key: 'lvgl',
+            value: irObject([
+              { key: 'pages', value: irArray([irObject([{ key: 'widgets', value: irArray([]) }])]) },
+            ]),
+          },
+        ],
+        haEntities: [
+          { entityId: 'light.kitchen', domain: 'light', sensorType: 'binary_sensor', generatedId: 'ha_light_kitchen' },
+        ],
+        components: [],
+        scripts: [],
+      },
+      espcompose: { reactive: { bindings: [], memos: [], effects: [] } },
     };
 
     const provider = new MockProvider();

@@ -74,7 +74,7 @@ export function collectFromIR(ir: SemanticIR): IRTreeCollected {
     triggerVars: [],
   };
 
-  for (const section of ir.sections) {
+  for (const section of ir.esphome.sections) {
     walkValue(section.value, collected);
   }
 

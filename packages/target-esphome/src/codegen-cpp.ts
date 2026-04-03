@@ -28,17 +28,19 @@ export interface CppBackendResult {
  * no themes).
  */
 export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
-  const hasReactiveContent = ir.bindings.length > 0
-    || ir.reactiveNodes.length > 0
-    || (ir.themes != null);
+  const { reactive, themes } = ir.espcompose;
+  const hasReactiveContent = reactive.bindings.length > 0
+    || reactive.memos.length > 0
+    || reactive.effects.length > 0
+    || (themes != null);
 
   if (!hasReactiveContent) return null;
 
   const runtimeConfig = buildRuntimeConfig(
-    ir.reactiveNodes,
-    ir.bindings,
-    ir.entities,
-    ir.themes,
+    [...reactive.memos, ...reactive.effects],
+    reactive.bindings,
+    ir.esphome.haEntities,
+    themes,
     [],
   );
 
