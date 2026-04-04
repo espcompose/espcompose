@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmlguy74/espcompose.git",
+    "url": "git+https://github.com/espcompose/espcompose.git",
     "directory": "packages/eslint"
   },
   "engines": {
