@@ -136,9 +136,9 @@ export function writeIRDebugFiles(ir: SemanticIR, buildDir: string): string {
 function generateHTML(irJson: string): string {
   // Locate the pre-built single-file viewer HTML. In the compiled bundle
   // __dirname is dist/ (one level from package root); under vitest it is
-  // src/compiler/ (two levels from package root). Try production path first.
+  // src/compiler/phases/emit/ (four levels from package root). Try production path first.
   const prodPath = path.resolve(__dirname, '..', 'assets', 'ir-viewer-dist', 'index.html');
-  const devPath  = path.resolve(__dirname, '..', '..', 'assets', 'ir-viewer-dist', 'index.html');
+  const devPath  = path.resolve(__dirname, '..', '..', '..', '..', 'assets', 'ir-viewer-dist', 'index.html');
   const templatePath = fs.existsSync(prodPath) ? prodPath : devPath;
   const template = fs.readFileSync(templatePath, 'utf8');
 
@@ -152,4 +152,3 @@ function generateHTML(irJson: string): string {
   const injection = `<script>window.__IR_DATA = ${safeJson};</script>`;
   return template.replace('</body>', `${injection}\n</body>`);
 }
-

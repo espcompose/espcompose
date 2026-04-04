@@ -46,7 +46,11 @@ export function initProject(name: string, options: InitOptions = {}): void {
   fs.mkdirSync(targetDir, { recursive: true });
 
   const variant = isLibrary ? 'library' : 'device';
-  const templateDir = path.resolve(__dirname, '..', 'templates', variant);
+  // In the compiled bundle __dirname is dist/ (one level from package root);
+  // under vitest it is src/commands/init/ (three levels from package root).
+  const prodPath = path.resolve(__dirname, '..', 'templates', variant);
+  const devPath  = path.resolve(__dirname, '..', '..', '..', 'templates', variant);
+  const templateDir = fs.existsSync(prodPath) ? prodPath : devPath;
   const context = { name, board };
 
   for (const relPath of walkDir(templateDir)) {

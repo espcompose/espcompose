@@ -1,6 +1,6 @@
 import * as path from 'path';
 import type { Command } from 'commander';
-import { withErrorHandler } from '../utils';
+import { withErrorHandler, logWarn } from '../utils';
 
 export function registerLibraryCommand(program: Command) {
   program
@@ -14,7 +14,7 @@ export function registerLibraryCommand(program: Command) {
     .option('--outDir <dir>', 'Output directory relative to rootDir', 'dist')
     .option('--tsconfig <file>', 'Path to tsconfig.json (default: auto-detect)')
     .action(withErrorHandler('Library build', async (rootDir?: string, opts?: { entry?: string; outDir?: string; tsconfig?: string }) => {
-      const { buildLibrary } = await import('../transform-lib');
+      const { buildLibrary } = await import('../compiler/library');
       const resolvedRoot = path.resolve(rootDir ?? '.');
       console.log(`Building library in ${resolvedRoot}`);
       const result = await buildLibrary({
@@ -29,7 +29,7 @@ export function registerLibraryCommand(program: Command) {
       if (t.diagnostics.length > 0) {
         for (const d of t.diagnostics) {
           const loc = d.file && d.line ? `${path.relative(process.cwd(), d.file)}:${d.line}` : 'unknown';
-          console.warn(`  ⚠ ${loc} — ${d.message}`);
+          logWarn(`  ⚠ ${loc} — ${d.message}`);
         }
       }
     }));

@@ -1,5 +1,5 @@
-import { writeIRDebugFiles } from '../ir-debug.js';
-import type { PhaseContext } from './types';
+import { writeIRDebugFiles } from './ir-debug.js';
+import type { PhaseContext } from '../types';
 
 /**
  * Emit phase: Lower IR to target-specific output.

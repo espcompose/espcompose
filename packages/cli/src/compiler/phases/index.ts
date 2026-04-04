@@ -5,5 +5,6 @@ export { lintPhase } from './lint';
 export { transformPhase } from './transform';
 export { bundlePhase } from './bundle';
 export { executePhase } from './execute';
-export { emitPhase } from './emit';
+export { validatePhase } from './validate';
+export { emitPhase } from './emit/index';
 export { teardownPhase } from './teardown';

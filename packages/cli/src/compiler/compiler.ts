@@ -8,6 +8,7 @@ import { lintPhase } from './phases/lint';
 import { transformPhase } from './phases/transform';
 import { bundlePhase } from './phases/bundle';
 import { executePhase } from './phases/execute';
+import { validatePhase } from './phases/validate';
 import { emitPhase } from './phases/emit';
 import { teardownPhase } from './phases/teardown';
 
@@ -36,6 +37,7 @@ const compilePipeline: Phase[] = [
   transformPhase,
   bundlePhase,
   executePhase,
+  validatePhase,
   emitPhase,
   teardownPhase,
 ];
@@ -48,6 +50,7 @@ const irPipeline: Phase[] = [
   transformPhase,
   bundlePhase,
   executePhase,
+  validatePhase,
   teardownPhase,
 ];
 

@@ -1,4 +1,4 @@
-export { registerInitCommand } from './init';
+export { registerInitCommand } from './init/index';
 export { registerTranspileCommand } from './transpile';
 export { registerConfigCommand } from './config';
 export { registerCompileCommand } from './compile';

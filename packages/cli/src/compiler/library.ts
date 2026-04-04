@@ -15,10 +15,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import ts from 'typescript';
 import * as esbuild from 'esbuild';
-import { transformReactiveExpressions } from './compiler/transform/reactive-transformer.js';
-import { transformScriptFile } from './compiler/transform/script-transformer.js';
-import type { TransformDiagnostic } from './compiler/transform/index.js';
-import { LIBRARY_FORMAT_VERSION, FORMAT_VERSION_EXPORT } from './compiler/transform/format-version.js';
+import { transformReactiveExpressions } from './transform/reactive-transformer.js';
+import { transformScriptFile } from './transform/script-transformer.js';
+import type { TransformDiagnostic } from './transform/index.js';
+import { LIBRARY_FORMAT_VERSION, FORMAT_VERSION_EXPORT } from './transform/format-version.js';
 
 export interface TransformLibOptions {
   /** Absolute path to the library entry file (e.g. src/index.ts). */

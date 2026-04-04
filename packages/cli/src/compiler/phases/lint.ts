@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ESLint } from 'eslint';
+import { logError } from '../../utils/log.js';
 import type { PhaseContext } from './types';
 
 /**
@@ -55,7 +56,7 @@ export async function lintPhase(ctx: PhaseContext): Promise<void> {
     const formatter = await eslint.loadFormatter('stylish');
     const output = await formatter.format(results);
     if (output) {
-      console.error(output);
+      logError(output);
     }
   }
 

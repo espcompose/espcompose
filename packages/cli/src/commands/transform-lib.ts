@@ -1,6 +1,6 @@
 import * as path from 'path';
 import type { Command } from 'commander';
-import { withErrorHandler } from '../utils';
+import { withErrorHandler, logWarn } from '../utils';
 
 export function registerTransformLibCommand(program: Command) {
   program
@@ -16,7 +16,7 @@ export function registerTransformLibCommand(program: Command) {
     .option('--outDir <dir>', 'Output directory for transformed sources', '.espcompose-build')
     .option('--tsconfig <file>', 'Path to tsconfig.json (default: auto-detect)')
     .action(withErrorHandler('Transform', async (srcDir?: string, opts?: { entry?: string; outDir?: string; tsconfig?: string }) => {
-      const { transformLib } = await import('../transform-lib');
+      const { transformLib } = await import('../compiler/library');
       const resolvedSrcDir = path.resolve(srcDir ?? '.');
       const entryFile = path.resolve(resolvedSrcDir, opts?.entry ?? 'src/index.ts');
       const sourceDir = path.dirname(entryFile);
@@ -29,7 +29,7 @@ export function registerTransformLibCommand(program: Command) {
       if (result.diagnostics.length > 0) {
         for (const d of result.diagnostics) {
           const loc = d.file && d.line ? `${path.relative(process.cwd(), d.file)}:${d.line}` : 'unknown';
-          console.warn(`  ⚠ ${loc} — ${d.message}`);
+          logWarn(`  ⚠ ${loc} — ${d.message}`);
         }
       }
     }));
