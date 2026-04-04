@@ -11,8 +11,8 @@
  * </ThemeProvider>
  */
 
-import type { EspComposeElement } from '@esphome/compose';
-import { registerTheme, getThemeRegistry, createElement, Fragment } from '@esphome/compose';
+import type { EspComposeElement } from '@espcompose/core';
+import { registerTheme, getThemeRegistry, createElement, Fragment } from '@espcompose/core';
 import type { Theme } from './types';
 
 interface ThemeProviderProps {

@@ -3,7 +3,7 @@
  * Action type codegen — generates typed action method interfaces from
  * schema-extracted action data, grouped by target C++ class.
  *
- * Output: packages/sdk/src/generated/actions.ts
+ * Output: packages/core/src/generated/actions.ts
  *
  * Produces:
  *   - Per-class param interfaces (e.g. LightState_TurnOnParams)

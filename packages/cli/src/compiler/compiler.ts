@@ -5,18 +5,20 @@ import { createRequire } from 'module';
 import ts from 'typescript';
 import { ESLint } from 'eslint';
 import { writeTransformedFiles } from './transform/index.js';
-import { injectHASensorImports } from './reactive-injector.js';
-import { buildIR, lowerIR } from './ir/index.js';
-import { generateBindingsHeader, getRuntimeHeaderContent } from './reactive-runtime/codegen.js';
-import { buildRuntimeConfig, injectReactiveBindingsRuntime } from './reactive-config.js';
-import { resolveAssets } from './assets.js';
 import { LIBRARY_FORMAT_VERSION } from './transform/format-version.js';
+import type { SemanticIR, ComposeTarget, BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
+import { buildSemanticIR } from '@espcompose/core/internals';
+import { writeIRDebugFiles } from './ir-debug.js';
 
 export interface CompileOptions {
   /** Absolute path to the TSX/TS entry file. */
   entryFile: string;
-  /** Absolute path to the YAML output file. */
-  outFile: string;
+  /** Absolute path to the project root directory (where package.json lives). */
+  projectDir: string;
+  /** Absolute path to the output directory for generated files. */
+  outDir: string;
+  /** The compilation target that will lower IR to target-specific output. */
+  target: ComposeTarget;
   /** When true, keep the `.espcompose-build/` intermediate folder for inspection. */
   debug?: boolean;
 }
@@ -57,7 +59,7 @@ async function typeCheck(entryFile: string): Promise<ts.Program> {
       target: ts.ScriptTarget.ES2022,
       moduleResolution: ts.ModuleResolutionKind.Bundler,
       jsx: ts.JsxEmit.ReactJSX,
-      jsxImportSource: '@esphome/compose',
+      jsxImportSource: '@espcompose/core',
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
@@ -99,11 +101,11 @@ async function typeCheck(entryFile: string): Promise<ts.Program> {
 /**
  * Build the default ESLint flat config used when a project has no config file.
  *
- * Loads the `@esphome/compose-eslint` recommended preset, which includes
+ * Loads the `@espcompose/compose-eslint` recommended preset, which includes
  * `typescript-eslint` recommended rules and JSX parser options.
  */
 async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
-  const composeESLint = (await import('@esphome/compose-eslint')).default;
+  const { default: composeESLint } = await import('@espcompose/compose-eslint');
   return composeESLint.recommended as ESLint.Options['overrideConfig'];
 }
 
@@ -112,7 +114,7 @@ async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
  *
  * Always enforced — if the project has its own `eslint.config.*` the ESLint
  * API discovers it automatically; otherwise the compiler supplies a built-in
- * default config based on `@esphome/compose-eslint` recommended.
+ * default config based on `@espcompose/compose-eslint` recommended.
  *
  * Throws on lint errors. Warnings are printed to stderr but do not fail.
  */
@@ -208,9 +210,9 @@ async function bundle(entryFile: string, outFile: string): Promise<void> {
     format: 'cjs',
     target: 'node18',
     jsx: 'automatic',
-    jsxImportSource: '@esphome/compose',
+    jsxImportSource: '@espcompose/core',
     // Keep the SDK external — it will be require()'d from the host process
-    external: ['@esphome/compose'],
+    external: ['@espcompose/core'],
     outfile: outFile,
     sourcemap: false,
     metafile: true,
@@ -282,12 +284,19 @@ function extractLibraryName(inputPath: string): string {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Phase 3: Execute + emit YAML
+// Phase 3: Execute + render
 // ────────────────────────────────────────────────────────────────────────────
 
-async function execute(bundleFile: string, outFile: string, sourceDir: string): Promise<void> {
+interface ExecuteResult {
+  ir: SemanticIR;
+}
+
+/**
+ * Execute the bundled CJS, capture the render pass, and build a SemanticIR.
+ */
+function executeAndBuildIR(bundleFile: string): ExecuteResult {
   // Use createRequire so this works correctly in both CJS and ESM contexts.
-  // Rooting the require at the bundle file itself means @esphome/compose
+  // Rooting the require at the bundle file itself means @espcompose/core
   // resolves from the user's project node_modules (bundle sits next to source).
   const _require = createRequire(bundleFile);
 
@@ -300,34 +309,21 @@ async function execute(bundleFile: string, outFile: string, sourceDir: string): 
   // statically-imported ESM copy and the user bundle's CJS copy would have
   // separate state and never communicate.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cjsSDK = (_require('@esphome/compose') as any).ESPCompose;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sdkModule = _require('@esphome/compose') as any;
+  const cjsSDK = (_require('@espcompose/core') as any).ESPCompose;
 
-  // Clear HA entity binding cache for a fresh render pass.
+  // Clear all compiler state for a fresh render pass.
   cjsSDK.clearHAEntityCache();
   cjsSDK.clearImageCache();
   cjsSDK.clearFontCache();
-  sdkModule.clearRefRegistry();
-
-  // Clear theme state from any previous compile run.
-  if (typeof sdkModule.clearThemeRegistry === 'function') {
-    sdkModule.clearThemeRegistry();
-  }
-  if (typeof sdkModule.clearReactiveThemeProxy === 'function') {
-    sdkModule.clearReactiveThemeProxy();
-  }
-  if (typeof sdkModule.clearThemeNodeCache === 'function') {
-    sdkModule.clearThemeNodeCache();
-  }
+  cjsSDK.clearRefRegistry();
+  cjsSDK.clearSecrets();
+  cjsSDK.clearThemeRegistry();
+  cjsSDK.clearReactiveThemeProxy();
+  cjsSDK.clearThemeNodeCache();
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
-  // - useScript() calls may fire during render, so the script scope covers rendering.
-  // - useHAEntity() calls fire during render and register HA entities in the
-  //   reactive scope.
-  // - ReactiveNode props are detected during render and register reactive
-  //   bindings in the reactive scope.
-  let collectedScripts: Array<{ id: string; then: unknown[] }> = [];
+  let collectedScripts: unknown[] = [];
+  cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: config, scripts } = cjsSDK.withScriptScope(() => {
       const mod = _require(bundleFile) as { default?: unknown };
@@ -351,23 +347,20 @@ async function execute(bundleFile: string, outFile: string, sourceDir: string): 
     return config;
   });
 
-  // ── IR construction + lowering ───────────────────────────────────────────
-  // Build a typed IR tree from the rendered config, then lower it back.
-  const irTree = buildIR(reactiveResult);
-  const loweredConfig = lowerIR(irTree);
+  const serializationCaptures = cjsSDK.stopSerializationCapture();
 
   // ── Extract theme data from the SDK registry ─────────────────────────────
-  let themeData: import('./reactive-config.js').ThemeData | undefined;
-  const getThemeRegistry = sdkModule.getThemeRegistry;
+  let themeData: IRThemeData | undefined;
+  const getThemeRegistry = cjsSDK.getThemeRegistry;
   if (typeof getThemeRegistry === 'function') {
     const registry = getThemeRegistry();
     const themeNames: string[] = registry.getThemeNames();
     if (themeNames.length > 0) {
       const signalPaths: string[] = registry.getSignalPaths();
-      const leafData = new Map<string, { values: unknown[]; cppType: string }>();
+      const leafData = new Map<string, { values: unknown[]; valueType: string }>();
       for (const path of signalPaths) {
         const values: unknown[] = [];
-        let cppType = 'int32_t';
+        let valueType = 'int';
         for (const name of themeNames) {
           const themes = registry.getThemes();
           const theme = themes.get(name);
@@ -375,13 +368,13 @@ async function execute(bundleFile: string, outFile: string, sourceDir: string): 
             const val = theme.values[path];
             if (val) {
               values.push(val.value);
-              cppType = val.cppType;
+              valueType = val.valueType;
             } else {
               values.push(0);
             }
           }
         }
-        leafData.set(path, { values, cppType });
+        leafData.set(path, { values, valueType });
       }
       themeData = {
         themeNames,
@@ -391,92 +384,44 @@ async function execute(bundleFile: string, outFile: string, sourceDir: string): 
     }
   }
 
-  // Check if any reactive bindings or nodes exist — if so we need the C++ runtime.
-  const hasReactiveContent = (bindings?.length ?? 0) > 0
-    || (reactiveNodes?.length ?? 0) > 0
-    || (themeData != null);
+  // ── Build Semantic IR ─────────────────────────────────────────────────
+  const ir: SemanticIR = serializationCaptures
+    ? buildSemanticIR({
+        config: reactiveResult,
+        captures: serializationCaptures,
+        bindings: bindings ?? [],
+        entities: entities ?? [],
+        components: components ?? [],
+        scripts: collectedScripts as BuildSemanticIRInput['scripts'],
+        reactiveNodes: reactiveNodes ?? [],
+        themes: themeData,
+      })
+    : { esphome: { sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { reactive: { bindings: [], memos: [], effects: [] } } };
 
-  let finalConfig: Record<string, unknown>;
-
-  if (hasReactiveContent) {
-    // ── C++ reactive runtime path ────────────────────────────────────────
-    // Build the runtime config from collected data.
-    const runtimeConfig = buildRuntimeConfig(reactiveNodes, bindings, entities, themeData, []);
-
-    // Generate and write espcompose_bindings.h.
-    const bindingsHeaderContent = generateBindingsHeader(runtimeConfig);
-    const outDir = path.dirname(outFile);
-    fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, 'espcompose_bindings.h'), bindingsHeaderContent, 'utf8');
-
-    // Write espcompose_reactive.h (embedded content).
-    fs.writeFileSync(path.join(outDir, 'espcompose_reactive.h'), getRuntimeHeaderContent(), 'utf8');
-
-    // Inject HA sensor imports + signal.set() triggers (runtime-aware).
-    finalConfig = injectReactiveBindingsRuntime(
-      loweredConfig,
-      bindings,
-      entities,
-      runtimeConfig,
-    );
-  } else {
-    // ── No reactive bindings — just inject HA sensor imports if any ─────
-    finalConfig = injectHASensorImports(loweredConfig, entities);
-  }
-
-  // ── Inject component definitions (image, font, etc.) from hooks ─────────
-  if (components && components.length > 0) {
-    for (const comp of components) {
-      const section = comp.section;
-      if (!finalConfig[section]) {
-        finalConfig[section] = [];
-      }
-      (finalConfig[section] as unknown[]).push(comp.config);
-    }
-  }
-
-  // ── Inject createScript() definitions as top-level script: section ──────
-  if (collectedScripts.length > 0) {
-    finalConfig['script'] = collectedScripts.map((s) => ({
-      id: s.id,
-      then: s.then,
-    }));
-  }
-
-  // ── Resolve asset file paths and copy files to build output ────────────
-  const outDir = path.dirname(outFile);
-  const copiedAssets = resolveAssets(finalConfig as Record<string, unknown>, sourceDir, outDir);
-  if (copiedAssets.length > 0) {
-    console.log(`  Assets  → copied ${copiedAssets.length} file(s) to ${path.relative(sourceDir, outDir)}/assets/`);
-  }
-
-  const yamlOutput = cjsSDK.toYAML(finalConfig);
-
-  fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, yamlOutput, 'utf8');
+  return { ir };
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Public entry point
+// Shared pipeline: Phases 0–3
 // ────────────────────────────────────────────────────────────────────────────
 
-/**
- * Compile a TSX entry file into an ESPHome YAML configuration file.
- *
- * Pipeline:
- *   [type-check] → [lint] → [transform to .espcompose-build/] → [esbuild bundle] → [require + render] → [write YAML]
- */
-export async function compile(options: CompileOptions): Promise<void> {
-  const { entryFile, outFile, debug = false } = options;
+interface PipelineResult {
+  ir: SemanticIR;
+  buildDir: string;
+  sourceDir: string;
+}
 
-  // Phase 0: Type-check — fail fast on any TypeScript errors before bundling.
-  // Returns the ts.Program so Phase 1 can reuse it.
+/**
+ * Run the shared compiler pipeline (type-check → lint → transform → bundle → execute).
+ * Returns the SemanticIR and the build directory path for cleanup.
+ */
+async function runPipeline(entryFile: string): Promise<PipelineResult> {
+  // Phase 0: Type-check
   const program = await typeCheck(entryFile);
 
-  // Phase 0.5: Lint — enforce ESLint rules on the original source.
+  // Phase 0.5: Lint
   await lint(entryFile);
 
-  // Establish the build directory next to the entry file.
   const sourceDir = path.dirname(entryFile);
   const buildDir = path.join(sourceDir, '.espcompose-build');
   const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
@@ -487,18 +432,42 @@ export async function compile(options: CompileOptions): Promise<void> {
   }
   fs.mkdirSync(buildDir, { recursive: true });
 
+  // Phase 1: Transform
+  const transformedEntry = transform(program, entryFile, sourceDir, buildDir);
+
+  // Phase 2: Bundle
+  await bundle(transformedEntry, bundlePath);
+
+  // Phase 3: Execute + build IR
+  const { ir } = executeAndBuildIR(bundlePath);
+
+  return { ir, buildDir, sourceDir };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public entry point
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compile a TSX entry file through the full pipeline and emit via the target.
+ *
+ * Pipeline:
+ *   [type-check] → [lint] → [transform to .espcompose-build/] → [esbuild bundle] → [require + render] → [target.emit()]
+ */
+export async function compile(options: CompileOptions): Promise<void> {
+  const { entryFile, projectDir, outDir, target, debug = false } = options;
+
+  const { ir, buildDir, sourceDir } = await runPipeline(entryFile);
+
+  // Write IR debug files when --debug is set
+  if (debug) {
+    const htmlPath = writeIRDebugFiles(ir, buildDir);
+    console.log(`IR debug viewer: ${htmlPath}`);
+  }
+
   try {
-    // Phase 1: Transform — write every user source file into the build
-    // directory, preserving directory structure. Each file is individually
-    // inspectable with --debug.
-    const transformedEntry = transform(program, entryFile, sourceDir, buildDir);
-
-    // Phase 2: Bundle — esbuild reads the pre-transformed files from the
-    // build directory and produces a single CJS bundle.
-    await bundle(transformedEntry, bundlePath);
-
-    // Phase 3: Execute the bundle and emit YAML
-    await execute(bundlePath, outFile, sourceDir);
+    // Phase 4: Delegate to the target for lowering and output
+    await target.emit({ ir, projectDir, outDir, sourceDir });
   } finally {
     // Clean up the build directory unless --debug is set
     if (!debug && fs.existsSync(buildDir)) {
@@ -519,7 +488,7 @@ export async function compile(options: CompileOptions): Promise<void> {
  *
  * @param projectDir  Absolute path to the project directory.
  */
-export async function build(projectDir: string, options?: { debug?: boolean }): Promise<void> {
+export async function build(projectDir: string, target: ComposeTarget, options?: { debug?: boolean }): Promise<void> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -531,7 +500,40 @@ export async function build(projectDir: string, options?: { debug?: boolean }): 
   }
 
   const entryFile = path.resolve(projectDir, pkg.main);
-  const outFile = path.join(projectDir, '.espcompose', 'esphome.yaml');
+  const outDir = path.join(projectDir, '.espcompose');
 
-  await compile({ entryFile, outFile, debug: options?.debug });
+  await compile({ entryFile, projectDir, outDir, target, debug: options?.debug });
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// IR-only compilation (for simulator and other backends)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compile a project to SemanticIR without emitting target-specific files.
+ *
+ * Runs the full pipeline (type-check, lint, transform, bundle, execute+render)
+ * but stops after IR construction.
+ */
+export async function compileToIR(projectDir: string): Promise<SemanticIR> {
+  const pkgPath = path.join(projectDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) {
+    throw new Error(`No package.json found in project directory: ${projectDir}`);
+  }
+
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) as { main?: string };
+  if (!pkg.main) {
+    throw new Error(`package.json is missing a "main" field: ${pkgPath}`);
+  }
+
+  const entryFile = path.resolve(projectDir, pkg.main);
+
+  const { ir, buildDir } = await runPipeline(entryFile);
+
+  // Clean up the build directory
+  if (fs.existsSync(buildDir)) {
+    fs.rmSync(buildDir, { recursive: true, force: true });
+  }
+
+  return ir;
 }

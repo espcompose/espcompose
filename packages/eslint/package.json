@@ -1,6 +1,6 @@
 {
-  "name": "@esphome/compose-eslint",
-  "version": "0.4.0",
+  "name": "@espcompose/compose-eslint",
+  "version": "0.0.1",
   "description": "ESLint plugin with custom rules for ESPHome Compose projects",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmlguy74/espcompose.git",
+    "url": "git+https://github.com/espcompose/espcompose.git",
     "directory": "packages/eslint"
   },
   "engines": {
@@ -41,7 +41,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@esphome/compose": "workspace:*",
+    "@espcompose/core": "workspace:*",
     "@typescript-eslint/utils": "^8.0.0",
     "typescript-eslint": "catalog:"
   },

@@ -41,7 +41,7 @@ describe('initProject', () => {
       expect(pkg.name).toBe('my-device');
       expect(pkg.private).toBe(true);
       expect(pkg.main).toBe('index.tsx');
-      expect(pkg.dependencies['@esphome/compose']).toBe('latest');
+      expect(pkg.dependencies['@espcompose/core']).toBe('latest');
 
       // index.tsx has correct token replacements
       const indexTsx = fs.readFileSync(path.join(root, 'index.tsx'), 'utf8');
@@ -51,7 +51,7 @@ describe('initProject', () => {
 
       // tsconfig.json is valid JSON
       const tsconfig = JSON.parse(fs.readFileSync(path.join(root, 'tsconfig.json'), 'utf8'));
-      expect(tsconfig.extends).toBe('@esphome/compose/tsconfig.sdk.json');
+      expect(tsconfig.extends).toBe('@espcompose/core/tsconfig.sdk.json');
 
       // .gitignore contains expected patterns
       const gitignore = fs.readFileSync(path.join(root, '.gitignore'), 'utf8');

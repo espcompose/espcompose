@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { build, esphomeConfig } from '@esphome/compose-cli';
+import { build } from '@espcompose/compose-cli';
+import { createEsphomeTarget, esphomeConfig } from '@espcompose/compose-target-esphome';
 import { expect } from 'vitest';
 
 /**
@@ -21,7 +22,7 @@ export async function createProjectTest(
   const projectPath = path.resolve(projectsDir, projectName);
 
   // Run the full compiler pipeline — output lands at .espcompose/esphome.yaml
-  await build(projectPath);
+  await build(projectPath, createEsphomeTarget());
 
   const yamlPath = path.join(projectPath, '.espcompose', 'esphome.yaml');
   if (!fs.existsSync(yamlPath)) {

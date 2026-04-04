@@ -16,8 +16,8 @@ import {
   delay,
   logger,
   useRef,
-} from '@esphome/compose';
-import type { switch__Switch } from '@esphome/compose';
+} from '@espcompose/core';
+import type { switch__Switch } from '@espcompose/core';
 
 function App() {
   const switchRef = useRef<switch__Switch>();

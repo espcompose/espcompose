@@ -1,4 +1,4 @@
-import composeESLint from '@esphome/compose-eslint';
+import composeESLint from '@espcompose/compose-eslint';
 
 export default [
   ...composeESLint.recommended,

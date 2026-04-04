@@ -1,4 +1,4 @@
-import { delay, logger, useScript } from '@esphome/compose';
+import { delay, logger, useScript } from '@espcompose/core';
 
 function App() {
   const blink = useScript(async () => {

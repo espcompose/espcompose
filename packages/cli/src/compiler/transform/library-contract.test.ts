@@ -24,30 +24,65 @@ import {
 const fixturesDir = path.resolve(__dirname, '..', '..', '__fixtures__', 'library-contract');
 
 /**
- * Extract all _reactive.compiled({...}) metadata objects from transformed source.
+ * Find the balanced `{…}` block starting at `startIndex` (which must be a `{`).
+ * Handles quoted strings so that braces inside string literals are ignored.
+ */
+function extractBalancedObject(source: string, startIndex: number): string | null {
+  if (source[startIndex] !== '{') return null;
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = startIndex; i < source.length; i++) {
+    const ch = source[i];
+    if (escape) { escape = false; continue; }
+    if (ch === '\\' && inString) { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === '{') depth++;
+    else if (ch === '}') { depth--; if (depth === 0) return source.slice(startIndex, i + 1); }
+  }
+  return null;
+}
+
+/**
+ * Extract all __espcompose.compiled({...}) metadata objects from transformed source.
  * Returns parsed objects by quoting bare JS keys into valid JSON.
  */
 function extractCompiledCalls(source: string): unknown[] {
   const results: unknown[] = [];
-  const re = /_reactive\.compiled\((\{.+?\})\)/gs;
-  let match;
-  while ((match = re.exec(source)) !== null) {
-    const json = match[1].replace(/([{,])(\w+):/g, '$1"$2":');
-    results.push(JSON.parse(json));
+  const prefix = '__espcompose.compiled(';
+  let idx = 0;
+  while ((idx = source.indexOf(prefix, idx)) !== -1) {
+    const objStart = idx + prefix.length;
+    const obj = extractBalancedObject(source, objStart);
+    if (obj) {
+      const json = obj.replace(/([{,])(\w+):/g, '$1"$2":');
+      results.push(JSON.parse(json));
+      idx = objStart + obj.length;
+    } else {
+      idx = objStart;
+    }
   }
   return results;
 }
 
 /**
- * Extract all _reactive.slotted({...}, ...) metadata objects from transformed source.
+ * Extract all __espcompose.slotted({...}, ...) metadata objects from transformed source.
  */
 function extractSlottedCalls(source: string): unknown[] {
   const results: unknown[] = [];
-  const re = /_reactive\.slotted\((\{.+?\}),/gs;
-  let match;
-  while ((match = re.exec(source)) !== null) {
-    const json = match[1].replace(/([{,])(\w+):/g, '$1"$2":');
-    results.push(JSON.parse(json));
+  const prefix = '__espcompose.slotted(';
+  let idx = 0;
+  while ((idx = source.indexOf(prefix, idx)) !== -1) {
+    const objStart = idx + prefix.length;
+    const obj = extractBalancedObject(source, objStart);
+    if (obj) {
+      const json = obj.replace(/([{,])(\w+):/g, '$1"$2":');
+      results.push(JSON.parse(json));
+      idx = objStart + obj.length;
+    } else {
+      idx = objStart;
+    }
   }
   return results;
 }

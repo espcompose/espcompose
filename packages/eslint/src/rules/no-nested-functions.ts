@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @esphome/compose-eslint/no-nested-functions
+ * ESLint rule: @espcompose/compose-eslint/no-nested-functions
  *
  * Prevents function declarations nested inside other functions or arrow
  * function components. In ESPHome Compose, only top-level function

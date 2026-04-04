@@ -1,9 +1,9 @@
-import { Display, Image, Ref, useHAEntity, useScript, delay, theme } from "@esphome/compose";
+import { Display, Ref, useHAEntity, theme } from "@espcompose/core";
 import {
     Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
     ThemeProvider, darkTheme, lightTheme,
-} from "@esphome/compose-ui";
-import { HALight, MyButton, MyImageButton } from "./button";
+} from "@espcompose/compose-ui";
+import { HALight, MyButton } from "./button";
 
 type UIProps = {
     display: Ref<Display>,
@@ -12,12 +12,6 @@ type UIProps = {
 export const UI = (props: UIProps) => {
 
     const officeLight = useHAEntity('light.office');
-    const gymLight = useHAEntity('light.gym');
-    const airHockeyLight = useHAEntity('light.air_hockey_light');
-
-    const myScript = useScript(async () => {
-        await delay(1000);
-    });
 
     return <>
         <lvgl

@@ -7,7 +7,7 @@
 import {
   Display,
   useRef,
-} from '@esphome/compose';
+} from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -19,7 +19,7 @@ import {
   SwitchField,
   ThemeProvider,
   darkTheme,
-} from '@esphome/compose-ui';
+} from '@espcompose/compose-ui';
 
 function App() {
   const displayRef = useRef<Display>();

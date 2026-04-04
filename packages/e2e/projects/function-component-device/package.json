@@ -4,6 +4,6 @@
   "private": true,
   "main": "index.tsx",
   "dependencies": {
-    "@esphome/compose": "workspace:*"
+    "@espcompose/core": "workspace:*"
   }
 }

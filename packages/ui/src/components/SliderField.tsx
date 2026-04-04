@@ -6,8 +6,8 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler, BindProp } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler, BindProp } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveTypography, resolveFont } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
 

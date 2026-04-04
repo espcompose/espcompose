@@ -13,7 +13,7 @@
  *   - Direct passthrough: officeLight.stateText (should NOT be wrapped)
  *   - Explicit useMemo (should NOT be double-wrapped)
  */
-import { Display, useRef, useHAEntity, useMemo } from '@esphome/compose';
+import { Display, useRef, useHAEntity, useMemo } from '@espcompose/core';
 
 function App() {
   const displayRef = useRef<Display>();

@@ -12,8 +12,8 @@
  * optional vertical gutter as `pad_row`.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS } from '@esphome/compose';
+import type { EspComposeElement } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';

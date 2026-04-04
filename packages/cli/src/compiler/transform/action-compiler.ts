@@ -1,26 +1,20 @@
 /**
- * Action Body Compiler — TypeScript AST → IRAction[] compiler.
+ * Action Body Compiler — TypeScript AST → ActionNode[] compiler.
  *
  * Compiles arrow function bodies from TriggerHandler-typed JSX props and
- * createScript arguments into ESPHome action tree IR. Every user-visible TS
- * statement maps to one or more IRAction nodes. Unsupported constructs
+ * createScript arguments into action tree IR. Every user-visible TS
+ * statement maps to one or more ActionNode nodes. Unsupported constructs
  * produce hard compile errors.
- *
- * No C++ is generated for user code. Lambdas appear only for:
- * - Condition expressions in if/while/wait_until
- * - Templatable params with trigger variables
- * - Reactive plumbing (theme.select, signal wiring)
  */
 
 import ts from 'typescript';
 import {
-  translateScriptExpr,
-  escapeStringForCpp,
+  translateScriptExprIR,
   type HAEntityInfo,
   type ScriptTransformContext,
 } from './expr-compiler.js';
 import {
-  type IRAction,
+  type ActionNode,
   type IRActionParam,
   type IRActionConfig,
   type IRCondition,
@@ -35,9 +29,17 @@ import {
   irScriptExecute,
   irScriptWait,
   irScriptStop,
-  irInternalLambda,
+  irThemeSelect,
   irLambdaCondition,
 } from '../ir/action-tree.js';
+import type { ExprNode } from '@espcompose/core';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Constants
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Placeholder false literal for error recovery in control flow. */
+const FALSE_EXPR: ExprNode = { kind: 'literal', value: false, type: 'bool' };
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -51,7 +53,7 @@ export interface ActionCompilerDiagnostic {
 }
 
 export interface ActionCompileResult {
-  actions: IRAction[];
+  actions: ActionNode[];
   diagnostics: ActionCompilerDiagnostic[];
   /** Names of trigger variables accessed (e.g. ['x', 'state']) */
   triggerVars: string[];
@@ -115,7 +117,7 @@ export function compileActionBody(
     }
   }
 
-  let actions: IRAction[];
+  let actions: ActionNode[];
   if (ts.isBlock(callback.body)) {
     actions = compileStatements(callback.body.statements, ctx);
   } else {
@@ -137,8 +139,8 @@ export function compileActionBody(
 function compileStatements(
   stmts: ts.NodeArray<ts.Statement> | ts.Statement[],
   ctx: ActionCompilerContext,
-): IRAction[] {
-  const actions: IRAction[] = [];
+): ActionNode[] {
+  const actions: ActionNode[] = [];
   for (const stmt of stmts) {
     const compiled = compileStatement(stmt, ctx);
     if (compiled) {
@@ -151,7 +153,7 @@ function compileStatements(
 function compileStatement(
   stmt: ts.Statement,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   if (ts.isExpressionStatement(stmt)) {
     return compileExpressionAsAction(stmt.expression, ctx);
   }
@@ -222,7 +224,7 @@ function compileStatement(
 function compileExpressionAsAction(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   // await expression
   if (ts.isAwaitExpression(expr)) {
     return compileAwait(expr, ctx);
@@ -246,7 +248,7 @@ function compileExpressionAsAction(
 function compileAwait(
   expr: ts.AwaitExpression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   const inner = expr.expression;
 
   // await delay(N)
@@ -284,7 +286,7 @@ function compileAwait(
 function compileWaitUntil(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'waitUntil() requires a condition function argument.');
   }
@@ -328,7 +330,7 @@ function compileWaitUntil(
 function compileActionCall(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   // logger.log(msg) / logger.log(msg, level)
   if (isPropertyCall(call, 'logger', 'log')) {
     return compileLoggerCall(call, ctx);
@@ -423,7 +425,7 @@ function compileActionCall(
 function compileLoggerCall(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'logger.log() requires a message argument.');
   }
@@ -449,7 +451,7 @@ function compileLoggerCall(
 function compileThemeSelect(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'theme.select() requires a theme name argument.');
   }
@@ -460,12 +462,9 @@ function compileThemeSelect(
       'theme.select() argument must be a string literal.');
   }
 
-  // Emit as internal lambda — actual theme index resolution happens at
-  // serialization time when theme registry is available
+  // Emit target-agnostic theme select — actual lowering to C++/JS happens in target packages
   const themeName = nameArg.text;
-  return [irInternalLambda(
-    `espcompose::select_theme("${escapeStringForCpp(themeName)}");`,
-  )];
+  return [irThemeSelect(themeName)];
 }
 
 function compileHAAction(
@@ -473,7 +472,7 @@ function compileHAAction(
   entity: HAEntityInfo,
   methodName: string,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   // Build the HA action name: domain.method (camelCase → snake_case)
   const snakeMethod = camelToSnake(methodName);
   const action = `${entity.domain}.${snakeMethod}`;
@@ -513,7 +512,7 @@ function compileRefAction(
   tag: string | undefined,
   methodName: string,
   ctx: ActionCompilerContext,
-): IRAction[] | null {
+): ActionNode[] | null {
   const snakeMethod = camelToSnake(methodName);
   const actionKey = tag ? `${tag}.${snakeMethod}` : snakeMethod;
 
@@ -558,11 +557,11 @@ function buildRefActionConfig(
 function compileIf(
   stmt: ts.IfStatement,
   ctx: ActionCompilerContext,
-): IRAction {
+): ActionNode {
   const condition = compileConditionExpr(stmt.expression, ctx);
   if (!condition) {
     // If condition compilation failed, emit a placeholder with the error already reported
-    return irIfAction(irLambdaCondition('false'), []);
+    return irIfAction(irLambdaCondition(FALSE_EXPR), []);
   }
 
   const thenActions = compileStatementBody(stmt.thenStatement, ctx);
@@ -576,10 +575,10 @@ function compileIf(
 function compileWhile(
   stmt: ts.WhileStatement,
   ctx: ActionCompilerContext,
-): IRAction {
+): ActionNode {
   const condition = compileConditionExpr(stmt.expression, ctx);
   if (!condition) {
-    return irWhileAction(irLambdaCondition('false'), []);
+    return irWhileAction(irLambdaCondition(FALSE_EXPR), []);
   }
 
   const bodyActions = compileStatementBody(stmt.statement, ctx);
@@ -589,7 +588,7 @@ function compileWhile(
 function compileFor(
   stmt: ts.ForStatement,
   ctx: ActionCompilerContext,
-): IRAction | null {
+): ActionNode | null {
   // Only support: for (let i = 0; i < N; i++)
   const countResult = matchCountedForLoop(stmt);
   if (!countResult) {
@@ -653,8 +652,7 @@ function matchCountedForLoop(stmt: ts.ForStatement): CountedForResult | null {
 /**
  * Compile a TS boolean expression to an IRCondition.
  *
- * Uses the shared expr-compiler to translate to C++ — this is the ONLY
- * place where C++ is generated, for internal condition evaluation.
+ * Uses the shared expr-compiler to produce a target-agnostic ExprNode tree.
  */
 function compileConditionExpr(
   expr: ts.Expression,
@@ -665,15 +663,14 @@ function compileConditionExpr(
     localVars: new Set(),
   };
 
-  const cppExpr = translateScriptExpr(expr, scriptCtx);
-  if (cppExpr === null) {
+  const exprIR = translateScriptExprIR(expr, scriptCtx);
+  if (exprIR === null) {
     emitError(expr, ctx,
       'Cannot compile condition expression. Only simple comparisons with ' +
       'literals, trigger variables, and ref properties are supported.');
     return null;
   }
-
-  return irLambdaCondition(cppExpr);
+  return irLambdaCondition(exprIR);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -733,7 +730,7 @@ function compileActionParam(
 function compileStatementBody(
   stmt: ts.Statement,
   ctx: ActionCompilerContext,
-): IRAction[] {
+): ActionNode[] {
   if (ts.isBlock(stmt)) {
     return compileStatements(stmt.statements, ctx);
   }

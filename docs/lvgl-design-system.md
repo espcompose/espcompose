@@ -1,4 +1,4 @@
-# 🧠 espcompose LVGL Design System — AI Guidance Prompt
+# espcompose LVGL Design System — AI Guidance
 
 ## Purpose
 
@@ -12,66 +12,62 @@ It is a:
 
 ---
 
-# ⚠️ Core Mental Model (Critical)
+# Core Mental Model (Critical)
 
-### ❌ This is NOT React
+### This is NOT React
 
 * No virtual DOM
 * No re-rendering
 * No component lifecycle
-* No hooks like `useState` or `useEffect`
+* No `useState` or equivalent state primitives
 
-### ✅ This IS:
+### This IS:
 
 * A **compile-time DSL**
 * Producing a **static widget tree**
-* With **event-driven updates via bindings**
+* With **reactive updates via a C++ signal graph** (Signal/Memo/Effect)
 
 ---
 
-# 🔁 What “Reactivity” Means Here
+# What "Reactivity" Means Here
 
 Reactivity is **NOT rendering**.
 
 It is:
 
-> **Bindings → compiled into subscriptions → imperative widget updates**
+> **Reactive signals → compiled into a C++ dependency graph → imperative widget updates**
 
 ### Example
 
 ```tsx
-<Text value={sensor.temp} />
+const sensor = useHAEntity('sensor.temperature');
+
+<Text value={useMemo(() => `${sensor.value}°`)} />
 ```
 
-Compiles conceptually into:
-
-```yaml
-on_value:
-  - lambda: lv_label_set_text(...)
-```
+Compiles to a C++ `Memo<std::string>` that tracks a `Signal<float>` from the HA sensor.
+When the sensor value changes, the memo recomputes and the widget text is updated via
+`lv_label_set_text()` — no re-rendering.
 
 ### Key Idea
 
-> UI updates happen by **mutating existing widgets**, not re-rendering them.
+> UI updates happen by **mutating existing widgets** via C++ effects, not re-rendering the tree.
 
 ---
 
-# 🧩 Design System Goals
+# Design System Goals
 
 The design system should:
 
-1. Provide a **high-level, ergonomic API** (like Ant Design)
+1. Provide a **high-level, ergonomic API** (like Ant Design for embedded)
 2. Hide LVGL complexity where possible
-3. Still allow **low-level escape hatches**
-4. Compile cleanly into:
-
-   * LVGL widgets
-   * ESPHome automations
-   * C++ lambdas
+3. Still allow **low-level escape hatches** (`x:custom`, `createElement()`)
+4. Compile cleanly into LVGL widgets + ESPHome automations + C++ lambdas
+5. Support **runtime theme switching** through the reactive signal graph
 
 ---
 
-# 🏗️ Architecture Overview
+# Architecture Overview
 
 ## Two Layers
 
@@ -80,9 +76,9 @@ The design system should:
 Thin wrappers over LVGL:
 
 ```tsx
-<lv-label />
-<lv-button />
-<lv-slider />
+<lvgl-label />
+<lvgl-button />
+<lvgl-slider />
 ```
 
 Used for:
@@ -94,25 +90,28 @@ Used for:
 
 ### 2. Design System Components (Preferred API)
 
-High-level, semantic components:
+High-level, semantic components from `@espcompose/compose-ui`:
 
 ```tsx
+<Screen />
 <Text />
 <Button />
 <Card />
-<SliderField />
 <VStack />
+<SliderField />
+<SwitchField />
+<DropdownField />
 ```
 
 Used for:
 
 * most UI authoring
 * consistency
-* simplicity
+* reactive theme integration
 
 ---
 
-# 🧱 Core Concepts
+# Core Concepts
 
 ## 1. Static Widget Tree
 
@@ -120,68 +119,71 @@ All components compile into a **fixed tree**.
 
 ```tsx
 <VStack>
-  <Text />
-  <Button />
+  <Text value="Hello" />
+  <Button label="Press Me" />
 </VStack>
 ```
 
-➡️ No dynamic insertion/removal at runtime
-➡️ Only visibility/state changes
+No dynamic insertion/removal at runtime. Only visibility/state changes.
 
 ---
 
-## 2. Bindings (Primary Dynamic Mechanism)
+## 2. Reactive Bindings (Primary Dynamic Mechanism)
+
+Bindings connect data sources to widget properties through the reactive system:
 
 ```tsx
-<Text value={sensor.temp} />
+const sensor = useHAEntity('sensor.temperature');
+const temp = useMemo(() => `${sensor.value}°`);
+
+<Text value={temp} />
 ```
 
-Bindings:
-
-* subscribe to data sources
-* generate update handlers
-* mutate widget properties
+This compiles to:
+- A `Signal<float>` for the HA sensor
+- A `Memo<std::string>` for the formatted string
+- An `Effect` that calls `lv_label_set_text()` when the memo changes
 
 ### Binding Sources
 
-* sensors
-* Home Assistant entities
-* computed expressions
+* Home Assistant entities (`useHAEntity()`)
+* Theme tokens (`useReactiveTheme()`)
+* Derived computations (`useMemo()`)
+* Side effects (`useEffect()`)
 
 ---
 
 ## 3. Event → Action Model
 
 ```tsx
-<Button onPress={ha.toggle('light.kitchen')} />
+<Button
+  label="Kitchen"
+  onPress={async () => { kitchenLight.toggle(); }}
+/>
 ```
 
-Compiles to:
-
-* LVGL event handler
-* ESPHome action
-
-👉 No state transitions or re-rendering
+The arrow function body is compiled at the AST level to an ESPHome action sequence
+(`light.toggle: { id: kitchen_light }`). No JavaScript runs at runtime.
 
 ---
 
 ## 4. Visibility Instead of Conditional Rendering
 
-❌ Do NOT do this:
+Do NOT do this:
 
 ```tsx
 {isOn && <Light />}
 ```
 
-✅ Do this:
+Do this:
 
 ```tsx
-<Light show={sensor.isOn} />
+<lvgl-obj hidden={useMemo(() => !sensor.isOn)}>
+  <Text value="Light is on" />
+</lvgl-obj>
 ```
 
-Compiles to:
-
-* LVGL hidden flag toggle
+Compiles to an LVGL hidden flag toggle — no tree mutation.
 
 ---
 
@@ -206,19 +208,6 @@ LVGL uses:
 * `checked`
 * `disabled`
 
-### Design System API
-
-```tsx
-<Slider
-  partStyle={{
-    knob: {
-      default: { bg: 'primary' },
-      pressed: { scale: 1.1 }
-    }
-  }}
-/>
-```
-
 ---
 
 ## 6. Design Tokens First
@@ -226,14 +215,19 @@ LVGL uses:
 Use semantic tokens instead of raw styles:
 
 ```tsx
-<Button status="primary" size="md" variant="solid" />
+<Button status="primary" size="md" />
 ```
 
 Instead of:
 
 ```tsx
-<Button style={{ backgroundColor: '#123456' }} />
+<lvgl-button bgColor="#123456" />
 ```
+
+Token values are resolved through the reactive theme system:
+- `status` → colors from `theme.colors[status]`
+- `size` → dimensions from `theme.sizes[size]`
+- `spacing` → padding from `theme.spacing[token]`
 
 ---
 
@@ -243,14 +237,18 @@ Prefer layout components:
 
 ```tsx
 <VStack gap="md">
-  <Text />
-  <Button />
+  <Text value="Title" />
+  <Button label="Action" />
 </VStack>
 ```
 
-Instead of:
+Instead of x/y absolute positioning.
 
-* x/y positioning
+Available layout components:
+- `VStack` / `HStack` — flex column/row with gap
+- `Space` — spacer
+- `Row` / `Col` — proportional flex grid (AntD-style)
+- `Grid` / `GridItem` — native LVGL CSS Grid with FR(n) columns/rows
 
 ---
 
@@ -259,128 +257,206 @@ Instead of:
 Prefer:
 
 ```tsx
-<SliderField label="Brightness" value={...} />
+<SliderField label="Brightness" />
 ```
 
 Over:
 
 ```tsx
-<Slider />
-<Text />
+<lvgl-slider />
+<lvgl-label />
 ```
+
+Field components combine label + input + theme styling.
 
 ---
 
-## 9. IDs Are Required for Updates
+## 9. Theme System
 
-Every dynamic widget must have an ID:
-
-```yaml
-id: temp_label
-```
-
-Used by:
-
-```cpp
-lv_label_set_text(...)
-```
-
-AI should:
-
-* auto-generate IDs when needed
-* ensure uniqueness
-
----
-
-## 10. Formatting Must Be Compilable
-
-Allowed:
+Themes are registered at compile time and switchable at runtime:
 
 ```tsx
-(v) => `${v}°`
+import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/compose-ui';
+
+<ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+  <Screen>
+    <Button
+      label="Switch to Light"
+      onPress={async () => { theme.select('light'); }}
+    />
+  </Screen>
+</ThemeProvider>
+```
+
+Inside components, theme values are reactive:
+```tsx
+const thm = useReactiveTheme();
+const bgColor = thm.colors.primary.bg;  // → ReactiveNode<lv_color_t>
+```
+
+Theme switching compiles to `theme_index.set(N); Scheduler::flush();` —
+all downstream memos recalculate and widgets update.
+
+---
+
+## 10. Refs Are Required for Cross-Component References
+
+Every component that will be referenced from actions must have a `useRef()`:
+
+```tsx
+const lightRef = useRef<Light>();
+
+<light platform="homeassistant" ref={lightRef} entityId="light.kitchen" />
+
+<Button onPress={async () => { lightRef.toggle(); }} />
+```
+
+Refs generate unique IDs (`r_<random>`) and are
+collision-resistant. The compiler resolves them to ESPHome YAML IDs.
+
+---
+
+## 11. Formatting Must Be Compilable
+
+Allowed (inside `useMemo()`):
+
+```tsx
+useMemo(() => `${sensor.value}°`)
+useMemo(() => sensor.isOn ? "On" : "Off")
 ```
 
 NOT allowed:
 
-* arbitrary JS
-* async logic
-* closures with external state
+* Arbitrary JS logic inside useMemo
+* Async operations
+* Closures with external mutable state
+* Import of external JS libraries
 
-All formatting must:
-
-* be pure
-* compile to C++
+All reactive expressions compile to C++ via `ExprNode` → `exprToCpp()`.
 
 ---
 
-# 🧠 What the AI Should Optimize For
+# Available Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `useHAEntity(entityId)` | Bind to a Home Assistant entity; returns typed signal properties |
+| `useMemo(fn)` | Derive a value from reactive sources |
+| `useEffect(fn)` | Run side effects when reactive sources change |
+| `useReactiveTheme()` | Access reactive theme token values |
+| `useRef<T>()` | Create a typed cross-component reference |
+| `useScript(fn)` | Define a named ESPHome script from an async arrow function |
+| `useImage(path)` | Register an image asset |
+| `useFont(config)` | Register a font asset |
+
+---
+
+# Available Components
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `Screen` | Root display container | `bgColor` |
+| `VStack` / `HStack` | Flexbox column/row | `gap`, `padding` |
+| `Space` | Spacer element | `size` |
+| `Row` / `Col` | Proportional flex grid | `span` (on Col) |
+| `Grid` / `GridItem` | CSS Grid layout | `columns`, `rows`, `gap` |
+| `Text` | Typography component | `value`, `variant` |
+| `Button` | Status-aware button | `label`, `status`, `size`, `onPress` |
+| `Card` | Surface container | `bgColor` |
+| `SliderField` | Slider with label | `label`, `onValue` |
+| `SwitchField` | Toggle with label | `label`, `onCheckedChange` |
+| `DropdownField` | Dropdown selector | `label`, `options` |
+
+---
+
+# What the AI Should Optimize For
 
 When generating or modifying code:
 
-### ✅ Prefer:
+### Prefer:
 
-* semantic components (`<Card>`, `<Text>`)
-* bindings over manual updates
-* tokens over raw styles
-* layout components
-* field abstractions
+* Design system components (`<Card>`, `<Text>`, `<Button>`)
+* Reactive hooks (`useMemo`, `useHAEntity`, `useReactiveTheme`)
+* Design tokens over raw styles (`status="primary"` not `bgColor="#123456"`)
+* Layout components (`VStack`, `HStack`, `Grid`)
+* Field abstractions (`SliderField`, `SwitchField`)
+* Action tree syntax for trigger handlers (bare arrow functions)
 
-### ❌ Avoid:
+### Avoid:
 
-* React mental model (state, re-render)
-* dynamic tree mutation
-* CSS-like styling
-* complex inline logic
-* unnecessary low-level LVGL usage
+* React mental model (useState, useReducer, re-render)
+* Dynamic tree mutation (conditional rendering with `&&`)
+* CSS-like styling (there is no CSS)
+* Complex inline logic in JSX attributes
+* Unnecessary low-level LVGL usage when design system components suffice
+* Old APIs (`device.script()`, `device.inline()`, `createLvglThemeProps()`)
 
 ---
 
-# 🧪 Example (Correct)
+# Example (Correct)
 
 ```tsx
-<Screen id="home">
-  <VStack gap="lg" padding="lg">
-    <Card>
-      <Text variant="title">Living Room</Text>
+import { useHAEntity, useMemo, useRef, secret } from '@espcompose/core';
+import type { Light } from '@espcompose/core';
+import { ThemeProvider, darkTheme, Screen, VStack, Card, Text, SliderField, SwitchField } from '@espcompose/compose-ui';
 
-      <SliderField
-        label="Brightness"
-        value={ha.entity('light.brightness')}
-        onChange={ha.setNumber('light.brightness')}
-      />
+function App() {
+  const light = useHAEntity('light.living_room');
+  const sensor = useHAEntity('sensor.temperature');
+  const brightness = useMemo(() => light.brightness);
+  const temp = useMemo(() => `${sensor.value}°`);
 
-      <SwitchField
-        label="Lamp"
-        value={ha.entity('switch.lamp')}
-        onChange={ha.toggle('switch.lamp')}
-      />
-    </Card>
-  </VStack>
-</Screen>
+  return (
+    <esphome name="dashboard">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
+      <api />
+      <ThemeProvider themes={{ dark: darkTheme }} default="dark">
+        <lvgl>
+          <lvgl-page>
+            <Screen>
+              <VStack gap="lg" padding="lg">
+                <Card>
+                  <Text variant="title" value="Living Room" />
+                  <Text value={temp} />
+                  <SliderField label="Brightness" />
+                  <SwitchField label="Lamp" />
+                </Card>
+              </VStack>
+            </Screen>
+          </lvgl-page>
+        </lvgl>
+      </ThemeProvider>
+    </esphome>
+  );
+}
+
+export default <App />;
 ```
 
 ---
 
-# 🧪 Example (Incorrect)
+# Example (Incorrect)
 
 ```tsx
 const [value, setValue] = useState(0);
 
 return (
   <div>
-    {value > 10 && <Text>{value}</Text>}
+    {value > 10 && <Text value={value} />}
   </div>
 );
 ```
 
-❌ Invalid because:
+Invalid because:
 
-* uses React state
-* conditional rendering
+* uses React state (`useState` doesn't exist for this purpose)
+* conditional rendering (tree must be static)
 * assumes re-rendering
+* `<div>` is not an ESPHome/LVGL element
 
 ---
 
-# 🧾 Summary (One-liner)
+# Summary
 
-> **espcompose is a declarative TSX UI compiler that generates a static LVGL widget tree with event-driven updates via bindings.**
+> **espcompose is a declarative TSX compiler that produces a static LVGL widget tree with reactive C++ signal-driven updates via bindings to Home Assistant entities and theme tokens.**

@@ -79,7 +79,7 @@ typedRuleTester.run('no-unresolvable-ha-entity (typed)', rule, {
     {
       name: 'constrained template literal type infers domain',
       code: `
-        import { useHAEntity } from '@esphome/compose';
+        import { useHAEntity } from '@espcompose/core';
         function App(props: { entity: \`light.\${string}\` }) {
           const light = useHAEntity(props.entity);
           return null;
@@ -89,7 +89,7 @@ typedRuleTester.run('no-unresolvable-ha-entity (typed)', rule, {
     {
       name: 'domain hint overload with variable',
       code: `
-        import { useHAEntity } from '@esphome/compose';
+        import { useHAEntity } from '@espcompose/core';
         function App(props: { entity: string }) {
           const light = useHAEntity(props.entity, { domain: 'light' });
           return null;
@@ -99,7 +99,7 @@ typedRuleTester.run('no-unresolvable-ha-entity (typed)', rule, {
     {
       name: 'static string literal',
       code: `
-        import { useHAEntity } from '@esphome/compose';
+        import { useHAEntity } from '@espcompose/core';
         function App() {
           const light = useHAEntity('light.kitchen');
           return null;
@@ -111,7 +111,7 @@ typedRuleTester.run('no-unresolvable-ha-entity (typed)', rule, {
     {
       name: 'plain string type — domain cannot be inferred',
       code: `
-        import { useHAEntity } from '@esphome/compose';
+        import { useHAEntity } from '@espcompose/core';
         function App(props: { entity: string }) {
           const light = useHAEntity(props.entity);
           return null;

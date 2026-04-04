@@ -6,8 +6,8 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveTypography, resolveFont } from '../theme/resolvers';
 
 interface SwitchFieldProps {

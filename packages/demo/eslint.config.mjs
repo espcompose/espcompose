@@ -1,5 +1,6 @@
-import composeESLint from '@esphome/compose-eslint';
+import composeESLint from '@espcompose/compose-eslint';
 
 export default [
+  { ignores: ['.espcompose-sim/**'] },
   ...composeESLint.recommended,
 ];

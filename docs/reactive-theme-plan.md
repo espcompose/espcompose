@@ -1,6 +1,9 @@
-## Plan: Reactive Theme & Component Reactivity System
+## Reactive Theme & Component Reactivity System
 
-Replace the current split theme system (compile-time context + style\_definitions + bridge layer) with a **unified reactive architecture** where theme tokens and component props flow as reactive signals through the C++ Signal/Memo/Effect runtime. Theme switching sets a theme index signal; component prop cascading (`FancyLightButton → Button → lvgl-button`) works by passing ReactiveNodes through render functions. Clean break — no backward compatibility.
+Unified reactive architecture where theme tokens and component props flow as
+reactive signals through the C++ Signal/Memo/Effect runtime. Theme switching
+sets a theme index signal; component prop cascading works by passing
+ReactiveNodes through render functions.
 
 ---
 
@@ -10,7 +13,6 @@ Replace the current split theme system (compile-time context + style\_definition
 - **No style\_definitions** — everything flows through per-widget reactive bindings
 - **Preregistered themes** — registered at compile time, switched by name via `theme.select('dark')`
 - **Reactive token props** — `status`, `size`, etc. can be `BindProp<T>` (static or reactive)
-- **Clean break** — old theme system removed entirely
 
 ### Architecture
 
@@ -20,103 +22,123 @@ Replace the current split theme system (compile-time context + style\_definition
 
 ---
 
-### Phase 1: Theme Signal Infrastructure (SDK)
+### Phase 1: Theme Signal Infrastructure (SDK) — ✅ COMPLETE
 
 *Foundation: flatten Theme into signals, create reactive proxy, register themes.*
 
-1. **Theme flattener** — `flattenTheme(theme)` in new `theme-signals.ts`: walks `Theme` object, produces flat map of `~80` leaf paths to `{ value, cppType }`. E.g., `"colors_primary_bg"` → `{ value: "#1E88E5", cppType: "uint32_t" }`
-2. **Theme registry** — new `theme-registry.ts`: `ThemeRegistry` class with `register(name, theme)`, `getThemes()`, `getSignalPaths()`. Module singleton + `clearThemeRegistry()` for compile-run cleanup
-3. **Reactive theme proxy** — new `reactive-theme.ts`: `createReactiveThemeProxy()` returns deeply-nested Proxy where leaf access (e.g., `proxy.colors.primary.bg`) returns a cached `ReactiveNode` with `cppSignalName: 'sig_theme_colors_primary_bg'`. Integrates with `trackDependency()` for `useMemo()` tracking
-4. **`useReactiveTheme()` hook** — replaces `useTheme()`. Returns the proxy, registers theme signals in reactive scope on first access
-5. **Extend `ExpressionDependency`** — add `sourceType?: 'ha_entity' | 'theme'` to `reactive-node.ts` so compiler distinguishes theme signals from HA signals
-6. **`theme.select()` action** — when called inside action scope (`device.inline()`), pushes C++ lambda: `espcompose::theme_index.set(N); Scheduler::flush();` where N is the compile-time index
-7. **`<ThemeRegistry>` JSX component** — `<ThemeRegistry themes={{ dark: darkTheme, light: lightTheme }} default="dark">` registers themes during render, sets up reactive proxy
+1. ✅ **Theme flattener** — `flattenTheme(theme)` in `theme-signals.ts`: walks `Theme` object, produces flat map of leaf paths to `{ value, cppType }`. C++ type inference: hex colors → `lv_color_t`, integers → `int32_t`, floats → `float`, strings → `const char*`
+2. ✅ **Theme registry** — `theme-registry.ts`: `ThemeRegistryStore` class with `register(name, theme)`, manages flattened theme data for compiler. Module singleton + clearable between compilations
+3. ✅ **Reactive theme proxy** — `reactive-theme.ts`: `createReactiveThemeProxy()` returns deeply-nested Proxy where leaf access (e.g., `proxy.colors.primary.bg`) returns a cached `ReactiveNode`. Integrates with `trackDependency()` for `useMemo()` tracking
+4. ✅ **`useReactiveTheme()` hook** — replaces `useTheme()`. Returns the proxy from SDK, re-exported by `packages/ui/src/theme/context.ts`
+5. ✅ **Extended `ExpressionDependency`** — `sourceType?: 'ha_entity' | 'theme'` on `reactive-node.ts` distinguishes theme signals from HA signals
+6. ✅ **`theme.select()` action** — when called inside action scope, pushes C++ lambda: `espcompose::theme_index.set(N); Scheduler::flush();`
+7. ✅ **`<ThemeProvider>` JSX component** — `packages/ui/src/theme/ThemeProvider.ts`: `<ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">` registers themes during render via SDK's `registerTheme()` and `getThemeRegistry()`
 
 ---
 
-### Phase 2: Reactive Resolver & Lift Utilities (SDK + UI)
+### Phase 2: Reactive Resolver & Lift Utilities (SDK + UI) — ✅ COMPLETE
 
-*Make resolvers handle both static and ReactiveNode inputs.*
+*Resolvers handle both static and ReactiveNode inputs.*
 
-1. **`liftReactive()` utility** — in `reactive-utils.ts`: if input is reactive, wraps function in `useMemo()`; if static, calls directly. Multi-arg variant `liftReactive2()` for two inputs
-2. **Reactive-aware resolvers** — rewrite `resolvers.ts`: `resolveSpacing('md')` returns `ReactiveNode<number>` (theme value behind `'md'` can change). `resolveStatus(reactiveStatus)` returns `ReactiveStatusColors` with per-field memos. Same for `resolveSize()`, `resolveRadius()`, `resolveTypography()`, `fontDefToLvgl()`
-3. **Dynamic token lookup codegen** — extend `memo-codegen.ts`: when memo body accesses `theme.colors[dynamicVar].bg`, generate C++ ternary chain over known token values (e.g., `s == "primary" ? sig_theme_colors_primary_bg.get() : s == "danger" ? ...`)
-4. **Reactive return types** — add to `types.ts`: `ReactiveStatusColors`, `ReactiveSizeDimensions` with `ReactiveNode<T>` fields
-
----
-
-### Phase 3: Component Rewrite (UI)
-
-*All design system components updated. Button is the reference implementation.*
-
-1. **Button** (*reference, do first*) — props become `BindProp<StatusToken>`, `BindProp<SizeToken>`, etc. Uses `resolveBindProp()` to normalize, reactive resolvers for colors/sizing, `useMemo()` for derived width. Remove all `statusStyleId()` / style reference usage. Colors, padding, font applied as direct reactive props on `lvgl-button` and `lvgl-label`
-2. **Screen** — `bgColor` from `theme.colors.background` (reactive), padding from reactive resolver
-3. **Card** — `bgColor` from `theme.colors.surfaceAlt`, padding/radius from reactive resolvers
-4. **Text** — `textColor` + `textFont` from reactive resolvers
-5. **Space / VStack / HStack** — gap from reactive resolver
-6. **SliderField, SwitchField, DropdownField** — label textColor + widget part colors from theme
-7. **Row/Col, Grid/GridItem** — gap from reactive resolver
-
-*Steps 2-7 are parallel with each other after Step 1 validates the pattern.*
+1. ✅ **`resolveBindProp()` / `BindProp<T>`** — in `reactive-utils.ts`: normalizes static or reactive inputs. `BindProp<T>` type union enables props to accept either
+2. ✅ **Reactive-aware resolvers** — `resolvers.ts` rewritten: `resolveSpacing('md')` returns `ReactiveNode<number>` (theme value behind `'md'` can change). Same for `resolveStatus()`, `resolveSize()`, `resolveRadius()`, `resolveTypography()`, `fontDefToLvgl()`
+3. ✅ **ExprNode-based codegen** — All reactive expressions compile to `ExprNode` trees (target-agnostic IR), lowered per-backend: `exprToCpp()` for ESPHome, `exprToJs()` for simulator. Theme reads use `theme_read` ExprNode kind
+4. ✅ **Reactive return types** — `ReactiveStatusColors`, etc. with `ReactiveNode<T>` fields
 
 ---
 
-### Phase 4: Compiler Extensions (CLI)
+### Phase 3: Component Rewrite (UI) — ✅ COMPLETE
 
-*Generate theme signal C++ code and handle theme-sourced dependencies.*
+*All design system components updated.*
 
-1. **Theme signal collection** — extend `reactive-config.ts`: `buildRuntimeConfig()` receives theme registry, creates `SignalDecl` for `theme_index` + `MemoDecl` for each theme leaf signal
-2. **Theme C++ generation** — extend `codegen.ts`: generate theme value arrays (indexed by theme), `theme_index` signal, per-leaf memos reading `theme_values_X[theme_index.get()]`, wire all to `theme_index` in `setup()`
-3. **Theme initialization** — `setup()` sets `theme_index` to default (0), first flush evaluates all memos
-4. **`theme.select()` codegen** — compiler recognizes in action scope, generates `theme_index.set(N); flush();`
-5. **Expanded widget update codegen** — add C++ updaters for: `bg_color`, `text_color`, `text_font`, `pad_all`, `width`, `height`, `radius`, `pad_row`, `pad_column` (currently only `text`, `checked`, `value`, `hidden`, `bg_color` are handled)
-6. **Color literal conversion** — `toCppLiteral()` helper: `"#1E88E5"` → `lv_color_hex(0x1E88E5)`, `16` → `16`, `"montserrat_16"` → pointer to LVGL font
-7. **Remove style\_definitions emission** — `<lvgl>` no longer receives `styleDefinitions` or `theme` props
-
----
-
-### Phase 5: Cleanup (UI)
-
-1. **Delete** `bridge.ts`, `style-ids.ts`, `json.ts`
-2. **Rewrite** `context.ts` — export `useReactiveTheme()`, remove `ThemeProvider`, `ThemeContext`, `useTheme()`
-3. **Update** `index.ts` — remove all deleted exports, add `useReactiveTheme`, `ThemeRegistry`, `theme.select`
+1. ✅ **Button** (reference implementation) — props accept `BindProp<StatusToken>`, `BindProp<SizeToken>`, etc. Colors, padding, font applied as direct reactive props on `lvgl-button` and `lvgl-label`. Old style-id references removed
+2. ✅ **Screen** — `bgColor` from `theme.colors.background` (reactive), padding from reactive resolver
+3. ✅ **Card** — `bgColor` from `theme.colors.surfaceAlt`, padding/radius from reactive resolvers
+4. ✅ **Text** — `textColor` + `textFont` from reactive resolvers
+5. ✅ **Space / VStack / HStack** — gap from reactive resolver
+6. ✅ **SliderField, SwitchField, DropdownField** — label textColor + widget part colors from theme
+7. ✅ **Row/Col, Grid/GridItem** — gap from reactive resolver
 
 ---
 
-### Phase 6: E2E Tests
+### Phase 4: Compiler Extensions (CLI + target-esphome) — ✅ COMPLETE
 
-1. **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen with Text, Card, SliderField, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
-2. **`fancy-light-cascade-device`** — sensor-derived `mode` → `FancyLightButton` → `LightButton` → `Button` → `lvgl-button` + `lvgl-label`. Validates: ReactiveNode flows through 3 component layers, memo chain (sensor → mode → status → labelText → widget), correct C++ dependency graph
-3. **Update `design-system-device`** — replace `createLvglThemeProps()` + `<ThemeProvider>` with `<ThemeRegistry>`
-4. **Add both to** `build.test.ts` — snapshot + ESPHome config validation
+*Theme signal C++ code generation and theme-sourced dependency handling.*
 
----
-
-### Relevant Files
-
-**SDK (new):** `theme-signals.ts`, `theme-registry.ts`, `reactive-theme.ts`
-**SDK (modify):** `reactive-node.ts`, `reactive-utils.ts`, `memo-codegen.ts`, `hooks/useReactiveScope.ts`, `index.ts`
-**UI (modify):** `theme/resolvers.ts`, `theme/types.ts`, `theme/context.ts`, all 10 component files, `index.ts`
-**UI (delete):** `theme/bridge.ts`, `theme/style-ids.ts`, `theme/json.ts`
-**UI (new):** `theme/ThemeRegistry.ts`
-**CLI (modify):** `reactive-config.ts`, `reactive-runtime/codegen.ts`, `compiler.ts`
-**E2E (new):** `projects/reactive-theme-device/`, `projects/fancy-light-cascade-device/`
+1. ✅ **Theme signal collection** — `reactive-config.ts`: `buildRuntimeConfig()` receives theme registry, creates `SignalDecl` for `theme_index` + `MemoDecl` for each theme leaf signal
+2. ✅ **Theme C++ generation** — `bindings-codegen.ts`: theme value arrays (indexed by theme), `theme_index` signal, per-leaf memos reading `theme_values_X[theme_index.get()]`, wired in `setup()`
+3. ✅ **Theme initialization** — `setup()` sets `theme_index` to default (0), first flush evaluates all memos
+4. ✅ **`theme.select()` codegen** — recognised in action scope, generates `theme_index.set(N); flush();`
+5. ✅ **Expanded widget update codegen** — C++ updaters for: `bg_color`, `text_color`, `text_font`, `pad_all`, `width`, `height`, `radius`, `border_width`, `border_color`, `pad_row`, `pad_column`, `text`, `checked`, `value`, `hidden`
+6. ✅ **Color literal conversion** — `toCppLiteral()`: `"#1E88E5"` → `lv_color_hex(0x1E88E5)`, `16` → `16`, `"montserrat_16"` → pointer to LVGL font
+7. ✅ **style\_definitions removed** — `<lvgl>` no longer receives `styleDefinitions` or `theme` props
 
 ---
 
-### Verification
+### Phase 5: Cleanup (UI) — ⚠️ PARTIALLY COMPLETE
 
-1. `cd packages/sdk && pnpm test` — flattenTheme, reactive proxy, liftReactive, resolver logic, codegen extensions
-2. `cd packages/ui && pnpm test` — Button static/reactive paths, ThemeRegistry
-3. `cd packages/e2e && pnpm test` — all 16 e2e tests (14 existing + 2 new)
-4. `pnpm build` from root — topological build succeeds
-5. `pnpm lint` — clean
-6. Manual: inspect generated `espcompose_bindings.h` and `esphome.yaml` for both new e2e projects
+1. ⬜ **Delete `bridge.ts`, `style-ids.ts`, `json.ts`** — These files still exist but are obsolete. They were part of the old theme system that used LVGL `style_definitions`. Safe to delete once all consumers verified
+2. ✅ **`context.ts` rewritten** — exports `useReactiveTheme()` re-exported from SDK; old `ThemeProvider`/`ThemeContext`/`useTheme()` removed
+3. ✅ **`index.ts` updated** — exports `useReactiveTheme`, `ThemeProvider`, `darkTheme`, `lightTheme`, reactive resolvers, all component exports
+
+### Files awaiting deletion:
+- `packages/ui/src/theme/bridge.ts` — old `createLvglThemeProps()` / `style_definitions` bridge
+- `packages/ui/src/theme/style-ids.ts` — named LVGL style definition ID constants (`ds_status_*`, etc.)
+- `packages/ui/src/theme/json.ts` — `themeToJSON()` / `themeFromJSON()` serialization helpers
+
+---
+
+### Phase 6: E2E Tests — ⬜ NOT STARTED
+
+1. ⬜ **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen with Text, Card, SliderField, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
+2. ⬜ **`fancy-light-cascade-device`** — sensor-derived `mode` → `FancyLightButton` → `LightButton` → `Button` → `lvgl-button` + `lvgl-label`. Validates: ReactiveNode flows through 3 component layers, memo chain (sensor → mode → status → labelText → widget), correct C++ dependency graph
+3. ✅ **`design-system-device` updated** — uses `<ThemeProvider themes={{ dark: darkTheme }}>` pattern (new reactive API)
+4. ⬜ **Add both new projects to `build.test.ts`** — snapshot + ESPHome config validation
+
+---
+
+### Current API
+
+```tsx
+import { ThemeProvider, darkTheme, lightTheme, Screen, Button, Text } from '@espcompose/compose-ui';
+import { useReactiveTheme, theme } from '@espcompose/core';
+
+function App() {
+  return (
+    <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+      <Screen>
+        <Button
+          label="Switch Theme"
+          status="primary"
+          onPress={async () => { theme.select('light'); }}
+        />
+      </Screen>
+    </ThemeProvider>
+  );
+}
+```
+
+Inside components, theme values are accessed via:
+```tsx
+const thm = useReactiveTheme();
+const bgColor = thm.colors.primary.bg;  // → ReactiveNode<lv_color_t>
+```
+
+---
+
+### Key Files
+
+**SDK:** `theme-signals.ts`, `theme-registry.ts`, `reactive-theme.ts`
+**SDK (modified):** `reactive-node.ts`, `reactive-utils.ts`, `hooks/useReactiveScope.ts`, `index.ts`
+**UI:** `theme/ThemeProvider.ts`, `theme/resolvers.ts`, `theme/types.ts`, `theme/context.ts`, `theme/dark.ts`, `theme/light.ts`
+**UI (all components updated):** `Button.tsx`, `Screen.tsx`, `Card.tsx`, `Text.tsx`, `Space.tsx`, `Row.tsx`, `Grid.tsx`, `SliderField.tsx`, `SwitchField.tsx`, `DropdownField.tsx`
+**UI (obsolete, awaiting deletion):** `theme/bridge.ts`, `theme/style-ids.ts`, `theme/json.ts`
+**target-esphome (modified):** `reactive-config.ts`, `bindings-codegen.ts`, `codegen-cpp.ts`, `lower-yaml.ts`
 
 ---
 
 ### Scope Boundaries
 
-**Included:** full-spectrum runtime theme switching, reactive token props, component cascade at arbitrary depth, 2 new e2e tests, all components rewritten
+**Included:** full-spectrum runtime theme switching, reactive token props, component cascade at arbitrary depth, all components rewritten
 
 **Excluded:** animated theme transitions (addable later via `lv_anim_set_exec_cb`), dynamic runtime theme creation, theme values from Home Assistant, partial theme overrides / inheritance, new components beyond existing set

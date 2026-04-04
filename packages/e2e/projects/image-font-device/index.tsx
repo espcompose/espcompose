@@ -9,7 +9,7 @@
  *   - Asset pipeline copies image files with content-hash names
  *   - gfonts:// URIs are left as-is (not copied)
  */
-import { Display, useRef, useImage, useFont } from '@esphome/compose';
+import { Display, useRef, useImage, useFont } from '@espcompose/core';
 
 function App() {
   const displayRef = useRef<Display>();

@@ -4,7 +4,7 @@
  * Exercises __compiledActions and __compiledScript transform paths.
  * Kept minimal — just enough to produce all action metadata shapes.
  */
-import { useScript, delay, logger } from '@esphome/compose';
+import { useScript, delay, logger } from '@espcompose/core';
 
 /** Component with a useScript() call (compiled script path). */
 export function ScriptButton() {

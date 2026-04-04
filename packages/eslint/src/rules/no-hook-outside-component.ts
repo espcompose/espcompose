@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @esphome/compose-eslint/no-hook-outside-component
+ * ESLint rule: @espcompose/compose-eslint/no-hook-outside-component
  *
  * Prevents hook calls (useHAEntity, useScript, useRef, useMemo, useEffect)
  * outside function component bodies. These hooks must be called during a
@@ -24,7 +24,6 @@ const HOOK_NAMES = new Set([
   'useScript',
   'useRef',
   'useMemo',
-  'useRawMemo',
   'useEffect',
 ]);
 

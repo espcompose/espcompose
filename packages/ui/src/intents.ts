@@ -1,5 +1,5 @@
 /**
- * Intent constants for @esphome/compose-ui design system.
+ * Intent constants for @espcompose/compose-ui design system.
  *
  * These are owned by the UI package — the base SDK is unaware of them.
  * Most DS components declare only `lvgl:widget` for LVGL container placement.

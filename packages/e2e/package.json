@@ -1,5 +1,5 @@
 {
-  "name": "@esphome/compose-e2e",
+  "name": "@espcompose/compose-e2e",
   "version": "0.0.1",
   "private": true,
   "description": "End-to-end tests for the ESPHome Compose pipeline",
@@ -9,9 +9,10 @@
     "build": "echo \"no build step for e2e\""
   },
   "dependencies": {
-    "@esphome/compose": "workspace:*",
-    "@esphome/compose-cli": "workspace:*",
-    "@esphome/compose-ui": "workspace:*",
+    "@espcompose/core": "workspace:*",
+    "@espcompose/compose-cli": "workspace:*",
+    "@espcompose/compose-target-esphome": "workspace:*",
+    "@espcompose/compose-ui": "workspace:*",
     "yaml": "catalog:"
   },
   "devDependencies": {

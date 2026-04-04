@@ -28,11 +28,12 @@ export {
 
 export { buildIR, configValueToIR } from './build-ir.js';
 export { lowerIR, irValueToConfig } from './lower-ir.js';
-export { analyzeReactiveStrategy, injectRuntimeIncludes } from './hybrid-lowering.js';
+export { analyzeReactiveStrategy } from './hybrid-lowering.js';
 export type { ReactiveStrategy, ReactiveAnalysis } from './hybrid-lowering.js';
 
-// Action tree IR
+// Action tree IR (re-exported from @espcompose/core/internals)
 export type {
+  ActionNode,
   IRAction,
   IRNativeAction,
   IRHAServiceAction,
@@ -45,15 +46,15 @@ export type {
   IRScriptExecute,
   IRScriptWait,
   IRScriptStop,
-  IRInternalLambda,
+  IRThemeSelect,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
   IRActionParam,
   IRLiteralParam,
   IRTriggerVarParam,
+  IRExpressionParam,
   IRActionConfig,
-  LambdaMarker,
 } from './action-tree.js';
 
 export {
@@ -68,8 +69,7 @@ export {
   irScriptExecute,
   irScriptWait,
   irScriptStop,
-  irInternalLambda,
+  irThemeSelect,
   irLambdaCondition,
   irNativeCondition,
-  lowerActionTree,
 } from './action-tree.js';

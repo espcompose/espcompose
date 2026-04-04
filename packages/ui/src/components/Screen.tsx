@@ -4,8 +4,8 @@
  * Compiles to <lvgl-page> with background from the `ds-bg` style definition.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
 

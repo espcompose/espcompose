@@ -4,8 +4,8 @@
  * Compiles to <lvgl-label> with theme-driven typography via reactive tokens.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveTypography, resolveFont } from '../theme/resolvers';
 import type { TextVariant } from '../theme/types';
 

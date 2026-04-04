@@ -6,23 +6,23 @@
  *
  * Example transform (auto-detected):
  *   text={officeLight.isOn ? "Off" : "On"}
- *   → text={_reactive.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
+ *   → text={__espcompose.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
  *
  * Example transform (explicit useMemo):
  *   useMemo(() => officeLight.isOn ? "Off" : "On")
- *   → _reactive.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
+ *   → __espcompose.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
  *
  * Skipped cases:
  *   - Direct passthrough: officeLight.stateText (ReactiveNode handled by runtime)
  *   - Non-reactive: static values, literal expressions
- *   - useEffect, _reactive.derivedMemo (kept as runtime calls)
+ *   - useEffect, __espcompose.derivedMemo (kept as runtime calls)
  */
 
 import ts from 'typescript';
 import type { TransformOutput, TransformDiagnostic } from './script-transformer.js';
 import {
   hasSignalBrand,
-  translateReactiveExpr,
+  translateReactiveExprIR,
   scanForHAEntities,
   type ExprCompilerContext,
   type HAEntityInfo,
@@ -41,7 +41,7 @@ interface SourceEdit {
 
 /**
  * Transform a TypeScript source file: compile reactive JSX attribute
- * expressions and explicit useMemo() calls to _reactive.compiled() with
+ * expressions and explicit useMemo() calls to __espcompose.compiled() with
  * pre-computed C++ metadata.
  */
 export function transformReactiveExpressions(
@@ -61,7 +61,7 @@ export function transformReactiveExpressions(
 
   walkNode(sourceFile, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
 
-  // If transforms were applied, ensure '_reactive' is importable
+  // If transforms were applied, ensure '__espcompose' is importable
   if (transformCount > 0) {
     injectReactiveImportIfNeeded(sourceFile, edits);
   }
@@ -85,7 +85,7 @@ export function transformReactiveExpressions(
 
 /**
  * Check if an expression sub-tree contains any Signal<T>-typed nodes.
- * Does NOT recurse into arrow functions, function expressions, or _reactive.* calls.
+ * Does NOT recurse into arrow functions, function expressions, or __espcompose.* calls.
  */
 function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
@@ -96,7 +96,7 @@ function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
     const callee = node.expression;
     if (ts.isPropertyAccessExpression(callee) &&
         ts.isIdentifier(callee.expression) &&
-        (callee.expression.text === '_reactive' || callee.expression.text === 'device')) {
+        (callee.expression.text === '__espcompose' || callee.expression.text === 'device')) {
       return false;
     }
   }
@@ -131,19 +131,19 @@ function isMemoCall(expr: ts.Expression): expr is ts.CallExpression {
 }
 
 /**
- * Check if an expression is a _reactive.* or useEffect() call that should be skipped entirely.
+ * Check if an expression is a __espcompose.* or useEffect() call that should be skipped entirely.
  * useMemo is NOT in this list — it gets AST-compiled.
  */
 function isReactiveSkipCall(expr: ts.Expression): boolean {
   if (!ts.isCallExpression(expr)) return false;
   const callee = expr.expression;
-  // useEffect(...), useRawMemo(...)
-  if (ts.isIdentifier(callee) && (callee.text === 'useEffect' || callee.text === 'useRawMemo')) return true;
+  // useEffect(...)
+  if (ts.isIdentifier(callee) && callee.text === 'useEffect') return true;
   // resolveBindProp(...), reactiveIsNaN(...)
   if (ts.isIdentifier(callee) && (callee.text === 'resolveBindProp' || callee.text === 'reactiveIsNaN')) return true;
   if (ts.isPropertyAccessExpression(callee)) {
     const obj = callee.expression;
-    if (ts.isIdentifier(obj) && obj.text === '_reactive') {
+    if (ts.isIdentifier(obj) && obj.text === '__espcompose') {
       return true;
     }
   }
@@ -160,14 +160,12 @@ function isDirectSignalPassthrough(expr: ts.Expression, checker: ts.TypeChecker)
 // Compiled metadata serialization
 // ────────────────────────────────────────────────────────────────────────────
 
-function serializeCompiledCall(cpp: string, cppType: string, deps: DependencyInfo[]): string {
+function serializeCompiledCall(exprType: string, deps: DependencyInfo[], exprIR: unknown): string {
   const depsJson = deps.map(d => {
     const parts = [
-      `signalName:${JSON.stringify(d.signalName)}`,
       `sourceId:${JSON.stringify(d.sourceId)}`,
       `triggerType:${JSON.stringify(d.triggerType)}`,
       `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
-      `cppType:${JSON.stringify(d.cppType)}`,
     ];
     if (d.sourceType) {
       parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
@@ -175,19 +173,16 @@ function serializeCompiledCall(cpp: string, cppType: string, deps: DependencyInf
     return `{${parts.join(',')}}`;
   });
 
-  return `_reactive.compiled({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},deps:[${depsJson.join(',')}]})`;
+  return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(exprIR)}})`;
 }
 
 function serializeSlottedCall(
-  cpp: string,
-  cppType: string,
+  exprType: string,
   slotCount: number,
   slotExprs: string[],
+  exprIR: unknown,
 ): string {
-  // The `as any` cast is necessary because Signal<T> (phantom branded number)
-  // is not assignable to ReactiveNode<unknown> at the type level, even though
-  // it is at runtime. This is compiler-generated code, so the cast is safe.
-  return `_reactive.slotted({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},slots:${slotCount}}, ${slotExprs.join(', ')}) as any`;
+  return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(exprIR)}}, ${slotExprs.join(', ')}) as any`;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -232,7 +227,7 @@ function processJsxAttributeExpression(
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
 ): void {
-  // Skip _reactive.* calls and useEffect() that shouldn't be transformed
+  // Skip __espcompose.* calls and useEffect() that shouldn't be transformed
   if (isReactiveSkipCall(expr)) return;
 
   // useMemo() in JSX — AST-compile it
@@ -260,7 +255,7 @@ function processJsxAttributeExpression(
   // Check if the expression sub-tree contains Signal-typed nodes
   if (!containsSignalNode(expr, checker)) return;
 
-  // AST-compile the expression to C++
+  // AST-compile the expression to ExpressionIR
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
@@ -268,20 +263,17 @@ function processJsxAttributeExpression(
     slots: [],
   };
 
-  const result = translateReactiveExpr(expr, ctx);
-  if (!result) {
-    // Fallback: wrap in useMemo() for runtime codegen
-    const { line } = sourceFile.getLineAndCharacterOfPosition(expr.getStart(sourceFile));
-    diagnostics.push({ message: 'could not AST-compile expression, falling back to useMemo()', file: sourceFile.fileName, line: line + 1 });
-    const exprText = expr.getText(sourceFile);
-    const start = expr.getStart(sourceFile);
-    const end = expr.getEnd();
-    edits.push({
-      position: start,
-      deleteEnd: end,
-      text: `useMemo(() => ${exprText})`,
+  const irResult = translateReactiveExprIR(expr, ctx);
+  if (!irResult) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(expr.getStart(sourceFile));
+    diagnostics.push({
+      message: `Unsupported reactive expression: cannot compile to ExprIR. ` +
+        `Expression contains patterns not supported by the compiler (e.g. unsupported method calls, ` +
+        `property access, or operators). Simplify the expression or extract it into a supported form.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
     });
-    onTransform();
     return;
   }
 
@@ -289,20 +281,20 @@ function processJsxAttributeExpression(
   const start = expr.getStart(sourceFile);
   const end = expr.getEnd();
 
-  if (result.slots && result.slots.length > 0) {
-    // Slots present — emit _reactive.slotted() with runtime signal arguments
-    const slotExprs = result.slots.map(s => s.expr.getText(sourceFile));
+  if (irResult.slots && irResult.slots.length > 0) {
+    // Slots present — emit __espcompose.slotted() with runtime signal arguments
+    const slotExprs = irResult.slots.map(s => s.expr.getText(sourceFile));
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeSlottedCall(result.cpp, result.cppType, result.slots.length, slotExprs),
+      text: serializeSlottedCall(irResult.exprType, irResult.slots.length, slotExprs, irResult.expr),
     });
   } else {
-    // Fully static — emit _reactive.compiled() with embedded deps
+    // Fully static — emit __espcompose.compiled() with embedded deps
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeCompiledCall(result.cpp, result.cppType, result.deps),
+      text: serializeCompiledCall(irResult.exprType, irResult.deps, irResult.expr),
     });
   }
 
@@ -311,7 +303,7 @@ function processJsxAttributeExpression(
 
 /**
  * Process an explicit useMemo(() => expr) call.
- * Extract the arrow body, AST-compile it, and replace with _reactive.compiled({...}).
+ * Extract the arrow body, AST-compile it, and replace with __espcompose.compiled({...}).
  */
 function processExplicitMemo(
   callExpr: ts.CallExpression,
@@ -353,7 +345,7 @@ function processExplicitMemo(
   // Check if the body contains reactive signal references
   if (!containsSignalNode(bodyExpr, checker)) return;
 
-  // AST-compile the expression body
+  // AST-compile the expression body to ExpressionIR
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
@@ -361,29 +353,36 @@ function processExplicitMemo(
     slots: [],
   };
 
-  const result = translateReactiveExpr(bodyExpr, ctx);
-  if (!result) {
-    const { line } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
-    diagnostics.push({ message: 'could not AST-compile memo() body', file: sourceFile.fileName, line: line + 1 });
-    return; // Can't compile — leave as useMemo() for runtime
+  const irResult = translateReactiveExprIR(bodyExpr, ctx);
+  if (!irResult) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `Unsupported expression in useMemo() body: cannot compile to ExprIR. ` +
+        `The memo body contains patterns not supported by the compiler. ` +
+        `Simplify the expression or extract it into a supported form.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
   }
 
   // Replace the entire useMemo(...) call with compiled call
   const start = callExpr.getStart(sourceFile);
   const end = callExpr.getEnd();
 
-  if (result.slots && result.slots.length > 0) {
-    const slotExprs = result.slots.map(s => s.expr.getText(sourceFile));
+  if (irResult.slots && irResult.slots.length > 0) {
+    const slotExprs = irResult.slots.map(s => s.expr.getText(sourceFile));
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeSlottedCall(result.cpp, result.cppType, result.slots.length, slotExprs),
+      text: serializeSlottedCall(irResult.exprType, irResult.slots.length, slotExprs, irResult.expr),
     });
   } else {
     edits.push({
       position: start,
       deleteEnd: end,
-      text: serializeCompiledCall(result.cpp, result.cppType, result.deps),
+      text: serializeCompiledCall(irResult.exprType, irResult.deps, irResult.expr),
     });
   }
 
@@ -402,10 +401,10 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
     if (!ts.isImportDeclaration(stmt)) continue;
     const moduleSpec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(moduleSpec)) continue;
-    if (moduleSpec.text !== '@esphome/compose') continue;
+    if (moduleSpec.text !== '@espcompose/core') continue;
 
     // Skip type-only imports — `import type { ... }` is erased at runtime,
-    // so injecting `_reactive` there would leave it undefined at bundle time.
+    // so injecting `__espcompose` there would leave it undefined at bundle time.
     if (stmt.importClause?.isTypeOnly) continue;
 
     composeImportDecl = stmt;
@@ -413,7 +412,7 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
     const namedBindings = stmt.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
       for (const spec of namedBindings.elements) {
-        if (spec.name.text === '_reactive') {
+        if (spec.name.text === '__espcompose') {
           hasReactiveImport = true;
           break;
         }
@@ -429,7 +428,7 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
       const lastElement = namedBindings.elements[namedBindings.elements.length - 1];
       if (lastElement) {
         const insertPos = lastElement.getEnd();
-        edits.push({ position: insertPos, text: ', _reactive' });
+        edits.push({ position: insertPos, text: ', __espcompose' });
         return;
       }
     }
@@ -437,6 +436,6 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   edits.push({
     position: 0,
-    text: `import { _reactive } from '@esphome/compose';\n`,
+    text: `import { __espcompose } from '@espcompose/core';\n`,
   });
 }

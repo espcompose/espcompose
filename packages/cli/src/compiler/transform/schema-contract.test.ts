@@ -26,12 +26,12 @@ import { LIBRARY_FORMAT_VERSION } from './format-version.js';
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 /**
- * Extract the metadata JSON object from a `_reactive.compiled({...})` string.
+ * Extract the metadata JSON object from a `__espcompose.compiled({...})` string.
  * The serializer emits unquoted object keys, so we need to add quotes for JSON.parse.
  */
 function extractCompiledMeta(code: string): unknown {
-  const match = code.match(/_reactive\.compiled\((\{.+\})\)/s);
-  if (!match) throw new Error(`No _reactive.compiled() found in: ${code}`);
+  const match = code.match(/__espcompose\.compiled\((\{.+\})\)/s);
+  if (!match) throw new Error(`No __espcompose.compiled() found in: ${code}`);
   // The serializer emits JS object literal syntax (unquoted keys).
   // Convert to valid JSON by quoting bare keys.
   const jsObj = match[1];
@@ -40,11 +40,11 @@ function extractCompiledMeta(code: string): unknown {
 }
 
 /**
- * Extract the metadata object from a `_reactive.slotted({...}, ...)` string.
+ * Extract the metadata object from a `__espcompose.slotted({...}, ...)` string.
  */
 function extractSlottedMeta(code: string): unknown {
-  const match = code.match(/_reactive\.slotted\((\{.+?\}),/s);
-  if (!match) throw new Error(`No _reactive.slotted() found in: ${code}`);
+  const match = code.match(/__espcompose\.slotted\((\{.+?\}),/s);
+  if (!match) throw new Error(`No __espcompose.slotted() found in: ${code}`);
   const jsObj = match[1];
   const json = jsObj.replace(/([{,])(\w+):/g, '$1"$2":');
   return JSON.parse(json);
@@ -54,28 +54,26 @@ function extractSlottedMeta(code: string): unknown {
 // These mirror the private serializeCompiledCall / serializeSlottedCall
 // functions. The tests validate that this exact format conforms to the schema.
 
-function buildCompiledCallString(cpp: string, cppType: string, deps: Array<{
-  signalName: string; sourceId: string; triggerType: string;
-  sourceDomain: string; cppType: string; sourceType?: string;
-}>): string {
+function buildCompiledCallString(exprType: string, deps: Array<{
+  sourceId: string; triggerType: string;
+  sourceDomain: string; sourceType?: string;
+}>, expr: unknown = { kind: 'literal', value: 0, type: 'float' }): string {
   const depsJson = deps.map(d => {
     const parts = [
-      `signalName:${JSON.stringify(d.signalName)}`,
       `sourceId:${JSON.stringify(d.sourceId)}`,
       `triggerType:${JSON.stringify(d.triggerType)}`,
       `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
-      `cppType:${JSON.stringify(d.cppType)}`,
     ];
     if (d.sourceType) {
       parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
     }
     return `{${parts.join(',')}}`;
   });
-  return `_reactive.compiled({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},deps:[${depsJson.join(',')}]})`;
+  return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(expr)}})`;
 }
 
-function buildSlottedCallString(cpp: string, cppType: string, slotCount: number): string {
-  return `_reactive.slotted({cpp:${JSON.stringify(cpp)},type:${JSON.stringify(cppType)},slots:${slotCount}}, signal0) as any`;
+function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'slot', slotIndex: 0 }): string {
+  return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(expr)}}, signal0) as any`;
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────
@@ -84,15 +82,13 @@ describe('Library Format Schema Contract (Producer)', () => {
   describe('CompiledReactive metadata', () => {
     it('single dependency matches schema', () => {
       const code = buildCompiledCallString(
-        'sig_ha_light_office.get() ? std::string("On") : std::string("Off")',
-        'std::string',
+        'string',
         [{
-          signalName: 'sig_ha_light_office',
           sourceId: 'ha_light_office',
           triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
-          cppType: 'bool',
         }],
+        { kind: 'ternary', test: { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' }, consequent: { kind: 'literal', value: 'On', type: 'string' }, alternate: { kind: 'literal', value: 'Off', type: 'string' } },
       );
 
       const meta = extractCompiledMeta(code);
@@ -102,11 +98,10 @@ describe('Library Format Schema Contract (Producer)', () => {
 
     it('multiple dependencies with sourceType matches schema', () => {
       const code = buildCompiledCallString(
-        'sig_a.get() + sig_b.get()',
         'float',
         [
-          { signalName: 'sig_a', sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', cppType: 'float', sourceType: 'ha_entity' },
-          { signalName: 'sig_b', sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', cppType: 'int32_t', sourceType: 'theme' },
+          { sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
         ],
       );
 
@@ -123,21 +118,21 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
 
     it('zero dependencies matches schema', () => {
-      const code = buildCompiledCallString('42', 'int32_t', []);
+      const code = buildCompiledCallString('int', []);
       const meta = extractCompiledMeta(code);
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
     });
 
     it('rejects metadata missing required fields', () => {
-      const bad = { cpp: 'x', type: 'int' }; // missing deps
+      const bad = { type: 'int' }; // missing deps and expr
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);
     });
 
     it('rejects dependency missing required fields', () => {
       const bad = {
-        cpp: 'x',
         type: 'int',
-        deps: [{ signalName: 'sig', sourceId: 'id' }], // missing triggerType, sourceDomain, cppType
+        deps: [{ sourceId: 'id' }], // missing triggerType, sourceDomain
+        expr: { kind: 'literal', value: 0, type: 'int' },
       };
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);
     });
@@ -145,11 +140,7 @@ describe('Library Format Schema Contract (Producer)', () => {
 
   describe('SlottedReactive metadata', () => {
     it('matches schema', () => {
-      const code = buildSlottedCallString(
-        '__$$SLOT_0$$__.get() * 2',
-        'float',
-        1,
-      );
+      const code = buildSlottedCallString('float', 1);
 
       const meta = extractSlottedMeta(code);
       const result = SlottedReactiveSchema.safeParse(meta);
@@ -157,7 +148,7 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
 
     it('rejects metadata missing slots', () => {
-      const bad = { cpp: 'x', type: 'int' }; // missing slots
+      const bad = { type: 'int', expr: { kind: 'literal', value: 0, type: 'int' } }; // missing slots
       expect(SlottedReactiveSchema.safeParse(bad).success).toBe(false);
     });
   });

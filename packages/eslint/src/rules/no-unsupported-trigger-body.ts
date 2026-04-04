@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @esphome/compose-eslint/no-unsupported-trigger-body
+ * ESLint rule: @espcompose/compose-eslint/no-unsupported-trigger-body
  *
  * Detects arrow functions assigned to TriggerHandler-typed JSX props (or
  * useScript/createScript bodies) and validates their statement-level contents. Reports

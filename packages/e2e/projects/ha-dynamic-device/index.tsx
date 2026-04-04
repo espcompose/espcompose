@@ -7,8 +7,8 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { Display, useRef, useHAEntity } from '@esphome/compose';
-import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
+import { Display, useRef, useHAEntity } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
 function ActionButton(props: {

@@ -13,7 +13,7 @@ import {
   type i2s_audio_I2SAudioComponent,
   type output_FloatOutput,
   type speaker_Speaker,
-} from '@esphome/compose';
+} from '@espcompose/core';
 
 export function Hardware({ displayRef }: { displayRef: Ref<Display> }) {
   // ── Cross-component refs ──────────────────────────────────────────────

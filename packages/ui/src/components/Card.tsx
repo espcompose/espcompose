@@ -5,8 +5,8 @@
  * Background color comes from the `ds-surface-alt` style definition.
  */
 
-import type { EspComposeElement } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveRadius } from '../theme/resolvers';
 import type { SpacingToken, RadiusToken } from '../theme/types';
 

@@ -9,8 +9,8 @@
 ### Patch Changes
 
 - Updated dependencies [[`57f5b38`](https://github.com/xmlguy74/espcompose/commit/57f5b38a37bd30b5b0db435630a4dc704f329f40)]:
-  - @esphome/compose@0.4.0
-  - @esphome/compose-ui@0.4.0
+  - @espcompose/core@0.4.0
+  - @espcompose/compose-ui@0.4.0
 
 ## 1.2.0
 
@@ -21,8 +21,8 @@
 ### Patch Changes
 
 - Updated dependencies [[`d0a49b7`](https://github.com/xmlguy74/espcompose/commit/d0a49b72d82cfd1434236f7a4e3eb536751fef6e)]:
-  - @esphome/compose@0.3.0
-  - @esphome/compose-ui@0.3.0
+  - @espcompose/core@0.3.0
+  - @espcompose/compose-ui@0.3.0
 
 ## 1.1.0
 
@@ -35,5 +35,5 @@
 - [#25](https://github.com/xmlguy74/espcompose/pull/25) [`ada5543`](https://github.com/xmlguy74/espcompose/commit/ada55439101e858448e11577bfc4ca494cb1e605) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Refactored the compiler into the cli tool. Added new demo project
 
 - Updated dependencies [[`ada5543`](https://github.com/xmlguy74/espcompose/commit/ada55439101e858448e11577bfc4ca494cb1e605), [`12a28fe`](https://github.com/xmlguy74/espcompose/commit/12a28fe564aa3495c9abc20d1d48473035035f69)]:
-  - @esphome/compose@0.2.0
-  - @esphome/compose-ui@0.2.0
+  - @espcompose/core@0.2.0
+  - @espcompose/compose-ui@0.2.0

@@ -5,8 +5,8 @@
  * component's `.value` is bound to an LVGL label widget via Expression<T>,
  * plus using an LVGL button event to control an HA entity.
  */
-import { Display, useRef, useHAEntity } from '@esphome/compose';
-import type { internal_temperature_InternalTemperatureSensor, EspComposeElement, TriggerHandler } from '@esphome/compose';
+import { Display, useRef, useHAEntity } from '@espcompose/core';
+import type { internal_temperature_InternalTemperatureSensor, EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
 function ActionButton(props: {

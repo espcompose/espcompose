@@ -5,7 +5,7 @@
  *   - useMemo() combining two HA entities into a derived text value
  *   - LVGL label displaying the memo-derived status text
  */
-import { Display, useRef, useHAEntity, useMemo } from '@esphome/compose';
+import { Display, useRef, useHAEntity, useMemo } from '@espcompose/core';
 
 function App() {
   const displayRef = useRef<Display>();

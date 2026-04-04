@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Display, useRef } from '@esphome/compose';
+import { Display, useRef } from '@espcompose/core';
 import { UI } from './lvgl';
 import { Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 } from './hardware';
 

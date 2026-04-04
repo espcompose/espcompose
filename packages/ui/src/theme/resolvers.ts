@@ -9,8 +9,8 @@
  * value is returned directly (no reactive overhead).
  */
 
-import { useReactiveTheme, isReactiveNode, useRawMemo } from '@esphome/compose';
-import type { ReactiveNode, Signal } from '@esphome/compose';
+import { useReactiveTheme, isReactiveNode, __espcompose } from '@espcompose/core';
+import type { ReactiveNode, Signal, ExprNode } from '@espcompose/core';
 import type {
   SpacingToken,
   SizeToken,
@@ -24,8 +24,6 @@ import type {
 /**
  * Safely access a nested path on the reactive theme proxy.
  *
- * @example themeLeaf('spacing', 'md') → ReactiveNode<number>
- * @example themeLeaf('colors', 'primary', 'bg') → ReactiveNode<lv_color_t>
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function themeLeaf(...path: string[]): any {
@@ -108,29 +106,29 @@ export function resolveFont(def: {
   const szReactive = isReactiveNode(def.fontSize);
 
   if (!famReactive && !szReactive) {
-    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- narrowed by isReactiveNode() guards above
+    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- narrowed by isReactiveNode() guards above
     return `${def.fontFamily}_${def.fontSize}`;
   }
-
-  // Build C++ args for resolve_font(family, size) → const lv_font_t*
-  const famExpr = famReactive
-    ? `${(def.fontFamily as unknown as ReactiveNode<string>).cppSignalName}.get()`
-    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: famReactive is false
-    : `std::string("${def.fontFamily}")`;
-  const szExpr = szReactive
-    ? `${(def.fontSize as unknown as ReactiveNode<number>).cppSignalName}.get()`
-    // eslint-disable-next-line @esphome/compose-eslint/no-untracked-signal -- static branch: szReactive is false
-    : `${def.fontSize}`;
 
   const deps = [
     ...(famReactive ? (def.fontFamily as unknown as ReactiveNode<string>).dependencies : []),
     ...(szReactive ? (def.fontSize as unknown as ReactiveNode<number>).dependencies : []),
   ];
 
-  return useRawMemo<string>({
-    cppExpression: `resolve_font(${famExpr}, ${szExpr})`,
-    cppReturnType: 'const lv_font_t*',
+  // Build ExprResolveFont IR node
+  const famIR: ExprNode = famReactive
+    ? (def.fontFamily as unknown as ReactiveNode<string>).exprIR ?? { kind: 'literal', value: '', type: 'string' }
+    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- static branch: famReactive is false
+    : { kind: 'literal', value: def.fontFamily as string, type: 'string' };
+  const szIR: ExprNode = szReactive
+    ? (def.fontSize as unknown as ReactiveNode<number>).exprIR ?? { kind: 'literal', value: 0, type: 'float' }
+    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- static branch: szReactive is false
+    : { kind: 'literal', value: def.fontSize as number, type: 'float' };
+
+  return __espcompose.derivedMemo<string>({
+    exprType: 'font_ptr',
     dependencies: deps,
+    exprIR: { kind: 'resolve_font', family: famIR, size: szIR },
   });
 }
 

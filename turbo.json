@@ -5,7 +5,7 @@
       "dependsOn": ["^build", "typecheck", "lint"],
       "outputs": ["dist/**"]
     },
-    "@esphome/compose-e2e#build": {
+    "@espcompose/compose-e2e#build": {
       "dependsOn": ["^build"],
       "outputs": []
     },

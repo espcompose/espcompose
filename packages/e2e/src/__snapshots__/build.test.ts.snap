@@ -365,6 +365,7 @@ lvgl:
       border_width: 0
       pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
       scrollbar_mode: 'OFF'
+      id: rw_ref1
       widgets:
         - obj:
             width: 100%
@@ -380,7 +381,7 @@ lvgl:
                   text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                   text_font: !lambda "return espcompose::memo_0.get();"
                   text: Smart Home
-                  id: rw_ref1
+                  id: rw_ref2
               - obj:
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
                   pad_all: !lambda "return espcompose::thm_spacing_md.get();"
@@ -392,12 +393,13 @@ lvgl:
                   layout:
                     type: flex
                     flex_flow: COLUMN
+                  id: rw_ref3
                   widgets:
                     - label:
                         text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                         text_font: !lambda "return espcompose::memo_1.get();"
                         text: Living Room
-                        id: rw_ref2
+                        id: rw_ref4
                     - obj:
                         bg_opa: TRANSP
                         width: 100%
@@ -410,7 +412,7 @@ lvgl:
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                               text_font: !lambda "return espcompose::memo_2.get();"
                               text: Brightness
-                              id: rw_ref3
+                              id: rw_ref5
                           - slider:
                               min_value: 0
                               max_value: 255
@@ -428,9 +430,8 @@ lvgl:
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                               text_font: !lambda "return espcompose::memo_3.get();"
                               text: Power
-                              id: rw_ref4
+                              id: rw_ref6
                           - switch: {}
-                  id: rw_ref5
               - obj:
                   width: 100%
                   height: SIZE_CONTENT
@@ -449,14 +450,14 @@ lvgl:
                         height: !lambda "return espcompose::thm_sizes_sm_height.get();"
                         pressed:
                           bg_color: !lambda "return espcompose::thm_colors_success_bgPressed.get();"
+                        id: rw_ref7
                         widgets:
                           - label:
                               text: Turn On
                               text_color: !lambda "return espcompose::thm_colors_success_text.get();"
                               text_font: !lambda "return espcompose::memo_4.get();"
                               align: CENTER
-                              id: rw_ref6
-                        id: rw_ref7
+                              id: rw_ref8
                     - button:
                         bg_opa: TRANSP
                         border_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
@@ -466,15 +467,14 @@ lvgl:
                         pressed:
                           bg_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                           bg_opa: COVER
+                        id: rw_ref9
                         widgets:
                           - label:
                               text: Turn Off
                               text_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                               text_font: !lambda "return espcompose::memo_6.get();"
                               align: CENTER
-                              id: rw_ref8
-                        id: rw_ref9
-      id: rw_ref10
+                              id: rw_ref10
 "
 `;
 
@@ -1059,11 +1059,11 @@ lvgl:
             y: 160
             pressed:
               bg_opa: !lambda "return espcompose::memo_1.get().c_str();"
+            id: rw_ref4
             widgets:
               - label:
                   text: Styled
                   align: CENTER
-            id: rw_ref4
         - slider:
             x: 10
             y: 210

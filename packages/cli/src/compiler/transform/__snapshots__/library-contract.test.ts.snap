@@ -1,20 +1,20 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Library Contract Snapshots > reactive-fixture > transformed output matches snapshot > reactive-fixture transformed output 1`] = `
-"export const __espcompose_format__ = 1;
+"export const __espcompose_format__ = 2;
 /**
  * Library contract fixture: reactive expressions.
  *
- * Exercises _reactive.compiled() and _reactive.slotted() transform paths.
+ * Exercises __espcompose.compiled() and __espcompose.slotted() transform paths.
  * Kept minimal — just enough to produce all reactive metadata shapes.
  */
-import { useHAEntity, useMemo, _reactive } from '@esphome/compose';
-import type { Signal } from '@esphome/compose';
+import { useHAEntity, useMemo, __espcompose } from '@espcompose/core';
+import type { Signal } from '@espcompose/core';
 
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {
   const light = useHAEntity('light.office');
-  const text = _reactive.compiled({cpp:"sig_ha_light_office.get() ? std::string(\\"On\\") : std::string(\\"Off\\")",type:"std::string",deps:[{signalName:"sig_ha_light_office",sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor",cppType:"bool"}]});
+  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"ternary","test":{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},"consequent":{"kind":"literal","value":"On","type":"string"},"alternate":{"kind":"literal","value":"Off","type":"string"}}});
 
   return (
     <lvgl-label text={text as unknown as string} />
@@ -23,7 +23,7 @@ export function StatusLabel() {
 
 /** Component that passes a Signal through (slotted path via JSX attribute). */
 export function TemperatureDisplay(props: { temp: Signal<number> }) {
-  const formatted = _reactive.slotted({cpp:"__$$SLOT_0$$__.get() > 72 ? std::string(\\"Hot\\") : std::string(\\"Cold\\")",type:"std::string",slots:1}, props.temp) as any;
+  const formatted = __espcompose.slotted({type:"string",slots:1,expr:{"kind":"ternary","test":{"kind":"binary","op":">","left":{"kind":"slot","slotIndex":0},"right":{"kind":"literal","value":72,"type":"float"}},"consequent":{"kind":"literal","value":"Hot","type":"string"},"alternate":{"kind":"literal","value":"Cold","type":"string"}}}, props.temp) as any;
 
   return (
     <lvgl-label text={formatted as unknown as string} />
@@ -33,28 +33,28 @@ export function TemperatureDisplay(props: { temp: Signal<number> }) {
 `;
 
 exports[`Library Contract Snapshots > script-fixture > transformed output matches snapshot > script-fixture transformed output 1`] = `
-"export const __espcompose_format__ = 1;
+"export const __espcompose_format__ = 2;
 /**
  * Library contract fixture: script / action tree compilation.
  *
  * Exercises __compiledActions and __compiledScript transform paths.
  * Kept minimal — just enough to produce all action metadata shapes.
  */
-import { useScript, delay, logger } from '@esphome/compose';
+import { useScript, delay, logger } from '@espcompose/core';
 
 /** Component with a useScript() call (compiled script path). */
 export function ScriptButton() {
   const greet = useScript(Object.assign(async () => {
     logger.log('Hello!');
     await delay(500);
-  }, { __compiledScript: {"id":"greet","then":[{"logger.log":"Hello!"},{"delay":"500ms"}]} }));
+  }, { __compiledScript: {"id":"greet","then":[{"kind":"logger","message":"Hello!"},{"kind":"delay","duration":"500ms"}]} }));
 
   return (
     <binary_sensor
       platform="gpio"
       pin={4}
       name="ScriptBtn"
-      onPress={Object.assign(async () => { await greet(); }, { __compiledActions: [{"script.execute":{"id":"greet"}},{"script.wait":{"id":"greet"}}] })}
+      onPress={Object.assign(async () => { await greet(); }, { __compiledActions: [{"kind":"script_execute","scriptId":"greet"},{"kind":"script_wait","scriptId":"greet"}] })}
     />
   );
 }

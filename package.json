@@ -1,5 +1,5 @@
 {
-  "name": "esphome-compose",
+  "name": "espcompose",
   "version": "0.0.0",
   "private": true,
   "description": "TypeScript to ESPHome YAML transpiler toolset",
@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmlguy74/espcompose.git"
+    "url": "git+https://github.com/espcompose/espcompose.git"
   },
   "engines": {
     "node": ">=22"
@@ -42,6 +42,7 @@
     "tsx": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "vite-plugin-singlefile": "^2.3.2"
   }
 }

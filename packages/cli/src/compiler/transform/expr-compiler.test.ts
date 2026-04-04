@@ -2,24 +2,20 @@
  * Unit tests for the shared expression compiler (expr-compiler.ts).
  *
  * Tests cover:
- *   - translateReactiveExpr() with various expression types
+ *   - translateScriptExprIR() with various expression types
  *   - hasSignalBrand() type detection
  *   - scanForHAEntities() entity scanning
- *   - Lift parameter handling
- *   - Theme property chain resolution
- *   - Binary/prefix operators, ternary, Math.*, isNaN, template literals
+ *   - Binary/prefix operators
  */
 
 import { describe, it, expect } from 'vitest';
 import ts from 'typescript';
 import {
-  translateReactiveExpr,
-  translateScriptExpr,
   scanForHAEntities,
   translateBinaryOp,
   translatePrefixOp,
   escapeStringForCpp,
-  type ExprCompilerContext,
+  translateScriptExprIR,
   type HAEntityInfo,
   type ScriptTransformContext,
   type ScanDiagnostic,
@@ -31,49 +27,16 @@ import {
 
 /**
  * Parse a TS expression string into an AST node.
- * Uses a minimal TS program so the type checker is available.
  */
-function parseExpr(code: string): { node: ts.Expression; checker: ts.TypeChecker; sourceFile: ts.SourceFile } {
+function parseExpr(code: string): { node: ts.Expression; sourceFile: ts.SourceFile } {
   const fileName = 'test.tsx';
-  // Wrap expression as: const __result = <expr>;
   const fullSource = `const __result = ${code};`;
   const sourceFile = ts.createSourceFile(fileName, fullSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-
-  const host = ts.createCompilerHost({});
-  const originalGetSourceFile = host.getSourceFile;
-  host.getSourceFile = (name, ...args) => {
-    if (name === fileName) return sourceFile;
-    return originalGetSourceFile.call(host, name, ...args);
-  };
-
-  const program = ts.createProgram([fileName], {
-    target: ts.ScriptTarget.Latest,
-    jsx: ts.JsxEmit.ReactJSX,
-    strict: false,
-    noEmit: true,
-  }, host);
-
-  const checker = program.getTypeChecker();
-
-  // Extract the expression from `const __result = <expr>;`
   const stmt = sourceFile.statements[0];
   if (!ts.isVariableStatement(stmt)) throw new Error('Expected variable statement');
   const decl = stmt.declarationList.declarations[0];
   if (!decl.initializer) throw new Error('Expected initializer');
-
-  return { node: decl.initializer, checker, sourceFile };
-}
-
-function createReactiveCtx(
-  checker: ts.TypeChecker,
-  haEntities?: Map<ts.Symbol, HAEntityInfo>,
-): ExprCompilerContext {
-  return {
-    checker,
-    haEntities: haEntities ?? new Map(),
-    dependencies: new Map(),
-    slots: [],
-  };
+  return { node: decl.initializer, sourceFile };
 }
 
 /**
@@ -164,128 +127,71 @@ describe('expr-compiler', () => {
     });
   });
 
-  describe('translateReactiveExpr', () => {
-    it('compiles numeric literals', () => {
-      const { node, checker } = parseExpr('42');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(result!.cpp).toBe('42');
-    });
-
-    it('compiles string literals', () => {
-      const { node, checker } = parseExpr('"hello"');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(result!.cpp).toBe('std::string("hello")');
-    });
-
-    it('compiles boolean literals', () => {
-      const { node: trueNode, checker } = parseExpr('true');
-      const ctx = createReactiveCtx(checker);
-      expect(translateReactiveExpr(trueNode, ctx)!.cpp).toBe('true');
-
-      const { node: falseNode, checker: c2 } = parseExpr('false');
-      expect(translateReactiveExpr(falseNode, createReactiveCtx(c2))!.cpp).toBe('false');
-    });
-
-    it('compiles binary expressions', () => {
-      const { node, checker } = parseExpr('1 + 2');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result!.cpp).toBe('1 + 2');
-    });
-
-    it('compiles ternary/conditional expression', () => {
-      const { node, checker } = parseExpr('true ? "a" : "b"');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result!.cpp).toBe('true ? std::string("a") : std::string("b")');
-    });
-
-    it('compiles prefix unary expressions', () => {
-      const { node, checker } = parseExpr('!true');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result!.cpp).toBe('!true');
-    });
-
-    it('compiles parenthesized expressions', () => {
-      const { node, checker } = parseExpr('(1 + 2)');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result!.cpp).toBe('(1 + 2)');
-    });
-
-    it('returns null for unsupported expressions', () => {
-      // Array literal — not supported
-      const { node, checker } = parseExpr('[1, 2, 3]');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).toBeNull();
-    });
-
-    it('compiles template literal with numeric substitution using std::to_string', () => {
-      const { node, checker } = parseExpr('`val: ${42}`');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(result!.cpp).toBe('std::string("val: ") + std::to_string(42)');
-    });
-
-    it('compiles template literal with string substitution without std::to_string', () => {
-      const { node, checker } = parseExpr('`hi ${\"world\"}`');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(result!.cpp).toBe('std::string("hi ") + std::string("world")');
-    });
-
-    it('compiles template literal with mixed substitutions', () => {
-      const { node, checker } = parseExpr('`${"abc"}_${123}`');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(result!.cpp).toBe('std::string("abc") + std::string("_") + std::to_string(123)');
-    });
-  });
-
-  describe('translateScriptExpr', () => {
+  describe('translateScriptExprIR', () => {
     it('compiles numeric literals', () => {
       const { node } = parseExpr('42');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
-      expect(translateScriptExpr(node, ctx)).toBe('42');
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({ kind: 'literal', value: 42, type: 'float' });
     });
 
     it('compiles string literals', () => {
       const { node } = parseExpr('"hello"');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
-      expect(translateScriptExpr(node, ctx)).toBe('std::string("hello")');
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({ kind: 'literal', value: 'hello', type: 'string' });
     });
 
     it('compiles boolean literals', () => {
       const { node } = parseExpr('true');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
-      expect(translateScriptExpr(node, ctx)).toBe('true');
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({ kind: 'literal', value: true, type: 'bool' });
     });
 
     it('resolves local variables', () => {
       const { node } = parseExpr('count');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set(['count']) };
-      expect(translateScriptExpr(node, ctx)).toBe('count');
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({ kind: 'trigger_var', name: 'count' });
     });
 
     it('resolves trigger parameter properties', () => {
       const { node } = parseExpr('args.x');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
-      expect(translateScriptExpr(node, ctx)).toBe('x');
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({ kind: 'trigger_var', name: 'x' });
     });
 
     it('returns null for unknown identifiers', () => {
       const { node } = parseExpr('unknown');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
-      expect(translateScriptExpr(node, ctx)).toBeNull();
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toBeNull();
+    });
+
+    it('compiles binary expressions', () => {
+      const { node } = parseExpr('1 + 2');
+      const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({
+        kind: 'binary',
+        op: '+',
+        left: { kind: 'literal', value: 1, type: 'float' },
+        right: { kind: 'literal', value: 2, type: 'float' },
+      });
+    });
+
+    it('compiles ternary expressions', () => {
+      const { node } = parseExpr('true ? 1 : 2');
+      const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
+      const result = translateScriptExprIR(node, ctx);
+      expect(result).toEqual({
+        kind: 'ternary',
+        test: { kind: 'literal', value: true, type: 'bool' },
+        consequent: { kind: 'literal', value: 1, type: 'float' },
+        alternate: { kind: 'literal', value: 2, type: 'float' },
+      });
     });
   });
 
@@ -370,26 +276,6 @@ describe('expr-compiler', () => {
       scanForHAEntities(sourceFile, haEntities, checker, diagnostics);
       expect(diagnostics).toHaveLength(0);
       expect(haEntities.size).toBe(1);
-    });
-  });
-
-  describe('HA entity property resolution', () => {
-    it('resolves isOn property', () => {
-      const { node, checker } = parseExpr('true ? "a" : "b"');
-      const haEntities = new Map<ts.Symbol, HAEntityInfo>();
-      const ctx = createReactiveCtx(checker, haEntities);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
-      expect(ctx.dependencies.size).toBe(0);
-    });
-  });
-
-  describe('slot assignment', () => {
-    it('assigns slots for Signal-typed identifiers', () => {
-      const { node, checker } = parseExpr('true ? "a" : "b"');
-      const ctx = createReactiveCtx(checker);
-      const result = translateReactiveExpr(node, ctx);
-      expect(result).not.toBeNull();
     });
   });
 });

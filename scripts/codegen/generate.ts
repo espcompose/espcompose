@@ -87,7 +87,7 @@ if (!ESPHOME_VERSION) {
 
 const SCHEMAS_DIR = path.resolve(__dirname, '../../.cache/schemas');
 
-const GENERATED_DIR = path.resolve(__dirname, '../../packages/sdk/src/generated');
+const GENERATED_DIR = path.resolve(__dirname, '../../packages/core/src/generated');
 const COMPONENTS_DIR = path.join(GENERATED_DIR, 'components');
 
 // ────────────────────────────────────────────────────────────────────────────

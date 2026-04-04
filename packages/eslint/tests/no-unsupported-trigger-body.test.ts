@@ -151,7 +151,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'Ref action — branded',
       filename: 'test.tsx',
       code: `
-        import type { Ref } from '@esphome/compose';
+        import type { Ref } from '@espcompose/core';
         declare const lightRef: Ref<object>;
         <button onPress={() => { lightRef.turnOn(); }} />;
       `,
@@ -160,7 +160,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'delay() — branded',
       filename: 'test.tsx',
       code: `
-        import { delay } from '@esphome/compose';
+        import { delay } from '@espcompose/core';
         <button onPress={async () => { await delay(500); }} />;
       `,
     },
@@ -168,7 +168,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'logger.log() — branded',
       filename: 'test.tsx',
       code: `
-        import { logger } from '@esphome/compose';
+        import { logger } from '@espcompose/core';
         <button onPress={() => { logger.log("hello"); }} />;
       `,
     },
@@ -176,7 +176,7 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'theme.select() — branded',
       filename: 'test.tsx',
       code: `
-        import { theme } from '@esphome/compose';
+        import { theme } from '@espcompose/core';
         <button onPress={() => { theme.select("dark"); }} />;
       `,
     },
@@ -184,25 +184,16 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'ScriptHandle.execute() — branded',
       filename: 'test.tsx',
       code: `
-        import type { ScriptHandle } from '@esphome/compose';
+        import type { ScriptHandle } from '@espcompose/core/internals';
         declare const myScript: ScriptHandle;
         <button onPress={() => { myScript.execute(); }} />;
-      `,
-    },
-    {
-      name: 'LightBinding.turnOn() — branded',
-      filename: 'test.tsx',
-      code: `
-        import type { LightBinding } from '@esphome/compose';
-        declare const kitchen: LightBinding;
-        <button onPress={() => { kitchen.turnOn(); }} />;
       `,
     },
     {
       name: 'SwitchBinding.toggle() — branded',
       filename: 'test.tsx',
       code: `
-        import type { SwitchBinding } from '@esphome/compose';
+        import type { SwitchBinding } from '@espcompose/core/internals';
         declare const sw: SwitchBinding;
         <button onPress={() => { sw.toggle(); }} />;
       `,
@@ -211,8 +202,8 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       name: 'multiple branded calls',
       filename: 'test.tsx',
       code: `
-        import type { Ref } from '@esphome/compose';
-        import { delay, logger } from '@esphome/compose';
+        import type { Ref } from '@espcompose/core';
+        import { delay, logger } from '@espcompose/core';
         declare const lightRef: Ref<object>;
         <button onPress={async () => { lightRef.turnOn(); await delay(500); logger.log("done"); }} />;
       `,

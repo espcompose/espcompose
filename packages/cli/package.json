@@ -1,6 +1,6 @@
 {
-  "name": "@esphome/compose-cli",
-  "version": "0.4.0",
+  "name": "@espcompose/compose-cli",
+  "version": "0.0.1",
   "description": "ESPHome Compose CLI - Command-line tools for building ESPHome Compose projects",
   "bin": {
     "espcompose": "bin/espcompose.js"
@@ -10,10 +10,12 @@
   "files": [
     "bin",
     "dist",
-    "templates"
+    "templates",
+    "assets"
   ],
   "scripts": {
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @esphome/compose-eslint --external typescript-eslint",
+    "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true});\"",
+    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/compose-eslint --external @espcompose/compose-target-simulator --external @espcompose/compose-target-esphome --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -29,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmlguy74/espcompose.git",
+    "url": "git+https://github.com/espcompose/espcompose.git",
     "directory": "packages/cli"
   },
   "engines": {
@@ -39,8 +41,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@esphome/compose": "workspace:*",
-    "@esphome/compose-eslint": "workspace:*",
+    "@espcompose/core": "workspace:*",
+    "@espcompose/compose-eslint": "workspace:*",
+    "@espcompose/compose-target-esphome": "workspace:*",
+    "@espcompose/compose-target-simulator": "workspace:*",
     "commander": "catalog:",
     "esbuild": "catalog:",
     "handlebars": "^4.7.8",
@@ -51,6 +55,7 @@
     "yaml": "catalog:"
   },
   "devDependencies": {
+    "@espcompose/ir-viewer": "workspace:*",
     "@types/node": "catalog:",
     "@types/which": "catalog:",
     "tsup": "catalog:",

@@ -17,7 +17,7 @@ import noUnresolvableHaEntity from './rules/no-unresolvable-ha-entity';
 
 const plugin: ESLint.Plugin = {
   meta: {
-    name: '@esphome/compose-eslint',
+    name: '@espcompose/compose-eslint',
     version: '0.0.1',
   },
   rules: {
@@ -48,7 +48,7 @@ const recommended: Linter.Config[] = [
   ...tseslint.configs.recommended as Linter.Config[],
   {
     plugins: {
-      '@esphome/compose-eslint': plugin,
+      '@espcompose/compose-eslint': plugin,
     },
     languageOptions: {
       parserOptions: {
@@ -67,23 +67,23 @@ const recommended: Linter.Config[] = [
       '@typescript-eslint/no-unused-vars': 'warn',
 
       // Enforce valid parent-child component nesting based on declared intents.
-      '@esphome/compose-eslint/jsx-children-intents': 'error',
+      '@espcompose/compose-eslint/jsx-children-intents': 'error',
 
       // Prevent nested function declarations — only top-level functions become
       // ESPHome scripts; nested ones are silently ignored by the compiler.
-      '@esphome/compose-eslint/no-nested-functions': 'error',
+      '@espcompose/compose-eslint/no-nested-functions': 'error',
 
       // Warn about Node.js APIs in reactive contexts — not available on device.
-      '@esphome/compose-eslint/no-node-in-reactive': 'warn',
+      '@espcompose/compose-eslint/no-node-in-reactive': 'warn',
 
       // Warn when reactive Signal properties are accessed outside reactive contexts.
-      '@esphome/compose-eslint/no-untracked-signal': 'warn',
+      '@espcompose/compose-eslint/no-untracked-signal': 'warn',
 
       // Validate trigger handler bodies contain only ESPHome-compatible constructs.
-      '@esphome/compose-eslint/no-unsupported-trigger-body': 'error',
+      '@espcompose/compose-eslint/no-unsupported-trigger-body': 'error',
 
       // Prevent useHAEntity() with variable args that can't resolve to a domain.
-      '@esphome/compose-eslint/no-unresolvable-ha-entity': 'error',
+      '@espcompose/compose-eslint/no-unresolvable-ha-entity': 'error',
     },
   },
   {

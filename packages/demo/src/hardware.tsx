@@ -1,4 +1,4 @@
-import { Display, es8311_ES8311, i2c_I2CBus, i2s_audio_I2SAudioComponent, ledc_LEDCOutput, Ref, speaker_Speaker, useRef } from "@esphome/compose";
+import { Display, es8311_ES8311, i2c_I2CBus, i2s_audio_I2SAudioComponent, ledc_LEDCOutput, Ref, speaker_Speaker, useRef } from "@espcompose/core";
 
 type Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1Props = {
     display: Ref<Display>,

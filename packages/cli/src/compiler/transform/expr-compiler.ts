@@ -2,7 +2,7 @@
  * Shared Expression Compiler — TypeScript AST → C++ expression translator.
  *
  * Extracted from script-transformer.ts and extended with:
- *   - Signal<T> property access → `<cppSignalName>.get()`
+ *   - Signal<T> property access → `<signalName>.get()`
  *   - `isNaN()` → `std::isnan()`
  *   - ExprCompilerContext for signal resolution
  *
@@ -12,6 +12,8 @@
  */
 
 import ts from 'typescript';
+import type { ExprNode } from '@espcompose/core';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -28,9 +30,9 @@ export interface HAEntityInfo {
 
 export interface SignalPropertyInfo {
   /** C++ signal variable name, e.g. `sig_ha_light_office` */
-  cppSignalName: string;
+  signalName: string;
   /** C++ type of the signal, e.g. `bool`, `float`, `std::string` */
-  cppType: string;
+  valueType: string;
   /** Source domain for trigger lookup, e.g. `binary_sensor`, `sensor` */
   sourceDomain: string;
   /** ESPHome component ID, e.g. `ha_light_office` */
@@ -46,7 +48,7 @@ export interface DependencyInfo {
   sourceId: string;
   triggerType: string;
   sourceDomain: string;
-  cppType: string;
+  valueType: string;
   sourceType?: string;
 }
 
@@ -59,17 +61,9 @@ export interface ExprCompilerContext {
   /**
    * Slot tracking for unresolvable Signal<T> subexpressions.
    * Each slot maps to the original AST expression that will be passed
-   * as a runtime argument to _reactive.slotted().
+   * as a runtime argument to __espcompose.slotted().
    */
   slots: { expr: ts.Expression; slotIndex: number }[];
-}
-
-export interface ReactiveExprResult {
-  cpp: string;
-  cppType: string;
-  deps: DependencyInfo[];
-  /** Ordered list of runtime Signal expressions that need slot substitution. */
-  slots?: { expr: ts.Expression }[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -146,32 +140,32 @@ function resolveSignalProperty(
   switch (propName) {
     case 'isOn':
       return {
-        cppSignalName: `sig_${sourceId}`,
-        cppType: 'bool',
+        signalName: `sig_${sourceId}`,
+        valueType: 'bool',
         sourceDomain: 'binary_sensor',
         sourceId,
         triggerType: 'on_state',
       };
     case 'isOpen':
       return {
-        cppSignalName: `sig_${sourceId}`,
-        cppType: 'bool',
+        signalName: `sig_${sourceId}`,
+        valueType: 'bool',
         sourceDomain: 'binary_sensor',
         sourceId,
         triggerType: 'on_state',
       };
     case 'value':
       return {
-        cppSignalName: `sig_${sourceId}`,
-        cppType: 'float',
+        signalName: `sig_${sourceId}`,
+        valueType: 'float',
         sourceDomain: 'sensor',
         sourceId,
         triggerType: 'on_value',
       };
     case 'stateText':
       return {
-        cppSignalName: `sig_${sourceId}`,
-        cppType: 'std::string',
+        signalName: `sig_${sourceId}`,
+        valueType: 'string',
         sourceDomain: sensorDomain,
         sourceId,
         triggerType: sensorDomain === 'sensor' ? 'on_value' : 'on_state',
@@ -179,8 +173,8 @@ function resolveSignalProperty(
     case 'brightness': {
       const brightnessId = `${sourceId}_brightness`;
       return {
-        cppSignalName: `sig_${brightnessId}`,
-        cppType: 'float',
+        signalName: `sig_${brightnessId}`,
+        valueType: 'float',
         sourceDomain: 'sensor',
         sourceId: brightnessId,
         triggerType: 'on_value',
@@ -192,396 +186,147 @@ function resolveSignalProperty(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Reactive expression compiler (for JSX attribute expressions)
+// Script/trigger expression IR compiler (ExprNode output)
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Compile a TypeScript expression AST node to a C++ expression string,
- * resolving Signal<T> property accesses to their C++ signal getters.
- *
- * Returns null if the expression contains unsupported patterns.
+ * Compile a script/trigger TS expression to an ExprNode tree.
  */
-export function translateReactiveExpr(
-  node: ts.Expression,
-  ctx: ExprCompilerContext,
-): ReactiveExprResult | null {
-  const cpp = compileExpr(node, ctx);
-  if (cpp === null) return null;
-
-  const deps = Array.from(ctx.dependencies.values());
-
-  // Infer C++ return type from the expression
-  const cppType = inferCppReturnType(node, ctx);
-
-  const result: ReactiveExprResult = { cpp, cppType, deps };
-  if (ctx.slots.length > 0) {
-    result.slots = ctx.slots.map(s => ({ expr: s.expr }));
-  }
-  return result;
-}
-
-function compileExpr(node: ts.Expression, ctx: ExprCompilerContext): string | null {
-  if (ts.isNumericLiteral(node)) return node.text;
-  if (ts.isStringLiteral(node)) return `std::string("${escapeStringForCpp(node.text)}")`;
-  if (node.kind === ts.SyntaxKind.TrueKeyword) return 'true';
-  if (node.kind === ts.SyntaxKind.FalseKeyword) return 'false';
-  if (node.kind === ts.SyntaxKind.NullKeyword) return 'nullptr';
-
-  if (ts.isIdentifier(node)) {
-    // Signal-branded identifier → assign a slot
-    const type = ctx.checker.getTypeAtLocation(node);
-    if (hasSignalBrand(type)) {
-      return assignSlot(node, ctx);
-    }
-  }
-
-  // Signal property access: entity.isOn, entity.value, or generic Signal<T>
-  if (ts.isPropertyAccessExpression(node)) {
-    return compilePropertyAccess(node, ctx);
-  }
-
-  if (ts.isBinaryExpression(node)) {
-    const leftCpp = compileExpr(node.left, ctx);
-    const rightCpp = compileExpr(node.right, ctx);
-    if (leftCpp === null || rightCpp === null) return null;
-    const op = translateBinaryOp(node.operatorToken.kind);
-    if (op === null) return null;
-    return `${leftCpp} ${op} ${rightCpp}`;
-  }
-
-  if (ts.isPrefixUnaryExpression(node)) {
-    const operandCpp = compileExpr(node.operand, ctx);
-    if (operandCpp === null) return null;
-    const op = translatePrefixOp(node.operator);
-    if (op === null) return null;
-    return `${op}${operandCpp}`;
-  }
-
-  if (ts.isPostfixUnaryExpression(node)) {
-    const operandCpp = compileExpr(node.operand, ctx);
-    if (operandCpp === null) return null;
-    const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
-    return `${operandCpp}${op}`;
-  }
-
-  if (ts.isParenthesizedExpression(node)) {
-    const innerCpp = compileExpr(node.expression, ctx);
-    if (innerCpp === null) return null;
-    return `(${innerCpp})`;
-  }
-
-  if (ts.isConditionalExpression(node)) {
-    const condCpp = compileExpr(node.condition, ctx);
-    const whenTrueCpp = compileExpr(node.whenTrue, ctx);
-    const whenFalseCpp = compileExpr(node.whenFalse, ctx);
-    if (condCpp === null || whenTrueCpp === null || whenFalseCpp === null) return null;
-    return `${condCpp} ? ${whenTrueCpp} : ${whenFalseCpp}`;
-  }
-
-  if (ts.isCallExpression(node)) {
-    return compileCallExpr(node, ctx);
-  }
-
-  if (ts.isTemplateExpression(node)) {
-    return compileTemplateLiteral(node, ctx);
-  }
-
-  if (ts.isNoSubstitutionTemplateLiteral(node)) {
-    return `std::string("${escapeStringForCpp(node.text)}")`;
-  }
-
-  return null;
-}
-
-function compilePropertyAccess(
-  node: ts.PropertyAccessExpression,
-  ctx: ExprCompilerContext,
-): string | null {
-  const propName = node.name.text;
-
-  // Check if this property access is on a known HA entity variable
-  if (ts.isIdentifier(node.expression)) {
-    const sym = ctx.checker.getSymbolAtLocation(node.expression);
-    const entity = sym ? ctx.haEntities.get(sym) : undefined;
-    if (entity && !entity.isDynamic) {
-      // Static entity: resolve to C++ signal getter
-      const varName = node.expression.text;
-      const signalInfo = resolveSignalProperty(varName, propName, entity);
-      if (signalInfo) {
-        // Register this dependency
-        ctx.dependencies.set(signalInfo.cppSignalName, {
-          signalName: signalInfo.cppSignalName,
-          sourceId: signalInfo.sourceId,
-          triggerType: signalInfo.triggerType,
-          sourceDomain: signalInfo.sourceDomain,
-          cppType: signalInfo.cppType,
-          sourceType: signalInfo.sourceType,
-        });
-        return `${signalInfo.cppSignalName}.get()`;
-      }
-    }
-    // Dynamic entity: skip static resolution — fall through to slot assignment
-    // below. The runtime ReactiveNode carries the correct signal metadata.
-  }
-
-  // Fallback: if the type is Signal<T>, assign a slot for runtime resolution
-  const type = ctx.checker.getTypeAtLocation(node);
-  if (hasSignalBrand(type)) {
-    return assignSlot(node, ctx);
-  }
-
-  return null;
-}
-
-/**
- * Assign a slot placeholder for a Signal<T>-typed expression that can't
- * be resolved statically. The runtime will substitute the actual signal
- * name from the ReactiveNode.
- */
-function assignSlot(expr: ts.Expression, ctx: ExprCompilerContext): string {
-  const slotIndex = ctx.slots.length;
-  ctx.slots.push({ expr, slotIndex });
-  return `__$$SLOT_${slotIndex}$$__.get()`;
-}
-
-function compileCallExpr(node: ts.CallExpression, ctx: ExprCompilerContext): string | null {
-  // Math.* calls
-  if (ts.isPropertyAccessExpression(node.expression) &&
-      ts.isIdentifier(node.expression.expression) &&
-      node.expression.expression.text === 'Math') {
-    return compileMathCall(node, node.expression.name.text, ctx);
-  }
-
-  // isNaN() → std::isnan()
-  if (ts.isIdentifier(node.expression) && node.expression.text === 'isNaN') {
-    if (node.arguments.length === 1) {
-      const argCpp = compileExpr(node.arguments[0], ctx);
-      if (argCpp === null) return null;
-      return `std::isnan(${argCpp})`;
-    }
-  }
-
-  return null;
-}
-
-function compileMathCall(
-  node: ts.CallExpression,
-  method: string,
-  ctx: ExprCompilerContext,
-): string | null {
-  const cppFn = MATH_MAP[method];
-  if (!cppFn) return null;
-
-  const argsCpp: string[] = [];
-  for (const arg of node.arguments) {
-    const argCpp = compileExpr(arg, ctx);
-    if (argCpp === null) return null;
-    argsCpp.push(argCpp);
-  }
-
-  return `${cppFn}(${argsCpp.join(', ')})`;
-}
-
-function compileTemplateLiteral(
-  node: ts.TemplateExpression,
-  ctx: ExprCompilerContext,
-): string | null {
-  const parts: string[] = [];
-  if (node.head.text) {
-    parts.push(`std::string("${escapeStringForCpp(node.head.text)}")`);
-  }
-
-  for (const span of node.templateSpans) {
-    const exprCpp = compileExpr(span.expression, ctx);
-    if (exprCpp === null) return null;
-    // Only wrap in std::to_string() for non-string types;
-    // std::to_string(std::string) doesn't compile in C++.
-    const exprType = ctx.checker.getTypeAtLocation(span.expression);
-    const isString = (exprType.flags & ts.TypeFlags.StringLike) !== 0
-      || (exprType.isIntersection() && exprType.types.some(t => (t.flags & ts.TypeFlags.StringLike) !== 0));
-    parts.push(isString ? exprCpp : `std::to_string(${exprCpp})`);
-    if (span.literal.text) {
-      parts.push(`std::string("${escapeStringForCpp(span.literal.text)}")`);
-    }
-  }
-
-  return parts.length > 0 ? parts.join(' + ') : 'std::string("")';
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// C++ return type inference
-// ────────────────────────────────────────────────────────────────────────────
-
-function inferCppReturnType(node: ts.Expression, ctx: ExprCompilerContext): string {
-  const checker = ctx.checker;
-  const type = checker.getTypeAtLocation(node);
-
-  if (type.flags & ts.TypeFlags.StringLike) return 'std::string';
-  if (type.flags & ts.TypeFlags.NumberLike) return 'float';
-  if (type.flags & ts.TypeFlags.BooleanLike) return 'bool';
-
-  // Union types (e.g. ternary returning string | string) — check constituents
-  if (type.isUnion()) {
-    const hasString = type.types.some(t => t.flags & ts.TypeFlags.StringLike);
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.NumberLike);
-    const hasBool = type.types.some(t => t.flags & ts.TypeFlags.BooleanLike);
-
-    if (hasString) return 'std::string';
-    if (hasNumber) return 'float';
-    if (hasBool) return 'bool';
-  }
-
-  // Intersection types (Signal<T>) — look at the non-branded constituent
-  if (type.isIntersection()) {
-    for (const t of type.types) {
-      if (t.flags & ts.TypeFlags.StringLike) return 'std::string';
-      if (t.flags & ts.TypeFlags.NumberLike) return 'float';
-      if (t.flags & ts.TypeFlags.BooleanLike) return 'bool';
-    }
-  }
-
-  // If there's exactly one slot and the expression is a direct passthrough
-  // (no operations on it), use a slot type placeholder so the runtime
-  // resolves the C++ type from ReactiveNode.cppType.
-  if (ctx.slots.length === 1 && hasSignalBrand(type)) {
-    return `__$$SLOT_TYPE_0$$__`;
-  }
-
-  // Default fallback
-  return 'float';
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Script-mode expression translator
-//
-// This is the original translateExpr from script-transformer.ts, kept for
-// backward compatibility with the script callback compiler.
-// ────────────────────────────────────────────────────────────────────────────
-
-export function translateScriptExpr(
+export function translateScriptExprIR(
   node: ts.Expression,
   ctx: ScriptTransformContext,
-): string | null {
-  if (ts.isNumericLiteral(node)) return node.text;
-  if (ts.isStringLiteral(node)) return `std::string("${escapeStringForCpp(node.text)}")`;
-  if (node.kind === ts.SyntaxKind.TrueKeyword) return 'true';
-  if (node.kind === ts.SyntaxKind.FalseKeyword) return 'false';
-  if (node.kind === ts.SyntaxKind.NullKeyword) return 'nullptr';
+): ExprNode | null {
+  if (ts.isNumericLiteral(node)) {
+    return { kind: 'literal', value: Number(node.text), type: 'float' };
+  }
+  if (ts.isStringLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+  if (node.kind === ts.SyntaxKind.TrueKeyword) {
+    return { kind: 'literal', value: true, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.FalseKeyword) {
+    return { kind: 'literal', value: false, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.NullKeyword) {
+    return { kind: 'literal', value: 0, type: 'int' };
+  }
 
   if (ts.isIdentifier(node)) {
-    if (ctx.localVars.has(node.text)) return node.text;
+    if (ctx.localVars.has(node.text)) {
+      return { kind: 'trigger_var', name: node.text };
+    }
     return null;
   }
 
   if (ts.isPropertyAccessExpression(node)) {
     if (ts.isIdentifier(node.expression) && node.expression.text === ctx.triggerParamName) {
-      return node.name.text;
-    }
-    if (ts.isIdentifier(node.expression) && ctx.localVars.has(node.expression.text)) {
-      return null;
+      return { kind: 'trigger_var', name: node.name.text };
     }
     return null;
   }
 
   if (ts.isBinaryExpression(node)) {
-    const leftCpp = translateScriptExpr(node.left, ctx);
-    const rightCpp = translateScriptExpr(node.right, ctx);
-    if (leftCpp === null || rightCpp === null) return null;
+    // Null coalescing operator (??)
+    if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken) {
+      const left = translateScriptExprIR(node.left, ctx);
+      const right = translateScriptExprIR(node.right, ctx);
+      if (!left || !right) return null;
+      // Default to 'float' in script context (most common for sensor ?? fallback)
+      return { kind: 'null_coalesce', left, right, type: 'float' };
+    }
+
+    const left = translateScriptExprIR(node.left, ctx);
+    const right = translateScriptExprIR(node.right, ctx);
+    if (!left || !right) return null;
     const op = translateBinaryOp(node.operatorToken.kind);
-    if (op === null) return null;
-    return `${leftCpp} ${op} ${rightCpp}`;
+    if (!op) return null;
+    return { kind: 'binary', op: op as BinaryOp, left, right };
   }
 
   if (ts.isPrefixUnaryExpression(node)) {
-    const operandCpp = translateScriptExpr(node.operand, ctx);
-    if (operandCpp === null) return null;
+    const operand = translateScriptExprIR(node.operand, ctx);
+    if (!operand) return null;
     const op = translatePrefixOp(node.operator);
-    if (op === null) return null;
-    return `${op}${operandCpp}`;
+    if (!op) return null;
+    return { kind: 'unary', op: op as UnaryOp, operand };
   }
 
   if (ts.isPostfixUnaryExpression(node)) {
-    const operandCpp = translateScriptExpr(node.operand, ctx);
-    if (operandCpp === null) return null;
+    const operand = translateScriptExprIR(node.operand, ctx);
+    if (!operand) return null;
     const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
-    return `${operandCpp}${op}`;
+    return { kind: 'postfix', op: op as PostfixOp, operand };
   }
 
   if (ts.isParenthesizedExpression(node)) {
-    const innerCpp = translateScriptExpr(node.expression, ctx);
-    if (innerCpp === null) return null;
-    return `(${innerCpp})`;
+    const inner = translateScriptExprIR(node.expression, ctx);
+    if (!inner) return null;
+    return { kind: 'group', expr: inner };
   }
 
   if (ts.isConditionalExpression(node)) {
-    const condCpp = translateScriptExpr(node.condition, ctx);
-    const whenTrueCpp = translateScriptExpr(node.whenTrue, ctx);
-    const whenFalseCpp = translateScriptExpr(node.whenFalse, ctx);
-    if (condCpp === null || whenTrueCpp === null || whenFalseCpp === null) return null;
-    return `${condCpp} ? ${whenTrueCpp} : ${whenFalseCpp}`;
+    const test = translateScriptExprIR(node.condition, ctx);
+    const consequent = translateScriptExprIR(node.whenTrue, ctx);
+    const alternate = translateScriptExprIR(node.whenFalse, ctx);
+    if (!test || !consequent || !alternate) return null;
+    return { kind: 'ternary', test, consequent, alternate };
   }
 
   if (ts.isCallExpression(node)) {
-    return translateScriptCallExpr(node, ctx);
+    if (ts.isPropertyAccessExpression(node.expression) &&
+        ts.isIdentifier(node.expression.expression) &&
+        node.expression.expression.text === 'Math') {
+      const method = node.expression.name.text;
+      const builtinFn = TS_MATH_TO_BUILTIN[method];
+      if (!builtinFn) return null;
+      const args: ExprNode[] = [];
+      for (const arg of node.arguments) {
+        const compiled = translateScriptExprIR(arg, ctx);
+        if (!compiled) return null;
+        args.push(compiled);
+      }
+      return { kind: 'call', fn: builtinFn, args };
+    }
+
+    // Number(x), String(x), Boolean(x) → type_cast
+    if (ts.isIdentifier(node.expression) && node.arguments.length === 1) {
+      const name = node.expression.text;
+      const castTarget = TYPE_CAST_MAP[name];
+      if (castTarget) {
+        const arg = translateScriptExprIR(node.arguments[0], ctx);
+        if (!arg) return null;
+        // Default fromType to 'float' in script context
+        return { kind: 'type_cast', expr: arg, fromType: 'float', toType: castTarget };
+      }
+    }
+
+    return null;
   }
 
   if (ts.isTemplateExpression(node)) {
-    return translateScriptTemplateLiteral(node, ctx);
+    const parts: ExprNode[] = [];
+    if (node.head.text) {
+      parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+    }
+    for (const span of node.templateSpans) {
+      const compiled = translateScriptExprIR(span.expression, ctx);
+      if (!compiled) return null;
+      parts.push({ kind: 'to_string', expr: compiled });
+      if (span.literal.text) {
+        parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+      }
+    }
+    return parts.length > 0
+      ? { kind: 'concat', parts }
+      : { kind: 'literal', value: '', type: 'string' };
   }
 
   if (ts.isNoSubstitutionTemplateLiteral(node)) {
-    return `std::string("${escapeStringForCpp(node.text)}")`;
+    return { kind: 'literal', value: node.text, type: 'string' };
   }
 
   return null;
-}
-
-function translateScriptCallExpr(node: ts.CallExpression, ctx: ScriptTransformContext): string | null {
-  if (ts.isPropertyAccessExpression(node.expression) &&
-      ts.isIdentifier(node.expression.expression) &&
-      node.expression.expression.text === 'Math') {
-    return translateScriptMathCall(node, node.expression.name.text, ctx);
-  }
-  return null;
-}
-
-function translateScriptMathCall(
-  node: ts.CallExpression,
-  method: string,
-  ctx: ScriptTransformContext,
-): string | null {
-  const cppFn = MATH_MAP[method];
-  if (!cppFn) return null;
-
-  const argsCpp: string[] = [];
-  for (const arg of node.arguments) {
-    const argCpp = translateScriptExpr(arg, ctx);
-    if (argCpp === null) return null;
-    argsCpp.push(argCpp);
-  }
-
-  return `${cppFn}(${argsCpp.join(', ')})`;
-}
-
-function translateScriptTemplateLiteral(
-  node: ts.TemplateExpression,
-  ctx: ScriptTransformContext,
-): string | null {
-  const parts: string[] = [];
-  if (node.head.text) {
-    parts.push(`std::string("${escapeStringForCpp(node.head.text)}")`);
-  }
-
-  for (const span of node.templateSpans) {
-    const exprCpp = translateScriptExpr(span.expression, ctx);
-    if (exprCpp === null) return null;
-    parts.push(`std::to_string(${exprCpp})`);
-    if (span.literal.text) {
-      parts.push(`std::string("${escapeStringForCpp(span.literal.text)}")`);
-    }
-  }
-
-  return parts.length > 0 ? parts.join(' + ') : 'std::string("")';
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -635,15 +380,6 @@ export function translatePrefixOp(op: ts.PrefixUnaryOperator): string | null {
 export function escapeStringForCpp(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 }
-
-const MATH_MAP: Record<string, string> = {
-  min: 'std::min', max: 'std::max',
-  abs: 'std::abs', round: 'std::round',
-  floor: 'std::floor', ceil: 'std::ceil',
-  sqrt: 'std::sqrt', pow: 'std::pow',
-  log: 'std::log', log2: 'std::log2', log10: 'std::log10',
-  sin: 'std::sin', cos: 'std::cos', tan: 'std::tan',
-};
 
 // ────────────────────────────────────────────────────────────────────────────
 // HA entity scanner (shared utility)
@@ -785,4 +521,349 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
     if (domains.size === 1) return domains.values().next().value;
   }
   return undefined;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// ExpressionIR compilation — TypeScript AST → ExprNode
+//
+// Parallels compileExpr() but produces target-agnostic ExprNode trees
+// instead of C++ strings. Used by Phase B+ of the Expression IR plan.
+// ────────────────────────────────────────────────────────────────────────────
+
+const TS_MATH_TO_BUILTIN: Record<string, BuiltinFn> = {
+  min: 'math_min', max: 'math_max',
+  abs: 'math_abs', round: 'math_round',
+  floor: 'math_floor', ceil: 'math_ceil',
+  trunc: 'math_trunc',
+  sqrt: 'math_sqrt', pow: 'math_pow',
+  log: 'math_log', log2: 'math_log2', log10: 'math_log10',
+  sin: 'math_sin', cos: 'math_cos', tan: 'math_tan',
+  clamp: 'math_clamp',
+};
+
+/** Map of global type cast function names → target ExprType. */
+const TYPE_CAST_MAP: Record<string, ExprType> = {
+  Number: 'float',
+  String: 'string',
+  Boolean: 'bool',
+};
+
+/** Set of string method names supported in ExprIR. */
+const STRING_METHOD_SET: Record<string, true> = {
+  toUpperCase: true,
+  toLowerCase: true,
+  substring: true,
+  charAt: true,
+  indexOf: true,
+  trim: true,
+};
+
+/** Check if a TS type is string-like (including intersections with string). */
+function isStringLikeType(type: ts.Type): boolean {
+  if (type.flags & ts.TypeFlags.StringLike) return true;
+  if (type.isIntersection()) return type.types.some(t => isStringLikeType(t));
+  if (type.isUnion()) return type.types.some(t => isStringLikeType(t));
+  return false;
+}
+
+export interface ExprIRResult {
+  expr: ExprNode;
+  exprType: ExprType;
+  deps: DependencyInfo[];
+  slots?: { expr: ts.Expression }[];
+}
+
+/**
+ * Compile a TypeScript expression to a target-agnostic ExprNode tree.
+ * Returns null if the expression contains unsupported patterns.
+ */
+export function translateReactiveExprIR(
+  node: ts.Expression,
+  ctx: ExprCompilerContext,
+): ExprIRResult | null {
+  const expr = compileExprIR(node, ctx);
+  if (expr === null) return null;
+
+  const deps = Array.from(ctx.dependencies.values());
+  const exprType = inferExprType(node, ctx);
+
+  const result: ExprIRResult = { expr, exprType, deps };
+  if (ctx.slots.length > 0) {
+    result.slots = ctx.slots.map(s => ({ expr: s.expr }));
+  }
+  return result;
+}
+
+function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode | null {
+  if (ts.isNumericLiteral(node)) {
+    return { kind: 'literal', value: Number(node.text), type: 'float' };
+  }
+  if (ts.isStringLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+  if (node.kind === ts.SyntaxKind.TrueKeyword) {
+    return { kind: 'literal', value: true, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.FalseKeyword) {
+    return { kind: 'literal', value: false, type: 'bool' };
+  }
+  if (node.kind === ts.SyntaxKind.NullKeyword) {
+    return { kind: 'literal', value: 0, type: 'int' };
+  }
+
+  if (ts.isIdentifier(node)) {
+    const type = ctx.checker.getTypeAtLocation(node);
+    if (hasSignalBrand(type)) {
+      return assignSlotIR(node, ctx);
+    }
+  }
+
+  if (ts.isPropertyAccessExpression(node)) {
+    return compilePropertyAccessIR(node, ctx);
+  }
+
+  if (ts.isBinaryExpression(node)) {
+    // Null coalescing operator (??)
+    if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken) {
+      const left = compileExprIR(node.left, ctx);
+      const right = compileExprIR(node.right, ctx);
+      if (left === null || right === null) return null;
+      const leftType = inferExprType(node.left, ctx);
+      return { kind: 'null_coalesce', left, right, type: leftType };
+    }
+
+    const left = compileExprIR(node.left, ctx);
+    const right = compileExprIR(node.right, ctx);
+    if (left === null || right === null) return null;
+    const op = translateBinaryOp(node.operatorToken.kind);
+    if (op === null) return null;
+    return { kind: 'binary', op: op as ExprNode extends { kind: 'binary' } ? ExprNode['op'] : never, left, right };
+  }
+
+  if (ts.isPrefixUnaryExpression(node)) {
+    const operand = compileExprIR(node.operand, ctx);
+    if (operand === null) return null;
+    const op = translatePrefixOp(node.operator);
+    if (op === null) return null;
+    return { kind: 'unary', op: op as ExprNode extends { kind: 'unary' } ? ExprNode['op'] : never, operand };
+  }
+
+  if (ts.isPostfixUnaryExpression(node)) {
+    const operand = compileExprIR(node.operand, ctx);
+    if (operand === null) return null;
+    const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
+    return { kind: 'postfix', op: op as '++' | '--', operand };
+  }
+
+  if (ts.isParenthesizedExpression(node)) {
+    const inner = compileExprIR(node.expression, ctx);
+    if (inner === null) return null;
+    return { kind: 'group', expr: inner };
+  }
+
+  if (ts.isConditionalExpression(node)) {
+    const test = compileExprIR(node.condition, ctx);
+    const consequent = compileExprIR(node.whenTrue, ctx);
+    const alternate = compileExprIR(node.whenFalse, ctx);
+    if (test === null || consequent === null || alternate === null) return null;
+    return { kind: 'ternary', test, consequent, alternate };
+  }
+
+  if (ts.isCallExpression(node)) {
+    return compileCallExprIR(node, ctx);
+  }
+
+  if (ts.isTemplateExpression(node)) {
+    return compileTemplateLiteralIR(node, ctx);
+  }
+
+  if (ts.isNoSubstitutionTemplateLiteral(node)) {
+    return { kind: 'literal', value: node.text, type: 'string' };
+  }
+
+  return null;
+}
+
+function compilePropertyAccessIR(
+  node: ts.PropertyAccessExpression,
+  ctx: ExprCompilerContext,
+): ExprNode | null {
+  const propName = node.name.text;
+
+  if (ts.isIdentifier(node.expression)) {
+    const sym = ctx.checker.getSymbolAtLocation(node.expression);
+    const entity = sym ? ctx.haEntities.get(sym) : undefined;
+    if (entity && !entity.isDynamic) {
+      const varName = node.expression.text;
+      const signalInfo = resolveSignalProperty(varName, propName, entity);
+      if (signalInfo) {
+        ctx.dependencies.set(signalInfo.signalName, {
+          signalName: signalInfo.signalName,
+          sourceId: signalInfo.sourceId,
+          triggerType: signalInfo.triggerType,
+          sourceDomain: signalInfo.sourceDomain,
+          valueType: signalInfo.valueType,
+          sourceType: signalInfo.sourceType,
+        });
+        const exprType = valueTypeToExprType(signalInfo.valueType);
+        return { kind: 'entity_prop', entityId: entity.entityId, property: propName, type: exprType };
+      }
+    }
+  }
+
+  const type = ctx.checker.getTypeAtLocation(node);
+  if (hasSignalBrand(type)) {
+    return assignSlotIR(node, ctx);
+  }
+
+  // .length on a string-typed expression → string_method
+  if (propName === 'length') {
+    const objType = ctx.checker.getTypeAtLocation(node.expression);
+    if (isStringLikeType(objType)) {
+      const obj = compileExprIR(node.expression, ctx);
+      if (obj !== null) return { kind: 'string_method', method: 'length', object: obj, args: [] };
+    }
+  }
+
+  return null;
+}
+
+function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): ExprNode {
+  const slotIndex = ctx.slots.length;
+  ctx.slots.push({ expr, slotIndex });
+  return { kind: 'slot', slotIndex };
+}
+
+function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): ExprNode | null {
+  // Math.* calls
+  if (ts.isPropertyAccessExpression(node.expression) &&
+      ts.isIdentifier(node.expression.expression) &&
+      node.expression.expression.text === 'Math') {
+    const method = node.expression.name.text;
+    const builtinFn = TS_MATH_TO_BUILTIN[method];
+    if (!builtinFn) return null;
+    const args: ExprNode[] = [];
+    for (const arg of node.arguments) {
+      const compiled = compileExprIR(arg, ctx);
+      if (compiled === null) return null;
+      args.push(compiled);
+    }
+    return { kind: 'call', fn: builtinFn, args };
+  }
+
+  // isNaN(x) → call is_nan
+  if (ts.isIdentifier(node.expression) && node.expression.text === 'isNaN') {
+    if (node.arguments.length === 1) {
+      const arg = compileExprIR(node.arguments[0], ctx);
+      if (arg === null) return null;
+      return { kind: 'call', fn: 'is_nan', args: [arg] };
+    }
+  }
+
+  // Number(x), String(x), Boolean(x) → type_cast
+  if (ts.isIdentifier(node.expression) && node.arguments.length === 1) {
+    const name = node.expression.text;
+    const castTarget = TYPE_CAST_MAP[name];
+    if (castTarget) {
+      const arg = compileExprIR(node.arguments[0], ctx);
+      if (arg === null) return null;
+      const fromType = inferExprType(node.arguments[0], ctx);
+      return { kind: 'type_cast', expr: arg, fromType, toType: castTarget };
+    }
+  }
+
+  // Method calls on compiled expressions: .toFixed(n), .toUpperCase(), etc.
+  if (ts.isPropertyAccessExpression(node.expression)) {
+    const methodName = node.expression.name.text;
+    const objectExpr = node.expression.expression;
+
+    // .toFixed(n) → format_string
+    if (methodName === 'toFixed' && node.arguments.length === 1) {
+      const obj = compileExprIR(objectExpr, ctx);
+      if (obj === null) return null;
+      const precisionArg = node.arguments[0];
+      if (ts.isNumericLiteral(precisionArg)) {
+        const precision = parseInt(precisionArg.text, 10);
+        return { kind: 'format_string', expr: obj, format: `%.${precision}f` };
+      }
+      return null;
+    }
+
+    // String methods → string_method
+    if (methodName in STRING_METHOD_SET) {
+      const obj = compileExprIR(objectExpr, ctx);
+      if (obj === null) return null;
+      const args: ExprNode[] = [];
+      for (const arg of node.arguments) {
+        const compiled = compileExprIR(arg, ctx);
+        if (compiled === null) return null;
+        args.push(compiled);
+      }
+      return { kind: 'string_method', method: methodName as StringMethod, object: obj, args };
+    }
+  }
+
+  return null;
+}
+
+function compileTemplateLiteralIR(
+  node: ts.TemplateExpression,
+  ctx: ExprCompilerContext,
+): ExprNode | null {
+  const parts: ExprNode[] = [];
+  if (node.head.text) {
+    parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+  }
+
+  for (const span of node.templateSpans) {
+    const exprIR = compileExprIR(span.expression, ctx);
+    if (exprIR === null) return null;
+
+    const exprType = ctx.checker.getTypeAtLocation(span.expression);
+    const isString = (exprType.flags & ts.TypeFlags.StringLike) !== 0
+      || (exprType.isIntersection() && exprType.types.some(t => (t.flags & ts.TypeFlags.StringLike) !== 0));
+
+    parts.push(isString ? exprIR : { kind: 'to_string', expr: exprIR });
+
+    if (span.literal.text) {
+      parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+    }
+  }
+
+  if (parts.length === 0) return { kind: 'literal', value: '', type: 'string' };
+  if (parts.length === 1) return parts[0];
+  return { kind: 'concat', parts };
+}
+
+function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType {
+  const type = ctx.checker.getTypeAtLocation(node);
+
+  if (type.flags & ts.TypeFlags.StringLike) return 'string';
+  if (type.flags & ts.TypeFlags.NumberLike) return 'float';
+  if (type.flags & ts.TypeFlags.BooleanLike) return 'bool';
+
+  if (type.isUnion()) {
+    if (type.types.some(t => t.flags & ts.TypeFlags.StringLike)) return 'string';
+    if (type.types.some(t => t.flags & ts.TypeFlags.NumberLike)) return 'float';
+    if (type.types.some(t => t.flags & ts.TypeFlags.BooleanLike)) return 'bool';
+  }
+
+  if (type.isIntersection()) {
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.StringLike) return 'string';
+      if (t.flags & ts.TypeFlags.NumberLike) return 'float';
+      if (t.flags & ts.TypeFlags.BooleanLike) return 'bool';
+    }
+  }
+
+  return 'float';
+}
+
+/**
+ * Cast valueType string to ExprType. Since valueType already uses ExprType
+ * values, this is essentially an identity function with type validation.
+ */
+function valueTypeToExprType(valueType: string): ExprType {
+  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown'] as const;
+  return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
 }

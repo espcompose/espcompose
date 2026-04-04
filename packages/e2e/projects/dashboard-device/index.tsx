@@ -7,7 +7,7 @@
  * Hardware definitions live in hardware.tsx (mirroring the YAML packages
  * pattern).
  */
-import { Display, logger, useRef, useScript } from '@esphome/compose';
+import { Display, logger, useRef, useScript } from '@espcompose/core';
 import { Hardware } from './hardware';
 
 function ConnectivityConfig() {

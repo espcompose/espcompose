@@ -11,7 +11,7 @@
 
 </div>
 
-# ESPHome Compose
+# ESPCompose
 
 Write [ESPHome](https://esphome.io/) device configurations in TypeScript/TSX instead of YAML.
 
@@ -126,7 +126,7 @@ export default (
 Top-level functions automatically compile to ESPHome `script:` components. Reference them in trigger props and the compiler handles the wiring:
 
 ```tsx
-import { delay, logger } from '@esphome/compose';
+import { delay, logger } from '@espcompose/core';
 
 function greet(): void {
   logger.log('Hello from ESPCompose!');
@@ -157,7 +157,7 @@ Supported control flow in scripts: `if/else`, `while`, `for` loops (literal coun
 Use `useRef()` to create typed references between components — no manual ID strings needed:
 
 ```tsx
-import { useRef, type i2c_I2CBus } from '@esphome/compose';
+import { useRef, type i2c_I2CBus } from '@espcompose/core';
 
 const i2cBus = useRef<i2c_I2CBus>();
 
@@ -206,9 +206,9 @@ Output is written to `<projectDir>/.espcompose/esphome.yaml`.
 
 ```
 packages/
-  sdk/         @esphome/compose           Core SDK, JSX runtime, hooks, generated types
-  cli/         @esphome/compose-cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
-  eslint/      @esphome/compose-eslint    ESLint plugin
+  core/        @espcompose/core           Core SDK, JSX runtime, hooks, generated types
+  cli/         @espcompose/compose-cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
+  eslint/      @espcompose/compose-eslint    ESLint plugin
   e2e/         (private)                  End-to-end snapshot tests
 ```
 
@@ -222,7 +222,7 @@ pnpm build
 pnpm test
 
 # Run e2e tests only
-pnpm --filter @esphome/compose-e2e test
+pnpm --filter @espcompose/compose-e2e test
 
 # Regenerate SDK types from ESPHome schemas
 pnpm codegen
@@ -235,7 +235,7 @@ pnpm lint
 
 1. **Type-check** — The TypeScript compiler validates the entry file and its imports
 2. **Transform** — A TypeScript AST transformer rewrites top-level `function` declarations into `useScript()` calls and converts trigger props into ESPHome action arrays
-3. **Bundle** — esbuild bundles the transformed source into a single CommonJS module (`@esphome/compose` is kept external)
+3. **Bundle** — esbuild bundles the transformed source into a single CommonJS module (`@espcompose/core` is kept external)
 4. **Execute & Emit** — The bundle is loaded in a script scope, the JSX tree is rendered to a plain object graph, and YAML is serialized to disk
 
 ## Contributing

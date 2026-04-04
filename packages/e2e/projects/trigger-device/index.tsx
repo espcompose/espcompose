@@ -5,8 +5,8 @@
  * actions, createScript() triggers, and bare arrow functions for anonymous triggers.
  * Ref actions are resolved at compile time via the action tree compiler.
  */
-import { delay, logger, useRef, useScript } from '@esphome/compose';
-import type { output_FloatOutput, light_LightOutput, switch__Switch } from '@esphome/compose';
+import { delay, logger, useRef, useScript } from '@espcompose/core';
+import type { output_FloatOutput, light_LightOutput, switch__Switch } from '@espcompose/core';
 
 function App() {
   const lightRef = useRef<light_LightOutput>();

@@ -1,8 +1,8 @@
 /**
- * @esphome/compose-ui — Design system components for ESPHome LVGL displays.
+ * @espcompose/compose-ui — Design system components for ESPHome LVGL displays.
  *
  * This package re-exports components, theming, and token types.
- * The intent system and core types remain in @esphome/compose (the SDK).
+ * The intent system and core types remain in @espcompose/core (the SDK).
  */
 
 // Theme system

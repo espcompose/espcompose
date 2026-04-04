@@ -9,5 +9,5 @@
  * component imports from '../theme/context' continue to work.
  */
 
-export { useReactiveTheme } from '@esphome/compose';
+export { useReactiveTheme } from '@espcompose/core';
 

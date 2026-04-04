@@ -6,8 +6,8 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, BindProp } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useMemo } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler, BindProp } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useMemo } from '@espcompose/core';
 import { resolveSize, resolveTypography, resolveFont, resolveStatus } from '../theme/resolvers';
 import type { StatusToken, SizeToken } from '../theme/types';
 
@@ -52,7 +52,6 @@ export const Button = createIntentComponent(
     const typo = resolveTypography('body');
     const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
 
-    // Colors from reactive theme (direct ReactiveNode props)
     const bgColor = variant === 'solid' ? sc.bg : undefined;
     const bgOpa = variant === 'outline' ? 'TRANSP' : undefined;
     const borderColor = variant === 'outline' ? sc.bg : undefined;
@@ -67,7 +66,7 @@ export const Button = createIntentComponent(
 
     // Width: derived from reactive paddingX if no override.
     // The compiler transform (espcompose transform-lib) compiles this to
-    // _reactive.slotted() with a C++ template at library build time.
+    // __espcompose.slotted() with a C++ template at library build time.
     const width = props.width ?? useMemo(() => dims.paddingX * 2 + 80);
     const height = props.height ?? dims.height;
 

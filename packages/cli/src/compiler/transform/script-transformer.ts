@@ -2,7 +2,7 @@
  * TypeScript AST transformer for trigger handler compilation.
  *
  * Scans source files for arrow functions in JSX trigger props and
- * createScript() calls, compiles their bodies to ESPHome action trees,
+ * createScript() calls, compiles their bodies to action trees,
  * and injects the compiled metadata back into the source.
  *
  * Also scans for importHAEntity() calls to build HA entity context
@@ -17,7 +17,7 @@ import {
 import {
   compileActionBody,
 } from './action-compiler.js';
-import { lowerActionTree, type IRAction } from '../ir/action-tree.js';
+import { type ActionNode } from '../ir/action-tree.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -229,9 +229,6 @@ function compileAndInjectTriggerHandler(
   if (result.diagnostics.length > 0) return;
   if (result.actions.length === 0) return;
 
-  // Lower IR actions to YAML-ready config objects
-  const lowered = lowerActionTree(result.actions);
-
   // Collect ref variable names used in the actions (needed for runtime resolution)
   const refNameSet = symbolMapToNameSet(refTags);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
@@ -240,9 +237,10 @@ function compileAndInjectTriggerHandler(
   const haEntityNames = collectDynamicHAEntityNames(result.actions, ctx.haEntities);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
+  // Store ActionNode[] directly - lowering to target format happens in target packages
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
-  const metaJson = serializeWithExpressions(lowered);
+  const metaJson = serializeWithExpressions(result.actions);
 
   // Build __refBindings object literal: { switchRef: switchRef, lightRef: lightRef }
   const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
@@ -301,7 +299,7 @@ function compileAndInjectUseScript(
     scriptId = parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
   }
 
-  const lowered = lowerActionTree(result.actions);
+  // Store ActionNode[] directly - lowering happens in target packages
   const refNameSet = symbolMapToNameSet(refTags);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
   const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
@@ -309,7 +307,7 @@ function compileAndInjectUseScript(
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';
 
-  const scriptMeta = serializeWithExpressions({ id: scriptId, then: lowered });
+  const scriptMeta = serializeWithExpressions({ id: scriptId, then: result.actions });
 
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
@@ -340,11 +338,11 @@ function symbolMapToNameSet(map: Map<ts.Symbol, string>): Set<string> {
  * These need runtime binding resolution (variable name → ref token).
  */
 function collectRefNamesFromActions(
-  actions: IRAction[],
+  actions: ActionNode[],
   refNames: Set<string>,
 ): string[] {
   const names = new Set<string>();
-  const walk = (actionList: IRAction[]): void => {
+  const walk = (actionList: ActionNode[]): void => {
     for (const action of actionList) {
       switch (action.kind) {
         case 'native': {
@@ -382,7 +380,7 @@ function collectRefNamesFromActions(
  * serializer can read __entityId__ at runtime.
  */
 function collectDynamicHAEntityNames(
-  actions: IRAction[],
+  actions: ActionNode[],
   haEntities: Map<ts.Symbol, HAEntityInfo>,
 ): string[] {
   // Build reverse map: variable name → entity info
@@ -394,7 +392,7 @@ function collectDynamicHAEntityNames(
   }
 
   const found = new Set<string>();
-  const walk = (actionList: IRAction[]): void => {
+  const walk = (actionList: ActionNode[]): void => {
     for (const action of actionList) {
       if (action.kind === 'ha_service' && action.data) {
         for (const param of Object.values(action.data)) {
@@ -429,11 +427,11 @@ function collectDynamicHAEntityNames(
  */
 function serializeWithExpressions(value: unknown): string {
   return JSON.stringify(value, (_key, val) => {
-    // ExpressionMarker objects stay as-is through JSON.stringify, then we
+    // IRExpressionParam objects stay as-is through JSON.stringify, then we
     // post-process the output to replace their JSON representation with raw code.
     return val;
   }).replace(
-    /\{"__expression__":"([^"]+)"\}/g,
+    /\{"kind":"expression","jsExpression":"([^"]+)"\}/g,
     (_match, expr) => expr,
   );
 }

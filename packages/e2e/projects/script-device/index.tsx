@@ -4,7 +4,7 @@
  * Demonstrates named scripts via useScript() and inline trigger handlers
  * via bare arrow functions.
  */
-import { useScript, delay, logger } from '@esphome/compose';
+import { useScript, delay, logger } from '@espcompose/core';
 
 function App() {
   /** Named script: greet — logs a greeting and waits 500 ms. */

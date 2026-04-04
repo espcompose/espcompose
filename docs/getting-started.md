@@ -20,7 +20,7 @@ This creates a `my-device/` directory with the following files:
 | File | Purpose |
 |------|---------|
 | `index.tsx` | Device configuration entry point |
-| `package.json` | Dependencies (`@esphome/compose` SDK + CLI + ESLint plugin) |
+| `package.json` | Dependencies (`@espcompose/core` SDK + CLI + ESLint plugin) |
 | `tsconfig.json` | TypeScript config extending the SDK's base config |
 | `eslint.config.mjs` | ESLint config with ESPHome Compose rules |
 | `.gitignore` | Ignores `node_modules/`, `.espcompose/`, and `dist/` |
@@ -104,8 +104,8 @@ ESPHome uses string IDs to link components together (e.g. a light referencing an
 Call `useRef<T>()` to create a typed reference, pass it to an element's `ref` prop to assign it, and pass it to other elements' ID props to reference it:
 
 ```tsx
-import { useRef } from '@esphome/compose';
-import type { output_FloatOutput, light_LightOutput } from '@esphome/compose';
+import { useRef } from '@espcompose/core';
+import type { output_FloatOutput, light_LightOutput } from '@espcompose/core';
 
 const outputRef = useRef<output_FloatOutput>();
 const lightRef = useRef<light_LightOutput>();
@@ -172,7 +172,7 @@ binary_sensor:
 Use `useScript()` to create named ESPHome `script:` components. The async arrow function body is compiled at the AST level by the action tree compiler — it is never executed at runtime. Must be called inside a component function body:
 
 ```tsx
-import { delay, logger, useScript } from '@esphome/compose';
+import { delay, logger, useScript } from '@espcompose/core';
 
 function App() {
   const greet = useScript(async () => {
@@ -231,7 +231,7 @@ Use async arrow functions directly on trigger props for one-off handlers:
 
 ### Action Primitives
 
-Import action primitives from `@esphome/compose` to use inside script bodies and trigger handlers:
+Import action primitives from `@espcompose/core` to use inside script bodies and trigger handlers:
 
 | Function | YAML Output |
 |----------|-------------|
@@ -244,8 +244,8 @@ Import action primitives from `@esphome/compose` to use inside script bodies and
 Refs to actionable components (lights, switches, etc.) provide typed action methods. Inside `useScript()` or trigger handlers, calling these methods emits the corresponding ESPHome actions:
 
 ```tsx
-import { delay, logger, useRef, useScript } from '@esphome/compose';
-import type { light_LightOutput, switch__Switch, output_FloatOutput } from '@esphome/compose';
+import { delay, logger, useRef, useScript } from '@espcompose/core';
+import type { light_LightOutput, switch__Switch, output_FloatOutput } from '@espcompose/core';
 
 function App() {
   const lightRef = useRef<light_LightOutput>();
@@ -314,7 +314,7 @@ Use the `secret()` function to create `!secret` references for sensitive values
 like Wi-Fi passwords and API keys:
 
 ```tsx
-import { secret } from '@esphome/compose';
+import { secret } from '@espcompose/core';
 
 export default (
   <esphome name="my-device">

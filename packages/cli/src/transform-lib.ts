@@ -7,7 +7,7 @@
  * rollup, etc.) then compiles the transformed sources into publishable JS.
  *
  * This enables third-party ESPCompose component libraries to ship with
- * pre-compiled `_reactive.compiled()` / `_reactive.slotted()` calls, so consumers
+ * pre-compiled `__espcompose.compiled()` / `__espcompose.slotted()` calls, so consumers
  * don't need the library's TypeScript source.
  */
 
@@ -69,7 +69,7 @@ export function transformLib(options: TransformLibOptions): TransformLibResult {
       target: ts.ScriptTarget.ES2022,
       moduleResolution: ts.ModuleResolutionKind.Bundler,
       jsx: ts.JsxEmit.ReactJSX,
-      jsxImportSource: '@esphome/compose',
+      jsxImportSource: '@espcompose/core',
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
@@ -208,8 +208,8 @@ export async function buildLibrary(options: BuildLibraryOptions): Promise<BuildL
     platform: 'node',
     target: 'es2022',
     jsx: 'automatic',
-    jsxImportSource: '@esphome/compose',
-    external: ['@esphome/compose'],
+    jsxImportSource: '@espcompose/core',
+    external: ['@espcompose/core'],
     outdir: outDir,
     sourcemap: false,
   };

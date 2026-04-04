@@ -1,11 +1,11 @@
 /**
  * Library contract fixture: reactive expressions.
  *
- * Exercises _reactive.compiled() and _reactive.slotted() transform paths.
+ * Exercises __espcompose.compiled() and __espcompose.slotted() transform paths.
  * Kept minimal — just enough to produce all reactive metadata shapes.
  */
-import { useHAEntity, useMemo } from '@esphome/compose';
-import type { Signal } from '@esphome/compose';
+import { useHAEntity, useMemo } from '@espcompose/core';
+import type { Signal } from '@espcompose/core';
 
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {

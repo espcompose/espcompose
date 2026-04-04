@@ -1,4 +1,4 @@
 {
-  "extends": "@esphome/compose/tsconfig.sdk.json",
+  "extends": "@espcompose/core/tsconfig.sdk.json",
   "include": ["src"]
 }

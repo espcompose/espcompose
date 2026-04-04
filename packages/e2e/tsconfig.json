@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "jsxImportSource": "@esphome/compose",
+    "jsxImportSource": "@espcompose/core",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

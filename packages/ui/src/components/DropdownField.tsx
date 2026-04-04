@@ -5,8 +5,8 @@
  * Label uses `ds-text-primary` style reference.
  */
 
-import type { EspComposeElement, TriggerHandler } from '@esphome/compose';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@esphome/compose';
+import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
+import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveTypography, resolveFont } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
 

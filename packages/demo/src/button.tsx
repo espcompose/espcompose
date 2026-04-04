@@ -1,5 +1,5 @@
-import { LightBinding, TriggerHandler, useHAEntity, useImage } from "@esphome/compose";
-import { Button } from "@esphome/compose-ui"
+import { TriggerHandler, useHAEntity, useImage } from "@espcompose/core";
+import { Button } from "@espcompose/compose-ui"
 
 type MyButtonProps = {
     text: string,

@@ -107,8 +107,8 @@ describe('no-untracked-signal', () => {
         name: 'Signal in useMemo — type-aware',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
-          import { useMemo } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
+          import { useMemo } from '@espcompose/core';
           declare const paddingX: Signal<number>;
           const width = useMemo(() => paddingX * 2 + 80);
         `,
@@ -117,7 +117,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal in JSX attribute — type-aware',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const paddingX: Signal<number>;
           <div width={paddingX * 2 + 80} />;
         `,
@@ -134,7 +134,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal direct passthrough via ?? — type-aware',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const height: Signal<number>;
           declare const override: number | undefined;
           const h = override ?? height;
@@ -144,8 +144,8 @@ describe('no-untracked-signal', () => {
         name: 'Signal inside useEffect — type-aware',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
-          import { useEffect } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
+          import { useEffect } from '@espcompose/core';
           declare const temp: Signal<number>;
           useEffect(() => { console.log(temp > 72); });
         `,
@@ -156,7 +156,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal in binary expression outside reactive context',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const paddingX: Signal<number>;
           const width = paddingX * 2 + 80;
         `,
@@ -166,7 +166,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal member access in binary expression',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const dims: { paddingX: Signal<number> };
           const width = dims.paddingX * 2 + 80;
         `,
@@ -176,7 +176,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal used as ternary condition outside reactive context',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const isOn: Signal<boolean>;
           const label = isOn ? "On" : "Off";
         `,
@@ -186,7 +186,7 @@ describe('no-untracked-signal', () => {
         name: 'Signal in template literal outside reactive context',
         filename: 'test.tsx',
         code: `
-          import type { Signal } from '@esphome/compose';
+          import type { Signal } from '@espcompose/core';
           declare const temp: Signal<number>;
           const label = \`Temperature: \${temp}\`;
         `,
