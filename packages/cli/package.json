@@ -1,7 +1,7 @@
 {
-  "name": "@espcompose/compose-cli",
+  "name": "@espcompose/cli",
   "version": "0.0.1",
-  "description": "ESPHome Compose CLI - Command-line tools for building ESPHome Compose projects",
+  "description": "ESPCompose CLI - Command-line tools for building ESPCompose projects",
   "bin": {
     "espcompose": "bin/espcompose.js"
   },
@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true});\"",
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/compose-eslint --external @espcompose/compose-target-simulator --external @espcompose/compose-target-esphome --external typescript-eslint",
+    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external @espcompose/target-simulator --external @espcompose/target-esphome --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -42,9 +42,9 @@
   },
   "dependencies": {
     "@espcompose/core": "workspace:*",
-    "@espcompose/compose-eslint": "workspace:*",
-    "@espcompose/compose-target-esphome": "workspace:*",
-    "@espcompose/compose-target-simulator": "workspace:*",
+    "@espcompose/eslint": "workspace:*",
+    "@espcompose/target-esphome": "workspace:*",
+    "@espcompose/target-simulator": "workspace:*",
     "commander": "catalog:",
     "esbuild": "catalog:",
     "handlebars": "^4.7.8",
@@ -55,7 +55,7 @@
     "yaml": "catalog:"
   },
   "devDependencies": {
-    "@espcompose/ir-viewer": "workspace:*",
+    "espcompose-ir-viewer": "workspace:*",
     "@types/node": "catalog:",
     "@types/which": "catalog:",
     "tsup": "catalog:",

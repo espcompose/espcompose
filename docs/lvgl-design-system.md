@@ -90,7 +90,7 @@ Used for:
 
 ### 2. Design System Components (Preferred API)
 
-High-level, semantic components from `@espcompose/compose-ui`:
+High-level, semantic components from `@espcompose/ui`:
 
 ```tsx
 <Screen />
@@ -276,7 +276,7 @@ Field components combine label + input + theme styling.
 Themes are registered at compile time and switchable at runtime:
 
 ```tsx
-import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/compose-ui';
+import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/ui';
 
 <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
   <Screen>
@@ -398,7 +398,7 @@ When generating or modifying code:
 ```tsx
 import { useHAEntity, useMemo, useRef, secret } from '@espcompose/core';
 import type { Light } from '@espcompose/core';
-import { ThemeProvider, darkTheme, Screen, VStack, Card, Text, SliderField, SwitchField } from '@espcompose/compose-ui';
+import { ThemeProvider, darkTheme, Screen, VStack, Card, Text, SliderField, SwitchField } from '@espcompose/ui';
 
 function App() {
   const light = useHAEntity('light.living_room');

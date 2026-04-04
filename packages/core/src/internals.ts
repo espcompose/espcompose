@@ -4,10 +4,10 @@
  * Compiler & tooling internals — NOT part of the public user-facing SDK API.
  *
  * This sub-path export provides typed access to SDK internals consumed by:
- *   - @espcompose/compose-cli (compiler)
- *   - @espcompose/compose-target-esphome (code-generation)
- *   - @espcompose/compose-target-simulator (code-generation)
- *   - @espcompose/compose-eslint (lint rules)
+ *   - @espcompose/cli (compiler)
+ *   - @espcompose/target-esphome (code-generation)
+ *   - @espcompose/target-simulator (code-generation)
+ *   - @espcompose/eslint (lint rules)
  *
  * Do NOT import from this path in user application code.
  */

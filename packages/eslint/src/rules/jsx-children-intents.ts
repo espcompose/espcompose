@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @espcompose/compose-eslint/jsx-children-intents
+ * ESLint rule: @espcompose/eslint/jsx-children-intents
  *
  * Validates that JSX children satisfy their parent's allowedChildIntents
  * and any ancestor's context requirements.

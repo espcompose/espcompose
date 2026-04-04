@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @espcompose/compose-eslint/no-node-in-reactive
+ * ESLint rule: @espcompose/eslint/no-node-in-reactive
  *
  * Prevents usage of Node.js-specific APIs (process, fs, require, __dirname,
  * __filename, Buffer) inside reactive contexts — specifically inside

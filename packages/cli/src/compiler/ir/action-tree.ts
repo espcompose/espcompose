@@ -4,7 +4,7 @@
 // The action IR types and constructors are defined in @espcompose/core/internals.
 // This file re-exports them for backwards compatibility with existing CLI code.
 //
-// NOTE: Action lowering (to ESPHome YAML) is in @espcompose/compose-target-esphome.
+// NOTE: Action lowering (to ESPHome YAML) is in @espcompose/target-esphome.
 // ────────────────────────────────────────────────────────────────────────────
 
 // Re-export all action types and constructors from SDK

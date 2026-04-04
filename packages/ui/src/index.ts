@@ -1,5 +1,5 @@
 /**
- * @espcompose/compose-ui — Design system components for ESPHome LVGL displays.
+ * @espcompose/ui — Design system components for ESPHome LVGL displays.
  *
  * This package re-exports components, theming, and token types.
  * The intent system and core types remain in @espcompose/core (the SDK).

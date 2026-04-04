@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────────────────
-// @espcompose/compose-target-simulator — Browser-based LVGL UI preview
+// @espcompose/target-simulator — Browser-based LVGL UI preview
 // ────────────────────────────────────────────────────────────────────────────
 
 // ComposeTarget implementation

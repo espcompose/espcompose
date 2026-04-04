@@ -89,18 +89,18 @@ importers:
 
   packages/cli:
     dependencies:
-      '@espcompose/compose-eslint':
-        specifier: workspace:*
-        version: link:../eslint
-      '@espcompose/compose-target-esphome':
-        specifier: workspace:*
-        version: link:../target-esphome
-      '@espcompose/compose-target-simulator':
-        specifier: workspace:*
-        version: link:../target-simulator
       '@espcompose/core':
         specifier: workspace:*
         version: link:../core
+      '@espcompose/eslint':
+        specifier: workspace:*
+        version: link:../eslint
+      '@espcompose/target-esphome':
+        specifier: workspace:*
+        version: link:../target-esphome
+      '@espcompose/target-simulator':
+        specifier: workspace:*
+        version: link:../target-simulator
       commander:
         specifier: 'catalog:'
         version: 12.1.0
@@ -126,15 +126,15 @@ importers:
         specifier: 'catalog:'
         version: 2.8.2
     devDependencies:
-      '@espcompose/ir-viewer':
-        specifier: workspace:*
-        version: link:../ir-viewer
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
       '@types/which':
         specifier: 'catalog:'
         version: 3.0.4
+      espcompose-ir-viewer:
+        specifier: workspace:*
+        version: link:../ir-viewer
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -174,20 +174,20 @@ importers:
 
   packages/demo:
     dependencies:
-      '@espcompose/compose-ui':
-        specifier: workspace:*
-        version: link:../ui
       '@espcompose/core':
         specifier: workspace:*
         version: link:../core
+      '@espcompose/ui':
+        specifier: workspace:*
+        version: link:../ui
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
     devDependencies:
-      '@espcompose/compose-cli':
+      '@espcompose/cli':
         specifier: workspace:*
         version: link:../cli
-      '@espcompose/compose-eslint':
+      '@espcompose/eslint':
         specifier: workspace:*
         version: link:../eslint
       '@types/node':
@@ -202,18 +202,18 @@ importers:
 
   packages/e2e:
     dependencies:
-      '@espcompose/compose-cli':
+      '@espcompose/cli':
         specifier: workspace:*
         version: link:../cli
-      '@espcompose/compose-target-esphome':
-        specifier: workspace:*
-        version: link:../target-esphome
-      '@espcompose/compose-ui':
-        specifier: workspace:*
-        version: link:../ui
       '@espcompose/core':
         specifier: workspace:*
         version: link:../core
+      '@espcompose/target-esphome':
+        specifier: workspace:*
+        version: link:../target-esphome
+      '@espcompose/ui':
+        specifier: workspace:*
+        version: link:../ui
       yaml:
         specifier: 'catalog:'
         version: 2.8.2
@@ -364,10 +364,10 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@espcompose/compose-cli':
+      '@espcompose/cli':
         specifier: workspace:*
         version: link:../cli
-      '@espcompose/compose-eslint':
+      '@espcompose/eslint':
         specifier: workspace:*
         version: link:../eslint
       '@types/node':
