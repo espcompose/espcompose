@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
 import fs from 'fs';
-import { build } from '@espcompose/compose-cli';
-import { createEsphomeTarget } from '@espcompose/compose-target-esphome';
+import { build } from '@espcompose/cli';
+import { createEsphomeTarget } from '@espcompose/target-esphome';
 import { createProjectTest } from './helpers';
 
 const projectsDir = path.resolve(__dirname, '..', 'projects');

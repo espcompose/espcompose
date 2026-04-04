@@ -1,5 +1,5 @@
 import { TriggerHandler, useHAEntity, useImage } from "@espcompose/core";
-import { Button } from "@espcompose/compose-ui"
+import { Button } from "@espcompose/ui"
 
 type MyButtonProps = {
     text: string,

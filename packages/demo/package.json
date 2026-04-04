@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@espcompose/core": "workspace:*",
-    "@espcompose/compose-ui": "workspace:*",
+    "@espcompose/ui": "workspace:*",
     "dotenv": "^17.3.1"
   },
   "devDependencies": {
-    "@espcompose/compose-cli": "workspace:*",
-    "@espcompose/compose-eslint": "workspace:*",
+    "@espcompose/cli": "workspace:*",
+    "@espcompose/eslint": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "typescript-eslint": "catalog:"

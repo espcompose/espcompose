@@ -5,6 +5,6 @@
   "main": "index.tsx",
   "dependencies": {
     "@espcompose/core": "workspace:*",
-    "@espcompose/compose-ui": "workspace:*"
+    "@espcompose/ui": "workspace:*"
   }
 }

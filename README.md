@@ -207,8 +207,8 @@ Output is written to `<projectDir>/.espcompose/esphome.yaml`.
 ```
 packages/
   core/        @espcompose/core           Core SDK, JSX runtime, hooks, generated types
-  cli/         @espcompose/compose-cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
-  eslint/      @espcompose/compose-eslint    ESLint plugin
+  cli/         @espcompose/cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
+  eslint/      @espcompose/eslint    ESLint plugin
   e2e/         (private)                  End-to-end snapshot tests
 ```
 
@@ -222,7 +222,7 @@ pnpm build
 pnpm test
 
 # Run e2e tests only
-pnpm --filter @espcompose/compose-e2e test
+pnpm --filter espcompose-e2e test
 
 # Regenerate SDK types from ESPHome schemas
 pnpm codegen

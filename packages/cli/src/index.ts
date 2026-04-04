@@ -17,4 +17,4 @@ export {
   esphomeCompile,
   esphomeRun,
   esphomeLogs,
-} from '@espcompose/compose-target-esphome';
+} from '@espcompose/target-esphome';

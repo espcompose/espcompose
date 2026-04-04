@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @espcompose/compose-eslint/no-untracked-signal
+ * ESLint rule: @espcompose/eslint/no-untracked-signal
  *
  * Warns when a reactive Signal<T> value is used in a variable assignment
  * outside of a reactive context (useMemo, useEffect, or a

@@ -1,5 +1,5 @@
 {
-  "name": "@espcompose/ir-viewer",
+  "name": "espcompose-ir-viewer",
   "version": "0.0.1",
   "private": true,
   "scripts": {

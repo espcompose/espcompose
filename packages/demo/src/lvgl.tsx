@@ -2,7 +2,7 @@ import { Display, Ref, useHAEntity, theme } from "@espcompose/core";
 import {
     Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
     ThemeProvider, darkTheme, lightTheme,
-} from "@espcompose/compose-ui";
+} from "@espcompose/ui";
 import { HALight, MyButton } from "./button";
 
 type UIProps = {

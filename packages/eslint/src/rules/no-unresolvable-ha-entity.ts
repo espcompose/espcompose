@@ -1,5 +1,5 @@
 /**
- * ESLint rule: @espcompose/compose-eslint/no-unresolvable-ha-entity
+ * ESLint rule: @espcompose/eslint/no-unresolvable-ha-entity
  *
  * Reports useHAEntity() calls where the first argument is not a string
  * literal AND the domain cannot be determined. The compiler needs to know

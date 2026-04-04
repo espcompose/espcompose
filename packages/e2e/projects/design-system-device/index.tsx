@@ -19,7 +19,7 @@ import {
   SwitchField,
   ThemeProvider,
   darkTheme,
-} from '@espcompose/compose-ui';
+} from '@espcompose/ui';
 
 function App() {
   const displayRef = useRef<Display>();

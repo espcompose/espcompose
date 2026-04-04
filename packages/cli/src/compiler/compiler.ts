@@ -101,11 +101,11 @@ async function typeCheck(entryFile: string): Promise<ts.Program> {
 /**
  * Build the default ESLint flat config used when a project has no config file.
  *
- * Loads the `@espcompose/compose-eslint` recommended preset, which includes
+ * Loads the `@espcompose/eslint` recommended preset, which includes
  * `typescript-eslint` recommended rules and JSX parser options.
  */
 async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
-  const { default: composeESLint } = await import('@espcompose/compose-eslint');
+  const { default: composeESLint } = await import('@espcompose/eslint');
   return composeESLint.recommended as ESLint.Options['overrideConfig'];
 }
 
@@ -114,7 +114,7 @@ async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
  *
  * Always enforced — if the project has its own `eslint.config.*` the ESLint
  * API discovers it automatically; otherwise the compiler supplies a built-in
- * default config based on `@espcompose/compose-eslint` recommended.
+ * default config based on `@espcompose/eslint` recommended.
  *
  * Throws on lint errors. Warnings are printed to stderr but do not fail.
  */

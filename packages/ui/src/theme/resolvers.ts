@@ -106,7 +106,7 @@ export function resolveFont(def: {
   const szReactive = isReactiveNode(def.fontSize);
 
   if (!famReactive && !szReactive) {
-    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- narrowed by isReactiveNode() guards above
+    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- narrowed by isReactiveNode() guards above
     return `${def.fontFamily}_${def.fontSize}`;
   }
 
@@ -118,11 +118,11 @@ export function resolveFont(def: {
   // Build ExprResolveFont IR node
   const famIR: ExprNode = famReactive
     ? (def.fontFamily as unknown as ReactiveNode<string>).exprIR ?? { kind: 'literal', value: '', type: 'string' }
-    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- static branch: famReactive is false
+    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- static branch: famReactive is false
     : { kind: 'literal', value: def.fontFamily as string, type: 'string' };
   const szIR: ExprNode = szReactive
     ? (def.fontSize as unknown as ReactiveNode<number>).exprIR ?? { kind: 'literal', value: 0, type: 'float' }
-    // eslint-disable-next-line @espcompose/compose-eslint/no-untracked-signal -- static branch: szReactive is false
+    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- static branch: szReactive is false
     : { kind: 'literal', value: def.fontSize as number, type: 'float' };
 
   return __espcompose.derivedMemo<string>({

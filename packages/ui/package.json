@@ -1,5 +1,5 @@
 {
-  "name": "@espcompose/compose-ui",
+  "name": "@espcompose/ui",
   "version": "0.0.1",
   "description": "LVGL Design System components for ESPHome Compose",
   "main": "dist/index.js",
@@ -48,8 +48,8 @@
     "@espcompose/core": "workspace:*"
   },
   "devDependencies": {
-    "@espcompose/compose-cli": "workspace:*",
-    "@espcompose/compose-eslint": "workspace:*",
+    "@espcompose/cli": "workspace:*",
+    "@espcompose/eslint": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "tsx": "catalog:",

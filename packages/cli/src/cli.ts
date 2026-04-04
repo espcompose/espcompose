@@ -9,8 +9,8 @@ import {
   esphomeRun,
   esphomeLogs,
   createEsphomeTarget,
-} from '@espcompose/compose-target-esphome';
-import { createSimulatorTarget } from '@espcompose/compose-target-simulator';
+} from '@espcompose/target-esphome';
+import { createSimulatorTarget } from '@espcompose/target-simulator';
 import { initProject } from './init';
 import { transformLib, buildLibrary } from './transform-lib';
 
