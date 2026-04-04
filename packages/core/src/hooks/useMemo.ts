@@ -9,14 +9,14 @@
 // This runtime fallback handles:
 //   - Pure computations (no reactive deps) — returns the value directly
 //   - Leftover reactive calls not caught by the compiler — creates
-//     a ReactiveNode with dependency tracking only
+//     a IRReactiveNode with dependency tracking only
 //
 // Usage:
 //   const status = useMemo(() => light.isOn ? 'ON' : 'OFF');
 // ────────────────────────────────────────────────────────────────────────────
 
 import {
-  ReactiveNode,
+  IRReactiveNode,
   startTracking,
   stopTracking,
 } from '../reactive-node';
@@ -34,9 +34,9 @@ import { assertHookContext } from './useState';
  * This runtime fallback handles:
  *   - Pure computations (no reactive deps) — returns the value directly
  *   - Leftover reactive calls not caught by the compiler — creates
- *     a ReactiveNode with dependency tracking only
+ *     a IRReactiveNode with dependency tracking only
  */
-export function useMemo<T>(fn: () => T): T | ReactiveNode<T> {
+export function useMemo<T>(fn: () => T): T | IRReactiveNode<T> {
   assertHookContext('useMemo()');
   startTracking();
   const value = fn();
@@ -53,7 +53,7 @@ export function useMemo<T>(fn: () => T): T | ReactiveNode<T> {
   else if (typeof value === 'number') exprType = 'float';
   else if (typeof value === 'boolean') exprType = 'bool';
 
-  const node = new ReactiveNode<T>({
+  const node = new IRReactiveNode<T>({
     kind: 'memo',
     dependencies: deps,
     exprType,

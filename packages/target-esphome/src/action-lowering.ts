@@ -1,12 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Action Tree Lowering — ActionNode[] → ESPHome YAML config
+// Action Tree Lowering — IRActionNode[] → ESPHome YAML config
 //
-// Converts target-agnostic ActionNode nodes to ESPHome-specific YAML config
+// Converts target-agnostic IRActionNode nodes to ESPHome-specific YAML config
 // objects. This is the ESPHome backend for action IR.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type {
-  ActionNode,
+  IRActionNode,
   IRActionConfig,
   IRActionParam,
   IRCondition,
@@ -95,9 +95,9 @@ function lowerCondition(condition: IRCondition): unknown {
 }
 
 /**
- * Lower a single ActionNode to its ESPHome YAML-ready config object.
+ * Lower a single IRActionNode to its ESPHome YAML-ready config object.
  */
-function lowerAction(action: ActionNode): unknown {
+function lowerAction(action: IRActionNode): unknown {
   switch (action.kind) {
     case 'native':
       return { [action.actionKey]: lowerConfig(action.config) };
@@ -193,12 +193,12 @@ function lowerAction(action: ActionNode): unknown {
 }
 
 /**
- * Lower an array of ActionNode nodes to ESPHome YAML-ready config objects.
+ * Lower an array of IRActionNode nodes to ESPHome YAML-ready config objects.
  *
  * Each action becomes one entry in an ESPHome action list (the `then:` array
  * in triggers, scripts, etc.).
  */
-export function lowerActionTree(actions: ActionNode[]): unknown[] {
+export function lowerActionTree(actions: IRActionNode[]): unknown[] {
   return actions.map(lowerAction);
 }
 

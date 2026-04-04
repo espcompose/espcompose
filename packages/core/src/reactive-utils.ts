@@ -6,7 +6,7 @@
 // assertion required).
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ReactiveNode, isReactiveNode } from './reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
 import { __espcompose } from './__espcompose';
 
@@ -16,20 +16,20 @@ import { __espcompose } from './__espcompose';
  * A prop value that can be static, a reactive node, or a reactive function.
  * Component authors use this to declare which props support reactive binding.
  */
-export type BindProp<T> = T | (() => T) | ReactiveNode<T>;
+export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
 
 // ── resolveBindProp ────────────────────────────────────────────────────────
 
 /**
  * Normalize a prop value that may be static, reactive node, or reactive function.
  *
- * - `ReactiveNode<T>` → pass through (already tracked)
- * - `() => T` → evaluate with dependency tracking → ReactiveNode or literal
+ * - `IRReactiveNode<T>` → pass through (already tracked)
+ * - `() => T` → evaluate with dependency tracking → IRReactiveNode or literal
  * - `T` → literal (no reactivity)
  */
-export function resolveBindProp<T>(prop: BindProp<T>): T | ReactiveNode<T> {
-  if (isReactiveNode(prop)) {
-    return prop as ReactiveNode<T>;
+export function resolveBindProp<T>(prop: BindProp<T>): T | IRReactiveNode<T> {
+  if (isIRReactiveNode(prop)) {
+    return prop as IRReactiveNode<T>;
   }
   if (typeof prop === 'function') {
     return useMemo(prop as () => T);
@@ -42,13 +42,13 @@ export function resolveBindProp<T>(prop: BindProp<T>): T | ReactiveNode<T> {
 /**
  * Test whether a reactive numeric value is NaN.
  *
- * Returns a `ReactiveNode<boolean>` that is `true` when the source value
+ * Returns a `IRReactiveNode<boolean>` that is `true` when the source value
  * is NaN (e.g. HA reports `None` for a numeric attribute).
  *
  * @example
  * value={useMemo(() => reactiveIsNaN(light.brightness).get() ? 0 : light.brightness.get())}
  */
-export function reactiveIsNaN(node: ReactiveNode<number>): ReactiveNode<boolean> {
+export function reactiveIsNaN(node: IRReactiveNode<number>): IRReactiveNode<boolean> {
   const sourceIR = node.exprIR ?? { kind: 'literal' as const, value: 0, type: 'float' as const };
   return __espcompose.derivedMemo<boolean>({
     exprType: 'bool',

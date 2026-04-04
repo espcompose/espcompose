@@ -2,21 +2,21 @@
 // Reactive Property Mapping for Ref<T>
 //
 // Maps reactive property names (e.g. `.value`, `.isOn`, `.brightness`) to the
-// ReactiveNode configuration needed to generate ESPHome lambdas and trigger
+// IRReactiveNode configuration needed to generate ESPHome lambdas and trigger
 // wiring.
 //
 // Two layers:
 //
 //   Type level — InferReactiveProperties<T> uses the phantom brands on
 //   marker types to narrow which reactive properties are available:
-//     Ref<sensor_Sensor>.value      → ReactiveNode<number>
-//     Ref<binary_sensor_BinarySensor>.isOn → ReactiveNode<boolean>
-//     Ref<light_LightState>.brightness     → ReactiveNode<number>
+//     Ref<sensor_Sensor>.value      → IRReactiveNode<number>
+//     Ref<binary_sensor_BinarySensor>.isOn → IRReactiveNode<boolean>
+//     Ref<light_LightState>.brightness     → IRReactiveNode<number>
 //
 //   Runtime level — REACTIVE_PROPERTY_MAP is consulted by the RefHandle
-//   Proxy to create ReactiveNode instances when a reactive property is
+//   Proxy to create IRReactiveNode instances when a reactive property is
 //   accessed.  Since markers are phantom types erased at runtime, the
-//   Proxy can't check brands — it simply returns a ReactiveNode for any
+//   Proxy can't check brands — it simply returns a IRReactiveNode for any
 //   known reactive property name.  Type-safety is enforced at compile
 //   time by InferReactiveProperties<T>.
 // ────────────────────────────────────────────────────────────────────────────

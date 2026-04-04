@@ -13,7 +13,7 @@ import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp } from './expr-to-cpp.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
-import type { ExprNode } from '@espcompose/core';
+import type { IRExprNode } from '@espcompose/core';
 import type { ExprType } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -63,9 +63,9 @@ function deriveSourceSignals(
 }
 
 /**
- * Collect all theme_read paths from an ExprNode tree.
+ * Collect all theme_read paths from an IRExprNode tree.
  */
-function collectThemePaths(node: ExprNode | undefined): string[] {
+function collectThemePaths(node: IRExprNode | undefined): string[] {
   if (!node) return [];
   if (node.kind === 'theme_read') return [node.path];
   const paths: string[] = [];
@@ -189,7 +189,7 @@ export function buildRuntimeConfig(
     );
   }
 
-  // Build memo declarations from ReactiveNode instances, deduplicating
+  // Build memo declarations from IRReactiveNode instances, deduplicating
   // identical memos (same expression + return type + sources).
   const memos: MemoDecl[] = [];
   const effects: EffectDecl[] = [];
@@ -205,7 +205,7 @@ export function buildRuntimeConfig(
 
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
-      const exprIR: ExprNode | undefined = node.exprIR;
+      const exprIR: IRExprNode | undefined = node.exprIR;
       const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : 'std::string';
       const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
 

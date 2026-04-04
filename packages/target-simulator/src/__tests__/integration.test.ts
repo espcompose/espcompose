@@ -271,25 +271,26 @@ describe('Simulator render function', () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 import { lowerToSimulator } from '../backends/ir-renderer';
-import { ReactiveNode } from '@espcompose/core';
-import type { SemanticIR, IRSection, IRValue } from '@espcompose/core/internals';
+import { IRReactiveNode } from '@espcompose/core';
+import type { SemanticIR, IRValue } from '@espcompose/core/internals';
 
 function irScalar(value: string | number | boolean): IRValue {
   return { kind: 'scalar', value };
 }
 
 function irObject(entries: Array<{ key: string; value: IRValue }>): IRValue {
-  return { kind: 'object', entries };
+  return { kind: 'object', entries: entries.map(e => ({ kind: 'entry' as const, ...e })) };
 }
 
 function irArray(items: IRValue[]): IRValue {
   return { kind: 'array', items };
 }
 
-function makeEmptyIR(sections: IRSection[]): SemanticIR {
+function makeEmptyIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
   return {
-    esphome: { sections, haEntities: [], components: [], scripts: [] },
-    espcompose: { reactive: { bindings: [], memos: [], effects: [] } },
+    kind: 'semantic_ir',
+    esphome: { kind: 'esphome_data', sections: sections.map(s => ({ kind: 'section' as const, ...s })), haEntities: [], components: [], scripts: [] },
+    espcompose: { kind: 'espcompose_data', reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] } },
   };
 }
 
@@ -396,9 +397,10 @@ describe('IR-based simulator renderer', () => {
   });
 
   it('classifies IRReactive as reactive prop', () => {
-    const reactiveNode = new ReactiveNode({
+    const reactiveNode = new IRReactiveNode({
       kind: 'expression',
       dependencies: [{
+        kind: 'dependency',
         sourceId: 'ha_light_kitchen',
         triggerType: 'on_state',
         sourceDomain: 'binary_sensor',
@@ -557,9 +559,12 @@ describe('IR-based simulator renderer', () => {
 
   it('registers entities from IR', () => {
     const ir: SemanticIR = {
+      kind: 'semantic_ir',
       esphome: {
+        kind: 'esphome_data',
         sections: [
           {
+            kind: 'section',
             key: 'lvgl',
             value: irObject([
               { key: 'pages', value: irArray([irObject([{ key: 'widgets', value: irArray([]) }])]) },
@@ -567,12 +572,12 @@ describe('IR-based simulator renderer', () => {
           },
         ],
         haEntities: [
-          { entityId: 'light.kitchen', domain: 'light', sensorType: 'binary_sensor', generatedId: 'ha_light_kitchen' },
+          { kind: 'ha_entity', entityId: 'light.kitchen', domain: 'light', sensorType: 'binary_sensor', generatedId: 'ha_light_kitchen' },
         ],
         components: [],
         scripts: [],
       },
-      espcompose: { reactive: { bindings: [], memos: [], effects: [] } },
+      espcompose: { kind: 'espcompose_data', reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] } },
     };
 
     const provider = new MockProvider();

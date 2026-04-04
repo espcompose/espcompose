@@ -2,7 +2,7 @@
 // useHAEntity() — Home Assistant entity hook
 //
 // Creates a typed binding object for a HA entity. The binding provides:
-//   - ReactiveNode<T> properties for reactive state reads
+//   - IRReactiveNode<T> properties for reactive state reads
 //   - Action methods (compile-time no-ops) for entity control
 //
 // Must be called inside a function component body (render pass).
@@ -14,8 +14,8 @@
 // same render pass return a cached binding and register only once.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ReactiveNode, isReactiveNode } from '../reactive-node';
-import type { Signal, ExpressionDependency } from '../reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from '../reactive-node';
+import type { Signal, IRDependency } from '../reactive-node';
 import type { ExprType } from '../ir/expr-types';
 import { registerHAEntity } from './useReactiveScope';
 import { isTracking, trackDependency } from '../reactive-node';
@@ -92,7 +92,7 @@ export function clearHAEntityCache(): void {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Wrap a binding object in a Proxy that intercepts reads of ReactiveNode-valued
+ * Wrap a binding object in a Proxy that intercepts reads of IRReactiveNode-valued
  * properties. When dependency tracking is active (inside useMemo/useEffect),
  * the proxy calls trackDependency() and recordAccess() so the dependency
  * graph and C++ codegen substitution table are populated automatically.
@@ -102,8 +102,8 @@ function createTrackingProxy<T extends object>(binding: T): T {
     get(target, prop, receiver) {
       const val = Reflect.get(target, prop, receiver);
 
-      // Only intercept ReactiveNode-valued properties when tracking
-      if (isReactiveNode(val) && typeof prop === 'string' && isTracking()) {
+      // Only intercept IRReactiveNode-valued properties when tracking
+      if (isIRReactiveNode(val) && typeof prop === 'string' && isTracking()) {
         // Record dependency for the reactive graph
         for (const dep of val.dependencies) {
           trackDependency(dep);
@@ -132,7 +132,7 @@ function inferEntityExprType(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// ReactiveNode factory
+// IRReactiveNode factory
 // ────────────────────────────────────────────────────────────────────────────
 
 function makeExpressionNode<T>(
@@ -146,12 +146,13 @@ function makeExpressionNode<T>(
 ): Signal<T> {
   const sourceExprType = inferEntityExprType(sourceDomain, triggerType);
   const exprType = exprTypeOverride ?? sourceExprType;
-  const dep: ExpressionDependency = {
+  const dep: IRDependency = {
+    kind: 'dependency',
     sourceId,
     triggerType,
     sourceDomain,
   };
-  const node = new ReactiveNode<T>({
+  const node = new IRReactiveNode<T>({
     kind: 'expression',
     dependencies: [dep],
     exprType,
@@ -175,6 +176,7 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
+    kind: 'ha_entity',
     entityId,
     domain: 'light',
     sensorType: 'sensor',
@@ -288,6 +290,7 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({
+    kind: 'ha_entity',
     entityId,
     domain,
     sensorType,

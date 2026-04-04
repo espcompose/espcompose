@@ -87,13 +87,13 @@ export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
-export type { HAEntityRegistration, ReactiveBinding, ComponentRegistration } from './hooks/useReactiveScope';
+export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
-export type { ReactiveNodeKind, ExpressionDependency, ReactiveNodeConfig } from './reactive-node';
+export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive-node';
 export { resolveBindProp, reactiveIsNaN } from './reactive-utils';
 export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
 
@@ -142,25 +142,25 @@ export { isTriggerVar } from './trigger-args';
 export { buildSemanticIR, collectFromIR } from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeData, IRScriptDefinition,
+  BuildSemanticIRInput, IRThemeData, IRScript,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
   IRTreeCollected,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod,
-  ExprLiteral, ExprSignalRead, ExprMemoRead,
-  ExprBinary, ExprUnary, ExprPostfix, ExprTernary,
-  ExprCall, ExprConcat, ExprToString, ExprGroup,
-  ExprSlot, ExprResolveFont, ExprThemeRead,
-  ExprEntityProp, ExprComponentRead, ExprTriggerVar,
-  ExprTypeCast, ExprFormatString, ExprNullCoalesce, ExprStringMethod,
-  ExprNode,
+  IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
+  IRExprBinary, IRExprUnary, IRExprPostfix, IRExprTernary,
+  IRExprCall, IRExprConcat, IRExprToString, IRExprGroup,
+  IRExprSlot, IRExprResolveFont, IRExprThemeRead,
+  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar,
+  IRExprTypeCast, IRExprFormatString, IRExprNullCoalesce, IRExprStringMethod,
+  IRExprNode,
 } from './ir/index';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {
-  ActionNode,
+  IRActionNode,
   IRNativeAction, IRHAServiceAction, IRLoggerAction, IRDelayAction,
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect,

@@ -22,35 +22,40 @@ import type { SemanticIR } from '@espcompose/core/internals';
  * Produce a JSON-safe plain object from a SemanticIR.
  *
  * Handles:
- *   - ReactiveNode class-instance fields → spread to plain object. Prototype
+ *   - IRReactiveNode class-instance fields → spread to plain object. Prototype
  *     members (valueOf, toString, isSingleSource) are not own enumerable props
  *     so they are dropped automatically. `__`-prefixed fields (e.g.
  *     __reactive_node__) are preserved in the JSON; the viewer hides them by
  *     default and exposes a toggle to show them.
  *   - IRThemeData.leafData    → Map converted to a plain object
- *   - ReactiveBinding.expression → sanitized ReactiveNode
+ *   - IRBinding.expression → sanitized IRReactiveNode
  *
- * Everything else (IRValue tree, ExprNode ASTs, scalars) passes through.
+ * Everything else (IRValue tree, IRExprNode ASTs, scalars) passes through.
  */
 export function serializeIR(ir: SemanticIR): Record<string, unknown> {
   return {
+    kind: ir.kind,
     esphome: {
+      kind: ir.esphome.kind,
       sections: ir.esphome.sections,
       haEntities: ir.esphome.haEntities,
       components: ir.esphome.components,
       scripts: ir.esphome.scripts,
     },
     espcompose: {
+      kind: ir.espcompose.kind,
       reactive: {
+        kind: ir.espcompose.reactive.kind,
         bindings: ir.espcompose.reactive.bindings.map(b => ({
           ...b,
-          expression: sanitizeReactiveNode(b.expression),
+          expression: sanitizeIRReactiveNode(b.expression),
         })),
-        memos: ir.espcompose.reactive.memos.map(sanitizeReactiveNode),
-        effects: ir.espcompose.reactive.effects.map(sanitizeReactiveNode),
+        memos: ir.espcompose.reactive.memos.map(sanitizeIRReactiveNode),
+        effects: ir.espcompose.reactive.effects.map(sanitizeIRReactiveNode),
       },
       themes: ir.espcompose.themes
         ? {
+            kind: ir.espcompose.themes.kind,
             themeNames: ir.espcompose.themes.themeNames,
             defaultIndex: ir.espcompose.themes.defaultIndex,
             leafData: Object.fromEntries(ir.espcompose.themes.leafData),
@@ -61,14 +66,14 @@ export function serializeIR(ir: SemanticIR): Record<string, unknown> {
 }
 
 /**
- * Convert a ReactiveNode class instance to a plain object.
+ * Convert a IRReactiveNode class instance to a plain object.
  *
  * Spreading own enumerable properties drops prototype members (valueOf,
  * toString, isSingleSource) automatically. `__`-prefixed brand fields are
  * intentionally kept — the viewer filters them at render time.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function sanitizeReactiveNode(node: any): Record<string, unknown> {
+function sanitizeIRReactiveNode(node: any): Record<string, unknown> {
   return { ...(node as Record<string, unknown>) };
 }
 

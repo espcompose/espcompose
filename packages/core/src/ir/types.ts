@@ -2,7 +2,7 @@
 // Semantic IR — target-agnostic intermediate representation
 //
 // Captures the FULL information from a render pass: the config tree structure
-// with semantic value nodes that preserve ReactiveNodes, Refs, compiled
+// with semantic value nodes that preserve IRReactiveNodes, Refs, compiled
 // actions, and secrets — all BEFORE serialization flattens them.
 //
 // This IR is consumed by backends:
@@ -10,17 +10,18 @@
 //   - Simulator backend: produces HTML+JS for browser preview
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ReactiveNode } from '../reactive-node';
-import type { ReactiveBinding, HAEntityRegistration, ComponentRegistration } from '../hooks/useReactiveScope';
-import type { ActionNode } from './action-types';
+import type { IRReactiveNode } from '../reactive-node';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRActionNode } from './action-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition (re-declared here to avoid circular imports with hooks)
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface IRScriptDefinition {
+export interface IRScript {
+  readonly kind: 'script';
   id: string;
-  then: ActionNode[];
+  then: IRActionNode[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -28,6 +29,7 @@ export interface IRScriptDefinition {
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface IRThemeData {
+  readonly kind: 'theme_data';
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
@@ -43,17 +45,18 @@ export interface IRThemeData {
  * All of this becomes ESPHome YAML or injected YAML sections.
  */
 export interface IRESPHomeData {
+  readonly kind: 'esphome_data';
   /** Top-level config sections (esphome:, wifi:, lvgl:, sensor:, etc.) */
   sections: IRSection[];
 
-  /** HA entity registrations for auto-generated sensor imports */
-  haEntities: HAEntityRegistration[];
+  /** HA entities for auto-generated sensor imports */
+  haEntities: IRHAEntity[];
 
-  /** Component registrations (images, fonts) for injection */
-  components: ComponentRegistration[];
+  /** Component definitions (images, fonts) for injection */
+  components: IRComponent[];
 
   /** Named script definitions from useScript() */
-  scripts: IRScriptDefinition[];
+  scripts: IRScript[];
 }
 
 /**
@@ -65,14 +68,15 @@ export interface IRESPHomeData {
  * nodes may not appear in the config tree.
  */
 export interface IRReactiveData {
+  readonly kind: 'reactive_data';
   /** Reactive bindings linking memo/effect nodes to widget props */
-  bindings: ReactiveBinding[];
+  bindings: IRBinding[];
 
   /** Memo nodes (kind === 'memo') registered during the render pass */
-  memos: ReactiveNode[];
+  memos: IRReactiveNode[];
 
   /** Effect nodes (kind === 'effect') registered during the render pass */
-  effects: ReactiveNode[];
+  effects: IRReactiveNode[];
 }
 
 /**
@@ -80,6 +84,7 @@ export interface IRReactiveData {
  * This drives C++ header generation and is target-agnostic.
  */
 export interface IRESPComposeData {
+  readonly kind: 'espcompose_data';
   /** Reactive bindings, memos, and effects */
   reactive: IRReactiveData;
 
@@ -100,6 +105,7 @@ export interface IRESPComposeData {
  * reactive nodes and bindings from the tree.
  */
 export interface SemanticIR {
+  readonly kind: 'semantic_ir';
   /** ESPHome-targeted sections, HA entities, components, and scripts */
   esphome: IRESPHomeData;
 
@@ -113,6 +119,7 @@ export interface SemanticIR {
 
 /** A top-level config section. */
 export interface IRSection {
+  readonly kind: 'section';
   key: string;
   value: IRValue;
 }
@@ -121,7 +128,7 @@ export interface IRSection {
  * Union of all IR value types in the config tree.
  *
  * Unlike the old YAML-shaped IR, these types preserve semantic information:
- * - IRReactive wraps the original ReactiveNode (not a lambda string)
+ * - IRReactive wraps the original IRReactiveNode (not a lambda string)
  * - IRRef wraps the original Ref object (not a token string)
  * - IRAction wraps the raw compiled action tree (not YAML-resolved actions)
  * - IRSecret wraps the secret key (not a !secret tagged scalar)
@@ -153,6 +160,7 @@ export interface IRObject {
 }
 
 export interface IREntry {
+  readonly kind: 'entry';
   key: string;
   value: IRValue;
 }
@@ -169,7 +177,7 @@ export interface IRNull {
 }
 
 /**
- * A reactive binding — wraps the original ReactiveNode directly.
+ * A reactive binding — wraps the original IRReactiveNode directly.
  *
  * Preserves the full reactive metadata (dependencies, ExprIR, return type,
  * kind) that backends need. No target-specific encoding.
@@ -179,8 +187,8 @@ export interface IRNull {
  */
 export interface IRReactive {
   kind: 'reactive';
-  /** The original ReactiveNode instance with full metadata. */
-  node: ReactiveNode;
+  /** The original IRReactiveNode instance with full metadata. */
+  node: IRReactiveNode;
 }
 
 /**
@@ -203,7 +211,7 @@ export interface IRRef {
 export interface IRAction {
   kind: 'action';
   /** The raw compiled action tree (pre-ref-resolution). */
-  actions: ActionNode[];
+  actions: IRActionNode[];
   /** Variable name → Ref mappings for resolving ref references in actions. */
   refBindings?: Record<string, unknown>;
 }
@@ -232,7 +240,7 @@ export interface IRTriggerVar {
 // ────────────────────────────────────────────────────────────────────────────
 
 export function irSection(key: string, value: IRValue): IRSection {
-  return { key, value };
+  return { kind: 'section', key, value };
 }
 
 export function irScalar(value: string | number | boolean, quoted?: boolean): IRScalar {
@@ -244,7 +252,7 @@ export function irObject(entries: IREntry[]): IRObject {
 }
 
 export function irEntry(key: string, value: IRValue): IREntry {
-  return { key, value };
+  return { kind: 'entry', key, value };
 }
 
 export function irArray(items: IRValue[]): IRArray {
@@ -255,7 +263,7 @@ export function irNull(): IRNull {
   return { kind: 'null' };
 }
 
-export function irReactive(node: ReactiveNode): IRReactive {
+export function irReactive(node: IRReactiveNode): IRReactive {
   return { kind: 'reactive', node };
 }
 
@@ -263,7 +271,7 @@ export function irRef(token: string): IRRef {
   return { kind: 'ref', token };
 }
 
-export function irAction(actions: ActionNode[], refBindings?: Record<string, unknown>): IRAction {
+export function irAction(actions: IRActionNode[], refBindings?: Record<string, unknown>): IRAction {
   return { kind: 'action', actions, ...(refBindings ? { refBindings } : {}) };
 }
 

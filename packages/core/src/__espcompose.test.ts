@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { setCurrentHookPath } from './hooks/useState';
 import { __espcompose } from './__espcompose';
-import { ReactiveNode, isReactiveNode } from './reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
 
 describe('__espcompose', () => {
@@ -14,7 +14,7 @@ describe('__espcompose', () => {
   });
 
   describe('__espcompose.compiled()', () => {
-    it('creates ReactiveNode from pre-computed metadata', () => {
+    it('creates IRReactiveNode from pre-computed metadata', () => {
       withReactiveScope(() => {
         const result = __espcompose.compiled<string>({
           type: 'string',
@@ -26,7 +26,7 @@ describe('__espcompose', () => {
           expr: { kind: 'literal', value: 'On', type: 'string' },
         });
 
-        expect(isReactiveNode(result)).toBe(true);
+        expect(isIRReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
         expect(result.dependencies).toHaveLength(1);
         expect(result.dependencies[0].sourceId).toBe('ha_light_office');
@@ -35,7 +35,7 @@ describe('__espcompose', () => {
       });
     });
 
-    it('creates ReactiveNode with multiple dependencies', () => {
+    it('creates IRReactiveNode with multiple dependencies', () => {
       withReactiveScope(() => {
         const result = __espcompose.compiled<string>({
           type: 'string',
@@ -55,9 +55,9 @@ describe('__espcompose', () => {
   describe('__espcompose.slotted()', () => {
     it('resolves slots from signal arguments', () => {
       withReactiveScope(() => {
-        const signal = new ReactiveNode({
+        const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
@@ -67,7 +67,7 @@ describe('__espcompose', () => {
           signal,
         );
 
-        expect(isReactiveNode(result)).toBe(true);
+        expect(isIRReactiveNode(result)).toBe(true);
         expect(result.exprType).toBe('float');
         expect(result.dependencies).toHaveLength(1);
       });
@@ -75,16 +75,16 @@ describe('__espcompose', () => {
 
     it('resolves multiple slot placeholders', () => {
       withReactiveScope(() => {
-        const sigA = new ReactiveNode({
+        const sigA = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         sigA.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
-        const sigB = new ReactiveNode({
+        const sigB = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_b', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_b', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
           exprType: 'bool',
         });
         sigB.exprIR = { kind: 'signal_read', signalIndex: 1 };
@@ -104,20 +104,20 @@ describe('__espcompose', () => {
 
     it('collects dependencies from all signal arguments', () => {
       withReactiveScope(() => {
-        const sig1 = new ReactiveNode({
+        const sig1 = new IRReactiveNode({
           kind: 'expression',
           dependencies: [
-            { sourceId: 's1', triggerType: 'on_value', sourceDomain: 'sensor' },
+            { kind: 'dependency', sourceId: 's1', triggerType: 'on_value', sourceDomain: 'sensor' },
           ],
           exprType: 'float',
         });
         sig1.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
-        const sig2 = new ReactiveNode({
+        const sig2 = new IRReactiveNode({
           kind: 'expression',
           dependencies: [
-            { sourceId: 's2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
-            { sourceId: 's3', triggerType: 'on_value', sourceDomain: 'sensor' },
+            { kind: 'dependency', sourceId: 's2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+            { kind: 'dependency', sourceId: 's3', triggerType: 'on_value', sourceDomain: 'sensor' },
           ],
           exprType: 'bool',
         });
@@ -139,12 +139,12 @@ describe('__espcompose', () => {
         const result = __espcompose.derivedMemo<string>({
           exprType: 'font_ptr',
           dependencies: [
-            { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+            { kind: 'dependency', sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
           ],
           exprIR: { kind: 'literal', value: 'montserrat_28', type: 'string' },
         });
 
-        expect(isReactiveNode(result)).toBe(true);
+        expect(isIRReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
         expect(result.exprType).toBe('font_ptr');
         expect(result.exprIR).toEqual({ kind: 'literal', value: 'montserrat_28', type: 'string' });

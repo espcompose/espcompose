@@ -1,21 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ReactiveNode,
-  isReactiveNode,
+  IRReactiveNode,
+  isIRReactiveNode,
   startTracking,
   stopTracking,
   trackDependency,
   isTracking,
 } from './reactive-node';
 
-describe('ReactiveNode', () => {
+describe('IRReactiveNode', () => {
   describe('construction', () => {
     it('creates a node with dependencies', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'memo',
         dependencies: [
-          { sourceId: 'sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' },
-          { sourceId: 'sensor_2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+          { kind: 'dependency', sourceId: 'sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'sensor_2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
         ],
         exprType: 'float',
       });
@@ -25,9 +25,9 @@ describe('ReactiveNode', () => {
     });
 
     it('creates a single-source expression node', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
-        dependencies: [{ sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+        dependencies: [{ kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
         exprType: 'bool',
         sourceId: 'ha_light_x',
         property: '.state',
@@ -41,19 +41,19 @@ describe('ReactiveNode', () => {
     });
 
     it('isSingleSource = true for one dependency', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
-        dependencies: [{ sourceId: 'x', triggerType: 'on_state', sourceDomain: 'sensor' }],
+        dependencies: [{ kind: 'dependency', sourceId: 'x', triggerType: 'on_state', sourceDomain: 'sensor' }],
       });
       expect(node.isSingleSource).toBe(true);
     });
 
     it('isSingleSource = false for multiple dependencies', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'memo',
         dependencies: [
-          { sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
-          { sourceId: 'b', triggerType: 'on_state', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'b', triggerType: 'on_state', sourceDomain: 'sensor' },
         ],
         exprType: 'float',
       });
@@ -63,7 +63,7 @@ describe('ReactiveNode', () => {
 
   describe('valueOf() / get()', () => {
     it('returns true for bool type', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
         dependencies: [],
         exprType: 'bool',
@@ -73,7 +73,7 @@ describe('ReactiveNode', () => {
     });
 
     it('returns NaN for float type', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
         dependencies: [],
         exprType: 'float',
@@ -83,7 +83,7 @@ describe('ReactiveNode', () => {
     });
 
     it('returns empty string for string type', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
         dependencies: [],
         exprType: 'string',
@@ -93,7 +93,7 @@ describe('ReactiveNode', () => {
     });
 
     it('returns 0 for unknown type', () => {
-      const node = new ReactiveNode({
+      const node = new IRReactiveNode({
         kind: 'expression',
         dependencies: [],
       });
@@ -101,35 +101,35 @@ describe('ReactiveNode', () => {
     });
   });
 
-  describe('isReactiveNode()', () => {
-    it('returns true for ReactiveNode', () => {
-      const node = new ReactiveNode({
+  describe('isIRReactiveNode()', () => {
+    it('returns true for IRReactiveNode', () => {
+      const node = new IRReactiveNode({
         kind: 'expression',
         dependencies: [],
       });
-      expect(isReactiveNode(node)).toBe(true);
+      expect(isIRReactiveNode(node)).toBe(true);
     });
 
     it('returns false for other values', () => {
-      expect(isReactiveNode(null)).toBe(false);
-      expect(isReactiveNode({})).toBe(false);
-      expect(isReactiveNode('string')).toBe(false);
+      expect(isIRReactiveNode(null)).toBe(false);
+      expect(isIRReactiveNode({})).toBe(false);
+      expect(isIRReactiveNode('string')).toBe(false);
     });
   });
 
   describe('dependency tracking', () => {
     it('tracks dependencies between start/stop', () => {
       startTracking();
-      trackDependency({ sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
-      trackDependency({ sourceId: 'b', triggerType: 'on_value', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'b', triggerType: 'on_value', sourceDomain: 'sensor' });
       const deps = stopTracking();
       expect(deps).toHaveLength(2);
     });
 
     it('deduplicates by sourceId + triggerType', () => {
       startTracking();
-      trackDependency({ sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
-      trackDependency({ sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
       const deps = stopTracking();
       expect(deps).toHaveLength(1);
     });
@@ -144,10 +144,10 @@ describe('ReactiveNode', () => {
 
     it('supports nested tracking', () => {
       startTracking();
-      trackDependency({ sourceId: 'outer', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'outer', triggerType: 'on_state', sourceDomain: 'sensor' });
 
       startTracking();
-      trackDependency({ sourceId: 'inner', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'inner', triggerType: 'on_state', sourceDomain: 'sensor' });
       const inner = stopTracking();
 
       const outer = stopTracking();

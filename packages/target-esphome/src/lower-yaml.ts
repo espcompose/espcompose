@@ -164,7 +164,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
 
     case 'action': {
       const actionNode = node as IRAction;
-      // Lower ActionNode[] to ESPHome YAML format, then resolve ref bindings
+      // Lower IRActionNode[] to ESPHome YAML format, then resolve ref bindings
       let actions: unknown[] = lowerActionTree(actionNode.actions);
       if (actionNode.refBindings) {
         actions = actions.map(a =>

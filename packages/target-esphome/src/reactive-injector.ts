@@ -9,7 +9,7 @@
 // generating the `platform: homeassistant` sensor entries.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { HAEntityRegistration } from '@espcompose/core/internals';
+import type { IRHAEntity } from '@espcompose/core/internals';
 
 /**
  * Inject HA entity sensor imports into the rendered config.
@@ -20,7 +20,7 @@ import type { HAEntityRegistration } from '@espcompose/core/internals';
  */
 export function injectHASensorImports(
   config: Record<string, unknown>,
-  entities: HAEntityRegistration[],
+  entities: IRHAEntity[],
 ): Record<string, unknown> {
   if (entities.length === 0) {
     return config;
@@ -48,7 +48,7 @@ export function injectHASensorImports(
  */
 function hasSensorForEntity(
   config: Record<string, unknown>,
-  entity: HAEntityRegistration,
+  entity: IRHAEntity,
 ): boolean {
   const section = config[entity.sensorType];
   if (!section) return false;
@@ -66,7 +66,7 @@ function hasSensorForEntity(
 /**
  * Build the ESPHome sensor config for a HA entity import.
  */
-function buildHASensorConfig(entity: HAEntityRegistration): Record<string, unknown> {
+function buildHASensorConfig(entity: IRHAEntity): Record<string, unknown> {
   return {
     platform: 'homeassistant',
     id: entity.generatedId,

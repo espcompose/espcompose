@@ -17,7 +17,7 @@ import {
 import {
   compileActionBody,
 } from './action-compiler.js';
-import { type ActionNode } from '../ir/action-tree.js';
+import { type IRActionNode } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -237,7 +237,7 @@ function compileAndInjectTriggerHandler(
   const haEntityNames = collectDynamicHAEntityNames(result.actions, ctx.haEntities);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
-  // Store ActionNode[] directly - lowering to target format happens in target packages
+  // Store IRActionNode[] directly - lowering to target format happens in target packages
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
   const metaJson = serializeWithExpressions(result.actions);
@@ -299,7 +299,7 @@ function compileAndInjectUseScript(
     scriptId = parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
   }
 
-  // Store ActionNode[] directly - lowering happens in target packages
+  // Store IRActionNode[] directly - lowering happens in target packages
   const refNameSet = symbolMapToNameSet(refTags);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
   const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
@@ -338,11 +338,11 @@ function symbolMapToNameSet(map: Map<ts.Symbol, string>): Set<string> {
  * These need runtime binding resolution (variable name → ref token).
  */
 function collectRefNamesFromActions(
-  actions: ActionNode[],
+  actions: IRActionNode[],
   refNames: Set<string>,
 ): string[] {
   const names = new Set<string>();
-  const walk = (actionList: ActionNode[]): void => {
+  const walk = (actionList: IRActionNode[]): void => {
     for (const action of actionList) {
       switch (action.kind) {
         case 'native': {
@@ -380,7 +380,7 @@ function collectRefNamesFromActions(
  * serializer can read __entityId__ at runtime.
  */
 function collectDynamicHAEntityNames(
-  actions: ActionNode[],
+  actions: IRActionNode[],
   haEntities: Map<ts.Symbol, HAEntityInfo>,
 ): string[] {
   // Build reverse map: variable name → entity info
@@ -392,7 +392,7 @@ function collectDynamicHAEntityNames(
   }
 
   const found = new Set<string>();
-  const walk = (actionList: ActionNode[]): void => {
+  const walk = (actionList: IRActionNode[]): void => {
     for (const action of actionList) {
       if (action.kind === 'ha_service' && action.data) {
         for (const param of Object.values(action.data)) {

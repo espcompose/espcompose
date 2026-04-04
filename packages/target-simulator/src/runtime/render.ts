@@ -8,7 +8,7 @@
 //
 // Key difference from SDK render:
 //   - Does NOT convert keys to snake_case
-//   - Does NOT serialize ReactiveNodes to !lambda scalars
+//   - Does NOT serialize IRReactiveNodes to !lambda scalars
 //   - Preserves JS closures and action handlers as callable functions
 //   - Produces a typed tree for DOM rendering
 // ────────────────────────────────────────────────────────────────────────────
@@ -78,7 +78,7 @@ function classifyPropWithTracking(key: string, value: unknown, binding: unknown)
     };
   }
 
-  // Third check: ReactiveNode instances (from theme resolvers / derived memos).
+  // Third check: IRReactiveNode instances (from theme resolvers / derived memos).
   // These have a get()/valueOf() that returns a simulator value.
   if (value != null && typeof value === 'object' && '__reactive_node__' in value) {
     const rn = value as { get?: () => unknown; valueOf?: () => unknown };

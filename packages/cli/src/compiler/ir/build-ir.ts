@@ -7,7 +7,7 @@
 // and we structure it into IR nodes for downstream analysis and lowering.
 //
 // Later phases evolve buildIR to intercept earlier in the pipeline,
-// walking JSX elements directly to capture ReactiveNode, etc.
+// walking JSX elements directly to capture IRReactiveNode, etc.
 // ────────────────────────────────────────────────────────────────────────────
 
 import {

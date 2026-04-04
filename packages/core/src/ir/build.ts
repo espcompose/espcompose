@@ -4,7 +4,7 @@
 // Takes the post-render config AND serialization captures recorded during
 // the render pass. Walks the config tree, and for each value checks the
 // capture maps to recover the original pre-serialization data:
-//   - Scalar objects captured as ReactiveNode → IRReactive
+//   - Scalar objects captured as IRReactiveNode → IRReactive
 //   - String values captured as Ref tokens → IRRef
 //   - Array/object values captured as compiled actions → IRAction
 //   - Scalar objects captured as secrets → IRSecret
@@ -13,10 +13,10 @@
 // Values without captures are classified as scalars, objects, arrays, or null.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ReactiveBinding, HAEntityRegistration, ComponentRegistration } from '../hooks/useReactiveScope';
-import type { ReactiveNode } from '../reactive-node';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRReactiveNode } from '../reactive-node';
 import type { SerializationCaptures } from '../serialize';
-import type { ActionNode } from './action-types';
+import type { IRActionNode } from './action-types';
 import type {
   SemanticIR,
   IRSection,
@@ -150,19 +150,19 @@ export interface BuildSemanticIRInput {
   captures: SerializationCaptures;
 
   /** Reactive bindings linking nodes to widget props */
-  bindings: ReactiveBinding[];
+  bindings: IRBinding[];
 
-  /** HA entity registrations for sensor imports */
-  entities: HAEntityRegistration[];
+  /** HA entities for sensor imports */
+  entities: IRHAEntity[];
 
-  /** Component registrations (images, fonts) */
-  components: ComponentRegistration[];
+  /** Component definitions (images, fonts) */
+  components: IRComponent[];
 
   /** Named script definitions from useScript() */
-  scripts: Array<{ id: string; then: ActionNode[] }>;
+  scripts: Array<{ id: string; then: IRActionNode[] }>;
 
   /** Reactive nodes registered during the render pass */
-  reactiveNodes: ReactiveNode[];
+  reactiveNodes: IRReactiveNode[];
 
   /** Theme data from the theme registry */
   themes?: IRThemeData;
@@ -190,14 +190,18 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
   );
 
   return {
+    kind: 'semantic_ir' as const,
     esphome: {
+      kind: 'esphome_data' as const,
       sections,
       haEntities: input.entities,
       components: input.components,
-      scripts: input.scripts,
+      scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
     },
     espcompose: {
+      kind: 'espcompose_data' as const,
       reactive: {
+        kind: 'reactive_data' as const,
         bindings: input.bindings,
         memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
         effects: input.reactiveNodes.filter(n => n.kind === 'effect'),

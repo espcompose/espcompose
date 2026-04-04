@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Box, Chip, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import Tree from 'react-d3-tree';
 import type { RawNodeDatum, RenderCustomNodeElementFn } from 'react-d3-tree';
-import type { IREntry, IRValue, ReactiveNode, ExprNode, IRThemeData, TreeNode } from './types';
+import type { IREntry, IRValue, IRReactiveNode, IRExprNode, IRThemeData, TreeNode } from './types';
 
 // ── Shared primitives ──────────────────────────────────────────────────────
 
@@ -71,22 +71,22 @@ function exprKindColor(kind: string): string {
   }
 }
 
-function exprScalarFields(expr: ExprNode): [string, string][] {
+function exprScalarFields(expr: IRExprNode): [string, string][] {
   return Object.entries(expr)
     .filter(([k, v]) => k !== 'kind' && (v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean'))
     .map(([k, v]) => [k, v === null ? 'null' : String(v)]);
 }
 
-function exprChildEntries(expr: ExprNode): [string, ExprNode][] {
-  const out: [string, ExprNode][] = [];
+function exprChildEntries(expr: IRExprNode): [string, IRExprNode][] {
+  const out: [string, IRExprNode][] = [];
   for (const [key, val] of Object.entries(expr)) {
     if (key === 'kind') continue;
-    if (val && typeof val === 'object' && !Array.isArray(val) && typeof (val as ExprNode).kind === 'string') {
-      out.push([key, val as ExprNode]);
+    if (val && typeof val === 'object' && !Array.isArray(val) && typeof (val as IRExprNode).kind === 'string') {
+      out.push([key, val as IRExprNode]);
     } else if (Array.isArray(val)) {
       (val as unknown[]).forEach((item, i) => {
-        if (item && typeof item === 'object' && typeof (item as ExprNode).kind === 'string') {
-          out.push([`${key}[${i}]`, item as ExprNode]);
+        if (item && typeof item === 'object' && typeof (item as IRExprNode).kind === 'string') {
+          out.push([`${key}[${i}]`, item as IRExprNode]);
         }
       });
     }
@@ -94,9 +94,9 @@ function exprChildEntries(expr: ExprNode): [string, ExprNode][] {
   return out;
 }
 
-// ── ExprNode → RawNodeDatum converter ─────────────────────────────────────
+// ── IRExprNode → RawNodeDatum converter ─────────────────────────────────────
 
-function exprToD3(expr: ExprNode, edgeLabel?: string): RawNodeDatum {
+function exprToD3(expr: IRExprNode, edgeLabel?: string): RawNodeDatum {
   const scalars = exprScalarFields(expr);
   const childExprs = exprChildEntries(expr);
   const attributes: Record<string, string> = {};
@@ -114,7 +114,7 @@ function exprToD3(expr: ExprNode, edgeLabel?: string): RawNodeDatum {
 
 // ── Custom SVG node renderer ───────────────────────────────────────────────
 
-function renderExprNode({ nodeDatum }: Parameters<RenderCustomNodeElementFn>[0]) {
+function renderIRExprNode({ nodeDatum }: Parameters<RenderCustomNodeElementFn>[0]) {
   const raw = nodeDatum.name;
   const colonIdx = raw.indexOf(': ');
   const edgeLabel = colonIdx >= 0 ? raw.slice(0, colonIdx) : undefined;
@@ -162,7 +162,7 @@ function renderExprNode({ nodeDatum }: Parameters<RenderCustomNodeElementFn>[0])
 
 // ── ExprTreeD3 — react-d3-tree expression viewer ──────────────────────────
 
-function ExprTreeD3({ expr }: { expr: ExprNode }) {
+function ExprTreeD3({ expr }: { expr: IRExprNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState<{ width: number; height: number } | null>(null);
 
@@ -199,7 +199,7 @@ function ExprTreeD3({ expr }: { expr: ExprNode }) {
           orientation="horizontal"
           translate={translate}
           dimensions={dims}
-          renderCustomNodeElement={renderExprNode}
+          renderCustomNodeElement={renderIRExprNode}
           nodeSize={{ x: 240, y: 100 }}
           separation={{ siblings: 1, nonSiblings: 1.3 }}
           pathFunc="step"
@@ -211,7 +211,7 @@ function ExprTreeD3({ expr }: { expr: ExprNode }) {
   );
 }
 
-function ReactiveDetails({ rn }: { rn: ReactiveNode }) {
+function ReactiveDetails({ rn }: { rn: IRReactiveNode }) {
   const deps = rn.dependencies ?? [];
   const uniqueSources = [...new Set(deps.map(d => d.sourceId))];
   const rows: PropRow[] = [
@@ -402,7 +402,7 @@ function IRRefCard({ node }: { node: TreeNode }) {
 
 function IRReactiveCard({ node }: { node: TreeNode }) {
   const val = node.data as IRValue;
-  const rn = val.node as ReactiveNode | undefined;
+  const rn = val.node as IRReactiveNode | undefined;
   return (
     <>
       <SectionHeader label={node.label} chip="reactive" chipColor="info" />
@@ -442,6 +442,7 @@ function IRActionCard({ node }: { node: TreeNode }) {
 
 function HAEntityCard({ node }: { node: TreeNode }) {
   const e = node.data as {
+    kind: string;
     entityId: string;
     domain: string;
     sensorType: string;
@@ -452,6 +453,7 @@ function HAEntityCard({ node }: { node: TreeNode }) {
     <>
       <SectionHeader label={e.entityId} chip={e.sensorType} chipColor="success" />
       <PropTable rows={[
+        { key: 'kind',        value: e.kind,        color: '#585b70' },
         { key: 'entityId',    value: e.entityId },
         { key: 'domain',      value: e.domain },
         { key: 'sensorType',  value: e.sensorType },
@@ -463,13 +465,14 @@ function HAEntityCard({ node }: { node: TreeNode }) {
 }
 
 function ComponentCard({ node }: { node: TreeNode }) {
-  const c = node.data as { section: string; id: string; config: Record<string, unknown> };
+  const c = node.data as { kind: string; section: string; id: string; config: Record<string, unknown> };
   const configRows: PropRow[] = Object.entries(c.config ?? {})
     .filter(([, v]) => v === null || typeof v !== 'object')
     .map(([key, value]) => ({ key, value }));
   return (
     <>
       <SectionHeader label={c.id} chip={c.section} chipColor="info" />
+      <PropTable rows={[{ key: 'kind', value: c.kind, color: '#585b70' }]} />
       <SubHeader>config</SubHeader>
       {configRows.length > 0 ? <PropTable rows={configRows} /> : <EmptyHint>No scalar config properties.</EmptyHint>}
     </>
@@ -477,11 +480,11 @@ function ComponentCard({ node }: { node: TreeNode }) {
 }
 
 function ScriptCard({ node }: { node: TreeNode }) {
-  const s = node.data as { id: string; then: unknown[] };
+  const s = node.data as { kind: string; id: string; then: unknown[] };
   return (
     <>
       <SectionHeader label={s.id} chip={`${s.then?.length ?? 0} actions`} chipColor="warning" />
-      <PropTable rows={[{ key: 'id', value: s.id }, { key: 'actions', value: s.then?.length ?? 0 }]} />
+      <PropTable rows={[{ key: 'kind', value: s.kind, color: '#585b70' }, { key: 'id', value: s.id }, { key: 'actions', value: s.then?.length ?? 0 }]} />
     </>
   );
 }
@@ -501,8 +504,8 @@ function ScriptActionCard({ node }: { node: TreeNode }) {
 
 function BindingCard({ node }: { node: TreeNode }) {
   const b = node.data as {
-    targetId: string; targetType: string; targetProp: string;
-    part?: string; state?: string; expression: ReactiveNode;
+    kind: string; targetId: string; targetType: string; targetProp: string;
+    part?: string; state?: string; expression: IRReactiveNode;
   };
   const label = [b.targetId, b.targetProp, b.part, b.state].filter(Boolean).join('.');
   return (
@@ -510,6 +513,7 @@ function BindingCard({ node }: { node: TreeNode }) {
       <SectionHeader label={label} chip={b.targetType} chipColor="info" />
       <SubHeader>target</SubHeader>
       <PropTable rows={[
+        { key: 'kind',       value: b.kind, color: '#585b70' },
         { key: 'targetId',   value: b.targetId },
         { key: 'targetProp', value: b.targetProp },
         { key: 'targetType', value: b.targetType },
@@ -526,8 +530,8 @@ function BindingCard({ node }: { node: TreeNode }) {
   );
 }
 
-function ReactiveNodeCard({ node }: { node: TreeNode }) {
-  const obj = node.data as ReactiveNode;
+function IRReactiveNodeCard({ node }: { node: TreeNode }) {
+  const obj = node.data as IRReactiveNode;
   return (
     <>
       <SectionHeader label={node.label} chip={node.chip} chipColor="info" />
@@ -622,7 +626,7 @@ export function DetailPanel({ node }: DetailPanelProps) {
       {node.nodeKind === 'script'         && <ScriptCard       node={node} />}
       {node.nodeKind === 'script-action'  && <ScriptActionCard node={node} />}
       {node.nodeKind === 'binding'        && <BindingCard      node={node} />}
-      {node.nodeKind === 'reactive-node'  && <ReactiveNodeCard node={node} />}
+      {node.nodeKind === 'reactive-node'  && <IRReactiveNodeCard node={node} />}
       {node.nodeKind === 'theme-group'    && <ThemeGroupCard   node={node} />}
       {node.nodeKind === 'theme-leaf'     && <ThemeLeafCard    node={node} />}
       {(node.nodeKind === 'group' || node.nodeKind === 'root') && <GroupCard node={node} />}

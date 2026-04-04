@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { ReactiveNode } from '../reactive-node';
+import { IRReactiveNode } from '../reactive-node';
 import { RefHandle } from '../types';
-import type { ReactiveBinding, HAEntityRegistration, ComponentRegistration } from '../hooks/useReactiveScope';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
 import type { SerializationCaptures } from '../serialize';
-import type { ActionNode } from './action-types';
+import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
 import { collectFromIR } from './traverse';
 
@@ -35,11 +35,11 @@ function emptyCaptures(): SerializationCaptures {
   };
 }
 
-function makeMemoNode(index: number): ReactiveNode {
-  const node = new ReactiveNode({
+function makeMemoNode(index: number): IRReactiveNode {
+  const node = new IRReactiveNode({
     kind: 'memo',
     dependencies: [
-      { sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+      { kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
     ],
     exprType: 'float',
   });
@@ -98,14 +98,15 @@ describe('buildSemanticIR', () => {
     }
   });
 
-  it('captures ReactiveNode from serialized Scalar via captures map', () => {
+  it('captures IRReactiveNode from serialized Scalar via captures map', () => {
     const node = makeMemoNode(0);
     const scalar = lambdaScalar('return espcompose::memo_0.get();');
 
     const captures = emptyCaptures();
     captures.reactives.set(scalar, node);
 
-    const binding: ReactiveBinding = {
+    const binding: IRBinding = {
+      kind: 'binding',
       targetId: 'rw_abc',
       targetType: 'label',
       targetProp: 'text',
@@ -185,7 +186,7 @@ describe('buildSemanticIR', () => {
   });
 
   it('captures compiled action metadata', () => {
-    const rawActions: ActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
     const serializedResult = [{ 'homeassistant.service': { service: 'light.toggle', entity_id: 'light.kitchen' } }];
 
     const captures = emptyCaptures();
@@ -304,14 +305,16 @@ describe('buildSemanticIR', () => {
   });
 
   it('preserves side-channel data', () => {
-    const entity: HAEntityRegistration = {
+    const entity: IRHAEntity = {
+      kind: 'ha_entity',
       entityId: 'light.kitchen',
       domain: 'light',
       sensorType: 'binary_sensor',
       generatedId: 'ha_light_kitchen',
     };
 
-    const component: ComponentRegistration = {
+    const component: IRComponent = {
+      kind: 'component',
       section: 'image',
       id: 'img_1',
       config: { id: 'img_1', file: './bg.png', type: 'RGB565' },
@@ -323,9 +326,10 @@ describe('buildSemanticIR', () => {
       bindings: [],
       entities: [entity],
       components: [component],
-      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies ActionNode] }],
+      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: {
+        kind: 'theme_data',
         themeNames: ['light', 'dark'],
         defaultIndex: 0,
         leafData: new Map([['colors_primary', { values: [0xFF0000, 0x0000FF], valueType: 'int' }]]),
@@ -351,7 +355,7 @@ describe('collectFromIR', () => {
     const triggerVal = lambdaScalar('return x;');
     const ref = new RefHandle();
     const token = ref.toString();
-    const rawActions: ActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
+    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
     const actionArr = [{ 'homeassistant.service': { service: 'light.toggle' } }];
 
     const captures = emptyCaptures();
@@ -361,7 +365,8 @@ describe('collectFromIR', () => {
     captures.refs.set(token, ref);
     captures.actions.set(actionArr, { rawActions });
 
-    const binding: ReactiveBinding = {
+    const binding: IRBinding = {
+      kind: 'binding',
       targetId: 'lbl_1',
       targetType: 'label',
       targetProp: 'text',

@@ -1,9 +1,9 @@
 /**
- * Action Body Compiler — TypeScript AST → ActionNode[] compiler.
+ * Action Body Compiler — TypeScript AST → IRActionNode[] compiler.
  *
  * Compiles arrow function bodies from TriggerHandler-typed JSX props and
  * createScript arguments into action tree IR. Every user-visible TS
- * statement maps to one or more ActionNode nodes. Unsupported constructs
+ * statement maps to one or more IRActionNode nodes. Unsupported constructs
  * produce hard compile errors.
  */
 
@@ -14,7 +14,7 @@ import {
   type ScriptTransformContext,
 } from './expr-compiler.js';
 import {
-  type ActionNode,
+  type IRActionNode,
   type IRActionParam,
   type IRActionConfig,
   type IRCondition,
@@ -31,15 +31,15 @@ import {
   irScriptStop,
   irThemeSelect,
   irLambdaCondition,
-} from '../ir/action-tree.js';
-import type { ExprNode } from '@espcompose/core';
+} from '@espcompose/core/internals';
+import type { IRExprNode } from '@espcompose/core';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Constants
 // ────────────────────────────────────────────────────────────────────────────
 
 /** Placeholder false literal for error recovery in control flow. */
-const FALSE_EXPR: ExprNode = { kind: 'literal', value: false, type: 'bool' };
+const FALSE_EXPR: IRExprNode = { kind: 'literal', value: false, type: 'bool' };
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -53,7 +53,7 @@ export interface ActionCompilerDiagnostic {
 }
 
 export interface ActionCompileResult {
-  actions: ActionNode[];
+  actions: IRActionNode[];
   diagnostics: ActionCompilerDiagnostic[];
   /** Names of trigger variables accessed (e.g. ['x', 'state']) */
   triggerVars: string[];
@@ -117,7 +117,7 @@ export function compileActionBody(
     }
   }
 
-  let actions: ActionNode[];
+  let actions: IRActionNode[];
   if (ts.isBlock(callback.body)) {
     actions = compileStatements(callback.body.statements, ctx);
   } else {
@@ -139,8 +139,8 @@ export function compileActionBody(
 function compileStatements(
   stmts: ts.NodeArray<ts.Statement> | ts.Statement[],
   ctx: ActionCompilerContext,
-): ActionNode[] {
-  const actions: ActionNode[] = [];
+): IRActionNode[] {
+  const actions: IRActionNode[] = [];
   for (const stmt of stmts) {
     const compiled = compileStatement(stmt, ctx);
     if (compiled) {
@@ -153,7 +153,7 @@ function compileStatements(
 function compileStatement(
   stmt: ts.Statement,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   if (ts.isExpressionStatement(stmt)) {
     return compileExpressionAsAction(stmt.expression, ctx);
   }
@@ -224,7 +224,7 @@ function compileStatement(
 function compileExpressionAsAction(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   // await expression
   if (ts.isAwaitExpression(expr)) {
     return compileAwait(expr, ctx);
@@ -248,7 +248,7 @@ function compileExpressionAsAction(
 function compileAwait(
   expr: ts.AwaitExpression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   const inner = expr.expression;
 
   // await delay(N)
@@ -286,7 +286,7 @@ function compileAwait(
 function compileWaitUntil(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'waitUntil() requires a condition function argument.');
   }
@@ -330,7 +330,7 @@ function compileWaitUntil(
 function compileActionCall(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   // logger.log(msg) / logger.log(msg, level)
   if (isPropertyCall(call, 'logger', 'log')) {
     return compileLoggerCall(call, ctx);
@@ -425,7 +425,7 @@ function compileActionCall(
 function compileLoggerCall(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'logger.log() requires a message argument.');
   }
@@ -451,7 +451,7 @@ function compileLoggerCall(
 function compileThemeSelect(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   if (call.arguments.length < 1) {
     return emitError(call, ctx, 'theme.select() requires a theme name argument.');
   }
@@ -472,7 +472,7 @@ function compileHAAction(
   entity: HAEntityInfo,
   methodName: string,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   // Build the HA action name: domain.method (camelCase → snake_case)
   const snakeMethod = camelToSnake(methodName);
   const action = `${entity.domain}.${snakeMethod}`;
@@ -512,7 +512,7 @@ function compileRefAction(
   tag: string | undefined,
   methodName: string,
   ctx: ActionCompilerContext,
-): ActionNode[] | null {
+): IRActionNode[] | null {
   const snakeMethod = camelToSnake(methodName);
   const actionKey = tag ? `${tag}.${snakeMethod}` : snakeMethod;
 
@@ -557,7 +557,7 @@ function buildRefActionConfig(
 function compileIf(
   stmt: ts.IfStatement,
   ctx: ActionCompilerContext,
-): ActionNode {
+): IRActionNode {
   const condition = compileConditionExpr(stmt.expression, ctx);
   if (!condition) {
     // If condition compilation failed, emit a placeholder with the error already reported
@@ -575,7 +575,7 @@ function compileIf(
 function compileWhile(
   stmt: ts.WhileStatement,
   ctx: ActionCompilerContext,
-): ActionNode {
+): IRActionNode {
   const condition = compileConditionExpr(stmt.expression, ctx);
   if (!condition) {
     return irWhileAction(irLambdaCondition(FALSE_EXPR), []);
@@ -588,7 +588,7 @@ function compileWhile(
 function compileFor(
   stmt: ts.ForStatement,
   ctx: ActionCompilerContext,
-): ActionNode | null {
+): IRActionNode | null {
   // Only support: for (let i = 0; i < N; i++)
   const countResult = matchCountedForLoop(stmt);
   if (!countResult) {
@@ -652,7 +652,7 @@ function matchCountedForLoop(stmt: ts.ForStatement): CountedForResult | null {
 /**
  * Compile a TS boolean expression to an IRCondition.
  *
- * Uses the shared expr-compiler to produce a target-agnostic ExprNode tree.
+ * Uses the shared expr-compiler to produce a target-agnostic IRExprNode tree.
  */
 function compileConditionExpr(
   expr: ts.Expression,
@@ -730,7 +730,7 @@ function compileActionParam(
 function compileStatementBody(
   stmt: ts.Statement,
   ctx: ActionCompilerContext,
-): ActionNode[] {
+): IRActionNode[] {
   if (ts.isBlock(stmt)) {
     return compileStatements(stmt.statements, ctx);
   }

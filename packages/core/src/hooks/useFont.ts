@@ -85,6 +85,7 @@ export function useFont(props: FontProps): Ref<font_Font> {
   }
 
   registerComponent({
+    kind: 'component',
     section: 'font',
     id,
     config,

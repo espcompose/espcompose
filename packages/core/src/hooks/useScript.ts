@@ -23,14 +23,14 @@ import { setCurrentHookPath, assertHookContext } from './useState';
 import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
-import type { ActionNode } from '../ir/action-types';
+import type { IRActionNode } from '../ir/action-types';
 import type { ACTION_BRAND } from '../types';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
 export interface ScriptDefinition {
   id: string;
-  then: ActionNode[];
+  then: IRActionNode[];
 }
 
 const scriptScopeContext = createContext<ScopeFrame<ScriptDefinition>>({ value: {} });
@@ -100,8 +100,8 @@ export function useScript(
   const body = fn as ((...args: unknown[]) => unknown) & { __compiledScript?: CompiledScriptMeta; __refBindings?: Record<string, unknown> };
   if (body.__compiledScript) {
     const resolvedActions = body.__refBindings
-      ? resolveRefBindingsInActions(body.__compiledScript.then, body.__refBindings) as ActionNode[]
-      : body.__compiledScript.then as ActionNode[];
+      ? resolveRefBindingsInActions(body.__compiledScript.then, body.__refBindings) as IRActionNode[]
+      : body.__compiledScript.then as IRActionNode[];
     scriptDef = {
       id: body.__compiledScript.id,
       then: resolvedActions,

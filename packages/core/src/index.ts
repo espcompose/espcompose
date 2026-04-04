@@ -56,6 +56,6 @@ export { useReactiveTheme } from './reactive-theme';
 // Public API — Used by theme resolvers
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { ExprNode } from './ir/index';
-export { ReactiveNode, isReactiveNode } from './reactive-node';
+export type { IRExprNode } from './ir/index';
+export { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 export type { Signal } from './reactive-node';

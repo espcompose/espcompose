@@ -69,6 +69,7 @@ export function useImage(props: ImageProps): Ref<image_Image> {
   const id = ref.toString();
 
   registerComponent({
+    kind: 'component',
     section: 'image',
     id,
     config: {
