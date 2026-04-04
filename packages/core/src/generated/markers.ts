@@ -240,6 +240,7 @@ export interface airthings_wave_mini_AirthingsWaveMini {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_ble_client_BLEClientNode?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  airthings_wave_plus::AirthingsWavePlus
 export interface airthings_wave_plus_AirthingsWavePlus {
@@ -248,6 +249,7 @@ export interface airthings_wave_plus_AirthingsWavePlus {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_ble_client_BLEClientNode?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  alarm_control_panel::AlarmControlPanel
 export interface alarm_control_panel_AlarmControlPanel {
@@ -259,6 +261,7 @@ export interface alpha3_Alpha3 {
     readonly __brand_ble_client_BLEClientNode?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  am2315c::AM2315C
 export interface am2315c_AM2315C {
@@ -280,6 +283,7 @@ export interface am43_Am43 {
     readonly __brand_ble_client_BLEClientNode?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  am43::Am43Component
 export interface am43_Am43Component {
@@ -521,6 +525,7 @@ export interface bedjet_BedJetHub {
     readonly __brand_ble_client_BLEClientNode?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  bedjet::BedjetSensor
 export interface bedjet_BedjetSensor {
@@ -591,6 +596,7 @@ export interface bl0939_BL0939 {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  bl0940::BL0940
 export interface bl0940_BL0940 {
@@ -598,6 +604,7 @@ export interface bl0940_BL0940 {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  bl0940::BL0940Number
 export interface bl0940_BL0940Number {
@@ -624,6 +631,7 @@ export interface bl0942_BL0942 {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  ble_client::BLEBinaryOutput
 export interface ble_client_BLEBinaryOutput {
@@ -1077,6 +1085,7 @@ export interface cse7761_CSE7761Component {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  cse7766::CSE7766Component
 export interface cse7766_CSE7766Component {
@@ -1193,15 +1202,17 @@ export interface daly_bms_DalyBmsComponent {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  datetime::DateEntity
 export interface datetime_DateEntity {
     readonly __brand_datetime_DateEntity?: true;
+    readonly __brand_datetime_DateTimeEntity?: true;
+    readonly __brand_datetime_TimeEntity?: true;
 }
 //  datetime::DateTimeBase
 export interface datetime_DateTimeBase {
     readonly __brand_datetime_DateTimeBase?: true;
-    readonly __brand_datetime_DateEntity?: true;
     readonly __brand_datetime_DateTimeEntity?: true;
     readonly __brand_datetime_TimeEntity?: true;
 }
@@ -1312,8 +1323,6 @@ export interface display_Display {
 //  display::DisplayBuffer
 export interface display_DisplayBuffer {
     readonly __brand_display_DisplayBuffer?: true;
-    readonly __brand_display_DisplayPage?: true;
-    readonly __brand_display_Display?: true;
 }
 //  display::DisplayPage
 export interface display_DisplayPage {
@@ -1519,21 +1528,15 @@ export interface esp32_ble_server_BLEServer {
     readonly __brand_Component?: true;
     readonly __brand_esp32_ble_GATTsEventHandler?: true;
     readonly __brand_Parented?: true;
-    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
-    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_server::BLEService
 export interface esp32_ble_server_BLEService {
     readonly __brand_esp32_ble_server_BLEService?: true;
-    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
-    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_server::esp32_ble_server_automations::BLECharacteristicSetValueAction
 export interface esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction {
     readonly __brand_esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction?: true;
     readonly __brand_Action?: true;
-    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
-    readonly __brand_esp32_ble_server_BLEDescriptor?: true;
 }
 //  esp32_ble_tracker::ESP32BLETracker
 export interface esp32_ble_tracker_ESP32BLETracker {
@@ -1647,6 +1650,7 @@ export interface espnow_ESPNowTransport {
     readonly __brand_packet_transport_PacketTransport?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_espnow_ESPNowComponent?: true;
 }
 //  ethernet::EthernetComponent
 export interface ethernet_EthernetComponent {
@@ -1781,6 +1785,7 @@ export interface gcja5_GCJA5Component {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  gdk101::GDK101Component
 export interface gdk101_GDK101Component {
@@ -1850,6 +1855,7 @@ export interface gps_GPS {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  gps::GPSListener
 export interface gps_GPSListener {
@@ -2018,6 +2024,9 @@ export interface hbridge_HBridgeLightOutput {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_light_LightOutput?: true;
+    readonly __brand_hbridge_HBridgeFan?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
 }
 //  hbridge::HBridgeSwitch
 export interface hbridge_HBridgeSwitch {
@@ -2266,6 +2275,7 @@ export interface hydreon_rgxx_HydreonRGxxComponent {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  hyt271::HYT271Component
 export interface hyt271_HYT271Component {
@@ -2474,6 +2484,7 @@ export interface kamstrup_kmp_KamstrupKMPComponent {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  key_collector::KeyCollector
 export interface key_collector_KeyCollector {
@@ -2571,6 +2582,7 @@ export interface ld2410_LD2410Component {
     readonly __brand_ld2410_LD2410Component?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  ld2410::LightOutControlSelect
 export interface ld2410_LightOutControlSelect {
@@ -3001,13 +3013,13 @@ export interface lvgl_LVLight {
     readonly __brand_lvgl_LVLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_lvgl_LvglComponent?: true;
-    readonly __brand_lvgl_LvPseudoButton?: true;
     readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
 }
 //  lvgl::LvPseudoButton
 export interface lvgl_LvPseudoButton {
     readonly __brand_lvgl_LvPseudoButton?: true;
+    readonly __brand_lvgl_LvglComponent?: true;
 }
 //  m5stack_8angle::M5Stack8AngleComponent
 export interface m5stack_8angle_M5Stack8AngleComponent {
@@ -3425,7 +3437,6 @@ export interface mitsubishi_MitsubishiClimate {
 export interface mixer_speaker_MixerSpeaker {
     readonly __brand_mixer_speaker_MixerSpeaker?: true;
     readonly __brand_Component?: true;
-    readonly __brand_mixer_speaker_SourceSpeaker?: true;
 }
 //  mixer_speaker::SourceSpeaker
 export interface mixer_speaker_SourceSpeaker {
@@ -4209,6 +4220,7 @@ export interface pm1006_PM1006Component {
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  pm2005::PM2005Component
 export interface pm2005_PM2005Component {
@@ -4336,6 +4348,7 @@ export interface pvvx_mithermometer_PVVXDisplay {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_ble_client_BLEClientNode?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  pvvx_mithermometer::PVVXMiThermometer
 export interface pvvx_mithermometer_PVVXMiThermometer {
@@ -4350,6 +4363,7 @@ export interface pylontech_PylontechComponent {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  pylontech::PylontechSensor
 export interface pylontech_PylontechSensor {
@@ -4367,6 +4381,7 @@ export interface pzem004t_PZEM004T {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  pzemac::PZEMAC
 export interface pzemac_PZEMAC {
@@ -4430,6 +4445,7 @@ export interface radon_eye_rd200_RadonEyeRD200 {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_ble_client_BLEClientNode?: true;
+    readonly __brand_ble_client_BLEClient?: true;
 }
 //  rc522::RC522
 export interface rc522_RC522 {
@@ -4951,6 +4967,9 @@ export interface shelly_dimmer_ShellyDimmer {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_light_LightState?: true;
+    readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  sht3xd::SHT3XDComponent
 export interface sht3xd_SHT3XDComponent {
@@ -5066,6 +5085,7 @@ export interface sm300d2_SM300D2Sensor {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  sml::Sml
 export interface sml_Sml {
@@ -5094,6 +5114,7 @@ export interface smt100_SMT100Component {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  sn74hc165::SN74HC165Component
 export interface sn74hc165_SN74HC165Component {
@@ -5503,6 +5524,7 @@ export interface sx126x_SX126xTransport {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_sx126x_SX126xListener?: true;
+    readonly __brand_sx126x_SX126x?: true;
 }
 //  sx127x::SX127x
 export interface sx127x_SX127x {
@@ -5522,6 +5544,7 @@ export interface sx127x_SX127xTransport {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_sx127x_SX127xListener?: true;
+    readonly __brand_sx127x_SX127x?: true;
 }
 //  sx1509::SX1509BinarySensor
 export interface sx1509_SX1509BinarySensor {
@@ -5628,6 +5651,7 @@ export interface t6615_T6615Component {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  tc74::TC74Component
 export interface tc74_TC74Component {
@@ -5686,6 +5710,7 @@ export interface teleinfo_TeleInfo {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  teleinfo::TeleInfoSensor
 export interface teleinfo_TeleInfoSensor {
@@ -5748,6 +5773,11 @@ export interface template__TemplateDate {
     readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_template__TemplateLock?: true;
+    readonly __brand_template__TemplateValve?: true;
+    readonly __brand_template__TemplateWaterHeater?: true;
+    readonly __brand_datetime_DateTimeEntity?: true;
+    readonly __brand_datetime_TimeEntity?: true;
 }
 //  template_::TemplateDateTime
 export interface template__TemplateDateTime {
@@ -6244,6 +6274,7 @@ export interface uart_UARTTransport {
     readonly __brand_packet_transport_PacketTransport?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_uart_UARTComponent?: true;
 }
 //  udp::UDPComponent
 export interface udp_UDPComponent {
@@ -6256,6 +6287,7 @@ export interface udp_UDPTransport {
     readonly __brand_packet_transport_PacketTransport?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_udp_UDPComponent?: true;
 }
 //  ufire_ec::UFireECComponent
 export interface ufire_ec_UFireECComponent {
@@ -6945,6 +6977,7 @@ export interface zigbee_ZigbeeTime {
     readonly __brand_time_RealTimeClock?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+    readonly __brand_zigbee_ZigbeeComponent?: true;
 }
 //  zio_ultrasonic::ZioUltrasonicComponent
 export interface zio_ultrasonic_ZioUltrasonicComponent {

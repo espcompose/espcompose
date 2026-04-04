@@ -718,16 +718,6 @@ export interface CS5460AComponentActions {
   restart(): void;
 }
 
-// ── datetime::DateEntity ─────────────────────────────────────────────
-
-export interface DateEntity_SetParams {
-  date: unknown;
-}
-
-export interface DateEntityActions {
-  set(params?: DateEntity_SetParams): void;
-}
-
 // ── datetime::DateTimeEntity ─────────────────────────────────────────
 
 export interface DateTimeEntity_SetParams {
@@ -901,19 +891,6 @@ export interface DfrobotSen0395ComponentActions {
   settings(params?: DfrobotSen0395Component_SettingsParams): void;
 }
 
-// ── display::Display ─────────────────────────────────────────────────
-
-export interface DisplayActions {
-  showNext(): void;
-  showPrevious(): void;
-}
-
-// ── display::DisplayPage ─────────────────────────────────────────────
-
-export interface DisplayPageActions {
-  show(): void;
-}
-
 // ── ds1307::DS1307Component ──────────────────────────────────────────
 
 export interface DS1307ComponentActions {
@@ -932,27 +909,6 @@ export interface DutyTimeSensorActions {
   stop(): void;
   /** This action resets the duty time counter. Causes a sensor update. Does not affect the `last_time` sensor. In lambdas, you may use the `reset()` method. */
   reset(): void;
-}
-
-// ── esp32_ble_server::BLECharacteristic ──────────────────────────────
-
-export interface BLECharacteristic_SetValueParams {
-  value: Record<string, unknown>;
-}
-
-export interface BLECharacteristicActions {
-  setValue(params?: BLECharacteristic_SetValueParams): void;
-  notify(): void;
-}
-
-// ── esp32_ble_server::BLEDescriptor ──────────────────────────────────
-
-export interface BLEDescriptor_SetValueParams {
-  value: Record<string, unknown>;
-}
-
-export interface BLEDescriptorActions {
-  setValue(params?: BLEDescriptor_SetValueParams): void;
 }
 
 // ── esp32_ble_tracker::ESP32BLETracker ───────────────────────────────
@@ -1056,20 +1012,6 @@ export interface ESPNowComponent_SetChannelParams {
   channel: number;
 }
 
-export interface ESPNowComponent_DeleteParams {
-  /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
-
-  *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  address: MACAddress;
-}
-
-export interface ESPNowComponent_AddParams {
-  /** **MAC Address**: The Peer address that needs to be removed from the list of allowed peers.
-
-  *See also: [ESPNow communication Component](https://esphome.io/components/espnow#configuration-variables)* */
-  address: MACAddress;
-}
-
 export interface ESPNowComponentActions {
   /** This is an [Action](/automations/actions#all-actions) for sending a data packet over the espnow protocol to any device that is listening. */
   broadcast(params?: ESPNowComponent_BroadcastParams): void;
@@ -1077,8 +1019,6 @@ export interface ESPNowComponentActions {
   send(params?: ESPNowComponent_SendParams): void;
   /** This is an [Action](/automations/actions#all-actions) to change the channel that espnow is sending and receiving on. */
   setChannel(params?: ESPNowComponent_SetChannelParams): void;
-  delete(params?: ESPNowComponent_DeleteParams): void;
-  add(params?: ESPNowComponent_AddParams): void;
 }
 
 // ── event::Event ─────────────────────────────────────────────────────
@@ -1631,16 +1571,6 @@ export interface KeyCollectorActions {
   disable(): void;
 }
 
-// ── ld2410::LD2410Component ──────────────────────────────────────────
-
-export interface LD2410Component_SetParams {
-  password: string;
-}
-
-export interface LD2410ComponentActions {
-  set(params?: LD2410Component_SetParams): void;
-}
-
 // ── ledc::LEDCOutput ─────────────────────────────────────────────────
 
 export interface LEDCOutput_SetFrequencyParams {
@@ -1848,202 +1778,6 @@ export interface LoggerActions {
   log(params?: Logger_LogParams): void;
   /** Set the log level at runtime. The level can only be set to a level that is no less severe than the global log level. */
   setLevel(params?: Logger_SetLevelParams): void;
-}
-
-// ── lv_animimg_t ─────────────────────────────────────────────────────
-
-export interface lv_animimg_tActions {
-  start(): void;
-  stop(): void;
-}
-
-// ── lv_canvas_t ──────────────────────────────────────────────────────
-
-export interface lv_canvas_t_FillParams {
-  color: unknown;
-  opa?: unknown;
-}
-
-export interface lv_canvas_t_SetPixelsParams {
-  color: unknown;
-  opa?: unknown;
-  points: unknown[];
-}
-
-export interface lv_canvas_t_DrawRectangleParams {
-  x: unknown;
-  y: unknown;
-  opa?: unknown;
-  width: number;
-  height: number;
-  radius?: unknown;
-  /** @yamlKey bg_opa */
-  bgOpa?: unknown;
-  /** @yamlKey bg_color */
-  bgColor?: unknown;
-  /** @yamlKey bg_grad */
-  bgGrad?: unknown;
-  /** @yamlKey border_color */
-  borderColor?: unknown;
-  /** @yamlKey border_width */
-  borderWidth?: unknown;
-  /** @yamlKey border_opa */
-  borderOpa?: unknown;
-  /** @yamlKey outline_color */
-  outlineColor?: unknown;
-  /** @yamlKey outline_width */
-  outlineWidth?: unknown;
-  /** @yamlKey outline_pad */
-  outlinePad?: unknown;
-  /** @yamlKey outline_opa */
-  outlineOpa?: unknown;
-  /** @yamlKey shadow_color */
-  shadowColor?: unknown;
-  /** @yamlKey shadow_width */
-  shadowWidth?: unknown;
-  /** @yamlKey shadow_ofs_x */
-  shadowOfsX?: unknown;
-  /** @yamlKey shadow_ofs_y */
-  shadowOfsY?: unknown;
-  /** @yamlKey shadow_spread */
-  shadowSpread?: unknown;
-  /** @yamlKey shadow_opa */
-  shadowOpa?: unknown;
-}
-
-export interface lv_canvas_t_DrawTextParams {
-  text?: unknown;
-  x: unknown;
-  y: unknown;
-  opa?: unknown;
-  /** @yamlKey max_width */
-  maxWidth: number;
-  font?: unknown;
-  color?: unknown;
-  /** @yamlKey line_space */
-  lineSpace?: unknown;
-  /** @yamlKey letter_space */
-  letterSpace?: unknown;
-  align?: unknown;
-  decor?: unknown;
-}
-
-export interface lv_canvas_t_DrawImageParams {
-  x: unknown;
-  y: unknown;
-  opa?: unknown;
-  src: unknown;
-  /** @yamlKey pivot_x */
-  pivotX?: unknown;
-  /** @yamlKey pivot_y */
-  pivotY?: unknown;
-  angle?: unknown;
-  zoom?: unknown;
-  recolor?: unknown;
-  /** @yamlKey recolor_opa */
-  recolorOpa?: unknown;
-}
-
-export interface lv_canvas_t_DrawLineParams {
-  opa?: unknown;
-  points: unknown[];
-  width?: unknown;
-  color?: unknown;
-  /** @yamlKey round_start */
-  roundStart?: unknown;
-  /** @yamlKey round_end */
-  roundEnd?: unknown;
-}
-
-export interface lv_canvas_t_DrawPolygonParams {
-  points: unknown[];
-  radius?: unknown;
-  /** @yamlKey bg_opa */
-  bgOpa?: unknown;
-  /** @yamlKey bg_color */
-  bgColor?: unknown;
-  /** @yamlKey bg_grad */
-  bgGrad?: unknown;
-  /** @yamlKey border_color */
-  borderColor?: unknown;
-  /** @yamlKey border_width */
-  borderWidth?: unknown;
-  /** @yamlKey border_opa */
-  borderOpa?: unknown;
-  /** @yamlKey outline_color */
-  outlineColor?: unknown;
-  /** @yamlKey outline_width */
-  outlineWidth?: unknown;
-  /** @yamlKey outline_pad */
-  outlinePad?: unknown;
-  /** @yamlKey outline_opa */
-  outlineOpa?: unknown;
-  /** @yamlKey shadow_color */
-  shadowColor?: unknown;
-  /** @yamlKey shadow_width */
-  shadowWidth?: unknown;
-  /** @yamlKey shadow_ofs_x */
-  shadowOfsX?: unknown;
-  /** @yamlKey shadow_ofs_y */
-  shadowOfsY?: unknown;
-  /** @yamlKey shadow_spread */
-  shadowSpread?: unknown;
-  /** @yamlKey shadow_opa */
-  shadowOpa?: unknown;
-}
-
-export interface lv_canvas_t_DrawArcParams {
-  x: unknown;
-  y: unknown;
-  opa?: unknown;
-  radius: unknown;
-  /** @yamlKey start_angle */
-  startAngle: unknown;
-  /** @yamlKey end_angle */
-  endAngle: unknown;
-  width?: unknown;
-  color?: unknown;
-  rounded?: unknown;
-}
-
-export interface lv_canvas_tActions {
-  fill(params?: lv_canvas_t_FillParams): void;
-  setPixels(params?: lv_canvas_t_SetPixelsParams): void;
-  drawRectangle(params?: lv_canvas_t_DrawRectangleParams): void;
-  drawText(params?: lv_canvas_t_DrawTextParams): void;
-  drawImage(params?: lv_canvas_t_DrawImageParams): void;
-  drawLine(params?: lv_canvas_t_DrawLineParams): void;
-  drawPolygon(params?: lv_canvas_t_DrawPolygonParams): void;
-  drawArc(params?: lv_canvas_t_DrawArcParams): void;
-}
-
-// ── lv_meter_indicator_t ─────────────────────────────────────────────
-
-export interface lv_meter_indicator_t_UpdateParams {
-  value?: unknown;
-  /** @yamlKey start_value */
-  startValue?: unknown;
-  /** @yamlKey end_value */
-  endValue?: unknown;
-  opa?: unknown;
-}
-
-export interface lv_meter_indicator_tActions {
-  update(params?: lv_meter_indicator_t_UpdateParams): void;
-}
-
-// ── lv_obj_t ─────────────────────────────────────────────────────────
-
-export interface lv_obj_tActions {
-  redraw(): void;
-  refresh(): void;
-}
-
-// ── lv_spinbox_t ─────────────────────────────────────────────────────
-
-export interface lv_spinbox_tActions {
-  increment(): void;
-  decrement(): void;
 }
 
 // ── lv_style_t ───────────────────────────────────────────────────────
@@ -2260,46 +1994,7 @@ export interface lv_style_t_UpdateParams {
   main?: Record<string, unknown>;
   id?: Record<string, unknown>[];
   state?: Record<string, unknown>;
-  /** @yamlKey repeat_count */
-  repeatCount?: unknown;
-  /** @yamlKey auto_start */
-  autoStart?: boolean;
-  duration?: unknown;
-  src?: unknown;
-  indicator?: Record<string, unknown>;
-  knob?: Record<string, unknown>;
-  value?: unknown;
-  /** @yamlKey min_value */
-  minValue?: unknown;
-  /** @yamlKey max_value */
-  maxValue?: unknown;
-  /** @yamlKey start_angle */
-  startAngle?: unknown;
-  /** @yamlKey end_angle */
-  endAngle?: unknown;
-  rotation?: unknown;
-  mode?: unknown;
-  /** @yamlKey change_rate */
-  changeRate?: unknown;
-  /** @yamlKey start_value */
-  startValue?: unknown;
-  animated?: unknown;
   text?: unknown;
-  items?: Record<string, unknown>;
-  transparent?: boolean;
-  /** @yamlKey pad_column */
-  padColumn?: unknown;
-  scrollbar?: Record<string, unknown>;
-  symbol?: unknown;
-  /** @yamlKey selected_index */
-  selectedIndex?: unknown;
-  /** @yamlKey selected_text */
-  selectedText?: unknown;
-  /** @yamlKey dropdown_list */
-  dropdownList?: Record<string, unknown>;
-  options?: unknown[];
-  dir?: unknown;
-  selected?: Record<string, unknown>;
   /** @yamlKey pivot_x */
   pivotX?: unknown;
   /** @yamlKey pivot_y */
@@ -2311,66 +2006,14 @@ export interface lv_style_t_UpdateParams {
   /** @yamlKey offset_y */
   offsetY?: unknown;
   antialias?: unknown;
-  textarea?: unknown;
-  recolor?: unknown;
-  /** @yamlKey long_mode */
-  longMode?: unknown;
-  color?: unknown;
-  brightness?: unknown;
-  points?: unknown[];
-  ticks?: Record<string, unknown>;
-  scales?: Record<string, unknown>[];
-  /** @yamlKey visible_row_count */
-  visibleRowCount?: unknown;
-  cursor?: Record<string, unknown>;
-  /** @yamlKey textarea_placeholder */
-  textareaPlaceholder?: Record<string, unknown>;
-  styles?: unknown[];
-  /** @yamlKey grid_cell_x_align */
-  gridCellXAlign?: unknown;
-  /** @yamlKey grid_cell_y_align */
-  gridCellYAlign?: unknown;
-  /** @yamlKey pad_row */
-  padRow?: unknown;
-  /** @yamlKey placeholder_text */
-  placeholderText?: unknown;
-  /** @yamlKey accepted_chars */
-  acceptedChars?: unknown;
-  /** @yamlKey one_line */
-  oneLine?: unknown;
-  /** @yamlKey password_mode */
-  passwordMode?: unknown;
-  /** @yamlKey max_length */
-  maxLength?: unknown;
+  mode?: unknown;
+  src?: unknown;
+  indicator?: Record<string, unknown>;
+  knob?: Record<string, unknown>;
 }
 
 export interface lv_style_tActions {
   update(params?: lv_style_t_UpdateParams): void;
-}
-
-// ── lv_tabview_t ─────────────────────────────────────────────────────
-
-export interface lv_tabview_t_SelectParams {
-  animated?: unknown;
-  index: unknown;
-}
-
-export interface lv_tabview_tActions {
-  select(params?: lv_tabview_t_SelectParams): void;
-}
-
-// ── lv_tileview_t ────────────────────────────────────────────────────
-
-export interface lv_tileview_t_SelectParams {
-  animated?: unknown;
-  row?: unknown;
-  column?: unknown;
-  /** @yamlKey tile_id */
-  tileId?: unknown;
-}
-
-export interface lv_tileview_tActions {
-  select(params?: lv_tileview_t_SelectParams): void;
 }
 
 // ── lvgl::LvglComponent ──────────────────────────────────────────────
@@ -2389,22 +2032,6 @@ export interface LvglComponent_PauseParams {
   showSnow?: unknown;
 }
 
-export interface LvglComponent_NextParams {
-  animation?: unknown;
-  time?: unknown;
-}
-
-export interface LvglComponent_PreviousParams {
-  animation?: unknown;
-  time?: unknown;
-}
-
-export interface LvglComponent_ShowParams {
-  animation?: unknown;
-  time?: unknown;
-  id: unknown;
-}
-
 export interface LvglComponentActions {
   /** This [action](/automations/actions#actions-action) allows changing/updating the `disp_bg_color` or `disp_bg_image` configuration variables of the main component, making it possible to change the background color or wallpaper at any time. */
   update(params?: LvglComponent_UpdateParams): void;
@@ -2412,18 +2039,6 @@ export interface LvglComponentActions {
   pause(params?: LvglComponent_PauseParams): void;
   /** This [action](/automations/actions#actions-action) resumes the activity of LVGL, including rendering. */
   resume(): void;
-  next(params?: LvglComponent_NextParams): void;
-  previous(params?: LvglComponent_PreviousParams): void;
-  show(params?: LvglComponent_ShowParams): void;
-}
-
-// ── lvgl::LvPseudoButton ─────────────────────────────────────────────
-
-export interface LvPseudoButtonActions {
-  disable(): void;
-  enable(): void;
-  hide(): void;
-  show(): void;
 }
 
 // ── max17043::MAX17043Component ──────────────────────────────────────
@@ -2706,18 +2321,6 @@ export interface AirConditionerActions {
   powerOff(): void;
   /** This action toggle the power state. Identical to pressing the power button on the remote control. */
   powerToggle(): void;
-}
-
-// ── mixer_speaker::SourceSpeaker ─────────────────────────────────────
-
-export interface SourceSpeaker_ApplyDuckingParams {
-  /** @yamlKey decibel_reduction */
-  decibelReduction: number;
-  duration?: Record<string, unknown>;
-}
-
-export interface SourceSpeakerActions {
-  applyDucking(params?: SourceSpeaker_ApplyDuckingParams): void;
 }
 
 // ── mqtt::MQTTClientComponent ────────────────────────────────────────
@@ -3060,19 +2663,6 @@ export interface PMWCS3ComponentActions {
   airCalibration(): void;
   /** A new I2C address can be set (for multi-probes cases for example) */
   newI2cAddress(params?: PMWCS3Component_NewI2cAddressParams): void;
-}
-
-// ── PollingComponent ─────────────────────────────────────────────────
-
-export interface PollingComponent_ResumeParams {
-  /** @yamlKey update_interval */
-  updateInterval?: Record<string, unknown>;
-}
-
-export interface PollingComponentActions {
-  update(): void;
-  suspend(): void;
-  resume(params?: PollingComponent_ResumeParams): void;
 }
 
 // ── pulse_counter::PulseCounterSensor ────────────────────────────────
@@ -3995,18 +3585,13 @@ export interface ClassActionMap {
   "cm1106::CM1106Component": CM1106ComponentActions;
   "cover::Cover": CoverActions;
   "cs5460a::CS5460AComponent": CS5460AComponentActions;
-  "datetime::DateEntity": DateEntityActions;
   "datetime::DateTimeEntity": DateTimeEntityActions;
   "datetime::TimeEntity": TimeEntityActions;
   "deep_sleep::DeepSleepComponent": DeepSleepComponentActions;
   "dfplayer::DFPlayer": DFPlayerActions;
   "dfrobot_sen0395::DfrobotSen0395Component": DfrobotSen0395ComponentActions;
-  "display::Display": DisplayActions;
-  "display::DisplayPage": DisplayPageActions;
   "ds1307::DS1307Component": DS1307ComponentActions;
   "duty_time_sensor::DutyTimeSensor": DutyTimeSensorActions;
-  "esp32_ble_server::BLECharacteristic": BLECharacteristicActions;
-  "esp32_ble_server::BLEDescriptor": BLEDescriptorActions;
   "esp32_ble_tracker::ESP32BLETracker": ESP32BLETrackerActions;
   "esp8266_pwm::ESP8266PWM": ESP8266PWMActions;
   "espnow::ESPNowComponent": ESPNowComponentActions;
@@ -4027,7 +3612,6 @@ export interface ClassActionMap {
   "htu21d::HTU21DComponent": HTU21DComponentActions;
   "integration::IntegrationSensor": IntegrationSensorActions;
   "key_collector::KeyCollector": KeyCollectorActions;
-  "ld2410::LD2410Component": LD2410ComponentActions;
   "ledc::LEDCOutput": LEDCOutputActions;
   "libretiny_pwm::LibreTinyPWM": LibreTinyPWMActions;
   "light::AddressableLightState": AddressableLightStateActions;
@@ -4035,16 +3619,8 @@ export interface ClassActionMap {
   "lightwaverf::LightWaveRF": LightWaveRFActions;
   "lock::Lock": LockActions;
   "logger::Logger": LoggerActions;
-  "lv_animimg_t": lv_animimg_tActions;
-  "lv_canvas_t": lv_canvas_tActions;
-  "lv_meter_indicator_t": lv_meter_indicator_tActions;
-  "lv_obj_t": lv_obj_tActions;
-  "lv_spinbox_t": lv_spinbox_tActions;
   "lv_style_t": lv_style_tActions;
-  "lv_tabview_t": lv_tabview_tActions;
-  "lv_tileview_t": lv_tileview_tActions;
   "lvgl::LvglComponent": LvglComponentActions;
-  "lvgl::LvPseudoButton": LvPseudoButtonActions;
   "max17043::MAX17043Component": MAX17043ComponentActions;
   "max6956::MAX6956": MAX6956Actions;
   "max7219digit::MAX7219Component": MAX7219ComponentActions;
@@ -4054,7 +3630,6 @@ export interface ClassActionMap {
   "micro_wake_word::WakeWordModel": WakeWordModelActions;
   "microphone::Microphone": MicrophoneActions;
   "midea::ac::AirConditioner": AirConditionerActions;
-  "mixer_speaker::SourceSpeaker": SourceSpeakerActions;
   "mqtt::MQTTClientComponent": MQTTClientComponentActions;
   "nau7802::NAU7802Sensor": NAU7802SensorActions;
   "nextion::Nextion": NextionActions;
@@ -4070,7 +3645,6 @@ export interface ClassActionMap {
   "pcf8563::PCF8563Component": PCF8563ComponentActions;
   "pid::PIDClimate": PIDClimateActions;
   "pmwcs3::PMWCS3Component": PMWCS3ComponentActions;
-  "PollingComponent": PollingComponentActions;
   "pulse_counter::PulseCounterSensor": PulseCounterSensorActions;
   "pulse_meter::PulseMeterSensor": PulseMeterSensorActions;
   "pzemac::PZEMAC": PZEMACActions;
@@ -4124,92 +3698,76 @@ export interface ClassActionMap {
  * Used by the compiler transformer to resolve ref actions.
  */
 export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
-  "_esphome_hub75_HUB75Display": ["::esphome::hub75::HUB75Display","PollingComponent","display::Display"],
+  "_esphome_hub75_HUB75Display": ["::esphome::hub75::HUB75Display"],
   "a01nyub_A01nyubComponent": ["sensor::Sensor"],
   "a02yyuw_A02yyuwComponent": ["sensor::Sensor"],
   "a4988_A4988": ["stepper::Stepper"],
   "absolute_humidity_AbsoluteHumidityComponent": ["sensor::Sensor"],
   "ac_dimmer_AcDimmer": ["output::FloatOutput","output::BinaryOutput"],
-  "adc_ADCSensor": ["sensor::Sensor","PollingComponent"],
-  "adc128s102_ADC128S102Sensor": ["sensor::Sensor","PollingComponent"],
-  "addressable_light_AddressableLightDisplay": ["display::Display","PollingComponent"],
-  "ade7880_ADE7880": ["PollingComponent"],
-  "ade7953_i2c_AdE7953I2c": ["PollingComponent"],
-  "ade7953_spi_AdE7953Spi": ["PollingComponent"],
-  "ads1115_ADS1115Sensor": ["sensor::Sensor","PollingComponent"],
-  "ads1118_ADS1118Sensor": ["PollingComponent","sensor::Sensor"],
-  "ags10_AGS10Component": ["ags10::AGS10Component","PollingComponent"],
-  "aht10_AHT10Component": ["PollingComponent"],
+  "adc_ADCSensor": ["sensor::Sensor"],
+  "adc128s102_ADC128S102Sensor": ["sensor::Sensor"],
+  "ads1115_ADS1115Sensor": ["sensor::Sensor"],
+  "ads1118_ADS1118Sensor": ["sensor::Sensor"],
+  "ags10_AGS10Component": ["ags10::AGS10Component"],
   "aic3204_AIC3204": ["aic3204::AIC3204","audio_dac::AudioDac"],
   "airthings_ble_AirthingsListener": ["esp32_ble_tracker::ESP32BLETracker"],
-  "airthings_wave_mini_AirthingsWaveMini": ["PollingComponent"],
-  "airthings_wave_plus_AirthingsWavePlus": ["PollingComponent"],
+  "airthings_wave_mini_AirthingsWaveMini": ["ble_client::BLEClient"],
+  "airthings_wave_plus_AirthingsWavePlus": ["ble_client::BLEClient"],
   "alarm_control_panel_AlarmControlPanel": ["alarm_control_panel::AlarmControlPanel"],
-  "alpha3_Alpha3": ["PollingComponent"],
-  "am2315c_AM2315C": ["PollingComponent"],
-  "am2320_AM2320Component": ["PollingComponent"],
-  "am43_Am43": ["PollingComponent"],
+  "alpha3_Alpha3": ["ble_client::BLEClient"],
+  "am43_Am43": ["ble_client::BLEClient"],
   "am43_Am43Component": ["cover::Cover"],
   "analog_threshold_AnalogThresholdBinarySensor": ["binary_sensor::BinarySensor"],
   "animation_Animation": ["animation::Animation"],
-  "anova_Anova": ["climate::Climate","PollingComponent"],
-  "apds9306_APDS9306": ["sensor::Sensor","PollingComponent"],
-  "apds9960_APDS9960": ["PollingComponent"],
+  "anova_Anova": ["climate::Climate"],
+  "apds9306_APDS9306": ["sensor::Sensor"],
   "api_APIServer": ["api::APIServer"],
   "aqi_AQISensor": ["sensor::Sensor"],
-  "as5600_AS5600Sensor": ["sensor::Sensor","PollingComponent"],
-  "as7341_AS7341Component": ["PollingComponent"],
+  "as5600_AS5600Sensor": ["sensor::Sensor"],
   "at581x_AT581XComponent": ["at581x::AT581XComponent"],
   "at581x_RFSwitch": ["switch_::Switch"],
   "atc_mithermometer_ATCMiThermometer": ["esp32_ble_tracker::ESP32BLETracker"],
-  "atm90e26_ATM90E26Component": ["PollingComponent"],
   "atm90e32_ATM90E32ClearGainCalibrationButton": ["button::Button"],
   "atm90e32_ATM90E32ClearOffsetCalibrationButton": ["button::Button"],
   "atm90e32_ATM90E32ClearPowerOffsetCalibrationButton": ["button::Button"],
-  "atm90e32_ATM90E32Component": ["PollingComponent"],
   "atm90e32_ATM90E32GainCalibrationButton": ["button::Button"],
   "atm90e32_ATM90E32Number": ["number::Number"],
   "atm90e32_ATM90E32OffsetCalibrationButton": ["button::Button"],
   "atm90e32_ATM90E32PowerOffsetCalibrationButton": ["button::Button"],
   "audio_adc_AudioAdc": ["audio_adc::AudioAdc"],
   "audio_dac_AudioDac": ["audio_dac::AudioDac"],
-  "axs15231_AXS15231Touchscreen": ["PollingComponent"],
   "b_parasite_BParasite": ["esp32_ble_tracker::ESP32BLETracker"],
   "ballu_BalluClimate": ["climate::Climate"],
   "bang_bang_BangBangClimate": ["climate::Climate"],
-  "bedjet_BedJetClimate": ["climate::Climate","PollingComponent"],
-  "bedjet_BedJetFan": ["fan::Fan","PollingComponent"],
-  "bedjet_BedJetHub": ["PollingComponent"],
+  "bedjet_BedJetClimate": ["climate::Climate"],
+  "bedjet_BedJetFan": ["fan::Fan"],
+  "bedjet_BedJetHub": ["ble_client::BLEClient"],
   "beken_spi_led_strip_BekenSPILEDStripLightOutput": ["light::LightState","light::AddressableLightState"],
-  "bh1750_BH1750Sensor": ["sensor::Sensor","PollingComponent"],
-  "bh1900nux_BH1900NUXSensor": ["PollingComponent"],
+  "bh1750_BH1750Sensor": ["sensor::Sensor"],
   "binary_BinaryFan": ["fan::Fan"],
   "binary_BinaryLightOutput": ["light::LightState","light::AddressableLightState"],
   "binary_sensor_BinarySensor": ["binary_sensor::BinarySensor"],
   "binary_sensor_map_BinarySensorMap": ["sensor::Sensor"],
-  "bl0906_BL0906": ["bl0906::BL0906","PollingComponent"],
-  "bl0939_BL0939": ["PollingComponent"],
-  "bl0940_BL0940": ["PollingComponent"],
-  "bl0940_CalibrationNumber": ["number::Number","PollingComponent"],
+  "bl0906_BL0906": ["bl0906::BL0906"],
+  "bl0939_BL0939": ["uart::UARTComponent"],
+  "bl0940_BL0940": ["uart::UARTComponent"],
+  "bl0940_CalibrationNumber": ["number::Number"],
   "bl0940_CalibrationResetButton": ["button::Button"],
-  "bl0942_BL0942": ["PollingComponent"],
+  "bl0942_BL0942": ["uart::UARTComponent"],
   "ble_client_BLEBinaryOutput": ["output::BinaryOutput"],
   "ble_client_BLEClient": ["ble_client::BLEClient"],
   "ble_client_BLEClientNode": ["ble_client::BLEClient"],
-  "ble_client_BLEClientRSSISensor": ["sensor::Sensor","PollingComponent"],
+  "ble_client_BLEClientRSSISensor": ["sensor::Sensor"],
   "ble_client_BLEClientSwitch": ["switch_::Switch"],
-  "ble_client_BLESensor": ["sensor::Sensor","PollingComponent"],
-  "ble_client_BLETextSensor": ["text_sensor::TextSensor","PollingComponent"],
+  "ble_client_BLESensor": ["sensor::Sensor"],
+  "ble_client_BLETextSensor": ["text_sensor::TextSensor"],
   "ble_nus_BLENUS": ["uart::UARTComponent"],
   "ble_presence_BLEPresenceDevice": ["binary_sensor::BinarySensor"],
   "ble_rssi_BLERSSISensor": ["sensor::Sensor"],
   "ble_scanner_BLEScanner": ["text_sensor::TextSensor"],
   "bluetooth_proxy_BluetoothConnection": ["esp32_ble_tracker::ESP32BLETracker"],
   "bluetooth_proxy_BluetoothProxy": ["esp32_ble_tracker::ESP32BLETracker"],
-  "bm8563_BM8563": ["bm8563::BM8563","PollingComponent"],
-  "bme680_BME680Component": ["PollingComponent"],
-  "bmi160_BMI160Component": ["PollingComponent"],
-  "bmp085_BMP085Component": ["PollingComponent"],
+  "bm8563_BM8563": ["bm8563::BM8563"],
   "bp1658cj_BP1658CJ_Channel": ["output::FloatOutput","output::BinaryOutput"],
   "bp5758d_BP5758D_Channel": ["output::FloatOutput","output::BinaryOutput"],
   "bthome_mithermometer_BTHomeMiThermometer": ["esp32_ble_tracker::ESP32BLETracker"],
@@ -4217,13 +3775,10 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "canbus_CanbusComponent": ["canbus::CanbusComponent"],
   "cap1188_CAP1188Channel": ["binary_sensor::BinarySensor"],
   "cc1101_CC1101Component": ["cc1101::CC1101Component"],
-  "ccs811_CCS811Component": ["PollingComponent"],
-  "cd74hc4067_CD74HC4067Component": ["PollingComponent"],
-  "cd74hc4067_CD74HC4067Sensor": ["sensor::Sensor","PollingComponent"],
-  "chsc6x_CHSC6XTouchscreen": ["PollingComponent"],
+  "cd74hc4067_CD74HC4067Sensor": ["sensor::Sensor"],
   "climate_Climate": ["climate::Climate"],
   "climate_ir_lg_LgIrClimate": ["climate::Climate"],
-  "cm1106_CM1106Component": ["cm1106::CM1106Component","PollingComponent"],
+  "cm1106_CM1106Component": ["cm1106::CM1106Component"],
   "color_temperature_CTLightOutput": ["light::LightState","light::AddressableLightState"],
   "combination_KalmanCombinationComponent": ["sensor::Sensor"],
   "combination_LinearCombinationComponent": ["sensor::Sensor"],
@@ -4248,25 +3803,22 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "copy_CopyTextSensor": ["text_sensor::TextSensor"],
   "cover_Cover": ["cover::Cover"],
   "cs5460a_CS5460AComponent": ["cs5460a::CS5460AComponent"],
-  "cse7761_CSE7761Component": ["PollingComponent"],
+  "cse7761_CSE7761Component": ["uart::UARTComponent"],
   "cse7766_CSE7766Component": ["uart::UARTComponent"],
   "cst226_CST226Button": ["binary_sensor::BinarySensor"],
-  "cst226_CST226Touchscreen": ["PollingComponent"],
-  "cst816_CST816Touchscreen": ["PollingComponent"],
-  "ct_clamp_CTClampSensor": ["sensor::Sensor","PollingComponent"],
+  "ct_clamp_CTClampSensor": ["sensor::Sensor"],
   "current_based_CurrentBasedCover": ["cover::Cover"],
   "cwww_CWWWLightOutput": ["light::LightState","light::AddressableLightState"],
   "dac7678_DAC7678Channel": ["output::FloatOutput","output::BinaryOutput"],
   "daikin_arc_DaikinArcClimate": ["climate::Climate"],
   "daikin_brc_DaikinBrcClimate": ["climate::Climate"],
   "daikin_DaikinClimate": ["climate::Climate"],
-  "dallas_temp_DallasTemperatureSensor": ["PollingComponent","sensor::Sensor"],
-  "daly_bms_DalyBmsComponent": ["PollingComponent"],
-  "datetime_DateEntity": ["datetime::DateEntity"],
-  "datetime_DateTimeBase": ["datetime::DateEntity","datetime::DateTimeEntity","datetime::TimeEntity"],
+  "dallas_temp_DallasTemperatureSensor": ["sensor::Sensor"],
+  "daly_bms_DalyBmsComponent": ["uart::UARTComponent"],
+  "datetime_DateEntity": ["datetime::DateTimeEntity","datetime::TimeEntity"],
+  "datetime_DateTimeBase": ["datetime::DateTimeEntity","datetime::TimeEntity"],
   "datetime_DateTimeEntity": ["datetime::DateTimeEntity"],
   "datetime_TimeEntity": ["datetime::TimeEntity"],
-  "debug_DebugComponent": ["PollingComponent"],
   "deep_sleep_DeepSleepComponent": ["deep_sleep::DeepSleepComponent"],
   "delonghi_DelonghiClimate": ["climate::Climate"],
   "dew_point_DewPointComponent": ["sensor::Sensor"],
@@ -4277,23 +3829,13 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "dfrobot_sen0395_Sen0395PowerSwitch": ["switch_::Switch"],
   "dfrobot_sen0395_Sen0395StartAfterBootSwitch": ["switch_::Switch"],
   "dfrobot_sen0395_Sen0395UartPresenceSwitch": ["switch_::Switch"],
-  "dht_DHT": ["PollingComponent"],
-  "dht12_DHT12Component": ["PollingComponent"],
-  "display_Display": ["display::Display"],
-  "display_DisplayBuffer": ["display::DisplayPage","display::Display"],
-  "display_DisplayPage": ["display::DisplayPage"],
   "dlms_meter_DlmsMeterComponent": ["uart::UARTComponent"],
-  "dps310_DPS310Component": ["PollingComponent"],
-  "ds1307_DS1307Component": ["ds1307::DS1307Component","PollingComponent"],
-  "duty_cycle_DutyCycleSensor": ["sensor::Sensor","PollingComponent"],
-  "duty_time_sensor_DutyTimeSensor": ["duty_time_sensor::DutyTimeSensor","sensor::Sensor","PollingComponent"],
-  "ee895_EE895Component": ["PollingComponent"],
-  "ektf2232_EKTF2232Touchscreen": ["PollingComponent"],
+  "ds1307_DS1307Component": ["ds1307::DS1307Component"],
+  "duty_cycle_DutyCycleSensor": ["sensor::Sensor"],
+  "duty_time_sensor_DutyTimeSensor": ["duty_time_sensor::DutyTimeSensor","sensor::Sensor"],
   "emc2101_EMC2101Output": ["output::FloatOutput","output::BinaryOutput"],
-  "emc2101_EMC2101Sensor": ["PollingComponent"],
   "emmeti_EmmetiClimate": ["climate::Climate"],
   "endstop_EndstopCover": ["cover::Cover"],
-  "ens210_ENS210Component": ["PollingComponent"],
   "es7210_ES7210": ["audio_adc::AudioAdc"],
   "es7243e_ES7243E": ["audio_adc::AudioAdc"],
   "es8156_ES8156": ["audio_dac::AudioDac"],
@@ -4301,56 +3843,42 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "es8388_ADCInputMicSelect": ["select::Select"],
   "es8388_DacOutputSelect": ["select::Select"],
   "es8388_ES8388": ["audio_dac::AudioDac"],
-  "esp32_ble_server_BLECharacteristic": ["esp32_ble_server::BLECharacteristic"],
-  "esp32_ble_server_BLEDescriptor": ["esp32_ble_server::BLEDescriptor"],
-  "esp32_ble_server_BLEServer": ["esp32_ble_server::BLECharacteristic","esp32_ble_server::BLEDescriptor"],
-  "esp32_ble_server_BLEService": ["esp32_ble_server::BLECharacteristic","esp32_ble_server::BLEDescriptor"],
-  "esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction": ["esp32_ble_server::BLECharacteristic","esp32_ble_server::BLEDescriptor"],
   "esp32_ble_tracker_ESP32BLETracker": ["esp32_ble_tracker::ESP32BLETracker"],
   "esp32_ble_tracker_ESPBTClient": ["esp32_ble_tracker::ESP32BLETracker"],
   "esp32_ble_tracker_ESPBTDeviceListener": ["esp32_ble_tracker::ESP32BLETracker"],
-  "esp32_camera_ESP32Camera": ["PollingComponent"],
   "esp32_can_ESP32Can": ["canbus::CanbusComponent"],
   "esp32_dac_ESP32DAC": ["output::FloatOutput","output::BinaryOutput"],
-  "esp32_hosted_Esp32HostedUpdate": ["update::UpdateEntity","PollingComponent"],
+  "esp32_hosted_Esp32HostedUpdate": ["update::UpdateEntity"],
   "esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput": ["light::LightState","light::AddressableLightState"],
   "esp32_touch_ESP32TouchBinarySensor": ["binary_sensor::BinarySensor"],
   "esp8266_pwm_ESP8266PWM": ["esp8266_pwm::ESP8266PWM","output::FloatOutput","output::BinaryOutput"],
   "esphome_dsmr_Dsmr": ["uart::UARTComponent"],
   "espnow_ESPNowComponent": ["espnow::ESPNowComponent"],
-  "espnow_ESPNowTransport": ["PollingComponent"],
+  "espnow_ESPNowTransport": ["espnow::ESPNowComponent"],
   "ethernet_info_DNSAddressEthernetInfo": ["text_sensor::TextSensor"],
   "ethernet_info_IPAddressEthernetInfo": ["text_sensor::TextSensor"],
   "ethernet_info_MACAddressEthernetInfo": ["text_sensor::TextSensor"],
   "event_Event": ["event::Event"],
-  "ezo_EZOSensor": ["sensor::Sensor","PollingComponent"],
-  "ezo_pmp_EzoPMP": ["ezo_pmp::EzoPMP","PollingComponent"],
+  "ezo_EZOSensor": ["sensor::Sensor"],
+  "ezo_pmp_EzoPMP": ["ezo_pmp::EzoPMP"],
   "factory_reset_FactoryResetButton": ["button::Button"],
   "factory_reset_FactoryResetSwitch": ["switch_::Switch"],
   "fan_Fan": ["fan::Fan"],
   "feedback_FeedbackCover": ["cover::Cover"],
-  "fingerprint_grow_FingerprintGrowComponent": ["fingerprint_grow::FingerprintGrowComponent","PollingComponent"],
-  "fs3000_FS3000Component": ["PollingComponent","sensor::Sensor"],
-  "ft5x06_FT5x06Touchscreen": ["PollingComponent"],
-  "ft63x6_FT63X6Touchscreen": ["PollingComponent"],
+  "fingerprint_grow_FingerprintGrowComponent": ["fingerprint_grow::FingerprintGrowComponent"],
+  "fs3000_FS3000Component": ["sensor::Sensor"],
   "fujitsu_general_FujitsuGeneralClimate": ["climate::Climate"],
-  "gcja5_GCJA5Component": ["PollingComponent"],
-  "gdk101_GDK101Component": ["PollingComponent"],
-  "gl_r01_i2c_GLR01I2CComponent": ["PollingComponent"],
-  "gp2y1010au0f_GP2Y1010AU0FSensor": ["sensor::Sensor","PollingComponent"],
+  "gcja5_GCJA5Component": ["uart::UARTComponent"],
+  "gp2y1010au0f_GP2Y1010AU0FSensor": ["sensor::Sensor"],
   "gp8403_GP8403Output": ["output::FloatOutput","output::BinaryOutput"],
   "gpio_GPIOBinaryOutput": ["output::BinaryOutput"],
   "gpio_GPIOBinarySensor": ["binary_sensor::BinarySensor"],
   "gpio_GPIOSwitch": ["switch_::Switch"],
-  "gps_GPS": ["PollingComponent"],
-  "gps_GPSTime": ["PollingComponent"],
+  "gps_GPS": ["uart::UARTComponent"],
   "gree_GreeClimate": ["climate::Climate"],
   "gree_GreeModeBitSwitch": ["switch_::Switch"],
-  "grove_gas_mc_v2_GroveGasMultichannelV2Component": ["PollingComponent"],
   "grove_tb6612fng_GroveMotorDriveTB6612FNG": ["grove_tb6612fng::GroveMotorDriveTB6612FNG"],
-  "growatt_solar_GrowattSolar": ["PollingComponent"],
   "gt911_GT911Button": ["binary_sensor::BinarySensor"],
-  "gt911_GT911Touchscreen": ["PollingComponent"],
   "haier_BeeperSwitch": ["switch_::Switch"],
   "haier_DisplaySwitch": ["switch_::Switch"],
   "haier_HaierClimateBase": ["haier::HaierClimateBase"],
@@ -4360,74 +3888,47 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "haier_SelfCleaningButton": ["button::Button"],
   "haier_Smartair2Climate": ["haier::HaierClimateBase","climate::Climate"],
   "haier_SteriCleaningButton": ["button::Button"],
-  "havells_solar_HavellsSolar": ["PollingComponent"],
   "hbridge_HBridgeFan": ["hbridge::HBridgeFan","fan::Fan"],
-  "hbridge_HBridgeLightOutput": ["PollingComponent"],
+  "hbridge_HBridgeLightOutput": ["hbridge::HBridgeFan","light::LightState","light::AddressableLightState"],
   "hbridge_HBridgeSwitch": ["switch_::Switch"],
-  "hc8_HC8Component": ["hc8::HC8Component","PollingComponent"],
-  "hdc1080_HDC1080Component": ["PollingComponent"],
-  "hdc2010_HDC2010Component": ["PollingComponent"],
-  "hdc302x_HDC302XComponent": ["hdc302x::HDC302XComponent","PollingComponent"],
+  "hc8_HC8Component": ["hc8::HC8Component"],
+  "hdc302x_HDC302XComponent": ["hdc302x::HDC302XComponent"],
   "he60r_HE60rCover": ["cover::Cover"],
   "heatpumpir_HeatpumpIRClimate": ["climate::Climate"],
   "hitachi_ac344_HitachiClimate": ["climate::Climate"],
   "hitachi_ac424_HitachiClimate": ["climate::Climate"],
-  "hlk_fm22x_HlkFm22xComponent": ["hlk_fm22x::HlkFm22xComponent","PollingComponent"],
-  "hlw8012_HLW8012Component": ["PollingComponent"],
+  "hlk_fm22x_HlkFm22xComponent": ["hlk_fm22x::HlkFm22xComponent"],
   "hlw8032_HLW8032Component": ["uart::UARTComponent"],
-  "hm3301_HM3301Component": ["PollingComponent"],
-  "hmc5883l_HMC5883LComponent": ["PollingComponent"],
   "homeassistant_HomeassistantBinarySensor": ["binary_sensor::BinarySensor"],
   "homeassistant_HomeassistantNumber": ["number::Number"],
   "homeassistant_HomeassistantSensor": ["sensor::Sensor"],
   "homeassistant_HomeassistantSwitch": ["switch_::Switch"],
   "homeassistant_HomeassistantTextSensor": ["text_sensor::TextSensor"],
-  "homeassistant_HomeassistantTime": ["PollingComponent"],
-  "honeywell_hih_i2c_HoneywellHIComponent": ["PollingComponent"],
-  "honeywellabp_HONEYWELLABPSensor": ["sensor::Sensor","PollingComponent"],
-  "honeywellabp2_i2c_HONEYWELLABP2Sensor": ["sensor::Sensor","PollingComponent"],
-  "host_HostTime": ["PollingComponent"],
+  "honeywellabp_HONEYWELLABPSensor": ["sensor::Sensor"],
+  "honeywellabp2_i2c_HONEYWELLABP2Sensor": ["sensor::Sensor"],
   "hrxl_maxsonar_wr_HrxlMaxsonarWrComponent": ["sensor::Sensor"],
-  "hte501_HTE501Component": ["PollingComponent"],
   "http_request_HttpRequestComponent": ["http_request::HttpRequestComponent"],
-  "http_request_HttpRequestUpdate": ["update::UpdateEntity","PollingComponent"],
+  "http_request_HttpRequestUpdate": ["update::UpdateEntity"],
   "http_request_OtaHttpRequestComponent": ["http_request::OtaHttpRequestComponent"],
-  "htu21d_HTU21DComponent": ["htu21d::HTU21DComponent","PollingComponent"],
-  "htu31d_HTU31DComponent": ["PollingComponent"],
-  "hx711_HX711Sensor": ["sensor::Sensor","PollingComponent"],
-  "hydreon_rgxx_HydreonRGxxComponent": ["PollingComponent"],
-  "hyt271_HYT271Component": ["PollingComponent"],
+  "htu21d_HTU21DComponent": ["htu21d::HTU21DComponent"],
+  "hx711_HX711Sensor": ["sensor::Sensor"],
+  "hydreon_rgxx_HydreonRGxxComponent": ["uart::UARTComponent"],
   "i2s_audio_I2SAudioMediaPlayer": ["media_player::MediaPlayer"],
   "i2s_audio_I2SAudioMicrophone": ["microphone::Microphone"],
   "i2s_audio_I2SAudioSpeaker": ["speaker::Speaker"],
-  "iaqcore_IAQCore": ["PollingComponent"],
-  "ili9xxx_ILI9XXXDisplay": ["PollingComponent","display::Display"],
-  "ina219_INA219Component": ["PollingComponent"],
-  "ina226_INA226Component": ["PollingComponent"],
-  "ina260_INA260Component": ["PollingComponent"],
-  "ina2xx_i2c_INA2XXI2C": ["PollingComponent"],
-  "ina2xx_spi_INA2XXSPI": ["PollingComponent"],
-  "ina3221_INA3221Component": ["PollingComponent"],
   "inkbird_ibsth1_mini_InkbirdIbstH1Mini": ["esp32_ble_tracker::ESP32BLETracker"],
-  "inkplate_Inkplate": ["PollingComponent","display::Display"],
   "integration_IntegrationSensor": ["integration::IntegrationSensor","sensor::Sensor"],
-  "internal_temperature_InternalTemperatureSensor": ["sensor::Sensor","PollingComponent"],
-  "interval_IntervalTrigger": ["PollingComponent"],
-  "jsn_sr04t_Jsnsr04tComponent": ["sensor::Sensor","PollingComponent"],
-  "kamstrup_kmp_KamstrupKMPComponent": ["PollingComponent"],
+  "internal_temperature_InternalTemperatureSensor": ["sensor::Sensor"],
+  "jsn_sr04t_Jsnsr04tComponent": ["sensor::Sensor"],
+  "kamstrup_kmp_KamstrupKMPComponent": ["uart::UARTComponent"],
   "key_collector_KeyCollector": ["key_collector::KeyCollector"],
-  "kmeteriso_KMeterISOComponent": ["PollingComponent"],
-  "kuntze_Kuntze": ["PollingComponent"],
-  "lc709203f_Lc709203f": ["PollingComponent"],
-  "lcd_gpio_GPIOLCDDisplay": ["PollingComponent"],
-  "lcd_pcf8574_PCF8574LCDDisplay": ["PollingComponent"],
   "ld2410_BaudRateSelect": ["select::Select"],
   "ld2410_BluetoothSwitch": ["switch_::Switch"],
   "ld2410_DistanceResolutionSelect": ["select::Select"],
   "ld2410_EngineeringModeSwitch": ["switch_::Switch"],
   "ld2410_FactoryResetButton": ["button::Button"],
   "ld2410_GateThresholdNumber": ["number::Number"],
-  "ld2410_LD2410Component": ["ld2410::LD2410Component"],
+  "ld2410_LD2410Component": ["uart::UARTComponent"],
   "ld2410_LightOutControlSelect": ["select::Select"],
   "ld2410_LightThresholdNumber": ["number::Number"],
   "ld2410_MaxDistanceTimeoutNumber": ["number::Number"],
@@ -4472,79 +3973,63 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "ld2450_ZoneCoordinateNumber": ["number::Number"],
   "ld2450_ZoneTypeSelect": ["select::Select"],
   "ledc_LEDCOutput": ["ledc::LEDCOutput","output::FloatOutput","output::BinaryOutput"],
-  "libretiny_LTComponent": ["PollingComponent"],
   "libretiny_pwm_LibreTinyPWM": ["libretiny_pwm::LibreTinyPWM","output::FloatOutput","output::BinaryOutput"],
   "light_AddressableLight": ["light::LightState","light::AddressableLightState"],
   "light_AddressableLightState": ["light::AddressableLightState","light::LightState"],
   "light_AddressableLightWrapper": ["light::LightState","light::AddressableLightState"],
   "light_LightOutput": ["light::LightState","light::AddressableLightState"],
   "light_LightState": ["light::LightState"],
-  "lightwaverf_LightWaveRF": ["lightwaverf::LightWaveRF","PollingComponent"],
-  "lilygo_t5_47_LilygoT547Touchscreen": ["PollingComponent"],
-  "lm75b_LM75BComponent": ["PollingComponent","sensor::Sensor"],
+  "lightwaverf_LightWaveRF": ["lightwaverf::LightWaveRF"],
+  "lm75b_LM75BComponent": ["sensor::Sensor"],
   "lock_Lock": ["lock::Lock"],
   "logger_Logger": ["logger::Logger"],
   "logger_LoggerLevelSelect": ["select::Select"],
-  "lps22_LPS22Component": ["PollingComponent"],
-  "ltr_als_ps_LTRAlsPsComponent": ["PollingComponent"],
-  "ltr390_LTR390Component": ["PollingComponent"],
-  "ltr501_LTRAlsPs501Component": ["PollingComponent"],
   "lvgl_LVGLNumber": ["number::Number"],
   "lvgl_LVGLSelect": ["select::Select"],
   "lvgl_LVGLSwitch": ["switch_::Switch"],
   "lvgl_LVGLText": ["text::Text"],
-  "lvgl_LVLight": ["lvgl::LvglComponent","lvgl::LvPseudoButton","light::LightState","light::AddressableLightState"],
-  "lvgl_LvPseudoButton": ["lvgl::LvPseudoButton"],
-  "m5stack_8angle_M5Stack8AngleKnobSensor": ["sensor::Sensor","PollingComponent"],
+  "lvgl_LVLight": ["lvgl::LvglComponent","light::LightState","light::AddressableLightState"],
+  "lvgl_LvPseudoButton": ["lvgl::LvglComponent"],
+  "m5stack_8angle_M5Stack8AngleKnobSensor": ["sensor::Sensor"],
   "m5stack_8angle_M5Stack8AngleLightOutput": ["light::LightState","light::AddressableLightState"],
-  "m5stack_8angle_M5Stack8AngleSwitchBinarySensor": ["binary_sensor::BinarySensor","PollingComponent"],
+  "m5stack_8angle_M5Stack8AngleSwitchBinarySensor": ["binary_sensor::BinarySensor"],
   "matrix_keypad_MatrixKeypadBinarySensor": ["binary_sensor::BinarySensor"],
-  "max17043_MAX17043Component": ["max17043::MAX17043Component","PollingComponent"],
-  "max31855_MAX31855Sensor": ["sensor::Sensor","PollingComponent"],
-  "max31856_MAX31856Sensor": ["sensor::Sensor","PollingComponent"],
-  "max31865_MAX31865Sensor": ["sensor::Sensor","PollingComponent"],
-  "max44009_MAX44009Sensor": ["sensor::Sensor","PollingComponent"],
-  "max6675_MAX6675Sensor": ["sensor::Sensor","PollingComponent"],
+  "max17043_MAX17043Component": ["max17043::MAX17043Component"],
+  "max31855_MAX31855Sensor": ["sensor::Sensor"],
+  "max31856_MAX31856Sensor": ["sensor::Sensor"],
+  "max31865_MAX31865Sensor": ["sensor::Sensor"],
+  "max44009_MAX44009Sensor": ["sensor::Sensor"],
+  "max6675_MAX6675Sensor": ["sensor::Sensor"],
   "max6956_MAX6956": ["max6956::MAX6956"],
   "max6956_MAX6956LedChannel": ["output::FloatOutput","output::BinaryOutput"],
-  "max7219_MAX7219Component": ["PollingComponent"],
-  "max7219digit_MAX7219Component": ["max7219digit::MAX7219Component","display::Display","PollingComponent"],
-  "max9611_MAX9611Component": ["PollingComponent"],
+  "max7219digit_MAX7219Component": ["max7219digit::MAX7219Component"],
   "mcp2515_MCP2515": ["canbus::CanbusComponent"],
-  "mcp3008_MCP3008Sensor": ["sensor::Sensor","PollingComponent"],
-  "mcp3204_MCP3204Sensor": ["sensor::Sensor","PollingComponent"],
-  "mcp3221_MCP3221Sensor": ["sensor::Sensor","PollingComponent"],
+  "mcp3008_MCP3008Sensor": ["sensor::Sensor"],
+  "mcp3204_MCP3204Sensor": ["sensor::Sensor"],
+  "mcp3221_MCP3221Sensor": ["sensor::Sensor"],
   "mcp4461_Mcp4461Wiper": ["output::FloatOutput","output::BinaryOutput"],
   "mcp4725_MCP4725": ["output::FloatOutput","output::BinaryOutput"],
   "mcp4728_MCP4728Channel": ["output::FloatOutput","output::BinaryOutput"],
   "mcp47a1_MCP47A1": ["output::FloatOutput","output::BinaryOutput"],
-  "mcp9600_MCP9600Component": ["PollingComponent"],
-  "mcp9808_MCP9808Sensor": ["sensor::Sensor","PollingComponent"],
+  "mcp9808_MCP9808Sensor": ["sensor::Sensor"],
   "media_player_MediaPlayer": ["media_player::MediaPlayer"],
-  "mhz19_MHZ19Component": ["mhz19::MHZ19Component","PollingComponent"],
+  "mhz19_MHZ19Component": ["mhz19::MHZ19Component"],
   "micro_wake_word_MicroWakeWord": ["micro_wake_word::MicroWakeWord"],
   "micro_wake_word_WakeWordModel": ["micro_wake_word::WakeWordModel"],
   "micronova_MicroNova": ["uart::UARTComponent"],
   "micronova_MicroNovaButton": ["button::Button"],
-  "micronova_MicroNovaNumber": ["number::Number","PollingComponent"],
-  "micronova_MicroNovaSensor": ["sensor::Sensor","PollingComponent"],
-  "micronova_MicroNovaSwitch": ["switch_::Switch","PollingComponent"],
-  "micronova_MicroNovaTextSensor": ["text_sensor::TextSensor","PollingComponent"],
+  "micronova_MicroNovaNumber": ["number::Number"],
+  "micronova_MicroNovaSensor": ["sensor::Sensor"],
+  "micronova_MicroNovaSwitch": ["switch_::Switch"],
+  "micronova_MicroNovaTextSensor": ["text_sensor::TextSensor"],
   "microphone_Microphone": ["microphone::Microphone"],
   "microphone_MicrophoneSource": ["microphone::Microphone"],
-  "mics_4514_MICS4514Component": ["PollingComponent"],
   "midea_ac_AirConditioner": ["midea::ac::AirConditioner","climate::Climate"],
   "midea_ir_MideaIR": ["climate::Climate"],
   "mitsubishi_MitsubishiClimate": ["climate::Climate"],
-  "mixer_speaker_MixerSpeaker": ["mixer_speaker::SourceSpeaker"],
-  "mixer_speaker_SourceSpeaker": ["mixer_speaker::SourceSpeaker","speaker::Speaker"],
-  "mlx90393_MLX90393Cls": ["PollingComponent"],
-  "mlx90614_MLX90614Component": ["PollingComponent"],
-  "mmc5603_MMC5603Component": ["PollingComponent"],
-  "mmc5983_MMC5983Component": ["PollingComponent"],
+  "mixer_speaker_SourceSpeaker": ["speaker::Speaker"],
   "modbus_controller_ModbusBinaryOutput": ["output::BinaryOutput"],
   "modbus_controller_ModbusBinarySensor": ["binary_sensor::BinarySensor"],
-  "modbus_controller_ModbusController": ["PollingComponent"],
   "modbus_controller_ModbusFloatOutput": ["output::FloatOutput","output::BinaryOutput"],
   "modbus_controller_ModbusNumber": ["number::Number"],
   "modbus_controller_ModbusSelect": ["select::Select"],
@@ -4556,10 +4041,7 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "mopeka_ble_MopekaListener": ["esp32_ble_tracker::ESP32BLETracker"],
   "mopeka_pro_check_MopekaProCheck": ["esp32_ble_tracker::ESP32BLETracker"],
   "mopeka_std_check_MopekaStdCheck": ["esp32_ble_tracker::ESP32BLETracker"],
-  "mpl3115a2_MPL3115A2Component": ["PollingComponent"],
   "mpr121_MPR121BinarySensor": ["binary_sensor::BinarySensor"],
-  "mpu6050_MPU6050Component": ["PollingComponent"],
-  "mpu6886_MPU6886Component": ["PollingComponent"],
   "mqtt_MQTTAlarmControlPanelComponent": ["mqtt::MQTTClientComponent"],
   "mqtt_MQTTBinarySensorComponent": ["mqtt::MQTTClientComponent"],
   "mqtt_MQTTButtonComponent": ["mqtt::MQTTClientComponent"],
@@ -4584,37 +4066,33 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "mqtt_MQTTValveComponent": ["mqtt::MQTTClientComponent"],
   "mqtt_subscribe_MQTTSubscribeSensor": ["sensor::Sensor"],
   "mqtt_subscribe_MQTTSubscribeTextSensor": ["text_sensor::TextSensor"],
-  "ms5611_MS5611Component": ["PollingComponent"],
-  "ms8607_MS8607Component": ["PollingComponent"],
-  "msa3xx_MSA3xxComponent": ["PollingComponent"],
   "my9231_MY9231OutputComponent_Channel": ["output::FloatOutput","output::BinaryOutput"],
-  "nau7802_NAU7802Sensor": ["nau7802::NAU7802Sensor","sensor::Sensor","PollingComponent"],
+  "nau7802_NAU7802Sensor": ["nau7802::NAU7802Sensor","sensor::Sensor"],
   "neopixelbus_NeoPixelBusLightOutputBase": ["light::LightState","light::AddressableLightState"],
-  "nextion_Nextion": ["nextion::Nextion","PollingComponent"],
-  "nextion_NextionBinarySensor": ["nextion::NextionBinarySensor","binary_sensor::BinarySensor","PollingComponent"],
-  "nextion_NextionSensor": ["nextion::NextionSensor","sensor::Sensor","PollingComponent"],
-  "nextion_NextionSwitch": ["nextion::NextionSwitch","switch_::Switch","PollingComponent"],
-  "nextion_NextionTextSensor": ["nextion::NextionTextSensor","text_sensor::TextSensor","PollingComponent"],
+  "nextion_Nextion": ["nextion::Nextion"],
+  "nextion_NextionBinarySensor": ["nextion::NextionBinarySensor","binary_sensor::BinarySensor"],
+  "nextion_NextionSensor": ["nextion::NextionSensor","sensor::Sensor"],
+  "nextion_NextionSwitch": ["nextion::NextionSwitch","switch_::Switch"],
+  "nextion_NextionTextSensor": ["nextion::NextionTextSensor","text_sensor::TextSensor"],
   "nfc_NfcTagBinarySensor": ["binary_sensor::BinarySensor"],
   "noblex_NoblexClimate": ["climate::Climate"],
-  "npi19_NPI19Component": ["PollingComponent"],
   "ntc_NTC": ["sensor::Sensor"],
   "number_Number": ["number::Number"],
-  "online_image_OnlineImage": ["online_image::OnlineImage","PollingComponent"],
+  "online_image_OnlineImage": ["online_image::OnlineImage"],
   "opentherm_OpenthermNumber": ["number::Number"],
   "opentherm_OpenthermOutput": ["output::FloatOutput","output::BinaryOutput"],
   "opentherm_OpenthermSwitch": ["switch_::Switch"],
-  "openthread_info_ChannelOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
+  "openthread_info_ChannelOpenThreadInfo": ["text_sensor::TextSensor"],
   "openthread_info_Eui64OpenThreadInfo": ["text_sensor::TextSensor"],
-  "openthread_info_ExtAddrOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_ExtPanIdOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_IPAddressOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_NetworkKeyOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_NetworkNameOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_PanIdOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_Rloc16OpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "openthread_info_RoleOpenThreadInfo": ["text_sensor::TextSensor","PollingComponent"],
-  "opt3001_OPT3001Sensor": ["sensor::Sensor","PollingComponent"],
+  "openthread_info_ExtAddrOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_ExtPanIdOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_IPAddressOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_NetworkKeyOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_NetworkNameOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_PanIdOpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_Rloc16OpenThreadInfo": ["text_sensor::TextSensor"],
+  "openthread_info_RoleOpenThreadInfo": ["text_sensor::TextSensor"],
+  "opt3001_OPT3001Sensor": ["sensor::Sensor"],
   "output_BinaryOutput": ["output::BinaryOutput"],
   "output_FloatOutput": ["output::FloatOutput"],
   "output_OutputButton": ["button::Button"],
@@ -4622,42 +4100,29 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "output_OutputSwitch": ["switch_::Switch"],
   "partition_PartitionLightOutput": ["light::LightState","light::AddressableLightState"],
   "pca9685_PCA9685Channel": ["output::FloatOutput","output::BinaryOutput"],
-  "pcd8544_PCD8544": ["PollingComponent","display::Display"],
-  "pcf85063_PCF85063Component": ["pcf85063::PCF85063Component","PollingComponent"],
-  "pcf8563_PCF8563Component": ["pcf8563::PCF8563Component","PollingComponent"],
+  "pcf85063_PCF85063Component": ["pcf85063::PCF85063Component"],
+  "pcf8563_PCF8563Component": ["pcf8563::PCF8563Component"],
   "pid_PIDClimate": ["pid::PIDClimate","climate::Climate"],
   "pid_PIDClimateSensor": ["sensor::Sensor"],
   "pipsolar_PipsolarOutput": ["output::FloatOutput","output::BinaryOutput"],
   "pipsolar_PipsolarSwitch": ["switch_::Switch"],
-  "pm1006_PM1006Component": ["PollingComponent"],
-  "pm2005_PM2005Component": ["PollingComponent"],
-  "pmsa003i_PMSA003IComponent": ["PollingComponent"],
+  "pm1006_PM1006Component": ["uart::UARTComponent"],
   "pmsx003_PMSX003Component": ["uart::UARTComponent"],
-  "pmwcs3_PMWCS3Component": ["pmwcs3::PMWCS3Component","PollingComponent"],
-  "pn532_i2c_PN532I2C": ["PollingComponent"],
-  "pn532_PN532": ["PollingComponent"],
+  "pmwcs3_PMWCS3Component": ["pmwcs3::PMWCS3Component"],
   "pn532_PN532BinarySensor": ["binary_sensor::BinarySensor"],
-  "pn532_spi_PN532Spi": ["PollingComponent"],
-  "PollingComponent": ["PollingComponent"],
-  "pulse_counter_PulseCounterSensor": ["pulse_counter::PulseCounterSensor","sensor::Sensor","PollingComponent"],
+  "pulse_counter_PulseCounterSensor": ["pulse_counter::PulseCounterSensor","sensor::Sensor"],
   "pulse_meter_PulseMeterSensor": ["pulse_meter::PulseMeterSensor","sensor::Sensor"],
-  "pulse_width_PulseWidthSensor": ["sensor::Sensor","PollingComponent"],
-  "pvvx_mithermometer_PVVXDisplay": ["PollingComponent"],
+  "pulse_width_PulseWidthSensor": ["sensor::Sensor"],
+  "pvvx_mithermometer_PVVXDisplay": ["ble_client::BLEClient"],
   "pvvx_mithermometer_PVVXMiThermometer": ["esp32_ble_tracker::ESP32BLETracker"],
-  "pylontech_PylontechComponent": ["PollingComponent"],
-  "pzem004t_PZEM004T": ["PollingComponent"],
-  "pzemac_PZEMAC": ["pzemac::PZEMAC","PollingComponent"],
-  "pzemdc_PZEMDC": ["pzemdc::PZEMDC","PollingComponent"],
-  "qmc5883l_QMC5883LComponent": ["PollingComponent"],
-  "qmp6988_QMP6988Component": ["PollingComponent"],
-  "qspi_dbi_QspiDbi": ["display::Display","PollingComponent"],
+  "pylontech_PylontechComponent": ["uart::UARTComponent"],
+  "pzem004t_PZEM004T": ["uart::UARTComponent"],
+  "pzemac_PZEMAC": ["pzemac::PZEMAC"],
+  "pzemdc_PZEMDC": ["pzemdc::PZEMDC"],
   "qwiic_pir_QwiicPIRComponent": ["binary_sensor::BinarySensor"],
   "radon_eye_ble_RadonEyeListener": ["esp32_ble_tracker::ESP32BLETracker"],
-  "radon_eye_rd200_RadonEyeRD200": ["PollingComponent"],
-  "rc522_i2c_RC522I2C": ["PollingComponent"],
-  "rc522_RC522": ["PollingComponent"],
+  "radon_eye_rd200_RadonEyeRD200": ["ble_client::BLEClient"],
   "rc522_RC522BinarySensor": ["binary_sensor::BinarySensor"],
-  "rc522_spi_RC522Spi": ["PollingComponent"],
   "rd03d_RD03DComponent": ["uart::UARTComponent"],
   "rdm6300_RDM6300BinarySensor": ["binary_sensor::BinarySensor"],
   "rdm6300_RDM6300Component": ["uart::UARTComponent"],
@@ -4674,21 +4139,16 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "rotary_encoder_RotaryEncoderSensor": ["sensor::Sensor"],
   "rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput": ["light::LightState","light::AddressableLightState"],
   "rp2040_pwm_RP2040PWM": ["rp2040_pwm::RP2040PWM","output::FloatOutput","output::BinaryOutput"],
-  "rpi_dpi_rgb_RpiDpiRgb": ["display::Display","PollingComponent"],
   "rtttl_Rtttl": ["rtttl::Rtttl"],
   "ruuvi_ble_RuuviListener": ["esp32_ble_tracker::ESP32BLETracker"],
   "ruuvitag_RuuviTag": ["esp32_ble_tracker::ESP32BLETracker"],
-  "rx8130_RX8130Component": ["rx8130::RX8130Component","PollingComponent"],
+  "rx8130_RX8130Component": ["rx8130::RX8130Component"],
   "safe_mode_SafeModeButton": ["button::Button"],
   "safe_mode_SafeModeComponent": ["safe_mode::SafeModeComponent"],
   "safe_mode_SafeModeSwitch": ["switch_::Switch"],
   "scd30_SCD30Component": ["scd30::SCD30Component"],
-  "scd4x_SCD4XComponent": ["scd4x::SCD4XComponent","PollingComponent"],
+  "scd4x_SCD4XComponent": ["scd4x::SCD4XComponent"],
   "script_Script": ["script::Script"],
-  "sdl_Sdl": ["display::Display","PollingComponent"],
-  "sdl_SdlTouchscreen": ["PollingComponent"],
-  "sdm_meter_SDMMeter": ["PollingComponent"],
-  "sdp3x_SDP3XComponent": ["PollingComponent"],
   "sds011_SDS011Component": ["uart::UARTComponent"],
   "seeed_mr24hpc1_CustomModeNumber": ["number::Number"],
   "seeed_mr24hpc1_CustomSetEndButton": ["button::Button"],
@@ -4712,38 +4172,28 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "seeed_mr60fda2_MR60FDA2Component": ["uart::UARTComponent"],
   "seeed_mr60fda2_ResetRadarButton": ["button::Button"],
   "seeed_mr60fda2_SensitivitySelect": ["select::Select"],
-  "selec_meter_SelecMeter": ["PollingComponent"],
   "select_Select": ["select::Select"],
-  "sen0321_sensor_Sen0321Sensor": ["PollingComponent"],
-  "sen21231_sensor_Sen21231Sensor": ["PollingComponent"],
-  "sen5x_SEN5XComponent": ["sen5x::SEN5XComponent","PollingComponent"],
-  "sen6x_SEN6XComponent": ["PollingComponent"],
-  "senseair_SenseAirComponent": ["senseair::SenseAirComponent","PollingComponent"],
+  "sen5x_SEN5XComponent": ["sen5x::SEN5XComponent"],
+  "senseair_SenseAirComponent": ["senseair::SenseAirComponent"],
   "sensor_Sensor": ["sensor::Sensor"],
   "serial_proxy_SerialProxy": ["uart::UARTComponent"],
   "servo_Servo": ["servo::Servo"],
-  "sfa30_SFA30Component": ["PollingComponent"],
-  "sgp30_SGP30Component": ["PollingComponent"],
-  "sgp4x_SGP4xComponent": ["sensor::Sensor","PollingComponent"],
-  "shelly_dimmer_ShellyDimmer": ["PollingComponent"],
-  "sht3xd_SHT3XDComponent": ["PollingComponent"],
-  "sht4x_SHT4XComponent": ["PollingComponent"],
-  "shtcx_SHTCXComponent": ["PollingComponent"],
+  "sgp4x_SGP4xComponent": ["sensor::Sensor"],
+  "shelly_dimmer_ShellyDimmer": ["light::LightState","light::AddressableLightState","uart::UARTComponent"],
   "shutdown_ShutdownButton": ["button::Button"],
   "shutdown_ShutdownSwitch": ["switch_::Switch"],
-  "sigma_delta_output_SigmaDeltaOutput": ["output::FloatOutput","output::BinaryOutput","PollingComponent"],
+  "sigma_delta_output_SigmaDeltaOutput": ["output::FloatOutput","output::BinaryOutput"],
   "sim800l_Sim800LComponent": ["sim800l::Sim800LComponent"],
   "slow_pwm_SlowPWMOutput": ["output::FloatOutput","output::BinaryOutput"],
   "sm16716_SM16716_Channel": ["output::FloatOutput","output::BinaryOutput"],
   "sm2135_SM2135_Channel": ["output::FloatOutput","output::BinaryOutput"],
   "sm2235_SM2235_Channel": ["output::FloatOutput","output::BinaryOutput"],
   "sm2335_SM2335_Channel": ["output::FloatOutput","output::BinaryOutput"],
-  "sm300d2_SM300D2Sensor": ["PollingComponent"],
+  "sm300d2_SM300D2Sensor": ["uart::UARTComponent"],
   "sml_Sml": ["uart::UARTComponent"],
   "sml_SmlSensor": ["sensor::Sensor"],
   "sml_SmlTextSensor": ["text_sensor::TextSensor"],
-  "smt100_SMT100Component": ["PollingComponent"],
-  "sntp_SNTPComponent": ["PollingComponent"],
+  "smt100_SMT100Component": ["uart::UARTComponent"],
   "sonoff_d1_SonoffD1Output": ["uart::UARTComponent","light::LightState","light::AddressableLightState"],
   "sound_level_SoundLevelComponent": ["sound_level::SoundLevelComponent"],
   "speaker_AudioPipeline": ["speaker::Speaker","speaker::SpeakerMediaPlayer"],
@@ -4756,38 +4206,23 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "sprinkler_Sprinkler": ["sprinkler::Sprinkler"],
   "sprinkler_SprinklerControllerNumber": ["number::Number"],
   "sprinkler_SprinklerControllerSwitch": ["switch_::Switch"],
-  "sps30_SPS30Component": ["sps30::SPS30Component","PollingComponent"],
-  "ssd1306_i2c_I2CSSD1306": ["PollingComponent","display::Display"],
-  "ssd1306_spi_SPISSD1306": ["PollingComponent","display::Display"],
-  "ssd1322_spi_SPISSD1322": ["PollingComponent","display::Display"],
-  "ssd1325_spi_SPISSD1325": ["PollingComponent","display::Display"],
-  "ssd1327_i2c_I2CSSD1327": ["PollingComponent","display::Display"],
-  "ssd1327_spi_SPISSD1327": ["PollingComponent","display::Display"],
-  "ssd1331_spi_SPISSD1331": ["PollingComponent","display::Display"],
-  "ssd1351_spi_SPISSD1351": ["PollingComponent","display::Display"],
-  "st7567_i2c_I2CST7567": ["PollingComponent","display::Display"],
-  "st7567_spi_SPIST7567": ["PollingComponent","display::Display"],
-  "st7701s_ST7701S": ["display::Display","PollingComponent"],
-  "st7735_ST7735": ["PollingComponent","display::Display"],
-  "st7789v_ST7789V": ["PollingComponent","display::Display"],
-  "st7920_ST7920": ["PollingComponent","display::Display"],
-  "statsd_StatsdComponent": ["PollingComponent"],
+  "sps30_SPS30Component": ["sps30::SPS30Component"],
   "status_led_StatusLEDLightOutput": ["light::LightState","light::AddressableLightState"],
-  "status_StatusBinarySensor": ["binary_sensor::BinarySensor","PollingComponent"],
+  "status_StatusBinarySensor": ["binary_sensor::BinarySensor"],
   "stepper_Stepper": ["stepper::Stepper"],
-  "sts3x_STS3XComponent": ["sensor::Sensor","PollingComponent"],
-  "stts22h_STTS22HComponent": ["sensor::Sensor","PollingComponent"],
+  "sts3x_STS3XComponent": ["sensor::Sensor"],
+  "stts22h_STTS22HComponent": ["sensor::Sensor"],
   "sun_gtil2_SunGTIL2": ["uart::UARTComponent"],
-  "sun_SunSensor": ["sensor::Sensor","PollingComponent"],
-  "sun_SunTextSensor": ["text_sensor::TextSensor","PollingComponent"],
+  "sun_SunSensor": ["sensor::Sensor"],
+  "sun_SunTextSensor": ["text_sensor::TextSensor"],
   "switch__Switch": ["switch_::Switch"],
   "switch__SwitchBinarySensor": ["binary_sensor::BinarySensor"],
   "sx126x_SX126x": ["sx126x::SX126x"],
   "sx126x_SX126xListener": ["sx126x::SX126x"],
-  "sx126x_SX126xTransport": ["PollingComponent"],
+  "sx126x_SX126xTransport": ["sx126x::SX126x"],
   "sx127x_SX127x": ["sx127x::SX127x"],
   "sx127x_SX127xListener": ["sx127x::SX127x"],
-  "sx127x_SX127xTransport": ["PollingComponent"],
+  "sx127x_SX127xTransport": ["sx127x::SX127x"],
   "sx1509_SX1509BinarySensor": ["binary_sensor::BinarySensor"],
   "sx1509_SX1509FloatOutputChannel": ["output::FloatOutput","output::BinaryOutput"],
   "sy6970_SY6970BatteryVoltageSensor": ["sensor::Sensor"],
@@ -4796,39 +4231,35 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "sy6970_SY6970ChargeDoneBinarySensor": ["binary_sensor::BinarySensor"],
   "sy6970_SY6970ChargeStatusTextSensor": ["text_sensor::TextSensor"],
   "sy6970_SY6970ChargingBinarySensor": ["binary_sensor::BinarySensor"],
-  "sy6970_SY6970Component": ["PollingComponent"],
   "sy6970_SY6970NtcStatusTextSensor": ["text_sensor::TextSensor"],
   "sy6970_SY6970PrechargeCurrentSensor": ["sensor::Sensor"],
   "sy6970_SY6970SystemVoltageSensor": ["sensor::Sensor"],
   "sy6970_SY6970VbusConnectedBinarySensor": ["binary_sensor::BinarySensor"],
   "sy6970_SY6970VbusVoltageSensor": ["sensor::Sensor"],
-  "t6615_T6615Component": ["PollingComponent"],
-  "tc74_TC74Component": ["PollingComponent"],
+  "t6615_T6615Component": ["uart::UARTComponent"],
   "tcl112_Tcl112Climate": ["climate::Climate"],
-  "tcs34725_TCS34725Component": ["PollingComponent"],
-  "tee501_TEE501Component": ["sensor::Sensor","PollingComponent"],
-  "teleinfo_TeleInfo": ["PollingComponent"],
+  "tee501_TEE501Component": ["sensor::Sensor"],
+  "teleinfo_TeleInfo": ["uart::UARTComponent"],
   "teleinfo_TeleInfoSensor": ["sensor::Sensor"],
   "teleinfo_TeleInfoTextSensor": ["text_sensor::TextSensor"],
-  "tem3200_TEM3200Component": ["PollingComponent"],
   "template__TemplateAlarmControlPanel": ["alarm_control_panel::AlarmControlPanel"],
   "template__TemplateBinaryOutput": ["output::BinaryOutput"],
   "template__TemplateBinarySensor": ["binary_sensor::BinarySensor"],
   "template__TemplateButton": ["button::Button"],
   "template__TemplateCover": ["cover::Cover"],
-  "template__TemplateDate": ["datetime::DateEntity","PollingComponent"],
-  "template__TemplateDateTime": ["datetime::DateTimeEntity","PollingComponent"],
+  "template__TemplateDate": ["template_::TemplateLock","template_::TemplateValve","template_::TemplateWaterHeater","datetime::DateTimeEntity","datetime::TimeEntity"],
+  "template__TemplateDateTime": ["datetime::DateTimeEntity"],
   "template__TemplateEvent": ["event::Event"],
   "template__TemplateFan": ["fan::Fan"],
   "template__TemplateFloatOutput": ["output::FloatOutput","output::BinaryOutput"],
   "template__TemplateLock": ["template_::TemplateLock","lock::Lock"],
-  "template__TemplateNumber": ["number::Number","PollingComponent"],
-  "template__TemplateSelect": ["select::Select","PollingComponent"],
-  "template__TemplateSensor": ["sensor::Sensor","PollingComponent"],
+  "template__TemplateNumber": ["number::Number"],
+  "template__TemplateSelect": ["select::Select"],
+  "template__TemplateSensor": ["sensor::Sensor"],
   "template__TemplateSwitch": ["switch_::Switch"],
-  "template__TemplateText": ["text::Text","PollingComponent"],
-  "template__TemplateTextSensor": ["text_sensor::TextSensor","PollingComponent"],
-  "template__TemplateTime": ["datetime::TimeEntity","PollingComponent"],
+  "template__TemplateText": ["text::Text"],
+  "template__TemplateTextSensor": ["text_sensor::TextSensor"],
+  "template__TemplateTime": ["datetime::TimeEntity"],
   "template__TemplateValve": ["template_::TemplateValve","valve::Valve"],
   "template__TemplateWaterHeater": ["template_::TemplateWaterHeater"],
   "text_sensor_TextSensor": ["text_sensor::TextSensor"],
@@ -4839,26 +4270,21 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "tlc59208f_TLC59208FChannel": ["output::FloatOutput","output::BinaryOutput"],
   "tlc5947_TLC5947Channel": ["output::FloatOutput","output::BinaryOutput"],
   "tlc5971_TLC5971Channel": ["output::FloatOutput","output::BinaryOutput"],
-  "tm1621_TM1621Display": ["PollingComponent"],
-  "tm1637_TM1637Display": ["PollingComponent"],
   "tm1637_TM1637Key": ["binary_sensor::BinarySensor"],
-  "tm1638_TM1638Component": ["PollingComponent"],
   "tm1638_TM1638Key": ["binary_sensor::BinarySensor"],
   "tm1638_TM1638OutputLed": ["output::BinaryOutput"],
   "tm1638_TM1638SwitchLed": ["switch_::Switch"],
   "tm1651_TM1651Display": ["tm1651::TM1651Display"],
-  "tmp102_TMP102Component": ["PollingComponent","sensor::Sensor"],
-  "tmp1075_TMP1075Sensor": ["PollingComponent","sensor::Sensor"],
-  "tmp117_TMP117Component": ["PollingComponent","sensor::Sensor"],
-  "tof10120_TOF10120Sensor": ["sensor::Sensor","PollingComponent"],
-  "tormatic_Tormatic": ["cover::Cover","PollingComponent"],
+  "tmp102_TMP102Component": ["sensor::Sensor"],
+  "tmp1075_TMP1075Sensor": ["sensor::Sensor"],
+  "tmp117_TMP117Component": ["sensor::Sensor"],
+  "tof10120_TOF10120Sensor": ["sensor::Sensor"],
+  "tormatic_Tormatic": ["cover::Cover"],
   "toshiba_ToshibaClimate": ["climate::Climate"],
   "total_daily_energy_TotalDailyEnergy": ["sensor::Sensor"],
   "touchscreen_TouchscreenBinarySensor": ["binary_sensor::BinarySensor"],
-  "tsl2561_TSL2561Sensor": ["sensor::Sensor","PollingComponent"],
-  "tsl2591_TSL2591Component": ["PollingComponent"],
+  "tsl2561_TSL2561Sensor": ["sensor::Sensor"],
   "tt21100_TT21100Button": ["binary_sensor::BinarySensor"],
-  "tt21100_TT21100Touchscreen": ["PollingComponent"],
   "ttp229_bsf_TTP229BSFChannel": ["binary_sensor::BinarySensor"],
   "ttp229_lsf_TTP229Channel": ["binary_sensor::BinarySensor"],
   "tuya_Tuya": ["uart::UARTComponent"],
@@ -4877,31 +4303,29 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "uart_UARTDevice": ["uart::UARTComponent"],
   "uart_UARTEvent": ["event::Event"],
   "uart_UARTSwitch": ["switch_::Switch"],
-  "uart_UARTTransport": ["PollingComponent"],
+  "uart_UARTTransport": ["uart::UARTComponent"],
   "udp_UDPComponent": ["udp::UDPComponent"],
-  "udp_UDPTransport": ["PollingComponent"],
-  "ufire_ec_UFireECComponent": ["ufire_ec::UFireECComponent","PollingComponent"],
-  "ufire_ise_UFireISEComponent": ["ufire_ise::UFireISEComponent","PollingComponent"],
+  "udp_UDPTransport": ["udp::UDPComponent"],
+  "ufire_ec_UFireECComponent": ["ufire_ec::UFireECComponent"],
+  "ufire_ise_UFireISEComponent": ["ufire_ise::UFireISEComponent"],
   "uln2003_ULN2003": ["stepper::Stepper"],
-  "ultrasonic_UltrasonicSensorComponent": ["sensor::Sensor","PollingComponent"],
+  "ultrasonic_UltrasonicSensorComponent": ["sensor::Sensor"],
   "update_UpdateEntity": ["update::UpdateEntity"],
   "uponor_smatrix_UponorSmatrixClimate": ["climate::Climate"],
   "uponor_smatrix_UponorSmatrixComponent": ["uart::UARTComponent"],
   "uponor_smatrix_UponorSmatrixSensor": ["sensor::Sensor"],
-  "uptime_UptimeSecondsSensor": ["sensor::Sensor","PollingComponent"],
-  "uptime_UptimeTextSensor": ["text_sensor::TextSensor","PollingComponent"],
+  "uptime_UptimeSecondsSensor": ["sensor::Sensor"],
+  "uptime_UptimeTextSensor": ["text_sensor::TextSensor"],
   "uptime_UptimeTimestampSensor": ["sensor::Sensor"],
   "usb_cdc_acm_USBCDCACMInstance": ["uart::UARTComponent"],
   "usb_uart_USBUartChannel": ["uart::UARTComponent"],
   "valve_Valve": ["valve::Valve"],
   "vbus_VBus": ["uart::UARTComponent"],
-  "veml3235_VEML3235Sensor": ["sensor::Sensor","PollingComponent"],
-  "veml7700_VEML7700Component": ["PollingComponent"],
+  "veml3235_VEML3235Sensor": ["sensor::Sensor"],
   "version_VersionTextSensor": ["text_sensor::TextSensor"],
-  "vl53l0x_VL53L0XSensor": ["sensor::Sensor","PollingComponent"],
+  "vl53l0x_VL53L0XSensor": ["sensor::Sensor"],
   "voice_assistant_VoiceAssistant": ["voice_assistant::VoiceAssistant"],
   "wake_on_lan_WakeOnLanButton": ["button::Button"],
-  "waveshare_epaper_WaveshareEPaperBase": ["PollingComponent","display::Display"],
   "whirlpool_WhirlpoolClimate": ["climate::Climate"],
   "whynter_Whynter": ["climate::Climate"],
   "wifi_info_BSSIDWiFiInfo": ["text_sensor::TextSensor"],
@@ -4911,12 +4335,11 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "wifi_info_PowerSaveModeWiFiInfo": ["text_sensor::TextSensor"],
   "wifi_info_ScanResultsWiFiInfo": ["text_sensor::TextSensor"],
   "wifi_info_SSIDWiFiInfo": ["text_sensor::TextSensor"],
-  "wifi_signal_WiFiSignalSensor": ["sensor::Sensor","PollingComponent"],
-  "wireguard_Wireguard": ["wireguard::Wireguard","PollingComponent"],
+  "wifi_signal_WiFiSignalSensor": ["sensor::Sensor"],
+  "wireguard_Wireguard": ["wireguard::Wireguard"],
   "wl_134_Wl134Component": ["text_sensor::TextSensor"],
   "wts01_WTS01Sensor": ["sensor::Sensor"],
   "x9c_X9cOutput": ["output::FloatOutput","output::BinaryOutput"],
-  "xgzp68xx_XGZP68XXComponent": ["PollingComponent"],
   "xiaomi_ble_XiaomiListener": ["esp32_ble_tracker::ESP32BLETracker"],
   "xiaomi_cgd1_XiaomiCGD1": ["esp32_ble_tracker::ESP32BLETracker"],
   "xiaomi_cgdk2_XiaomiCGDK2": ["esp32_ble_tracker::ESP32BLETracker"],
@@ -4939,7 +4362,6 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "xiaomi_rtcgq02lm_XiaomiRTCGQ02LM": ["esp32_ble_tracker::ESP32BLETracker"],
   "xiaomi_wx08zm_XiaomiWX08ZM": ["binary_sensor::BinarySensor"],
   "xiaomi_xmwsdj04mmc_XiaomiXMWSDJ04MMC": ["esp32_ble_tracker::ESP32BLETracker"],
-  "xpt2046_XPT2046Component": ["PollingComponent"],
   "yashima_YashimaClimate": ["climate::Climate"],
   "zhlt01_ZHLT01Climate": ["climate::Climate"],
   "zigbee_ZigbeeBinarySensor": ["zigbee::ZigbeeComponent"],
@@ -4947,10 +4369,9 @@ export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {
   "zigbee_ZigbeeNumber": ["zigbee::ZigbeeComponent"],
   "zigbee_ZigbeeSensor": ["zigbee::ZigbeeComponent"],
   "zigbee_ZigbeeSwitch": ["zigbee::ZigbeeComponent"],
-  "zigbee_ZigbeeTime": ["PollingComponent"],
-  "zio_ultrasonic_ZioUltrasonicComponent": ["PollingComponent","sensor::Sensor"],
+  "zigbee_ZigbeeTime": ["zigbee::ZigbeeComponent"],
+  "zio_ultrasonic_ZioUltrasonicComponent": ["sensor::Sensor"],
   "zwave_proxy_ZWaveProxy": ["uart::UARTComponent"],
-  "zyaura_ZyAuraSensor": ["PollingComponent"],
 };
 
 // ── Action YAML key lookup ───────────────────────────────────────────────
@@ -4980,21 +4401,16 @@ export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {
   "cm1106::CM1106Component": {"calibrateZero":"cm1106.calibrate_zero"},
   "cover::Cover": {"open":"cover.open","close":"cover.close","stop":"cover.stop","toggle":"cover.toggle","control":"cover.control","publish":"template.cover.publish"},
   "cs5460a::CS5460AComponent": {"restart":"cs5460a.restart"},
-  "datetime::DateEntity": {"set":"date.datetime.set"},
   "datetime::DateTimeEntity": {"set":"datetime.datetime.set"},
   "datetime::TimeEntity": {"set":"time.datetime.set"},
   "deep_sleep::DeepSleepComponent": {"enter":"deep_sleep.enter","allow":"deep_sleep.allow","prevent":"deep_sleep.prevent"},
   "dfplayer::DFPlayer": {"playNext":"dfplayer.play_next","playPrevious":"dfplayer.play_previous","playMp3":"dfplayer.play_mp3","play":"dfplayer.play","playFolder":"dfplayer.play_folder","setDevice":"dfplayer.set_device","setVolume":"dfplayer.set_volume","volumeUp":"dfplayer.volume_up","volumeDown":"dfplayer.volume_down","setEq":"dfplayer.set_eq","sleep":"dfplayer.sleep","reset":"dfplayer.reset","start":"dfplayer.start","pause":"dfplayer.pause","stop":"dfplayer.stop","random":"dfplayer.random"},
   "dfrobot_sen0395::DfrobotSen0395Component": {"reset":"dfrobot_sen0395.reset","settings":"dfrobot_sen0395.settings"},
-  "display::Display": {"showNext":"page.display.show_next","showPrevious":"page.display.show_previous"},
-  "display::DisplayPage": {"show":"page.display.show"},
   "ds1307::DS1307Component": {"writeTime":"ds1307.write_time","readTime":"ds1307.read_time"},
   "duty_time_sensor::DutyTimeSensor": {"start":"duty_time.sensor.start","stop":"duty_time.sensor.stop","reset":"duty_time.sensor.reset"},
-  "esp32_ble_server::BLECharacteristic": {"setValue":"characteristic.ble_server.set_value","notify":"characteristic.ble_server.notify"},
-  "esp32_ble_server::BLEDescriptor": {"setValue":"descriptor.ble_server.set_value"},
   "esp32_ble_tracker::ESP32BLETracker": {"startScan":"esp32_ble_tracker.start_scan","stopScan":"esp32_ble_tracker.stop_scan"},
   "esp8266_pwm::ESP8266PWM": {"setFrequency":"esp8266_pwm.output.set_frequency"},
-  "espnow::ESPNowComponent": {"broadcast":"espnow.broadcast","send":"espnow.send","setChannel":"espnow.set_channel","delete":"peer.espnow.delete","add":"peer.espnow.add"},
+  "espnow::ESPNowComponent": {"broadcast":"espnow.broadcast","send":"espnow.send","setChannel":"espnow.set_channel"},
   "event::Event": {"trigger":"event.trigger"},
   "ezo_pmp::EzoPMP": {"find":"ezo_pmp.find","doseContinuously":"ezo_pmp.dose_continuously","clearTotalVolumeDosed":"ezo_pmp.clear_total_volume_dosed","clearCalibration":"ezo_pmp.clear_calibration","pauseDosing":"ezo_pmp.pause_dosing","stopDosing":"ezo_pmp.stop_dosing","doseVolume":"ezo_pmp.dose_volume","doseVolumeOverTime":"ezo_pmp.dose_volume_over_time","doseWithConstantFlowRate":"ezo_pmp.dose_with_constant_flow_rate","setCalibrationVolume":"ezo_pmp.set_calibration_volume","changeI2cAddress":"ezo_pmp.change_i2c_address","arbitraryCommand":"ezo_pmp.arbitrary_command"},
   "fan::Fan": {"toggle":"fan.toggle","turnOff":"fan.turn_off","turnOn":"fan.turn_on","cycleSpeed":"fan.cycle_speed"},
@@ -5012,7 +4428,6 @@ export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {
   "htu21d::HTU21DComponent": {"setHeaterLevel":"htu21d.set_heater_level","setHeater":"htu21d.set_heater"},
   "integration::IntegrationSensor": {"reset":"integration.sensor.reset","setValue":"integration.sensor.set_value"},
   "key_collector::KeyCollector": {"enable":"key_collector.enable","disable":"key_collector.disable"},
-  "ld2410::LD2410Component": {"set":"bluetooth_password.set"},
   "ledc::LEDCOutput": {"setFrequency":"ledc.output.set_frequency"},
   "libretiny_pwm::LibreTinyPWM": {"setFrequency":"libretiny_pwm.output.set_frequency"},
   "light::AddressableLightState": {"addressableSet":"light.addressable_set"},
@@ -5020,16 +4435,8 @@ export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {
   "lightwaverf::LightWaveRF": {"sendRaw":"lightwaverf.send_raw"},
   "lock::Lock": {"open":"lock.open","lock":"lock.lock","unlock":"lock.unlock"},
   "logger::Logger": {"log":"logger.log","setLevel":"logger.set_level"},
-  "lv_animimg_t": {"start":"animimg.lvgl.start","stop":"animimg.lvgl.stop"},
-  "lv_canvas_t": {"fill":"canvas.lvgl.fill","setPixels":"canvas.lvgl.set_pixels","drawRectangle":"canvas.lvgl.draw_rectangle","drawText":"canvas.lvgl.draw_text","drawImage":"canvas.lvgl.draw_image","drawLine":"canvas.lvgl.draw_line","drawPolygon":"canvas.lvgl.draw_polygon","drawArc":"canvas.lvgl.draw_arc"},
-  "lv_meter_indicator_t": {"update":"indicator.lvgl.update"},
-  "lv_obj_t": {"redraw":"widget.lvgl.redraw","refresh":"widget.lvgl.refresh"},
-  "lv_spinbox_t": {"increment":"spinbox.lvgl.increment","decrement":"spinbox.lvgl.decrement"},
-  "lv_style_t": {"update":"animimg.lvgl.update"},
-  "lv_tabview_t": {"select":"tabview.lvgl.select"},
-  "lv_tileview_t": {"select":"tileview.lvgl.select"},
-  "lvgl::LvglComponent": {"update":"lvgl.update","pause":"lvgl.pause","resume":"lvgl.resume","next":"page.lvgl.next","previous":"page.lvgl.previous","show":"page.lvgl.show"},
-  "lvgl::LvPseudoButton": {"disable":"widget.lvgl.disable","enable":"widget.lvgl.enable","hide":"widget.lvgl.hide","show":"widget.lvgl.show"},
+  "lv_style_t": {"update":"button.lvgl.update"},
+  "lvgl::LvglComponent": {"update":"lvgl.update","pause":"lvgl.pause","resume":"lvgl.resume"},
   "max17043::MAX17043Component": {"sleepMode":"max17043.sleep_mode"},
   "max6956::MAX6956": {"setBrightnessGlobal":"max6956.set_brightness_global","setBrightnessMode":"max6956.set_brightness_mode"},
   "max7219digit::MAX7219Component": {"invertOn":"max7219digit.invert_on","invertOff":"max7219digit.invert_off","turnOn":"max7219digit.turn_on","turnOff":"max7219digit.turn_off","reverseOn":"max7219digit.reverse_on","reverseOff":"max7219digit.reverse_off","intensity":"max7219digit.intensity"},
@@ -5039,7 +4446,6 @@ export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {
   "micro_wake_word::WakeWordModel": {"disableModel":"micro_wake_word.disable_model","enableModel":"micro_wake_word.enable_model"},
   "microphone::Microphone": {"capture":"microphone.capture","stopCapture":"microphone.stop_capture","mute":"microphone.mute","unmute":"microphone.unmute"},
   "midea::ac::AirConditioner": {"followMe":"midea_ac.follow_me","displayToggle":"midea_ac.display_toggle","swingStep":"midea_ac.swing_step","beeperOn":"midea_ac.beeper_on","beeperOff":"midea_ac.beeper_off","powerOn":"midea_ac.power_on","powerOff":"midea_ac.power_off","powerToggle":"midea_ac.power_toggle"},
-  "mixer_speaker::SourceSpeaker": {"applyDucking":"mixer_speaker.apply_ducking"},
   "mqtt::MQTTClientComponent": {"publish":"mqtt.publish","publishJson":"mqtt.publish_json","enable":"mqtt.enable","disable":"mqtt.disable"},
   "nau7802::NAU7802Sensor": {"calibrateGain":"nau7802.calibrate_gain","calibrateExternalOffset":"nau7802.calibrate_external_offset","calibrateInternalOffset":"nau7802.calibrate_internal_offset"},
   "nextion::Nextion": {"setBrightness":"nextion.display.set_brightness"},
@@ -5055,7 +4461,6 @@ export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {
   "pcf8563::PCF8563Component": {"writeTime":"pcf8563.write_time","readTime":"pcf8563.read_time"},
   "pid::PIDClimate": {"resetIntegralTerm":"pid.climate.reset_integral_term","autotune":"pid.climate.autotune","setControlParameters":"pid.climate.set_control_parameters"},
   "pmwcs3::PMWCS3Component": {"waterCalibration":"pmwcs3.water_calibration","airCalibration":"pmwcs3.air_calibration","newI2cAddress":"pmwcs3.new_i2c_address"},
-  "PollingComponent": {"update":"component.update","suspend":"component.suspend","resume":"component.resume"},
   "pulse_counter::PulseCounterSensor": {"setTotalPulses":"pulse_counter.set_total_pulses"},
   "pulse_meter::PulseMeterSensor": {"setTotalPulses":"pulse_meter.set_total_pulses"},
   "pzemac::PZEMAC": {"resetEnergy":"pzemac.reset_energy"},
@@ -5147,18 +4552,13 @@ export type InferActions<T> =
   & (T extends { readonly __brand_cm1106_CM1106Component?: true } ? CM1106ComponentActions : {})
   & (T extends { readonly __brand_cover_Cover?: true } ? CoverActions : {})
   & (T extends { readonly __brand_cs5460a_CS5460AComponent?: true } ? CS5460AComponentActions : {})
-  & (T extends { readonly __brand_datetime_DateEntity?: true } ? DateEntityActions : {})
   & (T extends { readonly __brand_datetime_DateTimeEntity?: true } ? DateTimeEntityActions : {})
   & (T extends { readonly __brand_datetime_TimeEntity?: true } ? TimeEntityActions : {})
   & (T extends { readonly __brand_deep_sleep_DeepSleepComponent?: true } ? DeepSleepComponentActions : {})
   & (T extends { readonly __brand_dfplayer_DFPlayer?: true } ? DFPlayerActions : {})
   & (T extends { readonly __brand_dfrobot_sen0395_DfrobotSen0395Component?: true } ? DfrobotSen0395ComponentActions : {})
-  & (T extends { readonly __brand_display_Display?: true } ? DisplayActions : {})
-  & (T extends { readonly __brand_display_DisplayPage?: true } ? DisplayPageActions : {})
   & (T extends { readonly __brand_ds1307_DS1307Component?: true } ? DS1307ComponentActions : {})
   & (T extends { readonly __brand_duty_time_sensor_DutyTimeSensor?: true } ? DutyTimeSensorActions : {})
-  & (T extends { readonly __brand_esp32_ble_server_BLECharacteristic?: true } ? BLECharacteristicActions : {})
-  & (T extends { readonly __brand_esp32_ble_server_BLEDescriptor?: true } ? BLEDescriptorActions : {})
   & (T extends { readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true } ? ESP32BLETrackerActions : {})
   & (T extends { readonly __brand_esp8266_pwm_ESP8266PWM?: true } ? ESP8266PWMActions : {})
   & (T extends { readonly __brand_espnow_ESPNowComponent?: true } ? ESPNowComponentActions : {})
@@ -5179,7 +4579,6 @@ export type InferActions<T> =
   & (T extends { readonly __brand_htu21d_HTU21DComponent?: true } ? HTU21DComponentActions : {})
   & (T extends { readonly __brand_integration_IntegrationSensor?: true } ? IntegrationSensorActions : {})
   & (T extends { readonly __brand_key_collector_KeyCollector?: true } ? KeyCollectorActions : {})
-  & (T extends { readonly __brand_ld2410_LD2410Component?: true } ? LD2410ComponentActions : {})
   & (T extends { readonly __brand_ledc_LEDCOutput?: true } ? LEDCOutputActions : {})
   & (T extends { readonly __brand_libretiny_pwm_LibreTinyPWM?: true } ? LibreTinyPWMActions : {})
   & (T extends { readonly __brand_light_AddressableLightState?: true } ? AddressableLightStateActions : {})
@@ -5187,16 +4586,8 @@ export type InferActions<T> =
   & (T extends { readonly __brand_lightwaverf_LightWaveRF?: true } ? LightWaveRFActions : {})
   & (T extends { readonly __brand_lock_Lock?: true } ? LockActions : {})
   & (T extends { readonly __brand_logger_Logger?: true } ? LoggerActions : {})
-  & (T extends { readonly __brand_lv_animimg_t?: true } ? lv_animimg_tActions : {})
-  & (T extends { readonly __brand_lv_canvas_t?: true } ? lv_canvas_tActions : {})
-  & (T extends { readonly __brand_lv_meter_indicator_t?: true } ? lv_meter_indicator_tActions : {})
-  & (T extends { readonly __brand_lv_obj_t?: true } ? lv_obj_tActions : {})
-  & (T extends { readonly __brand_lv_spinbox_t?: true } ? lv_spinbox_tActions : {})
   & (T extends { readonly __brand_lv_style_t?: true } ? lv_style_tActions : {})
-  & (T extends { readonly __brand_lv_tabview_t?: true } ? lv_tabview_tActions : {})
-  & (T extends { readonly __brand_lv_tileview_t?: true } ? lv_tileview_tActions : {})
   & (T extends { readonly __brand_lvgl_LvglComponent?: true } ? LvglComponentActions : {})
-  & (T extends { readonly __brand_lvgl_LvPseudoButton?: true } ? LvPseudoButtonActions : {})
   & (T extends { readonly __brand_max17043_MAX17043Component?: true } ? MAX17043ComponentActions : {})
   & (T extends { readonly __brand_max6956_MAX6956?: true } ? MAX6956Actions : {})
   & (T extends { readonly __brand_max7219digit_MAX7219Component?: true } ? MAX7219ComponentActions : {})
@@ -5206,7 +4597,6 @@ export type InferActions<T> =
   & (T extends { readonly __brand_micro_wake_word_WakeWordModel?: true } ? WakeWordModelActions : {})
   & (T extends { readonly __brand_microphone_Microphone?: true } ? MicrophoneActions : {})
   & (T extends { readonly __brand_midea_ac_AirConditioner?: true } ? AirConditionerActions : {})
-  & (T extends { readonly __brand_mixer_speaker_SourceSpeaker?: true } ? SourceSpeakerActions : {})
   & (T extends { readonly __brand_mqtt_MQTTClientComponent?: true } ? MQTTClientComponentActions : {})
   & (T extends { readonly __brand_nau7802_NAU7802Sensor?: true } ? NAU7802SensorActions : {})
   & (T extends { readonly __brand_nextion_Nextion?: true } ? NextionActions : {})
@@ -5222,7 +4612,6 @@ export type InferActions<T> =
   & (T extends { readonly __brand_pcf8563_PCF8563Component?: true } ? PCF8563ComponentActions : {})
   & (T extends { readonly __brand_pid_PIDClimate?: true } ? PIDClimateActions : {})
   & (T extends { readonly __brand_pmwcs3_PMWCS3Component?: true } ? PMWCS3ComponentActions : {})
-  & (T extends { readonly __brand_PollingComponent?: true } ? PollingComponentActions : {})
   & (T extends { readonly __brand_pulse_counter_PulseCounterSensor?: true } ? PulseCounterSensorActions : {})
   & (T extends { readonly __brand_pulse_meter_PulseMeterSensor?: true } ? PulseMeterSensorActions : {})
   & (T extends { readonly __brand_pzemac_PZEMAC?: true } ? PZEMACActions : {})

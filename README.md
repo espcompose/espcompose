@@ -121,36 +121,40 @@ export default (
 );
 ```
 
-### Function-as-Script Pattern
+### Scripts via `useScript`
 
-Top-level functions automatically compile to ESPHome `script:` components. Reference them in trigger props and the compiler handles the wiring:
+Use the `useScript` hook inside a function component to define named ESPHome `script:` entries. Reference the returned handle in trigger props — the compiler wires everything together:
 
 ```tsx
-import { delay, logger } from '@espcompose/core';
+import { useScript, delay, logger } from '@espcompose/core';
 
-function greet(): void {
-  logger.log('Hello from ESPCompose!');
-  delay(500);
+function App() {
+  const greet = useScript(async () => {
+    logger.log('Hello from ESPCompose!');
+    await delay(500);
+  });
+
+  return (
+    <esphome name="script-device">
+      <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <api />
+      <logger level="INFO" />
+      <binary_sensor
+        platform="gpio"
+        pin={4}
+        name="Button"
+        onPress={async () => { await greet(); }}
+        onRelease={async () => { await delay(100); }}
+      />
+    </esphome>
+  );
 }
 
-export default (
-  <esphome name="script-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
-    <api />
-    <logger level="INFO" />
-    <binary_sensor
-      platform="gpio"
-      pin={4}
-      name="Button"
-      onPress={greet}
-      onRelease={() => { delay(100); }}
-    />
-  </esphome>
-);
+export default <App />;
 ```
 
-Supported control flow in scripts: `if/else`, `while`, `for` loops (literal count), and calls to other script functions.
+Supported control flow inside `useScript` bodies: `if/else`, `while`, `for` loops (literal count), and calls to other script handles.
 
 ### Typed Cross-Component References
 
@@ -234,7 +238,7 @@ pnpm lint
 ## How the Compiler Works
 
 1. **Type-check** — The TypeScript compiler validates the entry file and its imports
-2. **Transform** — A TypeScript AST transformer rewrites top-level `function` declarations into `useScript()` calls and converts trigger props into ESPHome action arrays
+2. **Transform** — A TypeScript AST transformer resolves `useScript()` calls into named ESPHome `script:` entries and converts trigger props into ESPHome action arrays
 3. **Bundle** — esbuild bundles the transformed source into a single CommonJS module (`@espcompose/core` is kept external)
 4. **Execute & Emit** — The bundle is loaded in a script scope, the JSX tree is rendered to a plain object graph, and YAML is serialized to disk
 
