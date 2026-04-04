@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AppBar,
   Box,
@@ -43,13 +43,53 @@ function useIRData(): LoadState {
   return state;
 }
 
+// ── Resizable panel hook ───────────────────────────────────────────────────
+
+const MIN_TREE   = 220;
+const MIN_DETAIL = 180;
+
+function useResizableSplit(initialWidth = 560) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging     = useRef(false);
+  const [treeWidth, setTreeWidth] = useState(initialWidth);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!dragging.current || !containerRef.current) return;
+      const rect     = containerRef.current.getBoundingClientRect();
+      const newWidth = Math.max(MIN_TREE, Math.min(rect.width - MIN_DETAIL, e.clientX - rect.left));
+      setTreeWidth(Math.round(newWidth));
+    };
+    const onUp = () => {
+      if (!dragging.current) return;
+      dragging.current = false;
+      document.body.style.cursor    = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup',   onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup',   onUp);
+    };
+  }, []);
+
+  const onDividerMouseDown = useCallback(() => {
+    dragging.current = true;
+    document.body.style.cursor    = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }, []);
+
+  return { containerRef, treeWidth, onDividerMouseDown };
+}
+
 // ── App ────────────────────────────────────────────────────────────────────
 
 export function App() {
   const loadState = useIRData();
 
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery]   = useState('');
   const [showInternal, setShowInternal] = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -63,6 +103,8 @@ export function App() {
     if (loadState.status !== 'ok') return [];
     return buildTree(loadState.data, showInternal);
   }, [loadState, showInternal]);
+
+  const { containerRef, treeWidth, onDividerMouseDown } = useResizableSplit(560);
 
   return (
     <ThemeProvider theme={theme}>
@@ -111,15 +153,13 @@ export function App() {
         )}
 
         {loadState.status === 'ok' && (
-          <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <Box ref={containerRef} sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
             {/* ── Tree panel (left) ──────────────────────────────────── */}
             <Box
               sx={{
-                flex: '3 1 0',
-                minWidth: 300,
+                width: treeWidth,
+                flexShrink: 0,
                 overflow: 'auto',
-                borderRight: '1px solid',
-                borderColor: 'divider',
                 p: 1,
               }}
             >
@@ -130,8 +170,35 @@ export function App() {
               />
             </Box>
 
+            {/* ── Drag handle ────────────────────────────────────────── */}
+            <Box
+              onMouseDown={onDividerMouseDown}
+              sx={{
+                width: 5,
+                flexShrink: 0,
+                cursor: 'col-resize',
+                bgcolor: 'divider',
+                borderLeft:  '1px solid',
+                borderRight: '1px solid',
+                borderColor: 'divider',
+                transition: 'background-color 0.1s, border-color 0.1s',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                  borderColor: 'primary.main',
+                },
+              }}
+            />
+
             {/* ── Detail panel (right) ───────────────────────────────── */}
-            <Box sx={{ flex: '1 1 0', minWidth: 200, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <Box
+              sx={{
+                flex: 1,
+                minWidth: MIN_DETAIL,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+              }}
+            >
               <DetailPanel node={selectedNode} />
             </Box>
           </Box>
@@ -139,4 +206,9 @@ export function App() {
       </Box>
     </ThemeProvider>
   );
+}
+// This avoids fetch() + CORS issues when the file is opened via file://.
+
+declare global {
+  interface Window { __IR_DATA?: IRData; }
 }
