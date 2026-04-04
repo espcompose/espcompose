@@ -10,13 +10,17 @@ import type { PhaseContext } from './types';
  * captures serialization data, extracts theme data, and builds the SemanticIR.
  */
 export function executePhase(ctx: PhaseContext): void {
+  if (!ctx.bundlePath) {
+    throw new Error('Execute phase requires bundlePath on the context.');
+  }
+  const bundlePath = ctx.bundlePath;
   // Use createRequire so this works correctly in both CJS and ESM contexts.
   // Rooting the require at the bundle file itself means @espcompose/core
   // resolves from the user's project node_modules (bundle sits next to source).
-  const _require = createRequire(ctx.bundlePath);
+  const _require = createRequire(bundlePath);
 
   // Clear the require cache so re-runs in the same process get a fresh module
-  delete _require.cache[_require.resolve(ctx.bundlePath)];
+  delete _require.cache[_require.resolve(bundlePath)];
 
   // Load the SDK via the same CommonJS require that the bundle will use.
   // This ensures withScriptScope and createScript share the same module-level
@@ -41,7 +45,7 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: config, scripts } = cjsSDK.withScriptScope(() => {
-      const mod = _require(ctx.bundlePath) as { default?: unknown };
+      const mod = _require(bundlePath) as { default?: unknown };
 
       const rootElement = mod.default;
 

@@ -33,7 +33,7 @@ export function validateLibraryFormat(version: unknown): void {
   if (typeof version !== 'number') {
     throw new Error(
       'This ESPCompose library was not compiled with format versioning. ' +
-      'Rebuild the library with the latest ESPCompose CLI (`espcompose library`).',
+      'Rebuild the library with the latest ESPCompose CLI (`espcompose build --library`).',
     );
   }
   if (!SUPPORTED_FORMAT_VERSIONS.includes(version)) {

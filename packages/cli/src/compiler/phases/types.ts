@@ -12,8 +12,8 @@ export interface PhaseContext {
   sourceDir: string;
   /** Absolute path to the intermediate build directory (.espcompose-build/). */
   buildDir: string;
-  /** Absolute path to the CJS bundle output. */
-  bundlePath: string;
+  /** Absolute path to the CJS bundle output (device pipeline only). */
+  bundlePath?: string;
   /** When true, keep the build directory after the pipeline completes. */
   debug: boolean;
 
@@ -32,8 +32,10 @@ export interface PhaseContext {
   program?: ts.Program;
   /** Path to the transformed entry file in buildDir. */
   transformedEntry?: string;
-  /** Semantic IR from the execute phase. */
+  /** Semantic IR from the execute phase (device pipeline only). */
   ir?: SemanticIR;
+  /** Transform statistics (set by transform phase). */
+  transformStats?: { filesWritten: number; filesTransformed: number };
 }
 
 /**

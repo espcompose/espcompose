@@ -194,7 +194,8 @@ espcompose <command> [projectDir] [-- esphome-args]
 |---------|-------------|
 | `transpile [dir]` | Transpile TSX → YAML (no ESPHome dependency needed) |
 | `config [dir]` | Transpile + validate via `esphome config` |
-| `compile [dir]` | Transpile + compile firmware via `esphome compile` |
+| `build [dir]` | Transpile + compile firmware via `esphome compile` |
+| `build --library [dir]` | Build a component library (CJS + `.d.ts`) |
 | `run [dir]` | Transpile + compile + upload via `esphome run` |
 | `logs [dir]` | Transpile + stream serial logs via `esphome logs` |
 

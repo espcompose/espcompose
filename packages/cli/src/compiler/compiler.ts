@@ -7,9 +7,11 @@ import { typeCheckPhase } from './phases/type-check';
 import { lintPhase } from './phases/lint';
 import { transformPhase } from './phases/transform';
 import { bundlePhase } from './phases/bundle';
+import { bundleLibraryPhase } from './phases/bundle-library';
 import { executePhase } from './phases/execute';
 import { validatePhase } from './phases/validate';
 import { emitPhase } from './phases/emit';
+import { emitDTSPhase } from './phases/emit-dts';
 import { teardownPhase } from './phases/teardown';
 
 export interface CompileOptions {
@@ -51,6 +53,26 @@ const irPipeline: Phase[] = [
   bundlePhase,
   executePhase,
   validatePhase,
+  teardownPhase,
+];
+
+/** Library pipeline: setup → type-check → lint → transform → bundle(library) → emitDTS → teardown. */
+const libraryPipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
+  bundleLibraryPhase,
+  emitDTSPhase,
+  teardownPhase,
+];
+
+/** Library transpile pipeline: setup → type-check → lint → transform → teardown (no bundle/emit). */
+const transpileLibraryPipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
   teardownPhase,
 ];
 
@@ -157,4 +179,97 @@ export async function compileToIR(projectDir: string): Promise<SemanticIR> {
   }
 
   return ctx.ir;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Library build
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface BuildLibraryOptions {
+  /** Absolute path to the library root (where package.json lives). */
+  rootDir: string;
+  /** Entry file relative to rootDir (default: 'src/index.ts'). */
+  entry?: string;
+  /** Output directory relative to rootDir (default: 'dist'). */
+  outDir?: string;
+  /** Optional path to tsconfig.json relative to rootDir. */
+  tsconfig?: string;
+  /** When true, keep the `.espcompose-build/` intermediate folder for inspection. */
+  debug?: boolean;
+}
+
+export interface BuildLibraryResult {
+  /** Number of source files processed. */
+  filesWritten: number;
+  /** Number of files that had AST transforms applied. */
+  filesTransformed: number;
+}
+
+/**
+ * Build an ESPCompose component library for distribution.
+ *
+ * Pipeline:
+ *   [setup] → [type-check] → [lint] → [transform] → [bundle-library] → [emit-dts] → [teardown]
+ *
+ * Produces an ESM bundle and .d.ts declarations in `outDir`.
+ */
+export async function buildLibrary(options: BuildLibraryOptions): Promise<BuildLibraryResult> {
+  const rootDir = options.rootDir;
+  const entryRel = options.entry ?? 'src/index.ts';
+  const outDirRel = options.outDir ?? 'dist';
+  const entryFile = path.resolve(rootDir, entryRel);
+  const sourceDir = path.dirname(entryFile);
+  const outDir = path.resolve(rootDir, outDirRel);
+  const buildDir = path.resolve(rootDir, '.espcompose-build');
+
+  const ctx: PhaseContext = {
+    entryFile,
+    sourceDir,
+    buildDir,
+    debug: options.debug ?? false,
+    projectDir: rootDir,
+    outDir,
+  };
+
+  await runPipeline(ctx, libraryPipeline);
+
+  return {
+    filesWritten: ctx.transformStats?.filesWritten ?? 0,
+    filesTransformed: ctx.transformStats?.filesTransformed ?? 0,
+  };
+}
+
+/**
+ * Transpile a component library — run AST transforms only, no bundling.
+ *
+ * Pipeline:
+ *   [setup] → [type-check] → [lint] → [transform] → [teardown]
+ *
+ * Writes transformed TypeScript sources to `outDir` for use with an
+ * external bundler (tsup, rollup, etc.).
+ */
+export async function transpileLibrary(options: BuildLibraryOptions): Promise<BuildLibraryResult> {
+  const rootDir = options.rootDir;
+  const entryRel = options.entry ?? 'src/index.ts';
+  const outDirRel = options.outDir ?? '.espcompose-build';
+  const entryFile = path.resolve(rootDir, entryRel);
+  const sourceDir = path.dirname(entryFile);
+  const outDir = path.resolve(rootDir, outDirRel);
+  const buildDir = path.resolve(rootDir, '.espcompose-build');
+
+  const ctx: PhaseContext = {
+    entryFile,
+    sourceDir,
+    buildDir,
+    debug: options.debug ?? false,
+    projectDir: rootDir,
+    outDir,
+  };
+
+  await runPipeline(ctx, transpileLibraryPipeline);
+
+  return {
+    filesWritten: ctx.transformStats?.filesWritten ?? 0,
+    filesTransformed: ctx.transformStats?.filesTransformed ?? 0,
+  };
 }

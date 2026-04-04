@@ -224,10 +224,10 @@ The action compiler recognizes 12 action kinds: `native`, `ha_service`, `logger`
 
 ## Library Compilation
 
-Component libraries can be pre-compiled with `espcompose library` so consumers don't need the TypeScript source:
+Component libraries can be pre-compiled with `espcompose build --library` so consumers don't need the TypeScript source:
 
 1. AST transform runs on library sources (same reactive + script transforms)
-2. esbuild bundles to CJS + ESM
+2. esbuild bundles to ESM
 3. TypeScript emits `.d.ts` declarations
 4. A `__espcompose_format__` version marker is injected
 

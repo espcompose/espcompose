@@ -5,12 +5,10 @@ import {
   registerInitCommand,
   registerTranspileCommand,
   registerConfigCommand,
-  registerCompileCommand,
+  registerBuildCommand,
   registerRunCommand,
   registerLogsCommand,
   registerSimulateCommand,
-  registerTransformLibCommand,
-  registerLibraryCommand,
 } from './commands';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -24,11 +22,9 @@ program
 registerInitCommand(program);
 registerTranspileCommand(program);
 registerConfigCommand(program);
-registerCompileCommand(program);
+registerBuildCommand(program);
 registerRunCommand(program);
 registerLogsCommand(program);
 registerSimulateCommand(program);
-registerTransformLibCommand(program);
-registerLibraryCommand(program);
 
 program.parse();

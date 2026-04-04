@@ -181,11 +181,11 @@ export function buildRuntimeConfig(
     throw new Error(
       `Found ${uncompiledNodes.length} reactive expression(s) that were not compiled.\n` +
       `This usually means a component library provides reactive JSX but was not\n` +
-      `built with \`espcompose transform-lib\`. Uncompiled nodes:\n` +
+      `built with \`espcompose build --library\`. Uncompiled nodes:\n` +
       `${summary}\n\n` +
-      `If you are the library author, add a transform step to your build:\n` +
-      `  espcompose transform-lib --entry src/index.ts --outDir .espcompose-build/\n` +
-      `Then build from the transformed sources.`,
+      `If you are the library author, run:\n` +
+      `  espcompose build --library\n` +
+      `to produce a distributable library with pre-compiled reactive expressions.`,
     );
   }
 

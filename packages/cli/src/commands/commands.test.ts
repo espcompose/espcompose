@@ -4,12 +4,10 @@ import {
   registerInitCommand,
   registerTranspileCommand,
   registerConfigCommand,
-  registerCompileCommand,
+  registerBuildCommand,
   registerRunCommand,
   registerLogsCommand,
   registerSimulateCommand,
-  registerTransformLibCommand,
-  registerLibraryCommand,
 } from './index';
 
 /** Helper: register a command and return its Commander metadata. */
@@ -38,7 +36,7 @@ describe('command registration', () => {
       name: 'transpile',
       register: registerTranspileCommand,
       expectedName: 'transpile',
-      expectedOptions: ['--debug'],
+      expectedOptions: ['--debug', '--library', '--entry', '--outDir', '--tsconfig'],
     },
     {
       name: 'config',
@@ -47,10 +45,10 @@ describe('command registration', () => {
       expectedOptions: ['--debug'],
     },
     {
-      name: 'compile',
-      register: registerCompileCommand,
-      expectedName: 'compile',
-      expectedOptions: ['--debug'],
+      name: 'build',
+      register: registerBuildCommand,
+      expectedName: 'build',
+      expectedOptions: ['--debug', '--library', '--entry', '--outDir', '--tsconfig'],
     },
     {
       name: 'run',
@@ -69,18 +67,6 @@ describe('command registration', () => {
       register: registerSimulateCommand,
       expectedName: 'simulate',
       expectedOptions: ['--width', '--height', '--debug'],
-    },
-    {
-      name: 'transform-lib',
-      register: registerTransformLibCommand,
-      expectedName: 'transform-lib',
-      expectedOptions: ['--entry', '--outDir', '--tsconfig'],
-    },
-    {
-      name: 'library',
-      register: registerLibraryCommand,
-      expectedName: 'library',
-      expectedOptions: ['--entry', '--outDir', '--tsconfig'],
     },
   ];
 

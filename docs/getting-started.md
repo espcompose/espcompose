@@ -5,7 +5,7 @@ This guide walks you through creating your first ESPHome Compose project — wri
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 22+
-- [ESPHome](https://esphome.io/guides/installing_esphome) (only needed for `config`, `compile`, `run`, and `logs` commands)
+- [ESPHome](https://esphome.io/guides/installing_esphome) (only needed for `config`, `build`, `run`, and `logs` commands)
 
 ## Creating a Project
 
@@ -297,8 +297,10 @@ Once your project is ready, use the CLI to build and deploy:
 | Command | Description |
 |---------|-------------|
 | `espcompose transpile [dir]` | Transpile TSX to YAML |
+| `espcompose transpile --library [dir]` | Run AST transforms on a component library |
 | `espcompose config [dir]` | Transpile + validate via `esphome config` |
-| `espcompose compile [dir]` | Transpile + compile firmware |
+| `espcompose build [dir]` | Transpile + compile firmware |
+| `espcompose build --library [dir]` | Build a component library (ESM + .d.ts) |
 | `espcompose run [dir]` | Transpile + compile + upload to device |
 | `espcompose logs [dir]` | Transpile + stream serial logs |
 

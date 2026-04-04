@@ -2,14 +2,12 @@
   "name": "@espcompose/ui",
   "version": "0.0.1",
   "description": "LVGL Design System components for ESPHome Compose",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "type": "module",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -19,7 +17,7 @@
     "library": true
   },
   "scripts": {
-    "build": "espcompose library",
+    "build": "espcompose build --library",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",

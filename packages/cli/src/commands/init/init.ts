@@ -80,7 +80,7 @@ export function initProject(name: string, options: InitOptions = {}): void {
   console.log(`  cd ${name}`);
   console.log('  npm install');
   if (isLibrary) {
-    console.log('  npx espcompose library');
+    console.log('  npx espcompose build --library');
   } else {
     console.log('  npx espcompose transpile');
   }

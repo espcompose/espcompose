@@ -17,6 +17,10 @@ export async function bundlePhase(ctx: PhaseContext): Promise<void> {
   if (!ctx.transformedEntry) {
     throw new Error('Bundle phase requires a transformed entry — run transform first.');
   }
+  if (!ctx.bundlePath) {
+    throw new Error('Bundle phase requires bundlePath on the context.');
+  }
+  const { bundlePath } = ctx;
 
   const result = await esbuild.build({
     entryPoints: [ctx.transformedEntry],
@@ -28,7 +32,7 @@ export async function bundlePhase(ctx: PhaseContext): Promise<void> {
     jsxImportSource: '@espcompose/core',
     // Keep the SDK external — it will be require()'d from the host process
     external: ['@espcompose/core'],
-    outfile: ctx.bundlePath,
+    outfile: bundlePath,
     sourcemap: false,
     metafile: true,
   });

@@ -1,4 +1,2 @@
-export { compile, build, compileToIR } from './compiler';
-export type { CompileOptions } from './compiler';
-export { transformLib, buildLibrary } from './library';
-export type { TransformLibOptions, TransformLibResult, BuildLibraryOptions, BuildLibraryResult } from './library';
+export { compile, build, compileToIR, buildLibrary, transpileLibrary } from './compiler';
+export type { CompileOptions, BuildLibraryOptions, BuildLibraryResult } from './compiler';

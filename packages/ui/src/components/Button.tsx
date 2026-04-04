@@ -65,7 +65,7 @@ export const Button = createIntentComponent(
         : { bgColor: sc.bg, bgOpa: 'COVER' };
 
     // Width: derived from reactive paddingX if no override.
-    // The compiler transform (espcompose transform-lib) compiles this to
+    // The compiler transform (espcompose build --library) compiles this to
     // __espcompose.slotted() with a C++ template at library build time.
     const width = props.width ?? useMemo(() => dims.paddingX * 2 + 80);
     const height = props.height ?? dims.height;

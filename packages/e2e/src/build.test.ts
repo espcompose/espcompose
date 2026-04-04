@@ -85,7 +85,7 @@ describe('ESPHome Compose Build', () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');
     const fakeLibDir = path.join(projectPath, 'node_modules', '@test', 'reactive-lib');
 
-    // Create a fake pre-built library that uses useMemo() without transform-lib
+    // Create a fake pre-built library that uses useMemo() without build --library
     fs.mkdirSync(fakeLibDir, { recursive: true });
     fs.writeFileSync(
       path.join(fakeLibDir, 'package.json'),
@@ -120,7 +120,7 @@ describe('ESPHome Compose Build', () => {
     const fakeLibDir = path.join(projectPath, 'node_modules', '@test', 'compiled-lib');
 
     // Create a fake pre-compiled library with __espcompose_format__ marker
-    // and __espcompose.compiled() calls (as transform-lib would produce)
+    // and __espcompose.compiled() calls (as build --library would produce)
     fs.mkdirSync(fakeLibDir, { recursive: true });
     fs.writeFileSync(
       path.join(fakeLibDir, 'package.json'),
