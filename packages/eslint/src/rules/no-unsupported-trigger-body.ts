@@ -157,14 +157,12 @@ export default createRule<[], MessageIds>({
         return branded;
       }
 
-      // Property call: ref.toggle(), logger.log(), theme.select(), etc.
+      // Property call: ref.toggle(), logger.log(), theme.select(), props.entity.toggle(), etc.
       if (callee.type === 'MemberExpression' && callee.property.type === 'Identifier') {
-        if (callee.object.type === 'Identifier') {
-          const branded = nodeHasActionBrand(callee.object);
-          // If no type info, allow the call
-          if (branded === undefined) return true;
-          return branded;
-        }
+        const branded = nodeHasActionBrand(callee.object);
+        // If no type info, allow the call
+        if (branded === undefined) return true;
+        return branded;
       }
 
       return false;

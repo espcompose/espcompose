@@ -8,26 +8,23 @@ This document captures the deferred items and future enhancements.
 
 ---
 
-### 1. Style Deduplication & `style_definitions`
+### ~~1. Style Deduplication & `style_definitions`~~ — Superseded
 
-**Priority:** Medium — optimization for large UIs with repeated styles.
+Superseded by the reactive theme system. The reactive architecture uses per-leaf
+C++ `Memo<T>` nodes (one per theme token) with `Effect`s that call
+`lv_obj_set_style_*()` directly on each widget. This subsumes what
+`style_definitions` would have provided:
 
-When many widgets share the same expanded style (e.g. via `createStyles()`),
-the current system inlines every property on each widget in the YAML output.
-ESPHome supports `style_definitions` — shared named style blocks that widgets
-can reference by ID.
+- **Shared values** — N widgets subscribing to the same `thm_spacing_md` Memo
+  share a single source of truth, equivalent to a shared `lv_style_t`.
+- **Runtime theme switching** — `theme_index.set(N); flush();` propagates
+  through the full reactive graph. `style_definitions` cannot do this natively.
+- **Full part+state support** — reactive bindings support any LVGL selector.
+  ESPHome `style_definitions` only support base state.
+- **Tree-shaking** — unreferenced theme memos are pruned at compile time.
 
-**Steps:**
-- Define `StyleAstNode` — a normalized IR with `base`, `states`, `parts` structure
-- Implement `normalizeCssToAst(style: CssStyle): StyleAstNode`
-- Collect all resolved styles during render into a registry
-- Content-hash identical `StyleAstNode` trees for deduplication
-- Emit shared entries in the `style_definitions` YAML section
-- Replace inline styles with `styles: [id]` references where beneficial
-
-**Tradeoff:** Adds compilation complexity. Only worthwhile when repeated styles
-produce measurably large YAML or when ESPHome's style_definitions offer runtime
-memory benefits on the ESP32.
+Memory cost is comparable (~2-4KB reactive graph vs ~2-3KB shared style structs
+for a typical 40-widget UI). See `reactive-theme-plan.md` for the full design.
 
 ---
 

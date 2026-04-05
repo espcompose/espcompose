@@ -547,6 +547,161 @@ sensor:
 "
 `;
 
+exports[`ESPHome Compose Build > fancy-light-cascade-device 1`] = `
+"esphome:
+  name: fancy-light-cascade-device
+  comment: Component cascade E2E
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+  platformio_options:
+    build_flags:
+      - -DLV_FONT_MONTSERRAT_16=1
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  data_rate: 40MHz
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - scrollbar_mode: 'OFF'
+      bg_color: !lambda "return espcompose::thm_colors_background.get();"
+      border_width: 0
+      pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
+      id: rw_ref1
+      widgets:
+        - obj:
+            scrollbar_mode: 'OFF'
+            layout:
+              type: flex
+              flex_flow: COLUMN
+            width: 100%
+            height: SIZE_CONTENT
+            bg_opa: TRANSP
+            border_width: 0
+            widgets:
+              - label:
+                  text: !lambda "return espcompose::memo_0.get().c_str();"
+                  id: rw_ref2
+              - button:
+                  on_press:
+                    - homeassistant.action:
+                        action: light.toggle
+                        data:
+                          entity_id: light.kitchen_floods
+                  bg_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
+                  border_width: 0
+                  width: !lambda "return espcompose::memo_4.get();"
+                  height: !lambda "return espcompose::thm_sizes_md_height.get();"
+                  pressed:
+                    bg_color: !lambda "return espcompose::thm_colors_primary_bgPressed.get();"
+                  id: rw_ref3
+                  widgets:
+                    - label:
+                        text: !lambda "return espcompose::memo_1.get().c_str();"
+                        align: CENTER
+                        text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
+                        text_font: !lambda "return espcompose::memo_3.get();"
+                        id: rw_ref4
+              - button:
+                  on_press:
+                    - homeassistant.action:
+                        action: light.toggle
+                        data:
+                          entity_id: light.bedroom_lamp
+                  bg_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
+                  border_width: 0
+                  width: !lambda "return espcompose::memo_6.get();"
+                  height: !lambda "return espcompose::thm_sizes_md_height.get();"
+                  pressed:
+                    bg_color: !lambda "return espcompose::thm_colors_secondary_bgPressed.get();"
+                  id: rw_ref5
+                  widgets:
+                    - label:
+                        text: !lambda "return espcompose::memo_2.get().c_str();"
+                        align: CENTER
+                        text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
+                        text_font: !lambda "return espcompose::memo_5.get();"
+                        id: rw_ref6
+              - button:
+                  on_press:
+                    - lambda: !lambda "espcompose::select_theme(\\"light\\");"
+                  bg_color: !lambda "return espcompose::thm_colors_success_bg.get();"
+                  border_width: 0
+                  width: !lambda "return espcompose::memo_8.get();"
+                  height: !lambda "return espcompose::thm_sizes_md_height.get();"
+                  pressed:
+                    bg_color: !lambda "return espcompose::thm_colors_success_bgPressed.get();"
+                  id: rw_ref7
+                  widgets:
+                    - label:
+                        text: Toggle Theme
+                        align: CENTER
+                        text_color: !lambda "return espcompose::thm_colors_success_text.get();"
+                        text_font: !lambda "return espcompose::memo_7.get();"
+                        id: rw_ref8
+sensor:
+  - platform: homeassistant
+    id: ha_sensor_living_room_temperature
+    entity_id: sensor.living_room_temperature
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_light_kitchen_floods_brightness
+    entity_id: light.kitchen_floods
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_light_bedroom_lamp_brightness
+    entity_id: light.bedroom_lamp
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp_brightness.set(x);
+          espcompose::Scheduler::instance().flush();"
+binary_sensor:
+  - platform: homeassistant
+    id: ha_light_kitchen_floods
+    entity_id: light.kitchen_floods
+    trigger_on_initial_state: true
+    on_state:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x);
+          espcompose::Scheduler::instance().flush();"
+  - platform: homeassistant
+    id: ha_light_bedroom_lamp
+    entity_id: light.bedroom_lamp
+    trigger_on_initial_state: true
+    on_state:
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp.set(x);
+          espcompose::Scheduler::instance().flush();"
+"
+`;
+
 exports[`ESPHome Compose Build > function-component-device 1`] = `
 "esphome:
   name: component-device
@@ -1080,6 +1235,150 @@ binary_sensor:
   on_state:
     - lambda: !lambda "espcompose::sig_ha_switch_space_heater.set(x);
         espcompose::Scheduler::instance().flush();"
+"
+`;
+
+exports[`ESPHome Compose Build > reactive-theme-device 1`] = `
+"esphome:
+  name: reactive-theme-device
+  comment: Reactive theme switching E2E
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+  platformio_options:
+    build_flags:
+      - -DLV_FONT_MONTSERRAT_16=1
+      - -DLV_FONT_MONTSERRAT_20=1
+      - -DLV_FONT_MONTSERRAT_28=1
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  data_rate: 40MHz
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - scrollbar_mode: 'OFF'
+      bg_color: !lambda "return espcompose::thm_colors_background.get();"
+      border_width: 0
+      pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
+      id: rw_ref1
+      widgets:
+        - obj:
+            scrollbar_mode: 'OFF'
+            layout:
+              type: flex
+              flex_flow: COLUMN
+            width: 100%
+            height: SIZE_CONTENT
+            bg_opa: TRANSP
+            border_width: 0
+            widgets:
+              - label:
+                  text: Theme Test
+                  text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                  text_font: !lambda "return espcompose::memo_0.get();"
+                  id: rw_ref2
+              - obj:
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: COLUMN
+                  bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
+                  pad_all: !lambda "return espcompose::thm_spacing_md.get();"
+                  radius: !lambda "return espcompose::thm_radii_md.get();"
+                  border_width: 0
+                  width: 100%
+                  height: SIZE_CONTENT
+                  id: rw_ref3
+                  widgets:
+                    - label:
+                        text: Controls
+                        text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                        text_font: !lambda "return espcompose::memo_1.get();"
+                        id: rw_ref4
+                    - obj:
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
+                        widgets:
+                          - label:
+                              text: Brightness
+                              text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
+                              text_font: !lambda "return espcompose::memo_2.get();"
+                              id: rw_ref5
+                          - slider:
+                              min_value: 0
+                              max_value: 255
+              - obj:
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: ROW
+                  width: 100%
+                  height: SIZE_CONTENT
+                  bg_opa: TRANSP
+                  border_width: 0
+                  widgets:
+                    - button:
+                        on_press:
+                          - lambda: !lambda "espcompose::select_theme(\\"dark\\");"
+                        bg_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
+                        border_width: 0
+                        width: !lambda "return espcompose::memo_4.get();"
+                        height: !lambda "return espcompose::thm_sizes_md_height.get();"
+                        pressed:
+                          bg_color: !lambda "return espcompose::thm_colors_primary_bgPressed.get();"
+                        id: rw_ref6
+                        widgets:
+                          - label:
+                              text: Dark
+                              align: CENTER
+                              text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
+                              text_font: !lambda "return espcompose::memo_3.get();"
+                              id: rw_ref7
+                    - button:
+                        on_press:
+                          - lambda: !lambda "espcompose::select_theme(\\"light\\");"
+                        bg_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
+                        border_width: 0
+                        width: !lambda "return espcompose::memo_6.get();"
+                        height: !lambda "return espcompose::thm_sizes_md_height.get();"
+                        pressed:
+                          bg_color: !lambda "return espcompose::thm_colors_secondary_bgPressed.get();"
+                        id: rw_ref8
+                        widgets:
+                          - label:
+                              text: Light
+                              align: CENTER
+                              text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
+                              text_font: !lambda "return espcompose::memo_5.get();"
+                              id: rw_ref9
 "
 `;
 

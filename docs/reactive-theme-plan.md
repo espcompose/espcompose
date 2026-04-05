@@ -10,7 +10,7 @@ ReactiveNodes through render functions.
 ### Design Decisions
 
 - **Full token switching** — colors, spacing, radii, fonts, sizes all runtime-switchable
-- **No style\_definitions** — everything flows through per-widget reactive bindings
+- **No style\_definitions** — everything flows through per-widget reactive bindings (see `style-system-next-steps.md` §1 for rationale)
 - **Preregistered themes** — registered at compile time, switched by name via `theme.select('dark')`
 - **Reactive token props** — `status`, `size`, etc. can be `BindProp<T>` (static or reactive)
 
@@ -75,25 +75,20 @@ ReactiveNodes through render functions.
 
 ---
 
-### Phase 5: Cleanup (UI) — ⚠️ PARTIALLY COMPLETE
+### Phase 5: Cleanup (UI) — ✅ COMPLETE
 
-1. ⬜ **Delete `bridge.ts`, `style-ids.ts`, `json.ts`** — These files still exist but are obsolete. They were part of the old theme system that used LVGL `style_definitions`. Safe to delete once all consumers verified
+1. ✅ **Deleted `bridge.ts`, `style-ids.ts`, `json.ts`** — removed obsolete files from `packages/ui/src/theme/`. No consumers imported them
 2. ✅ **`context.ts` rewritten** — exports `useReactiveTheme()` re-exported from SDK; old `ThemeProvider`/`ThemeContext`/`useTheme()` removed
 3. ✅ **`index.ts` updated** — exports `useReactiveTheme`, `ThemeProvider`, `darkTheme`, `lightTheme`, reactive resolvers, all component exports
 
-### Files awaiting deletion:
-- `packages/ui/src/theme/bridge.ts` — old `createLvglThemeProps()` / `style_definitions` bridge
-- `packages/ui/src/theme/style-ids.ts` — named LVGL style definition ID constants (`ds_status_*`, etc.)
-- `packages/ui/src/theme/json.ts` — `themeToJSON()` / `themeFromJSON()` serialization helpers
-
 ---
 
-### Phase 6: E2E Tests — ⬜ NOT STARTED
+### Phase 6: E2E Tests — ✅ COMPLETE
 
-1. ⬜ **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen with Text, Card, SliderField, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
-2. ⬜ **`fancy-light-cascade-device`** — sensor-derived `mode` → `FancyLightButton` → `LightButton` → `Button` → `lvgl-button` + `lvgl-label`. Validates: ReactiveNode flows through 3 component layers, memo chain (sensor → mode → status → labelText → widget), correct C++ dependency graph
+1. ✅ **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen, Text, Card, SliderField, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
+2. ✅ **`fancy-light-cascade-device`** — sensor-derived memo chain + 3-layer component cascade: `FancyLightButton` → `LightButton` → `Button` → `lvgl-button` + `lvgl-label`. Validates: ReactiveNode flows through component layers, memo chain (sensor → status text, light entity → label), correct C++ dependency graph with both HA entity signals and theme signals
 3. ✅ **`design-system-device` updated** — uses `<ThemeProvider themes={{ dark: darkTheme }}>` pattern (new reactive API)
-4. ⬜ **Add both new projects to `build.test.ts`** — snapshot + ESPHome config validation
+4. ✅ **Both projects wired into `build.test.ts`** — snapshot + ESPHome config validation
 
 ---
 

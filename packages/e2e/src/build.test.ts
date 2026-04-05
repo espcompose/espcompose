@@ -167,4 +167,14 @@ describe('ESPHome Compose Build', () => {
   it('action-tree-device', async () => {
     await createProjectTest(projectsDir, 'action-tree-device');
   });
+
+  // Reactive theme switching: two themes, theme.select(), full token reactivity
+  it('reactive-theme-device', async () => {
+    await createProjectTest(projectsDir, 'reactive-theme-device');
+  });
+
+  // Component cascade: ReactiveNode flows through 3 component layers
+  it('fancy-light-cascade-device', async () => {
+    await createProjectTest(projectsDir, 'fancy-light-cascade-device');
+  });
 });
