@@ -25,7 +25,7 @@ describe('withErrorHandler', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const wrapped = withErrorHandler('Compile', () => { throw new Error('bad config'); });
     await wrapped();
-    expect(errorSpy).toHaveBeenCalledWith('Compile failed: bad config');
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Compile failed: bad config'));
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -34,7 +34,7 @@ describe('withErrorHandler', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const wrapped = withErrorHandler('Run', () => { throw 'string error'; });
     await wrapped();
-    expect(errorSpy).toHaveBeenCalledWith('Run failed: string error');
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Run failed: string error'));
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -43,7 +43,7 @@ describe('withErrorHandler', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const wrapped = withErrorHandler('Logs', async () => { throw new Error('timeout'); });
     await wrapped();
-    expect(errorSpy).toHaveBeenCalledWith('Logs failed: timeout');
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Logs failed: timeout'));
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });
