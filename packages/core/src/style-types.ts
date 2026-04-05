@@ -12,7 +12,7 @@
 
 import type { BindProp } from './types';
 import type { LvglStyleProps } from './generated/components/lvgl';
-import type { ImageRef } from './generated/markers';
+import type { ImageRef } from './component-aliases';
 import type { RefProp } from './types';
 
 // ── Utility types ──────────────────────────────────────────────────────────

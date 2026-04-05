@@ -38,6 +38,9 @@ export * from './intents';
 // component-prop interfaces & marker phantom-types.
 export * from './generated/index';
 
+// Hand-curated top-level aliases for commonly used component refs.
+export * from './component-aliases';
+
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Hooks
 // ────────────────────────────────────────────────────────────────────────────

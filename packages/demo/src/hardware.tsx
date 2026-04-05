@@ -1,4 +1,4 @@
-import { DisplayRef, ES8311Ref, I2CBusRef, I2SAudioComponentRef, LEDCOutputRef, Ref, SpeakerRef, useRef } from "@espcompose/core";
+import { Components, DisplayRef, I2CBusRef, I2SAudioComponentRef, LEDCOutputRef, Ref, SpeakerRef, useRef } from "@espcompose/core";
 
 type Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1Props = {
     display: Ref<DisplayRef>,
@@ -9,7 +9,7 @@ export const Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 = (props: Waveshare_ESP32P4_
     const i2c_bus = useRef<I2CBusRef>();
     const backlight_pwm = useRef<LEDCOutputRef>();
     const audio_bus = useRef<I2SAudioComponentRef>();
-    const es8311_dac = useRef<ES8311Ref>();
+    const es8311_dac = useRef<Components.Es8311.ES8311Ref>();
     const speaker = useRef<SpeakerRef>();
 
     return <>

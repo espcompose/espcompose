@@ -395,6 +395,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.9(@types/node@22.19.15)
 
+  scripts:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.9(@types/node@22.19.15)
+
 packages:
 
   '@babel/code-frame@7.29.0':

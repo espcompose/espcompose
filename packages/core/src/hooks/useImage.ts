@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { ImageProps } from '../generated/components/image';
-import type { ImageRef } from '../generated/markers';
+import type { ImageRef } from '../component-aliases';
 import type { Ref } from '../types';
 import { RefHandle } from '../types';
 import { assertHookContext } from './useState';

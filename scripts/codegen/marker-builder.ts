@@ -337,31 +337,6 @@ export function buildMarkersFileContent(
     statements.push(componentsDecl);
   }
 
-  // ── Phase 3: Emit unique top-level aliases ────────────────────────────────
-
-  const emittedAliases: Array<{ leafName: string; groupName: string }> = [];
-  for (const { groupName, types } of namespaceEntries) {
-    for (const { leafName } of types) {
-      if ((leafNameCounts.get(leafName) ?? 0) === 1) {
-        emittedAliases.push({ leafName, groupName });
-      }
-    }
-  }
-
-  if (emittedAliases.length > 0) {
-    statements.push(ts.factory.createEmptyStatement());
-
-    for (const { leafName, groupName } of emittedAliases) {
-      const alias = ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        leafName,
-        undefined,
-        ts.factory.createTypeReferenceNode(`Components.${groupName}.${leafName}`),
-      );
-      statements.push(alias);
-    }
-  }
-
   const printed = printStatements(statements);
   return addFileHeader(printed, [
     `AUTO-GENERATED — DO NOT EDIT.`,
@@ -372,8 +347,7 @@ export function buildMarkersFileContent(
     ``,
     `Public API:`,
     `  Components.<Group>.<TypeRef>  — canonical namespaced path`,
-    `  <TypeRef>                      — top-level alias (when unique)`,
     ``,
-    `Example:  useRef<LightRef>()  or  useRef<Components.Light.LightRef>()`,
+    `Top-level aliases are hand-curated in component-aliases.ts.`,
   ]);
 }

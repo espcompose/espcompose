@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { FontProps } from '../generated/components/font';
-import type { FontRef } from '../generated/markers';
+import type { FontRef } from '../component-aliases';
 import type { Ref } from '../types';
 import { RefHandle } from '../types';
 import { assertHookContext } from './useState';

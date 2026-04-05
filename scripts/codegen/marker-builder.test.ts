@@ -77,10 +77,10 @@ describe('buildMarkersFileContent', () => {
     expect(output).toContain('export type SensorRef = __marker_sensor_Sensor');
   });
 
-  it('emits unique top-level aliases with Ref suffix', () => {
+  it('does not emit top-level aliases (managed by component-aliases.ts)', () => {
     const output = buildMarkers(['light::Light', 'sensor::Sensor']);
-    expect(output).toContain('export type LightRef = Components.Light.LightRef');
-    expect(output).toContain('export type SensorRef = Components.Sensor.SensorRef');
+    // Top-level aliases are hand-curated in component-aliases.ts, not generated
+    expect(output).not.toMatch(/^export type \w+Ref = Components\./m);
   });
 
   it('normalizes acronyms in group names', () => {
@@ -89,16 +89,14 @@ describe('buildMarkersFileContent', () => {
     expect(output).toContain('export namespace UART');
     expect(output).toContain('export type I2CBusRef = __marker_i2c_I2CBus');
     expect(output).toContain('export type UARTComponentRef = __marker_uart_UARTComponent');
-    // Top-level aliases
-    expect(output).toContain('export type I2CBusRef = Components.I2C.I2CBusRef');
-    expect(output).toContain('export type UARTComponentRef = Components.UART.UARTComponentRef');
+    // No top-level aliases (hand-curated in component-aliases.ts)
   });
 
   it('handles switch_ namespace (C++ reserved word escape)', () => {
     const output = buildMarkers(['switch_::Switch']);
     expect(output).toContain('export namespace Switch');
     expect(output).toContain('export type SwitchRef = __marker_switch__Switch');
-    expect(output).toContain('export type SwitchRef = Components.Switch.SwitchRef');
+    // No top-level alias (hand-curated in component-aliases.ts)
   });
 
   it('strips leading :: from class names', () => {
@@ -112,15 +110,13 @@ describe('buildMarkersFileContent', () => {
     expect(output).toContain('export type HUB75DisplayRef');
   });
 
-  it('skips top-level alias when leaf names collide', () => {
-    // Two groups produce the same leaf name "WidgetRef"
+  it('handles multiple groups with same leaf name', () => {
     const output = buildMarkers(['foo::Widget', 'bar::Widget']);
     // Both should exist in their respective namespaces
     expect(output).toContain('export namespace Foo');
     expect(output).toContain('export namespace Bar');
-    // But neither should get a top-level alias
-    const topLevelAliasCount = (output.match(/^export type WidgetRef = Components\./gm) ?? []).length;
-    expect(topLevelAliasCount).toBe(0);
+    // No top-level aliases emitted by codegen
+    expect(output).not.toMatch(/^export type WidgetRef = Components\./m);
   });
 
   it('does not emit namespace entries for root-level classes', () => {
