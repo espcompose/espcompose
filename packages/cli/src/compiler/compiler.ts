@@ -1,14 +1,18 @@
-import * as esbuild from 'esbuild';
 import * as fs from 'fs';
 import * as path from 'path';
-import { createRequire } from 'module';
-import ts from 'typescript';
-import { ESLint } from 'eslint';
-import { writeTransformedFiles } from './transform/index.js';
-import { LIBRARY_FORMAT_VERSION } from './transform/format-version.js';
-import type { SemanticIR, ComposeTarget, BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
-import { buildSemanticIR } from '@espcompose/core/internals';
-import { writeIRDebugFiles } from './ir-debug.js';
+import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { Phase, PhaseContext } from './phases/types';
+import { setupPhase } from './phases/setup';
+import { typeCheckPhase } from './phases/type-check';
+import { lintPhase } from './phases/lint';
+import { transformPhase } from './phases/transform';
+import { bundlePhase } from './phases/bundle';
+import { bundleLibraryPhase } from './phases/bundle-library';
+import { executePhase } from './phases/execute';
+import { validatePhase } from './phases/validate';
+import { emitPhase } from './phases/emit';
+import { emitDTSPhase } from './phases/emit-dts';
+import { teardownPhase } from './phases/teardown';
 
 export interface CompileOptions {
   /** Absolute path to the TSX/TS entry file. */
@@ -24,461 +28,101 @@ export interface CompileOptions {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Phase 0: Type-check
+// Pipelines
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Full compile pipeline: setup → type-check → lint → transform → bundle → execute → emit → teardown. */
+const compilePipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
+  bundlePhase,
+  executePhase,
+  validatePhase,
+  emitPhase,
+  teardownPhase,
+];
+
+/** IR-only pipeline: setup → type-check → lint → transform → bundle → execute → teardown. */
+const irPipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
+  bundlePhase,
+  executePhase,
+  validatePhase,
+  teardownPhase,
+];
+
+/** Library pipeline: setup → type-check → lint → transform → bundle(library) → emitDTS → teardown. */
+const libraryPipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
+  bundleLibraryPhase,
+  emitDTSPhase,
+  teardownPhase,
+];
+
+/** Library transpile pipeline: setup → type-check → lint → transform → teardown (no bundle/emit). */
+const transpileLibraryPipeline: Phase[] = [
+  setupPhase,
+  typeCheckPhase,
+  lintPhase,
+  transformPhase,
+  teardownPhase,
+];
+
+// ────────────────────────────────────────────────────────────────────────────
+// Pipeline runner
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Run the TypeScript compiler over the entry file and its transitive imports,
- * returning the ts.Program for reuse by Phase 1.
+ * Run a sequence of compiler phases, threading a shared PhaseContext through each.
  *
- * Uses the project's own tsconfig.json when one can be located (by walking up
- * from the entry file's directory), falling back to sensible JSX defaults so
- * the check can still run for projects without a tsconfig.
- *
- * Throws a descriptive error if any type errors are found.
+ * Teardown always runs via try/finally — even if a phase throws, the build
+ * directory is cleaned up (unless debug mode is enabled).
  */
-async function typeCheck(entryFile: string): Promise<ts.Program> {
-  const projectDir = path.dirname(entryFile);
-  const tsConfigPath = ts.findConfigFile(projectDir, ts.sys.fileExists, 'tsconfig.json');
+async function runPipeline(ctx: PhaseContext, phases: Phase[]): Promise<void> {
+  // Find teardown in the pipeline so we can guarantee it runs in finally
+  const teardownIndex = phases.indexOf(teardownPhase);
+  const corePhases = teardownIndex >= 0 ? phases.slice(0, teardownIndex) : phases;
+  const hasTeardown = teardownIndex >= 0;
 
-  let compilerOptions: ts.CompilerOptions;
-  if (tsConfigPath) {
-    const configFile = ts.readConfigFile(tsConfigPath, ts.sys.readFile);
-    if (configFile.error) {
-      const message = ts.flattenDiagnosticMessageText(configFile.error.messageText, '\n');
-      throw new Error(`Error reading tsconfig.json: ${message}`);
+  try {
+    for (const phase of corePhases) {
+      await phase(ctx);
     }
-    const parsedConfig = ts.parseJsonConfigFileContent(
-      configFile.config,
-      ts.sys,
-      path.dirname(tsConfigPath),
-    );
-    compilerOptions = parsedConfig.options;
-  } else {
-    compilerOptions = {
-      target: ts.ScriptTarget.ES2022,
-      moduleResolution: ts.ModuleResolutionKind.Bundler,
-      jsx: ts.JsxEmit.ReactJSX,
-      jsxImportSource: '@espcompose/core',
-      strict: true,
-      esModuleInterop: true,
-      skipLibCheck: true,
-    };
-  }
-
-  const program = ts.createProgram([entryFile], compilerOptions);
-  const diagnostics = ts.getPreEmitDiagnostics(program);
-
-  const errors = Array.from(diagnostics).filter(
-    (d) =>
-      d.category === ts.DiagnosticCategory.Error &&
-      d.file !== undefined &&
-      !d.file.fileName.includes('node_modules'),
-  );
-
-  if (errors.length > 0) {
-    const formatted = errors.map((d) => {
-      const message = ts.flattenDiagnosticMessageText(d.messageText, '\n');
-      if (d.file && d.start !== undefined) {
-        const { line, character } = d.file.getLineAndCharacterOfPosition(d.start);
-        const relFile = path.relative(process.cwd(), d.file.fileName);
-        return `  error ${relFile}:${line + 1}:${character + 1} - ${message}`;
-      }
-      return `  error ${message}`;
-    });
-    throw new Error(
-      `TypeScript type-check failed with ${errors.length} error(s):\n${formatted.join('\n')}`,
-    );
-  }
-
-  return program;
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Phase 0.5: Lint
-// ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Build the default ESLint flat config used when a project has no config file.
- *
- * Loads the `@espcompose/eslint` recommended preset, which includes
- * `typescript-eslint` recommended rules and JSX parser options.
- */
-async function buildDefaultConfig(): Promise<ESLint.Options['overrideConfig']> {
-  const { default: composeESLint } = await import('@espcompose/eslint');
-  return composeESLint.recommended as ESLint.Options['overrideConfig'];
-}
-
-/**
- * Run ESLint over the entry file and its sibling source files.
- *
- * Always enforced — if the project has its own `eslint.config.*` the ESLint
- * API discovers it automatically; otherwise the compiler supplies a built-in
- * default config based on `@espcompose/eslint` recommended.
- *
- * Throws on lint errors. Warnings are printed to stderr but do not fail.
- */
-export async function lint(entryFile: string): Promise<void> {
-  const projectDir = path.dirname(entryFile);
-
-  // Determine whether the project ships its own ESLint config
-  const configFiles = [
-    'eslint.config.js', 'eslint.config.mjs', 'eslint.config.cjs',
-    'eslint.config.ts', 'eslint.config.mts', 'eslint.config.cts',
-  ];
-  const hasProjectConfig = configFiles.some((f) =>
-    fs.existsSync(path.join(projectDir, f)),
-  );
-
-  let eslint: ESLint;
-  if (hasProjectConfig) {
-    eslint = new ESLint({ cwd: projectDir });
-  } else {
-    eslint = new ESLint({
-      cwd: projectDir,
-      overrideConfigFile: true,
-      overrideConfig: await buildDefaultConfig(),
-    });
-  }
-
-  const results = await eslint.lintFiles([entryFile]);
-
-  const errorCount = results.reduce((sum, r) => sum + r.errorCount, 0);
-  const warningCount = results.reduce((sum, r) => sum + r.warningCount, 0);
-
-  if (warningCount > 0 || errorCount > 0) {
-    const formatter = await eslint.loadFormatter('stylish');
-    const output = await formatter.format(results);
-    if (output) {
-      console.error(output);
-    }
-  }
-
-  if (errorCount > 0) {
-    throw new Error(`ESLint found ${errorCount} error(s).`);
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Phase 1: Transform (write transformed files to .espcompose-build/)
-//
-// Every user source file is transformed via the TypeScript AST and written
-// to the build directory preserving directory structure. This mirrors the
-// Resolut CLI pattern — individual transformed files are inspectable on
-// disk (especially useful with --debug).
-// ────────────────────────────────────────────────────────────────────────────
-
-function transform(
-  program: ts.Program,
-  entryFile: string,
-  sourceDir: string,
-  buildDir: string,
-): string {
-  const { entryFile: transformedEntry, diagnostics } = writeTransformedFiles(
-    program,
-    entryFile,
-    sourceDir,
-    buildDir,
-  );
-
-  if (diagnostics.length > 0) {
-    const formatted = diagnostics.map((d) => {
-      const loc = d.line != null ? `:${d.line}:${d.character ?? 1}` : '';
-      return `  transform ${d.file}${loc} - ${d.message}`;
-    });
-    throw new Error(
-      `Script transformation failed with ${diagnostics.length} error(s):\n${formatted.join('\n')}`,
-    );
-  }
-
-  return transformedEntry;
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Phase 2: Bundle (esbuild reads from .espcompose-build/)
-//
-// esbuild bundles the pre-transformed files from the build directory into
-// a single CJS file. Because the sources are real files on disk, esbuild
-// resolves imports normally — no load plugin needed.
-// ────────────────────────────────────────────────────────────────────────────
-
-async function bundle(entryFile: string, outFile: string): Promise<void> {
-  const result = await esbuild.build({
-    entryPoints: [entryFile],
-    bundle: true,
-    platform: 'node',
-    format: 'cjs',
-    target: 'node18',
-    jsx: 'automatic',
-    jsxImportSource: '@espcompose/core',
-    // Keep the SDK external — it will be require()'d from the host process
-    external: ['@espcompose/core'],
-    outfile: outFile,
-    sourcemap: false,
-    metafile: true,
-  });
-
-  if (result.errors.length > 0) {
-    const messages = await esbuild.formatMessages(result.errors, { kind: 'error' });
-    throw new Error(`Bundle failed:\n${messages.join('\n')}`);
-  }
-
-  // Check format versions of any ESPCompose libraries pulled into the bundle.
-  // Libraries built with `espcompose library` stamp an `__espcompose_format__`
-  // export. We scan the bundle's resolved inputs for these markers and validate
-  // that all declared versions are compatible with this compiler.
-  if (result.metafile) {
-    validateBundledLibraryVersions(result.metafile, entryFile);
-  }
-}
-
-/**
- * Scan esbuild metafile inputs for ESPCompose library format version markers.
- * Reads each resolved input file (outside the project's own source tree) and
- * checks for `__espcompose_format__` exports. Throws if any are incompatible.
- */
-function validateBundledLibraryVersions(
-  metafile: esbuild.Metafile,
-  entryFile: string,
-): void {
-  // The entry file lives inside the build directory (.espcompose-build/).
-  // Skip everything under that tree — those are the project's own sources.
-  const buildDir = path.dirname(path.resolve(entryFile));
-
-  for (const inputPath of Object.keys(metafile.inputs)) {
-    const absPath = path.resolve(inputPath);
-
-    // Skip the project's own transformed sources
-    if (absPath.startsWith(buildDir)) continue;
-    if (!fs.existsSync(absPath)) continue;
-
-    let content: string;
-    try {
-      content = fs.readFileSync(absPath, 'utf8');
-    } catch {
-      continue;
-    }
-
-    // Look for __espcompose_format__ assignments in the source
-    const versionMatch = content.match(
-      /(?:export\s+(?:const|var|let)\s+)?__espcompose_format__\s*=\s*(\d+)/,
-    );
-    if (!versionMatch) continue;
-
-    const version = parseInt(versionMatch[1], 10);
-    if (version !== LIBRARY_FORMAT_VERSION) {
-      const libName = extractLibraryName(inputPath);
-      throw new Error(
-        `Library ${libName} was compiled with ESPCompose format v${version}, ` +
-        `but this compiler requires format v${LIBRARY_FORMAT_VERSION}. ` +
-        `Please rebuild the library with a compatible ESPCompose CLI version.`,
-      );
+  } finally {
+    if (hasTeardown) {
+      teardownPhase(ctx);
     }
   }
 }
 
-/** Extract a human-readable library name from a node_modules path. */
-function extractLibraryName(inputPath: string): string {
-  const match = inputPath.match(/node_modules\/(@[^/]+\/[^/]+|[^/]+)/);
-  return match ? match[1] : inputPath;
-}
-
 // ────────────────────────────────────────────────────────────────────────────
-// Phase 3: Execute + render
-// ────────────────────────────────────────────────────────────────────────────
-
-interface ExecuteResult {
-  ir: SemanticIR;
-}
-
-/**
- * Execute the bundled CJS, capture the render pass, and build a SemanticIR.
- */
-function executeAndBuildIR(bundleFile: string): ExecuteResult {
-  // Use createRequire so this works correctly in both CJS and ESM contexts.
-  // Rooting the require at the bundle file itself means @espcompose/core
-  // resolves from the user's project node_modules (bundle sits next to source).
-  const _require = createRequire(bundleFile);
-
-  // Clear the require cache so re-runs in the same process get a fresh module
-  delete _require.cache[_require.resolve(bundleFile)];
-
-  // Load the SDK via the same CommonJS require that the bundle will use.
-  // This ensures withScriptScope and createScript share the same module-level
-  // state, avoiding the ESM / CJS dual-instance problem where the compiler's
-  // statically-imported ESM copy and the user bundle's CJS copy would have
-  // separate state and never communicate.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cjsSDK = (_require('@espcompose/core') as any).ESPCompose;
-
-  // Clear all compiler state for a fresh render pass.
-  cjsSDK.clearHAEntityCache();
-  cjsSDK.clearImageCache();
-  cjsSDK.clearFontCache();
-  cjsSDK.clearRefRegistry();
-  cjsSDK.clearSecrets();
-  cjsSDK.clearThemeRegistry();
-  cjsSDK.clearReactiveThemeProxy();
-  cjsSDK.clearThemeNodeCache();
-
-  // Wrap the bundle load and render in both a script scope and a reactive scope.
-  let collectedScripts: unknown[] = [];
-  cjsSDK.startSerializationCapture();
-  const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
-    const { result: config, scripts } = cjsSDK.withScriptScope(() => {
-      const mod = _require(bundleFile) as { default?: unknown };
-
-      const rootElement = mod.default;
-
-      if (rootElement == null) {
-        throw new Error(
-          `Entry module does not have a default export. ` +
-            `Make sure your TSX file exports a default ESPCompose element tree.`
-        );
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
-
-      return rendered;
-    });
-    collectedScripts = scripts;
-
-    return config;
-  });
-
-  const serializationCaptures = cjsSDK.stopSerializationCapture();
-
-  // ── Extract theme data from the SDK registry ─────────────────────────────
-  let themeData: IRThemeData | undefined;
-  const getThemeRegistry = cjsSDK.getThemeRegistry;
-  if (typeof getThemeRegistry === 'function') {
-    const registry = getThemeRegistry();
-    const themeNames: string[] = registry.getThemeNames();
-    if (themeNames.length > 0) {
-      const signalPaths: string[] = registry.getSignalPaths();
-      const leafData = new Map<string, { values: unknown[]; valueType: string }>();
-      for (const path of signalPaths) {
-        const values: unknown[] = [];
-        let valueType = 'int';
-        for (const name of themeNames) {
-          const themes = registry.getThemes();
-          const theme = themes.get(name);
-          if (theme) {
-            const val = theme.values[path];
-            if (val) {
-              values.push(val.value);
-              valueType = val.valueType;
-            } else {
-              values.push(0);
-            }
-          }
-        }
-        leafData.set(path, { values, valueType });
-      }
-      themeData = {
-        themeNames,
-        defaultIndex: registry.getDefaultIndex(),
-        leafData,
-      };
-    }
-  }
-
-  // ── Build Semantic IR ─────────────────────────────────────────────────
-  const ir: SemanticIR = serializationCaptures
-    ? buildSemanticIR({
-        config: reactiveResult,
-        captures: serializationCaptures,
-        bindings: bindings ?? [],
-        entities: entities ?? [],
-        components: components ?? [],
-        scripts: collectedScripts as BuildSemanticIRInput['scripts'],
-        reactiveNodes: reactiveNodes ?? [],
-        themes: themeData,
-      })
-    : { esphome: { sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { reactive: { bindings: [], memos: [], effects: [] } } };
-
-  return { ir };
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Shared pipeline: Phases 0–3
-// ────────────────────────────────────────────────────────────────────────────
-
-interface PipelineResult {
-  ir: SemanticIR;
-  buildDir: string;
-  sourceDir: string;
-}
-
-/**
- * Run the shared compiler pipeline (type-check → lint → transform → bundle → execute).
- * Returns the SemanticIR and the build directory path for cleanup.
- */
-async function runPipeline(entryFile: string): Promise<PipelineResult> {
-  // Phase 0: Type-check
-  const program = await typeCheck(entryFile);
-
-  // Phase 0.5: Lint
-  await lint(entryFile);
-
-  const sourceDir = path.dirname(entryFile);
-  const buildDir = path.join(sourceDir, '.espcompose-build');
-  const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
-
-  // Force-clean the build directory before each build
-  if (fs.existsSync(buildDir)) {
-    fs.rmSync(buildDir, { recursive: true, force: true });
-  }
-  fs.mkdirSync(buildDir, { recursive: true });
-
-  // Phase 1: Transform
-  const transformedEntry = transform(program, entryFile, sourceDir, buildDir);
-
-  // Phase 2: Bundle
-  await bundle(transformedEntry, bundlePath);
-
-  // Phase 3: Execute + build IR
-  const { ir } = executeAndBuildIR(bundlePath);
-
-  return { ir, buildDir, sourceDir };
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Public entry point
+// Public entry points
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Compile a TSX entry file through the full pipeline and emit via the target.
  *
  * Pipeline:
- *   [type-check] → [lint] → [transform to .espcompose-build/] → [esbuild bundle] → [require + render] → [target.emit()]
+ *   [setup] → [type-check] → [lint] → [transform] → [bundle] → [execute] → [emit] → [teardown]
  */
 export async function compile(options: CompileOptions): Promise<void> {
   const { entryFile, projectDir, outDir, target, debug = false } = options;
 
-  const { ir, buildDir, sourceDir } = await runPipeline(entryFile);
+  const sourceDir = path.dirname(entryFile);
+  const buildDir = path.join(sourceDir, '.espcompose-build');
+  const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
+  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, projectDir, outDir, target };
 
-  // Write IR debug files when --debug is set
-  if (debug) {
-    const htmlPath = writeIRDebugFiles(ir, buildDir);
-    console.log(`IR debug viewer: ${htmlPath}`);
-  }
-
-  try {
-    // Phase 4: Delegate to the target for lowering and output
-    await target.emit({ ir, projectDir, outDir, sourceDir });
-  } finally {
-    // Clean up the build directory unless --debug is set
-    if (!debug && fs.existsSync(buildDir)) {
-      fs.rmSync(buildDir, { recursive: true, force: true });
-    }
-  }
+  await runPipeline(ctx, compilePipeline);
 }
-
-// ────────────────────────────────────────────────────────────────────────────
-// Project-level build entry point
-// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Build an ESPHome Compose project directory.
@@ -505,15 +149,11 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
   await compile({ entryFile, projectDir, outDir, target, debug: options?.debug });
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// IR-only compilation (for simulator and other backends)
-// ────────────────────────────────────────────────────────────────────────────
-
 /**
  * Compile a project to SemanticIR without emitting target-specific files.
  *
- * Runs the full pipeline (type-check, lint, transform, bundle, execute+render)
- * but stops after IR construction.
+ * Runs the IR pipeline (type-check, lint, transform, bundle, execute+render)
+ * but skips the emit phase.
  */
 export async function compileToIR(projectDir: string): Promise<SemanticIR> {
   const pkgPath = path.join(projectDir, 'package.json');
@@ -527,13 +167,109 @@ export async function compileToIR(projectDir: string): Promise<SemanticIR> {
   }
 
   const entryFile = path.resolve(projectDir, pkg.main);
+  const sourceDir = path.dirname(entryFile);
+  const buildDir = path.join(sourceDir, '.espcompose-build');
+  const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
+  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug: false };
 
-  const { ir, buildDir } = await runPipeline(entryFile);
+  await runPipeline(ctx, irPipeline);
 
-  // Clean up the build directory
-  if (fs.existsSync(buildDir)) {
-    fs.rmSync(buildDir, { recursive: true, force: true });
+  if (!ctx.ir) {
+    throw new Error('Pipeline did not produce a SemanticIR. Ensure the execute phase ran successfully.');
   }
 
-  return ir;
+  return ctx.ir;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Library build
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface BuildLibraryOptions {
+  /** Absolute path to the library root (where package.json lives). */
+  rootDir: string;
+  /** Entry file relative to rootDir (default: 'src/index.ts'). */
+  entry?: string;
+  /** Output directory relative to rootDir (default: 'dist'). */
+  outDir?: string;
+  /** Optional path to tsconfig.json relative to rootDir. */
+  tsconfig?: string;
+  /** When true, keep the `.espcompose-build/` intermediate folder for inspection. */
+  debug?: boolean;
+}
+
+export interface BuildLibraryResult {
+  /** Number of source files processed. */
+  filesWritten: number;
+  /** Number of files that had AST transforms applied. */
+  filesTransformed: number;
+}
+
+/**
+ * Build an ESPCompose component library for distribution.
+ *
+ * Pipeline:
+ *   [setup] → [type-check] → [lint] → [transform] → [bundle-library] → [emit-dts] → [teardown]
+ *
+ * Produces an ESM bundle and .d.ts declarations in `outDir`.
+ */
+export async function buildLibrary(options: BuildLibraryOptions): Promise<BuildLibraryResult> {
+  const rootDir = options.rootDir;
+  const entryRel = options.entry ?? 'src/index.ts';
+  const outDirRel = options.outDir ?? 'dist';
+  const entryFile = path.resolve(rootDir, entryRel);
+  const sourceDir = path.dirname(entryFile);
+  const outDir = path.resolve(rootDir, outDirRel);
+  const buildDir = path.resolve(rootDir, '.espcompose-build');
+
+  const ctx: PhaseContext = {
+    entryFile,
+    sourceDir,
+    buildDir,
+    debug: options.debug ?? false,
+    projectDir: rootDir,
+    outDir,
+  };
+
+  await runPipeline(ctx, libraryPipeline);
+
+  return {
+    filesWritten: ctx.transformStats?.filesWritten ?? 0,
+    filesTransformed: ctx.transformStats?.filesTransformed ?? 0,
+  };
+}
+
+/**
+ * Transpile a component library — run AST transforms only, no bundling.
+ *
+ * Pipeline:
+ *   [setup] → [type-check] → [lint] → [transform] → [teardown]
+ *
+ * Writes transformed TypeScript sources to `outDir` for use with an
+ * external bundler (tsup, rollup, etc.).
+ */
+export async function transpileLibrary(options: BuildLibraryOptions): Promise<BuildLibraryResult> {
+  const rootDir = options.rootDir;
+  const entryRel = options.entry ?? 'src/index.ts';
+  const outDirRel = options.outDir ?? '.espcompose-build';
+  const entryFile = path.resolve(rootDir, entryRel);
+  const sourceDir = path.dirname(entryFile);
+  const outDir = path.resolve(rootDir, outDirRel);
+  const buildDir = path.resolve(rootDir, '.espcompose-build');
+
+  const ctx: PhaseContext = {
+    entryFile,
+    sourceDir,
+    buildDir,
+    debug: options.debug ?? false,
+    projectDir: rootDir,
+    outDir,
+  };
+
+  await runPipeline(ctx, transpileLibraryPipeline);
+
+  return {
+    filesWritten: ctx.transformStats?.filesWritten ?? 0,
+    filesTransformed: ctx.transformStats?.filesTransformed ?? 0,
+  };
 }

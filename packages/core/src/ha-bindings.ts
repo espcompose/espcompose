@@ -117,36 +117,3 @@ export interface HAEntityBindingMap {
   cover: CoverBinding;
 }
 
-/**
- * Resolve an HA domain string to the corresponding binding type.
- */
-export type HAEntityBinding<D extends keyof HAEntityBindingMap> = HAEntityBindingMap[D];
-
-/**
- * Mapping from HA action method names to HA service call names, per domain.
- *
- * Used by the compiler's action converter to rewrite `kitchen.toggle()`
- * into `{ 'homeassistant.action': { action: 'light.toggle', ... } }`.
- */
-export const HA_ACTION_MAP: Readonly<Record<string, Record<string, string>>> = {
-  light: {
-    toggle:  'light.toggle',
-    turnOn:  'light.turn_on',
-    turnOff: 'light.turn_off',
-  },
-  switch: {
-    toggle:  'switch.toggle',
-    turnOn:  'switch.turn_on',
-    turnOff: 'switch.turn_off',
-  },
-  fan: {
-    toggle:  'fan.toggle',
-    turnOn:  'fan.turn_on',
-    turnOff: 'fan.turn_off',
-  },
-  cover: {
-    open:  'cover.open_cover',
-    close: 'cover.close_cover',
-    stop:  'cover.stop_cover',
-  },
-};

@@ -12,10 +12,6 @@ export function setCurrentHookPath(path: string | null): void {
   _currentHookPath = path;
 }
 
-export function getCurrentHookPath(): string | null {
-  return _currentHookPath;
-}
-
 /**
  * Assert that we are inside a render pass (hook context is active).
  * Throws if called outside withScriptScope() — i.e. at module top level.

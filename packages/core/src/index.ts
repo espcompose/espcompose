@@ -15,7 +15,23 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 export * from './runtime';
-export * from './types';
+export type {
+  FunctionComponent,
+  EspComposeElement,
+  TriggerHandler,
+  TimePeriod,
+  MACAddress,
+  IPv4Address,
+  Ref,
+  RefProp,
+  BaseProps,
+  ComponentProps,
+  PinMode,
+  PinConfig,
+  Pin,
+  BindProp,
+} from './types';
+export { ACTION_BRAND, useRef, isRef } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
@@ -56,6 +72,6 @@ export { useReactiveTheme } from './reactive-theme';
 // Public API — Used by theme resolvers
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { ExprNode } from './ir/index';
-export { ReactiveNode, isReactiveNode } from './reactive-node';
+export type { IRExprNode } from './ir/index';
+export { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 export type { Signal } from './reactive-node';

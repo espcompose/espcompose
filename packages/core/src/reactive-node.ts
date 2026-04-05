@@ -1,9 +1,8 @@
 // ────────────────────────────────────────────────────────────────────────────
-// ReactiveNode<T> — unified reactive value abstraction
+// IRReactiveNode<T> — unified reactive value abstraction
 //
-// ReactiveNode is the single reactive value type in espcompose. It replaces
-// the former Expression<T> class and supports both single-source and
-// multi-source reactive values.
+// IRReactiveNode is the single reactive value type in espcompose.
+// It supports both single-source and multi-source reactive values.
 //
 // All reactive bindings — even single-source HA entity properties — route
 // through the C++ reactive runtime (Signal/Memo/Effect). There is no
@@ -15,7 +14,7 @@
 //   - 'effect':     side-effect callback (useEffect())
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ExprNode, ExprType } from './ir/expr-types';
+import type { IRExprNode, ExprType } from './ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types
@@ -24,7 +23,8 @@ import type { ExprNode, ExprType } from './ir/expr-types';
 /**
  * Tracks which source component and trigger a reactive node depends on.
  */
-export interface ExpressionDependency {
+export interface IRDependency {
+  readonly kind: 'dependency';
   /** ESPHome component ID that provides the value. */
   sourceId: string;
   /** The trigger on the source component (e.g. `on_state`, `on_value`). */
@@ -46,7 +46,7 @@ declare const REACTIVE_NODE_BRAND: unique symbol;
 //
 // At the type level, Signal<T> = T & { [SIGNAL]: true }. TypeScript treats
 // it as assignable to T, so expressions like `signal ? "A" : "B"` type-check
-// naturally. At runtime, the value is still a ReactiveNode instance — the
+// naturally. At runtime, the value is still a IRReactiveNode instance — the
 // brand is erased. The compiler detects Signal-typed sub-expressions in JSX
 // attributes and auto-wraps them in useMemo().
 // ────────────────────────────────────────────────────────────────────────────
@@ -58,18 +58,18 @@ declare const SIGNAL_BRAND: unique symbol;
  *
  * At the type level this is `T & { [SIGNAL_BRAND]: true }`, so TypeScript
  * treats it as a `T` — operators, ternaries, and comparisons all work
- * naturally. At runtime the value is a `ReactiveNode<T>` instance.
+ * naturally. At runtime the value is a `IRReactiveNode<T>` instance.
  */
 export type Signal<T> = T & { readonly [SIGNAL_BRAND]: true };
 
-export type ReactiveNodeKind = 'expression' | 'memo' | 'effect';
+export type IRReactiveNodeKind = 'expression' | 'memo' | 'effect';
 
 /**
- * Configuration for creating a ReactiveNode instance.
+ * Configuration for creating an IRReactiveNode instance.
  */
-export interface ReactiveNodeConfig {
-  kind: ReactiveNodeKind;
-  dependencies: ExpressionDependency[];
+export interface IRReactiveNodeConfig {
+  kind: IRReactiveNodeKind;
+  dependencies: IRDependency[];
   /** Target-agnostic return type for this reactive value. */
   exprType?: ExprType;
   /** ESPHome component ID of the source (set for kind='expression'). */
@@ -86,15 +86,15 @@ export interface ReactiveNodeConfig {
  * A compile-time marker representing a reactive value that may depend
  * on one or more ESPHome component states.
  *
- * ReactiveNode is the unified reactive type — it handles both single-source
+ * IRReactiveNode is the unified reactive type — it handles both single-source
  * bindings (kind='expression') and multi-source derived values (kind='memo').
  */
-export class ReactiveNode<T = unknown> {
+export class IRReactiveNode<T = unknown> {
   declare readonly [REACTIVE_NODE_BRAND]?: T;
   readonly __reactive_node__ = true;
 
-  readonly kind: ReactiveNodeKind;
-  readonly dependencies: ExpressionDependency[];
+  readonly kind: IRReactiveNodeKind;
+  readonly dependencies: IRDependency[];
   /** Target-agnostic return type for this reactive value. */
   readonly exprType?: ExprType;
 
@@ -117,9 +117,9 @@ export class ReactiveNode<T = unknown> {
    * Set by the AST compiler (__espcompose.compiled) when the expression is
    * statically analyzed. Backends lower this to target code (C++ or JS).
    */
-  exprIR?: ExprNode;
+  exprIR?: IRExprNode;
 
-  constructor(config: ReactiveNodeConfig) {
+  constructor(config: IRReactiveNodeConfig) {
     this.kind = config.kind;
     this.dependencies = config.dependencies;
     this.exprType = config.exprType;
@@ -136,7 +136,7 @@ export class ReactiveNode<T = unknown> {
   }
 
   /**
-   * Allow ReactiveNodes to participate in JS value coercions (comparisons,
+   * Allow IRReactiveNodes to participate in JS value coercions (comparisons,
    * arithmetic, ternary conditions). Returns a type-appropriate default:
    *   - boolean → true  (so `expr && ...` proceeds to the rhs)
    *   - number  → NaN   (so numeric comparisons are false)
@@ -176,16 +176,16 @@ export class ReactiveNode<T = unknown> {
 }
 
 /**
- * Type guard for ReactiveNode instances.
+ * Type guard for IRReactiveNode instances.
  */
-export function isReactiveNode(val: unknown): val is ReactiveNode {
-  return val instanceof ReactiveNode;
+export function isIRReactiveNode(val: unknown): val is IRReactiveNode {
+  return val instanceof IRReactiveNode;
 }
 
 // ── Dependency tracking ────────────────────────────────────────────────────
 
 /** Module-level stack for tracking reactive dependencies during render. */
-const trackingStack: ExpressionDependency[][] = [];
+const trackingStack: IRDependency[][] = [];
 
 /** Start tracking reactive dependencies. */
 export function startTracking(): void {
@@ -193,12 +193,12 @@ export function startTracking(): void {
 }
 
 /** Stop tracking and return the collected dependencies. */
-export function stopTracking(): ExpressionDependency[] {
+export function stopTracking(): IRDependency[] {
   return trackingStack.pop() ?? [];
 }
 
 /** Record a dependency during tracking. */
-export function trackDependency(dep: ExpressionDependency): void {
+export function trackDependency(dep: IRDependency): void {
   if (trackingStack.length === 0) return;
   const frame = trackingStack[trackingStack.length - 1];
   // Deduplicate by sourceId + property

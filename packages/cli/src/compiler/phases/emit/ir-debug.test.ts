@@ -3,15 +3,17 @@ import { serializeIR, writeIRDebugFiles } from './ir-debug';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import type { SemanticIR, ReactiveBinding } from '@espcompose/core/internals';
-import { ReactiveNode } from '@espcompose/core';
+import type { SemanticIR, IRBinding } from '@espcompose/core/internals';
+import { IRReactiveNode } from '@espcompose/core';
 
 function makeMinimalIR(overrides?: {
   esphome?: Partial<SemanticIR['esphome']>;
   espcompose?: Partial<SemanticIR['espcompose']>;
 }): SemanticIR {
   return {
+    kind: 'semantic_ir',
     esphome: {
+      kind: 'esphome_data',
       sections: [],
       haEntities: [],
       components: [],
@@ -19,7 +21,8 @@ function makeMinimalIR(overrides?: {
       ...overrides?.esphome,
     },
     espcompose: {
-      reactive: { bindings: [], memos: [], effects: [] },
+      kind: 'espcompose_data',
+      reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] },
       ...overrides?.espcompose,
     },
   };
@@ -46,12 +49,13 @@ describe('serializeIR', () => {
       esphome: {
         sections: [
           {
+            kind: 'section',
             key: 'esphome',
             value: {
               kind: 'object',
               entries: [
-                { key: 'name', value: { kind: 'scalar', value: 'my-device' } },
-                { key: 'items', value: { kind: 'array', items: [{ kind: 'scalar', value: 42 }, { kind: 'null' }] } },
+                { kind: 'entry', key: 'name', value: { kind: 'scalar', value: 'my-device' } },
+                { kind: 'entry', key: 'items', value: { kind: 'array', items: [{ kind: 'scalar', value: 42 }, { kind: 'null' }] } },
               ],
             },
           },
@@ -67,14 +71,14 @@ describe('serializeIR', () => {
     expect(JSON.stringify(result)).toContain('42');
   });
 
-  it('serializes ReactiveNode fields correctly', () => {
-    const node = new ReactiveNode({
+  it('serializes IRReactiveNode fields correctly', () => {
+    const node = new IRReactiveNode({
       kind: 'memo',
-      dependencies: [{ sourceId: 'ha_light', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+      dependencies: [{ kind: 'dependency', sourceId: 'ha_light', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
       exprType: 'string',
     });
 
-    const ir = makeMinimalIR({ espcompose: { reactive: { bindings: [], memos: [node], effects: [] } } });
+    const ir = makeMinimalIR({ espcompose: { reactive: { kind: 'reactive_data', bindings: [], memos: [node], effects: [] } } });
     const result = serializeIR(ir);
     const espcompose = result.espcompose as { reactive: { memos: Record<string, unknown>[] } };
     const serializedNode = espcompose.reactive.memos[0];
@@ -88,14 +92,15 @@ describe('serializeIR', () => {
     expect(() => JSON.stringify(result)).not.toThrow();
   });
 
-  it('sanitizes ReactiveNode in bindings', () => {
-    const node = new ReactiveNode({
+  it('sanitizes IRReactiveNode in bindings', () => {
+    const node = new IRReactiveNode({
       kind: 'expression',
       dependencies: [],
       exprType: 'bool',
     });
 
-    const binding: ReactiveBinding = {
+    const binding: IRBinding = {
+      kind: 'binding',
       targetId: 'lbl_1',
       targetType: 'lvgl_label',
       targetProp: 'text',
@@ -103,7 +108,7 @@ describe('serializeIR', () => {
     };
 
     const ir = makeMinimalIR({
-      espcompose: { reactive: { bindings: [binding], memos: [node], effects: [] } },
+      espcompose: { reactive: { kind: 'reactive_data', bindings: [binding], memos: [node], effects: [] } },
     });
     const result = serializeIR(ir);
     const espcompose = result.espcompose as { reactive: { bindings: Record<string, unknown>[] } };
@@ -123,6 +128,7 @@ describe('serializeIR', () => {
     const ir = makeMinimalIR({
       espcompose: {
         themes: {
+          kind: 'theme_data',
           themeNames: ['default', 'dark'],
           defaultIndex: 0,
           leafData,
@@ -143,8 +149,8 @@ describe('serializeIR', () => {
     expect(() => JSON.stringify(result)).not.toThrow();
   });
 
-  it('handles ReactiveNode with exprIR (ExprNode AST)', () => {
-    const node = new ReactiveNode({
+  it('handles IRReactiveNode with exprIR (IRExprNode AST)', () => {
+    const node = new IRReactiveNode({
       kind: 'memo',
       dependencies: [],
       exprType: 'string',
@@ -156,7 +162,7 @@ describe('serializeIR', () => {
       alternate: { kind: 'literal', value: 'Off', type: 'string' },
     };
 
-    const ir = makeMinimalIR({ espcompose: { reactive: { bindings: [], memos: [node], effects: [] } } });
+    const ir = makeMinimalIR({ espcompose: { reactive: { kind: 'reactive_data', bindings: [], memos: [node], effects: [] } } });
     const result = serializeIR(ir);
     const espcompose2 = result.espcompose as { reactive: { memos: Record<string, unknown>[] } };
     const serializedNode = espcompose2.reactive.memos[0];
@@ -170,10 +176,10 @@ describe('serializeIR', () => {
     const ir = makeMinimalIR({
       esphome: {
         haEntities: [
-          { entityId: 'light.office', domain: 'light', sensorType: 'binary_sensor' as const, generatedId: 'ha_light_office' },
+          { kind: 'ha_entity', entityId: 'light.office', domain: 'light', sensorType: 'binary_sensor' as const, generatedId: 'ha_light_office' },
         ],
         components: [
-          { section: 'image', id: 'img_logo', config: { file: 'logo.png', resize: '64x64' } },
+          { kind: 'component', section: 'image', id: 'img_logo', config: { file: 'logo.png', resize: '64x64' } },
         ],
       },
     });
@@ -192,7 +198,7 @@ describe('writeIRDebugFiles', () => {
       const ir = makeMinimalIR({
         esphome: {
           sections: [
-            { key: 'esphome', value: { kind: 'object', entries: [{ key: 'name', value: { kind: 'scalar', value: 'test' } }] } },
+            { kind: 'section', key: 'esphome', value: { kind: 'object', entries: [{ kind: 'entry', key: 'name', value: { kind: 'scalar', value: 'test' } }] } },
           ],
         },
       });

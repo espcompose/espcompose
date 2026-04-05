@@ -2,7 +2,7 @@
 // ExpressionIR — Typed expression AST for the ESPCompose compiler.
 //
 // Target-agnostic: no C++, no JS strings. Each backend (target-esphome,
-// target-simulator) lowers ExprNode trees to its own target code.
+// target-simulator) lowers IRExprNode trees to its own target code.
 // ────────────────────────────────────────────────────────────────────────────
 
 // ── Value types ──────────────────────────────────────────────────────────────
@@ -50,161 +50,161 @@ export type StringMethod =
 
 // ── Expression node types ────────────────────────────────────────────────────
 
-export interface ExprLiteral {
+export interface IRExprLiteral {
   readonly kind: 'literal';
   readonly value: string | number | boolean;
   readonly type: ExprType;
 }
 
-export interface ExprSignalRead {
+export interface IRExprSignalRead {
   readonly kind: 'signal_read';
   /** Index into the SemanticIR reactiveNodes/signal list. */
   readonly signalIndex: number;
 }
 
-export interface ExprMemoRead {
+export interface IRExprMemoRead {
   readonly kind: 'memo_read';
   readonly memoId: string;
 }
 
-export interface ExprBinary {
+export interface IRExprBinary {
   readonly kind: 'binary';
   readonly op: BinaryOp;
-  readonly left: ExprNode;
-  readonly right: ExprNode;
+  readonly left: IRExprNode;
+  readonly right: IRExprNode;
 }
 
-export interface ExprUnary {
+export interface IRExprUnary {
   readonly kind: 'unary';
   readonly op: UnaryOp;
-  readonly operand: ExprNode;
+  readonly operand: IRExprNode;
 }
 
-export interface ExprPostfix {
+export interface IRExprPostfix {
   readonly kind: 'postfix';
   readonly op: PostfixOp;
-  readonly operand: ExprNode;
+  readonly operand: IRExprNode;
 }
 
-export interface ExprTernary {
+export interface IRExprTernary {
   readonly kind: 'ternary';
-  readonly test: ExprNode;
-  readonly consequent: ExprNode;
-  readonly alternate: ExprNode;
+  readonly test: IRExprNode;
+  readonly consequent: IRExprNode;
+  readonly alternate: IRExprNode;
 }
 
-export interface ExprCall {
+export interface IRExprCall {
   readonly kind: 'call';
   readonly fn: BuiltinFn;
-  readonly args: ExprNode[];
+  readonly args: IRExprNode[];
 }
 
-export interface ExprConcat {
+export interface IRExprConcat {
   readonly kind: 'concat';
-  readonly parts: ExprNode[];
+  readonly parts: IRExprNode[];
 }
 
-export interface ExprToString {
+export interface IRExprToString {
   readonly kind: 'to_string';
-  readonly expr: ExprNode;
+  readonly expr: IRExprNode;
   readonly format?: string;
 }
 
-export interface ExprGroup {
+export interface IRExprGroup {
   readonly kind: 'group';
-  readonly expr: ExprNode;
+  readonly expr: IRExprNode;
 }
 
-export interface ExprSlot {
+export interface IRExprSlot {
   readonly kind: 'slot';
   readonly slotIndex: number;
 }
 
-export interface ExprResolveFont {
+export interface IRExprResolveFont {
   readonly kind: 'resolve_font';
-  readonly family: ExprNode;
-  readonly size: ExprNode;
+  readonly family: IRExprNode;
+  readonly size: IRExprNode;
 }
 
-export interface ExprThemeRead {
+export interface IRExprThemeRead {
   readonly kind: 'theme_read';
   readonly path: string;
   readonly type: ExprType;
 }
 
-export interface ExprEntityProp {
+export interface IRExprEntityProp {
   readonly kind: 'entity_prop';
   readonly entityId: string;
   readonly property: string;
   readonly type: ExprType;
 }
 
-export interface ExprComponentRead {
+export interface IRExprComponentRead {
   readonly kind: 'component_read';
   readonly componentId: string;
   readonly sensorIndex: number;
 }
 
 /** Read a trigger variable by name (used in action/script conditions) */
-export interface ExprTriggerVar {
+export interface IRExprTriggerVar {
   readonly kind: 'trigger_var';
   readonly name: string;
 }
 
 /** Explicit type conversion (Number(), String(), Boolean(), Math.trunc()) */
-export interface ExprTypeCast {
+export interface IRExprTypeCast {
   readonly kind: 'type_cast';
-  readonly expr: ExprNode;
+  readonly expr: IRExprNode;
   readonly fromType: ExprType;
   readonly toType: ExprType;
 }
 
 /** Formatted number-to-string (e.g. .toFixed(2) → format "%.2f") */
-export interface ExprFormatString {
+export interface IRExprFormatString {
   readonly kind: 'format_string';
-  readonly expr: ExprNode;
+  readonly expr: IRExprNode;
   /** printf-style format specifier, e.g. "%.2f" */
   readonly format: string;
 }
 
 /** Null-coalescing operator (??) — type determines the null-check strategy */
-export interface ExprNullCoalesce {
+export interface IRExprNullCoalesce {
   readonly kind: 'null_coalesce';
-  readonly left: ExprNode;
-  readonly right: ExprNode;
+  readonly left: IRExprNode;
+  readonly right: IRExprNode;
   /** Type of the left operand — backends use this to determine null semantics. */
   readonly type: ExprType;
 }
 
 /** String method call or property access (.length, .toUpperCase(), etc.) */
-export interface ExprStringMethod {
+export interface IRExprStringMethod {
   readonly kind: 'string_method';
   readonly method: StringMethod;
-  readonly object: ExprNode;
-  readonly args: ExprNode[];
+  readonly object: IRExprNode;
+  readonly args: IRExprNode[];
 }
 
 // ── Union type ───────────────────────────────────────────────────────────────
 
-export type ExprNode =
-  | ExprLiteral
-  | ExprSignalRead
-  | ExprMemoRead
-  | ExprBinary
-  | ExprUnary
-  | ExprPostfix
-  | ExprTernary
-  | ExprCall
-  | ExprConcat
-  | ExprToString
-  | ExprGroup
-  | ExprSlot
-  | ExprResolveFont
-  | ExprThemeRead
-  | ExprEntityProp
-  | ExprComponentRead
-  | ExprTriggerVar
-  | ExprTypeCast
-  | ExprFormatString
-  | ExprNullCoalesce
-  | ExprStringMethod;
+export type IRExprNode =
+  | IRExprLiteral
+  | IRExprSignalRead
+  | IRExprMemoRead
+  | IRExprBinary
+  | IRExprUnary
+  | IRExprPostfix
+  | IRExprTernary
+  | IRExprCall
+  | IRExprConcat
+  | IRExprToString
+  | IRExprGroup
+  | IRExprSlot
+  | IRExprResolveFont
+  | IRExprThemeRead
+  | IRExprEntityProp
+  | IRExprComponentRead
+  | IRExprTriggerVar
+  | IRExprTypeCast
+  | IRExprFormatString
+  | IRExprNullCoalesce
+  | IRExprStringMethod;

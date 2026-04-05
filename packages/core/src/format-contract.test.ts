@@ -14,7 +14,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { z } from 'zod';
 import { setCurrentHookPath } from './hooks/useState';
 import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
-import { ReactiveNode, isReactiveNode } from './reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
 import { serializeValue } from './serialize';
 
@@ -122,7 +122,7 @@ describe('Library Format Contract (Consumer)', () => {
       // Verify SDK consumes it correctly
       withReactiveScope(() => {
         const node = __espcompose.compiled<string>(VALID_COMPILED_META);
-        expect(isReactiveNode(node)).toBe(true);
+        expect(isIRReactiveNode(node)).toBe(true);
         expect(node.kind).toBe('memo');
         expect(node.dependencies).toHaveLength(1);
         expect(node.dependencies[0].sourceId).toBe('ha_light_office');
@@ -135,8 +135,8 @@ describe('Library Format Contract (Consumer)', () => {
       const meta = {
         type: 'float' as const,
         deps: [
-          { sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { kind: 'dependency', sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { kind: 'dependency', sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
         ],
         expr: { kind: 'literal' as const, value: 0, type: 'float' as const },
       };
@@ -167,15 +167,15 @@ describe('Library Format Contract (Consumer)', () => {
       expect(SlottedReactiveSchema.safeParse(VALID_SLOTTED_META).success).toBe(true);
 
       withReactiveScope(() => {
-        const signal = new ReactiveNode({
+        const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const node = __espcompose.slotted<number>(VALID_SLOTTED_META, signal);
-        expect(isReactiveNode(node)).toBe(true);
+        expect(isIRReactiveNode(node)).toBe(true);
         expect(node.exprType).toBe('float');
         expect(node.dependencies).toHaveLength(1);
       });
@@ -228,7 +228,7 @@ describe('Library Format Contract (Consumer)', () => {
 
       withReactiveScope(() => {
         const node = __espcompose.compiled<string>(goldenMeta);
-        expect(isReactiveNode(node)).toBe(true);
+        expect(isIRReactiveNode(node)).toBe(true);
         expect(node.kind).toBe('memo');
         expect(node.exprType).toBe('string');
         expect(node.exprIR).toBeDefined();
@@ -250,15 +250,15 @@ describe('Library Format Contract (Consumer)', () => {
       };
 
       withReactiveScope(() => {
-        const signal = new ReactiveNode({
+        const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const node = __espcompose.slotted<string>(goldenMeta, signal);
-        expect(isReactiveNode(node)).toBe(true);
+        expect(isIRReactiveNode(node)).toBe(true);
         expect(node.exprType).toBe('string');
         expect(node.dependencies).toHaveLength(1);
       });

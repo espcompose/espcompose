@@ -24,6 +24,10 @@ export interface TransformResult {
   entryFile: string;
   /** Any transform diagnostics (errors / warnings). */
   diagnostics: TransformDiagnostic[];
+  /** Number of source files written to the build directory. */
+  filesWritten: number;
+  /** Number of files that had AST transforms applied. */
+  filesTransformed: number;
 }
 
 /**
@@ -48,6 +52,8 @@ export function writeTransformedFiles(
 ): TransformResult {
   const diagnostics: TransformDiagnostic[] = [];
   let transformedEntryFile = '';
+  let filesWritten = 0;
+  let filesTransformed = 0;
 
   for (const sourceFile of program.getSourceFiles()) {
     const filePath = sourceFile.fileName;
@@ -126,6 +132,9 @@ export function writeTransformedFiles(
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, outputText, 'utf8');
 
+    filesWritten++;
+    if (outputText !== originalText) filesTransformed++;
+
     // Track the entry file's new location
     if (path.normalize(filePath) === path.normalize(entryFile)) {
       transformedEntryFile = outputPath;
@@ -139,5 +148,5 @@ export function writeTransformedFiles(
     transformedEntryFile = path.join(buildDir, rel);
   }
 
-  return { entryFile: transformedEntryFile, diagnostics };
+  return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed };
 }

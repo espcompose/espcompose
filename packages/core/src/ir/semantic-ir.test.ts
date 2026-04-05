@@ -1,11 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { ReactiveNode } from '../reactive-node';
+import { IRReactiveNode } from '../reactive-node';
 import { RefHandle } from '../types';
-import type { ReactiveBinding, HAEntityRegistration, ComponentRegistration } from '../hooks/useReactiveScope';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
 import type { SerializationCaptures } from '../serialize';
-import type { ActionNode } from './action-types';
+import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
-import { collectFromIR } from './traverse';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -35,11 +34,11 @@ function emptyCaptures(): SerializationCaptures {
   };
 }
 
-function makeMemoNode(index: number): ReactiveNode {
-  const node = new ReactiveNode({
+function makeMemoNode(index: number): IRReactiveNode {
+  const node = new IRReactiveNode({
     kind: 'memo',
     dependencies: [
-      { sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+      { kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
     ],
     exprType: 'float',
   });
@@ -98,14 +97,15 @@ describe('buildSemanticIR', () => {
     }
   });
 
-  it('captures ReactiveNode from serialized Scalar via captures map', () => {
+  it('captures IRReactiveNode from serialized Scalar via captures map', () => {
     const node = makeMemoNode(0);
     const scalar = lambdaScalar('return espcompose::memo_0.get();');
 
     const captures = emptyCaptures();
     captures.reactives.set(scalar, node);
 
-    const binding: ReactiveBinding = {
+    const binding: IRBinding = {
+      kind: 'binding',
       targetId: 'rw_abc',
       targetType: 'label',
       targetProp: 'text',
@@ -185,7 +185,7 @@ describe('buildSemanticIR', () => {
   });
 
   it('captures compiled action metadata', () => {
-    const rawActions: ActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
     const serializedResult = [{ 'homeassistant.service': { service: 'light.toggle', entity_id: 'light.kitchen' } }];
 
     const captures = emptyCaptures();
@@ -304,14 +304,16 @@ describe('buildSemanticIR', () => {
   });
 
   it('preserves side-channel data', () => {
-    const entity: HAEntityRegistration = {
+    const entity: IRHAEntity = {
+      kind: 'ha_entity',
       entityId: 'light.kitchen',
       domain: 'light',
       sensorType: 'binary_sensor',
       generatedId: 'ha_light_kitchen',
     };
 
-    const component: ComponentRegistration = {
+    const component: IRComponent = {
+      kind: 'component',
       section: 'image',
       id: 'img_1',
       config: { id: 'img_1', file: './bg.png', type: 'RGB565' },
@@ -323,9 +325,10 @@ describe('buildSemanticIR', () => {
       bindings: [],
       entities: [entity],
       components: [component],
-      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies ActionNode] }],
+      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: {
+        kind: 'theme_data',
         themeNames: ['light', 'dark'],
         defaultIndex: 0,
         leafData: new Map([['colors_primary', { values: [0xFF0000, 0x0000FF], valueType: 'int' }]]),
@@ -339,88 +342,3 @@ describe('buildSemanticIR', () => {
   });
 });
 
-// ────────────────────────────────────────────────────────────────────────────
-// collectFromIR tree-walk tests
-// ────────────────────────────────────────────────────────────────────────────
-
-describe('collectFromIR', () => {
-  it('collects all semantic node types from a mixed config', () => {
-    const node = makeMemoNode(0);
-    const reactiveScalar = lambdaScalar('return espcompose::memo_0.get();');
-    const secretVal = secretScalar('wifi_password');
-    const triggerVal = lambdaScalar('return x;');
-    const ref = new RefHandle();
-    const token = ref.toString();
-    const rawActions: ActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
-    const actionArr = [{ 'homeassistant.service': { service: 'light.toggle' } }];
-
-    const captures = emptyCaptures();
-    captures.reactives.set(reactiveScalar, node);
-    captures.secrets.set(secretVal, 'wifi_password');
-    captures.triggerVars.set(triggerVal, { name: 'x' });
-    captures.refs.set(token, ref);
-    captures.actions.set(actionArr, { rawActions });
-
-    const binding: ReactiveBinding = {
-      targetId: 'lbl_1',
-      targetType: 'label',
-      targetProp: 'text',
-      expression: node,
-    };
-
-    const config = {
-      lvgl: {
-        widgets: [{
-          label: { id: 'lbl_1', text: reactiveScalar },
-          button: { on_press: actionArr },
-        }],
-      },
-      wifi: { password: secretVal },
-      sensor: { i2c_id: token, value: triggerVal },
-    };
-
-    const ir = buildSemanticIR({
-      config,
-      captures,
-      bindings: [binding],
-      entities: [],
-      components: [],
-      scripts: [],
-      reactiveNodes: [],
-    });
-
-    const collected = collectFromIR(ir);
-    expect(collected.reactives).toHaveLength(1);
-    expect(collected.reactives[0].node).toBe(node);
-    expect(collected.refs).toHaveLength(1);
-    expect(collected.refs[0].token).toBe(token);
-    expect(collected.actions).toHaveLength(1);
-    expect(collected.secrets).toHaveLength(1);
-    expect(collected.secrets[0].key).toBe('wifi_password');
-    expect(collected.triggerVars).toHaveLength(1);
-    expect(collected.triggerVars[0].name).toBe('x');
-  });
-
-  it('returns empty collections for a plain config', () => {
-    const config = {
-      esphome: { name: 'test', platform: 'ESP32' },
-    };
-
-    const ir = buildSemanticIR({
-      config,
-      captures: emptyCaptures(),
-      bindings: [],
-      entities: [],
-      components: [],
-      scripts: [],
-      reactiveNodes: [],
-    });
-
-    const collected = collectFromIR(ir);
-    expect(collected.reactives).toHaveLength(0);
-    expect(collected.refs).toHaveLength(0);
-    expect(collected.actions).toHaveLength(0);
-    expect(collected.secrets).toHaveLength(0);
-    expect(collected.triggerVars).toHaveLength(0);
-  });
-});

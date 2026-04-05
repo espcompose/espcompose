@@ -15,8 +15,8 @@
 import type { EspComposeElement, FunctionComponent } from './types';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
-import { isReactiveNode } from './reactive-node';
-import type { ReactiveNode } from './reactive-node';
+import { isIRReactiveNode } from './reactive-node';
+import type { IRReactiveNode } from './reactive-node';
 import { registerReactiveBinding } from './hooks/useReactiveScope';
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
 import {
@@ -80,13 +80,13 @@ function resolveLvglChildren(
 
 interface NestedReactiveProp {
   propName: string;
-  node: ReactiveNode;
+  node: IRReactiveNode;
   part?: string;
   state?: string;
 }
 
 /**
- * Walk an LVGL prop bag and collect any ReactiveNode leaves, including nested
+ * Walk an LVGL prop bag and collect any IRReactiveNode leaves, including nested
  * part/state sub-objects (e.g. indicator, pressed, indicator.pressed).
  */
 function collectReactiveProps(
@@ -98,7 +98,7 @@ function collectReactiveProps(
   for (const [key, value] of Object.entries(obj)) {
     if (key === 'widgets' || key === 'children') continue;
 
-    if (isReactiveNode(value)) {
+    if (isIRReactiveNode(value)) {
       out.push({ propName: key, node: value, part, state });
       continue;
     }
@@ -136,6 +136,7 @@ function detectAndRegisterReactiveProps(
 
     for (const { propName, node, part, state } of reactiveProps) {
       registerReactiveBinding({
+        kind: 'binding',
         targetId: widgetId,
         targetType: yamlKey,
         targetProp: camelToSnake(propName),
@@ -155,7 +156,7 @@ function detectAndRegisterReactiveProps(
  *
  * When Expression<T> instances are detected in props:
  * 1. An auto-generated `id` is assigned if the widget doesn't already have one.
- * 2. Each Expression prop is registered as a ReactiveBinding so the compiler
+ * 2. Each Expression prop is registered as a IRBinding so the compiler
  *    can emit on_state/on_value trigger wiring later.
  */
 export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown> {

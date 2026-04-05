@@ -16,8 +16,8 @@
 // The existing hooks/render are kept for standalone use (testing, REPL).
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ExprNode } from '@espcompose/core';
-import type { SemanticIR, IRValue, IRObject, IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar, ActionNode } from '@espcompose/core/internals';
+import type { IRExprNode } from '@espcompose/core';
+import type { SemanticIR, IRValue, IRObject, IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar, IRActionNode } from '@espcompose/core/internals';
 import type { RuntimeNode, RuntimeProp, RuntimeDependency, ActionStep } from '../types';
 import { Signal, Scheduler } from '../runtime/signals';
 import type { MockProvider } from '../providers/mock-provider';
@@ -215,29 +215,29 @@ function entityIdToGeneratedId(entityId: string): string {
 }
 
 /**
- * Walk an ExprNode tree and call the visitor on each node.
+ * Walk an IRExprNode tree and call the visitor on each node.
  */
-function walkExprNode(node: ExprNode, visitor: (n: ExprNode) => void): void {
+function walkIRExprNode(node: IRExprNode, visitor: (n: IRExprNode) => void): void {
   visitor(node);
   switch (node.kind) {
-    case 'binary': walkExprNode(node.left, visitor); walkExprNode(node.right, visitor); break;
-    case 'unary': case 'postfix': walkExprNode(node.operand, visitor); break;
-    case 'ternary': walkExprNode(node.test, visitor); walkExprNode(node.consequent, visitor); walkExprNode(node.alternate, visitor); break;
-    case 'call': node.args.forEach(a => walkExprNode(a, visitor)); break;
-    case 'concat': node.parts.forEach(p => walkExprNode(p, visitor)); break;
-    case 'to_string': case 'group': walkExprNode(node.expr, visitor); break;
-    case 'resolve_font': walkExprNode(node.family, visitor); walkExprNode(node.size, visitor); break;
+    case 'binary': walkIRExprNode(node.left, visitor); walkIRExprNode(node.right, visitor); break;
+    case 'unary': case 'postfix': walkIRExprNode(node.operand, visitor); break;
+    case 'ternary': walkIRExprNode(node.test, visitor); walkIRExprNode(node.consequent, visitor); walkIRExprNode(node.alternate, visitor); break;
+    case 'call': node.args.forEach(a => walkIRExprNode(a, visitor)); break;
+    case 'concat': node.parts.forEach(p => walkIRExprNode(p, visitor)); break;
+    case 'to_string': case 'group': walkIRExprNode(node.expr, visitor); break;
+    case 'resolve_font': walkIRExprNode(node.family, visitor); walkIRExprNode(node.size, visitor); break;
   }
 }
 
 /**
- * Build a JsLoweringContext for evaluating an ExprNode in the simulator.
+ * Build a JsLoweringContext for evaluating an IRExprNode in the simulator.
  * Creates entity getters wired to the EntitySignalRegistry.
  */
-function buildJsLoweringContext(exprIR: ExprNode, ctx: IRRenderContext): JsLoweringContext {
+function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext): JsLoweringContext {
   const entityGetters = new Map<string, () => unknown>();
 
-  walkExprNode(exprIR, (node) => {
+  walkIRExprNode(exprIR, (node) => {
     if (node.kind === 'entity_prop') {
       const key = `${node.entityId}::${node.property}`;
       if (entityGetters.has(key)) return;
@@ -278,7 +278,7 @@ function buildJsLoweringContext(exprIR: ExprNode, ctx: IRRenderContext): JsLower
 }
 
 /**
- * Derive a sensible default value from a ReactiveNode's type metadata.
+ * Derive a sensible default value from a IRReactiveNode's type metadata.
  * This is the initial value shown in the simulator before any state changes.
  */
 function reactiveDefaultValue(reactive: IRReactive): unknown {
@@ -318,16 +318,16 @@ function irActionToRuntimeProp(
 }
 
 /**
- * Convert ActionNode[] from SemanticIR to simulator-friendly ActionStep[] format.
- * ActionNode is the target-agnostic IR from the CLI compiler.
+ * Convert IRActionNode[] from SemanticIR to simulator-friendly ActionStep[] format.
+ * IRActionNode is the target-agnostic IR from the CLI compiler.
  */
-function interpretActionSteps(actions: ActionNode[]): ActionStep[] {
+function interpretActionSteps(actions: IRActionNode[]): ActionStep[] {
   const steps: ActionStep[] = [];
   for (const action of actions) {
     if (action == null || typeof action !== 'object') continue;
     const node = action;
 
-    // Check for ActionNode format (has 'kind' property)
+    // Check for IRActionNode format (has 'kind' property)
     if ('kind' in node) {
       switch (node.kind) {
         case 'native': {
@@ -499,7 +499,7 @@ function irWidgetObjectToRuntimeNode(
     }
     // Action props that are arrays (compiled action lists)
     if (isActionPropKey(key) && entry.value.kind === 'array') {
-      const actionItems = entry.value.items.map(irValueToPlain) as ActionNode[];
+      const actionItems = entry.value.items.map(irValueToPlain) as IRActionNode[];
       const steps = interpretActionSteps(actionItems);
       props[key] = {
         kind: 'action',

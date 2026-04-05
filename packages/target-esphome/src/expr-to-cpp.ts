@@ -1,12 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────
-// ExprNode → C++ expression lowering
+// IRExprNode → C++ expression lowering
 //
-// Converts target-agnostic ExprNode AST trees into C++ expression strings
+// Converts target-agnostic IRExprNode AST trees into C++ expression strings
 // for the ESPHome firmware reactive runtime.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type {
-  ExprNode,
+  IRExprNode,
 } from '@espcompose/core';
 import type {
   ExprType,
@@ -31,7 +31,7 @@ export interface CppLoweringContext {
 
 // ── Main lowering function ───────────────────────────────────────────────────
 
-export function exprToCpp(node: ExprNode, ctx: CppLoweringContext): string {
+export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
   switch (node.kind) {
     case 'literal':
       return literalToCpp(node.value, node.type);
@@ -117,7 +117,7 @@ export function exprToCpp(node: ExprNode, ctx: CppLoweringContext): string {
       return stringMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
 
     default:
-      throw new Error(`Unknown ExprNode kind: ${(node as ExprNode).kind}`);
+      throw new Error(`Unknown IRExprNode kind: ${(node as IRExprNode).kind}`);
   }
 }
 

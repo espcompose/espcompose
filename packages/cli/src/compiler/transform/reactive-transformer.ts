@@ -13,7 +13,7 @@
  *   → __espcompose.compiled({"cpp":"sig_ha_light_office.get() ? ...","type":"std::string","deps":[...]})}
  *
  * Skipped cases:
- *   - Direct passthrough: officeLight.stateText (ReactiveNode handled by runtime)
+ *   - Direct passthrough: officeLight.stateText (IRReactiveNode handled by runtime)
  *   - Non-reactive: static values, literal expressions
  *   - useEffect, __espcompose.derivedMemo (kept as runtime calls)
  */
@@ -236,7 +236,7 @@ function processJsxAttributeExpression(
     return;
   }
 
-  // Skip direct Signal passthrough (runtime handles ReactiveNode in BindProp)
+  // Skip direct Signal passthrough (runtime handles IRReactiveNode in BindProp)
   if (isDirectSignalPassthrough(expr, checker)) return;
 
   // Object literals (part/state props like indicator={{ bgOpa: expr }})

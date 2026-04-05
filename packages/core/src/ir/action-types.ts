@@ -7,7 +7,7 @@
 // happens in the respective target packages.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ExprNode } from './expr-types.js';
+import type { IRExprNode } from './expr-types.js';
 
 // ── Action Nodes ───────────────────────────────────────────────────────────
 
@@ -55,22 +55,22 @@ export interface IRWaitUntilAction {
 export interface IRIfAction {
   kind: 'if';
   condition: IRCondition;
-  then: ActionNode[];
-  else?: ActionNode[];
+  then: IRActionNode[];
+  else?: IRActionNode[];
 }
 
 /** while loop action */
 export interface IRWhileAction {
   kind: 'while';
   condition: IRCondition;
-  then: ActionNode[];
+  then: IRActionNode[];
 }
 
 /** repeat action */
 export interface IRRepeatAction {
   kind: 'repeat';
   count: number;
-  then: ActionNode[];
+  then: IRActionNode[];
 }
 
 /** script.execute action */
@@ -99,7 +99,7 @@ export interface IRThemeSelect {
 
 // ── Discriminated Union ────────────────────────────────────────────────────
 
-export type ActionNode =
+export type IRActionNode =
   | IRNativeAction
   | IRHAServiceAction
   | IRLoggerAction
@@ -115,11 +115,11 @@ export type ActionNode =
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
-/** A lambda condition — compiled from a boolean expression to ExprNode IR */
+/** A lambda condition — compiled from a boolean expression to IRExprNode IR */
 export interface IRLambdaCondition {
   kind: 'lambda';
   /** Target-agnostic expression IR for the condition */
-  exprIR: ExprNode;
+  exprIR: IRExprNode;
 }
 
 /** A native condition (e.g. binary_sensor.is_on) */
@@ -187,15 +187,15 @@ export function irWaitUntilAction(condition: IRCondition, timeout?: string): IRW
   return { kind: 'wait_until', condition, ...(timeout ? { timeout } : {}) };
 }
 
-export function irIfAction(condition: IRCondition, then: ActionNode[], elseActions?: ActionNode[]): IRIfAction {
+export function irIfAction(condition: IRCondition, then: IRActionNode[], elseActions?: IRActionNode[]): IRIfAction {
   return { kind: 'if', condition, then, ...(elseActions ? { else: elseActions } : {}) };
 }
 
-export function irWhileAction(condition: IRCondition, then: ActionNode[]): IRWhileAction {
+export function irWhileAction(condition: IRCondition, then: IRActionNode[]): IRWhileAction {
   return { kind: 'while', condition, then };
 }
 
-export function irRepeatAction(count: number, then: ActionNode[]): IRRepeatAction {
+export function irRepeatAction(count: number, then: IRActionNode[]): IRRepeatAction {
   return { kind: 'repeat', count, then };
 }
 
@@ -215,10 +215,7 @@ export function irThemeSelect(themeName: string): IRThemeSelect {
   return { kind: 'theme_select', themeName };
 }
 
-export function irLambdaCondition(exprIR: ExprNode): IRLambdaCondition {
+export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
   return { kind: 'lambda', exprIR };
 }
 
-export function irNativeCondition(conditionKey: string, config: IRActionConfig): IRNativeCondition {
-  return { kind: 'native', conditionKey, config };
-}

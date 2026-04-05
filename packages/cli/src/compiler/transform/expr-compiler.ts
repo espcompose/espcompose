@@ -12,7 +12,7 @@
  */
 
 import ts from 'typescript';
-import type { ExprNode } from '@espcompose/core';
+import type { IRExprNode } from '@espcompose/core';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -186,16 +186,16 @@ function resolveSignalProperty(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Script/trigger expression IR compiler (ExprNode output)
+// Script/trigger expression IR compiler (IRExprNode output)
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Compile a script/trigger TS expression to an ExprNode tree.
+ * Compile a script/trigger TS expression to an IRExprNode tree.
  */
 export function translateScriptExprIR(
   node: ts.Expression,
   ctx: ScriptTransformContext,
-): ExprNode | null {
+): IRExprNode | null {
   if (ts.isNumericLiteral(node)) {
     return { kind: 'literal', value: Number(node.text), type: 'float' };
   }
@@ -280,7 +280,7 @@ export function translateScriptExprIR(
       const method = node.expression.name.text;
       const builtinFn = TS_MATH_TO_BUILTIN[method];
       if (!builtinFn) return null;
-      const args: ExprNode[] = [];
+      const args: IRExprNode[] = [];
       for (const arg of node.arguments) {
         const compiled = translateScriptExprIR(arg, ctx);
         if (!compiled) return null;
@@ -305,7 +305,7 @@ export function translateScriptExprIR(
   }
 
   if (ts.isTemplateExpression(node)) {
-    const parts: ExprNode[] = [];
+    const parts: IRExprNode[] = [];
     if (node.head.text) {
       parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
     }
@@ -524,9 +524,9 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// ExpressionIR compilation — TypeScript AST → ExprNode
+// ExpressionIR compilation — TypeScript AST → IRExprNode
 //
-// Parallels compileExpr() but produces target-agnostic ExprNode trees
+// Parallels compileExpr() but produces target-agnostic IRExprNode trees
 // instead of C++ strings. Used by Phase B+ of the Expression IR plan.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -567,14 +567,14 @@ function isStringLikeType(type: ts.Type): boolean {
 }
 
 export interface ExprIRResult {
-  expr: ExprNode;
+  expr: IRExprNode;
   exprType: ExprType;
   deps: DependencyInfo[];
   slots?: { expr: ts.Expression }[];
 }
 
 /**
- * Compile a TypeScript expression to a target-agnostic ExprNode tree.
+ * Compile a TypeScript expression to a target-agnostic IRExprNode tree.
  * Returns null if the expression contains unsupported patterns.
  */
 export function translateReactiveExprIR(
@@ -594,7 +594,7 @@ export function translateReactiveExprIR(
   return result;
 }
 
-function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode | null {
+function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNode | null {
   if (ts.isNumericLiteral(node)) {
     return { kind: 'literal', value: Number(node.text), type: 'float' };
   }
@@ -637,7 +637,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode 
     if (left === null || right === null) return null;
     const op = translateBinaryOp(node.operatorToken.kind);
     if (op === null) return null;
-    return { kind: 'binary', op: op as ExprNode extends { kind: 'binary' } ? ExprNode['op'] : never, left, right };
+    return { kind: 'binary', op: op as IRExprNode extends { kind: 'binary' } ? IRExprNode['op'] : never, left, right };
   }
 
   if (ts.isPrefixUnaryExpression(node)) {
@@ -645,7 +645,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode 
     if (operand === null) return null;
     const op = translatePrefixOp(node.operator);
     if (op === null) return null;
-    return { kind: 'unary', op: op as ExprNode extends { kind: 'unary' } ? ExprNode['op'] : never, operand };
+    return { kind: 'unary', op: op as IRExprNode extends { kind: 'unary' } ? IRExprNode['op'] : never, operand };
   }
 
   if (ts.isPostfixUnaryExpression(node)) {
@@ -687,7 +687,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): ExprNode 
 function compilePropertyAccessIR(
   node: ts.PropertyAccessExpression,
   ctx: ExprCompilerContext,
-): ExprNode | null {
+): IRExprNode | null {
   const propName = node.name.text;
 
   if (ts.isIdentifier(node.expression)) {
@@ -728,13 +728,13 @@ function compilePropertyAccessIR(
   return null;
 }
 
-function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): ExprNode {
+function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): IRExprNode {
   const slotIndex = ctx.slots.length;
   ctx.slots.push({ expr, slotIndex });
   return { kind: 'slot', slotIndex };
 }
 
-function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): ExprNode | null {
+function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): IRExprNode | null {
   // Math.* calls
   if (ts.isPropertyAccessExpression(node.expression) &&
       ts.isIdentifier(node.expression.expression) &&
@@ -742,7 +742,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): E
     const method = node.expression.name.text;
     const builtinFn = TS_MATH_TO_BUILTIN[method];
     if (!builtinFn) return null;
-    const args: ExprNode[] = [];
+    const args: IRExprNode[] = [];
     for (const arg of node.arguments) {
       const compiled = compileExprIR(arg, ctx);
       if (compiled === null) return null;
@@ -793,7 +793,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): E
     if (methodName in STRING_METHOD_SET) {
       const obj = compileExprIR(objectExpr, ctx);
       if (obj === null) return null;
-      const args: ExprNode[] = [];
+      const args: IRExprNode[] = [];
       for (const arg of node.arguments) {
         const compiled = compileExprIR(arg, ctx);
         if (compiled === null) return null;
@@ -809,8 +809,8 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): E
 function compileTemplateLiteralIR(
   node: ts.TemplateExpression,
   ctx: ExprCompilerContext,
-): ExprNode | null {
-  const parts: ExprNode[] = [];
+): IRExprNode | null {
+  const parts: IRExprNode[] = [];
   if (node.head.text) {
     parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
   }

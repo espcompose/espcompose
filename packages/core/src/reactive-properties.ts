@@ -2,21 +2,21 @@
 // Reactive Property Mapping for Ref<T>
 //
 // Maps reactive property names (e.g. `.value`, `.isOn`, `.brightness`) to the
-// ReactiveNode configuration needed to generate ESPHome lambdas and trigger
+// IRReactiveNode configuration needed to generate ESPHome lambdas and trigger
 // wiring.
 //
 // Two layers:
 //
 //   Type level — InferReactiveProperties<T> uses the phantom brands on
 //   marker types to narrow which reactive properties are available:
-//     Ref<sensor_Sensor>.value      → ReactiveNode<number>
-//     Ref<binary_sensor_BinarySensor>.isOn → ReactiveNode<boolean>
-//     Ref<light_LightState>.brightness     → ReactiveNode<number>
+//     Ref<sensor_Sensor>.value      → IRReactiveNode<number>
+//     Ref<binary_sensor_BinarySensor>.isOn → IRReactiveNode<boolean>
+//     Ref<light_LightState>.brightness     → IRReactiveNode<number>
 //
 //   Runtime level — REACTIVE_PROPERTY_MAP is consulted by the RefHandle
-//   Proxy to create ReactiveNode instances when a reactive property is
+//   Proxy to create IRReactiveNode instances when a reactive property is
 //   accessed.  Since markers are phantom types erased at runtime, the
-//   Proxy can't check brands — it simply returns a ReactiveNode for any
+//   Proxy can't check brands — it simply returns a IRReactiveNode for any
 //   known reactive property name.  Type-safety is enforced at compile
 //   time by InferReactiveProperties<T>.
 // ────────────────────────────────────────────────────────────────────────────
@@ -53,7 +53,7 @@ export interface FanReactiveProps {
 }
 
 export interface CoverReactiveProps {
-  readonly isOpen: Signal<boolean>;
+  readonly isOpen: Signal<number>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -69,17 +69,21 @@ export type InferReactiveProperties<T> =
     ? LightReactiveProps
     : T extends { readonly __brand_switch__Switch?: true }
       ? SwitchReactiveProps
-      : T extends { readonly __brand_sensor_Sensor?: true }
-        ? SensorReactiveProps
-        : T extends { readonly __brand_binary_sensor_BinarySensor?: true }
-          ? BinarySensorReactiveProps
-          : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-            {};
+      : T extends { readonly __brand_fan_Fan?: true }
+        ? FanReactiveProps
+        : T extends { readonly __brand_cover_Cover?: true }
+          ? CoverReactiveProps
+          : T extends { readonly __brand_sensor_Sensor?: true }
+            ? SensorReactiveProps
+            : T extends { readonly __brand_binary_sensor_BinarySensor?: true }
+              ? BinarySensorReactiveProps
+              : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+                {};
 
 // ────────────────────────────────────────────────────────────────────────────
 // Runtime property map
 //
-// Consulted by the RefHandle Proxy to create Expression instances.
+// Consulted by the RefHandle Proxy to create IRReactiveNode instances.
 // Keys are camelCase property names matching the interfaces above.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -97,7 +101,7 @@ export interface ReactivePropertyConfig {
 export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {
   value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor',        exprType: 'float' },
   isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor', exprType: 'bool' },
-  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         exprType: 'bool' },
+  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         exprType: 'float' },
   stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor',   exprType: 'string' },
   brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light',         exprType: 'float' },
 };

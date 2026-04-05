@@ -20,7 +20,7 @@ export type {
   IRSecret,
   IRTriggerVar,
   IRThemeData,
-  IRScriptDefinition,
+  IRScript,
 } from './types';
 
 export {
@@ -35,22 +35,11 @@ export {
   irAction,
   irSecret,
   irTriggerVar,
-  isIRScalar,
-  isIRObject,
-  isIRArray,
-  isIRNull,
-  isIRReactive,
-  isIRRef,
-  isIRAction,
-  isIRSecret,
-  isIRTriggerVar,
 } from './types';
 
 export { buildSemanticIR } from './build';
 export type { BuildSemanticIRInput } from './build';
 
-export { collectFromIR } from './traverse';
-export type { IRTreeCollected } from './traverse';
 
 // ── Expression IR ────────────────────────────────────────────────────────────
 export type {
@@ -60,33 +49,33 @@ export type {
   PostfixOp,
   BuiltinFn,
   StringMethod,
-  ExprLiteral,
-  ExprSignalRead,
-  ExprMemoRead,
-  ExprBinary,
-  ExprUnary,
-  ExprPostfix,
-  ExprTernary,
-  ExprCall,
-  ExprConcat,
-  ExprToString,
-  ExprGroup,
-  ExprSlot,
-  ExprResolveFont,
-  ExprThemeRead,
-  ExprEntityProp,
-  ExprComponentRead,
-  ExprTriggerVar,
-  ExprTypeCast,
-  ExprFormatString,
-  ExprNullCoalesce,
-  ExprStringMethod,
-  ExprNode,
+  IRExprLiteral,
+  IRExprSignalRead,
+  IRExprMemoRead,
+  IRExprBinary,
+  IRExprUnary,
+  IRExprPostfix,
+  IRExprTernary,
+  IRExprCall,
+  IRExprConcat,
+  IRExprToString,
+  IRExprGroup,
+  IRExprSlot,
+  IRExprResolveFont,
+  IRExprThemeRead,
+  IRExprEntityProp,
+  IRExprComponentRead,
+  IRExprTriggerVar,
+  IRExprTypeCast,
+  IRExprFormatString,
+  IRExprNullCoalesce,
+  IRExprStringMethod,
+  IRExprNode,
 } from './expr-types';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {
-  ActionNode,
+  IRActionNode,
   IRNativeAction,
   IRHAServiceAction,
   IRLoggerAction,
@@ -123,5 +112,4 @@ export {
   irScriptStop,
   irThemeSelect,
   irLambdaCondition,
-  irNativeCondition,
 } from './action-types';

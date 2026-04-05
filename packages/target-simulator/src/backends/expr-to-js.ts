@@ -1,12 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────
-// ExprNode → JavaScript evaluation
+// IRExprNode → JavaScript evaluation
 //
-// Converts target-agnostic ExprNode AST trees into executable JS closures
+// Converts target-agnostic IRExprNode AST trees into executable JS closures
 // for the browser-based simulator.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type {
-  ExprNode,
+  IRExprNode,
 } from '@espcompose/core';
 import type {
   BuiltinFn,
@@ -33,10 +33,10 @@ export interface JsLoweringContext {
 // ── Main lowering function ───────────────────────────────────────────────────
 
 /**
- * Convert an ExprNode tree into a JS evaluator closure.
+ * Convert an IRExprNode tree into a JS evaluator closure.
  * Returns a function that computes the expression value when called.
  */
-export function exprToJs(node: ExprNode, ctx: JsLoweringContext): () => unknown {
+export function exprToJs(node: IRExprNode, ctx: JsLoweringContext): () => unknown {
   switch (node.kind) {
     case 'literal':
       return () => node.value;
@@ -157,7 +157,7 @@ export function exprToJs(node: ExprNode, ctx: JsLoweringContext): () => unknown 
     }
 
     default:
-      throw new Error(`Unknown ExprNode kind: ${(node as ExprNode).kind}`);
+      throw new Error(`Unknown IRExprNode kind: ${(node as IRExprNode).kind}`);
   }
 }
 

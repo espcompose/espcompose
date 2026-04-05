@@ -11,7 +11,7 @@
 //   useEffect(() => { void sensor.value; });
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ReactiveNode, startTracking, stopTracking } from '../reactive-node';
+import { IRReactiveNode, startTracking, stopTracking } from '../reactive-node';
 import { registerReactiveNode } from './useReactiveScope';
 import { assertHookContext } from './useState';
 
@@ -29,7 +29,7 @@ export function useEffect(fn: () => void): void {
   const deps = stopTracking();
 
   if (deps.length > 0) {
-    const node = new ReactiveNode<void>({
+    const node = new IRReactiveNode<void>({
       kind: 'effect',
       dependencies: deps,
     });

@@ -17,25 +17,26 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Context, createContext, useContext, withContext } from './useContext';
-import type { ReactiveNode } from '../reactive-node';
+import type { IRReactiveNode } from '../reactive-node';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Binding types
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Records that a ReactiveNode was used in a specific element prop.
+ * Links an IRReactiveNode to a specific element prop.
  * The compiler uses this to generate reactive trigger wiring.
  */
-export interface ReactiveBinding {
+export interface IRBinding {
+  readonly kind: 'binding';
   /** ESPHome ID of the target element (auto-assigned if not present). */
   targetId: string;
   /** Element type for dispatch (e.g. `lvgl_button`, `sensor`, `light`). */
   targetType: string;
   /** Snake_case prop name on the target (e.g. `checked`, `text`, `text_color`). */
   targetProp: string;
-  /** The ReactiveNode instance that provides the reactive value. */
-  expression: ReactiveNode;
+  /** The IRReactiveNode instance that provides the reactive value. */
+  expression: IRReactiveNode;
   /** LVGL part name (snake_case) if the binding targets a sub-part, e.g. `'indicator'`, `'knob'`. */
   part?: string;
   /** LVGL state name (snake_case) if the binding targets a state variant, e.g. `'pressed'`, `'disabled'`. */
@@ -43,12 +44,10 @@ export interface ReactiveBinding {
 }
 
 /**
- * Records a Home Assistant entity that needs a sensor import in the YAML config.
+ * A component definition (image, font, etc.) for injection into the YAML config.
  */
-/**
- * Records a component definition (image, font, etc.) to inject into the YAML config.
- */
-export interface ComponentRegistration {
+export interface IRComponent {
+  readonly kind: 'component';
   /** ESPHome config section to inject into (e.g. `'image'`, `'font'`). */
   section: string;
   /** Auto-generated or user-supplied component ID. */
@@ -57,7 +56,11 @@ export interface ComponentRegistration {
   config: Record<string, unknown>;
 }
 
-export interface HAEntityRegistration {
+/**
+ * A Home Assistant entity that needs a sensor import in the YAML config.
+ */
+export interface IRHAEntity {
+  readonly kind: 'ha_entity';
   /** Full HA entity ID (e.g. `light.kitchen_floods`). */
   entityId: string;
   /** HA domain extracted from entity ID prefix (e.g. `light`, `sensor`). */
@@ -81,10 +84,10 @@ export interface HAEntityRegistration {
 // ────────────────────────────────────────────────────────────────────────────
 
 interface ReactiveScopeFrame {
-  bindings: ReactiveBinding[];
-  entities: Map<string, HAEntityRegistration>;
-  components: Map<string, ComponentRegistration>;
-  reactiveNodes: ReactiveNode[];
+  bindings: IRBinding[];
+  entities: Map<string, IRHAEntity>;
+  components: Map<string, IRComponent>;
+  reactiveNodes: IRReactiveNode[];
 }
 
 const reactiveScopeContext: Context<ReactiveScopeFrame | null> =
@@ -98,7 +101,7 @@ const reactiveScopeContext: Context<ReactiveScopeFrame | null> =
  * Register a reactive binding discovered during element serialization.
  * No-op if called outside a reactive scope.
  */
-export function registerReactiveBinding(binding: ReactiveBinding): void {
+export function registerReactiveBinding(binding: IRBinding): void {
   const frame = useContext(reactiveScopeContext);
   if (frame) {
     frame.bindings.push(binding);
@@ -110,7 +113,7 @@ export function registerReactiveBinding(binding: ReactiveBinding): void {
  * Deduplicates by entityId — multiple calls with the same entity are safe.
  * No-op if called outside a reactive scope.
  */
-export function registerHAEntity(entity: HAEntityRegistration): void {
+export function registerHAEntity(entity: IRHAEntity): void {
   const frame = useContext(reactiveScopeContext);
   if (frame && !frame.entities.has(entity.generatedId)) {
     frame.entities.set(entity.generatedId, entity);
@@ -122,7 +125,7 @@ export function registerHAEntity(entity: HAEntityRegistration): void {
  * final YAML config. Deduplicates by component ID.
  * No-op if called outside a reactive scope.
  */
-export function registerComponent(reg: ComponentRegistration): void {
+export function registerComponent(reg: IRComponent): void {
   const frame = useContext(reactiveScopeContext);
   if (frame && !frame.components.has(reg.id)) {
     frame.components.set(reg.id, reg);
@@ -130,11 +133,11 @@ export function registerComponent(reg: ComponentRegistration): void {
 }
 
 /**
- * Register a ReactiveNode (memo or effect) created during the render pass.
+ * Register an IRReactiveNode (memo or effect) created during the render pass.
  * Returns the node's stable nodeId. No-op (returns empty string) if called
  * outside a reactive scope.
  */
-export function registerReactiveNode(node: ReactiveNode): string {
+export function registerReactiveNode(node: IRReactiveNode): string {
   const frame = useContext(reactiveScopeContext);
   if (frame) {
     frame.reactiveNodes.push(node);
@@ -149,10 +152,10 @@ export function registerReactiveNode(node: ReactiveNode): string {
 
 export interface ReactiveScopeResult<T> {
   result: T;
-  bindings: ReactiveBinding[];
-  entities: HAEntityRegistration[];
-  components: ComponentRegistration[];
-  reactiveNodes: ReactiveNode[];
+  bindings: IRBinding[];
+  entities: IRHAEntity[];
+  components: IRComponent[];
+  reactiveNodes: IRReactiveNode[];
 }
 
 /**

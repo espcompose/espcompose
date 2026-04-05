@@ -1,29 +1,29 @@
 import type { EspComposeElement } from './types';
 import { isRef } from './types';
-import { isReactiveNode } from './reactive-node';
-import type { ReactiveNode } from './reactive-node';
+import { isIRReactiveNode } from './reactive-node';
+import type { IRReactiveNode } from './reactive-node';
 import { isSecretValue } from './secret';
 
 import { registerRefTag } from './ref-registry';
 import { isTriggerVar } from './trigger-args';
 import type { TriggerVar } from './trigger-args';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
-import type { ActionNode } from './ir/action-types';
+import type { IRActionNode } from './ir/action-types';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
 // in WeakMaps/Maps keyed by the serialized output objects. The IR builder
 // uses these to produce a target-agnostic semantic IR that preserves
-// ReactiveNodes, Refs, action metadata, and secrets.
+// IRReactiveNodes, Refs, action metadata, and secrets.
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface SerializationCaptures {
-  /** Serialized Scalar → original ReactiveNode */
-  reactives: WeakMap<object, ReactiveNode>;
+  /** Serialized Scalar → original IRReactiveNode */
+  reactives: WeakMap<object, IRReactiveNode>;
   /** Serialized token string → original Ref object */
   refs: Map<string, unknown>;
   /** Serialized action array/object → pre-resolution action metadata */
-  actions: WeakMap<object, { rawActions: ActionNode[]; refBindings?: Record<string, unknown> }>;
+  actions: WeakMap<object, { rawActions: IRActionNode[]; refBindings?: Record<string, unknown> }>;
   /** Serialized Scalar → secret key string */
   secrets: WeakMap<object, string>;
   /** Serialized Scalar → TriggerVar marker */
@@ -181,9 +181,9 @@ export function serializeValue(v: unknown): unknown {
     if (_captures) _captures.triggerVars.set(result as object, { name: (v as TriggerVar).name });
     return result;
   }
-  if (isReactiveNode(v)) {
-    const result = serializeReactiveNode(v);
-    if (_captures) _captures.reactives.set(result as object, v as ReactiveNode);
+  if (isIRReactiveNode(v)) {
+    const result = serializeIRReactiveNode(v);
+    if (_captures) _captures.reactives.set(result as object, v as IRReactiveNode);
     return result;
   }
   if (isSecretValue(v)) {
@@ -201,7 +201,7 @@ export function serializeValue(v: unknown): unknown {
     const result = restoreLambdaMarkers(actions);
     if (_captures && result !== null && typeof result === 'object') {
       _captures.actions.set(result as object, {
-        rawActions: fn.__compiledActions as ActionNode[],
+        rawActions: fn.__compiledActions as IRActionNode[],
         refBindings: fn.__refBindings,
       });
     }
@@ -255,12 +255,12 @@ function restoreLambdaMarkers(value: unknown): unknown {
 }
 
 /**
- * Serialize a ReactiveNode as a lambda marker.
+ * Serialize a IRReactiveNode as a lambda marker.
  *
  * Generates a placeholder lambda body; the actual target-specific code generation
  * happens in the target's lowering layer (e.g. target-esphome's lower-yaml.ts).
  */
-function serializeReactiveNode(node: ReactiveNode): unknown {
+function serializeIRReactiveNode(node: IRReactiveNode): unknown {
   if (node.kind === 'expression' && node.sourceId && node.property) {
     return createLambdaScalar(`return id(${node.sourceId})${node.property};`);
   }

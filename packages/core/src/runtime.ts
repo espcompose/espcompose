@@ -56,7 +56,7 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   if (typeof el.type === 'function') {
     const result = el.type(el.props as never);
     if (result == null) return undefined;
-    return toPlainObject(Array.isArray(result) ? result : result);
+    return toPlainObject(result);
  }
 
   // Fragment: recurse into children
@@ -231,7 +231,7 @@ function buildChildData(
 // ────────────────────────────────────────────────────────────────────────────
 
 function render(element: EspComposeElement | EspComposeElement[]): unknown {
-  return toPlainObject(Array.isArray(element) ? element : element);
+  return toPlainObject(element);
 }
 
 export const ESPCompose = {

@@ -320,11 +320,11 @@ copied to `.espcompose/assets/` with content-hash naming
 (`<stem>-<hash8><ext>`) for deduplication.
 
 ### Library Compilation
-Component libraries can be pre-compiled with `espcompose library` so consumers
+Component libraries can be pre-compiled with `espcompose build --library` so consumers
 don't need the TypeScript source:
 
 1. AST transform runs on library sources (same reactive + script transforms)
-2. esbuild bundles to CJS + ESM
+2. esbuild bundles to ESM
 3. TypeScript emits `.d.ts` declarations
 4. A `__espcompose_format__` version marker is injected (currently version **2**)
 
@@ -385,15 +385,15 @@ The `espcompose` CLI provides a unified workflow from TSX source to device:
 |---------|-------------|
 | `espcompose init <name>` | Create a new ESPHome Compose project (device or library with `--library`) |
 | `espcompose transpile [dir]` | Transpile TSX → ESPHome YAML (fast, no ESPHome dependency) |
+| `espcompose transpile --library [dir]` | Run AST transforms on a component library (no bundle/emit) |
 | `espcompose config [dir] [-- args]` | Transpile + validate via `esphome config`, prints merged config |
-| `espcompose compile [dir] [-- args]` | Transpile + compile firmware via `esphome compile` |
+| `espcompose build [dir] [-- args]` | Transpile + compile firmware via `esphome compile` |
+| `espcompose build --library [dir]` | Build a component library for distribution (ESM + `.d.ts`) |
 | `espcompose run [dir] [-- args]` | Transpile + compile + upload via `esphome run` (interactive) |
 | `espcompose logs [dir] [-- args]` | Transpile + open serial monitor via `esphome logs` (interactive) |
 | `espcompose simulate [dir]` | Transpile + open browser-based LVGL simulator (`-w`/`--width`, `--height`) |
-| `espcompose library [rootDir]` | Pre-compile a component library (CJS + ESM + `.d.ts`) |
-| `espcompose transform-lib [srcDir]` | Low-level: run AST transforms only on library source |
 
-All commands except `transpile` and `simulate` require `esphome` on PATH.
+All commands except `transpile` and `simulate` require `esphome` on PATH (library builds via `--library` also don't require ESPHome).
 Extra flags after `--` are forwarded to the underlying ESPHome command.
 Output is always written to `<projectDir>/.espcompose/esphome.yaml`.
 

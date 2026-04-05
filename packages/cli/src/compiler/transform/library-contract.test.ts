@@ -14,7 +14,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { transformLib } from '../../transform-lib.js';
+import { transformLib } from '../library.js';
 import { LIBRARY_FORMAT_VERSION, FORMAT_VERSION_EXPORT } from './format-version.js';
 import {
   CompiledReactiveSchema,

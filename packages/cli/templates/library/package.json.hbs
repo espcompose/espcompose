@@ -1,14 +1,12 @@
 {
   "name": "{{name}}",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "type": "module",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -18,7 +16,7 @@
     "library": true
   },
   "scripts": {
-    "build": "espcompose library",
+    "build": "espcompose build --library",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src"
   },

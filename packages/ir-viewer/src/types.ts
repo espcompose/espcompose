@@ -6,10 +6,11 @@ export type IRValueKind =
   | 'object'    // { kind, entries: [{key, value}] }
   | 'array'     // { kind, items: IRValue[] }
   | 'ref'       // { kind, token }
-  | 'reactive'  // { kind, node: ReactiveNode }
-  | 'action';   // { kind, actions: ExprNode[] }
+  | 'reactive'  // { kind, node: IRReactiveNode }
+  | 'action';   // { kind, actions: IRExprNode[] }
 
 export interface IREntry {
+  kind: 'entry';
   key: string;
   value: IRValue;
 }
@@ -26,40 +27,43 @@ export interface IRValue {
   // ref
   token?: string;
   // reactive
-  node?: ReactiveNode;
+  node?: IRReactiveNode;
   // action
-  actions?: ExprNode[];
+  actions?: IRExprNode[];
   [key: string]: unknown;
 }
 
-export interface ReactiveNode {
+export interface IRReactiveNode {
   __reactive_node__: true;
   kind: 'expression' | 'memo' | string;
   nodeId: string;
   exprType: string;
-  exprIR: ExprNode;
-  dependencies: Dependency[];
+  exprIR: IRExprNode;
+  dependencies: IRDependency[];
   [key: string]: unknown;
 }
 
-export interface Dependency {
+export interface IRDependency {
+  kind: 'dependency';
   sourceId: string;
   triggerType: string;
   sourceDomain?: string;
   sourceType?: string;
 }
 
-export interface ExprNode {
+export interface IRExprNode {
   kind: string;
   [key: string]: unknown;
 }
 
 export interface IRSection {
+  kind: 'section';
   key: string;
   value: IRValue;
 }
 
-export interface HAEntityRegistration {
+export interface IRHAEntity {
+  kind: 'ha_entity';
   entityId: string;
   domain: string;
   sensorType: 'binary_sensor' | 'sensor' | 'text_sensor';
@@ -67,42 +71,49 @@ export interface HAEntityRegistration {
   attribute?: string;
 }
 
-export interface ComponentRegistration {
+export interface IRComponent {
+  kind: 'component';
   section: string;
   id: string;
   config: Record<string, unknown>;
 }
 
-export interface IRScriptDefinition {
+export interface IRScript {
+  kind: 'script';
   id: string;
   then: unknown[];
 }
 
-export interface ReactiveBinding {
+export interface IRBinding {
+  kind: 'binding';
   targetId: string;
   targetType: string;
   targetProp: string;
-  expression: ReactiveNode;
+  expression: IRReactiveNode;
   part?: string;
   state?: string;
 }
 
 export interface IRESPHomeData {
+  kind: 'esphome_data';
   sections: IRSection[];
-  haEntities: HAEntityRegistration[];
-  components: ComponentRegistration[];
-  scripts: IRScriptDefinition[];
+  haEntities: IRHAEntity[];
+  components: IRComponent[];
+  scripts: IRScript[];
 }
 
 export interface IRThemeData {
+  kind: 'theme_data';
   themeNames: string[];
   defaultIndex: number;
   leafData: Record<string, { values: unknown[]; valueType: string }>;
 }
 
 export interface IRESPComposeData {
+  kind: 'espcompose_data';
   reactive: {
-    bindings: ReactiveBinding[];
+    kind: 'reactive_data';
+    bindings: IRBinding[];
     memos: unknown[];
     effects: unknown[];
   };
@@ -110,6 +121,7 @@ export interface IRESPComposeData {
 }
 
 export interface IRData {
+  kind: 'semantic_ir';
   esphome: IRESPHomeData;
   espcompose: IRESPComposeData;
 }
@@ -122,11 +134,11 @@ export type NodeKind =
   | 'group'         // count container (sections list, haEntities list…)
   // Registered IR items
   | 'section'       // a single top-level section (esphome, wifi, lvgl, …)
-  | 'ha-entity'     // HAEntityRegistration
-  | 'component'     // ComponentRegistration
-  | 'script'        // IRScriptDefinition
+  | 'ha-entity'     // IRHAEntity
+  | 'component'     // IRComponent
+  | 'script'        // IRScript
   | 'script-action' // an item in script.then[]
-  | 'binding'       // ReactiveBinding
+  | 'binding'       // IRBinding
   | 'reactive-node' // memo or effect in espcompose.reactive
   | 'theme-group'   // themes container
   | 'theme-leaf'    // a single theme design token

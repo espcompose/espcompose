@@ -433,18 +433,18 @@ export function useFont(_props: Record<string, unknown>): string {
   return `sim_font_${fontCounter++}`;
 }
 
-// ── ReactiveNode class reference ─────────────────────────────────────────────
+// ── IRReactiveNode class reference ─────────────────────────────────────────────
 
-let _ReactiveNodeClass: (new (config: Record<string, unknown>) => unknown) | null = null;
+let _IRReactiveNodeClass: (new (config: Record<string, unknown>) => unknown) | null = null;
 
 /** Must be called once after loading the SDK module, before render. */
-export function setReactiveNodeClass(cls: new (config: Record<string, unknown>) => unknown): void {
-  _ReactiveNodeClass = cls;
+export function setIRReactiveNodeClass(cls: new (config: Record<string, unknown>) => unknown): void {
+  _IRReactiveNodeClass = cls;
 }
 
-/** Get the ReactiveNode class (used by the simulator render for mock nodes). */
-export function getReactiveNodeClass(): (new (config: Record<string, unknown>) => unknown) | null {
-  return _ReactiveNodeClass;
+/** Get the IRReactiveNode class (used by the simulator render for mock nodes). */
+export function getIRReactiveNodeClass(): (new (config: Record<string, unknown>) => unknown) | null {
+  return _IRReactiveNodeClass;
 }
 
 // ── useReactiveTheme() ───────────────────────────────────────────────────────
@@ -461,7 +461,7 @@ export function setGetThemeRegistry(fn: () => unknown): void {
  *
  * Returns a deeply-nested proxy where leaf access returns either:
  * - The actual theme value (for the active/first theme) for static rendering
- * - A ReactiveNode if needed for isReactiveNode checks
+ * - A IRReactiveNode if needed for isIRReactiveNode checks
  *
  * Reads from the SDK's global theme registry (populated by ThemeProvider
  * during render) to get the first theme's flattened values.
@@ -521,12 +521,12 @@ function createThemeProxy(flatValues: Map<string, unknown>, path: string[]): unk
 }
 
 function createMockReactiveLeaf(value: unknown, _path: string[]): unknown {
-  if (_ReactiveNodeClass) {
+  if (_IRReactiveNodeClass) {
     const exprType = typeof value === 'number' ? 'int'
       : typeof value === 'boolean' ? 'bool'
       : typeof value === 'string' && (String(value).startsWith('0x') || String(value).startsWith('#')) ? 'color'
       : 'string';
-    const node = new _ReactiveNodeClass({
+    const node = new _IRReactiveNodeClass({
       kind: 'expression',
       dependencies: [],
       exprType,

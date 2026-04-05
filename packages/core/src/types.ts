@@ -4,7 +4,7 @@ import type {
 } from './generated/actions';
 import type { InferReactiveProperties } from './reactive-properties';
 import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
-import { ReactiveNode } from './reactive-node';
+import { IRReactiveNode } from './reactive-node';
 import { assertHookContext } from './hooks/useState';
 
 
@@ -100,9 +100,10 @@ export declare const ACTION_BRAND: unique symbol;
  *
  * The phantom uses a **function-property** signature so that the type
  * parameter sits in a *contravariant* position (under `strictFunctionTypes`).
- * This lets `BaseRef<Base>` be assignable where `BaseRef<Derived>` is
- * expected — the standard OOP "upcast" direction that users need when
- * passing a base-typed ref to a more-specific component slot.
+ * This lets `Ref<Derived>` be assignable to `Ref<Base>` — the function
+ * parameter's contravariance means `(base: Base) => void` is assignable
+ * to `(derived: Derived) => void`, enabling the standard upcast direction
+ * that users need when passing a derived-typed ref to a base component slot.
  */
 interface BaseRef<T = unknown> {
   readonly [REF_BRAND]?: (phantom: T) => void;
@@ -163,13 +164,14 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
           return Reflect.get(target, prop, receiver);
         }
 
-        // Check reactive property map — return ReactiveNode if matched.
+        // Check reactive property map — return IRReactiveNode if matched.
         if (typeof prop === 'string') {
           const reactiveConfig = REACTIVE_PROPERTY_MAP[prop];
           if (reactiveConfig) {
-            return new ReactiveNode({
+            return new IRReactiveNode({
               kind: 'expression',
               dependencies: [{
+                kind: 'dependency',
                 sourceId: target._token,
                 triggerType: reactiveConfig.triggerType,
                 sourceDomain: reactiveConfig.sourceDomain,
@@ -292,8 +294,6 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 // Catch-all prop shape used by generated and hand-authored element declarations
 // ────────────────────────────────────────────────────────────────────────────
-
-export type AnyProps = BaseProps & Record<string, unknown>;
 
 // Re-export types for use by generated code
 export type { BindProp } from './reactive-utils';

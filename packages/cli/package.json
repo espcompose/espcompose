@@ -47,17 +47,18 @@
     "@espcompose/target-simulator": "workspace:*",
     "commander": "catalog:",
     "esbuild": "catalog:",
-    "handlebars": "^4.7.8",
     "eslint": "catalog:",
+    "handlebars": "^4.7.8",
+    "picocolors": "^1.1.1",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
     "which": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
-    "espcompose-ir-viewer": "workspace:*",
     "@types/node": "catalog:",
     "@types/which": "catalog:",
+    "espcompose-ir-viewer": "workspace:*",
     "tsup": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"

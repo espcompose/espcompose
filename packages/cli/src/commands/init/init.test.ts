@@ -101,8 +101,9 @@ describe('initProject', () => {
       const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
       expect(pkg.name).toBe('my-lib');
       expect(pkg.espcompose).toEqual({ library: true });
-      expect(pkg.main).toBe('dist/index.js');
+      expect(pkg.type).toBe('module');
       expect(pkg.exports['.']).toBeDefined();
+      expect(pkg.exports['.'].import).toBe('./dist/index.js');
 
       // Source files have correct token replacements
       const indexTs = fs.readFileSync(path.join(root, 'src', 'index.ts'), 'utf8');

@@ -41,21 +41,6 @@ export class QuotedMarker {
   constructor(public readonly value: string) {}
 }
 
-/** Type guard for LambdaMarker instances. */
-export function isLambdaMarker(v: unknown): v is LambdaMarker {
-  return v instanceof LambdaMarker;
-}
-
-/** Type guard for SecretMarker instances. */
-export function isSecretMarker(v: unknown): v is SecretMarker {
-  return v instanceof SecretMarker;
-}
-
-/** Type guard for QuotedMarker instances. */
-export function isQuotedMarker(v: unknown): v is QuotedMarker {
-  return v instanceof QuotedMarker;
-}
-
 /** Type guard for any SDK serialize marker. */
 export function isSerializeMarker(v: unknown): v is LambdaMarker | SecretMarker | QuotedMarker {
   return v instanceof LambdaMarker || v instanceof SecretMarker || v instanceof QuotedMarker;

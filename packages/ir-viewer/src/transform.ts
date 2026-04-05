@@ -3,10 +3,10 @@ import type {
   IREntry,
   IRSection,
   IRValue,
-  HAEntityRegistration,
-  ComponentRegistration,
-  IRScriptDefinition,
-  ReactiveBinding,
+  IRHAEntity,
+  IRComponent,
+  IRScript,
+  IRBinding,
   NodeKind,
   TreeNode,
 } from './types';
@@ -246,9 +246,20 @@ function buildIRAction(label: string, val: IRValue, idSuffix: string): TreeNode 
 
 // ── Top-level builder ──────────────────────────────────────────────────────
 
+/**
+ * Build the viewer tree from serialized IR data.
+ * Uses the `kind` discriminant on each container to validate the data shape
+ * and route to the correct builder.
+ */
 export function buildTree(data: IRData, showInternal = false): TreeNode[] {
   _idSeq = 0;
   void showInternal;
+
+  // Validate top-level discriminant
+  if (data.kind !== 'semantic_ir') {
+    console.warn(`[ir-viewer] Expected kind 'semantic_ir', got '${data.kind}'`);
+  }
+
   const roots: TreeNode[] = [];
   if (data.esphome)    roots.push(buildEsphome(data.esphome));
   if (data.espcompose) roots.push(buildEspcompose(data.espcompose));
@@ -332,7 +343,7 @@ function buildSection(section: IRSection): TreeNode {
   };
 }
 
-function buildHAEntity(entity: HAEntityRegistration): TreeNode {
+function buildHAEntity(entity: IRHAEntity): TreeNode {
   return {
     id: uid(`entity_${entity.generatedId}`),
     label: entity.entityId,
@@ -343,7 +354,7 @@ function buildHAEntity(entity: HAEntityRegistration): TreeNode {
   };
 }
 
-function buildComponent(comp: ComponentRegistration): TreeNode {
+function buildComponent(comp: IRComponent): TreeNode {
   return {
     id: uid(`comp_${comp.id}`),
     label: comp.id,
@@ -354,7 +365,7 @@ function buildComponent(comp: ComponentRegistration): TreeNode {
   };
 }
 
-function buildScript(script: IRScriptDefinition): TreeNode {
+function buildScript(script: IRScript): TreeNode {
   const children = script.then.map((action, i) => {
     const a = action as Record<string, unknown>;
     const kind = typeof a.kind === 'string' ? a.kind : `action ${i}`;
@@ -402,7 +413,7 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
         chip: String(reactive.memos.length),
         nodeKind: 'group',
         data: reactive.memos,
-        children: reactive.memos.map((m, i) => buildReactiveNode(m, i, 'memo')),
+        children: reactive.memos.map((m, i) => buildIRReactiveNode(m, i, 'memo')),
       });
     }
     if (reactive.effects?.length) {
@@ -412,7 +423,7 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
         chip: String(reactive.effects.length),
         nodeKind: 'group',
         data: reactive.effects,
-        children: reactive.effects.map((e, i) => buildReactiveNode(e, i, 'effect')),
+        children: reactive.effects.map((e, i) => buildIRReactiveNode(e, i, 'effect')),
       });
     }
 
@@ -448,7 +459,7 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
   return { id: uid('espcompose'), label: 'espcompose', nodeKind: 'root', data: espcompose, children };
 }
 
-function buildBinding(binding: ReactiveBinding, i: number): TreeNode {
+function buildBinding(binding: IRBinding, i: number): TreeNode {
   const parts = [binding.targetId, binding.targetProp];
   if (binding.part)  parts.push(binding.part);
   if (binding.state) parts.push(binding.state);
@@ -462,7 +473,7 @@ function buildBinding(binding: ReactiveBinding, i: number): TreeNode {
   };
 }
 
-function buildReactiveNode(node: unknown, i: number, type: 'memo' | 'effect'): TreeNode {
+function buildIRReactiveNode(node: unknown, i: number, type: 'memo' | 'effect'): TreeNode {
   const obj = typeof node === 'object' && node !== null && !Array.isArray(node)
     ? (node as Record<string, unknown>)
     : null;

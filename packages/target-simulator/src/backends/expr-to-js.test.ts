@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { exprToJs, type JsLoweringContext } from './expr-to-js';
-import type { ExprNode } from '@espcompose/core';
+import type { IRExprNode } from '@espcompose/core';
 
 function emptyCtx(): JsLoweringContext {
   return {
@@ -16,7 +16,7 @@ function emptyCtx(): JsLoweringContext {
 
 describe('type_cast', () => {
   it('string → float via Number()', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'type_cast',
       expr: { kind: 'literal', value: '3.14', type: 'string' },
       fromType: 'string',
@@ -27,7 +27,7 @@ describe('type_cast', () => {
   });
 
   it('float → int via Math.trunc()', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'type_cast',
       expr: { kind: 'literal', value: 3.7, type: 'float' },
       fromType: 'float',
@@ -38,7 +38,7 @@ describe('type_cast', () => {
   });
 
   it('number → string', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'type_cast',
       expr: { kind: 'literal', value: 42, type: 'float' },
       fromType: 'float',
@@ -49,7 +49,7 @@ describe('type_cast', () => {
   });
 
   it('number → bool', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'type_cast',
       expr: { kind: 'literal', value: 0, type: 'float' },
       fromType: 'float',
@@ -60,7 +60,7 @@ describe('type_cast', () => {
   });
 
   it('truthy number → bool', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'type_cast',
       expr: { kind: 'literal', value: 1, type: 'float' },
       fromType: 'float',
@@ -75,7 +75,7 @@ describe('type_cast', () => {
 
 describe('format_string', () => {
   it('.toFixed(2)', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'format_string',
       expr: { kind: 'literal', value: 3.14159, type: 'float' },
       format: '%.2f',
@@ -85,7 +85,7 @@ describe('format_string', () => {
   });
 
   it('.toFixed(0)', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'format_string',
       expr: { kind: 'literal', value: 3.7, type: 'float' },
       format: '%.0f',
@@ -99,7 +99,7 @@ describe('format_string', () => {
 
 describe('null_coalesce', () => {
   it('float: NaN falls back to right', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'null_coalesce',
       left: { kind: 'literal', value: NaN, type: 'float' },
       right: { kind: 'literal', value: 42, type: 'float' },
@@ -110,7 +110,7 @@ describe('null_coalesce', () => {
   });
 
   it('float: valid value passes through', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'null_coalesce',
       left: { kind: 'literal', value: 10, type: 'float' },
       right: { kind: 'literal', value: 42, type: 'float' },
@@ -121,7 +121,7 @@ describe('null_coalesce', () => {
   });
 
   it('string: empty falls back to right', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'null_coalesce',
       left: { kind: 'literal', value: '', type: 'string' },
       right: { kind: 'literal', value: 'default', type: 'string' },
@@ -132,7 +132,7 @@ describe('null_coalesce', () => {
   });
 
   it('string: non-empty passes through', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'null_coalesce',
       left: { kind: 'literal', value: 'hello', type: 'string' },
       right: { kind: 'literal', value: 'default', type: 'string' },
@@ -147,7 +147,7 @@ describe('null_coalesce', () => {
 
 describe('string_method', () => {
   it('.length', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'length',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -158,7 +158,7 @@ describe('string_method', () => {
   });
 
   it('.toUpperCase()', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'toUpperCase',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -169,7 +169,7 @@ describe('string_method', () => {
   });
 
   it('.toLowerCase()', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'toLowerCase',
       object: { kind: 'literal', value: 'HELLO', type: 'string' },
@@ -180,7 +180,7 @@ describe('string_method', () => {
   });
 
   it('.substring(1, 3)', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'substring',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -194,7 +194,7 @@ describe('string_method', () => {
   });
 
   it('.charAt(0)', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'charAt',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -205,7 +205,7 @@ describe('string_method', () => {
   });
 
   it('.indexOf("lo")', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'indexOf',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -216,7 +216,7 @@ describe('string_method', () => {
   });
 
   it('.indexOf returns -1 for not found', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'indexOf',
       object: { kind: 'literal', value: 'hello', type: 'string' },
@@ -227,7 +227,7 @@ describe('string_method', () => {
   });
 
   it('.trim()', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'string_method',
       method: 'trim',
       object: { kind: 'literal', value: '  hello  ', type: 'string' },
@@ -242,7 +242,7 @@ describe('string_method', () => {
 
 describe('new builtins', () => {
   it('math_trunc', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'call',
       fn: 'math_trunc',
       args: [{ kind: 'literal', value: 3.7, type: 'float' }],
@@ -252,7 +252,7 @@ describe('new builtins', () => {
   });
 
   it('math_trunc with negative', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'call',
       fn: 'math_trunc',
       args: [{ kind: 'literal', value: -3.7, type: 'float' }],
@@ -262,7 +262,7 @@ describe('new builtins', () => {
   });
 
   it('math_clamp within range', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'call',
       fn: 'math_clamp',
       args: [
@@ -276,7 +276,7 @@ describe('new builtins', () => {
   });
 
   it('math_clamp below min', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'call',
       fn: 'math_clamp',
       args: [
@@ -290,7 +290,7 @@ describe('new builtins', () => {
   });
 
   it('math_clamp above max', () => {
-    const node: ExprNode = {
+    const node: IRExprNode = {
       kind: 'call',
       fn: 'math_clamp',
       args: [
