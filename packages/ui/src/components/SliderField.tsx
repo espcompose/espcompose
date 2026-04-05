@@ -6,7 +6,7 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler, BindProp } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, BindProp, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveTypography, resolveFont } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
@@ -25,7 +25,7 @@ interface SliderFieldProps {
   /** Gap between label and slider. Default: 'xs'. */
   gap?: SpacingToken | number;
   /** Width of the field container. */
-  width?: number | string;
+  width?: SizeValue;
 }
 
 /**

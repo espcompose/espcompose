@@ -15,6 +15,17 @@ import type { LvglStyleProps } from './generated/components/lvgl';
 import type { image_Image } from './generated/markers';
 import type { RefProp } from './types';
 
+// ── Utility types ──────────────────────────────────────────────────────────
+
+/** Numeric string: '0', '128', '255', etc. */
+type NumericString = `${number}`;
+/** Percentage string: '50%', '100%', etc. */
+export type Percentage = `${number}%`;
+/** Opacity value: named alias, numeric string, or percentage. */
+type OpacityValue = 'transparent' | 'opaque' | Percentage | NumericString;
+/** Size value: number, named keyword, or percentage string. */
+export type SizeValue = number | 'fit-content' | Percentage;
+
 // ── CSS-like naming aliases ────────────────────────────────────────────────
 
 /**
@@ -38,17 +49,17 @@ export interface CssAliasProps {
   translateY?: LvglStyleProps['translateY'];
   // ── Sizing ───────────────────────────────────────────────────────────
   /** Maps to `width`. */
-  width?: BindProp<number | string | 'fit-content'>;
+  width?: BindProp<SizeValue>;
   /** Maps to `height`. */
-  height?: BindProp<number | string | 'fit-content'>;
+  height?: BindProp<SizeValue>;
   /** Maps to `minWidth`. */
-  minWidth?: BindProp<number | string | 'fit-content'>;
+  minWidth?: BindProp<SizeValue>;
   /** Maps to `maxWidth`. */
-  maxWidth?: BindProp<number | string | 'fit-content'>;
+  maxWidth?: BindProp<SizeValue>;
   /** Maps to `minHeight`. */
-  minHeight?: BindProp<number | string | 'fit-content'>;
+  minHeight?: BindProp<SizeValue>;
   /** Maps to `maxHeight`. */
-  maxHeight?: BindProp<number | string | 'fit-content'>;
+  maxHeight?: BindProp<SizeValue>;
 
   // ── Position ─────────────────────────────────────────────────────────
   /** Horizontal position. Maps to LVGL `x`. */
@@ -64,7 +75,7 @@ export interface CssAliasProps {
 
   // ── Border ───────────────────────────────────────────────────────────
   /** Maps to `radius`. */
-  borderRadius?: BindProp<number | string | 'circle'>;
+  borderRadius?: BindProp<number | 'circle' | NumericString>;
 
   // ── Padding ──────────────────────────────────────────────────────────
   /** Maps to `padAll`. */
@@ -94,9 +105,9 @@ export interface CssAliasProps {
   /** Font reference. Maps to `textFont`. */
   font?: BindProp<string | LvglStyleProps['textFont'] extends BindProp<infer T> ? T : never>;
   /** Maps to `textDecor`. */
-  textDecoration?: BindProp<string | 'none' | 'underline' | 'strikethrough'>;
+  textDecoration?: BindProp<'none' | 'underline' | 'strikethrough'>;
   /** Maps to `textAlign`. */
-  textAlign?: BindProp<string | 'left' | 'center' | 'right' | 'auto'>;
+  textAlign?: BindProp<'left' | 'center' | 'right' | 'auto'>;
   /** Maps to `textLetterSpace`. */
   letterSpacing?: BindProp<number>;
   /** Maps to `textLineSpace`. */
@@ -104,23 +115,23 @@ export interface CssAliasProps {
 
   // ── Opacity ──────────────────────────────────────────────────────────
   /** Maps to `opa`. */
-  opacity?: BindProp<string | 'transparent' | 'opaque'>;
+  opacity?: BindProp<OpacityValue>;
   /** Maps to `bgOpa`. */
-  backgroundOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  backgroundOpacity?: BindProp<OpacityValue>;
   /** Maps to `textOpa`. */
-  textOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  textOpacity?: BindProp<OpacityValue>;
   /** Maps to `borderOpa`. */
-  borderOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  borderOpacity?: BindProp<OpacityValue>;
   /** Maps to `outlineOpa`. */
-  outlineOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  outlineOpacity?: BindProp<OpacityValue>;
   /** Maps to `shadowOpa`. */
-  shadowOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  shadowOpacity?: BindProp<OpacityValue>;
 
   // ── Background image ─────────────────────────────────────────────────
   /** Maps to `bgImageSrc`. */
   backgroundImage?: string | RefProp<image_Image>;
   /** Maps to `bgImageOpa`. */
-  backgroundImageOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  backgroundImageOpacity?: BindProp<OpacityValue>;
 
   // ── Shadow ───────────────────────────────────────────────────────────
   /** Maps to `shadowOfsX`. */
@@ -132,7 +143,7 @@ export interface CssAliasProps {
   /** Maps to `arcColor`. */
   arcColor?: BindProp<string>;
   /** Maps to `arcOpa`. */
-  arcOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  arcOpacity?: BindProp<OpacityValue>;
   /** Linecap style for arcs. Maps to `arcRounded`. */
   arcLinecap?: BindProp<'flat' | 'round'>;
   /** Maps to `arcWidth`. */
@@ -148,9 +159,9 @@ export interface CssAliasProps {
   /** Maps to `bgGradColor`. */
   backgroundGradientColor?: BindProp<string>;
   /** Maps to `bgDitherMode`. */
-  backgroundGradientDither?: BindProp<string | 'none' | 'ordered' | 'error-diffusion'>;
+  backgroundGradientDither?: BindProp<'none' | 'ordered' | 'error-diffusion'>;
   /** Maps to `bgGradDir`. */
-  backgroundGradientDirection?: BindProp<string | 'none' | 'horizontal' | 'vertical'>;
+  backgroundGradientDirection?: BindProp<'none' | 'horizontal' | 'vertical'>;
   /** Maps to `bgGradStop`. */
   backgroundGradientStop?: BindProp<number | string>;
   /** Maps to `bgMainStop`. */
@@ -160,7 +171,7 @@ export interface CssAliasProps {
   /** Maps to `bgImageRecolor`. */
   backgroundImageTint?: BindProp<string>;
   /** Maps to `bgImageRecolorOpa`. */
-  backgroundImageTintOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  backgroundImageTintOpacity?: BindProp<OpacityValue>;
   /** Whether to tile the background image. Maps to `bgImageTiled`. */
   backgroundRepeat?: BindProp<'repeat' | 'no-repeat'>;
 
@@ -168,7 +179,7 @@ export interface CssAliasProps {
   /** Render border before or after children. Maps to `borderPost`. */
   borderDrawOrder?: BindProp<'before-children' | 'after-children'>;
   /** Maps to `borderSide`. */
-  borderSides?: BindProp<string | 'none' | 'top' | 'bottom' | 'left' | 'right' | 'internal'>;
+  borderSides?: BindProp<'none' | 'top' | 'bottom' | 'left' | 'right' | 'internal'>;
 
   // ── Clipping ──────────────────────────────────────────────────────────
   /** Whether to clip children to the border radius. Maps to `clipCorner`. */
@@ -176,13 +187,13 @@ export interface CssAliasProps {
 
   // ── Color filter ──────────────────────────────────────────────────────
   /** Maps to `colorFilterOpa`. */
-  colorFilterOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  colorFilterOpacity?: BindProp<OpacityValue>;
 
   // ── Image (widget-specific) ───────────────────────────────────────────
   /** Maps to `imageRecolor`. */
   imageTint?: BindProp<string>;
   /** Maps to `imageRecolorOpa`. */
-  imageTintOpacity?: BindProp<string | 'transparent' | 'opaque'>;
+  imageTintOpacity?: BindProp<OpacityValue>;
 
   // ── Line / stroke (widget-specific) ───────────────────────────────────
   /** Linecap style for lines. Maps to `lineRounded`. */
@@ -198,7 +209,7 @@ export interface CssAliasProps {
 
   // ── Layered opacity ───────────────────────────────────────────────────
   /** Maps to `opaLayered`. */
-  opacityLayered?: BindProp<string | 'transparent' | 'opaque'>;
+  opacityLayered?: BindProp<OpacityValue>;
 
   // ── Outline extras ────────────────────────────────────────────────────
   /** Maps to `outlinePad`. */

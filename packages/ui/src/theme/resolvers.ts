@@ -118,11 +118,9 @@ export function resolveFont(def: {
   // Build ExprResolveFont IR node
   const famIR: IRExprNode = famReactive
     ? (def.fontFamily as unknown as IRReactiveNode<string>).exprIR ?? { kind: 'literal', value: '', type: 'string' }
-    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- static branch: famReactive is false
     : { kind: 'literal', value: def.fontFamily as string, type: 'string' };
   const szIR: IRExprNode = szReactive
     ? (def.fontSize as unknown as IRReactiveNode<number>).exprIR ?? { kind: 'literal', value: 0, type: 'float' }
-    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- static branch: szReactive is false
     : { kind: 'literal', value: def.fontSize as number, type: 'float' };
 
   return __espcompose.derivedMemo<string>({

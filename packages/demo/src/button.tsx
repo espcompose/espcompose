@@ -13,16 +13,6 @@ export const MyButton = (props: MyButtonProps) => {
             text={props.text}
             onPress={props.onPress}
         />
-
-        // <lvgl-button
-        //     lineRounded={true}
-        //     text={props.text}
-        //     bgColor={props.bgColor}
-        //     textColor="0xAAAAAA"
-        //     height="80"
-        //     width="160"
-        // >
-        // </lvgl-button>
     );
 }
 
@@ -41,8 +31,8 @@ export const MyImageButton = (props: MyButtonProps) => {
                 strokeLinecap: 'round',
                 borderRadius: '10',
                 overflow: 'hidden',
-                height: '60',
-                width: '120',
+                height: 60,
+                width: 120,
                 backgroundImage: bgImage,
                 backgroundImageOpacity: '50%',
                 textAlign: 'center',

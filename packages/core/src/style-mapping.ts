@@ -241,8 +241,26 @@ export function expandCssProps(
     if (mapping?.kind === 'direct') {
       result[mapping.lvglProp] = value;
     } else if (mapping?.kind === 'transform') {
-      const mapped = mapping.valueMap[value as string];
-      result[mapping.lvglProp] = mapped !== undefined ? mapped : value;
+      if (typeof value === 'string') {
+        const mapped = mapping.valueMap[value];
+        if (mapped !== undefined) {
+          result[mapping.lvglProp] = mapped;
+        } else if (/^-?\d/.test(value)) {
+          // Numeric / percentage strings (e.g. '50%', '128') — pass through.
+          // TODO: Add an optional `valuePattern` regex to transform entries so
+          // each prop can restrict which numeric formats are valid at runtime
+          // (e.g. sizing accepts only percentages, opacity accepts both).
+          result[mapping.lvglProp] = value;
+        } else {
+          throw new Error(
+            `Invalid value "${value}" for style property "${key}". ` +
+            `Expected one of: ${Object.keys(mapping.valueMap).join(', ')}`,
+          );
+        }
+      } else {
+        // Non-string (number, reactive node, etc.) — pass through
+        result[mapping.lvglProp] = value;
+      }
     } else if (mapping?.kind === 'shorthand') {
       // Already handled in pass 1
     } else {

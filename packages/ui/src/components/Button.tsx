@@ -6,7 +6,7 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, BindProp } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, BindProp, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS, useMemo } from '@espcompose/core';
 import { resolveSize, resolveTypography, resolveFont, resolveStatus } from '../theme/resolvers';
 import type { StatusToken, SizeToken } from '../theme/types';
@@ -27,9 +27,9 @@ interface ButtonProps {
   /** Y position (pixels). */
   y?: number;
   /** Width override. */
-  width?: number | string;
+  width?: SizeValue;
   /** Height override. */
-  height?: number | string;
+  height?: SizeValue;
   /** Press handler (ESPHome trigger function). */
   onPress?: TriggerHandler;
 }

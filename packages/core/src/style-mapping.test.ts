@@ -289,6 +289,18 @@ describe('expandCssProps', () => {
     expect(result.clipCorner).toBe(reactiveNode);
   });
 
+  it('throws on invalid string values for transform props', () => {
+    expect(() => expandCssProps({ opacity: 'COVER' })).toThrow(
+      'Invalid value "COVER" for style property "opacity". Expected one of: transparent, opaque',
+    );
+    expect(() => expandCssProps({ textAlign: 'CENTER' })).toThrow(
+      'Invalid value "CENTER" for style property "textAlign". Expected one of: left, center, right, auto',
+    );
+    expect(() => expandCssProps({ width: 'SIZE_CONTENT' })).toThrow(
+      'Invalid value "SIZE_CONTENT" for style property "width". Expected one of: fit-content',
+    );
+  });
+
   // ── Direct rename mappings (newly enabled) ─────────────────────────────
 
   it('maps arc CSS aliases', () => {

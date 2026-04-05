@@ -5,7 +5,7 @@
  * Label uses `ds-text-primary` style reference.
  */
 
-import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveTypography, resolveFont } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
@@ -22,7 +22,7 @@ interface DropdownFieldProps {
   /** Gap between label and dropdown. Default: 'xs'. */
   gap?: SpacingToken | number;
   /** Width of the field container. */
-  width?: number | string;
+  width?: SizeValue;
 }
 
 /**

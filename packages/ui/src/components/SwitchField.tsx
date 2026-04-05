@@ -6,7 +6,7 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveTypography, resolveFont } from '../theme/resolvers';
 
@@ -18,7 +18,7 @@ interface SwitchFieldProps {
   /** Change handler (ESPHome action). */
   onChange?: TriggerHandler<{ x: boolean }>;
   /** Width of the field container. */
-  width?: number | string;
+  width?: SizeValue;
 }
 
 /**

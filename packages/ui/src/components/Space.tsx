@@ -8,7 +8,7 @@
  * Gap (pad_row / pad_column) is placed INSIDE the layout dict per ESPHome docs.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
+import type { EspComposeElement, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
 import { resolveSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
@@ -35,9 +35,9 @@ interface SpaceProps {
   /** Enable wrapping (ROW_WRAP / COLUMN_WRAP). Default: false. */
   wrap?: boolean;
   /** Width. Numeric pixels, percentage string, or 'fit-content'. */
-  width?: number | string;
+  width?: SizeValue;
   /** Height. Numeric pixels, percentage string, or 'fit-content'. */
-  height?: number | string;
+  height?: SizeValue;
   /** Background color (hex). */
   backgroundColor?: string;
   /** Background opacity. */
@@ -84,7 +84,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
         padding: padding,
         backgroundColor: props.backgroundColor,
         backgroundOpacity: props.backgroundOpacity ?? 'transparent',
-        borderRadius: props.radius != null ? String(props.radius) : undefined,
+        borderRadius: props.radius,
         borderWidth: props.borderWidth ?? 0,
         borderColor: props.borderColor,
       }}

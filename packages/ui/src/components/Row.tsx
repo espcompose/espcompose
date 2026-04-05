@@ -12,7 +12,7 @@
  * optional vertical gutter as `pad_row`.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
+import type { EspComposeElement, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { resolveSpacing } from '../theme/resolvers';
@@ -36,9 +36,9 @@ interface RowProps {
   /** Whether row wraps. Default: true. */
   wrap?: boolean;
   /** Width. Default: '100%'. */
-  width?: number | string;
+  width?: SizeValue;
   /** Height. */
-  height?: number | string;
+  height?: SizeValue;
   /** Border width in pixels. Default: 0. */
   borderWidth?: number;
   /** Border color (hex). */
@@ -114,9 +114,9 @@ interface ColProps {
    */
   span?: number;
   /** Width override (disables flex_grow). */
-  width?: number | string;
+  width?: SizeValue;
   /** Height. */
-  height?: number | string;
+  height?: SizeValue;
   /** Border width in pixels. Default: 0. */
   borderWidth?: number;
   /** Border color (hex). */

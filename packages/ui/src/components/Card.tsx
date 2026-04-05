@@ -5,7 +5,7 @@
  * Background color comes from the `ds-surface-alt` style definition.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
+import type { EspComposeElement, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
 import { resolveSpacing, resolveRadius } from '../theme/resolvers';
 import type { SpacingToken, RadiusToken } from '../theme/types';
@@ -23,9 +23,9 @@ interface CardProps {
   /** Border width. Default: 0. */
   borderWidth?: number;
   /** Width. */
-  width?: number | string;
+  width?: SizeValue;
   /** Height. */
-  height?: number | string;
+  height?: SizeValue;
   /** Gap between children. Token name or pixel value. */
   gap?: SpacingToken | number;
 }
@@ -53,7 +53,7 @@ export const Card = createIntentComponent(
         style={{
           backgroundColor: bgColor,
           padding: padding,
-          borderRadius: radius as unknown as string,
+          borderRadius: radius,
           borderColor: props.borderColor,
           borderWidth: props.borderWidth ?? 0,
           width: props.width ?? '100%',

@@ -10,7 +10,7 @@
  * Grid children are positioned via grid_cell_* properties.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
+import type { EspComposeElement, SizeValue } from '@espcompose/core';
 import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { resolveSpacing } from '../theme/resolvers';
@@ -51,9 +51,9 @@ interface GridProps {
   /** Default row alignment for children. */
   alignRows?: GridAlign;
   /** Width. */
-  width?: number | string;
+  width?: SizeValue;
   /** Height. */
-  height?: number | string;
+  height?: SizeValue;
   /** Background color. */
   backgroundColor?: string;
   /** Background opacity. */

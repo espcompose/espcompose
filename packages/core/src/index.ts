@@ -72,7 +72,7 @@ export { useReactiveTheme } from './reactive-theme';
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName } from './style-types';
+export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage } from './style-types';
 export { expandCssStyle } from './style-mapping';
 export { createStyles, mergeStyles } from './create-styles';
 

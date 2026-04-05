@@ -107,60 +107,10 @@ could provide type-safe APIs for these without polluting the style namespace.
 
 ---
 
-### 6. Remove Transform Value Passthrough
+### ~~6. Remove Transform Value Passthrough~~ ✅ Done
 
-**Priority:** Low — correctness hardening.
-
-**Problem:** The `kind: 'transform'` branch in `expandCssProps()` uses a fallback
-pattern: `mapped !== undefined ? mapped : value`. This means that unrecognized
-string values pass through silently to LVGL. For example, if someone writes
-`opacity: 'COVER'` (the old LVGL CAPS value) instead of `opacity: 'opaque'`, it
-would pass through without error because `'COVER'` isn't in the `valueMap` — so it
-falls back to the raw value, which happens to be a valid LVGL enum.
-
-This was intentional during migration to allow non-string values (reactive nodes,
-percentage strings like `'50%'`, raw numbers) to pass through without being in the
-value map. But it also provides an accidental escape hatch for CAPS values.
-
-**Plan:**
-1. Change the transform branch to check `typeof value === 'string'` before
-   looking up the value map:
-   ```ts
-   if (typeof value === 'string') {
-     const mapped = mapping.valueMap[value];
-     if (mapped !== undefined) {
-       result[mapping.lvglProp] = mapped;
-     } else {
-       // String not in the map — accept raw strings that look like
-       // percentages/numbers, reject CAPS enum values
-       if (/^-?\d/.test(value)) {
-         result[mapping.lvglProp] = value; // e.g. '50%', '100px'
-       } else {
-         throw new Error(
-           `Invalid value "${value}" for "${key}". ` +
-           `Expected one of: ${Object.keys(mapping.valueMap).join(', ')}`,
-         );
-       }
-     }
-   } else {
-     // Non-string (number, reactive node, etc.) — pass through
-     result[mapping.lvglProp] = value;
-   }
-   ```
-2. This would immediately catch old CAPS values (`'TRANSP'`, `'COVER'`,
-   `'SIZE_CONTENT'`, etc.) with a clear error message showing the correct
-   lowercase alternative.
-3. Percentage strings like `'50%'` and numeric strings like `'100'` continue
-   to pass through via the regex check.
-4. Reactive nodes and other non-string values pass through via the `typeof`
-   check.
-
-**Prerequisites:**
-- All CAPS values in `packages/ui/` and `packages/demo/` are already migrated
-  to lowercase (done).
-- E2E snapshot tests updated to reflect the new lowercase input values (done —
-  the style system still emits LVGL CAPS in the output YAML, which is correct).
-
-**Risk:** Low. The only breakage would be if external consumers of the library
-are still using CAPS values directly in `style={{}}`. Those would get a clear
-error message with the correct alternative.
+Resolved — tightened all `kind: 'transform'` prop types using TypeScript template
+literal types (`\`${number}%\``, `\`${number}\``) and strict enum unions. The loose
+`string` type that absorbed literal unions is eliminated. TypeScript now catches
+invalid values like `'COVER'`, `'TRANSP'`, `'SIZE_CONTENT'` at compile time. The
+runtime transform branch throws on unmapped non-numeric strings as a safety net.
