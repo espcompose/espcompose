@@ -13,10 +13,10 @@ function ActionButton(props: {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
 }) {
-  const { onRelease, children, ...rest } = props;
+  const { onRelease, children, x, y, width, height } = props;
   return (
     <lvgl-button
-      {...rest}
+      style={{ left: x, top: y, width, height }}
       x:custom={onRelease != null ? { on_release: onRelease } : undefined}
     >
       {children}
@@ -52,8 +52,7 @@ function App() {
         <lvgl-page>
           {/* Light status label — bound to HA light entity */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={kitchenLight.stateText}
           />
 
@@ -67,13 +66,12 @@ function App() {
               kitchenLight.toggle();
             }}
           >
-            <lvgl-label text="Toggle" align="CENTER" />
+            <lvgl-label text="Toggle" x:custom={{ align: 'CENTER' }} />
           </ActionButton>
 
           {/* Temperature readout — bound to HA sensor entity */}
           <lvgl-label
-            x={10}
-            y={100}
+            style={{ left: 10, top: 100 }}
             text={tempSensor.stateText}
           />
         </lvgl-page>

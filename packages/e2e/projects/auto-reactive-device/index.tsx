@@ -48,37 +48,31 @@ function App() {
         <lvgl-page>
           {/* Direct passthrough — should NOT be wrapped in useMemo */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={officeLight.stateText}
           />
 
           {/* Ternary with Signal — should be auto-wrapped */}
           <lvgl-label
-            x={10}
-            y={40}
+            style={{ left: 10, top: 40 }}
             text={officeLight.isOn ? 'Light On' : 'Light Off'}
           />
 
           {/* isNaN pattern — should be auto-wrapped */}
           <lvgl-slider
-            x={10}
-            y={70}
-            width={200}
+            style={{ left: 10, top: 70, width: 200 }}
             value={isNaN(officeLight.brightness) ? 0 : officeLight.brightness}
           />
 
           {/* Multi-source ternary — should be auto-wrapped */}
           <lvgl-label
-            x={10}
-            y={100}
+            style={{ left: 10, top: 100 }}
             text={officeLight.isOn && tempSensor.value > 72 ? 'Comfortable' : 'Adjust'}
           />
 
           {/* Explicit useMemo — should NOT be double-wrapped */}
           <lvgl-label
-            x={10}
-            y={130}
+            style={{ left: 10, top: 130 }}
             text={explicitStatus}
           />
         </lvgl-page>

@@ -78,30 +78,30 @@ lvgl:
   pages:
     - widgets:
         - label:
+            text: !lambda "return std::string(id(ha_light_office).state ? \\"on\\" : \\"off\\");"
             x: 10
             y: 10
-            text: !lambda "return std::string(id(ha_light_office).state ? \\"on\\" : \\"off\\");"
             id: rw_ref1
         - label:
+            text: !lambda "return espcompose::memo_1.get().c_str();"
             x: 10
             y: 40
-            text: !lambda "return espcompose::memo_1.get().c_str();"
             id: rw_ref2
         - slider:
+            value: !lambda "return espcompose::memo_2.get();"
             x: 10
             y: 70
             width: 200
-            value: !lambda "return espcompose::memo_2.get();"
             id: rw_ref3
         - label:
+            text: !lambda "return espcompose::memo_3.get().c_str();"
             x: 10
             y: 100
-            text: !lambda "return espcompose::memo_3.get().c_str();"
             id: rw_ref4
         - label:
+            text: !lambda "return espcompose::memo_0.get().c_str();"
             x: 10
             y: 130
-            text: !lambda "return espcompose::memo_0.get().c_str();"
             id: rw_ref5
 binary_sensor:
   platform: homeassistant
@@ -361,87 +361,87 @@ lvgl:
   displays:
     - r_ref0
   pages:
-    - bg_color: !lambda "return espcompose::thm_colors_background.get();"
+    - scrollbar_mode: 'OFF'
+      bg_color: !lambda "return espcompose::thm_colors_background.get();"
       border_width: 0
       pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
-      scrollbar_mode: 'OFF'
       id: rw_ref1
       widgets:
         - obj:
-            width: 100%
-            height: SIZE_CONTENT
-            bg_opa: TRANSP
-            border_width: 0
             scrollbar_mode: 'OFF'
             layout:
               type: flex
               flex_flow: COLUMN
+            width: 100%
+            height: SIZE_CONTENT
+            bg_opa: TRANSP
+            border_width: 0
             widgets:
               - label:
+                  text: Smart Home
                   text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                   text_font: !lambda "return espcompose::memo_0.get();"
-                  text: Smart Home
                   id: rw_ref2
               - obj:
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: COLUMN
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
                   pad_all: !lambda "return espcompose::thm_spacing_md.get();"
                   radius: !lambda "return espcompose::thm_radii_md.get();"
                   border_width: 0
                   width: 100%
                   height: SIZE_CONTENT
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: COLUMN
                   id: rw_ref3
                   widgets:
                     - label:
+                        text: Living Room
                         text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                         text_font: !lambda "return espcompose::memo_1.get();"
-                        text: Living Room
                         id: rw_ref4
                     - obj:
-                        bg_opa: TRANSP
-                        width: 100%
-                        height: SIZE_CONTENT
                         layout:
                           type: flex
                           flex_flow: COLUMN
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
                         widgets:
                           - label:
+                              text: Brightness
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                               text_font: !lambda "return espcompose::memo_2.get();"
-                              text: Brightness
                               id: rw_ref5
                           - slider:
                               min_value: 0
                               max_value: 255
                     - obj:
-                        bg_opa: TRANSP
-                        width: 100%
-                        height: SIZE_CONTENT
                         layout:
                           type: flex
                           flex_flow: ROW
                           flex_align_main: SPACE_BETWEEN
                           flex_align_cross: CENTER
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
                         widgets:
                           - label:
+                              text: Power
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
                               text_font: !lambda "return espcompose::memo_3.get();"
-                              text: Power
                               id: rw_ref6
                           - switch: {}
               - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
                   scrollbar_mode: 'OFF'
                   layout:
                     type: flex
                     flex_flow: ROW
                     flex_align_main: SPACE_BETWEEN
+                  width: 100%
+                  height: SIZE_CONTENT
+                  bg_opa: TRANSP
+                  border_width: 0
                   widgets:
                     - button:
                         bg_color: !lambda "return espcompose::thm_colors_success_bg.get();"
@@ -454,9 +454,9 @@ lvgl:
                         widgets:
                           - label:
                               text: Turn On
+                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_success_text.get();"
                               text_font: !lambda "return espcompose::memo_4.get();"
-                              align: CENTER
                               id: rw_ref8
                     - button:
                         bg_opa: TRANSP
@@ -471,9 +471,9 @@ lvgl:
                         widgets:
                           - label:
                               text: Turn Off
+                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                               text_font: !lambda "return espcompose::memo_6.get();"
-                              align: CENTER
                               id: rw_ref10
 "
 `;
@@ -604,29 +604,29 @@ lvgl:
   pages:
     - widgets:
         - label:
-            x: 10
-            y: 10
             text: !lambda "return std::string(id(ha_light_kitchen_floods).state ? \\"on\\" :
               \\"off\\");"
+            x: 10
+            y: 10
             id: rw_ref1
         - button:
-            x: 10
-            y: 40
-            width: 120
-            height: 50
             on_release:
               - homeassistant.action:
                   action: light.toggle
                   data:
                     entity_id: light.kitchen_floods
+            x: 10
+            y: 40
+            width: 120
+            height: 50
             widgets:
               - label:
                   text: Toggle
                   align: CENTER
         - label:
+            text: !lambda "return to_string(id(ha_sensor_living_room_temperature).state);"
             x: 10
             y: 100
-            text: !lambda "return to_string(id(ha_sensor_living_room_temperature).state);"
             id: rw_ref2
 binary_sensor:
   platform: homeassistant
@@ -691,21 +691,21 @@ lvgl:
   pages:
     - widgets:
         - label:
-            x: 10
-            y: 10
             text: !lambda "return std::string(id(ha_light_office_main).state ? \\"on\\" :
               \\"off\\");"
+            x: 10
+            y: 10
             id: rw_ref1
         - button:
-            x: 10
-            y: 40
-            width: 120
-            height: 50
             on_release:
               - homeassistant.action:
                   action: light.toggle
                   data:
                     entity_id: light.office_main
+            x: 10
+            y: 40
+            width: 120
+            height: 50
             widgets:
               - label:
                   text: Office
@@ -760,31 +760,31 @@ lvgl:
   pages:
     - widgets:
         - image:
+            src: r_ref1
             x: 10
             y: 10
-            src: r_ref1
         - image:
+            src: r_ref1
             x: 50
             y: 10
-            src: r_ref1
         - image:
+            src: r_ref2
             x: 90
             y: 10
-            src: r_ref2
         - label:
+            text: Small
             x: 10
             y: 60
-            text: Small
             text_font: r_ref3
         - label:
+            text: Also small
             x: 10
             y: 90
-            text: Also small
             text_font: r_ref3
         - label:
+            text: Large
             x: 10
             y: 120
-            text: Large
             text_font: r_ref4
 image:
   - id: r_ref1
@@ -930,9 +930,9 @@ lvgl:
   pages:
     - widgets:
         - label:
+            text: !lambda "return espcompose::memo_0.get().c_str();"
             x: 10
             y: 10
-            text: !lambda "return espcompose::memo_0.get().c_str();"
             id: rw_ref1
 binary_sensor:
   platform: homeassistant
@@ -1029,20 +1029,20 @@ lvgl:
   pages:
     - widgets:
         - label:
+            text: !lambda "return id(r_ref0).state;"
             x: 10
             y: 10
-            text: !lambda "return id(r_ref0).state;"
             id: rw_ref2
         - button:
-            x: 10
-            y: 50
-            width: 120
-            height: 50
             on_release:
               - homeassistant.action:
                   action: switch.toggle
                   data:
                     entity_id: switch.space_heater
+            x: 10
+            y: 50
+            width: 120
+            height: 50
             widgets:
               - label:
                   text: Heater
@@ -1141,6 +1141,93 @@ binary_sensor:
   device_class: motion
 logger:
   level: INFO
+"
+`;
+
+exports[`ESPHome Compose Build > style-device 1`] = `
+"esphome:
+  name: style-device
+  comment: CSS-like style system E2E test
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  data_rate: 40MHz
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - button:
+            pad_left: 16
+            pad_right: 16
+            pad_top: 8
+            pad_bottom: 8
+            x: 10
+            y: 10
+            width: 200
+            height: 50
+            bg_color: "0x1E88E5"
+            text_color: "0xFFFFFF"
+            radius: 8
+            pressed:
+              bg_color: "0x1565C0"
+            widgets:
+              - label:
+                  text: Styled Button
+                  align: CENTER
+        - button:
+            x: 10
+            y: 70
+            width: 200
+            height: 50
+            bg_color: "0xFF0000"
+            widgets:
+              - label:
+                  text: Styled Red
+                  align: CENTER
+        - obj:
+            x: 10
+            y: 130
+            width: 200
+            height: 80
+            bg_color: "0x424242"
+            pad_all: 8
+            radius: 12
+            widgets:
+              - label:
+                  text: Merged
+                  align: CENTER
+        - slider:
+            value: 50
+            min_value: 0
+            max_value: 100
+            x: 10
+            y: 220
+            width: 200
+            bg_color: "0x555555"
+            indicator:
+              bg_color: "0x1E88E5"
+            knob:
+              bg_color: "0xFFFFFF"
+              radius: 16
 "
 `;
 

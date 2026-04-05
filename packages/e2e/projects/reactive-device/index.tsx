@@ -13,10 +13,10 @@ function ActionButton(props: {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
 }) {
-  const { onRelease, children, ...rest } = props;
+  const { onRelease, children, x, y, width, height } = props;
   return (
     <lvgl-button
-      {...rest}
+      style={{ left: x, top: y, width, height }}
       x:custom={onRelease != null ? { on_release: onRelease } : undefined}
     >
       {children}
@@ -59,8 +59,7 @@ function App() {
         <lvgl-page>
           {/* Temperature readout — bound to local sensor ref */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={tempRef.value}
           />
 
@@ -74,32 +73,38 @@ function App() {
               heater.toggle();
             }}
           >
-            <lvgl-label text="Heater" align="CENTER" />
+            <lvgl-label text="Heater" x:custom={{ align: 'CENTER' }} />
           </ActionButton>
 
           {/* Part-specific reactive binding: slider indicator color bound to HA entity */}
           <lvgl-slider
-            x={10}
-            y={120}
-            width={200}
-            indicator={{ bgOpa: heater.isOn ? 'COVER' : 'TRANSP' }}
+            style={{
+              left: 10,
+              top: 120,
+              width: 200,
+              indicator: { backgroundOpacity: heater.isOn ? 'opaque' : 'transparent' },
+            }}
           />
 
           {/* State-specific reactive binding: button pressed bg_opa bound to HA entity */}
           <lvgl-button
-            x={10}
-            y={160}
-            pressed={{ bgOpa: heater.isOn ? 'COVER' : 'TRANSP' }}
+            style={{
+              left: 10,
+              top: 160,
+              pressed: { backgroundOpacity: heater.isOn ? 'opaque' : 'transparent' },
+            }}
           >
-            <lvgl-label text="Styled" align="CENTER" />
+            <lvgl-label text="Styled" x:custom={{ align: 'CENTER' }} />
           </lvgl-button>
 
           {/* Part+state combo: slider indicator pressed bg_opa */}
           <lvgl-slider
-            x={10}
-            y={210}
-            width={200}
-            indicator={{ pressed: { bgOpa: heater.isOn ? 'COVER' : 'TRANSP' } }}
+            style={{
+              left: 10,
+              top: 210,
+              width: 200,
+              indicator: { pressed: { backgroundOpacity: heater.isOn ? 'opaque' : 'transparent' } },
+            }}
           />
         </lvgl-page>
       </lvgl>

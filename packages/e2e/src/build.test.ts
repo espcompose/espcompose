@@ -80,6 +80,11 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'image-font-device');
   });
 
+  // CSS-like style prop expansion and mergeStyles
+  it('style-device', async () => {
+    await createProjectTest(projectsDir, 'style-device');
+  });
+
   // Untransformed library detection — build should fail with a clear error
   it('uncompiled-lib-device (detects untransformed library)', async () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');

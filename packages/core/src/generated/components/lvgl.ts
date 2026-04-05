@@ -5,10 +5,10 @@
 
 import type { BindProp, ComponentProps, RefProp } from "../../types";
 import type { image_Image } from "../markers";
-/** Shared style properties available on every LVGL widget and on per-part / per-state overrides. */
+import type { CssStyleProps } from "../../style-types";
+/** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
 //
 export interface LvglStyleProps {
-    align?: "TOP_LEFT" | "TOP_MID" | "TOP_RIGHT" | "LEFT_MID" | "CENTER" | "RIGHT_MID" | "BOTTOM_LEFT" | "BOTTOM_MID" | "BOTTOM_RIGHT";
     /** @yamlKey arc_opa */
     arcOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey arc_color */
@@ -147,73 +147,226 @@ export interface LvglStyleProps {
     width?: BindProp<string | (number | string | "SIZE_CONTENT")>;
     x?: BindProp<number | string>;
     y?: BindProp<number | string>;
-    /** State-variant style override. */
-    checked?: LvglStyleProps;
-    /** State-variant style override. */
-    focused?: LvglStyleProps;
+}
+/** All valid LVGL style property names in camelCase. Used for runtime validation. */
+//
+export const LVGL_STYLE_PROP_KEYS = new Set([
+    "arcOpa",
+    "arcColor",
+    "arcRounded",
+    "arcWidth",
+    "animTime",
+    "bgColor",
+    "bgGrad",
+    "bgGradColor",
+    "bgDitherMode",
+    "bgGradDir",
+    "bgGradStop",
+    "bgImageOpa",
+    "bgImageRecolor",
+    "bgImageRecolorOpa",
+    "bgImageSrc",
+    "bgImageTiled",
+    "bgMainStop",
+    "bgOpa",
+    "borderColor",
+    "borderOpa",
+    "borderPost",
+    "borderSide",
+    "borderWidth",
+    "clipCorner",
+    "colorFilterOpa",
+    "height",
+    "imageRecolor",
+    "imageRecolorOpa",
+    "lineWidth",
+    "lineDashWidth",
+    "lineDashGap",
+    "lineRounded",
+    "lineColor",
+    "opa",
+    "opaLayered",
+    "outlineColor",
+    "outlineOpa",
+    "outlinePad",
+    "outlineWidth",
+    "padAll",
+    "padBottom",
+    "padLeft",
+    "padRight",
+    "padTop",
+    "shadowColor",
+    "shadowOfsX",
+    "shadowOfsY",
+    "shadowOpa",
+    "shadowSpread",
+    "shadowWidth",
+    "textAlign",
+    "textColor",
+    "textDecor",
+    "textFont",
+    "textLetterSpace",
+    "textLineSpace",
+    "textOpa",
+    "transformAngle",
+    "transformHeight",
+    "transformPivotX",
+    "transformPivotY",
+    "transformZoom",
+    "translateX",
+    "translateY",
+    "maxHeight",
+    "maxWidth",
+    "minHeight",
+    "minWidth",
+    "radius",
+    "width",
+    "x",
+    "y"
+]) as ReadonlySet<string>;
+//
+export interface LvglObjProps {
     /**
-     * State-variant style override.
-     * @yamlKey focus_key
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`.
      */
-    focusKey?: LvglStyleProps;
-    /** State-variant style override. */
-    edited?: LvglStyleProps;
-    /** State-variant style override. */
-    hovered?: LvglStyleProps;
-    /** State-variant style override. */
-    pressed?: LvglStyleProps;
-    /** State-variant style override. */
-    scrolled?: LvglStyleProps;
-    /** State-variant style override. */
-    disabled?: LvglStyleProps;
-    /**
-     * State-variant style override.
-     * @yamlKey user_1
-     */
-    user1?: LvglStyleProps;
-    /**
-     * State-variant style override.
-     * @yamlKey user_2
-     */
-    user2?: LvglStyleProps;
-    /**
-     * State-variant style override.
-     * @yamlKey user_3
-     */
-    user3?: LvglStyleProps;
-    /**
-     * State-variant style override.
-     * @yamlKey user_4
-     */
-    user4?: LvglStyleProps;
-    /** Reference to one or more `style_definitions` IDs. */
-    styles?: string | string[];
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglObjProps extends LvglStyleProps {
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
-}
-//
-export interface LvglLabelProps extends LvglStyleProps {
+export interface LvglLabelProps {
     text?: BindProp<string | number>;
     recolor?: boolean;
     /** @yamlKey long_mode */
     longMode?: "WRAP" | "DOT" | "SCROLL" | "SCROLL_CIRCULAR" | "CLIP";
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
-    /** Style overrides for the "selected" part. */
-    selected?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`, `selected`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        selected?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglButtonProps extends LvglStyleProps {
+export interface LvglButtonProps {
     text?: BindProp<string | number>;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglBtnmatrixBtnProps extends LvglStyleProps {
+export interface LvglBtnmatrixBtnProps {
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglButtonmatrixProps extends LvglStyleProps {
+export interface LvglButtonmatrixProps {
     /** @yamlKey one_checked */
     oneChecked?: boolean;
     /** @yamlKey pad_row */
@@ -223,19 +376,72 @@ export interface LvglButtonmatrixProps extends LvglStyleProps {
     /** @yamlKey button_text_list_id */
     buttonTextListId?: unknown;
     rows: unknown;
-    /** Style overrides for the "items" part. */
-    items?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `items`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        items?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglPageProps extends LvglStyleProps {
+export interface LvglPageProps {
     skip?: boolean;
     /** @yamlKey on_load */
     onLoad?: unknown;
     /** @yamlKey on_unload */
     onUnload?: unknown;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglImageProps extends LvglStyleProps {
+export interface LvglImageProps {
     /** @yamlKey pivot_x */
     pivotX?: number | string | "SIZE_CONTENT";
     /** @yamlKey pivot_y */
@@ -249,18 +455,58 @@ export interface LvglImageProps extends LvglStyleProps {
     antialias?: boolean;
     mode?: "VIRTUAL" | "REAL";
     src: string | RefProp<image_Image>;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglAnimimgProps extends LvglStyleProps {
+export interface LvglAnimimgProps {
     /** @yamlKey repeat_count */
     repeatCount?: unknown;
     /** @yamlKey auto_start */
     autoStart?: boolean;
     duration: number;
     src: unknown;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglArcProps extends LvglStyleProps {
+export interface LvglArcProps {
     value?: BindProp<number>;
     /** @yamlKey min_value */
     minValue?: number;
@@ -275,45 +521,241 @@ export interface LvglArcProps extends LvglStyleProps {
     mode?: "NORMAL" | "REVERSE" | "SYMMETRICAL";
     /** @yamlKey change_rate */
     changeRate?: number;
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
-    /** Style overrides for the "knob" part. */
-    knob?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`, `knob`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        knob?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglLineProps extends LvglStyleProps {
+export interface LvglLineProps {
     points: unknown;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglCanvasProps extends LvglStyleProps {
+export interface LvglCanvasProps {
     width: number | string | "SIZE_CONTENT";
     height: number | string | "SIZE_CONTENT";
     transparent?: boolean;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglCheckboxProps extends LvglStyleProps {
+export interface LvglCheckboxProps {
     text?: BindProp<string | number>;
     /** @yamlKey pad_column */
     padColumn?: number | string;
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglContainerProps extends LvglStyleProps {
+export interface LvglContainerProps {
     height?: number | string | "SIZE_CONTENT";
     width?: number | string | "SIZE_CONTENT";
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglDropdownListProps extends LvglStyleProps {
-    /** Style overrides for the "selected" part. */
-    selected?: LvglStyleProps;
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
+export interface LvglDropdownListProps {
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `selected`, `scrollbar`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        selected?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglDropdownProps extends LvglStyleProps {
+export interface LvglDropdownProps {
     symbol?: unknown;
     /** @yamlKey selected_index */
     selectedIndex?: number;
@@ -323,11 +765,44 @@ export interface LvglDropdownProps extends LvglStyleProps {
     dropdownList?: unknown;
     options: BindProp<unknown>;
     dir?: "LEFT" | "RIGHT" | "BOTTOM" | "TOP";
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglTextareaProps extends LvglStyleProps {
+export interface LvglTextareaProps {
     text?: BindProp<string | number>;
     /** @yamlKey placeholder_text */
     placeholderText?: string;
@@ -339,32 +814,151 @@ export interface LvglTextareaProps extends LvglStyleProps {
     passwordMode?: boolean;
     /** @yamlKey max_length */
     maxLength?: number;
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
-    /** Style overrides for the "selected" part. */
-    selected?: LvglStyleProps;
-    /** Style overrides for the "cursor" part. */
-    cursor?: LvglStyleProps;
     /**
-     * Style overrides for the "textarea_placeholder" part.
-     * @yamlKey textarea_placeholder
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`, `selected`, `cursor`, `textareaPlaceholder`.
      */
-    textareaPlaceholder?: LvglStyleProps;
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        selected?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        cursor?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        textareaPlaceholder?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglKeyboardProps extends LvglStyleProps {
+export interface LvglKeyboardProps {
     mode?: "TEXT_LOWER" | "TEXT_UPPER" | "SPECIAL" | "NUMBER";
     textarea?: unknown;
-    /** Style overrides for the "items" part. */
-    items?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `items`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        items?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglLedProps extends LvglStyleProps {
+export interface LvglLedProps {
     color?: BindProp<string | string>;
     brightness?: BindProp<unknown>;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglBarProps extends LvglStyleProps {
+export interface LvglBarProps {
     value?: BindProp<number>;
     /** @yamlKey start_value */
     startValue?: number;
@@ -374,30 +968,140 @@ export interface LvglBarProps extends LvglStyleProps {
     maxValue?: number;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglMeterProps extends LvglStyleProps {
+export interface LvglMeterProps {
     scales?: unknown;
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
-    /** Style overrides for the "ticks" part. */
-    ticks?: LvglStyleProps;
-    /** Style overrides for the "items" part. */
-    items?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`, `ticks`, `items`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        ticks?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        items?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglQrcodeProps extends LvglStyleProps {
+export interface LvglQrcodeProps {
     text?: string | number;
     /** @yamlKey dark_color */
     darkColor?: string;
     /** @yamlKey light_color */
     lightColor?: string;
     size: number;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglRollerProps extends LvglStyleProps {
+export interface LvglRollerProps {
     /** @yamlKey selected_index */
     selectedIndex?: number;
     /** @yamlKey selected_text */
@@ -406,11 +1110,44 @@ export interface LvglRollerProps extends LvglStyleProps {
     visibleRowCount?: number;
     mode?: "NORMAL" | "INFINITE";
     options: unknown;
-    /** Style overrides for the "selected" part. */
-    selected?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `selected`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        selected?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglSliderProps extends LvglStyleProps {
+export interface LvglSliderProps {
     value?: BindProp<number>;
     /** @yamlKey min_value */
     minValue?: number;
@@ -418,13 +1155,58 @@ export interface LvglSliderProps extends LvglStyleProps {
     maxValue?: number;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
-    /** Style overrides for the "knob" part. */
-    knob?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`, `knob`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        knob?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglSpinboxProps extends LvglStyleProps {
+export interface LvglSpinboxProps {
     value?: BindProp<number>;
     /** @yamlKey range_from */
     rangeFrom?: number;
@@ -437,36 +1219,180 @@ export interface LvglSpinboxProps extends LvglStyleProps {
     /** @yamlKey decimal_places */
     decimalPlaces?: unknown;
     rollover?: boolean;
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
-    /** Style overrides for the "selected" part. */
-    selected?: LvglStyleProps;
-    /** Style overrides for the "cursor" part. */
-    cursor?: LvglStyleProps;
     /**
-     * Style overrides for the "textarea_placeholder" part.
-     * @yamlKey textarea_placeholder
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`, `selected`, `cursor`, `textareaPlaceholder`.
      */
-    textareaPlaceholder?: LvglStyleProps;
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        selected?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        cursor?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        textareaPlaceholder?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglSpinnerProps extends LvglStyleProps {
+export interface LvglSpinnerProps {
     /** @yamlKey arc_length */
     arcLength: number;
     /** @yamlKey spin_time */
     spinTime: number;
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglSwitchProps extends LvglStyleProps {
-    /** Style overrides for the "indicator" part. */
-    indicator?: LvglStyleProps;
-    /** Style overrides for the "knob" part. */
-    knob?: LvglStyleProps;
+export interface LvglSwitchProps {
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `indicator`, `knob`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        indicator?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+        knob?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglTabviewProps extends LvglStyleProps {
+export interface LvglTabviewProps {
     tabs: unknown;
     /** @yamlKey tab_style */
     tabStyle?: unknown;
@@ -474,15 +1400,88 @@ export interface LvglTabviewProps extends LvglStyleProps {
     contentStyle?: unknown;
     position?: "LEFT" | "RIGHT" | "BOTTOM" | "TOP";
     size?: number | string | "SIZE_CONTENT";
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglLvTileviewTileTProps extends LvglStyleProps {
+export interface LvglLvTileviewTileTProps {
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * This widget has no sub-parts.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        styles?: string | string[];
+    };
 }
 //
-export interface LvglTileviewProps extends LvglStyleProps {
+export interface LvglTileviewProps {
     tiles: unknown;
-    /** Style overrides for the "scrollbar" part. */
-    scrollbar?: LvglStyleProps;
+    /**
+     * CSS-like style object. All visual properties must be specified here.
+     * Supports parts: `scrollbar`.
+     */
+    style?: CssStyleProps & {
+        checked?: CssStyleProps;
+        focused?: CssStyleProps;
+        focusKey?: CssStyleProps;
+        edited?: CssStyleProps;
+        hovered?: CssStyleProps;
+        pressed?: CssStyleProps;
+        scrolled?: CssStyleProps;
+        disabled?: CssStyleProps;
+        user1?: CssStyleProps;
+        user2?: CssStyleProps;
+        user3?: CssStyleProps;
+        user4?: CssStyleProps;
+    } & {
+        scrollbar?: CssStyleProps & {
+            checked?: CssStyleProps;
+            focused?: CssStyleProps;
+            focusKey?: CssStyleProps;
+            edited?: CssStyleProps;
+            hovered?: CssStyleProps;
+            pressed?: CssStyleProps;
+            scrolled?: CssStyleProps;
+            disabled?: CssStyleProps;
+            user1?: CssStyleProps;
+            user2?: CssStyleProps;
+            user3?: CssStyleProps;
+            user4?: CssStyleProps;
+        };
+    } & {
+        styles?: string | string[];
+    };
 }
 /** Top-level <lvgl> component properties. */
 //

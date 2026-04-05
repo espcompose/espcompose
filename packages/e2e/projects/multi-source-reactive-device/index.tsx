@@ -40,8 +40,7 @@ function App() {
         <lvgl-page>
           {/* Status label — bound to memo-derived value from two HA entities */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={status}
           />
         </lvgl-page>

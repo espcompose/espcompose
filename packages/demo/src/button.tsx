@@ -36,15 +36,17 @@ export const MyImageButton = (props: MyButtonProps) => {
 
     return (
         <lvgl-button
-            lineRounded={true}
-            radius="10"
-            clipCorner
             text={props.text}
-            height="60"
-            width="120"
-            bgImageSrc={bgImage}
-            bgImageOpa="50%"
-            textAlign="CENTER"
+            style={{
+                strokeLinecap: 'round',
+                borderRadius: '10',
+                overflow: 'hidden',
+                height: '60',
+                width: '120',
+                backgroundImage: bgImage,
+                backgroundImageOpacity: '50%',
+                textAlign: 'center',
+            }}
             x:custom={{
                 onPress: props.onPress
             }}

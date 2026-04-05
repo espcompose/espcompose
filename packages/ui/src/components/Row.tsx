@@ -71,11 +71,13 @@ export const Row = createIntentComponent(
 
     return (
       <lvgl-obj
-        width={props.width ?? '100%'}
-        height={props.height}
-        bgOpa="TRANSP"
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
+        style={{
+          width: props.width ?? '100%',
+          height: props.height,
+          backgroundOpacity: 'transparent',
+          borderWidth: props.borderWidth ?? 0,
+          borderColor: props.borderColor,
+        }}
         x:custom={{
           layout: {
             type: 'flex',
@@ -136,11 +138,13 @@ export const Col = createIntentComponent(
 
     return (
       <lvgl-obj
-        bgOpa="TRANSP"
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
-        width={props.width}
-        height={props.height}
+        style={{
+          backgroundOpacity: 'transparent',
+          borderWidth: props.borderWidth ?? 0,
+          borderColor: props.borderColor,
+          width: props.width,
+          height: props.height,
+        }}
         x:custom={{ flex_grow: span }}
       >
         {props.children}

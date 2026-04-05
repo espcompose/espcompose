@@ -34,14 +34,14 @@ interface SpaceProps {
   crossAlign?: CrossAlign;
   /** Enable wrapping (ROW_WRAP / COLUMN_WRAP). Default: false. */
   wrap?: boolean;
-  /** Width. Numeric pixels, percentage string, or 'SIZE_CONTENT'. */
+  /** Width. Numeric pixels, percentage string, or 'fit-content'. */
   width?: number | string;
-  /** Height. Numeric pixels, percentage string, or 'SIZE_CONTENT'. */
+  /** Height. Numeric pixels, percentage string, or 'fit-content'. */
   height?: number | string;
   /** Background color (hex). */
-  bgColor?: string;
+  backgroundColor?: string;
   /** Background opacity. */
-  bgOpa?: 'TRANSP' | 'COVER';
+  backgroundOpacity?: 'transparent' | 'opaque';
   /** Border radius. */
   radius?: number;
   /** Border width in pixels. Default: 0. */
@@ -78,14 +78,16 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
 
   return (
     <lvgl-obj
-      width={props.width ?? '100%'}
-      height={props.height ?? 'SIZE_CONTENT'}
-      padAll={padding}
-      bgColor={props.bgColor}
-      bgOpa={props.bgOpa ?? 'TRANSP'}
-      radius={props.radius as unknown as string}
-      borderWidth={props.borderWidth ?? 0}
-      borderColor={props.borderColor}
+      style={{
+        width: props.width ?? '100%',
+        height: props.height ?? 'fit-content',
+        padding: padding,
+        backgroundColor: props.backgroundColor,
+        backgroundOpacity: props.backgroundOpacity ?? 'transparent',
+        borderRadius: props.radius != null ? String(props.radius) : undefined,
+        borderWidth: props.borderWidth ?? 0,
+        borderColor: props.borderColor,
+      }}
       x:custom={{
         scrollbar_mode: 'OFF',
         layout: buildFlexLayout(flow, gapKey, props),

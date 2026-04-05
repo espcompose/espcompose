@@ -15,10 +15,10 @@ function ActionButton(props: {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
 }) {
-  const { onRelease, children, ...rest } = props;
+  const { onRelease, children, x, y, width, height } = props;
   return (
     <lvgl-button
-      {...rest}
+      style={{ left: x, top: y, width, height }}
       x:custom={onRelease != null ? { on_release: onRelease } : undefined}
     >
       {children}
@@ -37,8 +37,7 @@ function HALightControl(props: { entity: string; label: string }) {
     <>
       {/* Reactive state passthrough */}
       <lvgl-label
-        x={10}
-        y={10}
+        style={{ left: 10, top: 10 }}
         text={light.stateText}
       />
 
@@ -52,7 +51,7 @@ function HALightControl(props: { entity: string; label: string }) {
           light.toggle();
         }}
       >
-        <lvgl-label text={props.label} align="CENTER" />
+        <lvgl-label text={props.label} x:custom={{ align: 'CENTER' }} />
       </ActionButton>
     </>
   );

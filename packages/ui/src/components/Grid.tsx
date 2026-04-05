@@ -55,9 +55,9 @@ interface GridProps {
   /** Height. */
   height?: number | string;
   /** Background color. */
-  bgColor?: string;
+  backgroundColor?: string;
   /** Background opacity. */
-  bgOpa?: 'TRANSP' | 'COVER';
+  backgroundOpacity?: 'transparent' | 'opaque';
   /** Border width in pixels. Default: 0. */
   borderWidth?: number;
   /** Border color (hex). */
@@ -85,12 +85,14 @@ export const Grid = createIntentComponent(
 
     return (
       <lvgl-obj
-        width={props.width}
-        height={props.height}
-        bgColor={props.bgColor}
-        bgOpa={props.bgOpa ?? 'TRANSP'}
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
+        style={{
+          width: props.width,
+          height: props.height,
+          backgroundColor: props.backgroundColor,
+          backgroundOpacity: props.backgroundOpacity ?? 'transparent',
+          borderWidth: props.borderWidth ?? 0,
+          borderColor: props.borderColor,
+        }}
         x:custom={{
           layout: {
             type: 'grid',
@@ -150,9 +152,11 @@ export const GridItem = createIntentComponent(
   (props: GridItemProps): EspComposeElement => {
     return (
       <lvgl-obj
-        bgOpa="TRANSP"
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
+        style={{
+          backgroundOpacity: 'transparent',
+          borderWidth: props.borderWidth ?? 0,
+          borderColor: props.borderColor,
+        }}
         x:custom={{
           grid_cell_column_pos: props.col,
           grid_cell_row_pos: props.row,

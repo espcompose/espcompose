@@ -52,16 +52,16 @@ function App() {
       <lvgl displays={[displayRef]}>
         <lvgl-page>
           {/* Both icon1 and icon2 should resolve to the same ref (dedup) */}
-          <lvgl-image x={10} y={10} src={icon1} />
-          <lvgl-image x={50} y={10} src={icon2} />
+          <lvgl-image style={{ left: 10, top: 10 }} src={icon1} />
+          <lvgl-image style={{ left: 50, top: 10 }} src={icon2} />
 
           {/* iconBinary is a separate image entry */}
-          <lvgl-image x={90} y={10} src={iconBinary} />
+          <lvgl-image style={{ left: 90, top: 10 }} src={iconBinary} />
 
           {/* Labels using font refs — cast to string since textFont expects string */}
-          <lvgl-label x={10} y={60} text="Small" textFont={roboto as unknown as string} />
-          <lvgl-label x={10} y={90} text="Also small" textFont={roboto2 as unknown as string} />
-          <lvgl-label x={10} y={120} text="Large" textFont={robotoLarge as unknown as string} />
+          <lvgl-label style={{ left: 10, top: 60, font: roboto as unknown as string }} text="Small" />
+          <lvgl-label style={{ left: 10, top: 90, font: roboto2 as unknown as string }} text="Also small" />
+          <lvgl-label style={{ left: 10, top: 120, font: robotoLarge as unknown as string }} text="Large" />
         </lvgl-page>
       </lvgl>
     </esphome>

@@ -16,7 +16,7 @@ import { toPascalCase, toCamelCase } from './type-mapper.js';
 import {
   printStatements, addFileHeader, addJsDoc, addBlankLineBefore,
   keyword, typeRef, stringLiteralType, unionType, intersectionType,
-  propSig, indexSig,
+  propSig, indexSig, typeLiteral,
   interfaceDecl, typeAliasDecl,
   importTypeDecl,
   globalJsxAugmentation,
@@ -197,38 +197,53 @@ export function buildLvglFileContent(schemaPath: string): string {
   // ── Import ────────────────────────────────────────────────────────────────
   statements.push(importTypeDecl(['ComponentProps', 'BindProp', 'RefProp'], '../../types'));
   statements.push(importTypeDecl(['image_Image'], '../markers'));
+  statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
 
-  // ── LvglStyleProps ────────────────────────────────────────────────────────
-  const styleMembers = buildProps(schema.style_props, { isStyleProps: true });
+  // ── Layout props to exclude from LvglStyleProps ───────────────────────────
+  // These are layout concerns, not visual style — handled by layout components
+  // (Row, Flex, Space, Grid) which inject them via x:custom.
+  const LAYOUT_PROPS = new Set(['align']);
 
-  // Add state-variant style overrides:  checked?: LvglStyleProps; etc.
-  for (const state of schema.states) {
-    const camel = toCamelCase(state);
-    const sig = propSig(camel, typeRef('LvglStyleProps'), true);
-    if (camel !== state) {
-      styleMembers.push(addJsDoc(sig, [`State-variant style override.`, `@yamlKey ${state}`]));
-    } else {
-      styleMembers.push(addJsDoc(sig, ['State-variant style override.']));
-    }
-  }
-
-  // Add `styles` prop — references to style_definitions by ID(s)
-  {
-    const stringType = keyword('string');
-    const arrayType = ts.factory.createArrayTypeNode(keyword('string'));
-    const stylesType = unionType([stringType, arrayType]);
-    const sig = propSig('styles', stylesType, true);
-    styleMembers.push(addJsDoc(sig, ['Reference to one or more `style_definitions` IDs.']));
-  }
+  // ── LvglStyleProps (flat visual properties only) ──────────────────────────
+  // No state overrides, no `styles` ref, no layout props — those live
+  // in the CssStyle type or on layout components.
+  const filteredStyleProps = Object.fromEntries(
+    Object.entries(schema.style_props).filter(([name]) => !LAYOUT_PROPS.has(name)),
+  );
+  const styleMembers = buildProps(filteredStyleProps, { isStyleProps: true });
 
   statements.push(
     addBlankLineBefore(
       addJsDoc(
         interfaceDecl('LvglStyleProps', styleMembers, { exported: true }),
-        ['Shared style properties available on every LVGL widget and on per-part / per-state overrides.'],
+        ['Flat LVGL style properties (visual only). No state/part nesting, no layout props.'],
       ),
     ),
   );
+
+  // ── LVGL_STYLE_PROP_KEYS — generated set for runtime validation ───────────
+  {
+    const keys = Object.keys(filteredStyleProps).map(k => toCamelCase(k));
+    const elements = keys.map(k => ts.factory.createStringLiteral(k));
+    const arrayExpr = ts.factory.createArrayLiteralExpression(elements, true);
+    const newSetExpr = ts.factory.createNewExpression(
+      ts.factory.createIdentifier('Set'),
+      undefined,
+      [arrayExpr],
+    );
+    const asConst = ts.factory.createAsExpression(
+      newSetExpr,
+      ts.factory.createTypeReferenceNode('ReadonlySet', [keyword('string')]),
+    );
+    const decl = ts.factory.createVariableDeclaration('LVGL_STYLE_PROP_KEYS', undefined, undefined, asConst);
+    const stmt = ts.factory.createVariableStatement(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      ts.factory.createVariableDeclarationList([decl], ts.NodeFlags.Const),
+    );
+    statements.push(addBlankLineBefore(
+      addJsDoc(stmt, ['All valid LVGL style property names in camelCase. Used for runtime validation.']),
+    ));
+  }
 
   // ── Per-widget interfaces ─────────────────────────────────────────────────
   const jsxElements: Array<{ tagName: string; type: ts.TypeNode }> = [];
@@ -242,30 +257,66 @@ export function buildLvglFileContent(schemaPath: string): string {
     // Widget-specific props
     members.push(...buildProps(widget.schema, { widgetName }));
 
-    // Part-specific style overrides (e.g. indicator?: LvglStyleProps)
-    // Skip "main" — main part styles are at the top level via LvglStyleProps
+    // Collect widget parts (excluding "main")
+    const widgetParts: string[] = [];
     for (const part of widget.parts) {
       if (part === 'main') continue;
-      const camel = toCamelCase(part);
-      const sig = propSig(camel, typeRef('LvglStyleProps'), true);
-      if (camel !== part) {
-        members.push(addJsDoc(sig, [`Style overrides for the "${part}" part.`, `@yamlKey ${part}`]));
-      } else {
-        members.push(addJsDoc(sig, [`Style overrides for the "${part}" part.`]));
-      }
+      widgetParts.push(part);
     }
 
-    // Obj flags (common to all widgets)
-    // These are added on the base style interface, but we include them here
-    // since obj_flags are per-widget config, not style props
-    // Actually, obj_flags are per-widget top-level booleans
-    // We'll rely on the LvglStyleProps base + index sig to cover them
+    // Add widget-specific `style` prop with restricted parts
+    {
+      // Build the style type: CssStyleProps & { [state]?: CssStyleProps } & { [part]?: ... }
+      const styleTypeMembers: ts.TypeNode[] = [typeRef('CssStyleProps')];
+
+      // State overrides (universal for all widgets)
+      const stateMembers: ts.TypeElement[] = [];
+      for (const state of schema.states) {
+        const camel = toCamelCase(state);
+        stateMembers.push(propSig(camel, typeRef('CssStyleProps'), true));
+      }
+      styleTypeMembers.push(typeLiteral(stateMembers));
+
+      // Part overrides (widget-specific)
+      if (widgetParts.length > 0) {
+        const partMembers: ts.TypeElement[] = [];
+        for (const part of widgetParts) {
+          const camel = toCamelCase(part);
+          // Each part can have CssStyleProps + state overrides
+          const partStateMembers: ts.TypeElement[] = [];
+          for (const state of schema.states) {
+            const sc = toCamelCase(state);
+            partStateMembers.push(propSig(sc, typeRef('CssStyleProps'), true));
+          }
+          const partType = intersectionType([typeRef('CssStyleProps'), typeLiteral(partStateMembers)]);
+          partMembers.push(propSig(camel, partType, true));
+        }
+        styleTypeMembers.push(typeLiteral(partMembers));
+      }
+
+      // Add styles reference inside style type
+      {
+        const stylesRef: ts.TypeElement[] = [];
+        const stringType = keyword('string');
+        const arrayType = ts.factory.createArrayTypeNode(keyword('string'));
+        stylesRef.push(propSig('styles', unionType([stringType, arrayType]), true));
+        styleTypeMembers.push(typeLiteral(stylesRef));
+      }
+
+      const widgetStyleType = intersectionType(styleTypeMembers);
+      const sig = propSig('style', widgetStyleType, true);
+      members.push(addJsDoc(sig, [
+        'CSS-like style object. All visual properties must be specified here.',
+        widgetParts.length > 0
+          ? `Supports parts: ${widgetParts.map(p => `\`${toCamelCase(p)}\``).join(', ')}.`
+          : 'This widget has no sub-parts.',
+      ]));
+    }
 
     statements.push(
       addBlankLineBefore(
         interfaceDecl(interfaceName, members, {
           exported: true,
-          extends: ['LvglStyleProps'],
         }),
       ),
     );

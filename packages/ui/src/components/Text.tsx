@@ -16,7 +16,7 @@ interface TextProps {
   /** Static text content. Use this or children. */
   text?: string;
   /** Text alignment within the label. */
-  align?: 'LEFT' | 'CENTER' | 'RIGHT' | 'AUTO';
+  align?: 'left' | 'center' | 'right' | 'auto';
   /** Text color (hex). If omitted, uses theme textPrimary. */
   color?: string;
   /** Long text mode. */
@@ -47,14 +47,16 @@ export const Text = createIntentComponent(
 
     return (
       <lvgl-label
-        textColor={textColor}
-        textFont={font}
         text={props.text}
-        textAlign={props.align}
         longMode={props.longMode}
-        x={props.x}
-        y={props.y}
-        width={props.width}
+        style={{
+          color: textColor,
+          font: font,
+          textAlign: props.align,
+          left: props.x,
+          top: props.y,
+          width: props.width,
+        }}
       />
     );
   },

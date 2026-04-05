@@ -27,6 +27,7 @@ import {
   stripUndefined,
   toYamlKey,
 } from './serialize';
+import { expandCssStyle } from './style-mapping';
 
 // Known LVGL part and state names in camelCase, used for recursive binding detection.
 // Excludes 'main' and 'default' since those are the top-level defaults.
@@ -149,6 +150,20 @@ function detectAndRegisterReactiveProps(
 }
 
 /**
+ * Expand and hoist the `style` prop into the data object in-place.
+ * CSS aliases are mapped to LVGL camelCase, then merged into `data`.
+ */
+function hoistStyleProp(data: Record<string, unknown>): void {
+  if (data.style != null && typeof data.style === 'object' && !Array.isArray(data.style)) {
+    const expanded = expandCssStyle(data.style as Record<string, unknown>);
+    for (const [key, value] of Object.entries(expanded)) {
+      data[key] = value;
+    }
+    delete data.style;
+  }
+}
+
+/**
  * Convert a single LVGL widget element into its YAML-ready plain object:
  *   { widget_type: { ...props, widgets?: [...] } }
  *
@@ -167,6 +182,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   const nestedWidgets = lvglChildren.map(lvglWidgetToPlain);
 
   const data: Record<string, unknown> = { ...allProps };
+  hoistStyleProp(data);
 
   const yamlKey = toYamlKey(el.type as string);
 
@@ -201,6 +217,7 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
       const pageResolved = resolveLvglChildren(pageChildren);
       const pageWidgets = pageResolved.filter((c) => isLvglElement(c.type)).map(lvglWidgetToPlain);
       const pageData: Record<string, unknown> = { ...pageProps };
+      hoistStyleProp(pageData);
       detectAndRegisterReactiveProps(pageData, 'page');
       // Serialize own props first, then attach already-serialized child widgets.
       const serializedPage = stripUndefined(keysToSnakeCase(pageData));

@@ -44,9 +44,11 @@ export const SliderField = createIntentComponent(
 
     return (
       <lvgl-obj
-        bgOpa="TRANSP"
-        width={props.width ?? '100%'}
-        height="SIZE_CONTENT"
+        style={{
+          backgroundOpacity: 'transparent',
+          width: props.width ?? '100%',
+          height: 'fit-content',
+        }}
         x:custom={{
           layout: {
             type: 'flex',
@@ -56,8 +58,10 @@ export const SliderField = createIntentComponent(
         }}
       >
         <lvgl-label
-          textColor={theme?.colors?.textPrimary}
-          textFont={font}
+          style={{
+            color: theme?.colors?.textPrimary,
+            font: font,
+          }}
           text={props.label}
         />
         <lvgl-slider

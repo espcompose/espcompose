@@ -17,7 +17,7 @@ interface CardProps {
   /** Corner radius. Default: 'md'. */
   radius?: RadiusToken | number;
   /** Background color override (hex). If set, overrides the style definition. */
-  bgColor?: string;
+  backgroundColor?: string;
   /** Border color (hex). */
   borderColor?: string;
   /** Border width. Default: 0. */
@@ -46,17 +46,19 @@ export const Card = createIntentComponent(
     const gap = props.gap != null ? resolveSpacing(props.gap) : undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const theme = useReactiveTheme() as any;
-    const bgColor = props.bgColor ?? theme?.colors?.surfaceAlt;
+    const bgColor = props.backgroundColor ?? theme?.colors?.surfaceAlt;
 
     return (
       <lvgl-obj
-        bgColor={bgColor}
-        padAll={padding}
-        radius={radius as unknown as string}
-        borderColor={props.borderColor}
-        borderWidth={props.borderWidth ?? 0}
-        width={props.width ?? '100%'}
-        height={props.height ?? 'SIZE_CONTENT'}
+        style={{
+          backgroundColor: bgColor,
+          padding: padding,
+          borderRadius: radius as unknown as string,
+          borderColor: props.borderColor,
+          borderWidth: props.borderWidth ?? 0,
+          width: props.width ?? '100%',
+          height: props.height ?? 'fit-content',
+        }}
         x:custom={{
           scrollbar_mode: 'OFF',
           layout: {

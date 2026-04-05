@@ -53,7 +53,7 @@ export const Button = createIntentComponent(
     const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
 
     const bgColor = variant === 'solid' ? sc.bg : undefined;
-    const bgOpa = variant === 'outline' ? 'TRANSP' : undefined;
+    const bgOpa = variant === 'outline' ? 'transparent' : undefined;
     const borderColor = variant === 'outline' ? sc.bg : undefined;
     const borderWidth = variant === 'outline' ? 2 : 0;
     const textColor = variant === 'solid' ? sc.text : sc.bg;
@@ -61,8 +61,8 @@ export const Button = createIntentComponent(
     // Pressed state colors (reactive)
     const pressed: Record<string, unknown> =
       variant === 'solid'
-        ? { bgColor: sc.bgPressed }
-        : { bgColor: sc.bg, bgOpa: 'COVER' };
+        ? { backgroundColor: sc.bgPressed }
+        : { backgroundColor: sc.bg, backgroundOpacity: 'opaque' };
 
     // Width: derived from reactive paddingX if no override.
     // The compiler transform (espcompose build --library) compiles this to
@@ -70,29 +70,28 @@ export const Button = createIntentComponent(
     const width = props.width ?? useMemo(() => dims.paddingX * 2 + 80);
     const height = props.height ?? dims.height;
 
-    // State-variant and extension props stay untyped (not representable in JSX)
-    const extraProps: Record<string, unknown> = {
-      pressed,
-      ...(props.onPress != null ? { onPress: props.onPress } : {}),
-    };
-
     return (
       <lvgl-button
-        bgColor={bgColor}
-        bgOpa={bgOpa}
-        borderColor={borderColor}
-        borderWidth={borderWidth}
-        width={width}
-        height={height}
-        x={props.x}
-        y={props.y}
-        {...extraProps}
+        style={{
+          backgroundColor: bgColor,
+          backgroundOpacity: bgOpa,
+          borderColor: borderColor,
+          borderWidth: borderWidth,
+          width: width,
+          height: height,
+          left: props.x,
+          top: props.y,
+          pressed,
+        }}
+        {...(props.onPress != null ? { onPress: props.onPress } : {})}
       >
         <lvgl-label
           text={props.text ?? ''}
-          textColor={textColor}
-          textFont={font}
-          align="CENTER"
+          style={{
+            color: textColor,
+            font: font,
+          }}
+          x:custom={{ align: 'CENTER' }}
         />
       </lvgl-button>
     );

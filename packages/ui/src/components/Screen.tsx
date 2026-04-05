@@ -16,7 +16,7 @@ interface ScreenProps {
   /** Skip this page in the page list. */
   skip?: boolean;
   /** Background color override (hex). If set, overrides the style definition. */
-  bgColor?: string;
+  backgroundColor?: string;
   /** Border width in pixels. Default: 0. */
   borderWidth?: number;
   /** Border color (hex). */
@@ -41,15 +41,17 @@ export const Screen = createIntentComponent(
     const padding = props.padding != null ? resolveSpacing(props.padding) : undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const theme = useReactiveTheme() as any;
-    const bgColor = props.bgColor ?? theme?.colors?.background;
+    const bgColor = props.backgroundColor ?? theme?.colors?.background;
 
     return (
       <lvgl-page
-        bgColor={bgColor}
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
-        padAll={padding}
         skip={props.skip}
+        style={{
+          backgroundColor: bgColor,
+          borderWidth: props.borderWidth ?? 0,
+          ...(props.borderColor != null ? { borderColor: props.borderColor } : {}),
+          ...(padding != null ? { padding: padding } : {}),
+        }}
         x:custom={{ scrollbar_mode: 'OFF' }}
       >
         {props.children}
