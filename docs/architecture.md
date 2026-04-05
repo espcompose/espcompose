@@ -110,7 +110,7 @@ The IR sits between the render pass and the backend. Every value in the rendered
 | `IRArray` | Ordered list of IR values |
 | `IRNull` | Null value |
 | `IRReactive` | Reactive binding — wraps a `ReactiveNode` with full metadata |
-| `IRRef` | Cross-component reference (e.g. `useRef<typeof Light>()`) |
+| `IRRef` | Cross-component reference (e.g. `useRef<LightRef>()`) |
 | `IRAction` | Compiled action tree (12 action kinds) |
 | `IRSecret` | Secret reference (`!secret` in YAML) |
 | `IRTriggerVar` | Trigger variable for lambda injection |

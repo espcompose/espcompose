@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { http_request_HttpRequestComponent, image_Image, online_image_OnlineImage } from "../markers";
+import type { __marker_http_request_HttpRequestComponent, __marker_image_Image, __marker_online_image_OnlineImage } from "../markers";
 export interface OnlineImageProps extends _CoreComponent {
     /** The format that the image is encoded with. */
     format: "BMP" | "JPEG" | "PNG" | "JPG";
@@ -21,9 +21,9 @@ export interface OnlineImageProps extends _CoreComponent {
     /** If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `... */
     transparency?: unknown;
     /** [ID](/guides/configuration-types#id): ID of an [Image](/components/image/) to display while the downloaded image is n... */
-    placeholder?: RefProp<image_Image>;
+    placeholder?: RefProp<__marker_image_Image>;
     /** @yamlKey http_request_id */
-    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<__marker_http_request_HttpRequestComponent>;
     /** url: The URL where the image will be downloaded from. */
     url: string;
     /**
@@ -55,7 +55,7 @@ export interface OnlineImageProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            online_image: OnlineImageProps & ComponentProps<online_image_OnlineImage>;
+            online_image: OnlineImageProps & ComponentProps<__marker_online_image_OnlineImage>;
         }
     }
 }

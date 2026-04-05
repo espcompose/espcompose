@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BedjetClient, _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { bedjet_BedJetFan, binary_BinaryFan, copy_CopyFan, fan_Fan, hbridge_HBridgeFan, output_BinaryOutput, output_FloatOutput, speed_SpeedFan, template__TemplateFan, tuya_Tuya, tuya_TuyaFan, web_server_WebServer } from "../markers";
+import type { __marker_bedjet_BedJetFan, __marker_binary_BinaryFan, __marker_copy_CopyFan, __marker_fan_Fan, __marker_hbridge_HBridgeFan, __marker_output_BinaryOutput, __marker_output_FloatOutput, __marker_speed_SpeedFan, __marker_template__TemplateFan, __marker_tuya_Tuya, __marker_tuya_TuyaFan, __marker_web_server_WebServer } from "../markers";
 interface FanWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -52,29 +52,29 @@ interface FanBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
 }
 interface BinaryProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the binary output component to use for this fan. */
-    output: RefProp<output_BinaryOutput>;
+    output: RefProp<__marker_output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the direction state of t...
      * @yamlKey direction_output
      */
-    directionOutput?: RefProp<output_BinaryOutput>;
+    directionOutput?: RefProp<__marker_output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the oscillation state of...
      * @yamlKey oscillation_output
      */
-    oscillationOutput?: RefProp<output_BinaryOutput>;
+    oscillationOutput?: RefProp<__marker_output_BinaryOutput>;
 }
 interface HbridgeProps extends _CoreComponent {
     /**
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to Pin A (alternati...
      * @yamlKey pin_a
      */
-    pinA: RefProp<output_FloatOutput>;
+    pinA: RefProp<__marker_output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to Pin B (alternati...
      * @yamlKey pin_b
      */
-    pinB: RefProp<output_FloatOutput>;
+    pinB: RefProp<__marker_output_FloatOutput>;
     /**
      * string: The decay mode you want to use with the h-bridge. Either `slow` (coasting) or `fast` (braking). Defaults to `...
      * @yamlKey decay_mode
@@ -89,7 +89,7 @@ interface HbridgeProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) connected to the Enable pin o...
      * @yamlKey enable_pin
      */
-    enablePin?: RefProp<output_FloatOutput>;
+    enablePin?: RefProp<__marker_output_FloatOutput>;
     /**
      * A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set` ).
      * @yamlKey preset_modes
@@ -98,17 +98,17 @@ interface HbridgeProps extends _CoreComponent {
 }
 interface SpeedProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the [float output](/components/output/) to use for this fan. */
-    output: RefProp<output_FloatOutput>;
+    output: RefProp<__marker_output_FloatOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the oscillation state of...
      * @yamlKey oscillation_output
      */
-    oscillationOutput?: RefProp<output_BinaryOutput>;
+    oscillationOutput?: RefProp<__marker_output_BinaryOutput>;
     /**
      * [ID](/guides/configuration-types#id): The id of the [output](/components/output/) to use for the direction state of t...
      * @yamlKey direction_output
      */
-    directionOutput?: RefProp<output_BinaryOutput>;
+    directionOutput?: RefProp<__marker_output_BinaryOutput>;
     /**
      * int: Set the number of supported discrete speed levels. The value is used to calculate the percentages for each speed...
      * @yamlKey speed_count
@@ -129,7 +129,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The fan that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<fan_Fan>;
+    sourceId: RefProp<__marker_fan_Fan>;
 }
 interface TemplateProps extends _CoreComponent {
     /**
@@ -155,7 +155,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: RefProp<tuya_Tuya>;
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey oscillation_datapoint */
     oscillationDatapoint?: number;
     /** @yamlKey speed_datapoint */
@@ -169,19 +169,19 @@ interface TuyaProps extends _CoreComponent {
 }
 export type FanProps = (FanBaseProps & {
     platform: "binary";
-} & BinaryProps & ComponentProps<binary_BinaryFan>) | (FanBaseProps & {
+} & BinaryProps & ComponentProps<__marker_binary_BinaryFan>) | (FanBaseProps & {
     platform: "hbridge";
-} & HbridgeProps & ComponentProps<hbridge_HBridgeFan>) | (FanBaseProps & {
+} & HbridgeProps & ComponentProps<__marker_hbridge_HBridgeFan>) | (FanBaseProps & {
     platform: "speed";
-} & SpeedProps & ComponentProps<speed_SpeedFan>) | (FanBaseProps & {
+} & SpeedProps & ComponentProps<__marker_speed_SpeedFan>) | (FanBaseProps & {
     platform: "bedjet";
-} & BedjetProps & ComponentProps<bedjet_BedJetFan>) | (FanBaseProps & {
+} & BedjetProps & ComponentProps<__marker_bedjet_BedJetFan>) | (FanBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopyFan>) | (FanBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopyFan>) | (FanBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateFan>) | (FanBaseProps & {
+} & TemplateProps & ComponentProps<__marker_template__TemplateFan>) | (FanBaseProps & {
     platform: "tuya";
-} & TuyaProps & ComponentProps<tuya_TuyaFan>);
+} & TuyaProps & ComponentProps<__marker_tuya_TuyaFan>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

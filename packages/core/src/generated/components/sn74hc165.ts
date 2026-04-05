@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { sn74hc165_SN74HC165Component } from "../markers";
+import type { __marker_sn74hc165_SN74HC165Component } from "../markers";
 export interface Sn74hc165Props extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Pin connected to SN74HC165 Serial Output (QH) input.
@@ -36,7 +36,7 @@ export interface Sn74hc165Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sn74hc165: Sn74hc165Props & ComponentProps<sn74hc165_SN74HC165Component>;
+            sn74hc165: Sn74hc165Props & ComponentProps<__marker_sn74hc165_SN74HC165Component>;
         }
     }
 }

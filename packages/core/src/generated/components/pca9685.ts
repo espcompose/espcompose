@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, pca9685_PCA9685Output } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_pca9685_PCA9685Output } from "../markers";
 export interface Pca9685Props extends _CoreComponent {
     /** frequency: The frequency to let the */
     frequency?: unknown;
@@ -20,14 +20,14 @@ export interface Pca9685Props extends _CoreComponent {
      */
     phaseBalancer?: "none" | "linear";
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            pca9685: Pca9685Props & ComponentProps<pca9685_PCA9685Output>;
+            pca9685: Pca9685Props & ComponentProps<__marker_pca9685_PCA9685Output>;
         }
     }
 }

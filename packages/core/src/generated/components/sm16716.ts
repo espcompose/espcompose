@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { sm16716_SM16716 } from "../markers";
+import type { __marker_sm16716_SM16716 } from "../markers";
 export interface Sm16716Props extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin used for MOSI.
@@ -31,7 +31,7 @@ export interface Sm16716Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sm16716: Sm16716Props & ComponentProps<sm16716_SM16716>;
+            sm16716: Sm16716Props & ComponentProps<__marker_sm16716_SM16716>;
         }
     }
 }

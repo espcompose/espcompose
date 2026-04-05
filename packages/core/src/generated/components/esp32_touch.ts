@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp32_touch_ESP32TouchComponent } from "../markers";
+import type { __marker_esp32_touch_ESP32TouchComponent } from "../markers";
 export interface Esp32TouchProps extends _CoreComponent {
     /**
      * boolean: Whether debug messages with the touch pad value should
@@ -91,7 +91,7 @@ export interface Esp32TouchProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp32_touch: Esp32TouchProps & ComponentProps<esp32_touch_ESP32TouchComponent>;
+            esp32_touch: Esp32TouchProps & ComponentProps<__marker_esp32_touch_ESP32TouchComponent>;
         }
     }
 }

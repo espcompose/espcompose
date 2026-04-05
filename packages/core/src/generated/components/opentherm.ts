@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { opentherm_OpenthermHub, sensor_Sensor } from "../markers";
+import type { __marker_opentherm_OpenthermHub, __marker_sensor_Sensor } from "../markers";
 export interface OpenthermProps extends _CoreComponent {
     /**
      * number: The pin of the OpenTherm hardware bridge which is usually labeled `out` on the board.
@@ -41,25 +41,25 @@ export interface OpenthermProps extends _CoreComponent {
     /** @yamlKey before_process_response */
     beforeProcessResponse?: TriggerHandler;
     /** @yamlKey t_set */
-    tSet?: RefProp<sensor_Sensor>;
+    tSet?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey t_set_ch2 */
-    tSetCh2?: RefProp<sensor_Sensor>;
+    tSetCh2?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey cooling_control */
-    coolingControl?: RefProp<sensor_Sensor>;
+    coolingControl?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey t_dhw_set */
-    tDhwSet?: RefProp<sensor_Sensor>;
+    tDhwSet?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey max_t_set */
-    maxTSet?: RefProp<sensor_Sensor>;
+    maxTSet?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey t_room_set */
-    tRoomSet?: RefProp<sensor_Sensor>;
+    tRoomSet?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey t_room_set_ch2 */
-    tRoomSetCh2?: RefProp<sensor_Sensor>;
+    tRoomSetCh2?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey t_room */
-    tRoom?: RefProp<sensor_Sensor>;
+    tRoom?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey max_rel_mod_level */
-    maxRelModLevel?: RefProp<sensor_Sensor>;
+    maxRelModLevel?: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey otc_hc_ratio */
-    otcHcRatio?: RefProp<sensor_Sensor>;
+    otcHcRatio?: RefProp<__marker_sensor_Sensor>;
     /**
      * byte [0-255]: Controller product type
      * @yamlKey controller_product_type
@@ -89,7 +89,7 @@ export interface OpenthermProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            opentherm: OpenthermProps & ComponentProps<opentherm_OpenthermHub>;
+            opentherm: OpenthermProps & ComponentProps<__marker_opentherm_OpenthermHub>;
         }
     }
 }

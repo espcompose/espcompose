@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { safe_mode_SafeModeComponent } from "../markers";
+import type { __marker_safe_mode_SafeModeComponent } from "../markers";
 export interface SafeModeProps extends _CoreComponent {
     /**
      * [Time](/guides/configuration-types#time): The amount of time after which the boot is considered successful.
@@ -33,7 +33,7 @@ export interface SafeModeProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            safe_mode: SafeModeProps & ComponentProps<safe_mode_SafeModeComponent>;
+            safe_mode: SafeModeProps & ComponentProps<__marker_safe_mode_SafeModeComponent>;
         }
     }
 }

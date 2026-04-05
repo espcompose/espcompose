@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { es7210_ES7210, es7243e_ES7243E, i2c_I2CBus } from "../markers";
+import type { __marker_es7210_ES7210, __marker_es7243e_ES7243E, __marker_i2c_I2CBus } from "../markers";
 interface Es7210Props extends _CoreComponent {
     /**
      * enum: The bit depth of the audio samples. One of `16bit`, `24bit` or `32bit`. Defaults to `16bit`.
@@ -26,7 +26,7 @@ interface Es7210Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES7210 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x40`. */
     address?: number;
 }
@@ -40,15 +40,15 @@ interface Es7243eProps extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES7243e is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x40`. */
     address?: number;
 }
 export type AudioAdcProps = ({
     platform: "es7210";
-} & Es7210Props & ComponentProps<es7210_ES7210>) | ({
+} & Es7210Props & ComponentProps<__marker_es7210_ES7210>) | ({
     platform: "es7243e";
-} & Es7243eProps & ComponentProps<es7243e_ES7243E>);
+} & Es7243eProps & ComponentProps<__marker_es7243e_ES7243E>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

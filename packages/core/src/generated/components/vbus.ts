@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _UartDevice } from "../bases";
-import type { vbus_VBus } from "../markers";
+import type { __marker_vbus_VBus } from "../markers";
 export interface VbusProps extends _UartDevice {
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            vbus: VbusProps & ComponentProps<vbus_VBus>;
+            vbus: VbusProps & ComponentProps<__marker_vbus_VBus>;
         }
     }
 }

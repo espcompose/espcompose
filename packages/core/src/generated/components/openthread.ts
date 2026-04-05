@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { mdns_MDNSComponent, openthread_OpenThreadComponent } from "../markers";
+import type { __marker_mdns_MDNSComponent, __marker_openthread_OpenThreadComponent } from "../markers";
 export interface OpenthreadProps {
     /** @yamlKey mdns_id */
-    mdnsId?: RefProp<mdns_MDNSComponent>;
+    mdnsId?: RefProp<__marker_mdns_MDNSComponent>;
     /**
      * enum: OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`.
      * @yamlKey device_type
@@ -68,7 +68,7 @@ export interface OpenthreadProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            openthread: OpenthreadProps & ComponentProps<openthread_OpenThreadComponent>;
+            openthread: OpenthreadProps & ComponentProps<__marker_openthread_OpenThreadComponent>;
         }
     }
 }

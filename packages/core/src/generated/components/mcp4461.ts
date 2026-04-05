@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, mcp4461_Mcp4461Component } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_mcp4461_Mcp4461Component } from "../markers";
 export interface Mcp4461Props extends _CoreComponent {
     /**
      * bool: Disable wiper 0. Defaults to `false`.
@@ -28,14 +28,14 @@ export interface Mcp4461Props extends _CoreComponent {
      */
     disableWiper3?: boolean;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: Manually specify the I2C address of the digipot. Defaults to `0x2C`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mcp4461: Mcp4461Props & ComponentProps<mcp4461_Mcp4461Component>;
+            mcp4461: Mcp4461Props & ComponentProps<__marker_mcp4461_Mcp4461Component>;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { pylontech_PylontechComponent, uart_UARTComponent } from "../markers";
+import type { __marker_pylontech_PylontechComponent, __marker_uart_UARTComponent } from "../markers";
 export interface PylontechProps extends _CoreComponent {
     /**
      * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
@@ -16,12 +16,12 @@ export interface PylontechProps extends _CoreComponent {
      * The uart Bus ID
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            pylontech: PylontechProps & ComponentProps<pylontech_PylontechComponent>;
+            pylontech: PylontechProps & ComponentProps<__marker_pylontech_PylontechComponent>;
         }
     }
 }

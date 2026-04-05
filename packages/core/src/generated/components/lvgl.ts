@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { BindProp, ComponentProps, RefProp } from "../../types";
-import type { image_Image } from "../markers";
+import type { __marker_image_Image } from "../markers";
 import type { CssStyleProps } from "../../style-types";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
 //
@@ -38,7 +38,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_image_recolor_opa */
     bgImageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
-    bgImageSrc?: string | RefProp<image_Image>;
+    bgImageSrc?: string | RefProp<__marker_image_Image>;
     /** @yamlKey bg_image_tiled */
     bgImageTiled?: BindProp<boolean>;
     /** @yamlKey bg_main_stop */
@@ -454,7 +454,7 @@ export interface LvglImageProps {
     offsetY?: number | string | "SIZE_CONTENT";
     antialias?: boolean;
     mode?: "VIRTUAL" | "REAL";
-    src: string | RefProp<image_Image>;
+    src: string | RefProp<__marker_image_Image>;
     /**
      * CSS-like style object. All visual properties must be specified here.
      * This widget has no sub-parts.
@@ -1521,7 +1521,7 @@ export interface LvglProps {
     /** @yamlKey resume_on_input */
     resumeOnInput?: boolean;
     /** @yamlKey disp_bg_image */
-    dispBgImage?: string | RefProp<image_Image>;
+    dispBgImage?: string | RefProp<__marker_image_Image>;
     /** @yamlKey disp_bg_color */
     dispBgColor?: string;
     /** @yamlKey disp_bg_opa */

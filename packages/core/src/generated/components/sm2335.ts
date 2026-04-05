@@ -4,13 +4,13 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { sm2335_SM2335 } from "../markers";
+import type { __marker_sm2335_SM2335 } from "../markers";
 export interface Sm2335Props {
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sm2335: Sm2335Props & ComponentProps<sm2335_SM2335>;
+            sm2335: Sm2335Props & ComponentProps<__marker_sm2335_SM2335>;
         }
     }
 }

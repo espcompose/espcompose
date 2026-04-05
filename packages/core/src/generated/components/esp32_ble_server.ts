@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp32_ble_ESP32BLE, esp32_ble_server_BLEServer } from "../markers";
+import type { __marker_esp32_ble_ESP32BLE, __marker_esp32_ble_server_BLEServer } from "../markers";
 export interface Esp32BleServerManufacturerProps {
     data: number;
     type?: "uint8_t" | "uint16_t" | "uint32_t" | "uint64_t" | "int8_t" | "int16_t" | "int32_t" | "int64_t" | "float" | "double" | "string";
@@ -80,7 +80,7 @@ export interface Esp32BleServerServicesProps {
 }
 export interface Esp32BleServerProps extends _CoreComponent {
     /** @yamlKey ble_id */
-    bleId?: RefProp<esp32_ble_ESP32BLE>;
+    bleId?: RefProp<__marker_esp32_ble_ESP32BLE>;
     /** [Value Configuration](https://esphome.io/components/esp32_ble_server#esp32_ble_server-value): The name of the manufac... */
     manufacturer?: Esp32BleServerManufacturerProps;
     /** int: Sets the [appearance](https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/core/appearance_value... */
@@ -118,7 +118,7 @@ export interface Esp32BleServerProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp32_ble_server: Esp32BleServerProps & ComponentProps<esp32_ble_server_BLEServer>;
+            esp32_ble_server: Esp32BleServerProps & ComponentProps<__marker_esp32_ble_server_BLEServer>;
         }
     }
 }

@@ -4,13 +4,13 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { lcd_base_LCDDisplay, lcd_menu_LCDCharacterMenuComponent } from "../markers";
+import type { __marker_lcd_base_LCDDisplay, __marker_lcd_menu_LCDCharacterMenuComponent } from "../markers";
 export interface LcdMenuProps {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the LCD display.
      * @yamlKey display_id
      */
-    displayId?: RefProp<lcd_base_LCDDisplay>;
+    displayId?: RefProp<__marker_lcd_base_LCDDisplay>;
     /**
      * 0-255: Code of the character used to mark menu item selected. Defaults to `0x3e` (`>` ).
      * @yamlKey mark_selected
@@ -35,7 +35,7 @@ export interface LcdMenuProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            lcd_menu: LcdMenuProps & ComponentProps<lcd_menu_LCDCharacterMenuComponent>;
+            lcd_menu: LcdMenuProps & ComponentProps<__marker_lcd_menu_LCDCharacterMenuComponent>;
         }
     }
 }

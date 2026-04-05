@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { FontProps } from '../generated/components/font';
-import type { font_Font } from '../generated/markers';
+import type { FontRef } from '../generated/markers';
 import type { Ref } from '../types';
 import { RefHandle } from '../types';
 import { assertHookContext } from './useState';
@@ -20,7 +20,7 @@ import { registerComponent } from './useReactiveScope';
 // Cache — deduplication within a render pass
 // ────────────────────────────────────────────────────────────────────────────
 
-const fontCache = new Map<string, Ref<font_Font>>();
+const fontCache = new Map<string, Ref<FontRef>>();
 
 /** Clear the font cache. Called at the start of each render pass. */
 export function clearFontCache(): void {
@@ -58,14 +58,14 @@ function fontCacheKey(props: FontProps): string {
  * const roboto = useFont({ file: 'gfonts://Roboto', size: 20 });
  * <lvgl-label textFont={roboto} text="Hello" />
  */
-export function useFont(props: FontProps): Ref<font_Font> {
+export function useFont(props: FontProps): Ref<FontRef> {
   assertHookContext('useFont()');
 
   const key = fontCacheKey(props);
   const cached = fontCache.get(key);
   if (cached) return cached;
 
-  const ref = new RefHandle<font_Font>() as unknown as Ref<font_Font>;
+  const ref = new RefHandle<FontRef>() as unknown as Ref<FontRef>;
   const id = ref.toString();
 
   const config: Record<string, unknown> = {

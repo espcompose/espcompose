@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { runtime_stats_RuntimeStatsCollector } from "../markers";
+import type { __marker_runtime_stats_RuntimeStatsCollector } from "../markers";
 export interface RuntimeStatsProps {
     /**
      * [Time](/guides/configuration-types#time): How often to log the statistics. Defaults to `60s`.
@@ -15,7 +15,7 @@ export interface RuntimeStatsProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            runtime_stats: RuntimeStatsProps & ComponentProps<runtime_stats_RuntimeStatsCollector>;
+            runtime_stats: RuntimeStatsProps & ComponentProps<__marker_runtime_stats_RuntimeStatsCollector>;
         }
     }
 }

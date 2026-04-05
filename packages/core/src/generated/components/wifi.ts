@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { wifi_WiFiComponent } from "../markers";
+import type { __marker_wifi_WiFiComponent } from "../markers";
 export interface WifiNetworksPropsManualIpProps {
     /** IPv4 address: The main DNS server to use. */
     dns1?: IPv4Address;
@@ -165,7 +165,7 @@ export interface WifiProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            wifi: WifiProps & ComponentProps<wifi_WiFiComponent>;
+            wifi: WifiProps & ComponentProps<__marker_wifi_WiFiComponent>;
         }
     }
 }

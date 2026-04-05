@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { my9231_MY9231OutputComponent } from "../markers";
+import type { __marker_my9231_MY9231OutputComponent } from "../markers";
 export interface My9231Props extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin which DI is connected
@@ -36,7 +36,7 @@ export interface My9231Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            my9231: My9231Props & ComponentProps<my9231_MY9231OutputComponent>;
+            my9231: My9231Props & ComponentProps<__marker_my9231_MY9231OutputComponent>;
         }
     }
 }

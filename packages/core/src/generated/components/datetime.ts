@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreEntityBase, _CoreMqttCommandComponent, _TemplateDatetime_Base } from "../bases";
-import type { template__TemplateDate, template__TemplateDateTime, template__TemplateTime, time_RealTimeClock, web_server_WebServer } from "../markers";
+import type { __marker_template__TemplateDate, __marker_template__TemplateDateTime, __marker_template__TemplateTime, __marker_time_RealTimeClock, __marker_web_server_WebServer } from "../markers";
 interface DatetimeWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -18,7 +18,7 @@ interface DatetimeBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey on_value */
     onValue?: TriggerHandler;
     /** @yamlKey time_id */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** @yamlKey web_server */
     webServer?: DatetimeWebServerProps;
 }
@@ -53,13 +53,13 @@ interface TemplateDATETIMEProps extends _TemplateDatetime_Base {
 export type DatetimeProps = (DatetimeBaseProps & {
     platform: "template";
     type: "DATE";
-} & TemplateDATEProps & ComponentProps<template__TemplateDate>) | (DatetimeBaseProps & {
+} & TemplateDATEProps & ComponentProps<__marker_template__TemplateDate>) | (DatetimeBaseProps & {
     platform: "template";
     type: "TIME";
-} & TemplateTIMEProps & ComponentProps<template__TemplateTime>) | (DatetimeBaseProps & {
+} & TemplateTIMEProps & ComponentProps<__marker_template__TemplateTime>) | (DatetimeBaseProps & {
     platform: "template";
     type: "DATETIME";
-} & TemplateDATETIMEProps & ComponentProps<template__TemplateDateTime>);
+} & TemplateDATETIMEProps & ComponentProps<__marker_template__TemplateDateTime>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

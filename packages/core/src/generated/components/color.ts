@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { Color } from "../markers";
+import type { __marker_Color } from "../markers";
 export interface ColorProps extends _CoreComponent {
     red?: unknown;
     /** @yamlKey red_int */
@@ -24,7 +24,7 @@ export interface ColorProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            color: ColorProps & ComponentProps<Color>;
+            color: ColorProps & ComponentProps<__marker_Color>;
         }
     }
 }

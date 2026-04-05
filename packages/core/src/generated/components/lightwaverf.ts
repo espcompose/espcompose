@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { lightwaverf_LightWaveRF } from "../markers";
+import type { __marker_lightwaverf_LightWaveRF } from "../markers";
 export interface LightwaverfProps extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin that the receiver is connected to
@@ -23,7 +23,7 @@ export interface LightwaverfProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            lightwaverf: LightwaverfProps & ComponentProps<lightwaverf_LightWaveRF>;
+            lightwaverf: LightwaverfProps & ComponentProps<__marker_lightwaverf_LightWaveRF>;
         }
     }
 }

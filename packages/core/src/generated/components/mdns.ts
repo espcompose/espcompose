@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { mdns_MDNSComponent } from "../markers";
+import type { __marker_mdns_MDNSComponent } from "../markers";
 export interface MdnsServicesProps {
     /** string: Name of extra service. */
     service: string;
@@ -23,7 +23,7 @@ export interface MdnsProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mdns: MdnsProps & ComponentProps<mdns_MDNSComponent>;
+            mdns: MdnsProps & ComponentProps<__marker_mdns_MDNSComponent>;
         }
     }
 }

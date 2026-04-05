@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { cd74hc4067_CD74HC4067Component } from "../markers";
+import type { __marker_cd74hc4067_CD74HC4067Component } from "../markers";
 export interface Cd74hc4067Props extends _CoreComponent {
     /** @yamlKey pin_s0 */
     pinS0: Pin;
@@ -21,7 +21,7 @@ export interface Cd74hc4067Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            cd74hc4067: Cd74hc4067Props & ComponentProps<cd74hc4067_CD74HC4067Component>;
+            cd74hc4067: Cd74hc4067Props & ComponentProps<__marker_cd74hc4067_CD74HC4067Component>;
         }
     }
 }

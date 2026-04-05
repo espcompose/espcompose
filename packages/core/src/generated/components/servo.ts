@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { output_FloatOutput, servo_Servo } from "../markers";
+import type { __marker_output_FloatOutput, __marker_servo_Servo } from "../markers";
 export interface ServoProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the [output component](/components/output/) to use for this servo. */
-    output: RefProp<output_FloatOutput>;
+    output: RefProp<__marker_output_FloatOutput>;
     /**
      * percentage: The PWM duty cycle the minimum value (-100%) will map to. Defaults to `3%`.
      * @yamlKey min_level
@@ -40,7 +40,7 @@ export interface ServoProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            servo: ServoProps & ComponentProps<servo_Servo>;
+            servo: ServoProps & ComponentProps<__marker_servo_Servo>;
         }
     }
 }

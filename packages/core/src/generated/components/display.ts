@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _DisplayBasicDisplay, _DisplayFullDisplay, _QspiDbiDisplayBase } from "../bases";
-import type { _esphome_hub75_HUB75Display, addressable_light_AddressableLightDisplay, i2c_I2CBus, ili9xxx_ILI9XXXDisplay, inkplate_Inkplate, lcd_gpio_GPIOLCDDisplay, lcd_pcf8574_PCF8574LCDDisplay, light_AddressableLightState, max7219_MAX7219Component, max7219digit_MAX7219Component, nextion_Nextion, pcd8544_PCD8544, power_supply_PowerSupply, pvvx_mithermometer_PVVXDisplay, rpi_dpi_rgb_RpiDpiRgb, sdl_Sdl, spi_SPIComponent, ssd1306_i2c_I2CSSD1306, ssd1306_spi_SPISSD1306, ssd1322_spi_SPISSD1322, ssd1325_spi_SPISSD1325, ssd1327_i2c_I2CSSD1327, ssd1327_spi_SPISSD1327, ssd1331_spi_SPISSD1331, ssd1351_spi_SPISSD1351, st7567_i2c_I2CST7567, st7567_spi_SPIST7567, st7701s_ST7701S, st7735_ST7735, st7789v_ST7789V, st7920_ST7920, time_RealTimeClock, tm1621_TM1621Display, tm1637_TM1637Display, tm1638_TM1638Component, uart_UARTComponent, waveshare_epaper_WaveshareEPaperBase } from "../markers";
+import type { __marker_addressable_light_AddressableLightDisplay, __marker_esphome_hub75_HUB75Display, __marker_i2c_I2CBus, __marker_ili9xxx_ILI9XXXDisplay, __marker_inkplate_Inkplate, __marker_lcd_gpio_GPIOLCDDisplay, __marker_lcd_pcf8574_PCF8574LCDDisplay, __marker_light_AddressableLightState, __marker_max7219_MAX7219Component, __marker_max7219digit_MAX7219Component, __marker_nextion_Nextion, __marker_pcd8544_PCD8544, __marker_power_supply_PowerSupply, __marker_pvvx_mithermometer_PVVXDisplay, __marker_rpi_dpi_rgb_RpiDpiRgb, __marker_sdl_Sdl, __marker_spi_SPIComponent, __marker_ssd1306_i2c_I2CSSD1306, __marker_ssd1306_spi_SPISSD1306, __marker_ssd1322_spi_SPISSD1322, __marker_ssd1325_spi_SPISSD1325, __marker_ssd1327_i2c_I2CSSD1327, __marker_ssd1327_spi_SPISSD1327, __marker_ssd1331_spi_SPISSD1331, __marker_ssd1351_spi_SPISSD1351, __marker_st7567_i2c_I2CST7567, __marker_st7567_spi_SPIST7567, __marker_st7701s_ST7701S, __marker_st7735_ST7735, __marker_st7789v_ST7789V, __marker_st7920_ST7920, __marker_time_RealTimeClock, __marker_tm1621_TM1621Display, __marker_tm1637_TM1637Display, __marker_tm1638_TM1638Component, __marker_uart_UARTComponent, __marker_waveshare_epaper_WaveshareEPaperBase } from "../markers";
 interface Ili9xxxDimensionsProps {
     /** int: Specifies width of display. */
     width: number;
@@ -229,7 +229,7 @@ interface AddressableLightProps extends _DisplayFullDisplay {
      * [ID](/guides/configuration-types#id): The id of the addressable light component to use as a display.
      * @yamlKey addressable_light_id
      */
-    addressableLightId: RefProp<light_AddressableLightState>;
+    addressableLightId: RefProp<__marker_light_AddressableLightState>;
     /** int: The width of the LED matrix in pixels. */
     width: number;
     /** int: The height of the LED matrix in pixels. */
@@ -431,7 +431,7 @@ interface Ili9xxxProps extends _DisplayFullDisplay, _CoreComponent {
      */
     initSequence?: Array<unknown>;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -559,7 +559,7 @@ interface InkplateProps extends _DisplayFullDisplay, _CoreComponent {
      */
     displayData7Pin?: Pin;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     address?: number;
 }
 interface LcdGpioProps {
@@ -586,7 +586,7 @@ interface LcdGpioProps {
 }
 interface LcdPcf8574Props {
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The [I²C](/components/i2c) address of the PCF8574 chip, defaults to `0x3F`. */
     address?: number;
 }
@@ -607,7 +607,7 @@ interface Max7219Props extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -682,7 +682,7 @@ interface Max7219digitProps extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -714,7 +714,7 @@ interface Pcd8544Props extends _DisplayFullDisplay, _CoreComponent {
     /** int: Set screen contrast (0-255). Defaults to `0x7f`. */
     contrast?: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -727,7 +727,7 @@ interface PvvxMithermometerProps extends _DisplayBasicDisplay, _BleClient, _Core
      * [ID](/guides/configuration-types#id): ID of a [Time](/components/time/). If set, the time will be synchronized with e...
      * @yamlKey time_id
      */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /**
      * boolean: Whether to automatically clear the display data before each lambda call, or to keep the existing display con...
      * @yamlKey auto_clear_enabled
@@ -949,7 +949,7 @@ interface RpiDpiRgbProps extends _DisplayFullDisplay {
 }
 interface Ssd1306I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3C. */
     address?: number;
 }
@@ -957,7 +957,7 @@ interface Ssd1306SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -974,7 +974,7 @@ interface Ssd1322SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1004,7 +1004,7 @@ interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1029,7 +1029,7 @@ interface Ssd1325SpiProps extends _DisplayFullDisplay, _CoreComponent {
 }
 interface Ssd1327I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3D. */
     address?: number;
 }
@@ -1037,7 +1037,7 @@ interface Ssd1327SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1051,7 +1051,7 @@ interface Ssd1331SpiProps extends _DisplayFullDisplay, _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1071,7 +1071,7 @@ interface Ssd1351SpiProps extends _DisplayFullDisplay, _CoreComponent {
      */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1097,7 +1097,7 @@ interface St7567I2cProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I²C Component](/components/i2c) if you want to ...
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3F. */
     address?: number;
 }
@@ -1105,7 +1105,7 @@ interface St7567SpiProps extends _CoreComponent {
     /** @yamlKey dc_pin */
     dcPin: Pin;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1211,7 +1211,7 @@ interface St7701sProps extends _DisplayFullDisplay {
      */
     vsyncFrontPorch?: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /**
      * Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1M...
      * @yamlKey data_rate
@@ -1269,7 +1269,7 @@ interface St7735Props extends _DisplayFullDisplay, _CoreComponent {
      */
     invertColors?: boolean;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1311,7 +1311,7 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): The [power supply](/components/power_supply/) to connect to this display if req...
      * @yamlKey power_supply
      */
-    powerSupply?: RefProp<power_supply_PowerSupply>;
+    powerSupply?: RefProp<__marker_power_supply_PowerSupply>;
     /** boolean: Limits the supported color depth to eight bits. May be useful on memory-constrained devices. Defaults to `fa... */
     eightbitcolor?: boolean;
     /** int: Sets height of display in pixels. Default depends on `model`. */
@@ -1329,7 +1329,7 @@ interface St7789vProps extends _DisplayFullDisplay, _CoreComponent {
      */
     offsetWidth?: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /**
      * frequency: The SPI data rate (default 20MHz.) Can be reduced if required, e.g. to compensate for long data cables.
      * @yamlKey data_rate
@@ -1354,7 +1354,7 @@ interface St7920Props extends _DisplayFullDisplay, _CoreComponent {
     /** int: The "height" of a screen. Defaults to 64; */
     height: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1421,7 +1421,7 @@ interface WaveshareEpaperProps extends _DisplayFullDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -1551,7 +1551,7 @@ interface NextionProps extends _DisplayBasicDisplay, _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [UART Bus](/components/uart) you wish to use for this display. Sp...
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 interface SdlProps extends _DisplayFullDisplay {
     /**
@@ -1605,27 +1605,27 @@ interface Tm1638Props extends _DisplayBasicDisplay, _CoreComponent {
 }
 export type DisplayProps = ({
     platform: "addressable_light";
-} & AddressableLightProps & ComponentProps<addressable_light_AddressableLightDisplay>) | ({
+} & AddressableLightProps & ComponentProps<__marker_addressable_light_AddressableLightDisplay>) | ({
     platform: "epaper_spi";
 } & ComponentProps) | ({
     platform: "hub75";
-} & Hub75Props & ComponentProps<_esphome_hub75_HUB75Display>) | ({
+} & Hub75Props & ComponentProps<__marker_esphome_hub75_HUB75Display>) | ({
     platform: "ili9341";
 } & ComponentProps) | ({
     platform: "ili9xxx";
-} & Ili9xxxProps & ComponentProps<ili9xxx_ILI9XXXDisplay>) | ({
+} & Ili9xxxProps & ComponentProps<__marker_ili9xxx_ILI9XXXDisplay>) | ({
     platform: "inkplate";
-} & InkplateProps & ComponentProps<inkplate_Inkplate>) | ({
+} & InkplateProps & ComponentProps<__marker_inkplate_Inkplate>) | ({
     platform: "inkplate6";
 } & ComponentProps) | ({
     platform: "lcd_gpio";
-} & LcdGpioProps & ComponentProps<lcd_gpio_GPIOLCDDisplay>) | ({
+} & LcdGpioProps & ComponentProps<__marker_lcd_gpio_GPIOLCDDisplay>) | ({
     platform: "lcd_pcf8574";
-} & LcdPcf8574Props & ComponentProps<lcd_pcf8574_PCF8574LCDDisplay>) | ({
+} & LcdPcf8574Props & ComponentProps<__marker_lcd_pcf8574_PCF8574LCDDisplay>) | ({
     platform: "max7219";
-} & Max7219Props & ComponentProps<max7219_MAX7219Component>) | ({
+} & Max7219Props & ComponentProps<__marker_max7219_MAX7219Component>) | ({
     platform: "max7219digit";
-} & Max7219digitProps & ComponentProps<max7219digit_MAX7219Component>) | ({
+} & Max7219digitProps & ComponentProps<__marker_max7219digit_MAX7219Component>) | ({
     platform: "mipi_dsi";
 } & ComponentProps) | ({
     platform: "mipi_rgb";
@@ -1633,9 +1633,9 @@ export type DisplayProps = ({
     platform: "mipi_spi";
 } & ComponentProps) | ({
     platform: "pcd8544";
-} & Pcd8544Props & ComponentProps<pcd8544_PCD8544>) | ({
+} & Pcd8544Props & ComponentProps<__marker_pcd8544_PCD8544>) | ({
     platform: "pvvx_mithermometer";
-} & PvvxMithermometerProps & ComponentProps<pvvx_mithermometer_PVVXDisplay>) | ({
+} & PvvxMithermometerProps & ComponentProps<__marker_pvvx_mithermometer_PVVXDisplay>) | ({
     platform: "qspi_amoled";
 } & ComponentProps) | ({
     platform: "qspi_dbi";
@@ -1657,47 +1657,47 @@ export type DisplayProps = ({
     model: "CUSTOM";
 } & QspiDbiCUSTOMProps & ComponentProps) | ({
     platform: "rpi_dpi_rgb";
-} & RpiDpiRgbProps & ComponentProps<rpi_dpi_rgb_RpiDpiRgb>) | ({
+} & RpiDpiRgbProps & ComponentProps<__marker_rpi_dpi_rgb_RpiDpiRgb>) | ({
     platform: "ssd1306_i2c";
-} & Ssd1306I2cProps & ComponentProps<ssd1306_i2c_I2CSSD1306>) | ({
+} & Ssd1306I2cProps & ComponentProps<__marker_ssd1306_i2c_I2CSSD1306>) | ({
     platform: "ssd1306_spi";
-} & Ssd1306SpiProps & ComponentProps<ssd1306_spi_SPISSD1306>) | ({
+} & Ssd1306SpiProps & ComponentProps<__marker_ssd1306_spi_SPISSD1306>) | ({
     platform: "ssd1322_spi";
-} & Ssd1322SpiProps & ComponentProps<ssd1322_spi_SPISSD1322>) | ({
+} & Ssd1322SpiProps & ComponentProps<__marker_ssd1322_spi_SPISSD1322>) | ({
     platform: "ssd1325_spi";
-} & Ssd1325SpiProps & ComponentProps<ssd1325_spi_SPISSD1325>) | ({
+} & Ssd1325SpiProps & ComponentProps<__marker_ssd1325_spi_SPISSD1325>) | ({
     platform: "ssd1327_i2c";
-} & Ssd1327I2cProps & ComponentProps<ssd1327_i2c_I2CSSD1327>) | ({
+} & Ssd1327I2cProps & ComponentProps<__marker_ssd1327_i2c_I2CSSD1327>) | ({
     platform: "ssd1327_spi";
-} & Ssd1327SpiProps & ComponentProps<ssd1327_spi_SPISSD1327>) | ({
+} & Ssd1327SpiProps & ComponentProps<__marker_ssd1327_spi_SPISSD1327>) | ({
     platform: "ssd1331_spi";
-} & Ssd1331SpiProps & ComponentProps<ssd1331_spi_SPISSD1331>) | ({
+} & Ssd1331SpiProps & ComponentProps<__marker_ssd1331_spi_SPISSD1331>) | ({
     platform: "ssd1351_spi";
-} & Ssd1351SpiProps & ComponentProps<ssd1351_spi_SPISSD1351>) | ({
+} & Ssd1351SpiProps & ComponentProps<__marker_ssd1351_spi_SPISSD1351>) | ({
     platform: "st7567_i2c";
-} & St7567I2cProps & ComponentProps<st7567_i2c_I2CST7567>) | ({
+} & St7567I2cProps & ComponentProps<__marker_st7567_i2c_I2CST7567>) | ({
     platform: "st7567_spi";
-} & St7567SpiProps & ComponentProps<st7567_spi_SPIST7567>) | ({
+} & St7567SpiProps & ComponentProps<__marker_st7567_spi_SPIST7567>) | ({
     platform: "st7701s";
-} & St7701sProps & ComponentProps<st7701s_ST7701S>) | ({
+} & St7701sProps & ComponentProps<__marker_st7701s_ST7701S>) | ({
     platform: "st7735";
-} & St7735Props & ComponentProps<st7735_ST7735>) | ({
+} & St7735Props & ComponentProps<__marker_st7735_ST7735>) | ({
     platform: "st7789v";
-} & St7789vProps & ComponentProps<st7789v_ST7789V>) | ({
+} & St7789vProps & ComponentProps<__marker_st7789v_ST7789V>) | ({
     platform: "st7920";
-} & St7920Props & ComponentProps<st7920_ST7920>) | ({
+} & St7920Props & ComponentProps<__marker_st7920_ST7920>) | ({
     platform: "tm1621";
-} & Tm1621Props & ComponentProps<tm1621_TM1621Display>) | ({
+} & Tm1621Props & ComponentProps<__marker_tm1621_TM1621Display>) | ({
     platform: "waveshare_epaper";
-} & WaveshareEpaperProps & ComponentProps<waveshare_epaper_WaveshareEPaperBase>) | ({
+} & WaveshareEpaperProps & ComponentProps<__marker_waveshare_epaper_WaveshareEPaperBase>) | ({
     platform: "nextion";
-} & NextionProps & ComponentProps<nextion_Nextion>) | ({
+} & NextionProps & ComponentProps<__marker_nextion_Nextion>) | ({
     platform: "sdl";
-} & SdlProps & ComponentProps<sdl_Sdl>) | ({
+} & SdlProps & ComponentProps<__marker_sdl_Sdl>) | ({
     platform: "tm1637";
-} & Tm1637Props & ComponentProps<tm1637_TM1637Display>) | ({
+} & Tm1637Props & ComponentProps<__marker_tm1637_TM1637Display>) | ({
     platform: "tm1638";
-} & Tm1638Props & ComponentProps<tm1638_TM1638Component>);
+} & Tm1638Props & ComponentProps<__marker_tm1638_TM1638Component>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

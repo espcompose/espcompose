@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _BthomeMithermometerBleDevice, _CoreComponent } from "../bases";
-import type { xiaomi_rtcgq02lm_XiaomiRTCGQ02LM } from "../markers";
+import type { __marker_xiaomi_rtcgq02lm_XiaomiRTCGQ02LM } from "../markers";
 export interface XiaomiRtcgq02lmProps extends _BthomeMithermometerBleDevice, _CoreComponent {
     bindkey: unknown;
     /** @yamlKey mac_address */
@@ -14,7 +14,7 @@ export interface XiaomiRtcgq02lmProps extends _BthomeMithermometerBleDevice, _Co
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            xiaomi_rtcgq02lm: XiaomiRtcgq02lmProps & ComponentProps<xiaomi_rtcgq02lm_XiaomiRTCGQ02LM>;
+            xiaomi_rtcgq02lm: XiaomiRtcgq02lmProps & ComponentProps<__marker_xiaomi_rtcgq02lm_XiaomiRTCGQ02LM>;
         }
     }
 }

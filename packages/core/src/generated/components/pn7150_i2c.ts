@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, pn7150_PN7150 } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_pn7150_PN7150 } from "../markers";
 export interface Pn7150I2cProps extends _CoreComponent {
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     address?: number;
     /** @yamlKey on_emulated_tag_scan */
     onEmulatedTagScan?: TriggerHandler;
@@ -30,7 +30,7 @@ export interface Pn7150I2cProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            pn7150_i2c: Pn7150I2cProps & ComponentProps<pn7150_PN7150>;
+            pn7150_i2c: Pn7150I2cProps & ComponentProps<__marker_pn7150_PN7150>;
         }
     }
 }

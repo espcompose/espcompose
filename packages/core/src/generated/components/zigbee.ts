@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { zigbee_ZigbeeComponent } from "../markers";
+import type { __marker_zigbee_ZigbeeComponent } from "../markers";
 export interface ZigbeeProps extends _CoreComponent {
     /**
      * [Automation](/automations#automation): Automation to run when the device joins the network.
@@ -31,7 +31,7 @@ export interface ZigbeeProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            zigbee: ZigbeeProps & ComponentProps<zigbee_ZigbeeComponent>;
+            zigbee: ZigbeeProps & ComponentProps<__marker_zigbee_ZigbeeComponent>;
         }
     }
 }

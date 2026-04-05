@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { key_collector_KeyCollector, key_provider_KeyProvider } from "../markers";
+import type { __marker_key_collector_KeyCollector, __marker_key_provider_KeyProvider } from "../markers";
 export interface KeyCollectorProps extends _CoreComponent {
     /**
      * [ID](/guides/configuration-types#id): The ID of the key collector component to monitor.
      * @yamlKey source_id
      */
-    sourceId?: Array<RefProp<key_provider_KeyProvider>>;
+    sourceId?: Array<RefProp<__marker_key_provider_KeyProvider>>;
     /**
      * integer: The minimum length of the desired key sequence. Below this limit, `on_result` automation will not trigger ev...
      * @yamlKey min_length
@@ -78,7 +78,7 @@ export interface KeyCollectorProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            key_collector: KeyCollectorProps & ComponentProps<key_collector_KeyCollector>;
+            key_collector: KeyCollectorProps & ComponentProps<__marker_key_collector_KeyCollector>;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus } from "../markers";
+import type { __marker_i2c_I2CBus } from "../markers";
 export interface I2cProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin for the data line of the I²C bus. Defaults to the default of your boa... */
     sda?: Pin;
@@ -36,7 +36,7 @@ export interface I2cProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            i2c: I2cProps & ComponentProps<i2c_I2CBus>;
+            i2c: I2cProps & ComponentProps<__marker_i2c_I2CBus>;
         }
     }
 }

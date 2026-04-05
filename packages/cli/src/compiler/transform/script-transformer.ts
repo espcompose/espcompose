@@ -106,8 +106,12 @@ function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
 
 /**
  * Scan for `const ref = useRef<...>()` patterns and build a map of
- * declaration symbol → element tag. Tags are inferred from the generic type
- * parameter if possible (e.g. `light_LightOutput` → 'light').
+ * declaration symbol → element tag. Tags are inferred from the resolved type's
+ * `__brand_` properties — the first brand containing an underscore gives the
+ * C++ namespace which maps to the ESPHome component tag.
+ *
+ * Handles all naming schemes: `useRef<LightRef>()`,
+ * `useRef<Components.Light.LightRef>()`, `useRef<__marker_light_Light>()`.
  */
 function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, string> {
   const refTags = new Map<ts.Symbol, string>();
@@ -116,15 +120,15 @@ function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map
       if (ts.isCallExpression(node.initializer)) {
         const callee = node.initializer.expression;
         if (ts.isIdentifier(callee) && callee.text === 'useRef') {
-          // Try to extract tag from type argument: useRef<light_LightOutput>()
           const typeArgs = node.initializer.typeArguments;
           if (typeArgs && typeArgs.length > 0) {
-            const typeText = typeArgs[0].getText();
-            const underscoreIdx = typeText.indexOf('_');
-            if (underscoreIdx > 0) {
+            const resolvedType = checker.getTypeFromTypeNode(typeArgs[0]);
+            // Walk properties looking for __brand_<namespace>_<Class> pattern
+            const tag = extractTagFromBrands(resolvedType, checker);
+            if (tag) {
               const sym = checker.getSymbolAtLocation(node.name);
               if (sym) {
-                refTags.set(sym, typeText.slice(0, underscoreIdx));
+                refTags.set(sym, tag);
               }
             }
           }
@@ -135,6 +139,33 @@ function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map
   };
   walk(sourceFile);
   return refTags;
+}
+
+/**
+ * Extract the ESPHome component tag from a marker type's brand properties.
+ * Finds the first `__brand_` property whose name (after stripping `__brand_`)
+ * contains an underscore — the part before the first underscore is the C++ namespace
+ * which maps to the component tag.
+ *
+ * Uses the type's *own* symbol name (the first brand) as the canonical brand.
+ * E.g. `__brand_light_LightOutput` → tag = "light".
+ */
+function extractTagFromBrands(type: ts.Type, checker: ts.TypeChecker): string | undefined {
+  const props = checker.getPropertiesOfType(type);
+  // Sort properties to get a deterministic result — the most specific brand
+  // (the type's own identity) is the first __brand_ property alphabetically.
+  const brandProps = props
+    .filter(p => p.name.startsWith('__brand_'))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const prop of brandProps) {
+    const stripped = prop.name.slice('__brand_'.length);
+    const underscoreIdx = stripped.indexOf('_');
+    if (underscoreIdx > 0) {
+      return stripped.slice(0, underscoreIdx);
+    }
+  }
+  return undefined;
 }
 
 /**

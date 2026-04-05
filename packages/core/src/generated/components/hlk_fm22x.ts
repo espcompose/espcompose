@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { hlk_fm22x_HlkFm22xComponent, uart_UARTComponent } from "../markers";
+import type { __marker_hlk_fm22x_HlkFm22xComponent, __marker_uart_UARTComponent } from "../markers";
 export interface HlkFm22xProps extends _CoreComponent {
     /**
      * [Automation](/automations/): An action to be performed when an enrolled face is scanned and recognized. See [`on_face...
@@ -43,12 +43,12 @@ export interface HlkFm22xProps extends _CoreComponent {
      * ID: Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            hlk_fm22x: HlkFm22xProps & ComponentProps<hlk_fm22x_HlkFm22xComponent>;
+            hlk_fm22x: HlkFm22xProps & ComponentProps<__marker_hlk_fm22x_HlkFm22xComponent>;
         }
     }
 }

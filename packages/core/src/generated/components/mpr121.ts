@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, mpr121_MPR121Component } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_mpr121_MPR121Component } from "../markers";
 export interface Mpr121Props extends _CoreComponent {
     /**
      * int: The minimum length that no touch is recognized before a release event is created. Range is from 0 to 7. Defaults...
@@ -30,14 +30,14 @@ export interface Mpr121Props extends _CoreComponent {
     /** @yamlKey max_touch_channel */
     maxTouchChannel?: number;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the sensor. Defaults to `0x5A`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mpr121: Mpr121Props & ComponentProps<mpr121_MPR121Component>;
+            mpr121: Mpr121Props & ComponentProps<__marker_mpr121_MPR121Component>;
         }
     }
 }

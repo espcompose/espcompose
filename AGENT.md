@@ -172,10 +172,10 @@ component function body.
 
 ```tsx
 import { delay, logger, useRef, useScript } from '@espcompose/core';
-import type { Switch } from '@espcompose/core';
+import type { SwitchRef } from '@espcompose/core';
 
 function App() {
-  const switchRef = useRef<Switch>();
+  const switchRef = useRef<SwitchRef>();
 
   const blink = useScript(async () => {
     switchRef.toggle();
@@ -257,7 +257,7 @@ value is wrapped in a typed node:
 | `IRArray` | Ordered list of IR values |
 | `IRNull` | Null value |
 | `IRReactive` | Reactive binding — wraps a `ReactiveNode` with full metadata |
-| `IRRef` | Cross-component reference (e.g. `useRef<typeof Light>()`) |
+| `IRRef` | Cross-component reference (e.g. `useRef<LightRef>()`) |
 | `IRAction` | Compiled action tree (12 action kinds) |
 | `IRSecret` | Secret reference (`!secret` in YAML) |
 | `IRTriggerVar` | Trigger variable for lambda injection |
@@ -282,7 +282,7 @@ creates a typed, auto-generated ID token. Generated ref tokens follow the
 pattern `r_<random>` and are collision-resistant within a single config.
 
 ```tsx
-const i2cBus = useRef<i2c_I2CBus>();
+const i2cBus = useRef<I2CBusRef>();
 
 return (
   <>

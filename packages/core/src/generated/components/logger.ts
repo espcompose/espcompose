@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { logger_Logger } from "../markers";
+import type { __marker_logger_Logger } from "../markers";
 export interface LoggerProps extends _CoreComponent {
     /**
      * int: The baud rate to use for the serial
@@ -70,7 +70,7 @@ export interface LoggerProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            logger: LoggerProps & ComponentProps<logger_Logger>;
+            logger: LoggerProps & ComponentProps<__marker_logger_Logger>;
         }
     }
 }

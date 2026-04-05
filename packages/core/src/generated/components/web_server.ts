@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { web_server_WebServer, web_server_base_WebServerBase } from "../markers";
+import type { __marker_web_server_WebServer, __marker_web_server_base_WebServerBase } from "../markers";
 export interface WebServerAuthProps {
     /** string: The username to use for authentication. */
     username: string;
@@ -54,7 +54,7 @@ export interface WebServerProps extends _CoreComponent {
     /** Enables a simple *Digest* authentication with username and password. */
     auth?: WebServerAuthProps;
     /** @yamlKey web_server_base_id */
-    webServerBaseId?: RefProp<web_server_base_WebServerBase>;
+    webServerBaseId?: RefProp<__marker_web_server_base_WebServerBase>;
     /**
      * boolean: Whether `internal` entities should be displayed on the web interface. Defaults to `false`.
      * @yamlKey include_internal
@@ -77,7 +77,7 @@ export interface WebServerProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            web_server: WebServerProps & ComponentProps<web_server_WebServer>;
+            web_server: WebServerProps & ComponentProps<__marker_web_server_WebServer>;
         }
     }
 }

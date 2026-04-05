@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { ds2484_DS2484OneWireBus, gpio_GPIOOneWireBus, i2c_I2CBus } from "../markers";
+import type { __marker_ds2484_DS2484OneWireBus, __marker_gpio_GPIOOneWireBus, __marker_i2c_I2CBus } from "../markers";
 interface Ds2484Props extends _CoreComponent {
     /**
      * defaults to `false`: enables DS2484 `active_pullup`.
@@ -21,7 +21,7 @@ interface Ds2484Props extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [I2C](/components/i2c/). Required if you have co...
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the device. Defaults to `0x18`. */
     address?: number;
 }
@@ -31,9 +31,9 @@ interface GpioProps extends _CoreComponent {
 }
 export type OneWireProps = ({
     platform: "ds2484";
-} & Ds2484Props & ComponentProps<ds2484_DS2484OneWireBus>) | ({
+} & Ds2484Props & ComponentProps<__marker_ds2484_DS2484OneWireBus>) | ({
     platform: "gpio";
-} & GpioProps & ComponentProps<gpio_GPIOOneWireBus>);
+} & GpioProps & ComponentProps<__marker_gpio_GPIOOneWireBus>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { sml_Sml, uart_UARTComponent } from "../markers";
+import type { __marker_sml_Sml, __marker_uart_UARTComponent } from "../markers";
 export interface SmlProps {
     /** @yamlKey on_data */
     onData?: TriggerHandler;
@@ -12,12 +12,12 @@ export interface SmlProps {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sml: SmlProps & ComponentProps<sml_Sml>;
+            sml: SmlProps & ComponentProps<__marker_sml_Sml>;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { http_request_HttpRequestComponent } from "../markers";
+import type { __marker_http_request_HttpRequestComponent } from "../markers";
 export interface HttpRequestProps extends _CoreComponent {
     /** string: User-Agent header for requests. Defaults to `ESPHome/<version> (https://esphome.io)` where `<version>` is the... */
     useragent?: string;
@@ -65,7 +65,7 @@ export interface HttpRequestProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            http_request: HttpRequestProps & ComponentProps<http_request_HttpRequestComponent>;
+            http_request: HttpRequestProps & ComponentProps<__marker_http_request_HttpRequestComponent>;
         }
     }
 }

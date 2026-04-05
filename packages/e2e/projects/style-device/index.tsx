@@ -8,7 +8,7 @@
  * - Part nesting (indicator part with style)
  * - mergeStyles() combining multiple style objects
  */
-import { Display, useRef, mergeStyles } from '@espcompose/core';
+import { DisplayRef, useRef, mergeStyles } from '@espcompose/core';
 import type { CssStyle } from '@espcompose/core';
 
 const baseStyle: CssStyle = {
@@ -29,7 +29,7 @@ const buttonStyle: CssStyle = {
 };
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   return (
     <esphome name="style-device" comment="CSS-like style system E2E test">

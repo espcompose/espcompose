@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, sx1509_SX1509Component } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_sx1509_SX1509Component } from "../markers";
 export interface Sx1509KeypadProps {
     /**
      * int: The number of keypad rows to use. This enables any number of the first 8 pins. So a value of 3 enables pins 0,1,...
@@ -44,14 +44,14 @@ export interface Sx1509Props extends _CoreComponent {
     /** Add this to enable the keypad. */
     keypad?: Sx1509KeypadProps;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x3E`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sx1509: Sx1509Props & ComponentProps<sx1509_SX1509Component>;
+            sx1509: Sx1509Props & ComponentProps<__marker_sx1509_SX1509Component>;
         }
     }
 }

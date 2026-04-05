@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { espnow_ESPNowComponent } from "../markers";
+import type { __marker_espnow_ESPNowComponent } from "../markers";
 export interface EspnowProps extends _CoreComponent {
     /** int: The Wi-Fi channel that the esp-now communication will use to send/receive data packets. Cannot be set when the [... */
     channel?: number;
@@ -40,7 +40,7 @@ export interface EspnowProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            espnow: EspnowProps & ComponentProps<espnow_ESPNowComponent>;
+            espnow: EspnowProps & ComponentProps<__marker_espnow_ESPNowComponent>;
         }
     }
 }

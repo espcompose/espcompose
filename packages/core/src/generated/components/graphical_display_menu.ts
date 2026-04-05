@@ -4,12 +4,12 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { Color, display_Display, font_Font, graphical_display_menu_GraphicalDisplayMenu } from "../markers";
+import type { __marker_Color, __marker_display_Display, __marker_font_Font, __marker_graphical_display_menu_GraphicalDisplayMenu } from "../markers";
 export interface GraphicalDisplayMenuProps {
     /** [ID](/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://esphome.io/componen... */
-    display?: RefProp<display_Display>;
+    display?: RefProp<__marker_display_Display>;
     /** [Font](/components/font#display-fonts): Specifies the font to use */
-    font: RefProp<font_Font>;
+    font: RefProp<__marker_font_Font>;
     /**
      * string: Specifies how to render values for menu items that have values (eg. Selects, numbers). Defaults to rendering ...
      * @yamlKey menu_item_value
@@ -19,12 +19,12 @@ export interface GraphicalDisplayMenuProps {
      * [Color](/components/display#config-color): Specifies the foreground color to use. Defaults to COLOR_ON
      * @yamlKey foreground_color
      */
-    foregroundColor?: RefProp<Color>;
+    foregroundColor?: RefProp<__marker_Color>;
     /**
      * [Color](/components/display#config-color): Specifies the background color to use. Defaults to COLOR_OFF
      * @yamlKey background_color
      */
-    backgroundColor?: RefProp<Color>;
+    backgroundColor?: RefProp<__marker_Color>;
     /**
      * [Automation](/automations): An automation to perform when the menu needs to be redrawn. This can be useful if your di...
      * @yamlKey on_redraw
@@ -34,7 +34,7 @@ export interface GraphicalDisplayMenuProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            graphical_display_menu: GraphicalDisplayMenuProps & ComponentProps<graphical_display_menu_GraphicalDisplayMenu>;
+            graphical_display_menu: GraphicalDisplayMenuProps & ComponentProps<__marker_graphical_display_menu_GraphicalDisplayMenu>;
         }
     }
 }

@@ -6,12 +6,12 @@
  * Ref actions are resolved at compile time via the action tree compiler.
  */
 import { delay, logger, useRef, useScript } from '@espcompose/core';
-import type { output_FloatOutput, light_LightOutput, switch__Switch } from '@espcompose/core';
+import type { FloatOutputRef, LightOutputRef, SwitchRef } from '@espcompose/core';
 
 function App() {
-  const lightRef = useRef<light_LightOutput>();
-  const switchRef = useRef<switch__Switch>();
-  const outputRef = useRef<output_FloatOutput>();
+  const lightRef = useRef<LightOutputRef>();
+  const switchRef = useRef<SwitchRef>();
+  const outputRef = useRef<FloatOutputRef>();
 
   /** Named script: toggleAll — toggles both the light and switch, with a delay between. */
   const toggleAll = useScript(async () => {

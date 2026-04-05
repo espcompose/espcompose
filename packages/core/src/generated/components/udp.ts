@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, IPv4Address, Pin, RefProp, TriggerHandler } from "../../types";
-import type { udp_UDPComponent } from "../markers";
+import type { __marker_udp_UDPComponent } from "../markers";
 export interface UdpProps {
     /** int: The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specifi... */
     port?: number;
@@ -30,7 +30,7 @@ export interface UdpProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            udp: UdpProps & ComponentProps<udp_UDPComponent>;
+            udp: UdpProps & ComponentProps<__marker_udp_UDPComponent>;
         }
     }
 }

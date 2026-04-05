@@ -5,7 +5,7 @@
  * Screen, VStack, HStack, Text, Button, Card, SliderField, SwitchField.
  */
 import {
-  Display,
+  DisplayRef,
   useRef,
 } from '@espcompose/core';
 import {
@@ -22,7 +22,7 @@ import {
 } from '@espcompose/ui';
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   return (
     <esphome name="design-system-device" comment="Design system demo">

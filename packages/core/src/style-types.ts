@@ -12,7 +12,7 @@
 
 import type { BindProp } from './types';
 import type { LvglStyleProps } from './generated/components/lvgl';
-import type { image_Image } from './generated/markers';
+import type { ImageRef } from './generated/markers';
 import type { RefProp } from './types';
 
 // ── Utility types ──────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ export interface CssAliasProps {
 
   // ── Background image ─────────────────────────────────────────────────
   /** Maps to `bgImageSrc`. */
-  backgroundImage?: string | RefProp<image_Image>;
+  backgroundImage?: string | RefProp<ImageRef>;
   /** Maps to `bgImageOpa`. */
   backgroundImageOpacity?: BindProp<OpacityValue>;
 

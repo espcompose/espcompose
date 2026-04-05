@@ -1,10 +1,10 @@
 import 'dotenv/config';
-import { Display, useRef } from '@espcompose/core';
+import { DisplayRef, useRef } from '@espcompose/core';
 import { UI } from './lvgl';
 import { Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 } from './hardware';
 
 function App() {
-  const display = useRef<Display>();
+  const display = useRef<DisplayRef>();
 
   return (
     <esphome

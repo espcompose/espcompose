@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp32_ble_ESP32BLE, esp32_ble_beacon_ESP32BLEBeacon } from "../markers";
+import type { __marker_esp32_ble_ESP32BLE, __marker_esp32_ble_beacon_ESP32BLEBeacon } from "../markers";
 export interface Esp32BleBeaconProps extends _CoreComponent {
     /** @yamlKey ble_id */
-    bleId?: RefProp<esp32_ble_ESP32BLE>;
+    bleId?: RefProp<__marker_esp32_ble_ESP32BLE>;
     /** The type of beacon to create, currently only supports `iBeacon`. */
     type: "IBEACON";
     /** The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier) to identify the beacon. */
@@ -41,7 +41,7 @@ export interface Esp32BleBeaconProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp32_ble_beacon: Esp32BleBeaconProps & ComponentProps<esp32_ble_beacon_ESP32BLEBeacon>;
+            esp32_ble_beacon: Esp32BleBeaconProps & ComponentProps<__marker_esp32_ble_beacon_ESP32BLEBeacon>;
         }
     }
 }

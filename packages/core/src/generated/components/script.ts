@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { script_Script } from "../markers";
+import type { __marker_script_Script } from "../markers";
 export interface ScriptProps {
     /** string: Controls what happens when a script is invoked while it is still running from one or more previous invocation... */
     mode?: "single" | "restart" | "queued" | "parallel";
@@ -21,7 +21,7 @@ export interface ScriptProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            script: ScriptProps & ComponentProps<script_Script>;
+            script: ScriptProps & ComponentProps<__marker_script_Script>;
         }
     }
 }

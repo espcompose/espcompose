@@ -1,4 +1,4 @@
-import { Display, Ref, useHAEntity, theme } from "@espcompose/core";
+import { DisplayRef, Ref, useHAEntity, theme } from "@espcompose/core";
 import {
     Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
     ThemeProvider, darkTheme, lightTheme,
@@ -6,7 +6,7 @@ import {
 import { HALight, MyButton } from "./button";
 
 type UIProps = {
-    display: Ref<Display>,
+    display: Ref<DisplayRef>,
 }
 
 export const UI = (props: UIProps) => {

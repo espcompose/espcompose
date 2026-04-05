@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp_ldo_EspLdo } from "../markers";
+import type { __marker_esp_ldo_EspLdo } from "../markers";
 export interface EspLdoProps extends _CoreComponent {
     /** voltage: The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``, or ``passthrough`` to enable pass-thr... */
     voltage: unknown;
@@ -22,7 +22,7 @@ export interface EspLdoProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp_ldo: EspLdoProps & ComponentProps<esp_ldo_EspLdo>;
+            esp_ldo: EspLdoProps & ComponentProps<__marker_esp_ldo_EspLdo>;
         }
     }
 }

@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Pn532 } from "../bases";
-import type { pn532_spi_PN532Spi, spi_SPIComponent } from "../markers";
+import type { __marker_pn532_spi_PN532Spi, __marker_spi_SPIComponent } from "../markers";
 export interface Pn532SpiProps extends _Pn532 {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -27,7 +27,7 @@ export interface Pn532SpiProps extends _Pn532 {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            pn532_spi: Pn532SpiProps & ComponentProps<pn532_spi_PN532Spi>;
+            pn532_spi: Pn532SpiProps & ComponentProps<__marker_pn532_spi_PN532Spi>;
         }
     }
 }

@@ -12,7 +12,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import ts from 'typescript';
-import { toPascalCase, toCamelCase } from './type-mapper.js';
+import { toPascalCase, toCamelCase, internalMarkerName } from './type-mapper.js';
 import {
   printStatements, addFileHeader, addJsDoc, addBlankLineBefore,
   keyword, typeRef, stringLiteralType, unionType, intersectionType,
@@ -72,7 +72,7 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
       return keyword('string');
 
     case 'image':
-      return unionType([keyword('string'), refPropType('image_Image')]);
+      return unionType([keyword('string'), refPropType(internalMarkerName('image::Image'))]);
 
     case 'integer':
     case 'positive_integer':
@@ -196,7 +196,7 @@ export function buildLvglFileContent(schemaPath: string): string {
 
   // ── Import ────────────────────────────────────────────────────────────────
   statements.push(importTypeDecl(['ComponentProps', 'BindProp', 'RefProp'], '../../types'));
-  statements.push(importTypeDecl(['image_Image'], '../markers'));
+  statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
 
   // ── Layout props to exclude from LvglStyleProps ───────────────────────────

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { wiegand_Wiegand } from "../markers";
+import type { __marker_wiegand_Wiegand } from "../markers";
 export interface WiegandProps {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The pin where the `D0` output of the Wiegand's interface connects. */
     d0: Pin;
@@ -29,7 +29,7 @@ export interface WiegandProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            wiegand: WiegandProps & ComponentProps<wiegand_Wiegand>;
+            wiegand: WiegandProps & ComponentProps<__marker_wiegand_Wiegand>;
         }
     }
 }

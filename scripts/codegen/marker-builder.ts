@@ -8,7 +8,7 @@
 
 import ts from 'typescript';
 import type { SchemaConfigVar, ComponentEntry, SchemaDefinition, SchemaRegistry } from './schema-types.js';
-import { cppClassToMarkerName, CPP_PRIMITIVE_TO_TS } from './type-mapper.js';
+import { cppClassToMarkerName, CPP_PRIMITIVE_TO_TS, componentKeyToGroupName } from './type-mapper.js';
 import { resolveConfigSchema } from './extends-resolver.js';
 import {
   printStatements, addFileHeader, addLineComment,
@@ -125,7 +125,7 @@ export function buildMarkerClassMap(
 
   for (const cls of classes) {
     if (CPP_PRIMITIVE_TO_TS.has(cls)) continue;
-    const markerName = cppClassToMarkerName(cls);
+    const markerName = cppClassToMarkerName(cls.replace(/^::/, ''));
     if (!validIdent.test(markerName)) continue;
 
     const ancestors = getAncestors(cls, parentMap);
@@ -163,7 +163,7 @@ export function buildMarkerClassMap(
   // Build classBrandMap: for each action class, use its own marker name as brand
   const classBrandMap = new Map<string, string>();
   for (const cppClass of actionClassKeys) {
-    const markerName = cppClassToMarkerName(cppClass);
+    const markerName = cppClassToMarkerName(cppClass.replace(/^::/, ''));
     if (validIdent.test(markerName)) {
       classBrandMap.set(cppClass, markerName);
     }
@@ -178,8 +178,13 @@ export function buildMarkerClassMap(
 
 /**
  * Build the content of `src/generated/markers.ts`.
- * Each C++ class becomes an empty exported interface used solely as a phantom
- * type brand for `Ref<T>`.
+ *
+ * Each C++ class becomes an exported `__marker_`-prefixed interface used as a
+ * phantom type brand for `Ref<T>`.  Public access is through a nested
+ * `Components` namespace and unique top-level aliases with a `Ref` suffix:
+ *
+ *   Components.Light.LightRef       (canonical namespaced path)
+ *   type LightRef = Components.Light.LightRef   (top-level alias if unique)
  */
 export function buildMarkersFileContent(
   classes: Set<string>,
@@ -189,43 +194,58 @@ export function buildMarkersFileContent(
   const validIdent = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
   const statements: ts.Statement[] = [];
 
-  // Track markers that follow <namespace>_<ClassName> pattern for alias generation
-  const aliasTargets: Array<{ markerName: string; aliasName: string }> = [];
+  // ── Phase 1: Emit __marker_ internal interfaces ───────────────────────────
 
-  // Names that would conflict with TypeScript/JavaScript globals
-  const GLOBAL_CONFLICTS: Record<string, string> = {
-    Number: 'Numeric',  // conflicts with global Number
-  };
+  /** Maps flat marker name (e.g. "light_LightOutput") → __marker_ prefixed name */
+  const internalNameMap = new Map<string, string>();
+
+  /**
+   * Tracks namespace-bearing classes for Components namespace generation.
+   * Grouped by C++ namespace (before ::).
+   */
+  const groupedClasses = new Map<string, Array<{
+    cppClass: string;
+    cppNamespace: string;
+    cppClassName: string;
+    flatMarkerName: string;
+    internalName: string;
+  }>>();
 
   const sorted = [...classes].sort();
   for (const cls of sorted) {
     if (CPP_PRIMITIVE_TO_TS.has(cls)) continue;
-    const markerName = cppClassToMarkerName(cls);
-    if (!validIdent.test(markerName)) continue;
 
-    // One readonly optional property per ancestor (self + parents), each with
-    // a unique name.  This makes Derived structurally extend Base in TS.
+    // Strip leading :: (e.g. ::esphome::hub75::HUB75Display → esphome::hub75::HUB75Display)
+    const cleanedCls = cls.replace(/^::/, '');
+    const flatMarkerName = cppClassToMarkerName(cleanedCls);
+    if (!validIdent.test(flatMarkerName)) continue;
+
+    const internalName = `__marker_${flatMarkerName}`;
+    internalNameMap.set(flatMarkerName, internalName);
+
+    // One readonly optional property per ancestor (self + parents).
+    // Brand names use the *flat* marker name (without __marker_ prefix) for stability.
     const ancestors = getAncestors(cls, parentMap);
     const members: ts.TypeElement[] = [];
     const seen = new Set<string>();
     for (const anc of ancestors) {
-      const ancMarker = cppClassToMarkerName(anc);
-      if (!validIdent.test(ancMarker) || seen.has(ancMarker)) continue;
-      seen.add(ancMarker);
+      const ancFlat = cppClassToMarkerName(anc.replace(/^::/, ''));
+      if (!validIdent.test(ancFlat) || seen.has(ancFlat)) continue;
+      seen.add(ancFlat);
       members.push(
         ts.factory.createPropertySignature(
           [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-          `__brand_${ancMarker}`,
+          `__brand_${ancFlat}`,
           ts.factory.createToken(ts.SyntaxKind.QuestionToken),
           ts.factory.createLiteralTypeNode(ts.factory.createTrue()),
         ),
       );
     }
 
-    // Add virtual brands from namespace-bridged action classes so that
-    // InferActions<T> resolves correctly (e.g. light_LightOutput gets
-    // __brand_light_LightState so it picks up LightStateActions).
-    for (const vb of virtualBrands.get(markerName) ?? []) {
+    // Add virtual brands from namespace-bridged action classes.
+    // Lookup uses the original flat marker name (before __marker_ prefix).
+    const originalFlatName = cppClassToMarkerName(cls.replace(/^::/, ''));
+    for (const vb of virtualBrands.get(originalFlatName) ?? []) {
       if (seen.has(vb)) continue;
       seen.add(vb);
       members.push(
@@ -238,32 +258,105 @@ export function buildMarkersFileContent(
       );
     }
 
-    let decl = interfaceDecl(markerName, members, { exported: true });
+    let decl = interfaceDecl(internalName, members, { exported: true });
     decl = addLineComment(decl, ` ${cls}`);
     statements.push(decl);
 
-    // Check if this marker follows <namespace>_<ClassName> where namespace matches class
-    const underscoreIdx = markerName.indexOf('_');
-    if (underscoreIdx > 0) {
-      const prefix = markerName.slice(0, underscoreIdx);
-      const suffix = markerName.slice(underscoreIdx + 1);
-      if (prefix.toLowerCase() === suffix.toLowerCase()) {
-        const aliasName = GLOBAL_CONFLICTS[suffix] ?? suffix;
-        aliasTargets.push({ markerName, aliasName });
+    // Categorize into groups for namespace generation
+    const lastColonIdx = cleanedCls.lastIndexOf('::');
+    if (lastColonIdx > 0) {
+      const cppNamespace = cleanedCls.slice(0, lastColonIdx);
+      const cppClassName = cleanedCls.slice(lastColonIdx + 2);
+      const group = groupedClasses.get(cppNamespace) ?? [];
+      group.push({ cppClass: cls, cppNamespace, cppClassName, flatMarkerName, internalName });
+      groupedClasses.set(cppNamespace, group);
+    }
+  }
+
+  // ── Phase 2: Build Components namespace ───────────────────────────────────
+
+  // Collect all leaf ref type names and track their groups for collision detection
+  const leafNameCounts = new Map<string, number>();
+  const namespaceEntries: Array<{
+    groupName: string;
+    types: Array<{ leafName: string; internalName: string }>;
+  }> = [];
+
+  for (const [cppNamespace, entries] of [...groupedClasses.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    // For multi-level namespaces (e.g. "esphome::hub75"), join segments with ::
+    // and pass them through componentKeyToGroupName individually, then concatenate.
+    const nsParts = cppNamespace.split('::');
+    const groupName = nsParts.map(part => componentKeyToGroupName(part)).join('');
+
+    const types: Array<{ leafName: string; internalName: string }> = [];
+    for (const entry of entries) {
+      const leafName = `${entry.cppClassName}Ref`;
+      types.push({ leafName, internalName: entry.internalName });
+      leafNameCounts.set(leafName, (leafNameCounts.get(leafName) ?? 0) + 1);
+    }
+
+    namespaceEntries.push({ groupName, types });
+  }
+
+  // Build the Components namespace with nested group namespaces
+  if (namespaceEntries.length > 0) {
+    statements.push(ts.factory.createEmptyStatement());
+
+    const groupNamespaces: ts.Statement[] = [];
+    for (const { groupName, types } of namespaceEntries) {
+      const typeAliases: ts.Statement[] = types.map(({ leafName, internalName }) =>
+        ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          leafName,
+          undefined,
+          ts.factory.createTypeReferenceNode(internalName),
+        ),
+      );
+
+      const nsBody = ts.factory.createModuleBlock(typeAliases);
+      const nsDecl = ts.factory.createModuleDeclaration(
+        [
+          ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
+        ],
+        ts.factory.createIdentifier(groupName),
+        nsBody,
+        ts.NodeFlags.Namespace,
+      );
+      groupNamespaces.push(nsDecl);
+    }
+
+    const componentsBody = ts.factory.createModuleBlock(groupNamespaces);
+    const componentsDecl = ts.factory.createModuleDeclaration(
+      [
+        ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
+      ],
+      ts.factory.createIdentifier('Components'),
+      componentsBody,
+      ts.NodeFlags.Namespace,
+    );
+    statements.push(componentsDecl);
+  }
+
+  // ── Phase 3: Emit unique top-level aliases ────────────────────────────────
+
+  const emittedAliases: Array<{ leafName: string; groupName: string }> = [];
+  for (const { groupName, types } of namespaceEntries) {
+    for (const { leafName } of types) {
+      if ((leafNameCounts.get(leafName) ?? 0) === 1) {
+        emittedAliases.push({ leafName, groupName });
       }
     }
   }
 
-  // Emit ergonomic type aliases for <namespace>_<ClassName> pattern matches
-  if (aliasTargets.length > 0) {
+  if (emittedAliases.length > 0) {
     statements.push(ts.factory.createEmptyStatement());
 
-    for (const { markerName, aliasName } of aliasTargets) {
+    for (const { leafName, groupName } of emittedAliases) {
       const alias = ts.factory.createTypeAliasDeclaration(
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        aliasName,
+        leafName,
         undefined,
-        ts.factory.createTypeReferenceNode(markerName),
+        ts.factory.createTypeReferenceNode(`Components.${groupName}.${leafName}`),
       );
       statements.push(alias);
     }
@@ -274,10 +367,13 @@ export function buildMarkersFileContent(
     `AUTO-GENERATED — DO NOT EDIT.`,
     `Regenerate with: pnpm codegen`,
     ``,
-    `Each interface is a phantom type used to brand Ref<T> values.`,
-    `Each marker has one readonly property per ancestor class, making`,
-    `Ref<Derived> assignable to Ref<Base> via structural subtyping.`,
-    `Naming: C++ namespace separator "::" is replaced with "_".`,
-    `e.g. i2c::I2CBus → i2c_I2CBus`,
+    `Phantom type brands for Ref<T>.  Each __marker_ interface carries`,
+    `readonly properties per ancestor class for structural subtyping.`,
+    ``,
+    `Public API:`,
+    `  Components.<Group>.<TypeRef>  — canonical namespaced path`,
+    `  <TypeRef>                      — top-level alias (when unique)`,
+    ``,
+    `Example:  useRef<LightRef>()  or  useRef<Components.Light.LightRef>()`,
   ]);
 }

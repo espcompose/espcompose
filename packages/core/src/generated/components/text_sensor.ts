@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _HomeassistantHomeAssistantImport, _ModbusControllerModbusitembaseschema, _Msa3xxMsaSensor, _PipsolarComponent, _PylontechComponent, _TeleinfoListener, _UartDevice } from "../bases";
-import type { Color, EntityBase, atm90e32_ATM90E32Component, ble_client_BLETextSensor, ble_scanner_BLEScanner, bme680_bsec_BME680BSECComponent, bme68x_bsec2_BME68xBSEC2Component, copy_CopyTextSensor, daly_bms_DalyBmsComponent, debug_DebugComponent, dlms_meter_DlmsMeterComponent, esp32_ble_tracker_ESP32BLETracker, esphome_dsmr_Dsmr, ezo_pmp_EzoPMP, gdk101_GDK101Component, haier_HonClimate, hlk_fm22x_HlkFm22xComponent, homeassistant_HomeassistantTextSensor, key_collector_KeyCollector, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2420_LD2420TextSensor, ld2450_LD2450Component, libretiny_LTComponent, micronova_MicroNova, modbus_controller_ModbusTextSensor, mqtt_MQTTClientComponent, mqtt_subscribe_MQTTSubscribeTextSensor, nextion_Nextion, nextion_NextionTextSensor, pylontech_PylontechTextSensor, seeed_mr24hpc1_MR24HPC1Component, sml_Sml, sml_SmlTextSensor, sun_Sun, sun_SunTextSensor, sun_gtil2_SunGTIL2, sy6970_SY6970Component, teleinfo_TeleInfoTextSensor, template__TemplateTextSensor, text_sensor_TextSensor, tuya_Tuya, tuya_TuyaTextSensor, uptime_UptimeTextSensor, version_VersionTextSensor, web_server_WebServer, wireguard_Wireguard, wl_134_Wl134Component } from "../markers";
+import type { __marker_Color, __marker_EntityBase, __marker_atm90e32_ATM90E32Component, __marker_ble_client_BLETextSensor, __marker_ble_scanner_BLEScanner, __marker_bme680_bsec_BME680BSECComponent, __marker_bme68x_bsec2_BME68xBSEC2Component, __marker_copy_CopyTextSensor, __marker_daly_bms_DalyBmsComponent, __marker_debug_DebugComponent, __marker_dlms_meter_DlmsMeterComponent, __marker_esp32_ble_tracker_ESP32BLETracker, __marker_esphome_dsmr_Dsmr, __marker_ezo_pmp_EzoPMP, __marker_gdk101_GDK101Component, __marker_haier_HonClimate, __marker_hlk_fm22x_HlkFm22xComponent, __marker_homeassistant_HomeassistantTextSensor, __marker_key_collector_KeyCollector, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2420_LD2420TextSensor, __marker_ld2450_LD2450Component, __marker_libretiny_LTComponent, __marker_micronova_MicroNova, __marker_modbus_controller_ModbusTextSensor, __marker_mqtt_MQTTClientComponent, __marker_mqtt_subscribe_MQTTSubscribeTextSensor, __marker_nextion_Nextion, __marker_nextion_NextionTextSensor, __marker_pylontech_PylontechTextSensor, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_sml_Sml, __marker_sml_SmlTextSensor, __marker_sun_Sun, __marker_sun_SunTextSensor, __marker_sun_gtil2_SunGTIL2, __marker_sy6970_SY6970Component, __marker_teleinfo_TeleInfoTextSensor, __marker_template__TemplateTextSensor, __marker_text_sensor_TextSensor, __marker_tuya_Tuya, __marker_tuya_TuyaTextSensor, __marker_uptime_UptimeTextSensor, __marker_version_VersionTextSensor, __marker_web_server_WebServer, __marker_wireguard_Wireguard, __marker_wl_134_Wl134Component } from "../markers";
 interface TextSensorWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -23,7 +23,7 @@ interface EthernetInfoIpAddressPropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -38,7 +38,7 @@ interface EthernetInfoIpAddressPropsAddress0PropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsAddress0PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -94,7 +94,7 @@ interface EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsAddress1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -150,7 +150,7 @@ interface EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsAddress2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -206,7 +206,7 @@ interface EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsAddress3PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -262,7 +262,7 @@ interface EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps {
 }
 interface EthernetInfoIpAddressPropsAddress4PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -369,7 +369,7 @@ interface EthernetInfoDnsAddressPropsAvailabilityProps {
 }
 interface EthernetInfoDnsAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -425,7 +425,7 @@ interface EthernetInfoMacAddressPropsAvailabilityProps {
 }
 interface EthernetInfoMacAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -481,7 +481,7 @@ interface OpenthreadInfoIpAddressPropsAvailabilityProps {
 }
 interface OpenthreadInfoIpAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -537,7 +537,7 @@ interface OpenthreadInfoRolePropsAvailabilityProps {
 }
 interface OpenthreadInfoRolePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -597,7 +597,7 @@ interface OpenthreadInfoRloc16PropsAvailabilityProps {
 }
 interface OpenthreadInfoRloc16PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -657,7 +657,7 @@ interface OpenthreadInfoExtAddrPropsAvailabilityProps {
 }
 interface OpenthreadInfoExtAddrPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -717,7 +717,7 @@ interface OpenthreadInfoEui64PropsAvailabilityProps {
 }
 interface OpenthreadInfoEui64PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -777,7 +777,7 @@ interface OpenthreadInfoChannelPropsAvailabilityProps {
 }
 interface OpenthreadInfoChannelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -837,7 +837,7 @@ interface OpenthreadInfoNetworkNamePropsAvailabilityProps {
 }
 interface OpenthreadInfoNetworkNamePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -897,7 +897,7 @@ interface OpenthreadInfoNetworkKeyPropsAvailabilityProps {
 }
 interface OpenthreadInfoNetworkKeyPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -957,7 +957,7 @@ interface OpenthreadInfoPanIdPropsAvailabilityProps {
 }
 interface OpenthreadInfoPanIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1017,7 +1017,7 @@ interface OpenthreadInfoExtPanIdPropsAvailabilityProps {
 }
 interface OpenthreadInfoExtPanIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1077,7 +1077,7 @@ interface WifiInfoIpAddressPropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1092,7 +1092,7 @@ interface WifiInfoIpAddressPropsAddress0PropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsAddress0PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1148,7 +1148,7 @@ interface WifiInfoIpAddressPropsAddress1PropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsAddress1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1204,7 +1204,7 @@ interface WifiInfoIpAddressPropsAddress2PropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsAddress2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1260,7 +1260,7 @@ interface WifiInfoIpAddressPropsAddress3PropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsAddress3PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1316,7 +1316,7 @@ interface WifiInfoIpAddressPropsAddress4PropsAvailabilityProps {
 }
 interface WifiInfoIpAddressPropsAddress4PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1423,7 +1423,7 @@ interface WifiInfoScanResultsPropsAvailabilityProps {
 }
 interface WifiInfoScanResultsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1479,7 +1479,7 @@ interface WifiInfoSsidPropsAvailabilityProps {
 }
 interface WifiInfoSsidPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1535,7 +1535,7 @@ interface WifiInfoBssidPropsAvailabilityProps {
 }
 interface WifiInfoBssidPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1591,7 +1591,7 @@ interface WifiInfoMacAddressPropsAvailabilityProps {
 }
 interface WifiInfoMacAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1647,7 +1647,7 @@ interface WifiInfoDnsAddressPropsAvailabilityProps {
 }
 interface WifiInfoDnsAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1703,7 +1703,7 @@ interface WifiInfoPowerSaveModePropsAvailabilityProps {
 }
 interface WifiInfoPowerSaveModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1759,7 +1759,7 @@ interface Atm90e32PhaseStatusPropsPhaseAPropsAvailabilityProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseAPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1815,7 +1815,7 @@ interface Atm90e32PhaseStatusPropsPhaseBPropsAvailabilityProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseBPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1871,7 +1871,7 @@ interface Atm90e32PhaseStatusPropsPhaseCPropsAvailabilityProps {
 }
 interface Atm90e32PhaseStatusPropsPhaseCPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1944,7 +1944,7 @@ interface Atm90e32FrequencyStatusPropsAvailabilityProps {
 }
 interface Atm90e32FrequencyStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2000,7 +2000,7 @@ interface Bme680BsecIaqAccuracyPropsAvailabilityProps {
 }
 interface Bme680BsecIaqAccuracyPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2056,7 +2056,7 @@ interface Bme68xBsec2IaqAccuracyPropsAvailabilityProps {
 }
 interface Bme68xBsec2IaqAccuracyPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2112,7 +2112,7 @@ interface DalyBmsStatusPropsAvailabilityProps {
 }
 interface DalyBmsStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2168,7 +2168,7 @@ interface DebugDevicePropsAvailabilityProps {
 }
 interface DebugDevicePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2224,7 +2224,7 @@ interface DebugResetReasonPropsAvailabilityProps {
 }
 interface DebugResetReasonPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2280,7 +2280,7 @@ interface DlmsMeterTimestampPropsAvailabilityProps {
 }
 interface DlmsMeterTimestampPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2336,7 +2336,7 @@ interface DlmsMeterMeternumberPropsAvailabilityProps {
 }
 interface DlmsMeterMeternumberPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2392,7 +2392,7 @@ interface DsmrIdentificationPropsAvailabilityProps {
 }
 interface DsmrIdentificationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2448,7 +2448,7 @@ interface DsmrP1VersionPropsAvailabilityProps {
 }
 interface DsmrP1VersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2504,7 +2504,7 @@ interface DsmrP1VersionBePropsAvailabilityProps {
 }
 interface DsmrP1VersionBePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2560,7 +2560,7 @@ interface DsmrTimestampPropsAvailabilityProps {
 }
 interface DsmrTimestampPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2616,7 +2616,7 @@ interface DsmrElectricityTariffPropsAvailabilityProps {
 }
 interface DsmrElectricityTariffPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2672,7 +2672,7 @@ interface DsmrElectricityFailureLogPropsAvailabilityProps {
 }
 interface DsmrElectricityFailureLogPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2728,7 +2728,7 @@ interface DsmrMessageShortPropsAvailabilityProps {
 }
 interface DsmrMessageShortPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2784,7 +2784,7 @@ interface DsmrMessageLongPropsAvailabilityProps {
 }
 interface DsmrMessageLongPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2840,7 +2840,7 @@ interface DsmrEquipmentIdPropsAvailabilityProps {
 }
 interface DsmrEquipmentIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2896,7 +2896,7 @@ interface DsmrGasEquipmentIdPropsAvailabilityProps {
 }
 interface DsmrGasEquipmentIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2952,7 +2952,7 @@ interface DsmrGasEquipmentIdBePropsAvailabilityProps {
 }
 interface DsmrGasEquipmentIdBePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3008,7 +3008,7 @@ interface DsmrThermalEquipmentIdPropsAvailabilityProps {
 }
 interface DsmrThermalEquipmentIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3064,7 +3064,7 @@ interface DsmrWaterEquipmentIdPropsAvailabilityProps {
 }
 interface DsmrWaterEquipmentIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3120,7 +3120,7 @@ interface DsmrSubEquipmentIdPropsAvailabilityProps {
 }
 interface DsmrSubEquipmentIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3176,7 +3176,7 @@ interface DsmrGasDeliveredTextPropsAvailabilityProps {
 }
 interface DsmrGasDeliveredTextPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3232,7 +3232,7 @@ interface DsmrFwCoreChecksumPropsAvailabilityProps {
 }
 interface DsmrFwCoreChecksumPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3288,7 +3288,7 @@ interface DsmrFwCoreVersionPropsAvailabilityProps {
 }
 interface DsmrFwCoreVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3344,7 +3344,7 @@ interface DsmrFwModuleChecksumPropsAvailabilityProps {
 }
 interface DsmrFwModuleChecksumPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3400,7 +3400,7 @@ interface DsmrFwModuleVersionPropsAvailabilityProps {
 }
 interface DsmrFwModuleVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3456,7 +3456,7 @@ interface DsmrTelegramPropsAvailabilityProps {
 }
 interface DsmrTelegramPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3512,7 +3512,7 @@ interface EzoPmpDosingModePropsAvailabilityProps {
 }
 interface EzoPmpDosingModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3568,7 +3568,7 @@ interface EzoPmpCalibrationStatusPropsAvailabilityProps {
 }
 interface EzoPmpCalibrationStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3624,7 +3624,7 @@ interface Gdk101VersionPropsAvailabilityProps {
 }
 interface Gdk101VersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3680,7 +3680,7 @@ interface HaierCleaningStatusPropsAvailabilityProps {
 }
 interface HaierCleaningStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3736,7 +3736,7 @@ interface HaierProtocolVersionPropsAvailabilityProps {
 }
 interface HaierProtocolVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3792,7 +3792,7 @@ interface HaierApplianceNamePropsAvailabilityProps {
 }
 interface HaierApplianceNamePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3848,7 +3848,7 @@ interface HlkFm22xVersionPropsAvailabilityProps {
 }
 interface HlkFm22xVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3904,7 +3904,7 @@ interface HlkFm22xLastFaceNamePropsAvailabilityProps {
 }
 interface HlkFm22xLastFaceNamePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3960,7 +3960,7 @@ interface Ld2410VersionPropsAvailabilityProps {
 }
 interface Ld2410VersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4016,7 +4016,7 @@ interface Ld2410MacAddressPropsAvailabilityProps {
 }
 interface Ld2410MacAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4072,7 +4072,7 @@ interface Ld2412VersionPropsAvailabilityProps {
 }
 interface Ld2412VersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4128,7 +4128,7 @@ interface Ld2412MacAddressPropsAvailabilityProps {
 }
 interface Ld2412MacAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4184,7 +4184,7 @@ interface Ld2420FwVersionPropsAvailabilityProps {
 }
 interface Ld2420FwVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4240,7 +4240,7 @@ interface Ld2450VersionPropsAvailabilityProps {
 }
 interface Ld2450VersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4296,7 +4296,7 @@ interface Ld2450MacAddressPropsAvailabilityProps {
 }
 interface Ld2450MacAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4352,7 +4352,7 @@ interface Ld2450Target1PropsDirectionPropsAvailabilityProps {
 }
 interface Ld2450Target1PropsDirectionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4411,7 +4411,7 @@ interface Ld2450Target2PropsDirectionPropsAvailabilityProps {
 }
 interface Ld2450Target2PropsDirectionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4470,7 +4470,7 @@ interface Ld2450Target3PropsDirectionPropsAvailabilityProps {
 }
 interface Ld2450Target3PropsDirectionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4529,7 +4529,7 @@ interface LibretinyVersionPropsAvailabilityProps {
 }
 interface LibretinyVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4585,7 +4585,7 @@ interface MicronovaStoveStatePropsAvailabilityProps {
 }
 interface MicronovaStoveStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4634,7 +4634,7 @@ interface MicronovaStoveStateProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey micronova_id */
-    micronovaId?: RefProp<micronova_MicroNova>;
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
     /** @yamlKey memory_location */
     memoryLocation?: unknown;
     /** @yamlKey memory_address */
@@ -4651,7 +4651,7 @@ interface Msa3xxOrientationXyPropsAvailabilityProps {
 }
 interface Msa3xxOrientationXyPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4707,7 +4707,7 @@ interface Msa3xxOrientationZPropsAvailabilityProps {
 }
 interface Msa3xxOrientationZPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4763,7 +4763,7 @@ interface PipsolarDeviceModePropsAvailabilityProps {
 }
 interface PipsolarDeviceModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4819,7 +4819,7 @@ interface PipsolarLastQpigsPropsAvailabilityProps {
 }
 interface PipsolarLastQpigsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4875,7 +4875,7 @@ interface PipsolarLastQpiriPropsAvailabilityProps {
 }
 interface PipsolarLastQpiriPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4931,7 +4931,7 @@ interface PipsolarLastQmodPropsAvailabilityProps {
 }
 interface PipsolarLastQmodPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4987,7 +4987,7 @@ interface PipsolarLastQflagPropsAvailabilityProps {
 }
 interface PipsolarLastQflagPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5043,7 +5043,7 @@ interface PipsolarLastQpiwsPropsAvailabilityProps {
 }
 interface PipsolarLastQpiwsPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5099,7 +5099,7 @@ interface PipsolarLastQtPropsAvailabilityProps {
 }
 interface PipsolarLastQtPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5155,7 +5155,7 @@ interface PipsolarLastQmnPropsAvailabilityProps {
 }
 interface PipsolarLastQmnPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5211,7 +5211,7 @@ interface PylontechBaseStatePropsAvailabilityProps {
 }
 interface PylontechBaseStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5267,7 +5267,7 @@ interface PylontechVoltageStatePropsAvailabilityProps {
 }
 interface PylontechVoltageStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5323,7 +5323,7 @@ interface PylontechCurrentStatePropsAvailabilityProps {
 }
 interface PylontechCurrentStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5379,7 +5379,7 @@ interface PylontechTemperatureStatePropsAvailabilityProps {
 }
 interface PylontechTemperatureStatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5435,7 +5435,7 @@ interface SeeedMr24hpc1HeartBeatPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1HeartBeatPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5491,7 +5491,7 @@ interface SeeedMr24hpc1ProductModelPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1ProductModelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5547,7 +5547,7 @@ interface SeeedMr24hpc1ProductIdPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1ProductIdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5603,7 +5603,7 @@ interface SeeedMr24hpc1HardwareModelPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1HardwareModelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5659,7 +5659,7 @@ interface SeeedMr24hpc1HardwareVersionPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1HardwareVersionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5715,7 +5715,7 @@ interface SeeedMr24hpc1KeepAwayPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1KeepAwayPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5771,7 +5771,7 @@ interface SeeedMr24hpc1MotionStatusPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1MotionStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5827,7 +5827,7 @@ interface SeeedMr24hpc1CustomModeEndPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1CustomModeEndPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5883,7 +5883,7 @@ interface SunGtil2StatePropsAvailabilityProps {
 }
 interface SunGtil2StatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5939,7 +5939,7 @@ interface SunGtil2SerialNumberPropsAvailabilityProps {
 }
 interface SunGtil2SerialNumberPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5995,7 +5995,7 @@ interface Sy6970BusStatusPropsAvailabilityProps {
 }
 interface Sy6970BusStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6051,7 +6051,7 @@ interface Sy6970ChargeStatusPropsAvailabilityProps {
 }
 interface Sy6970ChargeStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6107,7 +6107,7 @@ interface Sy6970NtcStatusPropsAvailabilityProps {
 }
 interface Sy6970NtcStatusPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6177,7 +6177,7 @@ interface WireguardAddressPropsAvailabilityProps {
 }
 interface WireguardAddressPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6241,7 +6241,7 @@ interface TextSensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
 }
 interface BleScannerProps extends _CoreComponent {
     /** @yamlKey esp32_ble_id */
-    esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
+    esp32BleId?: RefProp<__marker_esp32_ble_tracker_ESP32BLETracker>;
 }
 interface EthernetInfoProps {
     /**
@@ -6350,7 +6350,7 @@ interface Wl134Props extends _UartDevice {
 }
 interface Atm90e32Props {
     /** [ID](/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if using more than one ... */
-    id?: RefProp<atm90e32_ATM90E32Component>;
+    id?: RefProp<__marker_atm90e32_ATM90E32Component>;
     /**
      * Enables per-phase status conditions:
      * @yamlKey phase_status
@@ -6380,7 +6380,7 @@ interface Bme680BsecProps {
      * [ID](/guides/configuration-types#id): Sets the ID of the bme680_bsec component to refer to. Useful when working with ...
      * @yamlKey bme680_bsec_id
      */
-    bme680BsecId?: RefProp<bme680_bsec_BME680BSECComponent>;
+    bme680BsecId?: RefProp<__marker_bme680_bsec_BME680BSECComponent>;
     /**
      * The information for the IAQ accuracy sensor. Shows: Stabilizing, Uncertain, Calibrating, Calibrated.
      * @yamlKey iaq_accuracy
@@ -6392,7 +6392,7 @@ interface Bme68xBsec2Props {
      * [ID](/guides/configuration-types#id): The ID of the `bme68x_bsec2_i2c` component the text sensor will refer to. Usefu...
      * @yamlKey bme68x_bsec2_id
      */
-    bme68xBsec2Id?: RefProp<bme68x_bsec2_BME68xBSEC2Component>;
+    bme68xBsec2Id?: RefProp<__marker_bme68x_bsec2_BME68xBSEC2Component>;
     /**
      * Configuration for the IAQ accuracy sensor. Shows: `Stabilizing`, `Uncertain`, `Calibrating`, `Calibrated`.
      * @yamlKey iaq_accuracy
@@ -6404,30 +6404,30 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The text sensor that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<text_sensor_TextSensor>;
+    sourceId: RefProp<__marker_text_sensor_TextSensor>;
 }
 interface DalyBmsProps extends _CoreComponent {
     /** @yamlKey bms_daly_id */
-    bmsDalyId?: RefProp<daly_bms_DalyBmsComponent>;
+    bmsDalyId?: RefProp<__marker_daly_bms_DalyBmsComponent>;
     /** The BMS Status (Charging, Discharging, Stationary). All options from [Text Sensor](/components/text_sensor#config-tex... */
     status?: DalyBmsStatusProps;
 }
 interface DebugProps {
     /** @yamlKey debug_id */
-    debugId?: RefProp<debug_DebugComponent>;
+    debugId?: RefProp<__marker_debug_DebugComponent>;
     device?: DebugDeviceProps;
     /** @yamlKey reset_reason */
     resetReason?: DebugResetReasonProps;
 }
 interface DlmsMeterProps extends _CoreComponent {
     /** @yamlKey dlms_meter_id */
-    dlmsMeterId?: RefProp<dlms_meter_DlmsMeterComponent>;
+    dlmsMeterId?: RefProp<__marker_dlms_meter_DlmsMeterComponent>;
     timestamp?: DlmsMeterTimestampProps;
     meternumber?: DlmsMeterMeternumberProps;
 }
 interface DsmrProps extends _CoreComponent {
     /** @yamlKey dsmr_id */
-    dsmrId?: RefProp<esphome_dsmr_Dsmr>;
+    dsmrId?: RefProp<__marker_esphome_dsmr_Dsmr>;
     identification?: DsmrIdentificationProps;
     /** @yamlKey p1_version */
     p1Version?: DsmrP1VersionProps;
@@ -6467,7 +6467,7 @@ interface DsmrProps extends _CoreComponent {
     telegram?: DsmrTelegramProps;
 }
 interface EzoPmpProps {
-    id?: RefProp<ezo_pmp_EzoPMP>;
+    id?: RefProp<__marker_ezo_pmp_EzoPMP>;
     /** @yamlKey dosing_mode */
     dosingMode?: EzoPmpDosingModeProps;
     /** @yamlKey calibration_status */
@@ -6475,7 +6475,7 @@ interface EzoPmpProps {
 }
 interface Gdk101Props {
     /** @yamlKey gdk101_id */
-    gdk101Id?: RefProp<gdk101_GDK101Component>;
+    gdk101Id?: RefProp<__marker_gdk101_GDK101Component>;
     /** Firmware version of the module. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
     version: Gdk101VersionProps;
 }
@@ -6484,7 +6484,7 @@ interface HaierProps {
      * [ID](/guides/configuration-types#id): The id of haier climate component
      * @yamlKey haier_id
      */
-    haierId?: RefProp<haier_HonClimate>;
+    haierId?: RefProp<__marker_haier_HonClimate>;
     /**
      * A text sensor that indicates cleaning status. Possible values "No cleaning", "Self clean", "56°C Steri-Clean". All op...
      * @yamlKey cleaning_status
@@ -6503,7 +6503,7 @@ interface HaierProps {
 }
 interface HlkFm22xProps {
     /** @yamlKey hlk_fm22x_id */
-    hlkFm22xId?: RefProp<hlk_fm22x_HlkFm22xComponent>;
+    hlkFm22xId?: RefProp<__marker_hlk_fm22x_HlkFm22xComponent>;
     version?: HlkFm22xVersionProps;
     /** @yamlKey last_face_name */
     lastFaceName?: HlkFm22xLastFaceNameProps;
@@ -6513,14 +6513,14 @@ interface HomeassistantProps extends _HomeassistantHomeAssistantImport {
 interface KeyCollectorProps {
     id?: unknown;
     /** @yamlKey source_id */
-    sourceId?: RefProp<key_collector_KeyCollector>;
+    sourceId?: RefProp<__marker_key_collector_KeyCollector>;
 }
 interface Ld2410Props {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: RefProp<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
     /** The firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
     version?: Ld2410VersionProps;
     /**
@@ -6534,7 +6534,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: RefProp<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
     /** The firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
     version?: Ld2412VersionProps;
     /**
@@ -6545,7 +6545,7 @@ interface Ld2412Props {
 }
 interface Ld2420Props extends _CoreComponent {
     /** @yamlKey ld2420_id */
-    ld2420Id?: RefProp<ld2420_LD2420Component>;
+    ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
     /**
      * Allows you to retrieve the [Ld2420](/components/sensor/ld2420/) firmware version. May contain any options from [Text ...
      * @yamlKey fw_version
@@ -6557,7 +6557,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
      * @yamlKey ld2450_id
      */
-    ld2450Id?: RefProp<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
     /** The `ld2450` firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
     version?: Ld2450VersionProps;
     /**
@@ -6573,7 +6573,7 @@ interface Ld2450Props {
     target3?: Ld2450Target3Props;
 }
 interface LibretinyProps {
-    libretiny?: RefProp<libretiny_LTComponent>;
+    libretiny?: RefProp<__marker_libretiny_LTComponent>;
     version?: LibretinyVersionProps;
 }
 interface LvglProps {
@@ -6582,7 +6582,7 @@ interface LvglProps {
 }
 interface MicronovaProps {
     /** @yamlKey micronova_id */
-    micronovaId?: RefProp<micronova_MicroNova>;
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
     /** @yamlKey stove_state */
     stoveState?: MicronovaStoveStateProps;
 }
@@ -6596,7 +6596,7 @@ interface ModbusControllerProps extends _CoreComponent, _ModbusControllerModbusi
 }
 interface MqttSubscribeProps extends _CoreComponent {
     /** @yamlKey mqtt_parent_id */
-    mqttParentId?: RefProp<mqtt_MQTTClientComponent>;
+    mqttParentId?: RefProp<__marker_mqtt_MQTTClientComponent>;
     /** string: The MQTT topic to listen for string data. */
     topic: string;
     /** int: The MQTT QoS to subscribe with. Defaults to `0`. */
@@ -6624,17 +6624,17 @@ interface NextionProps {
      * [ID](/guides/configuration-types#id): The ID of the Nextion display.
      * @yamlKey nextion_id
      */
-    nextionId?: RefProp<nextion_Nextion>;
+    nextionId?: RefProp<__marker_nextion_Nextion>;
     /**
      * [Color](/components/display#config-color): The background color
      * @yamlKey background_color
      */
-    backgroundColor?: RefProp<Color>;
+    backgroundColor?: RefProp<__marker_Color>;
     /**
      * [Color](/components/display#config-color): The foreground color
      * @yamlKey foreground_color
      */
-    foregroundColor?: RefProp<Color>;
+    foregroundColor?: RefProp<__marker_Color>;
     /** boolean: Visible or not */
     visible?: boolean;
     /**
@@ -6714,7 +6714,7 @@ interface PylontechProps extends _PylontechComponent {
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
     /**
      * Sensor operating status indicator. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
      * @yamlKey heart_beat
@@ -6761,7 +6761,7 @@ interface SmlProps {
      * [ID](/guides/configuration-types#id): The ID of the [SML platform](https://esphome.io/components/sml#sml-platform)
      * @yamlKey sml_id
      */
-    smlId?: RefProp<sml_Sml>;
+    smlId?: RefProp<__marker_sml_Sml>;
     /**
      * string: Specify the OBIS code you want to retrieve data for from the device. The format must be (A-B:C.D.E, e.g. 1-0:...
      * @yamlKey obis_code
@@ -6777,7 +6777,7 @@ interface SmlProps {
 }
 interface SunProps extends _CoreComponent {
     /** @yamlKey sun_id */
-    sunId?: RefProp<sun_Sun>;
+    sunId?: RefProp<__marker_sun_Sun>;
     /** string: The type of value to track. One of `sunrise` and `sunset`. */
     type: "sunset" | "sunrise";
     /** float: The elevation to calculate the next sunrise/sunset event for. Defaults to -0.833° (the horizon, slightly less ... */
@@ -6792,7 +6792,7 @@ interface SunGtil2Props extends _CoreComponent {
      * Manually specify the ID of the sun_gtil2 instance if there are multiple.
      * @yamlKey sun_gtil2_id
      */
-    sunGtil2Id?: RefProp<sun_gtil2_SunGTIL2>;
+    sunGtil2Id?: RefProp<__marker_sun_gtil2_SunGTIL2>;
     /** The inverter's state. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
     state?: SunGtil2StateProps;
     /**
@@ -6803,7 +6803,7 @@ interface SunGtil2Props extends _CoreComponent {
 }
 interface Sy6970Props {
     /** @yamlKey sy6970_id */
-    sy6970Id?: RefProp<sy6970_SY6970Component>;
+    sy6970Id?: RefProp<__marker_sy6970_SY6970Component>;
     /** @yamlKey bus_status */
     busStatus?: Sy6970BusStatusProps;
     /** @yamlKey charge_status */
@@ -6824,7 +6824,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: RefProp<tuya_Tuya>;
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey sensor_datapoint */
     sensorDatapoint: number;
 }
@@ -6842,98 +6842,98 @@ interface UptimeProps extends _CoreComponent {
 }
 interface WireguardProps {
     /** @yamlKey wireguard_id */
-    wireguardId?: RefProp<wireguard_Wireguard>;
+    wireguardId?: RefProp<__marker_wireguard_Wireguard>;
     address?: WireguardAddressProps;
 }
 export type TextSensorProps = (TextSensorBaseProps & {
     platform: "ble_scanner";
-} & BleScannerProps & ComponentProps<ble_scanner_BLEScanner>) | (TextSensorBaseProps & {
+} & BleScannerProps & ComponentProps<__marker_ble_scanner_BLEScanner>) | (TextSensorBaseProps & {
     platform: "ethernet_info";
-} & EthernetInfoProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & EthernetInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "openthread_info";
-} & OpenthreadInfoProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & OpenthreadInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "version";
-} & VersionProps & ComponentProps<version_VersionTextSensor>) | (TextSensorBaseProps & {
+} & VersionProps & ComponentProps<__marker_version_VersionTextSensor>) | (TextSensorBaseProps & {
     platform: "wifi_info";
-} & WifiInfoProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & WifiInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "wl_134";
-} & Wl134Props & ComponentProps<wl_134_Wl134Component>) | (TextSensorBaseProps & {
+} & Wl134Props & ComponentProps<__marker_wl_134_Wl134Component>) | (TextSensorBaseProps & {
     platform: "atm90e32";
-} & Atm90e32Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Atm90e32Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "ble_client";
-} & BleClientProps & ComponentProps<ble_client_BLETextSensor>) | (TextSensorBaseProps & {
+} & BleClientProps & ComponentProps<__marker_ble_client_BLETextSensor>) | (TextSensorBaseProps & {
     platform: "bme680_bsec";
-} & Bme680BsecProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Bme680BsecProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "bme68x_bsec2";
-} & Bme68xBsec2Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Bme68xBsec2Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopyTextSensor>) | (TextSensorBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopyTextSensor>) | (TextSensorBaseProps & {
     platform: "daly_bms";
-} & DalyBmsProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & DalyBmsProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "debug";
-} & DebugProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & DebugProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "dlms_meter";
-} & DlmsMeterProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & DlmsMeterProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "dsmr";
-} & DsmrProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & DsmrProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "ezo_pmp";
-} & EzoPmpProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & EzoPmpProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "gdk101";
-} & Gdk101Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Gdk101Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "haier";
-} & HaierProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & HaierProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "hlk_fm22x";
-} & HlkFm22xProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & HlkFm22xProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "homeassistant";
-} & HomeassistantProps & ComponentProps<homeassistant_HomeassistantTextSensor>) | (TextSensorBaseProps & {
+} & HomeassistantProps & ComponentProps<__marker_homeassistant_HomeassistantTextSensor>) | (TextSensorBaseProps & {
     platform: "key_collector";
-} & KeyCollectorProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & KeyCollectorProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "ld2410";
-} & Ld2410Props & ComponentProps<EntityBase>) | (TextSensorBaseProps & {
+} & Ld2410Props & ComponentProps<__marker_EntityBase>) | (TextSensorBaseProps & {
     platform: "ld2412";
-} & Ld2412Props & ComponentProps<EntityBase>) | (TextSensorBaseProps & {
+} & Ld2412Props & ComponentProps<__marker_EntityBase>) | (TextSensorBaseProps & {
     platform: "ld2420";
-} & Ld2420Props & ComponentProps<ld2420_LD2420TextSensor>) | (TextSensorBaseProps & {
+} & Ld2420Props & ComponentProps<__marker_ld2420_LD2420TextSensor>) | (TextSensorBaseProps & {
     platform: "ld2450";
-} & Ld2450Props & ComponentProps<EntityBase>) | (TextSensorBaseProps & {
+} & Ld2450Props & ComponentProps<__marker_EntityBase>) | (TextSensorBaseProps & {
     platform: "libretiny";
-} & LibretinyProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & LibretinyProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "lvgl";
-} & LvglProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & LvglProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "micronova";
-} & MicronovaProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & MicronovaProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "modbus_controller";
-} & ModbusControllerProps & ComponentProps<modbus_controller_ModbusTextSensor>) | (TextSensorBaseProps & {
+} & ModbusControllerProps & ComponentProps<__marker_modbus_controller_ModbusTextSensor>) | (TextSensorBaseProps & {
     platform: "mqtt_subscribe";
-} & MqttSubscribeProps & ComponentProps<mqtt_subscribe_MQTTSubscribeTextSensor>) | (TextSensorBaseProps & {
+} & MqttSubscribeProps & ComponentProps<__marker_mqtt_subscribe_MQTTSubscribeTextSensor>) | (TextSensorBaseProps & {
     platform: "msa3xx";
-} & Msa3xxProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Msa3xxProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "nextion";
-} & NextionProps & ComponentProps<nextion_NextionTextSensor>) | (TextSensorBaseProps & {
+} & NextionProps & ComponentProps<__marker_nextion_NextionTextSensor>) | (TextSensorBaseProps & {
     platform: "pipsolar";
-} & PipsolarProps & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & PipsolarProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "pylontech";
-} & PylontechProps & ComponentProps<pylontech_PylontechTextSensor>) | (TextSensorBaseProps & {
+} & PylontechProps & ComponentProps<__marker_pylontech_PylontechTextSensor>) | (TextSensorBaseProps & {
     platform: "seeed_mr24hpc1";
-} & SeeedMr24hpc1Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & SeeedMr24hpc1Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "sml";
-} & SmlProps & ComponentProps<sml_SmlTextSensor>) | (TextSensorBaseProps & {
+} & SmlProps & ComponentProps<__marker_sml_SmlTextSensor>) | (TextSensorBaseProps & {
     platform: "sun";
-} & SunProps & ComponentProps<sun_SunTextSensor>) | (TextSensorBaseProps & {
+} & SunProps & ComponentProps<__marker_sun_SunTextSensor>) | (TextSensorBaseProps & {
     platform: "sun_gtil2";
-} & SunGtil2Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & SunGtil2Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "sy6970";
-} & Sy6970Props & ComponentProps<text_sensor_TextSensor>) | (TextSensorBaseProps & {
+} & Sy6970Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "teleinfo";
-} & TeleinfoProps & ComponentProps<teleinfo_TeleInfoTextSensor>) | (TextSensorBaseProps & {
+} & TeleinfoProps & ComponentProps<__marker_teleinfo_TeleInfoTextSensor>) | (TextSensorBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateTextSensor>) | (TextSensorBaseProps & {
+} & TemplateProps & ComponentProps<__marker_template__TemplateTextSensor>) | (TextSensorBaseProps & {
     platform: "tuya";
-} & TuyaProps & ComponentProps<tuya_TuyaTextSensor>) | (TextSensorBaseProps & {
+} & TuyaProps & ComponentProps<__marker_tuya_TuyaTextSensor>) | (TextSensorBaseProps & {
     platform: "uptime";
-} & UptimeProps & ComponentProps<uptime_UptimeTextSensor>) | (TextSensorBaseProps & {
+} & UptimeProps & ComponentProps<__marker_uptime_UptimeTextSensor>) | (TextSensorBaseProps & {
     platform: "wireguard";
-} & WireguardProps & ComponentProps<text_sensor_TextSensor>);
+} & WireguardProps & ComponentProps<__marker_text_sensor_TextSensor>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

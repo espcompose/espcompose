@@ -9,10 +9,7 @@
  *   - Per-class param interfaces (e.g. LightState_TurnOnParams)
  *   - Per-class action method interfaces (e.g. LightStateActions)
  *   - ClassActionMap interface (C++ class → action interface)
- *   - MARKER_ACTION_CLASS_MAP runtime constant (marker → class[])
- *   - ACTION_YAML_KEYS runtime constant (class → { method → yamlKey })
  *   - InferActions<T> intersection-based structural brand type
- *   - resolveActionYamlKey() helper
  *
  * Usage:
  *   Called from generate.ts during codegen.
@@ -118,14 +115,12 @@ function generateClassActionsInterface(
 export interface ActionCodegenInput {
   /** C++ class → actions extracted from schema. */
   classActions: ClassActionMap;
-  /** Marker name → list of C++ classes whose actions apply (via ancestor walk). */
-  markerClassMap: Map<string, string[]>;
   /** C++ class → marker brand name used for structural type checking. */
   classBrandMap: Map<string, string>;
 }
 
 export function generateActionsFile(input: ActionCodegenInput): string {
-  const { classActions, markerClassMap, classBrandMap } = input;
+  const { classActions, classBrandMap } = input;
   const lines: string[] = [];
   const specialParamTypes = collectSpecialParamTypes(classActions);
 
@@ -189,56 +184,6 @@ export function generateActionsFile(input: ActionCodegenInput): string {
   lines.push('}');
   lines.push('');
 
-  // ── MARKER_ACTION_CLASS_MAP ───────────────────────────────────────────────
-  if (markerClassMap.size > 0) {
-    lines.push('// ── Marker to action classes mapping ────────────────────────────────────');
-    lines.push('');
-    lines.push('/**');
-    lines.push(' * Maps marker type names → C++ classes whose actions apply to that marker.');
-    lines.push(' * Used by the compiler transformer to resolve ref actions.');
-    lines.push(' */');
-    lines.push('export const MARKER_ACTION_CLASS_MAP: Record<string, string[]> = {');
-    const sorted = [...markerClassMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-    for (const [marker, classes] of sorted) {
-      lines.push(`  ${JSON.stringify(marker)}: ${JSON.stringify(classes)},`);
-    }
-    lines.push('};');
-    lines.push('');
-  }
-
-  // ── ACTION_YAML_KEYS ─────────────────────────────────────────────────────
-  lines.push('// ── Action YAML key lookup ───────────────────────────────────────────────');
-  lines.push('');
-  lines.push('/**');
-  lines.push(' * Maps C++ class → { camelMethod → YAML action key }.');
-  lines.push(' * Used by the compiler transformer to resolve ref.method() → YAML action.');
-  lines.push(' */');
-  lines.push('export const ACTION_YAML_KEYS: Record<string, Record<string, string>> = {');
-  for (const [cppClass, actions] of sortedClasses) {
-    const methodMap: Record<string, string> = {};
-    for (const action of actions) {
-      methodMap[action.methodName] = action.yamlKey;
-    }
-    lines.push(`  ${JSON.stringify(cppClass)}: ${JSON.stringify(methodMap)},`);
-  }
-  lines.push('};');
-  lines.push('');
-
-  // ── resolveActionYamlKey ──────────────────────────────────────────────────
-  lines.push('/**');
-  lines.push(' * Resolve a ref action method call to its YAML action key.');
-  lines.push(' * Iterates the target classes (from MARKER_ACTION_CLASS_MAP) and returns');
-  lines.push(' * the first matching YAML key for the given method name.');
-  lines.push(' */');
-  lines.push('export function resolveActionYamlKey(classes: string[], methodName: string): string | undefined {');
-  lines.push('  for (const cls of classes) {');
-  lines.push('    const methods = ACTION_YAML_KEYS[cls];');
-  lines.push('    if (methods && methods[methodName]) return methods[methodName];');
-  lines.push('  }');
-  lines.push('  return undefined;');
-  lines.push('}');
-  lines.push('');
-
   // ── InferActions<T> ───────────────────────────────────────────────────────
   if (classBrandMap.size > 0) {
     lines.push('/**');
@@ -247,9 +192,9 @@ export function generateActionsFile(input: ActionCodegenInput): string {
     lines.push(' * from all ancestor classes.');
     lines.push(' *');
     lines.push(' * @example');
-    lines.push(' * InferActions<light_LightOutput>      // → LightStateActions');
-    lines.push(' * InferActions<output_FloatOutput>      // → BinaryOutputActions & FloatOutputActions');
-    lines.push(' * InferActions<i2c_I2CBus>              // → {} (no actions)');
+    lines.push(' * InferActions<LightOutputRef>          // → LightStateActions');
+    lines.push(' * InferActions<FloatOutputRef>           // → BinaryOutputActions & FloatOutputActions');
+    lines.push(' * InferActions<I2CBusRef>                // → {} (no actions)');
     lines.push(' */');
     lines.push('// eslint-disable-next-line @typescript-eslint/no-empty-object-type');
     lines.push('export type InferActions<T> =');

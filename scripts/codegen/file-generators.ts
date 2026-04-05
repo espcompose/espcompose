@@ -9,7 +9,7 @@ import ts from 'typescript';
 import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry, ComponentEntry } from './schema-types.js';
 import {
   buildInterfaceBody, toPascalCase, toCamelCase,
-  cppClassToMarkerName, CPP_PRIMITIVE_TO_TS, mergeExtends,
+  cppClassToMarkerName, internalMarkerName, CPP_PRIMITIVE_TO_TS, mergeExtends,
   collectSpecialPropTypesFromMembers, collectSpecialPropTypesFromNested,
   type InterfaceAccumulator,
 } from './type-mapper.js';
@@ -171,7 +171,7 @@ export function buildStandaloneFileContent(
 
   const mergedVarsForMarker = mergeExtends(rawSchema, registry);
   const ownClass = findOwnClass(mergedVarsForMarker);
-  const ownMarker = ownClass ? cppClassToMarkerName(ownClass) : null;
+  const ownMarker = ownClass ? internalMarkerName(ownClass) : null;
   if (ownMarker) markerRefs.add(ownMarker);
 
   // ── Build AST statements ──────────────────────────────────────────────────
@@ -338,7 +338,7 @@ export function buildPlatformFileContent(
           : [];
 
         const variantClass = resolvePlatformMarkerClass(variantDef, platBaseClass);
-        const variantMarker = variantClass ? cppClassToMarkerName(variantClass) : null;
+        const variantMarker = variantClass ? internalMarkerName(variantClass) : null;
         if (variantMarker) markerRefs.add(variantMarker);
 
         componentInterfaces.push({
@@ -371,7 +371,7 @@ export function buildPlatformFileContent(
       : [];
 
     const compOwnClass = resolvePlatformMarkerClass(compRawSchema, platBaseClass);
-    const compOwnMarker = compOwnClass ? cppClassToMarkerName(compOwnClass) : null;
+    const compOwnMarker = compOwnClass ? internalMarkerName(compOwnClass) : null;
     if (compOwnMarker) markerRefs.add(compOwnMarker);
 
     componentInterfaces.push({

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { usb_host_USBHost } from "../markers";
+import type { __marker_usb_host_USBHost } from "../markers";
 export interface UsbHostDevicesProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
@@ -29,7 +29,7 @@ export interface UsbHostProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            usb_host: UsbHostProps & ComponentProps<usb_host_USBHost>;
+            usb_host: UsbHostProps & ComponentProps<__marker_usb_host_USBHost>;
         }
     }
 }

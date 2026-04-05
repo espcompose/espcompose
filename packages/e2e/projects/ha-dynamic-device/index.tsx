@@ -7,7 +7,7 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { Display, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
@@ -58,7 +58,7 @@ function HALightControl(props: { entity: string; label: string }) {
 }
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   return (
     <esphome name="ha-dynamic-device" comment="Dynamic HA entity binding demo">

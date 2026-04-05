@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { qr_code_QrCode } from "../markers";
+import type { __marker_qr_code_QrCode } from "../markers";
 export interface QrCodeProps {
     /** string: The string which you want to encode in the QR-code. */
     value: string;
@@ -14,7 +14,7 @@ export interface QrCodeProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            qr_code: QrCodeProps & ComponentProps<qr_code_QrCode>;
+            qr_code: QrCodeProps & ComponentProps<__marker_qr_code_QrCode>;
         }
     }
 }

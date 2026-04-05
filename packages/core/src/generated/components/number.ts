@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent, _HomeassistantHomeAssistantImportControl, _ModbusControllerModbusitembaseschema } from "../bases";
-import type { EntityBase, atm90e32_ATM90E32Component, bl0940_BL0940, bl0940_BL0940Number, copy_CopyNumber, homeassistant_HomeassistantNumber, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, lvgl_LVGLNumber, micronova_MicroNova, modbus_controller_ModbusNumber, number_Number, opentherm_OpenthermHub, seeed_mr24hpc1_MR24HPC1Component, template__TemplateNumber, tuya_Tuya, tuya_TuyaNumber, web_server_WebServer, zigbee_ZigbeeComponent, zigbee_ZigbeeNumber } from "../markers";
+import type { __marker_EntityBase, __marker_atm90e32_ATM90E32Component, __marker_bl0940_BL0940, __marker_bl0940_BL0940Number, __marker_copy_CopyNumber, __marker_homeassistant_HomeassistantNumber, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2450_LD2450Component, __marker_lvgl_LVGLNumber, __marker_micronova_MicroNova, __marker_modbus_controller_ModbusNumber, __marker_number_Number, __marker_opentherm_OpenthermHub, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_template__TemplateNumber, __marker_tuya_Tuya, __marker_tuya_TuyaNumber, __marker_web_server_WebServer, __marker_zigbee_ZigbeeComponent, __marker_zigbee_ZigbeeNumber } from "../markers";
 interface NumberWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -23,7 +23,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseAPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceVoltagePropsPhaseAPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -63,7 +63,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseAProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseAPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -92,7 +92,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseBPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceVoltagePropsPhaseBPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -132,7 +132,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseBProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseBPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -161,7 +161,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseCPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceVoltagePropsPhaseCPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -201,7 +201,7 @@ interface Atm90e32ReferenceVoltagePropsPhaseCProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceVoltagePropsPhaseCPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -247,7 +247,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseAPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceCurrentPropsPhaseAPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -287,7 +287,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseAProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseAPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -316,7 +316,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseBPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceCurrentPropsPhaseBPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -356,7 +356,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseBProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseBPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -385,7 +385,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseCPropsAvailabilityProps {
 }
 interface Atm90e32ReferenceCurrentPropsPhaseCPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -425,7 +425,7 @@ interface Atm90e32ReferenceCurrentPropsPhaseCProps {
     /** @yamlKey web_server */
     webServer?: Atm90e32ReferenceCurrentPropsPhaseCPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -471,7 +471,7 @@ interface Bl0940CurrentCalibrationPropsAvailabilityProps {
 }
 interface Bl0940CurrentCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -511,7 +511,7 @@ interface Bl0940CurrentCalibrationProps {
     /** @yamlKey web_server */
     webServer?: Bl0940CurrentCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -544,7 +544,7 @@ interface Bl0940VoltageCalibrationPropsAvailabilityProps {
 }
 interface Bl0940VoltageCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -584,7 +584,7 @@ interface Bl0940VoltageCalibrationProps {
     /** @yamlKey web_server */
     webServer?: Bl0940VoltageCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -617,7 +617,7 @@ interface Bl0940PowerCalibrationPropsAvailabilityProps {
 }
 interface Bl0940PowerCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -657,7 +657,7 @@ interface Bl0940PowerCalibrationProps {
     /** @yamlKey web_server */
     webServer?: Bl0940PowerCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -690,7 +690,7 @@ interface Bl0940EnergyCalibrationPropsAvailabilityProps {
 }
 interface Bl0940EnergyCalibrationPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -730,7 +730,7 @@ interface Bl0940EnergyCalibrationProps {
     /** @yamlKey web_server */
     webServer?: Bl0940EnergyCalibrationPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -763,7 +763,7 @@ interface Ld2410G0PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G0PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -803,7 +803,7 @@ interface Ld2410G0PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -827,7 +827,7 @@ interface Ld2410G0PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G0PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -867,7 +867,7 @@ interface Ld2410G0PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -897,7 +897,7 @@ interface Ld2410G1PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G1PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -937,7 +937,7 @@ interface Ld2410G1PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -961,7 +961,7 @@ interface Ld2410G1PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G1PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1001,7 +1001,7 @@ interface Ld2410G1PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1031,7 +1031,7 @@ interface Ld2410G2PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G2PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1071,7 +1071,7 @@ interface Ld2410G2PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1095,7 +1095,7 @@ interface Ld2410G2PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G2PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1135,7 +1135,7 @@ interface Ld2410G2PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1165,7 +1165,7 @@ interface Ld2410G3PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G3PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1205,7 +1205,7 @@ interface Ld2410G3PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1229,7 +1229,7 @@ interface Ld2410G3PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G3PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1269,7 +1269,7 @@ interface Ld2410G3PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1299,7 +1299,7 @@ interface Ld2410G4PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G4PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1339,7 +1339,7 @@ interface Ld2410G4PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1363,7 +1363,7 @@ interface Ld2410G4PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G4PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1403,7 +1403,7 @@ interface Ld2410G4PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1433,7 +1433,7 @@ interface Ld2410G5PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G5PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1473,7 +1473,7 @@ interface Ld2410G5PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1497,7 +1497,7 @@ interface Ld2410G5PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G5PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1537,7 +1537,7 @@ interface Ld2410G5PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1567,7 +1567,7 @@ interface Ld2410G6PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G6PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1607,7 +1607,7 @@ interface Ld2410G6PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1631,7 +1631,7 @@ interface Ld2410G6PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G6PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1671,7 +1671,7 @@ interface Ld2410G6PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1701,7 +1701,7 @@ interface Ld2410G7PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G7PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1741,7 +1741,7 @@ interface Ld2410G7PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1765,7 +1765,7 @@ interface Ld2410G7PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G7PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1805,7 +1805,7 @@ interface Ld2410G7PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1835,7 +1835,7 @@ interface Ld2410G8PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2410G8PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1875,7 +1875,7 @@ interface Ld2410G8PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1899,7 +1899,7 @@ interface Ld2410G8PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2410G8PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1939,7 +1939,7 @@ interface Ld2410G8PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2410G8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1969,7 +1969,7 @@ interface Ld2412Gate0PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate0PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2009,7 +2009,7 @@ interface Ld2412Gate0PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2033,7 +2033,7 @@ interface Ld2412Gate0PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate0PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2073,7 +2073,7 @@ interface Ld2412Gate0PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2103,7 +2103,7 @@ interface Ld2412Gate1PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate1PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2143,7 +2143,7 @@ interface Ld2412Gate1PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2167,7 +2167,7 @@ interface Ld2412Gate1PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate1PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2207,7 +2207,7 @@ interface Ld2412Gate1PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2237,7 +2237,7 @@ interface Ld2412Gate2PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate2PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2277,7 +2277,7 @@ interface Ld2412Gate2PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2301,7 +2301,7 @@ interface Ld2412Gate2PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate2PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2341,7 +2341,7 @@ interface Ld2412Gate2PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2371,7 +2371,7 @@ interface Ld2412Gate3PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate3PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2411,7 +2411,7 @@ interface Ld2412Gate3PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2435,7 +2435,7 @@ interface Ld2412Gate3PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate3PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2475,7 +2475,7 @@ interface Ld2412Gate3PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2505,7 +2505,7 @@ interface Ld2412Gate4PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate4PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2545,7 +2545,7 @@ interface Ld2412Gate4PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2569,7 +2569,7 @@ interface Ld2412Gate4PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate4PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2609,7 +2609,7 @@ interface Ld2412Gate4PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2639,7 +2639,7 @@ interface Ld2412Gate5PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate5PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2679,7 +2679,7 @@ interface Ld2412Gate5PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2703,7 +2703,7 @@ interface Ld2412Gate5PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate5PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2743,7 +2743,7 @@ interface Ld2412Gate5PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2773,7 +2773,7 @@ interface Ld2412Gate6PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate6PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2813,7 +2813,7 @@ interface Ld2412Gate6PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2837,7 +2837,7 @@ interface Ld2412Gate6PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate6PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2877,7 +2877,7 @@ interface Ld2412Gate6PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2907,7 +2907,7 @@ interface Ld2412Gate7PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate7PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -2947,7 +2947,7 @@ interface Ld2412Gate7PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -2971,7 +2971,7 @@ interface Ld2412Gate7PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate7PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3011,7 +3011,7 @@ interface Ld2412Gate7PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3041,7 +3041,7 @@ interface Ld2412Gate8PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate8PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3081,7 +3081,7 @@ interface Ld2412Gate8PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3105,7 +3105,7 @@ interface Ld2412Gate8PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate8PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3145,7 +3145,7 @@ interface Ld2412Gate8PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3175,7 +3175,7 @@ interface Ld2412Gate9PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate9PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3215,7 +3215,7 @@ interface Ld2412Gate9PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate9PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3239,7 +3239,7 @@ interface Ld2412Gate9PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate9PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3279,7 +3279,7 @@ interface Ld2412Gate9PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate9PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3309,7 +3309,7 @@ interface Ld2412Gate10PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate10PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3349,7 +3349,7 @@ interface Ld2412Gate10PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate10PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3373,7 +3373,7 @@ interface Ld2412Gate10PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate10PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3413,7 +3413,7 @@ interface Ld2412Gate10PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate10PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3443,7 +3443,7 @@ interface Ld2412Gate11PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate11PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3483,7 +3483,7 @@ interface Ld2412Gate11PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate11PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3507,7 +3507,7 @@ interface Ld2412Gate11PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate11PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3547,7 +3547,7 @@ interface Ld2412Gate11PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate11PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3577,7 +3577,7 @@ interface Ld2412Gate12PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate12PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3617,7 +3617,7 @@ interface Ld2412Gate12PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate12PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3641,7 +3641,7 @@ interface Ld2412Gate12PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate12PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3681,7 +3681,7 @@ interface Ld2412Gate12PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate12PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3711,7 +3711,7 @@ interface Ld2412Gate13PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate13PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3751,7 +3751,7 @@ interface Ld2412Gate13PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate13PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3775,7 +3775,7 @@ interface Ld2412Gate13PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2412Gate13PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3815,7 +3815,7 @@ interface Ld2412Gate13PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2412Gate13PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3845,7 +3845,7 @@ interface Ld2420PresenceTimeoutPropsAvailabilityProps {
 }
 interface Ld2420PresenceTimeoutPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3885,7 +3885,7 @@ interface Ld2420PresenceTimeoutProps {
     /** @yamlKey web_server */
     webServer?: Ld2420PresenceTimeoutPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3909,7 +3909,7 @@ interface Ld2420MinGateDistancePropsAvailabilityProps {
 }
 interface Ld2420MinGateDistancePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -3949,7 +3949,7 @@ interface Ld2420MinGateDistanceProps {
     /** @yamlKey web_server */
     webServer?: Ld2420MinGateDistancePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -3973,7 +3973,7 @@ interface Ld2420MaxGateDistancePropsAvailabilityProps {
 }
 interface Ld2420MaxGateDistancePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4013,7 +4013,7 @@ interface Ld2420MaxGateDistanceProps {
     /** @yamlKey web_server */
     webServer?: Ld2420MaxGateDistancePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4037,7 +4037,7 @@ interface Ld2420GateSelectPropsAvailabilityProps {
 }
 interface Ld2420GateSelectPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4077,7 +4077,7 @@ interface Ld2420GateSelectProps {
     /** @yamlKey web_server */
     webServer?: Ld2420GateSelectPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4101,7 +4101,7 @@ interface Ld2420StillThresholdPropsAvailabilityProps {
 }
 interface Ld2420StillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4141,7 +4141,7 @@ interface Ld2420StillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420StillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4165,7 +4165,7 @@ interface Ld2420MoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420MoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4205,7 +4205,7 @@ interface Ld2420MoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420MoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4229,7 +4229,7 @@ interface Ld2420GateMoveSensitivityPropsAvailabilityProps {
 }
 interface Ld2420GateMoveSensitivityPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4269,7 +4269,7 @@ interface Ld2420GateMoveSensitivityProps {
     /** @yamlKey web_server */
     webServer?: Ld2420GateMoveSensitivityPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4293,7 +4293,7 @@ interface Ld2420GateStillSensitivityPropsAvailabilityProps {
 }
 interface Ld2420GateStillSensitivityPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4333,7 +4333,7 @@ interface Ld2420GateStillSensitivityProps {
     /** @yamlKey web_server */
     webServer?: Ld2420GateStillSensitivityPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4357,7 +4357,7 @@ interface Ld2420Gate0PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate0PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4397,7 +4397,7 @@ interface Ld2420Gate0PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate0PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4421,7 +4421,7 @@ interface Ld2420Gate0PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate0PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4461,7 +4461,7 @@ interface Ld2420Gate0PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate0PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4491,7 +4491,7 @@ interface Ld2420Gate1PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate1PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4531,7 +4531,7 @@ interface Ld2420Gate1PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate1PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4555,7 +4555,7 @@ interface Ld2420Gate1PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate1PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4595,7 +4595,7 @@ interface Ld2420Gate1PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate1PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4625,7 +4625,7 @@ interface Ld2420Gate2PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate2PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4665,7 +4665,7 @@ interface Ld2420Gate2PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate2PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4689,7 +4689,7 @@ interface Ld2420Gate2PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate2PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4729,7 +4729,7 @@ interface Ld2420Gate2PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate2PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4759,7 +4759,7 @@ interface Ld2420Gate3PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate3PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4799,7 +4799,7 @@ interface Ld2420Gate3PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate3PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4823,7 +4823,7 @@ interface Ld2420Gate3PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate3PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4863,7 +4863,7 @@ interface Ld2420Gate3PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate3PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4893,7 +4893,7 @@ interface Ld2420Gate4PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate4PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4933,7 +4933,7 @@ interface Ld2420Gate4PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate4PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -4957,7 +4957,7 @@ interface Ld2420Gate4PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate4PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -4997,7 +4997,7 @@ interface Ld2420Gate4PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate4PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5027,7 +5027,7 @@ interface Ld2420Gate5PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate5PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5067,7 +5067,7 @@ interface Ld2420Gate5PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate5PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5091,7 +5091,7 @@ interface Ld2420Gate5PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate5PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5131,7 +5131,7 @@ interface Ld2420Gate5PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate5PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5161,7 +5161,7 @@ interface Ld2420Gate6PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate6PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5201,7 +5201,7 @@ interface Ld2420Gate6PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate6PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5225,7 +5225,7 @@ interface Ld2420Gate6PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate6PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5265,7 +5265,7 @@ interface Ld2420Gate6PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate6PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5295,7 +5295,7 @@ interface Ld2420Gate7PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate7PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5335,7 +5335,7 @@ interface Ld2420Gate7PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate7PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5359,7 +5359,7 @@ interface Ld2420Gate7PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate7PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5399,7 +5399,7 @@ interface Ld2420Gate7PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate7PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5429,7 +5429,7 @@ interface Ld2420Gate8PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate8PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5469,7 +5469,7 @@ interface Ld2420Gate8PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate8PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5493,7 +5493,7 @@ interface Ld2420Gate8PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate8PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5533,7 +5533,7 @@ interface Ld2420Gate8PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate8PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5563,7 +5563,7 @@ interface Ld2420Gate9PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate9PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5603,7 +5603,7 @@ interface Ld2420Gate9PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate9PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5627,7 +5627,7 @@ interface Ld2420Gate9PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate9PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5667,7 +5667,7 @@ interface Ld2420Gate9PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate9PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5697,7 +5697,7 @@ interface Ld2420Gate10PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate10PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5737,7 +5737,7 @@ interface Ld2420Gate10PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate10PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5761,7 +5761,7 @@ interface Ld2420Gate10PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate10PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5801,7 +5801,7 @@ interface Ld2420Gate10PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate10PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5831,7 +5831,7 @@ interface Ld2420Gate11PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate11PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5871,7 +5871,7 @@ interface Ld2420Gate11PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate11PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5895,7 +5895,7 @@ interface Ld2420Gate11PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate11PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -5935,7 +5935,7 @@ interface Ld2420Gate11PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate11PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -5965,7 +5965,7 @@ interface Ld2420Gate12PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate12PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6005,7 +6005,7 @@ interface Ld2420Gate12PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate12PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6029,7 +6029,7 @@ interface Ld2420Gate12PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate12PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6069,7 +6069,7 @@ interface Ld2420Gate12PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate12PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6099,7 +6099,7 @@ interface Ld2420Gate13PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate13PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6139,7 +6139,7 @@ interface Ld2420Gate13PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate13PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6163,7 +6163,7 @@ interface Ld2420Gate13PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate13PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6203,7 +6203,7 @@ interface Ld2420Gate13PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate13PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6233,7 +6233,7 @@ interface Ld2420Gate14PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate14PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6273,7 +6273,7 @@ interface Ld2420Gate14PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate14PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6297,7 +6297,7 @@ interface Ld2420Gate14PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate14PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6337,7 +6337,7 @@ interface Ld2420Gate14PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate14PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6367,7 +6367,7 @@ interface Ld2420Gate15PropsMoveThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate15PropsMoveThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6407,7 +6407,7 @@ interface Ld2420Gate15PropsMoveThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate15PropsMoveThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6431,7 +6431,7 @@ interface Ld2420Gate15PropsStillThresholdPropsAvailabilityProps {
 }
 interface Ld2420Gate15PropsStillThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6471,7 +6471,7 @@ interface Ld2420Gate15PropsStillThresholdProps {
     /** @yamlKey web_server */
     webServer?: Ld2420Gate15PropsStillThresholdPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6501,7 +6501,7 @@ interface Ld2450Zone1PropsX1PropsAvailabilityProps {
 }
 interface Ld2450Zone1PropsX1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6541,7 +6541,7 @@ interface Ld2450Zone1PropsX1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6565,7 +6565,7 @@ interface Ld2450Zone1PropsY1PropsAvailabilityProps {
 }
 interface Ld2450Zone1PropsY1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6605,7 +6605,7 @@ interface Ld2450Zone1PropsY1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6629,7 +6629,7 @@ interface Ld2450Zone1PropsX2PropsAvailabilityProps {
 }
 interface Ld2450Zone1PropsX2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6669,7 +6669,7 @@ interface Ld2450Zone1PropsX2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6693,7 +6693,7 @@ interface Ld2450Zone1PropsY2PropsAvailabilityProps {
 }
 interface Ld2450Zone1PropsY2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6733,7 +6733,7 @@ interface Ld2450Zone1PropsY2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone1PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6763,7 +6763,7 @@ interface Ld2450Zone2PropsX1PropsAvailabilityProps {
 }
 interface Ld2450Zone2PropsX1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6803,7 +6803,7 @@ interface Ld2450Zone2PropsX1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6827,7 +6827,7 @@ interface Ld2450Zone2PropsY1PropsAvailabilityProps {
 }
 interface Ld2450Zone2PropsY1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6867,7 +6867,7 @@ interface Ld2450Zone2PropsY1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6891,7 +6891,7 @@ interface Ld2450Zone2PropsX2PropsAvailabilityProps {
 }
 interface Ld2450Zone2PropsX2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6931,7 +6931,7 @@ interface Ld2450Zone2PropsX2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -6955,7 +6955,7 @@ interface Ld2450Zone2PropsY2PropsAvailabilityProps {
 }
 interface Ld2450Zone2PropsY2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -6995,7 +6995,7 @@ interface Ld2450Zone2PropsY2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone2PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7025,7 +7025,7 @@ interface Ld2450Zone3PropsX1PropsAvailabilityProps {
 }
 interface Ld2450Zone3PropsX1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7065,7 +7065,7 @@ interface Ld2450Zone3PropsX1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsX1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7089,7 +7089,7 @@ interface Ld2450Zone3PropsY1PropsAvailabilityProps {
 }
 interface Ld2450Zone3PropsY1PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7129,7 +7129,7 @@ interface Ld2450Zone3PropsY1Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsY1PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7153,7 +7153,7 @@ interface Ld2450Zone3PropsX2PropsAvailabilityProps {
 }
 interface Ld2450Zone3PropsX2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7193,7 +7193,7 @@ interface Ld2450Zone3PropsX2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsX2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7217,7 +7217,7 @@ interface Ld2450Zone3PropsY2PropsAvailabilityProps {
 }
 interface Ld2450Zone3PropsY2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7257,7 +7257,7 @@ interface Ld2450Zone3PropsY2Props {
     /** @yamlKey web_server */
     webServer?: Ld2450Zone3PropsY2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7287,7 +7287,7 @@ interface MicronovaThermostatTemperaturePropsAvailabilityProps {
 }
 interface MicronovaThermostatTemperaturePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7327,7 +7327,7 @@ interface MicronovaThermostatTemperatureProps {
     /** @yamlKey web_server */
     webServer?: MicronovaThermostatTemperaturePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7344,7 +7344,7 @@ interface MicronovaThermostatTemperatureProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey micronova_id */
-    micronovaId?: RefProp<micronova_MicroNova>;
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
     /** @yamlKey memory_location */
     memoryLocation?: unknown;
     /** @yamlKey memory_address */
@@ -7362,7 +7362,7 @@ interface MicronovaPowerLevelPropsAvailabilityProps {
 }
 interface MicronovaPowerLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7402,7 +7402,7 @@ interface MicronovaPowerLevelProps {
     /** @yamlKey web_server */
     webServer?: MicronovaPowerLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7419,7 +7419,7 @@ interface MicronovaPowerLevelProps {
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     /** @yamlKey micronova_id */
-    micronovaId?: RefProp<micronova_MicroNova>;
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
     /** @yamlKey memory_location */
     memoryLocation?: unknown;
     /** @yamlKey memory_address */
@@ -7436,7 +7436,7 @@ interface OpenthermTSetPropsAvailabilityProps {
 }
 interface OpenthermTSetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7476,7 +7476,7 @@ interface OpenthermTSetProps {
     /** @yamlKey web_server */
     webServer?: OpenthermTSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7513,7 +7513,7 @@ interface OpenthermTSetCh2PropsAvailabilityProps {
 }
 interface OpenthermTSetCh2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7553,7 +7553,7 @@ interface OpenthermTSetCh2Props {
     /** @yamlKey web_server */
     webServer?: OpenthermTSetCh2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7590,7 +7590,7 @@ interface OpenthermCoolingControlPropsAvailabilityProps {
 }
 interface OpenthermCoolingControlPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7630,7 +7630,7 @@ interface OpenthermCoolingControlProps {
     /** @yamlKey web_server */
     webServer?: OpenthermCoolingControlPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7665,7 +7665,7 @@ interface OpenthermTDhwSetPropsAvailabilityProps {
 }
 interface OpenthermTDhwSetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7705,7 +7705,7 @@ interface OpenthermTDhwSetProps {
     /** @yamlKey web_server */
     webServer?: OpenthermTDhwSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7744,7 +7744,7 @@ interface OpenthermMaxTSetPropsAvailabilityProps {
 }
 interface OpenthermMaxTSetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7784,7 +7784,7 @@ interface OpenthermMaxTSetProps {
     /** @yamlKey web_server */
     webServer?: OpenthermMaxTSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7823,7 +7823,7 @@ interface OpenthermTRoomSetPropsAvailabilityProps {
 }
 interface OpenthermTRoomSetPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7863,7 +7863,7 @@ interface OpenthermTRoomSetProps {
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomSetPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7898,7 +7898,7 @@ interface OpenthermTRoomSetCh2PropsAvailabilityProps {
 }
 interface OpenthermTRoomSetCh2PropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -7938,7 +7938,7 @@ interface OpenthermTRoomSetCh2Props {
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomSetCh2PropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -7973,7 +7973,7 @@ interface OpenthermTRoomPropsAvailabilityProps {
 }
 interface OpenthermTRoomPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8013,7 +8013,7 @@ interface OpenthermTRoomProps {
     /** @yamlKey web_server */
     webServer?: OpenthermTRoomPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -8048,7 +8048,7 @@ interface OpenthermMaxRelModLevelPropsAvailabilityProps {
 }
 interface OpenthermMaxRelModLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8088,7 +8088,7 @@ interface OpenthermMaxRelModLevelProps {
     /** @yamlKey web_server */
     webServer?: OpenthermMaxRelModLevelPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -8123,7 +8123,7 @@ interface OpenthermOtcHcRatioPropsAvailabilityProps {
 }
 interface OpenthermOtcHcRatioPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -8163,7 +8163,7 @@ interface OpenthermOtcHcRatioProps {
     /** @yamlKey web_server */
     webServer?: OpenthermOtcHcRatioPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -8205,7 +8205,7 @@ interface NumberBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: NumberWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -8222,7 +8222,7 @@ interface NumberBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
 }
 interface Atm90e32Props {
     /** [ID](/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if using more than one ... */
-    id?: RefProp<atm90e32_ATM90E32Component>;
+    id?: RefProp<__marker_atm90e32_ATM90E32Component>;
     /**
      * Fine grained gain calibration of a known voltage that a voltage transformer is connected to. It is used to calculate ...
      * @yamlKey reference_voltage
@@ -8236,7 +8236,7 @@ interface Atm90e32Props {
 }
 interface Bl0940Props {
     /** @yamlKey bl0940_id */
-    bl0940Id?: RefProp<bl0940_BL0940>;
+    bl0940Id?: RefProp<__marker_bl0940_BL0940>;
     /**
      * Enables current calibration configuration.
      * @yamlKey current_calibration
@@ -8263,7 +8263,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The number that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<number_Number>;
+    sourceId: RefProp<__marker_number_Number>;
 }
 interface HomeassistantProps extends _HomeassistantHomeAssistantImportControl, _CoreComponent {
 }
@@ -8272,7 +8272,7 @@ interface Ld2410Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: RefProp<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
     /** int: Time in seconds during which presence state will stay present after leaving. Defaults to `5s` All options from [... */
     timeout?: number;
     /**
@@ -8305,7 +8305,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: RefProp<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
     /**
      * int: Threshold for the light to activate the OUT pin of the sensor. All options from [Number](/components/number#conf...
      * @yamlKey light_threshold
@@ -8354,7 +8354,7 @@ interface Ld2412Props {
 }
 interface Ld2420Props {
     /** @yamlKey ld2420_id */
-    ld2420Id?: RefProp<ld2420_LD2420Component>;
+    ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
     /**
      * The time in seconds during which the occupied state (presence) will persist after presence is no longer detected. Any...
      * @yamlKey presence_timeout
@@ -8427,7 +8427,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
      * @yamlKey ld2450_id
      */
-    ld2450Id?: RefProp<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
     /**
      * int: The duration, in seconds, for which the [presence states](https://esphome.io/components/sensor/ld2450#ld2450-bin...
      * @yamlKey presence_timeout
@@ -8450,7 +8450,7 @@ interface LvglProps {
 }
 interface MicronovaProps {
     /** @yamlKey micronova_id */
-    micronovaId?: RefProp<micronova_MicroNova>;
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
     /** @yamlKey thermostat_temperature */
     thermostatTemperature?: MicronovaThermostatTemperatureProps;
     /** @yamlKey power_level */
@@ -8474,7 +8474,7 @@ interface ModbusControllerProps extends _ModbusControllerModbusitembaseschema {
 }
 interface OpenthermProps extends _CoreComponent {
     /** @yamlKey opentherm_id */
-    openthermId?: RefProp<opentherm_OpenthermHub>;
+    openthermId?: RefProp<__marker_opentherm_OpenthermHub>;
     /** @yamlKey t_set */
     tSet?: OpenthermTSetProps;
     /** @yamlKey t_set_ch2 */
@@ -8498,7 +8498,7 @@ interface OpenthermProps extends _CoreComponent {
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
     /** int: Valid only in [standard mode](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-standard_mode). Used t... */
     sensitivity?: number;
     /**
@@ -8572,7 +8572,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: RefProp<tuya_Tuya>;
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey number_datapoint */
     numberDatapoint: number;
     /** @yamlKey max_value */
@@ -8586,35 +8586,35 @@ interface TuyaProps extends _CoreComponent {
 }
 export type NumberProps = (NumberBaseProps & {
     platform: "atm90e32";
-} & Atm90e32Props & ComponentProps<zigbee_ZigbeeNumber>) | (NumberBaseProps & {
+} & Atm90e32Props & ComponentProps<__marker_zigbee_ZigbeeNumber>) | (NumberBaseProps & {
     platform: "bl0940";
-} & Bl0940Props & ComponentProps<bl0940_BL0940Number>) | (NumberBaseProps & {
+} & Bl0940Props & ComponentProps<__marker_bl0940_BL0940Number>) | (NumberBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopyNumber>) | (NumberBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopyNumber>) | (NumberBaseProps & {
     platform: "homeassistant";
-} & HomeassistantProps & ComponentProps<homeassistant_HomeassistantNumber>) | (NumberBaseProps & {
+} & HomeassistantProps & ComponentProps<__marker_homeassistant_HomeassistantNumber>) | (NumberBaseProps & {
     platform: "ld2410";
-} & Ld2410Props & ComponentProps<EntityBase>) | (NumberBaseProps & {
+} & Ld2410Props & ComponentProps<__marker_EntityBase>) | (NumberBaseProps & {
     platform: "ld2412";
-} & Ld2412Props & ComponentProps<EntityBase>) | (NumberBaseProps & {
+} & Ld2412Props & ComponentProps<__marker_EntityBase>) | (NumberBaseProps & {
     platform: "ld2420";
-} & Ld2420Props & ComponentProps<zigbee_ZigbeeNumber>) | (NumberBaseProps & {
+} & Ld2420Props & ComponentProps<__marker_zigbee_ZigbeeNumber>) | (NumberBaseProps & {
     platform: "ld2450";
-} & Ld2450Props & ComponentProps<EntityBase>) | (NumberBaseProps & {
+} & Ld2450Props & ComponentProps<__marker_EntityBase>) | (NumberBaseProps & {
     platform: "lvgl";
-} & LvglProps & ComponentProps<lvgl_LVGLNumber>) | (NumberBaseProps & {
+} & LvglProps & ComponentProps<__marker_lvgl_LVGLNumber>) | (NumberBaseProps & {
     platform: "micronova";
-} & MicronovaProps & ComponentProps<zigbee_ZigbeeNumber>) | (NumberBaseProps & {
+} & MicronovaProps & ComponentProps<__marker_zigbee_ZigbeeNumber>) | (NumberBaseProps & {
     platform: "modbus_controller";
-} & ModbusControllerProps & ComponentProps<modbus_controller_ModbusNumber>) | (NumberBaseProps & {
+} & ModbusControllerProps & ComponentProps<__marker_modbus_controller_ModbusNumber>) | (NumberBaseProps & {
     platform: "opentherm";
-} & OpenthermProps & ComponentProps<zigbee_ZigbeeNumber>) | (NumberBaseProps & {
+} & OpenthermProps & ComponentProps<__marker_zigbee_ZigbeeNumber>) | (NumberBaseProps & {
     platform: "seeed_mr24hpc1";
-} & SeeedMr24hpc1Props & ComponentProps<zigbee_ZigbeeNumber>) | (NumberBaseProps & {
+} & SeeedMr24hpc1Props & ComponentProps<__marker_zigbee_ZigbeeNumber>) | (NumberBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateNumber>) | (NumberBaseProps & {
+} & TemplateProps & ComponentProps<__marker_template__TemplateNumber>) | (NumberBaseProps & {
     platform: "tuya";
-} & TuyaProps & ComponentProps<tuya_TuyaNumber>);
+} & TuyaProps & ComponentProps<__marker_tuya_TuyaNumber>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

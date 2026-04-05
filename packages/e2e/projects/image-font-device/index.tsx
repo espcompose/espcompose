@@ -9,10 +9,10 @@
  *   - Asset pipeline copies image files with content-hash names
  *   - gfonts:// URIs are left as-is (not copied)
  */
-import { Display, useRef, useImage, useFont } from '@espcompose/core';
+import { DisplayRef, useRef, useImage, useFont } from '@espcompose/core';
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   // Two images: same file + props → should dedup to ONE entry
   const icon1 = useImage({ file: './assets/icon.png', type: 'RGB', resize: '32x32', transparency: 'alpha_channel' });

@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent } from "../bases";
-import type { copy_CopyText, lvgl_LVGLText, template__TemplateText, text_Text, web_server_WebServer } from "../markers";
+import type { __marker_copy_CopyText, __marker_lvgl_LVGLText, __marker_template__TemplateText, __marker_text_Text, __marker_web_server_WebServer } from "../markers";
 interface TextWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -26,7 +26,7 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The text that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<text_Text>;
+    sourceId: RefProp<__marker_text_Text>;
 }
 interface LvglProps {
     widget: RefProp<unknown>;
@@ -70,11 +70,11 @@ interface TemplateProps extends _CoreComponent {
 }
 export type TextProps = (TextBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopyText>) | (TextBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopyText>) | (TextBaseProps & {
     platform: "lvgl";
-} & LvglProps & ComponentProps<lvgl_LVGLText>) | (TextBaseProps & {
+} & LvglProps & ComponentProps<__marker_lvgl_LVGLText>) | (TextBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateText>);
+} & TemplateProps & ComponentProps<__marker_template__TemplateText>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { uart_UARTComponent } from "../markers";
+import type { __marker_uart_UARTComponent } from "../markers";
 export interface UartProps extends _CoreComponent {
     /**
      * int: The baud rate of the UART bus.
@@ -67,7 +67,7 @@ export interface UartProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            uart: UartProps & ComponentProps<uart_UARTComponent>;
+            uart: UartProps & ComponentProps<__marker_uart_UARTComponent>;
         }
     }
 }

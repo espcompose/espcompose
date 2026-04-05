@@ -13,10 +13,10 @@
  *   - Direct passthrough: officeLight.stateText (should NOT be wrapped)
  *   - Explicit useMemo (should NOT be double-wrapped)
  */
-import { Display, useRef, useHAEntity, useMemo } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo } from '@espcompose/core';
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
   const officeLight = useHAEntity('light.office');
   const tempSensor = useHAEntity('sensor.temp_inside');
 

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { cc1101_CC1101Component, spi_SPIComponent } from "../markers";
+import type { __marker_cc1101_CC1101Component, __marker_spi_SPIComponent } from "../markers";
 export interface Cc1101Props {
     /**
      * [Pin](/guides/configuration-types/#pin): The GDO0 pin. Required when `packet_mode` is enabled, also used for single p...
@@ -14,7 +14,7 @@ export interface Cc1101Props {
     /** @yamlKey on_packet */
     onPacket?: TriggerHandler;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -174,7 +174,7 @@ export interface Cc1101Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            cc1101: Cc1101Props & ComponentProps<cc1101_CC1101Component>;
+            cc1101: Cc1101Props & ComponentProps<__marker_cc1101_CC1101Component>;
         }
     }
 }

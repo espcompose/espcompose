@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { remote_transmitter_RemoteTransmitterComponent } from "../markers";
+import type { __marker_remote_transmitter_RemoteTransmitterComponent } from "../markers";
 export interface RemoteTransmitterProps extends _CoreComponent {
     /** [Pin](/guides/configuration-types#pin): The pin to transmit the remote signal on. */
     pin: Pin;
@@ -53,7 +53,7 @@ export interface RemoteTransmitterProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            remote_transmitter: RemoteTransmitterProps & ComponentProps<remote_transmitter_RemoteTransmitterComponent>;
+            remote_transmitter: RemoteTransmitterProps & ComponentProps<__marker_remote_transmitter_RemoteTransmitterComponent>;
         }
     }
 }

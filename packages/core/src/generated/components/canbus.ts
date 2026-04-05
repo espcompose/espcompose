@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _Canbus } from "../bases";
-import type { esp32_can_ESP32Can, mcp2515_MCP2515, spi_SPIComponent } from "../markers";
+import type { __marker_esp32_can_ESP32Can, __marker_mcp2515_MCP2515, __marker_spi_SPIComponent } from "../markers";
 interface Esp32CanProps extends _Canbus {
     /**
      * [Pin](/guides/configuration-types#pin): Receive pin.
@@ -41,7 +41,7 @@ interface Mcp2515Props extends _Canbus {
     /** enum: Operating mode. One of: */
     mode?: "NORMAL" | "LOOPBACK" | "LISTENONLY";
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -56,9 +56,9 @@ interface Mcp2515Props extends _Canbus {
 }
 export type CanbusProps = ({
     platform: "esp32_can";
-} & Esp32CanProps & ComponentProps<esp32_can_ESP32Can>) | ({
+} & Esp32CanProps & ComponentProps<__marker_esp32_can_ESP32Can>) | ({
     platform: "mcp2515";
-} & Mcp2515Props & ComponentProps<mcp2515_MCP2515>);
+} & Mcp2515Props & ComponentProps<__marker_mcp2515_MCP2515>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

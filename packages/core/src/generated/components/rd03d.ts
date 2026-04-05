@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { rd03d_RD03DComponent, uart_UARTComponent } from "../markers";
+import type { __marker_rd03d_RD03DComponent, __marker_uart_UARTComponent } from "../markers";
 export interface Rd03dProps extends _CoreComponent {
     /**
      * string: The tracking mode to configure. If not specified, no command is sent and the radar uses its default mode (typ...
@@ -18,12 +18,12 @@ export interface Rd03dProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) to use. Requi...
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            rd03d: Rd03dProps & ComponentProps<rd03d_RD03DComponent>;
+            rd03d: Rd03dProps & ComponentProps<__marker_rd03d_RD03DComponent>;
         }
     }
 }

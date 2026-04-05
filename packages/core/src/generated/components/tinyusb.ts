@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { tinyusb_TinyUSB } from "../markers";
+import type { __marker_tinyusb_TinyUSB } from "../markers";
 export interface TinyusbProps extends _CoreComponent {
     /**
      * int: USB product identifier. Defaults to `0x4001`.
@@ -41,7 +41,7 @@ export interface TinyusbProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            tinyusb: TinyusbProps & ComponentProps<tinyusb_TinyUSB>;
+            tinyusb: TinyusbProps & ComponentProps<__marker_tinyusb_TinyUSB>;
         }
     }
 }

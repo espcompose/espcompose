@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { as5600_AS5600Component, i2c_I2CBus } from "../markers";
+import type { __marker_as5600_AS5600Component, __marker_i2c_I2CBus } from "../markers";
 export interface As5600Props extends _CoreComponent {
     /**
      * int: The pin connected to the AS5600's direction pin. See [Direction](https://esphome.io/components/sensor/as5600#as5...
@@ -46,14 +46,14 @@ export interface As5600Props extends _CoreComponent {
     /** int: The allowable rotation range from the start_position. Mutually exclusive with end_position. See [Position / Rang... */
     range?: number;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The i²c address of the sensor. See [I²C Addresses](https://esphome.io/components/sensor/as5600#as5600_i2c_addres... */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            as5600: As5600Props & ComponentProps<as5600_AS5600Component>;
+            as5600: As5600Props & ComponentProps<__marker_as5600_AS5600Component>;
         }
     }
 }

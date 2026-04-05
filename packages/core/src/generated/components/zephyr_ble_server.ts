@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { zephyr_ble_server_BLEServer } from "../markers";
+import type { __marker_zephyr_ble_server_BLEServer } from "../markers";
 export interface ZephyrBleServerProps extends _CoreComponent {
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            zephyr_ble_server: ZephyrBleServerProps & ComponentProps<zephyr_ble_server_BLEServer>;
+            zephyr_ble_server: ZephyrBleServerProps & ComponentProps<__marker_zephyr_ble_server_BLEServer>;
         }
     }
 }

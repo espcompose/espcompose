@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { bme680_bsec_BME680BSECComponent, i2c_I2CBus } from "../markers";
+import type { __marker_bme680_bsec_BME680BSECComponent, __marker_i2c_I2CBus } from "../markers";
 export interface Bme680BsecProps {
     /**
      * float: Temperature offset if device is in enclosure and reads too high. This value is subtracted from the reading (e....
@@ -32,14 +32,14 @@ export interface Bme680BsecProps {
      */
     stateSaveInterval?: TimePeriod;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address can be `0x77`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            bme680_bsec: Bme680BsecProps & ComponentProps<bme680_bsec_BME680BSECComponent>;
+            bme680_bsec: Bme680BsecProps & ComponentProps<__marker_bme680_bsec_BME680BSECComponent>;
         }
     }
 }

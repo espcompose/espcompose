@@ -5,8 +5,8 @@
  * component's `.value` is bound to an LVGL label widget via Expression<T>,
  * plus using an LVGL button event to control an HA entity.
  */
-import { Display, useRef, useHAEntity } from '@espcompose/core';
-import type { internal_temperature_InternalTemperatureSensor, EspComposeElement, TriggerHandler } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
+import type { InternalTemperatureSensorRef, EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
 function ActionButton(props: {
@@ -25,8 +25,8 @@ function ActionButton(props: {
 }
 
 function App() {
-  const displayRef = useRef<Display>();
-  const tempRef = useRef<internal_temperature_InternalTemperatureSensor>();
+  const displayRef = useRef<DisplayRef>();
+  const tempRef = useRef<InternalTemperatureSensorRef>();
   const heater = useHAEntity('switch.space_heater');
 
   return (

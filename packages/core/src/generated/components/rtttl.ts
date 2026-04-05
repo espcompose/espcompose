@@ -5,12 +5,12 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { output_FloatOutput, rtttl_Rtttl, speaker_Speaker } from "../markers";
+import type { __marker_output_FloatOutput, __marker_rtttl_Rtttl, __marker_speaker_Speaker } from "../markers";
 export interface RtttlProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The id of the [float output](/components/output) to use for this buzzer. */
-    output?: RefProp<output_FloatOutput>;
+    output?: RefProp<__marker_output_FloatOutput>;
     /** [ID](/guides/configuration-types#id): The id of the [Speaker](/components/speaker) to play the song on. */
-    speaker?: RefProp<speaker_Speaker>;
+    speaker?: RefProp<__marker_speaker_Speaker>;
     /** Percentage: With this value you can set the volume of the sound. */
     gain?: number;
     /**
@@ -22,7 +22,7 @@ export interface RtttlProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            rtttl: RtttlProps & ComponentProps<rtttl_Rtttl>;
+            rtttl: RtttlProps & ComponentProps<__marker_rtttl_Rtttl>;
         }
     }
 }

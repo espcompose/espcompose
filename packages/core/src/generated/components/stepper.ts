@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _Stepper } from "../bases";
-import type { a4988_A4988, uln2003_ULN2003 } from "../markers";
+import type { __marker_a4988_A4988, __marker_uln2003_ULN2003 } from "../markers";
 interface A4988Props extends _Stepper, _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The `STEP` pin of the A4988 stepper driver.
@@ -57,9 +57,9 @@ interface Uln2003Props extends _Stepper, _CoreComponent {
 }
 export type StepperProps = ({
     platform: "a4988";
-} & A4988Props & ComponentProps<a4988_A4988>) | ({
+} & A4988Props & ComponentProps<__marker_a4988_A4988>) | ({
     platform: "uln2003";
-} & Uln2003Props & ComponentProps<uln2003_ULN2003>);
+} & Uln2003Props & ComponentProps<__marker_uln2003_ULN2003>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {
