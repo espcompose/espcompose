@@ -46,7 +46,7 @@ export * from './component-aliases';
 // ────────────────────────────────────────────────────────────────────────────
 
 export { useHAEntity } from './hooks/useHAEntity';
-export type { LightBinding, SensorBinding, BinarySensorBinding, SwitchBinding } from './ha-bindings';
+export type { LightBinding, SensorBinding, BinarySensorBinding, SwitchBinding, FanBinding, CoverBinding } from './device-bindings';
 export { useImage } from './hooks/useImage';
 export { useFont } from './hooks/useFont';
 export { useScript } from './hooks/useScript';
