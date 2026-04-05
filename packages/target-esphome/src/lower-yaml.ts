@@ -15,6 +15,7 @@ import { getTriggerSignature } from '@espcompose/core/internals';
 import { injectHASensorImports } from './reactive-injector.js';
 import { injectReactiveBindingsRuntime } from './reactive-config.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
+import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
 import { lowerActionTree } from './action-lowering.js';
 
@@ -232,12 +233,7 @@ export function lowerToYamlConfig(
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
   if (cppResult) {
-    const entityComponentIds = new Map<string, string>();
-    for (const entity of ir.esphome.haEntities) {
-      if (entity.entityId && entity.generatedId) {
-        entityComponentIds.set(entity.entityId, entity.generatedId);
-      }
-    }
+    const entityComponentIds = buildEntityComponentIds(ir.esphome.haEntities);
     const themeVarNames = new Map<string, string>();
     if (ir.espcompose.themes) {
       for (const signalPath of ir.espcompose.themes.leafData.keys()) {

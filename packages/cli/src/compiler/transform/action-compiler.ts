@@ -343,51 +343,56 @@ function compileActionCall(
   }
 
   // ref.method(args) — component action
-  if (ts.isPropertyAccessExpression(call.expression) &&
-      ts.isIdentifier(call.expression.expression)) {
-    const objNode = call.expression.expression;
-    const objName = objNode.text;
+  if (ts.isPropertyAccessExpression(call.expression)) {
     const methodName = call.expression.name.text;
 
-    // scriptHandle.execute() / scriptHandle.stop()
-    const scriptId = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
-    if (scriptId) {
-      if (methodName === 'execute') return [irScriptExecute(scriptId)];
-      if (methodName === 'stop') return [irScriptStop(scriptId)];
-      return emitError(call, ctx,
-        `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
+    // ── Symbol-based resolution (direct identifier access) ──────────
+    if (ts.isIdentifier(call.expression.expression)) {
+      const objNode = call.expression.expression;
+      const objName = objNode.text;
+
+      // scriptHandle.execute() / scriptHandle.stop()
+      const scriptId = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
+      if (scriptId) {
+        if (methodName === 'execute') return [irScriptExecute(scriptId)];
+        if (methodName === 'stop') return [irScriptStop(scriptId)];
+        return emitError(call, ctx,
+          `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
+      }
+
+      // HA entity action (symbol-based)
+      const haEntity = lookupBySymbol(ctx.haEntities, objNode, ctx.checker);
+      if (haEntity) {
+        return compileHAAction(call, haEntity, methodName, ctx);
+      }
+
+      // Component ref action (symbol-based)
+      const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
+      if (refTag !== undefined) {
+        return compileRefAction(call, objName, refTag, methodName, ctx);
+      }
     }
 
-    // HA entity action
-    const haEntity = lookupBySymbol(ctx.haEntities, objNode, ctx.checker);
-    if (haEntity) {
-      return compileHAAction(call, haEntity, methodName, ctx);
-    }
+    // ── Type-based resolution (works for any expression depth) ──────
+    // Handles: props.entity.toggle(), this.light.turnOn(), etc.
+    const objExpr = call.expression.expression;
+    const objType = ctx.checker.getTypeAtLocation(objExpr);
 
-    // Type-based HA entity fallback: if the variable wasn't scanned
-    // (e.g., dynamic entity from prop) but has HA entity type shape,
-    // infer domain from the type and compile as dynamic action.
-    const objType = ctx.checker.getTypeAtLocation(objNode);
+    // HA entity action (type-based)
     const inferredDomain = inferHAEntityDomainFromType(objType);
     if (inferredDomain) {
       const dynamicEntity: HAEntityInfo = {
         entityId: '__dynamic__',
         domain: inferredDomain,
         isDynamic: true,
-        entityIdExpr: objName,
+        entityIdExpr: objExpr.getText(),
       };
       return compileHAAction(call, dynamicEntity, methodName, ctx);
     }
 
-    // Component ref action
-    const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
-    if (refTag !== undefined) {
-      return compileRefAction(call, objName, refTag, methodName, ctx);
-    }
-
-    // Check if it's a ref by type (fallback for refs not in refTags map)
-    const type = ctx.checker.getTypeAtLocation(objNode);
-    if (hasRefBrand(type)) {
+    // Component ref action (type-based)
+    if (hasRefBrand(objType)) {
+      const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
       return compileRefAction(call, objName, undefined, methodName, ctx);
     }
   }

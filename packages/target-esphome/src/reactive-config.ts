@@ -11,7 +11,7 @@ import { injectHASensorImports } from './reactive-injector.js';
 import { generateSignalSetLambda } from './bindings-codegen.js';
 import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
 import { Scalar } from 'yaml';
-import { exprToCpp, exprTypeToCpp } from './expr-to-cpp.js';
+import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType } from '@espcompose/core/internals';
@@ -146,12 +146,7 @@ export function buildRuntimeConfig(
   }
 
   // ── Build CppLoweringContext from entity/theme data ────────────────────
-  const entityComponentIds = new Map<string, string>();
-  for (const entity of entities) {
-    if (entity.entityId && entity.generatedId) {
-      entityComponentIds.set(entity.entityId, entity.generatedId);
-    }
-  }
+  const entityComponentIds = buildEntityComponentIds(entities);
 
   const themeVarNames = new Map<string, string>();
   if (themeData) {

@@ -614,7 +614,7 @@ lvgl:
                           entity_id: light.kitchen_floods
                   bg_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
                   border_width: 0
-                  width: !lambda "return espcompose::memo_4.get();"
+                  width: !lambda "return espcompose::memo_3.get();"
                   height: !lambda "return espcompose::thm_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return espcompose::thm_colors_primary_bgPressed.get();"
@@ -624,7 +624,7 @@ lvgl:
                         text: !lambda "return espcompose::memo_1.get().c_str();"
                         align: CENTER
                         text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
-                        text_font: !lambda "return espcompose::memo_3.get();"
+                        text_font: !lambda "return espcompose::memo_2.get();"
                         id: rw_ref4
               - button:
                   on_press:
@@ -641,7 +641,7 @@ lvgl:
                   id: rw_ref5
                   widgets:
                     - label:
-                        text: !lambda "return espcompose::memo_2.get().c_str();"
+                        text: !lambda "return espcompose::memo_4.get().c_str();"
                         align: CENTER
                         text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
                         text_font: !lambda "return espcompose::memo_5.get();"

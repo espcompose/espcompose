@@ -1,22 +1,23 @@
 /**
  * E2E project: fancy-light-cascade-device
  *
- * Validates ReactiveNode propagation through a 3-layer component cascade:
- *   App (entity bindings + memos) → FancyLightButton → LightButton → Button → lvgl-button + lvgl-label
+ * Validates entity binding propagation through a 3-layer component cascade:
+ *   App (useHAEntity) → FancyLightButton → LightButton → Button → lvgl-button + lvgl-label
  *
- * The reactive label memos are created at the top level (where useHAEntity()
- * and useMemo() are statically resolvable by the compiler), then the resulting
- * ReactiveNode values flow as props through 3 component layers down to the
- * leaf <lvgl-button> + <lvgl-label> widgets.
+ * Entity binding objects (LightBinding) are passed as props through multiple
+ * component layers. Inner components use `useMemo(() => props.entity.isOn ? ...)`
+ * and `onPress={() => { props.entity.toggle(); }}` — exercising the compiler's
+ * slot mechanism (expression side) and type-based action resolution (action side).
  *
  * Expected compiler output:
  *   - HA sensor + light entity signals
- *   - Memo chain (sensor.value → statusText, light.isOn → label)
+ *   - Slotted memos resolved at render time (entity.isOn → label text)
+ *   - Type-based HA actions (entity.toggle() via inferHAEntityDomainFromType)
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
 import { DisplayRef, useRef, useHAEntity, useMemo, theme } from '@espcompose/core';
-import type { EspComposeElement, TriggerHandler, BindProp } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, BindProp, LightBinding } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -47,30 +48,35 @@ function LightButton(props: LightButtonProps): EspComposeElement {
 }
 
 // ── Layer 2: FancyLightButton ─────────────────────────────────────────────
-// Receives a reactive label (already a ReactiveNode from useMemo) and
-// forwards it through to LightButton. Tests that ReactiveNodes survive
-// prop passing through multiple component layers.
+// Receives a LightBinding entity and derives reactive label + action locally.
+// Tests that the compiler's slot mechanism and type-based action resolution
+// work through props (not just direct useHAEntity() variables).
 
 interface FancyLightButtonProps {
-  label: BindProp<string>;
+  entity: LightBinding;
+  label: string;
   status: StatusToken;
-  onPress?: TriggerHandler;
 }
 
 function FancyLightButton(props: FancyLightButtonProps): EspComposeElement {
+  // useMemo with props.entity.isOn → goes through slot path in expr-compiler
+  const lightLabel = useMemo(
+    () => props.entity.isOn ? 'On' : 'Off',
+  );
+
   return (
     <LightButton
-      label={props.label}
+      label={lightLabel}
       status={props.status}
-      onPress={props.onPress}
+      // onPress with props.entity.toggle() → goes through type-based action resolution
+      onPress={() => { props.entity.toggle(); }}
     />
   );
 }
 
 // ── Layer 1 (top-level): App ──────────────────────────────────────────────
-// Entity bindings and memos live here (the compiler requires literal entity
-// IDs and statically analyzable useMemo bodies). The resulting ReactiveNodes
-// flow down through FancyLightButton → LightButton → Button.
+// Entity bindings created here, then passed as props to inner layers.
+// The inner components compile useMemo()/actions using the slot mechanism.
 
 function App() {
   const displayRef = useRef<DisplayRef>();
@@ -78,17 +84,9 @@ function App() {
   const kitchenLight = useHAEntity('light.kitchen_floods');
   const bedroomLight = useHAEntity('light.bedroom_lamp');
 
-  // Sensor-derived reactive label
+  // Sensor-derived reactive label (direct, non-slotted — entity var is local)
   const statusText = useMemo(
     () => tempSensor.value > 75 ? 'Hot!' : tempSensor.value > 65 ? 'Comfortable' : 'Cool',
-  );
-
-  // Light-derived reactive labels (memo chain: entity signal → derived text)
-  const kitchenLabel = useMemo(
-    () => kitchenLight.isOn ? 'Kitchen: On' : 'Kitchen: Off',
-  );
-  const bedroomLabel = useMemo(
-    () => bedroomLight.isOn ? 'Bedroom: On' : 'Bedroom: Off',
   );
 
   return (
@@ -118,17 +116,17 @@ function App() {
               {/* Temperature status — reactive text from sensor */}
               <lvgl-label text={statusText} />
 
-              {/* 3-layer cascade: FancyLightButton → LightButton → Button
-                  ReactiveNode memos flow through props across all 3 layers */}
+              {/* 3-layer cascade: entity bindings flow through props.
+                  FancyLightButton derives memos + actions from props.entity */}
               <FancyLightButton
-                label={kitchenLabel}
+                entity={kitchenLight}
+                label="Kitchen"
                 status="primary"
-                onPress={() => { kitchenLight.toggle(); }}
               />
               <FancyLightButton
-                label={bedroomLabel}
+                entity={bedroomLight}
+                label="Bedroom"
                 status="secondary"
-                onPress={() => { bedroomLight.toggle(); }}
               />
 
               {/* Theme switching */}
