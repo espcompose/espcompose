@@ -6,18 +6,9 @@
  */
 
 // Theme system
-export { useReactiveTheme } from './theme/context';
 export { ThemeProvider } from './theme/ThemeProvider';
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
-export {
-  resolveSpacing,
-  resolveSize,
-  resolveStatus,
-  resolveTypography,
-  resolveRadius,
-  resolveFont as fontDefToLvgl,
-} from './theme/resolvers';
 
 // Theme types
 export type {
@@ -35,9 +26,6 @@ export type {
   StatusToken,
   TextVariant,
 } from './theme/types';
-
-// Intent constants
-export { COMPOSE_UI_INTENTS } from './intents';
 
 // Components
 export { Screen } from './components/Screen';
