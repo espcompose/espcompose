@@ -1,9 +1,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 // IRReactiveNode<T> — unified reactive value abstraction
 //
-// IRReactiveNode is the single reactive value type in espcompose. It replaces
-// the former Expression<T> class and supports both single-source and
-// multi-source reactive values.
+// IRReactiveNode is the single reactive value type in espcompose.
+// It supports both single-source and multi-source reactive values.
 //
 // All reactive bindings — even single-source HA entity properties — route
 // through the C++ reactive runtime (Signal/Memo/Effect). There is no

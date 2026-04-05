@@ -35,22 +35,11 @@ export {
   irAction,
   irSecret,
   irTriggerVar,
-  isIRScalar,
-  isIRObject,
-  isIRArray,
-  isIRNull,
-  isIRReactive,
-  isIRRef,
-  isIRAction,
-  isIRSecret,
-  isIRTriggerVar,
 } from './types';
 
 export { buildSemanticIR } from './build';
 export type { BuildSemanticIRInput } from './build';
 
-export { collectFromIR } from './traverse';
-export type { IRTreeCollected } from './traverse';
 
 // ── Expression IR ────────────────────────────────────────────────────────────
 export type {
@@ -123,5 +112,4 @@ export {
   irScriptStop,
   irThemeSelect,
   irLambdaCondition,
-  irNativeCondition,
 } from './action-types';

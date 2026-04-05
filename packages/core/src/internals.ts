@@ -44,12 +44,10 @@ export {
 } from './theme-registry';
 export {
   clearReactiveThemeProxy,
+  clearThemeNodeCache,
 } from './reactive-theme';
 export {
-  themeSignalName,
-  dottedToSignalPath,
   inferValueType,
-  THEME_SIGNAL_PREFIX,
 } from './theme-signals';
 export type { ThemeLeaf } from './theme-signals';
 
@@ -72,9 +70,6 @@ export {
 } from './lvgl-actions';
 export type { LvglStylePropDescriptor } from './lvgl-actions';
 
-// ── HA action map (target codegen) ─────────────────────────────────────────
-export { HA_ACTION_MAP } from './ha-bindings';
-
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Demoted from public API — still accessible for tooling / target authors
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -91,6 +86,9 @@ export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScop
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
+
+// ── Types (internal-only) ──────────────────────────────────────────────────
+export { RefHandle } from './types';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive-node';
@@ -112,7 +110,6 @@ export type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
-  HAEntityBinding,
   HAEntityBindingMap,
 } from './ha-bindings';
 
@@ -130,22 +127,21 @@ export type {
 
 // ── Serialize markers ──────────────────────────────────────────────────────
 export { camelToSnake } from './serialize';
-export { LambdaMarker, SecretMarker, QuotedMarker, isLambdaMarker, isSecretMarker, isQuotedMarker, isSerializeMarker } from './markers';
+export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
-export { lvglWidgetUpdate, LVGL_UPDATABLE_WIDGETS } from './lvgl-actions';
+export { LVGL_UPDATABLE_WIDGETS } from './lvgl-actions';
 
 // ── Trigger args ───────────────────────────────────────────────────────────
 export { isTriggerVar } from './trigger-args';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
-export { buildSemanticIR, collectFromIR } from './ir/index';
+export { buildSemanticIR } from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
   BuildSemanticIRInput, IRThemeData, IRScript,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
-  IRTreeCollected,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod,
@@ -172,5 +168,5 @@ export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,
   irWaitUntilAction, irIfAction, irWhileAction, irRepeatAction,
   irScriptExecute, irScriptWait, irScriptStop, irThemeSelect,
-  irLambdaCondition, irNativeCondition,
+  irLambdaCondition,
 } from './ir/index';

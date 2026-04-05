@@ -15,7 +15,23 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 export * from './runtime';
-export * from './types';
+export type {
+  FunctionComponent,
+  EspComposeElement,
+  TriggerHandler,
+  TimePeriod,
+  MACAddress,
+  IPv4Address,
+  Ref,
+  RefProp,
+  BaseProps,
+  ComponentProps,
+  PinMode,
+  PinConfig,
+  Pin,
+  BindProp,
+} from './types';
+export { ACTION_BRAND, useRef, isRef } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,

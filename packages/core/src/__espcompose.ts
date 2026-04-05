@@ -178,7 +178,26 @@ function resolveIRExprSlots(expr: IRExprNode, signals: IRReactiveNode[]): IRExpr
       return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
     case 'resolve_font':
       return { ...expr, family: resolveIRExprSlots(expr.family, signals), size: resolveIRExprSlots(expr.size, signals) };
-    default:
+    case 'type_cast':
+      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
+    case 'format_string':
+      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
+    case 'null_coalesce':
+      return { ...expr, left: resolveIRExprSlots(expr.left, signals), right: resolveIRExprSlots(expr.right, signals) };
+    case 'string_method':
+      return { ...expr, object: resolveIRExprSlots(expr.object, signals), args: expr.args.map(a => resolveIRExprSlots(a, signals)) };
+    // Leaf nodes with no child expressions
+    case 'literal':
+    case 'signal_read':
+    case 'memo_read':
+    case 'theme_read':
+    case 'entity_prop':
+    case 'component_read':
+    case 'trigger_var':
       return expr;
+    default: {
+      const _exhaustive: never = expr;
+      throw new Error(`resolveIRExprSlots: unhandled expression kind '${(_exhaustive as { kind: string }).kind}'`);
+    }
   }
 }

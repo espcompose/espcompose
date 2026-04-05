@@ -30,14 +30,6 @@ export const CONTEXT_TRANSPARENT = Symbol.for('esphome.compose.contextTransparen
 // Intent constants — domain taxonomy
 // ────────────────────────────────────────────────────────────────────────────
 
-/** ESPHome root-level intents */
-export const ESPHOME_INTENTS = {
-  ROOT: 'esphome:root',
-  INFRASTRUCTURE: 'esphome:infrastructure',
-  PLATFORM: 'esphome:platform',
-  DISPLAY: 'esphome:display',
-} as const;
-
 /** LVGL intents */
 export const LVGL_INTENTS = {
   ROOT: 'lvgl:root',
@@ -132,35 +124,4 @@ export interface IntrinsicIntentMeta {
   readonly contextTransparent?: boolean;
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// Helpers for runtime intent introspection
-// ────────────────────────────────────────────────────────────────────────────
 
-/** Check if a function component has intent branding. */
-export function hasIntents(fn: unknown): fn is IntentBrand {
-  return typeof fn === 'function' && INTENTS in (fn as object);
-}
-
-/** Get the intents from a branded component, or undefined if unbranded. */
-export function getIntents(fn: unknown): readonly string[] | undefined {
-  if (hasIntents(fn)) return fn[INTENTS];
-  return undefined;
-}
-
-/** Get the allowed child intents from a branded component. */
-export function getAllowedChildIntents(fn: unknown): readonly string[] | undefined {
-  if (hasIntents(fn)) return fn[ALLOWED_CHILD_INTENTS];
-  return undefined;
-}
-
-/** Get the context from a branded component. */
-export function getContext(fn: unknown): readonly string[] | undefined {
-  if (hasIntents(fn)) return fn[CONTEXT];
-  return undefined;
-}
-
-/** Check if a component is context-transparent. */
-export function isContextTransparent(fn: unknown): boolean {
-  if (hasIntents(fn)) return fn[CONTEXT_TRANSPARENT] === true;
-  return false;
-}

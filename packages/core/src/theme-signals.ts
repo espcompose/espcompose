@@ -17,9 +17,7 @@ export interface ThemeLeaf {
   valueType: string;
 }
 
-// ── Constants ──────────────────────────────────────────────────────────────
 
-export const THEME_SIGNAL_PREFIX = 'thm_';
 
 // ── Value type inference ───────────────────────────────────────────────────
 
@@ -70,19 +68,3 @@ export function flattenTheme(
   return result;
 }
 
-/**
- * Convert a leaf path to its C++ signal/memo name.
- *
- * @example themeSignalName('colors_primary_bg') → 'thm_colors_primary_bg'
- */
-export function themeSignalName(path: string): string {
-  return `${THEME_SIGNAL_PREFIX}${path}`;
-}
-
-/**
- * Convert a dotted JS proxy path (e.g. 'colors.primary.bg') to the
- * underscore-separated signal path (e.g. 'colors_primary_bg').
- */
-export function dottedToSignalPath(dotted: string): string {
-  return dotted.replace(/\./g, '_');
-}

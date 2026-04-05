@@ -15,7 +15,7 @@ import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveSco
 import type { IRActionNode } from './action-types';
 
 // ────────────────────────────────────────────────────────────────────────────
-// Script definition (re-declared here to avoid circular imports with hooks)
+// Script definition
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface IRScript {
@@ -101,8 +101,7 @@ export interface IRESPComposeData {
  * RuntimeNode[] + HTML for the browser simulator).
  *
  * The config tree contains semantic value nodes (IRReactive, IRRef, etc.)
- * that preserve pre-serialization data. Use collectFromIR() to extract
- * reactive nodes and bindings from the tree.
+ * that preserve pre-serialization data.
  */
 export interface SemanticIR {
   readonly kind: 'semantic_ir';
@@ -283,16 +282,3 @@ export function irTriggerVar(name: string): IRTriggerVar {
   return { kind: 'trigger_var', name };
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// Type guards
-// ────────────────────────────────────────────────────────────────────────────
-
-export function isIRScalar(v: IRValue): v is IRScalar { return v.kind === 'scalar'; }
-export function isIRObject(v: IRValue): v is IRObject { return v.kind === 'object'; }
-export function isIRArray(v: IRValue): v is IRArray { return v.kind === 'array'; }
-export function isIRNull(v: IRValue): v is IRNull { return v.kind === 'null'; }
-export function isIRReactive(v: IRValue): v is IRReactive { return v.kind === 'reactive'; }
-export function isIRRef(v: IRValue): v is IRRef { return v.kind === 'ref'; }
-export function isIRAction(v: IRValue): v is IRAction { return v.kind === 'action'; }
-export function isIRSecret(v: IRValue): v is IRSecret { return v.kind === 'secret'; }
-export function isIRTriggerVar(v: IRValue): v is IRTriggerVar { return v.kind === 'trigger_var'; }

@@ -39,24 +39,4 @@ export function isTriggerVar(val: unknown): val is TriggerVar {
   return val instanceof TriggerVar;
 }
 
-/** Maps each property of T to the base type (trigger args are plain values at runtime). */
-export type TriggerArgs<T> = {
-  [K in keyof T]: T[K];
-};
-
-/**
- * Create a TriggerArgs proxy for a trigger handler body.
- * Property access returns TriggerVar markers.
- */
-export function createTriggerArgs<T>(): TriggerArgs<T> {
-  return new Proxy({} as object, {
-    get(_target, prop) {
-      if (typeof prop === 'string') {
-        return new TriggerVar(prop);
-      }
-      return undefined;
-    },
-  }) as TriggerArgs<T>;
-}
-
 

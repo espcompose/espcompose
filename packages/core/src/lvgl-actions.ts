@@ -1,54 +1,16 @@
 // ────────────────────────────────────────────────────────────────────────────
-// LVGL Widget Update Actions
+// LVGL Widget Definitions & Style Property Tables
 //
-// Constructs ESPHome YAML action objects for updating LVGL widget properties
-// at runtime. ESPHome uses per-widget-type action keys:
-//
-//   - button.update:   { id: <widget_id>, ...props }
-//   - label.update:    { id: <widget_id>, text: "..." }
-//   - slider.update:   { id: <widget_id>, value: 50 }
-//   - etc.
-//
-// The YAML key format is: `lvgl.<widget_type>.update`
-//
-// These are used by the reactive injector to generate trigger callbacks
-// that push state changes from sensors into LVGL widgets.
+// Data-driven mapping from ESPHome prop names to LVGL C API setters.
+// Used by the type codegen (lvgl-codegen.ts) to wrap props with BindProp<T>
+// and by the C++ codegen to generate update calls.
 // ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Construct an ESPHome LVGL widget update action.
- *
- * @param widgetType - The LVGL widget type as it appears in YAML
- *                     (e.g. `button`, `label`, `slider`, `arc`).
- * @param widgetId   - The ESPHome ID of the target widget.
- * @param props      - Key-value pairs to update on the widget.
- *                     Values may be plain values or `!lambda` Scalars.
- * @returns A plain object representing the YAML action.
- *
- * @example
- * lvglWidgetUpdate('button', 'kitchen_btn', { checked: lambdaScalar })
- * // → { 'lvgl.button.update': { id: 'kitchen_btn', checked: !lambda "..." } }
- */
-export function lvglWidgetUpdate(
-  widgetType: string,
-  widgetId: string,
-  props: Record<string, unknown>,
-): Record<string, unknown> {
-  return {
-    [`lvgl.${widgetType}.update`]: {
-      id: widgetId,
-      ...props,
-    },
-  };
-}
 
 /**
  * Known LVGL widget types and their updatable properties.
  *
- * This is used for validation and documentation — the reactive injector
- * doesn't strictly need it since it passes through whatever props the
- * Expression binds to, but it serves as a reference for which widgets
- * support updates and what properties are meaningful.
+ * Used by the codegen for validation and documentation \u2014 it serves as a
+ * reference for which widgets support updates and what properties are meaningful.
  */
 export const LVGL_UPDATABLE_WIDGETS: Readonly<Record<string, readonly string[]>> = {
   button:    ['checked', 'text', 'hidden'],
@@ -78,11 +40,11 @@ export const LVGL_UPDATABLE_WIDGETS: Readonly<Record<string, readonly string[]>>
 // Data-driven mapping from ESPHome prop names to LVGL C API setters.
 // Used by both:
 //   1. The type codegen (lvgl-codegen.ts) — to wrap props with BindProp<T>
-//   2. The C++ codegen (reactive-runtime/codegen.ts) — to generate update calls
+//   2. The C++ codegen in target-esphome — to generate update calls
 //
 // Each entry specifies:
 //   - lvglSetter: name suffix for lv_obj_set_style_<name>(obj, value, selector)
-//   - cppType:    C++ value type for thecall
+//   - cppType:    C++ value type for the call
 //   - cast:       optional C++ cast expression wrapping the value
 //   - special:    optional flag for props needing custom codegen
 // ────────────────────────────────────────────────────────────────────────────
@@ -174,13 +136,13 @@ export const LVGL_STYLE_PROP_TABLE: Readonly<Record<string, LvglStylePropDescrip
   line_width:       { lvglSetter: 'line_width',       cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
   line_dash_width:  { lvglSetter: 'line_dash_width',  cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
   line_dash_gap:    { lvglSetter: 'line_dash_gap',    cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
-  line_rounded:     { lvglSetter: 'line_rounded',     cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
+  line_rounded:     { lvglSetter: 'line_rounded',     cppType: 'bool' },
   line_color:       { lvglSetter: 'line_color',       cppType: 'lv_color_t' },
   line_opa:         { lvglSetter: 'line_opa',         cppType: 'lv_opa_t',   cast: 'static_cast<lv_opa_t>($V)' },
 
   // ── Arc ────────────────────────────────────────────────────────────────
   arc_width:        { lvglSetter: 'arc_width',        cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
-  arc_rounded:      { lvglSetter: 'arc_rounded',      cppType: 'lv_coord_t', cast: 'static_cast<lv_coord_t>($V)' },
+  arc_rounded:      { lvglSetter: 'arc_rounded',      cppType: 'bool' },
   arc_color:        { lvglSetter: 'arc_color',        cppType: 'lv_color_t' },
   arc_opa:          { lvglSetter: 'arc_opa',          cppType: 'lv_opa_t',   cast: 'static_cast<lv_opa_t>($V)' },
 

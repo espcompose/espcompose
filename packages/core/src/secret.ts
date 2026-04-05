@@ -8,15 +8,12 @@
 //   <wifi ssid="MyNetwork" password={secret('my-wifi-password')} />
 // ────────────────────────────────────────────────────────────────────────────
 
-const SECRET_VALUE_BRAND = Symbol.for('espcompose.SecretValue');
-
 /**
  * A value marked for emission as an ESPHome `!secret` reference.
  *
  * The serializer detects `SecretValue` instances and emits `!secret <key>`.
  */
 export class SecretValue {
-  readonly [SECRET_VALUE_BRAND] = true;
   readonly value: string;
   readonly key: string;
 

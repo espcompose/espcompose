@@ -38,7 +38,6 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearSecrets();
   cjsSDK.clearThemeRegistry();
   cjsSDK.clearReactiveThemeProxy();
-  cjsSDK.clearThemeNodeCache();
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];

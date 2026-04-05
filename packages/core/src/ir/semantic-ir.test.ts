@@ -5,7 +5,6 @@ import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveSco
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
-import { collectFromIR } from './traverse';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -343,89 +342,3 @@ describe('buildSemanticIR', () => {
   });
 });
 
-// ────────────────────────────────────────────────────────────────────────────
-// collectFromIR tree-walk tests
-// ────────────────────────────────────────────────────────────────────────────
-
-describe('collectFromIR', () => {
-  it('collects all semantic node types from a mixed config', () => {
-    const node = makeMemoNode(0);
-    const reactiveScalar = lambdaScalar('return espcompose::memo_0.get();');
-    const secretVal = secretScalar('wifi_password');
-    const triggerVal = lambdaScalar('return x;');
-    const ref = new RefHandle();
-    const token = ref.toString();
-    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
-    const actionArr = [{ 'homeassistant.service': { service: 'light.toggle' } }];
-
-    const captures = emptyCaptures();
-    captures.reactives.set(reactiveScalar, node);
-    captures.secrets.set(secretVal, 'wifi_password');
-    captures.triggerVars.set(triggerVal, { name: 'x' });
-    captures.refs.set(token, ref);
-    captures.actions.set(actionArr, { rawActions });
-
-    const binding: IRBinding = {
-      kind: 'binding',
-      targetId: 'lbl_1',
-      targetType: 'label',
-      targetProp: 'text',
-      expression: node,
-    };
-
-    const config = {
-      lvgl: {
-        widgets: [{
-          label: { id: 'lbl_1', text: reactiveScalar },
-          button: { on_press: actionArr },
-        }],
-      },
-      wifi: { password: secretVal },
-      sensor: { i2c_id: token, value: triggerVal },
-    };
-
-    const ir = buildSemanticIR({
-      config,
-      captures,
-      bindings: [binding],
-      entities: [],
-      components: [],
-      scripts: [],
-      reactiveNodes: [],
-    });
-
-    const collected = collectFromIR(ir);
-    expect(collected.reactives).toHaveLength(1);
-    expect(collected.reactives[0].node).toBe(node);
-    expect(collected.refs).toHaveLength(1);
-    expect(collected.refs[0].token).toBe(token);
-    expect(collected.actions).toHaveLength(1);
-    expect(collected.secrets).toHaveLength(1);
-    expect(collected.secrets[0].key).toBe('wifi_password');
-    expect(collected.triggerVars).toHaveLength(1);
-    expect(collected.triggerVars[0].name).toBe('x');
-  });
-
-  it('returns empty collections for a plain config', () => {
-    const config = {
-      esphome: { name: 'test', platform: 'ESP32' },
-    };
-
-    const ir = buildSemanticIR({
-      config,
-      captures: emptyCaptures(),
-      bindings: [],
-      entities: [],
-      components: [],
-      scripts: [],
-      reactiveNodes: [],
-    });
-
-    const collected = collectFromIR(ir);
-    expect(collected.reactives).toHaveLength(0);
-    expect(collected.refs).toHaveLength(0);
-    expect(collected.actions).toHaveLength(0);
-    expect(collected.secrets).toHaveLength(0);
-    expect(collected.triggerVars).toHaveLength(0);
-  });
-});

@@ -118,8 +118,6 @@ let cachedProxy: unknown = null;
  * instances tied to theme signal memos.  When themes change at runtime via
  * `theme.select()`, all downstream effects recalculate automatically.
  *
- * Replaces the old `useTheme()` which returned a static `Theme` object.
- *
  * @example
  * const theme = useReactiveTheme();
  * const bg = theme.colors.primary.bg; // IRReactiveNode<lv_color_t>

@@ -28,7 +28,7 @@ import type { ACTION_BRAND } from '../types';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
-export interface ScriptDefinition {
+interface ScriptDefinition {
   id: string;
   then: IRActionNode[];
 }
@@ -76,7 +76,7 @@ export interface ScriptHandle {
 }
 
 /** Compiled metadata injected by the AST transformer */
-export interface CompiledScriptMeta {
+interface CompiledScriptMeta {
   id: string;
   then: unknown[];
 }

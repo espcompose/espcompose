@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { EspComposeElement, FunctionComponent } from './types';
-export { Fragment } from './serialize';
+export { Fragment } from './runtime';
 
 export function jsx(
   type: string | symbol | FunctionComponent,

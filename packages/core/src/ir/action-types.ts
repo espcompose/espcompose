@@ -219,6 +219,3 @@ export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
   return { kind: 'lambda', exprIR };
 }
 
-export function irNativeCondition(conditionKey: string, config: IRActionConfig): IRNativeCondition {
-  return { kind: 'native', conditionKey, config };
-}
