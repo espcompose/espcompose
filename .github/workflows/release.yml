@@ -45,7 +45,7 @@ jobs:
           pnpm -v
 
       - name: Upgrade npm for trusted publishing
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.11.1
 
       - name: Show npm version after upgrade
         run: npm -v
