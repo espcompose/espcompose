@@ -14,6 +14,7 @@ import noUntrackedSignal from './rules/no-untracked-signal';
 import noUnsupportedTriggerBody from './rules/no-unsupported-trigger-body';
 import noHookOutsideComponent from './rules/no-hook-outside-component';
 import noUnresolvableHaEntity from './rules/no-unresolvable-ha-entity';
+import noReactiveMapObject from './rules/no-reactive-map-object';
 
 const plugin: ESLint.Plugin = {
   meta: {
@@ -35,6 +36,8 @@ const plugin: ESLint.Plugin = {
     'no-hook-outside-component': noHookOutsideComponent as any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'no-unresolvable-ha-entity': noUnresolvableHaEntity as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'no-reactive-map-object': noReactiveMapObject as any,
   },
 };
 
@@ -84,6 +87,9 @@ const recommended: Linter.Config[] = [
 
       // Prevent useHAEntity() with variable args that can't resolve to a domain.
       '@espcompose/eslint/no-unresolvable-ha-entity': 'error',
+
+      // Prevent useReactiveMap() callbacks from returning objects.
+      '@espcompose/eslint/no-reactive-map-object': 'error',
     },
   },
   {

@@ -65,7 +65,7 @@ export { delay, logger } from './actions';
 
 // __espcompose — compiler-internal reactive plumbing (injected into user bundles by CLI)
 export { __espcompose } from './__espcompose';
-export { useReactive } from './reactive-utils';
+export { useReactive, useReactiveMap } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Theme

@@ -38,6 +38,7 @@ export const Switch = createWidgetComponent(
       <lvgl-obj
         style={{
           backgroundOpacity: 'transparent',
+          borderWidth: 0,
           width: props.width ?? '100%',
           height: 'fit-content',
           display: 'flex',

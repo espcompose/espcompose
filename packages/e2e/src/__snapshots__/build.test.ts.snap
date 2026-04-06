@@ -415,6 +415,7 @@ lvgl:
                         id: rw_ref4
                     - obj:
                         bg_opa: TRANSP
+                        border_width: 0
                         width: 100%
                         height: SIZE_CONTENT
                         layout:
@@ -433,6 +434,7 @@ lvgl:
                               width: 100%
                     - obj:
                         bg_opa: TRANSP
+                        border_width: 0
                         width: 100%
                         height: SIZE_CONTENT
                         layout:
@@ -2102,6 +2104,7 @@ lvgl:
                         id: rw_ref4
                     - obj:
                         bg_opa: TRANSP
+                        border_width: 0
                         width: 100%
                         height: SIZE_CONTENT
                         layout:

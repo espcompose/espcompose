@@ -42,7 +42,7 @@ function useButtonVariant(
   const resolved = useReactive(variant);
 
   if (isIRReactiveNode(resolved)) {
-    const r = resolved as IRReactiveNode<ButtonVariant>;
+    const r = resolved;
     return {
       bgColor: sc.bg,
       bgOpa: useMemo(() => r.get() === 'solid' ? 'opaque' as const : 'transparent' as const),

@@ -1,10 +1,10 @@
 /**
  * Resolve a component size token.
- * Returns an object where each dimension is a IRReactiveNode<number>.
+ * Returns an object where each dimension is a Signal.
  */
 
-import { useMemo, isIRReactiveNode, useReactive } from '@espcompose/core';
-import type { Reactive, IRReactiveNode, Signal } from '@espcompose/core';
+import { useReactiveMap } from '@espcompose/core';
+import type { Reactive, Signal } from '@espcompose/core';
 import type { SizeToken } from '../theme/types';
 import { themeLeaf } from './utils';
 
@@ -14,19 +14,10 @@ export function useSize(value: Reactive<SizeToken>): {
   paddingX: Signal<number>;
   paddingY: Signal<number>;
 } {
-  const resolved = useReactive(value);
-  if (isIRReactiveNode(resolved)) {
-    return {
-      height: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'height')),
-      fontSize: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'fontSize')),
-      paddingX: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'paddingX')),
-      paddingY: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'paddingY')),
-    };
-  }
   return {
-    height: themeLeaf('sizes', resolved, 'height'),
-    fontSize: themeLeaf('sizes', resolved, 'fontSize'),
-    paddingX: themeLeaf('sizes', resolved, 'paddingX'),
-    paddingY: themeLeaf('sizes', resolved, 'paddingY'),
+    height: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'height')),
+    fontSize: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'fontSize')),
+    paddingX: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'paddingX')),
+    paddingY: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'paddingY')),
   };
 }

@@ -70,6 +70,31 @@ export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
   return prop as T;
 }
 
+// ── useReactiveMap ─────────────────────────────────────────────────────────
+
+/**
+ * Map a `Reactive<T>` prop through a pure function, returning a reactive
+ * result when the input is reactive.
+ *
+ * Encapsulates the common `useReactive` → `isIRReactiveNode` → `useMemo`
+ * pattern so that hook authors never need to deal with the branch manually.
+ *
+ * @example
+ * export function useSpacing(value: Reactive<SpacingToken>): Signal<number> {
+ *   return useReactiveMap(value, (v) => themeLeaf('spacing', v));
+ * }
+ */
+export function useReactiveMap<T, R>(
+  prop: Reactive<T>,
+  fn: (value: T) => R,
+): R {
+  const resolved = useReactive(prop);
+  if (isIRReactiveNode(resolved)) {
+    return useMemo(() => fn((resolved as IRReactiveNode<T>).get())) as R;
+  }
+  return fn(resolved as T);
+}
+
 // ── reactiveIsNaN ──────────────────────────────────────────────────────────
 
 /**
