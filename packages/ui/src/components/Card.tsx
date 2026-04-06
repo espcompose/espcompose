@@ -8,7 +8,7 @@
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
-import type { SpacingToken, RadiusToken } from '../theme/types';
+import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
 
 type CardProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
@@ -34,8 +34,7 @@ export const Card = createWidgetComponent(
     const padding = useSpacing(props.padding ?? 'md');
     const radius = useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useTheme() as any;
+    const theme = useTheme<Theme>();
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;
 
     return (

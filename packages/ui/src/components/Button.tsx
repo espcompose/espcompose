@@ -80,8 +80,6 @@ export const Button = createWidgetComponent(
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
 
     // Width: derived from reactive paddingX if no override.
-    // The compiler transform (espcompose build --library) compiles this to
-    // __espcompose.slotted() with a C++ template at library build time.
     const width = props.style?.width ?? useMemo(() => dims.paddingX * 2 + 80);
     const height = props.style?.height ?? dims.height;
 

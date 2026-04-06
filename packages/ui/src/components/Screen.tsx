@@ -7,7 +7,7 @@
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
-import type { SpacingToken } from '../theme/types';
+import type { SpacingToken, Theme } from '../theme/types';
 
 type ScreenProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
@@ -33,8 +33,7 @@ type ScreenProps = WidgetProps<{
 export const Screen = createWidgetComponent(
   (props: ScreenProps): EspComposeElement => {
     const padding = props.padding != null ? useSpacing(props.padding) : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useTheme() as any;
+    const theme = useTheme<Theme>();
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.background;
 
     return (

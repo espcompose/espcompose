@@ -8,7 +8,7 @@
 import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, useTheme } from '@espcompose/core';
 import { useSpacing, useTypography, useFont } from '../hooks';
-import type { SpacingToken } from '../theme/types';
+import type { SpacingToken, Theme } from '../theme/types';
 
 export type DropdownProps = WidgetProps<{
   /** Label text displayed above the dropdown. */
@@ -36,8 +36,7 @@ export const Dropdown = createWidgetComponent(
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const typo = useTypography('body');
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useTheme() as any;
+    const theme = useTheme<Theme>();
 
     return (
       <lvgl-obj

@@ -38,7 +38,7 @@ export const LightSlider = createWidgetComponent(
     return (
       <Slider
         label={props.label}
-        value={props.binding.brightness}
+        value={isNaN(props.binding.brightness) ? 0 : props.binding.brightness}
         onChange={(args) => { props.binding.turnOn({ brightness: args.x }); }}
         min={props.min ?? 0}
         max={props.max ?? 255}
