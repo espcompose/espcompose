@@ -32,8 +32,7 @@ type SensorTextProps = WidgetProps<{
  */
 export const SensorText = createWidgetComponent(
   (props: SensorTextProps): EspComposeElement => {
-    const stateText = props.binding.stateText;
-    const text = props.text ?? useMemo(() => `${props.label}: ${stateText}`);
+    const text = props.text ?? useMemo(() => `${props.label}: ${props.binding.stateText}`);
 
     return (
       <Text

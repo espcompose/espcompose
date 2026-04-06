@@ -159,6 +159,16 @@ export class IRReactiveNode<T = unknown> {
   }
 
   /**
+   * String coercion for template literals and string concatenation.
+   *
+   * Without this override, `${reactiveNode}` produces "[object Object]".
+   * Delegates to valueOf() so the result matches the type-appropriate default.
+   */
+  toString(): string {
+    return String(this.valueOf());
+  }
+
+  /**
    * Extract the reactive value for use in memo/effect function bodies.
    *
    * Returns `T` at the TypeScript type level, enabling natural operators:

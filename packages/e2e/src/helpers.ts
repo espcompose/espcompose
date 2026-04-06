@@ -36,22 +36,44 @@ export async function createProjectTest(
   // Normalise random ref tokens (r_<random>) and reactive widget IDs
   // (rw_<random>) to deterministic sequential IDs so that snapshots are
   // stable across runs.
-  // Use word boundaries to avoid matching substrings like ds_slider_indicator.
+  // Use lookaround assertions instead of \b so that tokens embedded in C++
+  // identifiers (e.g. sig_r_<random>_subs) are also normalised.
   let counter = 0;
   const tokenMap = new Map<string, string>();
-  const stableYaml = yamlContent.replace(/\b(?:r_|rw_|script_)[a-z0-9]{8,11}\b/g, (tok) => {
-    let stable = tokenMap.get(tok);
-    if (!stable) {
-      const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('script_') ? 'script_ref' : 'r_ref';
-      stable = `${prefix}${counter++}`;
-      tokenMap.set(tok, stable);
-    }
-    return stable;
-  });
+  const stabilise = (text: string) =>
+    text.replace(/(?<![a-z0-9])(?:r_|rw_|script_)[a-z0-9]{8,11}(?![a-z0-9])/g, (tok) => {
+      let stable = tokenMap.get(tok);
+      if (!stable) {
+        const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('script_') ? 'script_ref' : 'r_ref';
+        stable = `${prefix}${counter++}`;
+        tokenMap.set(tok, stable);
+      }
+      return stable;
+    });
+
+  const stableYaml = stabilise(yamlContent);
 
   // Snapshot the raw YAML — any change to the generated config will surface
   // as a test failure requiring an explicit snapshot update.
   expect(stableYaml).toMatchSnapshot();
+
+  // Snapshot generated C++ headers when the build produces them (reactive
+  // projects).  The bindings header is project-specific and the most likely
+  // source of regressions; the reactive runtime header is shared but a
+  // change there affects every project so we capture it too.
+  const outDir = path.join(projectPath, '.espcompose');
+  const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
+  const runtimePath = path.join(outDir, 'espcompose_reactive.h');
+
+  if (fs.existsSync(bindingsPath)) {
+    const bindingsContent = stabilise(fs.readFileSync(bindingsPath, 'utf8'));
+    expect(bindingsContent).toMatchSnapshot('espcompose_bindings.h');
+  }
+
+  if (fs.existsSync(runtimePath)) {
+    const runtimeContent = fs.readFileSync(runtimePath, 'utf8');
+    expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
+  }
 
   // Validate the generated YAML with the real ESPHome config validator.
   await esphomeConfig(yamlPath);

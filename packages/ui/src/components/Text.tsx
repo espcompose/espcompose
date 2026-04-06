@@ -7,7 +7,7 @@
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, useTheme } from '@espcompose/core';
 import { useTypography, useFont, useStatus } from '../hooks';
-import type { TextVariant, StatusToken } from '../theme/types';
+import type { TextVariant, StatusToken, Theme } from '../theme/types';
 
 type TextProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
@@ -35,8 +35,7 @@ export const Text = createWidgetComponent(
     const variant = props.variant ?? 'body';
     const typo = useTypography(variant);
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useTheme() as any;
+    const theme = useTheme<Theme>();
     const textColor = props.color != null
       ? useStatus(props.color).text
       : theme?.colors?.textPrimary;

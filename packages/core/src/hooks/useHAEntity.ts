@@ -173,6 +173,7 @@ function makeExpressionNode<T>(
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
   const brightnessId = `${sourceId}_brightness`;
+  const stateTextId = `${sourceId}_state_text`;
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
@@ -184,10 +185,19 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     attribute: 'brightness',
   });
 
+  // Register a text_sensor import for string state representation
+  registerHAEntity({
+    kind: 'ha_entity',
+    entityId,
+    domain: 'light',
+    sensorType: 'text_sensor',
+    generatedId: stateTextId,
+  });
+
   const binding: LightBinding = {
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
     brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'on_value', '.state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(sourceId, 'binary_sensor', 'on_state', '.state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -198,16 +208,38 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 }
 
 function createSensorBinding(sourceId: string, entityId: string): SensorBinding {
+  const stateTextId = `${sourceId}_state_text`;
+
+  // Register a text_sensor import for string state representation
+  registerHAEntity({
+    kind: 'ha_entity',
+    entityId,
+    domain: 'sensor',
+    sensorType: 'text_sensor',
+    generatedId: stateTextId,
+  });
+
   return createTrackingProxy({
     value: makeExpressionNode<number>(sourceId, 'sensor', 'on_value', '.state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(sourceId, 'sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
   });
 }
 
 function createBinarySensorBinding(sourceId: string, entityId: string): BinarySensorBinding {
+  const stateTextId = `${sourceId}_state_text`;
+
+  // Register a text_sensor import for string state representation
+  registerHAEntity({
+    kind: 'ha_entity',
+    entityId,
+    domain: 'binary_sensor',
+    sensorType: 'text_sensor',
+    generatedId: stateTextId,
+  });
+
   return createTrackingProxy({
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(sourceId, 'binary_sensor', 'on_state', '.state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
   });
 }
 

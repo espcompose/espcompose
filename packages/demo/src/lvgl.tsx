@@ -43,9 +43,12 @@ export const UI = (props: UIProps) => {
                                 <SensorText binding={officeLight} label="Office" />
                                 <Button
                                     size="lg"
-                                    text={officeLight.isOn ? "Office Off" : "Office On"}
+                                    text={officeLight.isOn ? "Office On" : "Office Off"}
                                     onPress={() => { officeLight.toggle(); }}
                                 />
+
+                                <LightButton binding={officeLight} label="Office" size="sm" />
+
 
                                 <LightButton binding={officeLight} label="Office" />
                                 <LightButton binding={gymLight} label="Gym" />

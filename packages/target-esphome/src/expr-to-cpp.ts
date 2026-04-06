@@ -45,6 +45,8 @@ export function buildEntityComponentIds(
     if (!entity.entityId || !entity.generatedId) continue;
     if (entity.sensorType === 'binary_sensor') {
       map.set(`${entity.entityId}#isOn`, entity.generatedId);
+      map.set(`${entity.entityId}#isOpen`, entity.generatedId);
+    } else if (entity.sensorType === 'text_sensor') {
       map.set(`${entity.entityId}#stateText`, entity.generatedId);
     } else if (entity.attribute) {
       map.set(`${entity.entityId}#${entity.attribute}`, entity.generatedId);
