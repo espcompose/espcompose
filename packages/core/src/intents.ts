@@ -114,8 +114,61 @@ export function createIntentComponent<
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Intrinsic element intent metadata
+// Widget shorthand
 // ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Create an LVGL widget component with sensible defaults.
+ *
+ * Defaults:
+ * - `intents: [LVGL_INTENTS.WIDGET]`
+ * - `allowedChildIntents: []`
+ * - no `contextTransparent`
+ *
+ * Pass an optional `overrides` object to change any of these (e.g. to
+ * allow child widgets for container-style components, or declare
+ * additional intents like `COMPOSE_UI_INTENTS.COL`).
+ *
+ * @example
+ * // Leaf widget — zero config:
+ * const Switch = createWidgetComponent((props: SwitchProps) => { … });
+ *
+ * // Container widget:
+ * const Card = createWidgetComponent(
+ *   (props: CardProps) => { … },
+ *   { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const, contextTransparent: true as const },
+ * );
+ *
+ * // Widget with additional intents (e.g. Col inside Row):
+ * const Col = createWidgetComponent(
+ *   (props: ColProps) => { … },
+ *   { additionalIntents: [COMPOSE_UI_INTENTS.COL] as const },
+ * );
+ */
+export function createWidgetComponent<
+  P,
+  Extra extends readonly string[] = readonly [],
+  A extends readonly string[] | undefined = readonly [],
+  CT extends boolean | undefined = undefined,
+>(
+  component: FunctionComponent<P>,
+  overrides?: {
+    additionalIntents?: Extra;
+    allowedChildIntents?: A;
+    contextTransparent?: CT;
+  },
+): IntentComponent<P, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT> {
+  const intents = [
+    ...(overrides?.additionalIntents ?? []),
+    LVGL_INTENTS.WIDGET,
+  ] as const;
+
+  return createIntentComponent(component, {
+    intents: intents as unknown as readonly [...Extra, typeof LVGL_INTENTS.WIDGET],
+    allowedChildIntents: (overrides?.allowedChildIntents ?? ([] as const)) as A,
+    ...(overrides?.contextTransparent ? { contextTransparent: overrides.contextTransparent } : {}),
+  });
+}
 
 export interface IntrinsicIntentMeta {
   readonly intents: readonly string[];

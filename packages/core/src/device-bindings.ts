@@ -8,7 +8,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { Signal } from './reactive-node';
-import type { ACTION_BRAND } from './types';
+import type { BINDING_BRAND } from './types';
 
 /**
  * Binding for light devices.
@@ -16,7 +16,7 @@ import type { ACTION_BRAND } from './types';
  * Provides on/off state, brightness, and control actions.
  */
 export interface LightBinding {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Whether the light is currently on. */
   readonly isOn: Signal<boolean>;
   /** Current brightness (0–255). Available when the light supports brightness. */
@@ -37,6 +37,7 @@ export interface LightBinding {
  * Read-only — sensors have no action methods.
  */
 export interface SensorBinding {
+  readonly [BINDING_BRAND]?: true;
   /** Current numeric value of the sensor. */
   readonly value: Signal<number>;
   /** String representation of the sensor state. */
@@ -48,6 +49,7 @@ export interface SensorBinding {
  * Read-only — binary sensors have no action methods.
  */
 export interface BinarySensorBinding {
+  readonly [BINDING_BRAND]?: true;
   /** Whether the binary sensor is currently on. */
   readonly isOn: Signal<boolean>;
   /** String representation of the state. */
@@ -58,7 +60,7 @@ export interface BinarySensorBinding {
  * Binding for switch devices.
  */
 export interface SwitchBinding {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Whether the switch is currently on. */
   readonly isOn: Signal<boolean>;
 
@@ -74,7 +76,7 @@ export interface SwitchBinding {
  * Binding for fan devices.
  */
 export interface FanBinding {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Whether the fan is currently on. */
   readonly isOn: Signal<boolean>;
 
@@ -90,7 +92,7 @@ export interface FanBinding {
  * Binding for cover/blind devices.
  */
 export interface CoverBinding {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Whether the cover is currently open. */
   readonly isOpen: Signal<boolean>;
 

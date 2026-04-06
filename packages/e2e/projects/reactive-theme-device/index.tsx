@@ -4,7 +4,7 @@
  * Validates the reactive theme system end-to-end:
  *   - Two themes (dark + light) registered via ThemeProvider
  *   - theme.select() buttons switching between them
- *   - Screen, Text, Card, SliderField, Button all receiving reactive theme tokens
+ *   - Screen, Text, Card, Slider, Button all receiving reactive theme tokens
  *
  * Expected compiler output:
  *   - theme_index Signal + per-leaf Memo declarations (value arrays)
@@ -19,7 +19,7 @@ import {
   Text,
   Button,
   Card,
-  SliderField,
+  Slider,
   ThemeProvider,
   darkTheme,
   lightTheme,
@@ -56,7 +56,7 @@ function App() {
 
               <Card>
                 <Text variant="subtitle" text="Controls" />
-                <SliderField label="Brightness" min={0} max={255} />
+                <Slider label="Brightness" min={0} max={255} />
               </Card>
 
               <HStack>

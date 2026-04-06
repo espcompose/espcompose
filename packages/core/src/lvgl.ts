@@ -89,6 +89,10 @@ interface NestedReactiveProp {
 /**
  * Walk an LVGL prop bag and collect any IRReactiveNode leaves, including nested
  * part/state sub-objects (e.g. indicator, pressed, indicator.pressed).
+ *
+ * Also handles the ESPHome `state: { checked: value, ... }` wrapper used by
+ * widgets like lvgl-switch. Reactive nodes inside the `state` container are
+ * registered as direct prop bindings (e.g. targetProp = 'checked').
  */
 function collectReactiveProps(
   obj: Record<string, unknown>,
@@ -106,6 +110,18 @@ function collectReactiveProps(
 
     // Recurse into nested part/state sub-objects (up to 2 levels)
     if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+      // ESPHome 'state' wrapper: { state: { checked: <reactive>, ... } }
+      // Each entry maps a state flag name to a value — treat reactive entries
+      // as top-level prop bindings so the codegen can emit lv_obj_add/clear_state.
+      if (key === 'state' && !part) {
+        for (const [stateKey, stateValue] of Object.entries(value as Record<string, unknown>)) {
+          if (isIRReactiveNode(stateValue)) {
+            out.push({ propName: stateKey, node: stateValue, part, state: undefined });
+          }
+        }
+        continue;
+      }
+
       if (!part && !state && PART_NAMES_CAMEL.has(key)) {
         collectReactiveProps(value as Record<string, unknown>, out, key, undefined);
       } else if (!part && !state && STATE_NAMES_CAMEL.has(key)) {

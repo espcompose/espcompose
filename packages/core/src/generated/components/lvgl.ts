@@ -509,9 +509,9 @@ export interface LvglAnimimgProps {
 export interface LvglArcProps {
     value?: BindProp<number>;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: BindProp<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: BindProp<number>;
     /** @yamlKey start_angle */
     startAngle?: number;
     /** @yamlKey end_angle */
@@ -963,9 +963,9 @@ export interface LvglBarProps {
     /** @yamlKey start_value */
     startValue?: number;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: BindProp<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: BindProp<number>;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
     /**
@@ -1150,9 +1150,9 @@ export interface LvglRollerProps {
 export interface LvglSliderProps {
     value?: BindProp<number>;
     /** @yamlKey min_value */
-    minValue?: number;
+    minValue?: BindProp<number>;
     /** @yamlKey max_value */
-    maxValue?: number;
+    maxValue?: BindProp<number>;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
     /**

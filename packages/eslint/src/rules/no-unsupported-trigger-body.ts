@@ -7,7 +7,7 @@
  * runs, giving users earlier and more actionable feedback.
  *
  * Uses TypeScript type information when available: calls are allowed if the
- * callee or its receiver has the ACTION_BRAND phantom property from the SDK.
+ * callee or its receiver has the BINDING_BRAND phantom property from the SDK.
  * Falls back to allowing all calls when type info is unavailable.
  *
  * Unsupported constructs:
@@ -30,26 +30,26 @@ const createRule = ESLintUtils.RuleCreator(
 type MessageIds = 'unsupportedConstruct' | 'unsupportedCall';
 
 /**
- * Match the mangled form of the ACTION_BRAND unique-symbol property.
+ * Match the mangled form of the BINDING_BRAND unique-symbol property.
  *
- * TypeScript internally mangles `declare const ACTION_BRAND: unique symbol`
- * property keys to `__@ACTION_BRAND@<id>` (e.g. `__@ACTION_BRAND@42`).
+ * TypeScript internally mangles `declare const BINDING_BRAND: unique symbol`
+ * property keys to `__@BINDING_BRAND@<id>` (e.g. `__@BINDING_BRAND@42`).
  */
-const ACTION_BRAND_RE = /^__@ACTION_BRAND@\d+$/;
+const BINDING_BRAND_RE = /^__@BINDING_BRAND@\d+$/;
 
 /**
- * Check if a TypeScript type carries the ACTION_BRAND phantom property.
+ * Check if a TypeScript type carries the BINDING_BRAND phantom property.
  * Recursively checks union and intersection types.
  */
-function hasActionBrand(type: ts.Type): boolean {
+function hasBindingBrand(type: ts.Type): boolean {
   if (type.isIntersection()) {
-    return type.types.some(t => hasActionBrand(t));
+    return type.types.some(t => hasBindingBrand(t));
   }
   if (type.isUnion()) {
-    return type.types.some(t => hasActionBrand(t));
+    return type.types.some(t => hasBindingBrand(t));
   }
   for (const prop of type.getProperties()) {
-    if (ACTION_BRAND_RE.test(prop.name)) {
+    if (BINDING_BRAND_RE.test(prop.name)) {
       return true;
     }
   }
@@ -93,16 +93,16 @@ export default createRule<[], MessageIds>({
     }
 
     /**
-     * Type-aware check: does this node's resolved TS type carry ACTION_BRAND?
+     * Type-aware check: does this node's resolved TS type carry BINDING_BRAND?
      * Returns undefined if type info is unavailable (no checker).
      */
-    function nodeHasActionBrand(node: TSESTree.Node): boolean | undefined {
+    function nodeHasBindingBrand(node: TSESTree.Node): boolean | undefined {
       if (!checker || !services?.esTreeNodeToTSNodeMap) return undefined;
       try {
         const tsNode = services.esTreeNodeToTSNodeMap.get(node);
         if (!tsNode) return undefined;
         const type = checker.getTypeAtLocation(tsNode);
-        return hasActionBrand(type);
+        return hasBindingBrand(type);
       } catch {
         return undefined;
       }
@@ -142,7 +142,7 @@ export default createRule<[], MessageIds>({
      * Check if a call expression is a known action pattern using type info.
      *
      * When type info is available: checks if the callee or its receiver
-     * has the ACTION_BRAND phantom property.
+     * has the BINDING_BRAND phantom property.
      *
      * When type info is unavailable: allows all calls (no false positives).
      */
@@ -151,7 +151,7 @@ export default createRule<[], MessageIds>({
 
       // Direct function call: delay(), waitUntil(), scriptHandle()
       if (callee.type === 'Identifier') {
-        const branded = nodeHasActionBrand(callee);
+        const branded = nodeHasBindingBrand(callee);
         // If no type info, allow the call (no false positives)
         if (branded === undefined) return true;
         return branded;
@@ -159,7 +159,7 @@ export default createRule<[], MessageIds>({
 
       // Property call: ref.toggle(), logger.log(), theme.select(), props.entity.toggle(), etc.
       if (callee.type === 'MemberExpression' && callee.property.type === 'Identifier') {
-        const branded = nodeHasActionBrand(callee.object);
+        const branded = nodeHasBindingBrand(callee.object);
         // If no type info, allow the call
         if (branded === undefined) return true;
         return branded;
@@ -182,7 +182,7 @@ export default createRule<[], MessageIds>({
             if (inner.type === 'CallExpression') {
               // Identifier calls in await: check brand
               if (inner.callee.type === 'Identifier') {
-                const branded = nodeHasActionBrand(inner.callee);
+                const branded = nodeHasBindingBrand(inner.callee);
                 // If no type info or branded, allow
                 if (branded === undefined || branded) return;
                 context.report({

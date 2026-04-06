@@ -98,9 +98,9 @@ High-level, semantic components from `@espcompose/ui`:
 <Button />
 <Card />
 <VStack />
-<SliderField />
-<SwitchField />
-<DropdownField />
+<Slider />
+<Switch />
+<Dropdown />
 ```
 
 Used for:
@@ -252,12 +252,12 @@ Available layout components:
 
 ---
 
-## 8. Fields Over Raw Inputs
+## 8. Input Components Over Raw LVGL
 
 Prefer:
 
 ```tsx
-<SliderField label="Brightness" />
+<Slider label="Brightness" />
 ```
 
 Over:
@@ -267,7 +267,7 @@ Over:
 <lvgl-label />
 ```
 
-Field components combine label + input + theme styling.
+Input components combine label + input + theme styling.
 
 ---
 
@@ -355,17 +355,21 @@ All reactive expressions compile to C++ via `ExprNode` → `exprToCpp()`.
 
 | Component | Description | Key Props |
 |-----------|-------------|-----------|
-| `Screen` | Root display container | `bgColor` |
-| `VStack` / `HStack` | Flexbox column/row | `gap`, `padding` |
-| `Space` | Spacer element | `size` |
-| `Row` / `Col` | Proportional flex grid | `span` (on Col) |
-| `Grid` / `GridItem` | CSS Grid layout | `columns`, `rows`, `gap` |
-| `Text` | Typography component | `value`, `variant` |
-| `Button` | Status-aware button | `label`, `status`, `size`, `onPress` |
-| `Card` | Surface container | `bgColor` |
-| `SliderField` | Slider with label | `label`, `onValue` |
-| `SwitchField` | Toggle with label | `label`, `onCheckedChange` |
-| `DropdownField` | Dropdown selector | `label`, `options` |
+| `Screen` | Root display container | `style` |
+| `VStack` / `HStack` | Flexbox column/row | `gap`, `padding`, `style` |
+| `Space` | Spacer element | `size`, `style` |
+| `Row` / `Col` | Proportional flex grid | `span` (on Col), `style` |
+| `Grid` / `GridItem` | CSS Grid layout | `columns`, `rows`, `gap`, `style` |
+| `Text` | Typography component | `text`, `variant`, `color`, `style` |
+| `Button` | Status-aware button | `text`, `status`, `size`, `onPress`, `style` |
+| `Card` | Surface container | `style` |
+| `Slider` | Slider with label | `label`, `value`, `onChange` |
+| `Switch` | Toggle with label | `label`, `value`, `onChange` |
+| `Dropdown` | Dropdown selector | `label`, `options`, `value`, `onChange` |
+| `LightButton` | Binding-driven button | `binding`, `label`, `style` |
+| `LightSwitch` | Binding-driven toggle | `binding`, `label` |
+| `LightSlider` | Binding-driven slider | `binding`, `label` |
+| `SensorText` | Binding-driven text | `binding`, `style` |
 
 ---
 
@@ -379,7 +383,8 @@ When generating or modifying code:
 * Reactive hooks (`useMemo`, `useHAEntity`, `useReactiveTheme`)
 * Design tokens over raw styles (`status="primary"` not `bgColor="#123456"`)
 * Layout components (`VStack`, `HStack`, `Grid`)
-* Field abstractions (`SliderField`, `SwitchField`)
+* Input components (`Slider`, `Switch`, `Dropdown`)
+* Binding-driven components (`LightButton`, `LightSwitch`, `LightSlider`, `SensorText`)
 * Action tree syntax for trigger handlers (bare arrow functions)
 
 ### Avoid:
@@ -398,13 +403,11 @@ When generating or modifying code:
 ```tsx
 import { useHAEntity, useMemo, useRef, secret } from '@espcompose/core';
 import type { Light } from '@espcompose/core';
-import { ThemeProvider, darkTheme, Screen, VStack, Card, Text, SliderField, SwitchField } from '@espcompose/ui';
+import { ThemeProvider, darkTheme, Screen, VStack, Card, Text, LightSlider, LightSwitch, SensorText } from '@espcompose/ui';
 
 function App() {
   const light = useHAEntity('light.living_room');
   const sensor = useHAEntity('sensor.temperature');
-  const brightness = useMemo(() => light.brightness);
-  const temp = useMemo(() => `${sensor.value}°`);
 
   return (
     <esphome name="dashboard">
@@ -417,10 +420,10 @@ function App() {
             <Screen>
               <VStack gap="lg" padding="lg">
                 <Card>
-                  <Text variant="title" value="Living Room" />
-                  <Text value={temp} />
-                  <SliderField label="Brightness" />
-                  <SwitchField label="Lamp" />
+                  <Text variant="title" text="Living Room" />
+                  <SensorText binding={sensor} />
+                  <LightSlider binding={light} label="Brightness" />
+                  <LightSwitch binding={light} label="Lamp" />
                 </Card>
               </VStack>
             </Screen>

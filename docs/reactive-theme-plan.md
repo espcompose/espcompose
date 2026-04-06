@@ -56,7 +56,7 @@ ReactiveNodes through render functions.
 3. ✅ **Card** — `bgColor` from `theme.colors.surfaceAlt`, padding/radius from reactive resolvers
 4. ✅ **Text** — `textColor` + `textFont` from reactive resolvers
 5. ✅ **Space / VStack / HStack** — gap from reactive resolver
-6. ✅ **SliderField, SwitchField, DropdownField** — label textColor + widget part colors from theme
+6. ✅ **Slider, Switch, Dropdown** — label textColor + widget part colors from theme
 7. ✅ **Row/Col, Grid/GridItem** — gap from reactive resolver
 
 ---
@@ -85,7 +85,7 @@ ReactiveNodes through render functions.
 
 ### Phase 6: E2E Tests — ✅ COMPLETE
 
-1. ✅ **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen, Text, Card, SliderField, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
+1. ✅ **`reactive-theme-device`** — two themes (dark + light), two buttons switching between them via `theme.select()`. Screen, Text, Card, Slider, Button. Validates: theme signal declarations, value arrays, memo wiring, widget bindings for bg\_color/text\_color/padding/font, `theme.select()` → `theme_index.set()` actions
 2. ✅ **`fancy-light-cascade-device`** — sensor-derived memo chain + 3-layer component cascade: `FancyLightButton` → `LightButton` → `Button` → `lvgl-button` + `lvgl-label`. Validates: ReactiveNode flows through component layers, memo chain (sensor → status text, light entity → label), correct C++ dependency graph with both HA entity signals and theme signals
 3. ✅ **`design-system-device` updated** — uses `<ThemeProvider themes={{ dark: darkTheme }}>` pattern (new reactive API)
 4. ✅ **Both projects wired into `build.test.ts`** — snapshot + ESPHome config validation
@@ -126,7 +126,7 @@ const bgColor = thm.colors.primary.bg;  // → ReactiveNode<lv_color_t>
 **SDK:** `theme-signals.ts`, `theme-registry.ts`, `reactive-theme.ts`
 **SDK (modified):** `reactive-node.ts`, `reactive-utils.ts`, `hooks/useReactiveScope.ts`, `index.ts`
 **UI:** `theme/ThemeProvider.ts`, `theme/resolvers.ts`, `theme/types.ts`, `theme/context.ts`, `theme/dark.ts`, `theme/light.ts`
-**UI (all components updated):** `Button.tsx`, `Screen.tsx`, `Card.tsx`, `Text.tsx`, `Space.tsx`, `Row.tsx`, `Grid.tsx`, `SliderField.tsx`, `SwitchField.tsx`, `DropdownField.tsx`
+**UI (all components updated):** `Button.tsx`, `Screen.tsx`, `Card.tsx`, `Text.tsx`, `Space.tsx`, `Row.tsx`, `Grid.tsx`, `Slider.tsx`, `Switch.tsx`, `Dropdown.tsx`
 **UI (obsolete, awaiting deletion):** `theme/bridge.ts`, `theme/style-ids.ts`, `theme/json.ts`
 **target-esphome (modified):** `reactive-config.ts`, `bindings-codegen.ts`, `codegen-cpp.ts`, `lower-yaml.ts`
 

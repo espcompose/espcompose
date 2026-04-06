@@ -559,3 +559,136 @@ describe('mergeStyles', () => {
     expect(result).toEqual({ backgroundColor: '#AAA', padding: 10 });
   });
 });
+
+// ────────────────────────────────────────────────────────────────────────────
+// Layout property expansion
+// ────────────────────────────────────────────────────────────────────────────
+
+describe('expandCssProps — layout', () => {
+  // ── Flex ──────────────────────────────────────────────────────────────
+
+  it('expands flex layout into a layout block', () => {
+    const result = expandCssProps({
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'spaceBetween',
+      alignItems: 'center',
+    });
+    expect(result.layout).toEqual({
+      type: 'flex',
+      flexFlow: 'COLUMN',
+      flexAlignMain: 'SPACE_BETWEEN',
+      flexAlignCross: 'CENTER',
+    });
+  });
+
+  it('keeps visual props separate from layout block', () => {
+    const result = expandCssProps({
+      display: 'flex',
+      flexDirection: 'row',
+      backgroundColor: '#FFF',
+      gap: 12,
+    });
+    expect(result.layout).toEqual({ type: 'flex', flexFlow: 'ROW' });
+    expect(result.bgColor).toBe('#FFF');
+    expect(result.padRow).toBe(12);
+    expect(result.padColumn).toBe(12);
+  });
+
+  it('maps all flex direction values', () => {
+    expect(expandCssProps({ flexDirection: 'row' }).layout).toEqual({ flexFlow: 'ROW' });
+    expect(expandCssProps({ flexDirection: 'column' }).layout).toEqual({ flexFlow: 'COLUMN' });
+    expect(expandCssProps({ flexDirection: 'row-wrap' }).layout).toEqual({ flexFlow: 'ROW_WRAP' });
+    expect(expandCssProps({ flexDirection: 'column-wrap' }).layout).toEqual({ flexFlow: 'COLUMN_WRAP' });
+  });
+
+  it('maps all justifyContent values', () => {
+    const cases = [
+      ['start', 'START'], ['center', 'CENTER'], ['end', 'END'],
+      ['spaceBetween', 'SPACE_BETWEEN'], ['spaceAround', 'SPACE_AROUND'], ['spaceEvenly', 'SPACE_EVENLY'],
+    ] as const;
+    for (const [css, lvgl] of cases) {
+      expect(expandCssProps({ justifyContent: css }).layout).toEqual({ flexAlignMain: lvgl });
+    }
+  });
+
+  it('maps all alignItems values', () => {
+    const cases = [['start', 'START'], ['center', 'CENTER'], ['end', 'END'], ['stretch', 'STRETCH']] as const;
+    for (const [css, lvgl] of cases) {
+      expect(expandCssProps({ alignItems: css }).layout).toEqual({ flexAlignCross: lvgl });
+    }
+  });
+
+  it('flexGrow is a flat prop (not in layout block)', () => {
+    const result = expandCssProps({ flexGrow: 2 });
+    expect(result.flexGrow).toBe(2);
+    expect(result.layout).toBeUndefined();
+  });
+
+  // ── Grid ─────────────────────────────────────────────────────────────
+
+  it('expands grid layout into a layout block', () => {
+    const result = expandCssProps({
+      display: 'grid',
+      gridTemplateColumns: ['fr(1)', 'fr(2)', 200],
+      gridTemplateRows: ['fr(1)', 100, 'content'],
+      justifyItems: 'center',
+      alignContent: 'stretch',
+    });
+    expect(result.layout).toEqual({
+      type: 'grid',
+      gridColumns: ['FR(1)', 'FR(2)', 200],
+      gridRows: ['FR(1)', 100, 'CONTENT'],
+      gridColumnAlign: 'CENTER',
+      gridRowAlign: 'STRETCH',
+    });
+  });
+
+  it('passes through LVGL-format grid track values', () => {
+    const result = expandCssProps({
+      gridTemplateColumns: ['FR(1)', 'SIZE_CONTENT'],
+    });
+    expect((result.layout as Record<string, unknown>).gridColumns).toEqual(['FR(1)', 'SIZE_CONTENT']);
+  });
+
+  it('grid child props are flat (not in layout block)', () => {
+    const result = expandCssProps({
+      gridColumn: 0,
+      gridRow: 1,
+      gridColumnSpan: 2,
+      gridRowSpan: 3,
+      justifySelf: 'center',
+      alignSelf: 'end',
+    });
+    expect(result.gridCellColumnPos).toBe(0);
+    expect(result.gridCellRowPos).toBe(1);
+    expect(result.gridCellColumnSpan).toBe(2);
+    expect(result.gridCellRowSpan).toBe(3);
+    expect(result.gridCellXAlign).toBe('CENTER');
+    expect(result.gridCellYAlign).toBe('END');
+    expect(result.layout).toBeUndefined();
+  });
+
+  // ── Widget placement ─────────────────────────────────────────────────
+
+  it('maps placeSelf to align', () => {
+    expect(expandCssProps({ placeSelf: 'center' })).toEqual({ align: 'CENTER' });
+    expect(expandCssProps({ placeSelf: 'topLeft' })).toEqual({ align: 'TOP_LEFT' });
+    expect(expandCssProps({ placeSelf: 'bottomCenter' })).toEqual({ align: 'BOTTOM_MID' });
+    expect(expandCssProps({ placeSelf: 'rightCenter' })).toEqual({ align: 'RIGHT_MID' });
+  });
+
+  // ── Scrollbar ────────────────────────────────────────────────────────
+
+  it('maps scrollbarMode', () => {
+    expect(expandCssProps({ scrollbarMode: 'off' })).toEqual({ scrollbarMode: 'OFF' });
+    expect(expandCssProps({ scrollbarMode: 'active' })).toEqual({ scrollbarMode: 'ACTIVE' });
+  });
+
+  // ── No layout block when no layout props ──────────────────────────────
+
+  it('does not create layout block for non-layout props', () => {
+    const result = expandCssProps({ backgroundColor: '#FFF', padding: 8 });
+    expect(result.layout).toBeUndefined();
+  });
+});

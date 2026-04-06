@@ -4,12 +4,12 @@
  * Compiles to <lvgl-label> with theme-driven typography via reactive tokens.
  */
 
-import type { EspComposeElement, SizeValue } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
-import { resolveTypography, resolveFont } from '../theme/resolvers';
-import type { TextVariant } from '../theme/types';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, useReactiveTheme } from '@espcompose/core';
+import { useTypography, useFont, useStatus } from '../theme/resolvers';
+import type { TextVariant, StatusToken } from '../theme/types';
 
-interface TextProps {
+type TextProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
   /** Typography variant. Determines font size. Default: 'body'. */
   variant?: TextVariant;
@@ -17,33 +17,29 @@ interface TextProps {
   text?: string;
   /** Text alignment within the label. */
   align?: 'left' | 'center' | 'right' | 'auto';
-  /** Text color (hex). If omitted, uses theme textPrimary. */
-  color?: string;
+  /** Text color as a StatusToken (e.g. 'primary'). If omitted, uses theme textPrimary. */
+  color?: StatusToken;
   /** Long text mode. */
   longMode?: 'WRAP' | 'DOT' | 'SCROLL' | 'SCROLL_CIRCULAR' | 'CLIP';
-  /** X position (pixels). */
-  x?: number;
-  /** Y position (pixels). */
-  y?: number;
-  /** Width. */
-  width?: SizeValue;
-}
+}, 'longMode'>;
 
 /**
  * Text — a styled label component.
  *
  * @example
  * <Text variant="title">Living Room</Text>
- * <Text variant="caption" color="#888888">Last updated: 5m ago</Text>
+ * <Text variant="caption" color="primary">Last updated: 5m ago</Text>
  */
-export const Text = createIntentComponent(
+export const Text = createWidgetComponent(
   (props: TextProps): EspComposeElement => {
     const variant = props.variant ?? 'body';
-    const typo = resolveTypography(variant);
-    const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
+    const typo = useTypography(variant);
+    const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const theme = useReactiveTheme() as any;
-    const textColor = props.color ?? theme?.colors?.textPrimary;
+    const textColor = props.color != null
+      ? useStatus(props.color).text
+      : theme?.colors?.textPrimary;
 
     return (
       <lvgl-label
@@ -53,15 +49,10 @@ export const Text = createIntentComponent(
           color: textColor,
           font: font,
           textAlign: props.align,
-          left: props.x,
-          top: props.y,
-          width: props.width,
+          width: props.style?.width,
+          height: props.style?.height,
         }}
       />
     );
-  },
-  {
-    intents: [LVGL_INTENTS.WIDGET] as const,
-    allowedChildIntents: [] as const,
   },
 );

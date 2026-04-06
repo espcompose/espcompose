@@ -361,21 +361,21 @@ lvgl:
   displays:
     - r_ref0
   pages:
-    - scrollbar_mode: 'OFF'
-      bg_color: !lambda "return espcompose::thm_colors_background.get();"
+    - bg_color: !lambda "return espcompose::thm_colors_background.get();"
       border_width: 0
       pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
+      scrollbar_mode: 'OFF'
       id: rw_ref1
       widgets:
         - obj:
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
             width: 100%
             height: SIZE_CONTENT
             bg_opa: TRANSP
             border_width: 0
+            scrollbar_mode: 'OFF'
+            layout:
+              type: flex
+              flex_flow: COLUMN
             widgets:
               - label:
                   text: Smart Home
@@ -383,16 +383,16 @@ lvgl:
                   text_font: !lambda "return espcompose::memo_0.get();"
                   id: rw_ref2
               - obj:
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: COLUMN
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
                   pad_all: !lambda "return espcompose::thm_spacing_md.get();"
                   radius: !lambda "return espcompose::thm_radii_md.get();"
                   border_width: 0
                   width: 100%
                   height: SIZE_CONTENT
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: COLUMN
                   id: rw_ref3
                   widgets:
                     - label:
@@ -401,12 +401,12 @@ lvgl:
                         text_font: !lambda "return espcompose::memo_1.get();"
                         id: rw_ref4
                     - obj:
-                        layout:
-                          type: flex
-                          flex_flow: COLUMN
                         bg_opa: TRANSP
                         width: 100%
                         height: SIZE_CONTENT
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
                         widgets:
                           - label:
                               text: Brightness
@@ -417,14 +417,14 @@ lvgl:
                               min_value: 0
                               max_value: 255
                     - obj:
+                        bg_opa: TRANSP
+                        width: 100%
+                        height: SIZE_CONTENT
                         layout:
                           type: flex
                           flex_flow: ROW
                           flex_align_main: SPACE_BETWEEN
                           flex_align_cross: CENTER
-                        bg_opa: TRANSP
-                        width: 100%
-                        height: SIZE_CONTENT
                         widgets:
                           - label:
                               text: Power
@@ -433,32 +433,37 @@ lvgl:
                               id: rw_ref6
                           - switch: {}
               - obj:
+                  width: 100%
+                  height: SIZE_CONTENT
+                  bg_opa: TRANSP
+                  border_width: 0
                   scrollbar_mode: 'OFF'
                   layout:
                     type: flex
                     flex_flow: ROW
                     flex_align_main: SPACE_BETWEEN
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
                   widgets:
                     - button:
                         bg_color: !lambda "return espcompose::thm_colors_success_bg.get();"
+                        bg_opa: COVER
+                        border_color: !lambda "return espcompose::thm_colors_success_bg.get();"
                         border_width: 0
                         width: !lambda "return espcompose::memo_5.get();"
                         height: !lambda "return espcompose::thm_sizes_sm_height.get();"
                         pressed:
                           bg_color: !lambda "return espcompose::thm_colors_success_bgPressed.get();"
+                          bg_opa: COVER
                         id: rw_ref7
                         widgets:
                           - label:
                               text: Turn On
-                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_success_text.get();"
                               text_font: !lambda "return espcompose::memo_4.get();"
+                              text_align: CENTER
+                              align: CENTER
                               id: rw_ref8
                     - button:
+                        bg_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                         bg_opa: TRANSP
                         border_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                         border_width: 2
@@ -471,9 +476,10 @@ lvgl:
                         widgets:
                           - label:
                               text: Turn Off
-                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
                               text_font: !lambda "return espcompose::memo_6.get();"
+                              text_align: CENTER
+                              align: CENTER
                               id: rw_ref10
 "
 `;
@@ -587,21 +593,21 @@ lvgl:
   displays:
     - r_ref0
   pages:
-    - scrollbar_mode: 'OFF'
-      bg_color: !lambda "return espcompose::thm_colors_background.get();"
+    - bg_color: !lambda "return espcompose::thm_colors_background.get();"
       border_width: 0
       pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
+      scrollbar_mode: 'OFF'
       id: rw_ref1
       widgets:
         - obj:
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
             width: 100%
             height: SIZE_CONTENT
             bg_opa: TRANSP
             border_width: 0
+            scrollbar_mode: 'OFF'
+            layout:
+              type: flex
+              flex_flow: COLUMN
             widgets:
               - label:
                   text: !lambda "return espcompose::memo_0.get().c_str();"
@@ -609,59 +615,71 @@ lvgl:
               - button:
                   on_press:
                     - homeassistant.action:
-                        action: light.toggle
+                        action: homeassistant.toggle
                         data:
                           entity_id: light.kitchen_floods
                   bg_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
+                  bg_opa: COVER
+                  border_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
                   border_width: 0
                   width: !lambda "return espcompose::memo_3.get();"
                   height: !lambda "return espcompose::thm_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return espcompose::thm_colors_primary_bgPressed.get();"
+                    bg_opa: COVER
                   id: rw_ref3
                   widgets:
                     - label:
                         text: !lambda "return espcompose::memo_1.get().c_str();"
-                        align: CENTER
                         text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
                         text_font: !lambda "return espcompose::memo_2.get();"
+                        text_align: CENTER
+                        align: CENTER
                         id: rw_ref4
               - button:
                   on_press:
                     - homeassistant.action:
-                        action: light.toggle
+                        action: homeassistant.toggle
                         data:
                           entity_id: light.bedroom_lamp
                   bg_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
+                  bg_opa: COVER
+                  border_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
                   border_width: 0
                   width: !lambda "return espcompose::memo_6.get();"
                   height: !lambda "return espcompose::thm_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return espcompose::thm_colors_secondary_bgPressed.get();"
+                    bg_opa: COVER
                   id: rw_ref5
                   widgets:
                     - label:
                         text: !lambda "return espcompose::memo_4.get().c_str();"
-                        align: CENTER
                         text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
                         text_font: !lambda "return espcompose::memo_5.get();"
+                        text_align: CENTER
+                        align: CENTER
                         id: rw_ref6
               - button:
                   on_press:
                     - lambda: !lambda "espcompose::select_theme(\\"light\\");"
                   bg_color: !lambda "return espcompose::thm_colors_success_bg.get();"
+                  bg_opa: COVER
+                  border_color: !lambda "return espcompose::thm_colors_success_bg.get();"
                   border_width: 0
                   width: !lambda "return espcompose::memo_8.get();"
                   height: !lambda "return espcompose::thm_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return espcompose::thm_colors_success_bgPressed.get();"
+                    bg_opa: COVER
                   id: rw_ref7
                   widgets:
                     - label:
                         text: Toggle Theme
-                        align: CENTER
                         text_color: !lambda "return espcompose::thm_colors_success_text.get();"
                         text_font: !lambda "return espcompose::memo_7.get();"
+                        text_align: CENTER
+                        align: CENTER
                         id: rw_ref8
 sensor:
   - platform: homeassistant
@@ -854,7 +872,7 @@ lvgl:
         - button:
             on_release:
               - homeassistant.action:
-                  action: light.toggle
+                  action: homeassistant.toggle
                   data:
                     entity_id: light.office_main
             x: 10
@@ -1280,21 +1298,21 @@ lvgl:
   displays:
     - r_ref0
   pages:
-    - scrollbar_mode: 'OFF'
-      bg_color: !lambda "return espcompose::thm_colors_background.get();"
+    - bg_color: !lambda "return espcompose::thm_colors_background.get();"
       border_width: 0
       pad_all: !lambda "return espcompose::thm_spacing_lg.get();"
+      scrollbar_mode: 'OFF'
       id: rw_ref1
       widgets:
         - obj:
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
             width: 100%
             height: SIZE_CONTENT
             bg_opa: TRANSP
             border_width: 0
+            scrollbar_mode: 'OFF'
+            layout:
+              type: flex
+              flex_flow: COLUMN
             widgets:
               - label:
                   text: Theme Test
@@ -1302,16 +1320,16 @@ lvgl:
                   text_font: !lambda "return espcompose::memo_0.get();"
                   id: rw_ref2
               - obj:
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: COLUMN
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
                   pad_all: !lambda "return espcompose::thm_spacing_md.get();"
                   radius: !lambda "return espcompose::thm_radii_md.get();"
                   border_width: 0
                   width: 100%
                   height: SIZE_CONTENT
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: COLUMN
                   id: rw_ref3
                   widgets:
                     - label:
@@ -1320,12 +1338,12 @@ lvgl:
                         text_font: !lambda "return espcompose::memo_1.get();"
                         id: rw_ref4
                     - obj:
-                        layout:
-                          type: flex
-                          flex_flow: COLUMN
                         bg_opa: TRANSP
                         width: 100%
                         height: SIZE_CONTENT
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
                         widgets:
                           - label:
                               text: Brightness
@@ -1336,48 +1354,56 @@ lvgl:
                               min_value: 0
                               max_value: 255
               - obj:
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
                   width: 100%
                   height: SIZE_CONTENT
                   bg_opa: TRANSP
                   border_width: 0
+                  scrollbar_mode: 'OFF'
+                  layout:
+                    type: flex
+                    flex_flow: ROW
                   widgets:
                     - button:
                         on_press:
                           - lambda: !lambda "espcompose::select_theme(\\"dark\\");"
                         bg_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
+                        bg_opa: COVER
+                        border_color: !lambda "return espcompose::thm_colors_primary_bg.get();"
                         border_width: 0
                         width: !lambda "return espcompose::memo_4.get();"
                         height: !lambda "return espcompose::thm_sizes_md_height.get();"
                         pressed:
                           bg_color: !lambda "return espcompose::thm_colors_primary_bgPressed.get();"
+                          bg_opa: COVER
                         id: rw_ref6
                         widgets:
                           - label:
                               text: Dark
-                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
                               text_font: !lambda "return espcompose::memo_3.get();"
+                              text_align: CENTER
+                              align: CENTER
                               id: rw_ref7
                     - button:
                         on_press:
                           - lambda: !lambda "espcompose::select_theme(\\"light\\");"
                         bg_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
+                        bg_opa: COVER
+                        border_color: !lambda "return espcompose::thm_colors_secondary_bg.get();"
                         border_width: 0
                         width: !lambda "return espcompose::memo_6.get();"
                         height: !lambda "return espcompose::thm_sizes_md_height.get();"
                         pressed:
                           bg_color: !lambda "return espcompose::thm_colors_secondary_bgPressed.get();"
+                          bg_opa: COVER
                         id: rw_ref8
                         widgets:
                           - label:
                               text: Light
-                              align: CENTER
                               text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
                               text_font: !lambda "return espcompose::memo_5.get();"
+                              text_align: CENTER
+                              align: CENTER
                               id: rw_ref9
 "
 `;

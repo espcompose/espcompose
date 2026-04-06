@@ -30,8 +30,9 @@ export type {
   PinConfig,
   Pin,
   BindProp,
+  WidgetProps,
 } from './types';
-export { ACTION_BRAND, useRef, isRef } from './types';
+export { BINDING_BRAND, useRef, isRef } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
@@ -64,6 +65,7 @@ export { delay, logger } from './actions';
 
 // __espcompose — compiler-internal reactive plumbing (injected into user bundles by CLI)
 export { __espcompose } from './__espcompose';
+export { resolveBindProp } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Theme

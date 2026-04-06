@@ -32,7 +32,7 @@ function App() {
       <lvgl displays={[displayRef]}>
         <lvgl-page>
           <lvgl-button style={{ left: 10, top: 10, width: 120, height: 50 }}>
-            <lvgl-label text="Click me" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Click me" style={{ placeSelf: 'center' }} />
           </lvgl-button>
         </lvgl-page>
       </lvgl>

@@ -1,16 +1,23 @@
 /**
- * Theme-aware token resolvers — reactive edition.
+ * Theme-aware token resolvers — reactive hooks.
  *
- * Resolvers return IRReactiveNode<T> values sourced from the reactive theme
- * proxy. When themes switch at runtime, all resolved values update
- * automatically through the C++ reactive graph.
+ * Each hook accepts a `BindProp<T>` so callers can pass static values,
+ * reactive lambdas, or IRReactiveNodes. Internally the input is unwrapped
+ * via `resolveBindProp` and the theme lookup is wrapped in `useMemo`,
+ * composing both layers of reactivity through dependency tracking.
  *
- * For raw numeric pass-through (e.g. `resolveSpacing(16)`), the concrete
+ * For raw numeric pass-through (e.g. `useSpacing(16)`), the concrete
  * value is returned directly (no reactive overhead).
  */
 
-import { useReactiveTheme, isIRReactiveNode, __espcompose } from '@espcompose/core';
-import type { IRReactiveNode, Signal, IRExprNode } from '@espcompose/core';
+import {
+  useReactiveTheme,
+  useMemo,
+  isIRReactiveNode,
+  resolveBindProp,
+  __espcompose,
+} from '@espcompose/core';
+import type { BindProp, IRReactiveNode, Signal, IRExprNode } from '@espcompose/core';
 import type {
   SpacingToken,
   SizeToken,
@@ -35,31 +42,46 @@ function themeLeaf(...path: string[]): any {
   return cursor;
 }
 
-// ── Resolvers ──────────────────────────────────────────────────────────────
+// ── Hooks ──────────────────────────────────────────────────────────────────
 
-/** Resolve a spacing token or pass through a raw pixel value. */
-export function resolveSpacing(
-  value: SpacingToken | number,
-): number | Signal<number> {
-  if (typeof value === 'number') return value;
-  return themeLeaf('spacing', value);
+/** Resolve a spacing token to a reactive pixel value. */
+export function useSpacing(
+  value: BindProp<SpacingToken>,
+): Signal<number> {
+  const resolved = resolveBindProp(value);
+  if (isIRReactiveNode(resolved)) {
+    return useMemo(() => {
+      return themeLeaf('spacing', (resolved as IRReactiveNode<SpacingToken>).get());
+    });
+  }
+  // plain string token
+  return themeLeaf('spacing', resolved as SpacingToken);
 }
 
 /**
  * Resolve a component size token.
  * Returns an object where each dimension is a IRReactiveNode<number>.
  */
-export function resolveSize(value: SizeToken): {
+export function useSize(value: BindProp<SizeToken>): {
   height: Signal<number>;
   fontSize: Signal<number>;
   paddingX: Signal<number>;
   paddingY: Signal<number>;
 } {
+  const resolved = resolveBindProp(value);
+  if (isIRReactiveNode(resolved)) {
+    return {
+      height: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'height')),
+      fontSize: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'fontSize')),
+      paddingX: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'paddingX')),
+      paddingY: useMemo(() => themeLeaf('sizes', (resolved as IRReactiveNode<SizeToken>).get(), 'paddingY')),
+    };
+  }
   return {
-    height: themeLeaf('sizes', value, 'height'),
-    fontSize: themeLeaf('sizes', value, 'fontSize'),
-    paddingX: themeLeaf('sizes', value, 'paddingX'),
-    paddingY: themeLeaf('sizes', value, 'paddingY'),
+    height: themeLeaf('sizes', resolved, 'height'),
+    fontSize: themeLeaf('sizes', resolved, 'fontSize'),
+    paddingX: themeLeaf('sizes', resolved, 'paddingX'),
+    paddingY: themeLeaf('sizes', resolved, 'paddingY'),
   };
 }
 
@@ -67,26 +89,41 @@ export function resolveSize(value: SizeToken): {
  * Resolve a status color token.
  * Returns an object where each color is a IRReactiveNode.
  */
-export function resolveStatus(value: StatusToken): {
+export function useStatus(value: BindProp<StatusToken>): {
   bg: Signal<string>;
   text: Signal<string>;
   bgPressed: Signal<string>;
 } {
+  const resolved = resolveBindProp(value);
+  if (isIRReactiveNode(resolved)) {
+    return {
+      bg: useMemo(() => themeLeaf('colors', (resolved as IRReactiveNode<StatusToken>).get(), 'bg')),
+      text: useMemo(() => themeLeaf('colors', (resolved as IRReactiveNode<StatusToken>).get(), 'text')),
+      bgPressed: useMemo(() => themeLeaf('colors', (resolved as IRReactiveNode<StatusToken>).get(), 'bgPressed')),
+    };
+  }
   return {
-    bg: themeLeaf('colors', value, 'bg'),
-    text: themeLeaf('colors', value, 'text'),
-    bgPressed: themeLeaf('colors', value, 'bgPressed'),
+    bg: themeLeaf('colors', resolved, 'bg'),
+    text: themeLeaf('colors', resolved, 'text'),
+    bgPressed: themeLeaf('colors', resolved, 'bgPressed'),
   };
 }
 
 /** Resolve a typography variant to reactive font properties. */
-export function resolveTypography(variant: TextVariant): {
+export function useTypography(variant: BindProp<TextVariant>): {
   fontFamily: Signal<string>;
   fontSize: Signal<number>;
 } {
+  const resolved = resolveBindProp(variant);
+  if (isIRReactiveNode(resolved)) {
+    return {
+      fontFamily: useMemo(() => themeLeaf('typography', (resolved as IRReactiveNode<TextVariant>).get(), 'fontFamily')),
+      fontSize: useMemo(() => themeLeaf('typography', (resolved as IRReactiveNode<TextVariant>).get(), 'fontSize')),
+    };
+  }
   return {
-    fontFamily: themeLeaf('typography', variant, 'fontFamily'),
-    fontSize: themeLeaf('typography', variant, 'fontSize'),
+    fontFamily: themeLeaf('typography', resolved, 'fontFamily'),
+    fontSize: themeLeaf('typography', resolved, 'fontSize'),
   };
 }
 
@@ -98,7 +135,7 @@ export function resolveTypography(variant: TextVariant): {
  * `const lv_font_t*` directly. If both are static, returns a concrete
  * string like `montserrat_28`.
  */
-export function resolveFont(def: {
+export function useFont(def: {
   fontFamily: string | Signal<string>;
   fontSize: number | Signal<number>;
 }): string | IRReactiveNode<string> {
@@ -130,11 +167,17 @@ export function resolveFont(def: {
   });
 }
 
-/** Resolve a radius token or pass through a raw pixel value. */
-export function resolveRadius(
-  value: RadiusToken | number,
-): number | Signal<number> {
-  if (typeof value === 'number') return value;
-  return themeLeaf('radii', value);
+/** Resolve a radius token to a reactive pixel value. */
+export function useRadius(
+  value: BindProp<RadiusToken>,
+): Signal<number> {
+  const resolved = resolveBindProp(value);
+  if (isIRReactiveNode(resolved)) {
+    return useMemo(() => {
+      return themeLeaf('radii', (resolved as IRReactiveNode<RadiusToken>).get());
+    });
+  }
+  // plain string token
+  return themeLeaf('radii', resolved as RadiusToken);
 }
 

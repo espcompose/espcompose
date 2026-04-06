@@ -1,16 +1,16 @@
 /**
- * DropdownField — a label + dropdown composite.
+ * Dropdown — a label + dropdown composite.
  *
  * Compiles to a container with a label and a dropdown widget.
  * Label uses `ds-text-primary` style reference.
  */
 
-import type { EspComposeElement, TriggerHandler, SizeValue } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
-import { resolveSpacing, resolveTypography, resolveFont } from '../theme/resolvers';
+import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, useReactiveTheme } from '@espcompose/core';
+import { useSpacing, useTypography, useFont } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
 
-interface DropdownFieldProps {
+export type DropdownProps = WidgetProps<{
   /** Label text displayed above the dropdown. */
   label: string;
   /** Newline-separated option values (ESPHome LVGL format). */
@@ -20,22 +20,22 @@ interface DropdownFieldProps {
   /** Change handler (ESPHome action). */
   onChange?: TriggerHandler<{ x: number }>;
   /** Gap between label and dropdown. Default: 'xs'. */
-  gap?: SpacingToken | number;
+  gap?: SpacingToken;
   /** Width of the field container. */
   width?: SizeValue;
-}
+}>;
 
 /**
- * DropdownField — a label + dropdown composite.
+ * Dropdown — a label + dropdown composite.
  *
  * @example
- * <DropdownField label="Mode" options={"Auto\nCool\nHeat"} />
+ * <Dropdown label="Mode" options={"Auto\nCool\nHeat"} />
  */
-export const DropdownField = createIntentComponent(
-  (props: DropdownFieldProps): EspComposeElement => {
-    const gap = props.gap != null ? resolveSpacing(props.gap) : undefined;
-    const typo = resolveTypography('body');
-    const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
+export const Dropdown = createWidgetComponent(
+  (props: DropdownProps): EspComposeElement => {
+    const gap = props.gap != null ? useSpacing(props.gap) : undefined;
+    const typo = useTypography('body');
+    const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const theme = useReactiveTheme() as any;
 
@@ -45,13 +45,9 @@ export const DropdownField = createIntentComponent(
           backgroundOpacity: 'transparent',
           width: props.width ?? '100%',
           height: 'fit-content',
-        }}
-        x:custom={{
-          layout: {
-            type: 'flex',
-            flex_flow: 'COLUMN',
-            ...(gap != null ? { pad_row: gap } : {}),
-          },
+          display: 'flex',
+          flexDirection: 'column',
+          ...(gap != null ? { rowGap: gap } : {}),
         }}
       >
         <lvgl-label
@@ -70,9 +66,5 @@ export const DropdownField = createIntentComponent(
         />
       </lvgl-obj>
     );
-  },
-  {
-    intents: [LVGL_INTENTS.WIDGET] as const,
-    allowedChildIntents: [] as const,
   },
 );

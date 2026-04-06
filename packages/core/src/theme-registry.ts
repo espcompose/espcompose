@@ -11,7 +11,7 @@
 
 import { flattenTheme } from './theme-signals';
 import type { ThemeLeaf } from './theme-signals';
-import type { ACTION_BRAND } from './types';
+import type { BINDING_BRAND } from './types';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -125,7 +125,7 @@ export function registerTheme(name: string, themeObj: Record<string, unknown>): 
  * @example
  * <Button onPress={() => { theme.select('light'); }} />
  */
-export const theme: { readonly [ACTION_BRAND]?: true; select(name: string): void } = {
+export const theme: { readonly [BINDING_BRAND]?: true; select(name: string): void } = {
   /**
    * Switch the active theme at runtime.
    *

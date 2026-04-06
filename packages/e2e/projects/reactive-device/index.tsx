@@ -73,7 +73,7 @@ function App() {
               heater.toggle();
             }}
           >
-            <lvgl-label text="Heater" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Heater" style={{ placeSelf: 'center' }} />
           </ActionButton>
 
           {/* Part-specific reactive binding: slider indicator color bound to HA entity */}
@@ -94,7 +94,7 @@ function App() {
               pressed: { backgroundOpacity: heater.isOn ? 'opaque' : 'transparent' },
             }}
           >
-            <lvgl-label text="Styled" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Styled" style={{ placeSelf: 'center' }} />
           </lvgl-button>
 
           {/* Part+state combo: slider indicator pressed bg_opa */}

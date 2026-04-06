@@ -9,6 +9,8 @@
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
 import { __espcompose } from './__espcompose';
+import type { TriggerHandler, BINDING_BRAND } from './types';
+import type { CssStyleProps } from './style-types';
 
 // ── BindProp<T>: the reactive prop type alias ──────────────────────────────
 
@@ -17,6 +19,37 @@ import { __espcompose } from './__espcompose';
  * Component authors use this to declare which props support reactive binding.
  */
 export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
+
+// ── WidgetProps<T>: mapped type for design-system widget props ─────────────
+
+/**
+ * Maps a plain props interface into widget-ready props by wrapping each
+ * property in `BindProp<T>` — except for `children`, `style`, any
+ * `TriggerHandler` properties, any `BINDING_BRAND` types (bindings, refs,
+ * actions), and any keys listed in `Skip`.
+ *
+ * A `style?: CssStyleProps` property is always included automatically —
+ * component authors do not need to declare it in their base interface.
+ *
+ * @example
+ * export type SwitchProps = WidgetProps<{
+ *   label: string;
+ *   value?: boolean;
+ *   onChange?: TriggerHandler<{ x: boolean }>;
+ *   binding: LightBinding;
+ *   width?: SizeValue;
+ * }>;
+ * // → { label: BindProp<string>; value?: BindProp<boolean>; onChange?: TriggerHandler<…>; binding: LightBinding; width?: BindProp<SizeValue>; style?: CssStyleProps }
+ */
+export type WidgetProps<T, Skip extends keyof T = never> = {
+  [K in keyof T]: K extends 'children' | 'style' | Skip
+    ? T[K]
+    : NonNullable<T[K]> extends TriggerHandler<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+      ? T[K]
+      : NonNullable<T[K]> extends { readonly [BINDING_BRAND]?: true }
+        ? T[K]
+        : BindProp<NonNullable<T[K]>> | Extract<T[K], undefined>;
+} & { style?: CssStyleProps };
 
 // ── resolveBindProp ────────────────────────────────────────────────────────
 

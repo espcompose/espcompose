@@ -15,9 +15,9 @@
 export const LVGL_UPDATABLE_WIDGETS: Readonly<Record<string, readonly string[]>> = {
   button:    ['checked', 'text', 'hidden'],
   label:     ['text', 'hidden'],
-  slider:    ['value', 'min', 'max', 'hidden'],
-  arc:       ['value', 'min', 'max', 'hidden'],
-  bar:       ['value', 'min', 'max', 'hidden'],
+  slider:    ['value', 'min_value', 'max_value', 'hidden'],
+  arc:       ['value', 'min_value', 'max_value', 'hidden'],
+  bar:       ['value', 'min_value', 'max_value', 'hidden'],
   switch:    ['checked', 'hidden'],
   checkbox:  ['checked', 'text', 'hidden'],
   dropdown:  ['selected', 'options', 'hidden'],

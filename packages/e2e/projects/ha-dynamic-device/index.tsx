@@ -51,7 +51,7 @@ function HALightControl(props: { entity: string; label: string }) {
           light.toggle();
         }}
       >
-        <lvgl-label text={props.label} x:custom={{ align: 'CENTER' }} />
+        <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
       </ActionButton>
     </>
   );

@@ -63,7 +63,7 @@ function App() {
               ...buttonStyle,
             }}
           >
-            <lvgl-label text="Styled Button" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Styled Button" style={{ placeSelf: 'center' }} />
           </lvgl-button>
 
           {/* Test 2: Inline style prop */}
@@ -76,7 +76,7 @@ function App() {
               backgroundColor: '#FF0000',
             }}
           >
-            <lvgl-label text="Styled Red" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Styled Red" style={{ placeSelf: 'center' }} />
           </lvgl-button>
 
           {/* Test 3: mergeStyles combining base + specific */}
@@ -87,7 +87,7 @@ function App() {
               { backgroundColor: '#424242', borderRadius: 12 },
             )}
           >
-            <lvgl-label text="Merged" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Merged" style={{ placeSelf: 'center' }} />
           </lvgl-obj>
 
           {/* Test 4: Slider with part styling */}

@@ -1,7 +1,7 @@
 ## Popup System Design: Mux Signal + Hook-Path Dedup
 
 Design for a `usePopup()` hook in the UI library, enabling design-system components
-(e.g., `<HAButton>`) to define custom popups with arbitrary child widgets. The
+(e.g., `<LightButton>`) to define custom popups with arbitrary child widgets. The
 hook is unopinionated about popup content — there are no prescribed ok/cancel
 buttons. The user provides a **render callback** that receives a `PopupController`
 for dismissal, and can include any widgets with any action handlers. The core
@@ -19,7 +19,7 @@ automatically.
 ### Problem Statement
 
 In espcompose's static single-pass render model, every widget that could ever
-appear must be pre-rendered into the IR. A naive `usePopup()` inside `<HAButton>`
+appear must be pre-rendered into the IR. A naive `usePopup()` inside `<LightButton>`
 would produce N separate popup widget subtrees hoisted to `top_layer` — each with
 a backdrop, container, title, controls, and buttons. On ESP32 this is ~200 bytes
 per LVGL object × ~6 objects × N instances = significant RAM waste for
@@ -32,7 +32,7 @@ structurally identical content.
 Two mechanisms working together:
 
 1. **Hook-path deduplication** — `usePopup()` uses the function component call
-   stack as an implicit dedup key. The first `<HAButton>` instance renders the
+   stack as an implicit dedup key. The first `<LightButton>` instance renders the
    popup subtree; subsequent instances get a handle to the same popup.
 
 2. **C++ mux signal** — the generated C++ emits a `Signal<int32_t>` (the popup
@@ -64,8 +64,8 @@ Two mechanisms working together:
 #### User-Facing API
 
 ```tsx
-function HAButton({ entity: entityId }: { entity: string }) {
-  const light = useHAEntity(entityId);
+function LightButton({ binding }: { binding: LightBinding }) {
+  const light = binding;
 
   // Render callback receives a PopupController — no forward reference needed.
   // The factory is evaluated per instance, but only instance #0's widget
@@ -73,7 +73,7 @@ function HAButton({ entity: entityId }: { entity: string }) {
   const popup = usePopup((ctrl) => (
     <VStack>
       <Text variant="title" text={useMemo(() => light.isOn ? "On" : "Off")} />
-      <SliderField label="Brightness" value={light.brightness} />
+      <Slider label="Brightness" value={light.brightness} />
       <HStack>
         {/* User decides what buttons exist and what they do */}
         <Button text="Toggle" onPress={async () => {
@@ -96,10 +96,14 @@ function HAButton({ entity: entityId }: { entity: string }) {
 }
 
 // Usage — 8 instances, 1 popup in top_layer
+const kitchen = useHAEntity('light.kitchen');
+const bedroom = useHAEntity('light.bedroom');
+const livingRoom = useHAEntity('light.living_room');
+
 <Screen>
-  <HAButton entity="light.kitchen" />
-  <HAButton entity="light.bedroom" />
-  <HAButton entity="light.living_room" />
+  <LightButton binding={kitchen} />
+  <LightButton binding={bedroom} />
+  <LightButton binding={livingRoom} />
   {/* ... */}
 </Screen>
 ```
@@ -114,7 +118,7 @@ lvgl:
     widgets:
       # Backdrop — full-screen touch-eating overlay
       - obj:
-          id: popup_HAButton_backdrop
+          id: popup_LightButton_backdrop
           width: 100%
           height: 100%
           bg_color: 0x000000
@@ -123,22 +127,22 @@ lvgl:
           hidden: true
       # Popup container
       - obj:
-          id: popup_HAButton_container
+          id: popup_LightButton_container
           align: CENTER
           width: 80%
           height: SIZE_CONTENT
           hidden: true
           widgets:
             - label:
-                id: popup_HAButton_title
+                id: popup_LightButton_title
                 # ... reactive binding via mux memo
             - slider:
-                id: popup_HAButton_slider
+                id: popup_LightButton_slider
                 # ... reactive binding via mux memo
             - obj: # user-defined button row
                 widgets:
-                  - button: { id: popup_HAButton_btn_0, text: "Toggle" }
-                  - button: { id: popup_HAButton_btn_1, text: "Close" }
+                  - button: { id: popup_LightButton_btn_0, text: "Toggle" }
+                  - button: { id: popup_LightButton_btn_1, text: "Close" }
 ```
 
 The popup infrastructure only manages the backdrop + container + show/hide.
@@ -149,7 +153,7 @@ not inject or prescribe any buttons.
 
 ```cpp
 // Mux signal — which entity is the popup currently showing?
-Signal<int32_t> popup_HAButton_mux;
+Signal<int32_t> popup_LightButton_mux;
 
 // Per-entity signals (already exist from useHAEntity)
 Signal<bool> sig_ha_light_kitchen;
@@ -157,8 +161,8 @@ Signal<bool> sig_ha_light_bedroom;
 // ...
 
 // Switch-expression memo for popup title binding
-Memo<bool> popup_HAButton_is_on([]() -> bool {
-  switch (popup_HAButton_mux.get()) {
+Memo<bool> popup_LightButton_is_on([]() -> bool {
+  switch (popup_LightButton_mux.get()) {
     case 0: return sig_ha_light_kitchen.get();
     case 1: return sig_ha_light_bedroom.get();
     // ...
@@ -167,21 +171,21 @@ Memo<bool> popup_HAButton_is_on([]() -> bool {
 });
 
 // Show action (in each button's on_long_press): just sets mux + shows
-// popup_HAButton_mux.set(0); // entity index for this button
-// lv_obj_clear_flag(popup_HAButton_backdrop, LV_OBJ_FLAG_HIDDEN);
-// lv_obj_clear_flag(popup_HAButton_container, LV_OBJ_FLAG_HIDDEN);
+// popup_LightButton_mux.set(0); // entity index for this button
+// lv_obj_clear_flag(popup_LightButton_backdrop, LV_OBJ_FLAG_HIDDEN);
+// lv_obj_clear_flag(popup_LightButton_container, LV_OBJ_FLAG_HIDDEN);
 // Scheduler::instance().flush();
 
 // Action mux — popup's "Toggle" button dispatches by mux index
-void popup_HAButton_action_0() {
-  switch (popup_HAButton_mux.get()) {
+void popup_LightButton_action_0() {
+  switch (popup_LightButton_mux.get()) {
     case 0: call_ha_service("light/toggle", {{"entity_id", "light.kitchen"}}); break;
     case 1: call_ha_service("light/toggle", {{"entity_id", "light.bedroom"}}); break;
     // ...
   }
   // dismiss (shared across all instances)
-  lv_obj_add_flag(&id(popup_HAButton_backdrop), LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(&id(popup_HAButton_container), LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(&id(popup_LightButton_backdrop), LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(&id(popup_LightButton_container), LV_OBJ_FLAG_HIDDEN);
 }
 ```
 
@@ -351,7 +355,7 @@ objects during the build, not device-side allocation.
 
 ```typescript
 interface PopupController {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Show the popup — sets mux index + unhides backdrop & container. */
   show(): void;
   /** Dismiss the popup — hides backdrop & container. */
@@ -359,7 +363,7 @@ interface PopupController {
 }
 ```
 
-The controller is `ACTION_BRAND`-marked so both `show()` and `dismiss()`
+The controller is `BINDING_BRAND`-marked so both `show()` and `dismiss()`
 can be called inside trigger handler bodies (`onPress`, `onLongPress`, etc.).
 The user decides _when_ to dismiss — from any button, swipe handler, or timer.
 
@@ -389,7 +393,7 @@ The action tree compiler needs to recognize:
 - `ctrl.dismiss()` → `lv_obj_add_flag(backdrop, LV_OBJ_FLAG_HIDDEN)` + `lv_obj_add_flag(container, LV_OBJ_FLAG_HIDDEN)`
 
 These are similar to existing ref action methods — compile-time no-ops with
-`ACTION_BRAND` that the AST transformer recognizes. `dismiss()` is intentionally
+`BINDING_BRAND` that the AST transformer recognizes. `dismiss()` is intentionally
 named differently from `hide()` to avoid confusion with `lvgl.widget.hide`
 which operates on arbitrary widgets.
 
@@ -399,15 +403,15 @@ compiler generates a switch on the mux signal for these handlers:
 
 ```cpp
 // Generated for popup's "Toggle" button onPress
-void popup_HAButton_action_0() {
-  switch (popup_HAButton_mux.get()) {
+void popup_LightButton_action_0() {
+  switch (popup_LightButton_mux.get()) {
     case 0: call_ha_service("light/toggle", {{"entity_id", "light.kitchen"}}); break;
     case 1: call_ha_service("light/toggle", {{"entity_id", "light.bedroom"}}); break;
     // ...
   }
   // dismiss is shared — not muxed
-  lv_obj_add_flag(&id(popup_HAButton_backdrop), LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(&id(popup_HAButton_container), LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(&id(popup_LightButton_backdrop), LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(&id(popup_LightButton_container), LV_OBJ_FLAG_HIDDEN);
 }
 ```
 
@@ -508,7 +512,7 @@ at build time, never called at render), it reads as broken code. The factory
 pattern `usePopup((ctrl) => ...)` avoids this — `ctrl` is a function
 parameter, unambiguously in scope.
 
-**Evaluate factory N times, emit once.** Every `<HAButton>` instance's factory
+**Evaluate factory N times, emit once.** Every `<LightButton>` instance's factory
 is evaluated so the compiler captures its unique closures (entity-specific
 reactive bindings and action handlers). Only instance #0's widget subtree is
 serialized into the IR. The compile-time cost of creating and discarding

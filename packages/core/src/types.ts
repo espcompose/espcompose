@@ -87,13 +87,16 @@ export type IPv4Address = `${number}.${number}.${number}.${number}`;
 declare const REF_BRAND: unique symbol;
 
 /**
- * Phantom brand for action-providing types.
+ * Phantom brand for compile-time binding types.
  *
- * Types branded with ACTION_BRAND are recognized by the ESLint rule
- * `no-unsupported-trigger-body` as legitimate action sources when
- * called inside trigger handler bodies.
+ * Types branded with BINDING_BRAND represent compiler-understood constructs
+ * whose properties (signals) and methods (actions) have real ESPHome
+ * semantics. The brand is used by:
+ *   - `WidgetProps<T>` to skip wrapping in `BindProp` (stable identity)
+ *   - The ESLint rule `no-unsupported-trigger-body` to whitelist calls
+ *   - The compiler to infer HA entity domains from type structure
  */
-export declare const ACTION_BRAND: unique symbol;
+export declare const BINDING_BRAND: unique symbol;
 
 /**
  * Base ref interface — a branded, toString-able reference.
@@ -107,7 +110,7 @@ export declare const ACTION_BRAND: unique symbol;
  */
 interface BaseRef<T = unknown> {
   readonly [REF_BRAND]?: (phantom: T) => void;
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   toString(): string;
 }
 
@@ -296,7 +299,7 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 
 // Re-export types for use by generated code
-export type { BindProp } from './reactive-utils';
+export type { BindProp, WidgetProps } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX namespace — base declaration only.

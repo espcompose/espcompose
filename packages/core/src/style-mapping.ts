@@ -18,7 +18,11 @@ import type { CssAliasProps } from './style-types';
 type MappingEntry =
   | { kind: 'direct'; lvglProp: string }
   | { kind: 'shorthand'; lvglProps: readonly string[] }
-  | { kind: 'transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> };
+  | { kind: 'transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> }
+  | { kind: 'layout'; lvglProp: string }
+  | { kind: 'layout-transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> }
+  | { kind: 'layout-array'; lvglProp: string }
+  | { kind: 'flat-transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> };
 
 // ── Shared value maps ──────────────────────────────────────────────────────
 
@@ -29,6 +33,14 @@ const BORDER_SIDE_VALUES = { none: 'NONE', top: 'TOP', bottom: 'BOTTOM', left: '
 const GRAD_DIR_VALUES = { none: 'NONE', horizontal: 'HOR', vertical: 'VER' } as const;
 const DITHER_MODE_VALUES = { none: 'NONE', ordered: 'ORDERED', 'error-diffusion': 'ERR_DIFF' } as const;
 const SIZE_VALUES = { 'fit-content': 'SIZE_CONTENT' } as const;
+const FLEX_FLOW_VALUES = { row: 'ROW', column: 'COLUMN', 'row-wrap': 'ROW_WRAP', 'column-wrap': 'COLUMN_WRAP' } as const;
+const FLEX_ALIGN_MAIN_VALUES = { start: 'START', center: 'CENTER', end: 'END', spaceBetween: 'SPACE_BETWEEN', spaceAround: 'SPACE_AROUND', spaceEvenly: 'SPACE_EVENLY' } as const;
+const FLEX_ALIGN_CROSS_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH' } as const;
+const GRID_ALIGN_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH', spaceBetween: 'SPACE_BETWEEN', spaceAround: 'SPACE_AROUND', spaceEvenly: 'SPACE_EVENLY' } as const;
+const GRID_CELL_ALIGN_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH' } as const;
+const DISPLAY_VALUES = { flex: 'flex', grid: 'grid' } as const;
+const PLACE_SELF_VALUES = { center: 'CENTER', topLeft: 'TOP_LEFT', topCenter: 'TOP_MID', topRight: 'TOP_RIGHT', bottomLeft: 'BOTTOM_LEFT', bottomCenter: 'BOTTOM_MID', bottomRight: 'BOTTOM_RIGHT', leftCenter: 'LEFT_MID', rightCenter: 'RIGHT_MID' } as const;
+const SCROLLBAR_MODE_VALUES = { off: 'OFF', on: 'ON', active: 'ACTIVE', auto: 'AUTO' } as const;
 
 // ── CSS → LVGL mapping table ───────────────────────────────────────────────
 
@@ -160,6 +172,34 @@ const _cssToLvglMap = {
   transformOriginX:      { kind: 'direct', lvglProp: 'transformPivotX' },
   transformOriginY:      { kind: 'direct', lvglProp: 'transformPivotY' },
   scale:                 { kind: 'direct', lvglProp: 'transformZoom' },
+
+  // ── Layout (flex) ──────────────────────────────────────────────────
+  display:               { kind: 'layout-transform', lvglProp: 'type', valueMap: DISPLAY_VALUES },
+  flexDirection:         { kind: 'layout-transform', lvglProp: 'flexFlow', valueMap: FLEX_FLOW_VALUES },
+  justifyContent:        { kind: 'layout-transform', lvglProp: 'flexAlignMain', valueMap: FLEX_ALIGN_MAIN_VALUES },
+  alignItems:            { kind: 'layout-transform', lvglProp: 'flexAlignCross', valueMap: FLEX_ALIGN_CROSS_VALUES },
+  flexGrow:              { kind: 'direct', lvglProp: 'flexGrow' },
+
+  // ── Layout (grid — parent) ────────────────────────────────────────
+  gridTemplateColumns:   { kind: 'layout-array', lvglProp: 'gridColumns' },
+  gridTemplateRows:      { kind: 'layout-array', lvglProp: 'gridRows' },
+  justifyItems:          { kind: 'layout-transform', lvglProp: 'gridColumnAlign', valueMap: GRID_ALIGN_VALUES },
+  alignContent:          { kind: 'layout-transform', lvglProp: 'gridRowAlign', valueMap: GRID_ALIGN_VALUES },
+
+  // ── Layout (grid — child) ─────────────────────────────────────────
+  gridColumn:            { kind: 'direct', lvglProp: 'gridCellColumnPos' },
+  gridRow:               { kind: 'direct', lvglProp: 'gridCellRowPos' },
+  gridColumnSpan:        { kind: 'direct', lvglProp: 'gridCellColumnSpan' },
+  gridRowSpan:           { kind: 'direct', lvglProp: 'gridCellRowSpan' },
+  justifySelf:           { kind: 'flat-transform', lvglProp: 'gridCellXAlign', valueMap: GRID_CELL_ALIGN_VALUES },
+  alignSelf:             { kind: 'flat-transform', lvglProp: 'gridCellYAlign', valueMap: GRID_CELL_ALIGN_VALUES },
+
+  // ── Widget placement ──────────────────────────────────────────────
+  placeSelf:             { kind: 'flat-transform', lvglProp: 'align', valueMap: PLACE_SELF_VALUES },
+
+  // ── Scrollbar ─────────────────────────────────────────────────────
+  scrollbarMode:         { kind: 'flat-transform', lvglProp: 'scrollbarMode', valueMap: SCROLLBAR_MODE_VALUES },
+
 } as const satisfies Record<string, MappingEntry>;
 
 // Public export: widened to Record<string, MappingEntry> for runtime string-indexed access
@@ -188,8 +228,7 @@ const CSS_SUGGESTION_MAP: Readonly<Record<string, string>> = {
   fontFamily:      'Use "font" to set the font in LVGL (maps to text_font).',
   fontWeight:      'LVGL does not support font-weight. Select a specific font via "font".',
   background:      'Use "backgroundColor" for background color, or "backgroundImage" for background images.',
-  display:         'LVGL does not support CSS display. Use layout flags instead.',
-  position:        'LVGL does not support CSS position. Use left/top or layout alignment.',
+  position:        'LVGL does not support CSS position. Use left/top or placeSelf for widget alignment.',
   zIndex:          'LVGL does not support z-index. Layer order is determined by child order.',
   boxShadow:       'Use "shadowColor", "shadowWidth", "shadowOffsetX", "shadowOffsetY" for shadows.',
   margin:          'LVGL does not support margin. Use padding on the parent container instead.',
@@ -213,6 +252,7 @@ export function expandCssProps(
 ): Record<string, unknown> {
   // Two passes: shorthands first, then direct/passthrough (so specific wins).
   const result: Record<string, unknown> = {};
+  const layoutBag: Record<string, unknown> = {};
 
   // Pass 1: expand shorthands
   for (const [key, value] of Object.entries(cssProps)) {
@@ -231,7 +271,7 @@ export function expandCssProps(
     }
   }
 
-  // Pass 2: direct mappings (overwrite shorthands)
+  // Pass 2: direct, transform, layout, and flat-transform mappings
   for (const [key, value] of Object.entries(cssProps)) {
     if (value === undefined) continue;
     if (LVGL_STATE_NAMES.has(key) || LVGL_PART_NAMES.has(key)) continue;
@@ -246,10 +286,6 @@ export function expandCssProps(
         if (mapped !== undefined) {
           result[mapping.lvglProp] = mapped;
         } else if (/^-?\d/.test(value)) {
-          // Numeric / percentage strings (e.g. '50%', '128') — pass through.
-          // TODO: Add an optional `valuePattern` regex to transform entries so
-          // each prop can restrict which numeric formats are valid at runtime
-          // (e.g. sizing accepts only percentages, opacity accepts both).
           result[mapping.lvglProp] = value;
         } else {
           throw new Error(
@@ -260,6 +296,43 @@ export function expandCssProps(
       } else {
         // Non-string (number, reactive node, etc.) — pass through
         result[mapping.lvglProp] = value;
+      }
+    } else if (mapping?.kind === 'flat-transform') {
+      // Flat widget prop with value mapping (placeSelf, scrollbarMode, grid cell align)
+      if (typeof value === 'string') {
+        const mapped = mapping.valueMap[value];
+        if (mapped !== undefined) {
+          result[mapping.lvglProp] = mapped;
+        } else {
+          throw new Error(
+            `Invalid value "${value}" for style property "${key}". ` +
+            `Expected one of: ${Object.keys(mapping.valueMap).join(', ')}`,
+          );
+        }
+      } else {
+        result[mapping.lvglProp] = value;
+      }
+    } else if (mapping?.kind === 'layout-transform') {
+      // Layout block prop with value mapping (display, flexDirection, etc.)
+      if (typeof value === 'string') {
+        const mapped = mapping.valueMap[value];
+        if (mapped !== undefined) {
+          layoutBag[mapping.lvglProp] = mapped;
+        } else {
+          throw new Error(
+            `Invalid value "${value}" for style property "${key}". ` +
+            `Expected one of: ${Object.keys(mapping.valueMap).join(', ')}`,
+          );
+        }
+      } else {
+        layoutBag[mapping.lvglProp] = value;
+      }
+    } else if (mapping?.kind === 'layout-array') {
+      // Layout block array prop (gridTemplateColumns, gridTemplateRows)
+      if (Array.isArray(value)) {
+        layoutBag[mapping.lvglProp] = value.map(transformGridTrackValue);
+      } else {
+        layoutBag[mapping.lvglProp] = value;
       }
     } else if (mapping?.kind === 'shorthand') {
       // Already handled in pass 1
@@ -277,7 +350,31 @@ export function expandCssProps(
     }
   }
 
+  // Merge layout block if any layout properties were set
+  if (Object.keys(layoutBag).length > 0) {
+    result.layout = layoutBag;
+  }
+
   return result;
+}
+
+/**
+ * Transform a CSS-like grid track value to LVGL format.
+ *
+ * - `'fr(n)'` → `'FR(n)'`
+ * - `'content'` → `'CONTENT'`
+ * - number → number (px)
+ * - other strings → pass through (already in LVGL format like 'FR(1)')
+ */
+function transformGridTrackValue(v: unknown): unknown {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const frMatch = /^fr\((\d+)\)$/i.exec(v);
+    if (frMatch) return `FR(${frMatch[1]})`;
+    if (v.toLowerCase() === 'content') return 'CONTENT';
+    return v; // pass through 'FR(1)', 'SIZE_CONTENT', etc.
+  }
+  return v;
 }
 
 /**

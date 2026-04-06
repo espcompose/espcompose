@@ -226,6 +226,52 @@ export interface CssAliasProps {
   transformOriginY?: BindProp<number | string>;
   /** Maps to `transformZoom`. */
   scale?: BindProp<number | string>;
+
+  // ── Layout (flex) ────────────────────────────────────────────────────
+  /** Layout mode. Emitted into the `layout:` block. */
+  display?: BindProp<'flex' | 'grid'>;
+  /** Flex direction. Maps to `flexFlow` inside `layout:`. */
+  flexDirection?: BindProp<'row' | 'column' | 'row-wrap' | 'column-wrap'>;
+  /** Main-axis alignment (flex). Maps to `flexAlignMain` inside `layout:`. */
+  justifyContent?: BindProp<'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+  /** Cross-axis alignment (flex). Maps to `flexAlignCross` inside `layout:`. */
+  alignItems?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+  /** Flex grow factor for child within flex parent. Flat widget prop. */
+  flexGrow?: BindProp<number>;
+
+  // ── Layout (grid — parent) ───────────────────────────────────────────
+  /** Grid column track definitions. E.g. ['fr(1)', 'fr(2)', 200]. */
+  gridTemplateColumns?: (number | string)[];
+  /** Grid row track definitions. E.g. ['fr(1)', 100]. */
+  gridTemplateRows?: (number | string)[];
+  /** Default column alignment for grid children. Maps to `gridColumnAlign` inside `layout:`. */
+  justifyItems?: BindProp<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+  /** Default row alignment for grid children. Maps to `gridRowAlign` inside `layout:`. */
+  alignContent?: BindProp<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+
+  // ── Layout (grid — child) ────────────────────────────────────────────
+  /** Grid column position (0-based). Flat widget prop. */
+  gridColumn?: BindProp<number>;
+  /** Grid row position (0-based). Flat widget prop. */
+  gridRow?: BindProp<number>;
+  /** Number of grid columns to span. Flat widget prop. */
+  gridColumnSpan?: BindProp<number>;
+  /** Number of grid rows to span. Flat widget prop. */
+  gridRowSpan?: BindProp<number>;
+  /** Per-cell column alignment override. Flat widget prop. */
+  justifySelf?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+  /** Per-cell row alignment override. Flat widget prop. */
+  alignSelf?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+
+  // ── Widget placement ─────────────────────────────────────────────────
+  /** Widget alignment within parent (non-layout positioning). Maps to `align`. */
+  placeSelf?: BindProp<'center' | 'topLeft' | 'topCenter' | 'topRight'
+            | 'bottomLeft' | 'bottomCenter' | 'bottomRight'
+            | 'leftCenter' | 'rightCenter'>;
+
+  // ── Scrollbar ────────────────────────────────────────────────────────
+  /** Maps to `scrollbarMode`. */
+  scrollbarMode?: BindProp<'off' | 'on' | 'active' | 'auto'>;
 }
 
 // ── Composite style type ───────────────────────────────────────────────────

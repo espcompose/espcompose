@@ -96,6 +96,27 @@ export function hasSignalBrand(type: ts.Type): boolean {
   return false;
 }
 
+/**
+ * Detect whether a TS type is (or contains) IRReactiveNode<T>.
+ *
+ * IRReactiveNode declares `readonly [REACTIVE_NODE_BRAND]?: T` which
+ * the compiler mangles to `__@REACTIVE_NODE_BRAND@NNN`.
+ */
+export function hasReactiveNodeBrand(type: ts.Type): boolean {
+  if (type.isIntersection()) {
+    return type.types.some(t => hasReactiveNodeBrand(t));
+  }
+  if (type.isUnion()) {
+    return type.types.some(t => hasReactiveNodeBrand(t));
+  }
+  for (const prop of type.getProperties()) {
+    if (/^__@REACTIVE_NODE_BRAND@\d+$/.test(prop.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Signal property resolution
 // ────────────────────────────────────────────────────────────────────────────
@@ -800,6 +821,14 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         args.push(compiled);
       }
       return { kind: 'string_method', method: methodName as StringMethod, object: obj, args };
+    }
+
+    // .get() on IRReactiveNode<T> → slot (resolved at runtime)
+    if (methodName === 'get' && node.arguments.length === 0) {
+      const objType = ctx.checker.getTypeAtLocation(objectExpr);
+      if (hasReactiveNodeBrand(objType)) {
+        return assignSlotIR(objectExpr, ctx);
+      }
     }
   }
 

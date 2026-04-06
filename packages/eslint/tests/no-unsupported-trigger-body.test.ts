@@ -142,7 +142,7 @@ ruleTester.run('no-unsupported-trigger-body', rule, {
 });
 
 // ── Typed tester (action brand detection) ───────────────────────────────────
-// With type info, calls are checked for ACTION_BRAND phantom property.
+// With type info, calls are checked for BINDING_BRAND phantom property.
 const typedTester = createTypedRuleTester();
 
 typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {

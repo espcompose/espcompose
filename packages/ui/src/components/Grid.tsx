@@ -1,19 +1,19 @@
 /**
  * Grid / GridItem — native CSS Grid layout components.
  *
- * Uses ESPHome LVGL's native grid layout:
+ * Uses CSS-like style props that compile to ESPHome LVGL's native grid layout:
  *   layout:
  *     type: grid
  *     grid_columns: [FR(1), FR(2)]
  *     grid_rows: [FR(1), 100]
  *
- * Grid children are positioned via grid_cell_* properties.
+ * Grid children are positioned via grid cell style props.
  */
 
-import type { EspComposeElement, SizeValue } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
-import { resolveSpacing } from '../theme/resolvers';
+import { useSpacing } from '../theme/resolvers';
 import type { SpacingToken } from '../theme/types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -22,87 +22,73 @@ import type { SpacingToken } from '../theme/types';
 
 /**
  * Column/row track definition.
- * - `FR(n)` — fractional unit (string, passed through to ESPHome)
+ * - `'fr(n)'` — fractional unit (converted to `FR(n)` for ESPHome)
+ * - `'content'` — auto-size to content (converted to `CONTENT`)
  * - number  — fixed pixel size
- * - 'SIZE_CONTENT' — auto-size to content
+ * - Pre-formatted strings (`'FR(1)'`, `'SIZE_CONTENT'`) are also accepted.
  */
 export type TrackSize = string | number;
 
-type GridAlign = 'START' | 'CENTER' | 'END' | 'STRETCH';
+type GridAlign = 'start' | 'center' | 'end' | 'stretch';
+type GridContainerAlign = GridAlign | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Grid
 // ────────────────────────────────────────────────────────────────────────────
 
-interface GridProps {
+type GridProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
-  /** Column track definitions. E.g. ['FR(1)', 'FR(2)', 200] */
+  /** Column track definitions. E.g. ['fr(1)', 'fr(2)', 200] */
   columns: TrackSize[];
-  /** Row track definitions. E.g. ['FR(1)', 100] */
+  /** Row track definitions. E.g. ['fr(1)', 100] */
   rows: TrackSize[];
-  /** Column gap. Token or pixels. */
-  columnGap?: SpacingToken | number;
-  /** Row gap. Token or pixels. */
-  rowGap?: SpacingToken | number;
+  /** Column gap. Token name. */
+  columnGap?: SpacingToken;
+  /** Row gap. Token name. */
+  rowGap?: SpacingToken;
   /** Shorthand for equal column and row gap. */
-  gap?: SpacingToken | number;
+  gap?: SpacingToken;
   /** Default column alignment for children. */
-  alignColumns?: GridAlign;
+  alignColumns?: GridContainerAlign;
   /** Default row alignment for children. */
-  alignRows?: GridAlign;
-  /** Width. */
-  width?: SizeValue;
-  /** Height. */
-  height?: SizeValue;
-  /** Background color. */
-  backgroundColor?: string;
-  /** Background opacity. */
-  backgroundOpacity?: 'transparent' | 'opaque';
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+  alignRows?: GridContainerAlign;
+}, 'columns' | 'rows'>;
 
 /**
  * Grid — a native CSS Grid container for LVGL.
  *
  * @example
- * <Grid columns={['FR(1)', 'FR(1)']} rows={['FR(1)', 'FR(1)']}>
+ * <Grid columns={['fr(1)', 'fr(1)']} rows={['fr(1)', 'fr(1)']}>
  *   <GridItem col={0} row={0}><Text text="Top-left" /></GridItem>
  *   <GridItem col={1} row={0}><Text text="Top-right" /></GridItem>
  *   <GridItem col={0} row={1} colSpan={2}><Text text="Full bottom" /></GridItem>
  * </Grid>
  */
-export const Grid = createIntentComponent(
+export const Grid = createWidgetComponent(
   (props: GridProps): EspComposeElement => {
     const colGap = props.columnGap != null
-      ? resolveSpacing(props.columnGap)
-      : props.gap != null ? resolveSpacing(props.gap) : undefined;
+      ? useSpacing(props.columnGap)
+      : props.gap != null ? useSpacing(props.gap) : undefined;
     const rowGap = props.rowGap != null
-      ? resolveSpacing(props.rowGap)
-      : props.gap != null ? resolveSpacing(props.gap) : undefined;
+      ? useSpacing(props.rowGap)
+      : props.gap != null ? useSpacing(props.gap) : undefined;
 
     return (
       <lvgl-obj
         style={{
-          width: props.width,
-          height: props.height,
-          backgroundColor: props.backgroundColor,
-          backgroundOpacity: props.backgroundOpacity ?? 'transparent',
-          borderWidth: props.borderWidth ?? 0,
-          borderColor: props.borderColor,
-        }}
-        x:custom={{
-          layout: {
-            type: 'grid',
-            grid_columns: props.columns,
-            grid_rows: props.rows,
-            ...(colGap != null ? { pad_column: colGap } : {}),
-            ...(rowGap != null ? { pad_row: rowGap } : {}),
-            ...(props.alignColumns ? { grid_column_align: props.alignColumns } : {}),
-            ...(props.alignRows ? { grid_row_align: props.alignRows } : {}),
-          },
+          width: props.style?.width,
+          height: props.style?.height,
+          backgroundColor: props.style?.backgroundColor,
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          display: 'grid',
+          gridTemplateColumns: props.columns,
+          gridTemplateRows: props.rows,
+          ...(colGap != null ? { columnGap: colGap } : {}),
+          ...(rowGap != null ? { rowGap: rowGap } : {}),
+          ...(props.alignColumns ? { justifyItems: props.alignColumns } : {}),
+          ...(props.alignRows ? { alignContent: props.alignRows } : {}),
         }}
       >
         {props.children}
@@ -110,7 +96,6 @@ export const Grid = createIntentComponent(
     );
   },
   {
-    intents: [LVGL_INTENTS.WIDGET] as const,
     allowedChildIntents: [COMPOSE_UI_INTENTS.GRID_ITEM] as const,
     contextTransparent: true as const,
   },
@@ -120,7 +105,7 @@ export const Grid = createIntentComponent(
 // GridItem
 // ────────────────────────────────────────────────────────────────────────────
 
-interface GridItemProps {
+type GridItemProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
   /** Column position (0-based). */
   col: number;
@@ -134,11 +119,7 @@ interface GridItemProps {
   colAlign?: GridAlign;
   /** Row alignment override. */
   rowAlign?: GridAlign;
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+}>;
 
 /**
  * GridItem — positions a child within a Grid.
@@ -148,22 +129,20 @@ interface GridItemProps {
  *   <Text text="Spans two columns" />
  * </GridItem>
  */
-export const GridItem = createIntentComponent(
+export const GridItem = createWidgetComponent(
   (props: GridItemProps): EspComposeElement => {
     return (
       <lvgl-obj
         style={{
-          backgroundOpacity: 'transparent',
-          borderWidth: props.borderWidth ?? 0,
-          borderColor: props.borderColor,
-        }}
-        x:custom={{
-          grid_cell_column_pos: props.col,
-          grid_cell_row_pos: props.row,
-          ...(props.colSpan != null && props.colSpan !== 1 ? { grid_cell_column_span: props.colSpan } : {}),
-          ...(props.rowSpan != null && props.rowSpan !== 1 ? { grid_cell_row_span: props.rowSpan } : {}),
-          ...(props.colAlign ? { grid_cell_x_align: props.colAlign } : {}),
-          ...(props.rowAlign ? { grid_cell_y_align: props.rowAlign } : {}),
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          gridColumn: props.col,
+          gridRow: props.row,
+          ...(props.colSpan != null && props.colSpan !== 1 ? { gridColumnSpan: props.colSpan } : {}),
+          ...(props.rowSpan != null && props.rowSpan !== 1 ? { gridRowSpan: props.rowSpan } : {}),
+          ...(props.colAlign ? { justifySelf: props.colAlign } : {}),
+          ...(props.rowAlign ? { alignSelf: props.rowAlign } : {}),
         }}
       >
         {props.children}
@@ -171,7 +150,7 @@ export const GridItem = createIntentComponent(
     );
   },
   {
-    intents: [COMPOSE_UI_INTENTS.GRID_ITEM, LVGL_INTENTS.WIDGET] as const,
+    additionalIntents: [COMPOSE_UI_INTENTS.GRID_ITEM] as const,
     allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
     contextTransparent: true as const,
   },

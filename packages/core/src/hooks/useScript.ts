@@ -24,7 +24,7 @@ import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
-import type { ACTION_BRAND } from '../types';
+import type { BINDING_BRAND } from '../types';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
@@ -62,7 +62,7 @@ export function withScriptScope<T>(fn: () => T): { result: T; scripts: ScriptDef
  * Callable as a function: `await myScript()` = script.execute + script.wait
  */
 export interface ScriptHandle {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   /** Call as a function: `await myScript()` = script.execute + script.wait */
   (): Promise<void>;
   /** The script ID */

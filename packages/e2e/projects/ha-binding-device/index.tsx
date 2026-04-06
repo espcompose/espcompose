@@ -66,7 +66,7 @@ function App() {
               kitchenLight.toggle();
             }}
           >
-            <lvgl-label text="Toggle" x:custom={{ align: 'CENTER' }} />
+            <lvgl-label text="Toggle" style={{ placeSelf: 'center' }} />
           </ActionButton>
 
           {/* Temperature readout — bound to HA sensor entity */}

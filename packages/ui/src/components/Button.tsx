@@ -6,32 +6,62 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, BindProp, SizeValue } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS, useMemo } from '@espcompose/core';
-import { resolveSize, resolveTypography, resolveFont, resolveStatus } from '../theme/resolvers';
+import type { EspComposeElement, TriggerHandler, WidgetProps, BindProp, IRReactiveNode } from '@espcompose/core';
+import { createWidgetComponent, useMemo, resolveBindProp, isIRReactiveNode } from '@espcompose/core';
+import { useSize, useTypography, useFont, useStatus } from '../theme/resolvers';
 import type { StatusToken, SizeToken } from '../theme/types';
+import type { ButtonVariant } from './shared-types';
 
-type ButtonVariant = 'solid' | 'outline';
-
-interface ButtonProps {
+export type ButtonProps = WidgetProps<{
   /** Button label text. */
-  text?: BindProp<string>;
+  text?: string;
   /** Color scheme. Default: 'primary'. */
   status?: StatusToken;
   /** Size. Default: 'md'. */
   size?: SizeToken;
   /** Visual variant. Default: 'solid'. */
   variant?: ButtonVariant;
-  /** X position (pixels). */
-  x?: number;
-  /** Y position (pixels). */
-  y?: number;
-  /** Width override. */
-  width?: SizeValue;
-  /** Height override. */
-  height?: SizeValue;
   /** Press handler (ESPHome trigger function). */
   onPress?: TriggerHandler;
+}>;
+
+/**
+ * Derive variant-dependent style values, composing variant reactivity
+ * with status colors.
+ *
+ * Both branches always return a value (no `undefined`) so that the
+ * resulting types stay covariant — `Signal<string>` flows cleanly
+ * through `useMemo` without `IRReactiveNode<Signal<T> | undefined>`
+ * mismatches. Outline hides its background via `bgOpa = 'transparent'`
+ * rather than omitting bgColor.
+ */
+function useButtonVariant(
+  variant: BindProp<ButtonVariant>,
+  sc: { bg: ReturnType<typeof useStatus>['bg']; text: ReturnType<typeof useStatus>['text']; bgPressed: ReturnType<typeof useStatus>['bgPressed'] },
+) {
+  const resolved = resolveBindProp(variant);
+
+  if (isIRReactiveNode(resolved)) {
+    const r = resolved as IRReactiveNode<ButtonVariant>;
+    return {
+      bgColor: sc.bg,
+      bgOpa: useMemo(() => r.get() === 'solid' ? 'opaque' as const : 'transparent' as const),
+      borderColor: sc.bg,
+      borderWidth: useMemo(() => r.get() === 'solid' ? 0 : 2),
+      textColor: useMemo(() => r.get() === 'solid' ? sc.text : sc.bg),
+      pressedBg: useMemo(() => r.get() === 'solid' ? sc.bgPressed : sc.bg),
+    };
+  }
+
+  const isSolid = resolved === 'solid';
+  return {
+    bgColor: sc.bg,
+    bgOpa: isSolid ? 'opaque' as const : 'transparent' as const,
+    borderColor: sc.bg,
+    borderWidth: isSolid ? 0 : 2,
+    textColor: isSolid ? sc.text : sc.bg,
+    pressedBg: isSolid ? sc.bgPressed : sc.bg,
+  };
 }
 
 /**
@@ -41,63 +71,46 @@ interface ButtonProps {
  * <Button text="Toggle Light" status="primary" size="lg" />
  * <Button text="Delete" status="danger" variant="outline" />
  */
-export const Button = createIntentComponent(
+export const Button = createWidgetComponent(
   (props: ButtonProps): EspComposeElement => {
-    const status = props.status ?? 'primary';
-    const size = props.size ?? 'md';
-    const variant = props.variant ?? 'solid';
-
-    const dims = resolveSize(size);
-    const sc = resolveStatus(status);
-    const typo = resolveTypography('body');
-    const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
-
-    const bgColor = variant === 'solid' ? sc.bg : undefined;
-    const bgOpa = variant === 'outline' ? 'transparent' : undefined;
-    const borderColor = variant === 'outline' ? sc.bg : undefined;
-    const borderWidth = variant === 'outline' ? 2 : 0;
-    const textColor = variant === 'solid' ? sc.text : sc.bg;
-
-    // Pressed state colors (reactive)
-    const pressed: Record<string, unknown> =
-      variant === 'solid'
-        ? { backgroundColor: sc.bgPressed }
-        : { backgroundColor: sc.bg, backgroundOpacity: 'opaque' };
+    const dims = useSize(props.size ?? 'md');
+    const sc = useStatus(props.status ?? 'primary');
+    const vs = useButtonVariant(props.variant ?? 'solid', sc);
+    const typo = useTypography('body');
+    const font = useFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
 
     // Width: derived from reactive paddingX if no override.
     // The compiler transform (espcompose build --library) compiles this to
     // __espcompose.slotted() with a C++ template at library build time.
-    const width = props.width ?? useMemo(() => dims.paddingX * 2 + 80);
-    const height = props.height ?? dims.height;
+    const width = props.style?.width ?? useMemo(() => dims.paddingX * 2 + 80);
+    const height = props.style?.height ?? dims.height;
 
     return (
       <lvgl-button
         style={{
-          backgroundColor: bgColor,
-          backgroundOpacity: bgOpa,
-          borderColor: borderColor,
-          borderWidth: borderWidth,
+          backgroundColor: vs.bgColor,
+          backgroundOpacity: vs.bgOpa,
+          borderColor: vs.borderColor,
+          borderWidth: vs.borderWidth,
           width: width,
           height: height,
-          left: props.x,
-          top: props.y,
-          pressed,
+          pressed: {
+            backgroundColor: vs.pressedBg,
+            backgroundOpacity: 'opaque',
+          },
         }}
         {...(props.onPress != null ? { onPress: props.onPress } : {})}
       >
         <lvgl-label
           text={props.text ?? ''}
           style={{
-            color: textColor,
+            color: vs.textColor,
             font: font,
+            textAlign: 'center',
+            placeSelf: 'center',
           }}
-          x:custom={{ align: 'CENTER' }}
         />
       </lvgl-button>
     );
-  },
-  {
-    intents: [LVGL_INTENTS.WIDGET] as const,
-    allowedChildIntents: [] as const,
   },
 );
