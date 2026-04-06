@@ -14,7 +14,7 @@
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
-import { useSpacing } from '../theme/resolvers';
+import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
 // ────────────────────────────────────────────────────────────────────────────

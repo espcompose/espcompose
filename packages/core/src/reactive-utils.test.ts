@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { setCurrentHookPath } from './hooks/useState';
-import { resolveBindProp } from './reactive-utils';
+import { useReactive } from './reactive-utils';
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 
 describe('reactive-utils', () => {
@@ -12,14 +12,14 @@ describe('reactive-utils', () => {
     setCurrentHookPath(null);
   });
 
-  describe('resolveBindProp()', () => {
+  describe('useReactive()', () => {
     it('evaluates function props', () => {
-      const result = resolveBindProp(() => 'hello');
+      const result = useReactive(() => 'hello');
       expect(result).toBe('hello');
     });
 
     it('passes through static values', () => {
-      const result = resolveBindProp(42);
+      const result = useReactive(42);
       expect(result).toBe(42);
     });
 
@@ -28,7 +28,7 @@ describe('reactive-utils', () => {
         kind: 'expression',
         dependencies: [{ kind: 'dependency', sourceId: 'test', triggerType: 'on_state', sourceDomain: 'sensor' }],
       });
-      const result = resolveBindProp(node);
+      const result = useReactive(node);
       expect(isIRReactiveNode(result)).toBe(true);
     });
   });

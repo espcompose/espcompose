@@ -5,8 +5,8 @@
  */
 
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useReactiveTheme } from '@espcompose/core';
-import { useTypography, useFont, useStatus } from '../theme/resolvers';
+import { createWidgetComponent, useTheme } from '@espcompose/core';
+import { useTypography, useFont, useStatus } from '../hooks';
 import type { TextVariant, StatusToken } from '../theme/types';
 
 type TextProps = WidgetProps<{
@@ -36,7 +36,7 @@ export const Text = createWidgetComponent(
     const typo = useTypography(variant);
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useReactiveTheme() as any;
+    const theme = useTheme() as any;
     const textColor = props.color != null
       ? useStatus(props.color).text
       : theme?.colors?.textPrimary;

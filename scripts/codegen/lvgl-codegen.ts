@@ -20,7 +20,7 @@ import {
   interfaceDecl, typeAliasDecl,
   importTypeDecl,
   globalJsxAugmentation,
-  bindPropType,
+  reactivePropType,
   refPropType,
 } from './ast-helpers.js';
 
@@ -143,7 +143,7 @@ function buildProps(
   options?: {
     /** Widget name (e.g. 'label', 'button') for reactive prop lookup. */
     widgetName?: string;
-    /** When true, wrap reactive-updatable style props with BindProp<T>. */
+    /** When true, wrap reactive-updatable style props with Reactive<T>. */
     isStyleProps?: boolean;
   },
 ): ts.PropertySignature[] {
@@ -162,7 +162,7 @@ function buildProps(
       ? WIDGET_PROP_TYPE_OVERRIDES[name]()
       : lvglTypeToTs(def);
 
-    // Wrap with BindProp<T> if:
+    // Wrap with Reactive<T> if:
     // - widget-specific updatable prop, OR
     // - style prop that the reactive runtime can update
     const shouldBind = updatableProps.includes(name) || (isStyleProps && LVGL_REACTIVE_STYLE_PROPS.has(name));
@@ -172,7 +172,7 @@ function buildProps(
       if (def.type === 'enum' && def.values && def.values.length > 0) {
         tsType = unionType([keyword('string'), tsType]);
       }
-      tsType = bindPropType(tsType);
+      tsType = reactivePropType(tsType);
     }
 
     const optional = def.key !== 'Required';
@@ -195,7 +195,7 @@ export function buildLvglFileContent(schemaPath: string): string {
   const statements: ts.Statement[] = [];
 
   // ── Import ────────────────────────────────────────────────────────────────
-  statements.push(importTypeDecl(['ComponentProps', 'BindProp', 'RefProp'], '../../types'));
+  statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp'], '../../types'));
   statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
 

@@ -29,7 +29,7 @@ export type {
   PinMode,
   PinConfig,
   Pin,
-  BindProp,
+  Reactive,
   WidgetProps,
 } from './types';
 export { BINDING_BRAND, useRef, isRef } from './types';
@@ -65,14 +65,14 @@ export { delay, logger } from './actions';
 
 // __espcompose — compiler-internal reactive plumbing (injected into user bundles by CLI)
 export { __espcompose } from './__espcompose';
-export { resolveBindProp } from './reactive-utils';
+export { useReactive } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Theme
 // ────────────────────────────────────────────────────────────────────────────
 
 export { registerTheme, getThemeRegistry, theme } from './theme-registry';
-export { useReactiveTheme } from './reactive-theme';
+export { useTheme } from './reactive-theme';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — CSS-like Style System

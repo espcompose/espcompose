@@ -17,7 +17,7 @@
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
 import { DisplayRef, useRef, useHAEntity, useMemo, theme } from '@espcompose/core';
-import type { EspComposeElement, TriggerHandler, BindProp, LightBinding } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -32,7 +32,7 @@ import type { StatusToken } from '@espcompose/ui';
 // Wraps the design-system Button, forwarding reactive label and actions.
 
 interface LightButtonProps {
-  label: BindProp<string>;
+  label: Reactive<string>;
   status: StatusToken;
   onPress?: TriggerHandler;
 }

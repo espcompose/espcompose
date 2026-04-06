@@ -6,9 +6,9 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, WidgetProps, BindProp, IRReactiveNode } from '@espcompose/core';
-import { createWidgetComponent, useMemo, resolveBindProp, isIRReactiveNode } from '@espcompose/core';
-import { useSize, useTypography, useFont, useStatus } from '../theme/resolvers';
+import type { EspComposeElement, TriggerHandler, WidgetProps, Reactive, IRReactiveNode } from '@espcompose/core';
+import { createWidgetComponent, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
+import { useSize, useTypography, useFont, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
 
@@ -36,10 +36,10 @@ export type ButtonProps = WidgetProps<{
  * rather than omitting bgColor.
  */
 function useButtonVariant(
-  variant: BindProp<ButtonVariant>,
+  variant: Reactive<ButtonVariant>,
   sc: { bg: ReturnType<typeof useStatus>['bg']; text: ReturnType<typeof useStatus>['text']; bgPressed: ReturnType<typeof useStatus>['bgPressed'] },
 ) {
-  const resolved = resolveBindProp(variant);
+  const resolved = useReactive(variant);
 
   if (isIRReactiveNode(resolved)) {
     const r = resolved as IRReactiveNode<ButtonVariant>;

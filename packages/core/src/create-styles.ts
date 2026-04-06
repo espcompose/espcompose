@@ -10,7 +10,7 @@
 // and deep-merges state/part sub-objects.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { useReactiveTheme } from './reactive-theme';
+import { useTheme } from './reactive-theme';
 import type { CssStyle } from './style-types';
 import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from './style-mapping';
 
@@ -43,9 +43,9 @@ import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from './style-mapping';
  * ```
  */
 export function createStyles<K extends string>(
-  factory: (theme: ReturnType<typeof useReactiveTheme>) => Record<K, CssStyle>,
+  factory: (theme: ReturnType<typeof useTheme>) => Record<K, CssStyle>,
 ): Record<K, CssStyle> {
-  const theme = useReactiveTheme();
+  const theme = useTheme();
   return factory(theme);
 }
 

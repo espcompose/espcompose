@@ -92,7 +92,7 @@ declare const REF_BRAND: unique symbol;
  * Types branded with BINDING_BRAND represent compiler-understood constructs
  * whose properties (signals) and methods (actions) have real ESPHome
  * semantics. The brand is used by:
- *   - `WidgetProps<T>` to skip wrapping in `BindProp` (stable identity)
+ *   - `WidgetProps<T>` to skip wrapping in `Reactive` (stable identity)
  *   - The ESLint rule `no-unsupported-trigger-body` to whitelist calls
  *   - The compiler to infer HA entity domains from type structure
  */
@@ -299,7 +299,7 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 
 // Re-export types for use by generated code
-export type { BindProp, WidgetProps } from './reactive-utils';
+export type { Reactive, WidgetProps } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX namespace — base declaration only.

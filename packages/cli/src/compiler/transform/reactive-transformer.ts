@@ -139,8 +139,8 @@ function isReactiveSkipCall(expr: ts.Expression): boolean {
   const callee = expr.expression;
   // useEffect(...)
   if (ts.isIdentifier(callee) && callee.text === 'useEffect') return true;
-  // resolveBindProp(...), reactiveIsNaN(...)
-  if (ts.isIdentifier(callee) && (callee.text === 'resolveBindProp' || callee.text === 'reactiveIsNaN')) return true;
+  // useReactive(...), reactiveIsNaN(...)
+  if (ts.isIdentifier(callee) && (callee.text === 'useReactive' || callee.text === 'reactiveIsNaN')) return true;
   if (ts.isPropertyAccessExpression(callee)) {
     const obj = callee.expression;
     if (ts.isIdentifier(obj) && obj.text === '__espcompose') {
@@ -236,7 +236,7 @@ function processJsxAttributeExpression(
     return;
   }
 
-  // Skip direct Signal passthrough (runtime handles IRReactiveNode in BindProp)
+  // Skip direct Signal passthrough (runtime handles IRReactiveNode in Reactive)
   if (isDirectSignalPassthrough(expr, checker)) return;
 
   // Object literals (part/state props like indicator={{ bgOpa: expr }})

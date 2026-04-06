@@ -6,8 +6,8 @@
  */
 
 import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useReactiveTheme } from '@espcompose/core';
-import { useSpacing, useTypography, useFont } from '../theme/resolvers';
+import { createWidgetComponent, useTheme } from '@espcompose/core';
+import { useSpacing, useTypography, useFont } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
 export type DropdownProps = WidgetProps<{
@@ -37,7 +37,7 @@ export const Dropdown = createWidgetComponent(
     const typo = useTypography('body');
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useReactiveTheme() as any;
+    const theme = useTheme() as any;
 
     return (
       <lvgl-obj

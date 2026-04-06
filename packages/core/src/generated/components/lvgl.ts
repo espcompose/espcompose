@@ -3,150 +3,150 @@
 
 /* eslint-disable */
 
-import type { BindProp, ComponentProps, RefProp } from "../../types";
+import type { Reactive, ComponentProps, RefProp } from "../../types";
 import type { __marker_image_Image } from "../markers";
 import type { CssStyleProps } from "../../style-types";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
 //
 export interface LvglStyleProps {
     /** @yamlKey arc_opa */
-    arcOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    arcOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey arc_color */
-    arcColor?: BindProp<string | string>;
+    arcColor?: Reactive<string | string>;
     /** @yamlKey arc_rounded */
-    arcRounded?: BindProp<boolean>;
+    arcRounded?: Reactive<boolean>;
     /** @yamlKey arc_width */
-    arcWidth?: BindProp<number | string>;
+    arcWidth?: Reactive<number | string>;
     /** @yamlKey anim_time */
-    animTime?: BindProp<number>;
+    animTime?: Reactive<number>;
     /** @yamlKey bg_color */
-    bgColor?: BindProp<string | string>;
+    bgColor?: Reactive<string | string>;
     /** @yamlKey bg_grad */
     bgGrad?: unknown;
     /** @yamlKey bg_grad_color */
-    bgGradColor?: BindProp<string | string>;
+    bgGradColor?: Reactive<string | string>;
     /** @yamlKey bg_dither_mode */
     bgDitherMode?: "NONE" | "ORDERED" | "ERR_DIFF";
     /** @yamlKey bg_grad_dir */
-    bgGradDir?: BindProp<string | ("NONE" | "HOR" | "VER")>;
+    bgGradDir?: Reactive<string | ("NONE" | "HOR" | "VER")>;
     /** @yamlKey bg_grad_stop */
-    bgGradStop?: BindProp<unknown>;
+    bgGradStop?: Reactive<unknown>;
     /** @yamlKey bg_image_opa */
-    bgImageOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    bgImageOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_recolor */
-    bgImageRecolor?: BindProp<string | string>;
+    bgImageRecolor?: Reactive<string | string>;
     /** @yamlKey bg_image_recolor_opa */
-    bgImageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    bgImageRecolorOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
     bgImageSrc?: string | RefProp<__marker_image_Image>;
     /** @yamlKey bg_image_tiled */
-    bgImageTiled?: BindProp<boolean>;
+    bgImageTiled?: Reactive<boolean>;
     /** @yamlKey bg_main_stop */
-    bgMainStop?: BindProp<unknown>;
+    bgMainStop?: Reactive<unknown>;
     /** @yamlKey bg_opa */
-    bgOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    bgOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_color */
-    borderColor?: BindProp<string | string>;
+    borderColor?: Reactive<string | string>;
     /** @yamlKey border_opa */
-    borderOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    borderOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_post */
-    borderPost?: BindProp<boolean>;
+    borderPost?: Reactive<boolean>;
     /** @yamlKey border_side */
-    borderSide?: BindProp<string | ("NONE" | "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | "INTERNAL")>;
+    borderSide?: Reactive<string | ("NONE" | "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | "INTERNAL")>;
     /** @yamlKey border_width */
-    borderWidth?: BindProp<number>;
+    borderWidth?: Reactive<number>;
     /** @yamlKey clip_corner */
-    clipCorner?: BindProp<boolean>;
+    clipCorner?: Reactive<boolean>;
     /** @yamlKey color_filter_opa */
-    colorFilterOpa?: BindProp<string | ("TRANSP" | "COVER")>;
-    height?: BindProp<string | (number | string | "SIZE_CONTENT")>;
+    colorFilterOpa?: Reactive<string | ("TRANSP" | "COVER")>;
+    height?: Reactive<string | (number | string | "SIZE_CONTENT")>;
     /** @yamlKey image_recolor */
-    imageRecolor?: BindProp<string | string>;
+    imageRecolor?: Reactive<string | string>;
     /** @yamlKey image_recolor_opa */
-    imageRecolorOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    imageRecolorOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey line_width */
-    lineWidth?: BindProp<number>;
+    lineWidth?: Reactive<number>;
     /** @yamlKey line_dash_width */
-    lineDashWidth?: BindProp<number>;
+    lineDashWidth?: Reactive<number>;
     /** @yamlKey line_dash_gap */
-    lineDashGap?: BindProp<number>;
+    lineDashGap?: Reactive<number>;
     /** @yamlKey line_rounded */
-    lineRounded?: BindProp<boolean>;
+    lineRounded?: Reactive<boolean>;
     /** @yamlKey line_color */
-    lineColor?: BindProp<string | string>;
-    opa?: BindProp<string | ("TRANSP" | "COVER")>;
+    lineColor?: Reactive<string | string>;
+    opa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey opa_layered */
     opaLayered?: "TRANSP" | "COVER";
     /** @yamlKey outline_color */
-    outlineColor?: BindProp<string | string>;
+    outlineColor?: Reactive<string | string>;
     /** @yamlKey outline_opa */
-    outlineOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    outlineOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey outline_pad */
-    outlinePad?: BindProp<number | string>;
+    outlinePad?: Reactive<number | string>;
     /** @yamlKey outline_width */
-    outlineWidth?: BindProp<number | string>;
+    outlineWidth?: Reactive<number | string>;
     /** @yamlKey pad_all */
-    padAll?: BindProp<number | string>;
+    padAll?: Reactive<number | string>;
     /** @yamlKey pad_bottom */
-    padBottom?: BindProp<number | string>;
+    padBottom?: Reactive<number | string>;
     /** @yamlKey pad_left */
-    padLeft?: BindProp<number | string>;
+    padLeft?: Reactive<number | string>;
     /** @yamlKey pad_right */
-    padRight?: BindProp<number | string>;
+    padRight?: Reactive<number | string>;
     /** @yamlKey pad_top */
-    padTop?: BindProp<number | string>;
+    padTop?: Reactive<number | string>;
     /** @yamlKey shadow_color */
-    shadowColor?: BindProp<string | string>;
+    shadowColor?: Reactive<string | string>;
     /** @yamlKey shadow_ofs_x */
-    shadowOfsX?: BindProp<number>;
+    shadowOfsX?: Reactive<number>;
     /** @yamlKey shadow_ofs_y */
-    shadowOfsY?: BindProp<number>;
+    shadowOfsY?: Reactive<number>;
     /** @yamlKey shadow_opa */
-    shadowOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    shadowOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey shadow_spread */
-    shadowSpread?: BindProp<number>;
+    shadowSpread?: Reactive<number>;
     /** @yamlKey shadow_width */
-    shadowWidth?: BindProp<number>;
+    shadowWidth?: Reactive<number>;
     /** @yamlKey text_align */
-    textAlign?: BindProp<string | ("LEFT" | "CENTER" | "RIGHT" | "AUTO")>;
+    textAlign?: Reactive<string | ("LEFT" | "CENTER" | "RIGHT" | "AUTO")>;
     /** @yamlKey text_color */
-    textColor?: BindProp<string | string>;
+    textColor?: Reactive<string | string>;
     /** @yamlKey text_decor */
-    textDecor?: BindProp<string | ("NONE" | "UNDERLINE" | "STRIKETHROUGH")>;
+    textDecor?: Reactive<string | ("NONE" | "UNDERLINE" | "STRIKETHROUGH")>;
     /** @yamlKey text_font */
-    textFont?: BindProp<string | ("montserrat_8" | "montserrat_10" | "montserrat_12" | "montserrat_14" | "montserrat_16" | "montserrat_18" | "montserrat_20" | "montserrat_22" | "montserrat_24" | "montserrat_26" | "montserrat_28" | "montserrat_30" | "montserrat_32" | "montserrat_34" | "montserrat_36" | "montserrat_38" | "montserrat_40" | "montserrat_42" | "montserrat_44" | "montserrat_46" | "montserrat_48" | "dejavu_16_persian_hebrew" | "simsun_16_cjk" | "unscii_8" | "unscii_16")>;
+    textFont?: Reactive<string | ("montserrat_8" | "montserrat_10" | "montserrat_12" | "montserrat_14" | "montserrat_16" | "montserrat_18" | "montserrat_20" | "montserrat_22" | "montserrat_24" | "montserrat_26" | "montserrat_28" | "montserrat_30" | "montserrat_32" | "montserrat_34" | "montserrat_36" | "montserrat_38" | "montserrat_40" | "montserrat_42" | "montserrat_44" | "montserrat_46" | "montserrat_48" | "dejavu_16_persian_hebrew" | "simsun_16_cjk" | "unscii_8" | "unscii_16")>;
     /** @yamlKey text_letter_space */
-    textLetterSpace?: BindProp<number>;
+    textLetterSpace?: Reactive<number>;
     /** @yamlKey text_line_space */
-    textLineSpace?: BindProp<number>;
+    textLineSpace?: Reactive<number>;
     /** @yamlKey text_opa */
-    textOpa?: BindProp<string | ("TRANSP" | "COVER")>;
+    textOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey transform_angle */
-    transformAngle?: BindProp<number>;
+    transformAngle?: Reactive<number>;
     /** @yamlKey transform_height */
-    transformHeight?: BindProp<number | string>;
+    transformHeight?: Reactive<number | string>;
     /** @yamlKey transform_pivot_x */
     transformPivotX?: number | string;
     /** @yamlKey transform_pivot_y */
     transformPivotY?: number | string;
     /** @yamlKey transform_zoom */
-    transformZoom?: BindProp<unknown>;
+    transformZoom?: Reactive<unknown>;
     /** @yamlKey translate_x */
-    translateX?: BindProp<number | string>;
+    translateX?: Reactive<number | string>;
     /** @yamlKey translate_y */
-    translateY?: BindProp<number | string>;
+    translateY?: Reactive<number | string>;
     /** @yamlKey max_height */
-    maxHeight?: BindProp<number | string>;
+    maxHeight?: Reactive<number | string>;
     /** @yamlKey max_width */
-    maxWidth?: BindProp<number | string>;
+    maxWidth?: Reactive<number | string>;
     /** @yamlKey min_height */
-    minHeight?: BindProp<number | string>;
+    minHeight?: Reactive<number | string>;
     /** @yamlKey min_width */
-    minWidth?: BindProp<number | string>;
-    radius?: BindProp<string | "CIRCLE">;
-    width?: BindProp<string | (number | string | "SIZE_CONTENT")>;
-    x?: BindProp<number | string>;
-    y?: BindProp<number | string>;
+    minWidth?: Reactive<number | string>;
+    radius?: Reactive<string | "CIRCLE">;
+    width?: Reactive<string | (number | string | "SIZE_CONTENT")>;
+    x?: Reactive<number | string>;
+    y?: Reactive<number | string>;
 }
 /** All valid LVGL style property names in camelCase. Used for runtime validation. */
 //
@@ -264,7 +264,7 @@ export interface LvglObjProps {
 }
 //
 export interface LvglLabelProps {
-    text?: BindProp<string | number>;
+    text?: Reactive<string | number>;
     recolor?: boolean;
     /** @yamlKey long_mode */
     longMode?: "WRAP" | "DOT" | "SCROLL" | "SCROLL_CIRCULAR" | "CLIP";
@@ -320,7 +320,7 @@ export interface LvglLabelProps {
 }
 //
 export interface LvglButtonProps {
-    text?: BindProp<string | number>;
+    text?: Reactive<string | number>;
     /**
      * CSS-like style object. All visual properties must be specified here.
      * This widget has no sub-parts.
@@ -507,11 +507,11 @@ export interface LvglAnimimgProps {
 }
 //
 export interface LvglArcProps {
-    value?: BindProp<number>;
+    value?: Reactive<number>;
     /** @yamlKey min_value */
-    minValue?: BindProp<number>;
+    minValue?: Reactive<number>;
     /** @yamlKey max_value */
-    maxValue?: BindProp<number>;
+    maxValue?: Reactive<number>;
     /** @yamlKey start_angle */
     startAngle?: number;
     /** @yamlKey end_angle */
@@ -623,7 +623,7 @@ export interface LvglCanvasProps {
 }
 //
 export interface LvglCheckboxProps {
-    text?: BindProp<string | number>;
+    text?: Reactive<string | number>;
     /** @yamlKey pad_column */
     padColumn?: number | string;
     /**
@@ -763,7 +763,7 @@ export interface LvglDropdownProps {
     selectedText?: string;
     /** @yamlKey dropdown_list */
     dropdownList?: unknown;
-    options: BindProp<unknown>;
+    options: Reactive<unknown>;
     dir?: "LEFT" | "RIGHT" | "BOTTOM" | "TOP";
     /**
      * CSS-like style object. All visual properties must be specified here.
@@ -803,7 +803,7 @@ export interface LvglDropdownProps {
 }
 //
 export interface LvglTextareaProps {
-    text?: BindProp<string | number>;
+    text?: Reactive<string | number>;
     /** @yamlKey placeholder_text */
     placeholderText?: string;
     /** @yamlKey accepted_chars */
@@ -934,8 +934,8 @@ export interface LvglKeyboardProps {
 }
 //
 export interface LvglLedProps {
-    color?: BindProp<string | string>;
-    brightness?: BindProp<unknown>;
+    color?: Reactive<string | string>;
+    brightness?: Reactive<unknown>;
     /**
      * CSS-like style object. All visual properties must be specified here.
      * This widget has no sub-parts.
@@ -959,13 +959,13 @@ export interface LvglLedProps {
 }
 //
 export interface LvglBarProps {
-    value?: BindProp<number>;
+    value?: Reactive<number>;
     /** @yamlKey start_value */
     startValue?: number;
     /** @yamlKey min_value */
-    minValue?: BindProp<number>;
+    minValue?: Reactive<number>;
     /** @yamlKey max_value */
-    maxValue?: BindProp<number>;
+    maxValue?: Reactive<number>;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
     /**
@@ -1148,11 +1148,11 @@ export interface LvglRollerProps {
 }
 //
 export interface LvglSliderProps {
-    value?: BindProp<number>;
+    value?: Reactive<number>;
     /** @yamlKey min_value */
-    minValue?: BindProp<number>;
+    minValue?: Reactive<number>;
     /** @yamlKey max_value */
-    maxValue?: BindProp<number>;
+    maxValue?: Reactive<number>;
     mode?: "NORMAL" | "SYMMETRICAL" | "RANGE";
     animated?: "OFF" | "ON";
     /**
@@ -1207,7 +1207,7 @@ export interface LvglSliderProps {
 }
 //
 export interface LvglSpinboxProps {
-    value?: BindProp<number>;
+    value?: Reactive<number>;
     /** @yamlKey range_from */
     rangeFrom?: number;
     /** @yamlKey range_to */

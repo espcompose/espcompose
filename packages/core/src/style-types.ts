@@ -10,7 +10,7 @@
 // live at the top-level of widget interfaces.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { BindProp } from './types';
+import type { Reactive } from './types';
 import type { LvglStyleProps } from './generated/components/lvgl';
 import type { ImageRef } from './component-aliases';
 import type { RefProp } from './types';
@@ -49,195 +49,195 @@ export interface CssAliasProps {
   translateY?: LvglStyleProps['translateY'];
   // ── Sizing ───────────────────────────────────────────────────────────
   /** Maps to `width`. */
-  width?: BindProp<SizeValue>;
+  width?: Reactive<SizeValue>;
   /** Maps to `height`. */
-  height?: BindProp<SizeValue>;
+  height?: Reactive<SizeValue>;
   /** Maps to `minWidth`. */
-  minWidth?: BindProp<SizeValue>;
+  minWidth?: Reactive<SizeValue>;
   /** Maps to `maxWidth`. */
-  maxWidth?: BindProp<SizeValue>;
+  maxWidth?: Reactive<SizeValue>;
   /** Maps to `minHeight`. */
-  minHeight?: BindProp<SizeValue>;
+  minHeight?: Reactive<SizeValue>;
   /** Maps to `maxHeight`. */
-  maxHeight?: BindProp<SizeValue>;
+  maxHeight?: Reactive<SizeValue>;
 
   // ── Position ─────────────────────────────────────────────────────────
   /** Horizontal position. Maps to LVGL `x`. */
-  left?: BindProp<number | string>;
+  left?: Reactive<number | string>;
   /** Vertical position. Maps to LVGL `y`. */
-  top?: BindProp<number | string>;
+  top?: Reactive<number | string>;
 
   // ── Colors ───────────────────────────────────────────────────────────
   /** Maps to `bgColor`. */
-  backgroundColor?: BindProp<string>;
+  backgroundColor?: Reactive<string>;
   /** Maps to `textColor`. */
-  color?: BindProp<string>;
+  color?: Reactive<string>;
 
   // ── Border ───────────────────────────────────────────────────────────
   /** Maps to `radius`. */
-  borderRadius?: BindProp<number | 'circle' | NumericString>;
+  borderRadius?: Reactive<number | 'circle' | NumericString>;
 
   // ── Padding ──────────────────────────────────────────────────────────
   /** Maps to `padAll`. */
-  padding?: BindProp<number | string>;
+  padding?: Reactive<number | string>;
   /** Maps to `padTop`. */
-  paddingTop?: BindProp<number | string>;
+  paddingTop?: Reactive<number | string>;
   /** Maps to `padBottom`. */
-  paddingBottom?: BindProp<number | string>;
+  paddingBottom?: Reactive<number | string>;
   /** Maps to `padLeft`. */
-  paddingLeft?: BindProp<number | string>;
+  paddingLeft?: Reactive<number | string>;
   /** Maps to `padRight`. */
-  paddingRight?: BindProp<number | string>;
+  paddingRight?: Reactive<number | string>;
   /** Expands to `padLeft` + `padRight`. */
-  paddingHorizontal?: BindProp<number | string>;
+  paddingHorizontal?: Reactive<number | string>;
   /** Expands to `padTop` + `padBottom`. */
-  paddingVertical?: BindProp<number | string>;
+  paddingVertical?: Reactive<number | string>;
 
   // ── Gap ──────────────────────────────────────────────────────────────
   /** Expands to `padRow` + `padColumn`. */
-  gap?: BindProp<number | string>;
+  gap?: Reactive<number | string>;
   /** Maps to `padRow`. */
-  rowGap?: BindProp<number | string>;
+  rowGap?: Reactive<number | string>;
   /** Maps to `padColumn`. */
-  columnGap?: BindProp<number | string>;
+  columnGap?: Reactive<number | string>;
 
   // ── Text ─────────────────────────────────────────────────────────────
   /** Font reference. Maps to `textFont`. */
-  font?: BindProp<string | LvglStyleProps['textFont'] extends BindProp<infer T> ? T : never>;
+  font?: Reactive<string | LvglStyleProps['textFont'] extends Reactive<infer T> ? T : never>;
   /** Maps to `textDecor`. */
-  textDecoration?: BindProp<'none' | 'underline' | 'strikethrough'>;
+  textDecoration?: Reactive<'none' | 'underline' | 'strikethrough'>;
   /** Maps to `textAlign`. */
-  textAlign?: BindProp<'left' | 'center' | 'right' | 'auto'>;
+  textAlign?: Reactive<'left' | 'center' | 'right' | 'auto'>;
   /** Maps to `textLetterSpace`. */
-  letterSpacing?: BindProp<number>;
+  letterSpacing?: Reactive<number>;
   /** Maps to `textLineSpace`. */
-  lineHeight?: BindProp<number>;
+  lineHeight?: Reactive<number>;
 
   // ── Opacity ──────────────────────────────────────────────────────────
   /** Maps to `opa`. */
-  opacity?: BindProp<OpacityValue>;
+  opacity?: Reactive<OpacityValue>;
   /** Maps to `bgOpa`. */
-  backgroundOpacity?: BindProp<OpacityValue>;
+  backgroundOpacity?: Reactive<OpacityValue>;
   /** Maps to `textOpa`. */
-  textOpacity?: BindProp<OpacityValue>;
+  textOpacity?: Reactive<OpacityValue>;
   /** Maps to `borderOpa`. */
-  borderOpacity?: BindProp<OpacityValue>;
+  borderOpacity?: Reactive<OpacityValue>;
   /** Maps to `outlineOpa`. */
-  outlineOpacity?: BindProp<OpacityValue>;
+  outlineOpacity?: Reactive<OpacityValue>;
   /** Maps to `shadowOpa`. */
-  shadowOpacity?: BindProp<OpacityValue>;
+  shadowOpacity?: Reactive<OpacityValue>;
 
   // ── Background image ─────────────────────────────────────────────────
   /** Maps to `bgImageSrc`. */
   backgroundImage?: string | RefProp<ImageRef>;
   /** Maps to `bgImageOpa`. */
-  backgroundImageOpacity?: BindProp<OpacityValue>;
+  backgroundImageOpacity?: Reactive<OpacityValue>;
 
   // ── Shadow ───────────────────────────────────────────────────────────
   /** Maps to `shadowOfsX`. */
-  shadowOffsetX?: BindProp<number>;
+  shadowOffsetX?: Reactive<number>;
   /** Maps to `shadowOfsY`. */
-  shadowOffsetY?: BindProp<number>;
+  shadowOffsetY?: Reactive<number>;
 
   // ── Arc (widget-specific) ─────────────────────────────────────────────
   /** Maps to `arcColor`. */
-  arcColor?: BindProp<string>;
+  arcColor?: Reactive<string>;
   /** Maps to `arcOpa`. */
-  arcOpacity?: BindProp<OpacityValue>;
+  arcOpacity?: Reactive<OpacityValue>;
   /** Linecap style for arcs. Maps to `arcRounded`. */
-  arcLinecap?: BindProp<'flat' | 'round'>;
+  arcLinecap?: Reactive<'flat' | 'round'>;
   /** Maps to `arcWidth`. */
-  arcStrokeWidth?: BindProp<number | string>;
+  arcStrokeWidth?: Reactive<number | string>;
 
   // ── Animation ─────────────────────────────────────────────────────────
   /** Maps to `animTime`. */
-  animationDuration?: BindProp<number | string>;
+  animationDuration?: Reactive<number | string>;
 
   // ── Background gradient ───────────────────────────────────────────────
   /** Maps to `bgGrad`. */
   backgroundGradient?: LvglStyleProps['bgGrad'];
   /** Maps to `bgGradColor`. */
-  backgroundGradientColor?: BindProp<string>;
+  backgroundGradientColor?: Reactive<string>;
   /** Maps to `bgDitherMode`. */
-  backgroundGradientDither?: BindProp<'none' | 'ordered' | 'error-diffusion'>;
+  backgroundGradientDither?: Reactive<'none' | 'ordered' | 'error-diffusion'>;
   /** Maps to `bgGradDir`. */
-  backgroundGradientDirection?: BindProp<'none' | 'horizontal' | 'vertical'>;
+  backgroundGradientDirection?: Reactive<'none' | 'horizontal' | 'vertical'>;
   /** Maps to `bgGradStop`. */
-  backgroundGradientStop?: BindProp<number | string>;
+  backgroundGradientStop?: Reactive<number | string>;
   /** Maps to `bgMainStop`. */
-  backgroundGradientStartStop?: BindProp<number | string>;
+  backgroundGradientStartStop?: Reactive<number | string>;
 
   // ── Background-image extras ───────────────────────────────────────────
   /** Maps to `bgImageRecolor`. */
-  backgroundImageTint?: BindProp<string>;
+  backgroundImageTint?: Reactive<string>;
   /** Maps to `bgImageRecolorOpa`. */
-  backgroundImageTintOpacity?: BindProp<OpacityValue>;
+  backgroundImageTintOpacity?: Reactive<OpacityValue>;
   /** Whether to tile the background image. Maps to `bgImageTiled`. */
-  backgroundRepeat?: BindProp<'repeat' | 'no-repeat'>;
+  backgroundRepeat?: Reactive<'repeat' | 'no-repeat'>;
 
   // ── Border extras ─────────────────────────────────────────────────────
   /** Render border before or after children. Maps to `borderPost`. */
-  borderDrawOrder?: BindProp<'before-children' | 'after-children'>;
+  borderDrawOrder?: Reactive<'before-children' | 'after-children'>;
   /** Maps to `borderSide`. */
-  borderSides?: BindProp<'none' | 'top' | 'bottom' | 'left' | 'right' | 'internal'>;
+  borderSides?: Reactive<'none' | 'top' | 'bottom' | 'left' | 'right' | 'internal'>;
 
   // ── Clipping ──────────────────────────────────────────────────────────
   /** Whether to clip children to the border radius. Maps to `clipCorner`. */
-  overflow?: BindProp<'hidden' | 'visible'>;
+  overflow?: Reactive<'hidden' | 'visible'>;
 
   // ── Color filter ──────────────────────────────────────────────────────
   /** Maps to `colorFilterOpa`. */
-  colorFilterOpacity?: BindProp<OpacityValue>;
+  colorFilterOpacity?: Reactive<OpacityValue>;
 
   // ── Image (widget-specific) ───────────────────────────────────────────
   /** Maps to `imageRecolor`. */
-  imageTint?: BindProp<string>;
+  imageTint?: Reactive<string>;
   /** Maps to `imageRecolorOpa`. */
-  imageTintOpacity?: BindProp<OpacityValue>;
+  imageTintOpacity?: Reactive<OpacityValue>;
 
   // ── Line / stroke (widget-specific) ───────────────────────────────────
   /** Linecap style for lines. Maps to `lineRounded`. */
-  strokeLinecap?: BindProp<'flat' | 'round'>;
+  strokeLinecap?: Reactive<'flat' | 'round'>;
   /** Maps to `lineWidth`. */
-  strokeWidth?: BindProp<number | string>;
+  strokeWidth?: Reactive<number | string>;
   /** Maps to `lineDashWidth`. */
-  strokeDashWidth?: BindProp<number | string>;
+  strokeDashWidth?: Reactive<number | string>;
   /** Maps to `lineDashGap`. */
-  strokeDashGap?: BindProp<number | string>;
+  strokeDashGap?: Reactive<number | string>;
   /** Maps to `lineColor`. */
-  strokeColor?: BindProp<string>;
+  strokeColor?: Reactive<string>;
 
   // ── Layered opacity ───────────────────────────────────────────────────
   /** Maps to `opaLayered`. */
-  opacityLayered?: BindProp<OpacityValue>;
+  opacityLayered?: Reactive<OpacityValue>;
 
   // ── Outline extras ────────────────────────────────────────────────────
   /** Maps to `outlinePad`. */
-  outlineOffset?: BindProp<number | string>;
+  outlineOffset?: Reactive<number | string>;
 
   // ── Transform extras ──────────────────────────────────────────────────
   /** Maps to `transformAngle`. */
-  rotate?: BindProp<number | string>;
+  rotate?: Reactive<number | string>;
   /** Maps to `transformHeight`. */
-  transformScaleY?: BindProp<number | string>;
+  transformScaleY?: Reactive<number | string>;
   /** Maps to `transformPivotX`. */
-  transformOriginX?: BindProp<number | string>;
+  transformOriginX?: Reactive<number | string>;
   /** Maps to `transformPivotY`. */
-  transformOriginY?: BindProp<number | string>;
+  transformOriginY?: Reactive<number | string>;
   /** Maps to `transformZoom`. */
-  scale?: BindProp<number | string>;
+  scale?: Reactive<number | string>;
 
   // ── Layout (flex) ────────────────────────────────────────────────────
   /** Layout mode. Emitted into the `layout:` block. */
-  display?: BindProp<'flex' | 'grid'>;
+  display?: Reactive<'flex' | 'grid'>;
   /** Flex direction. Maps to `flexFlow` inside `layout:`. */
-  flexDirection?: BindProp<'row' | 'column' | 'row-wrap' | 'column-wrap'>;
+  flexDirection?: Reactive<'row' | 'column' | 'row-wrap' | 'column-wrap'>;
   /** Main-axis alignment (flex). Maps to `flexAlignMain` inside `layout:`. */
-  justifyContent?: BindProp<'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+  justifyContent?: Reactive<'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
   /** Cross-axis alignment (flex). Maps to `flexAlignCross` inside `layout:`. */
-  alignItems?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+  alignItems?: Reactive<'start' | 'center' | 'end' | 'stretch'>;
   /** Flex grow factor for child within flex parent. Flat widget prop. */
-  flexGrow?: BindProp<number>;
+  flexGrow?: Reactive<number>;
 
   // ── Layout (grid — parent) ───────────────────────────────────────────
   /** Grid column track definitions. E.g. ['fr(1)', 'fr(2)', 200]. */
@@ -245,33 +245,33 @@ export interface CssAliasProps {
   /** Grid row track definitions. E.g. ['fr(1)', 100]. */
   gridTemplateRows?: (number | string)[];
   /** Default column alignment for grid children. Maps to `gridColumnAlign` inside `layout:`. */
-  justifyItems?: BindProp<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+  justifyItems?: Reactive<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
   /** Default row alignment for grid children. Maps to `gridRowAlign` inside `layout:`. */
-  alignContent?: BindProp<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
+  alignContent?: Reactive<'start' | 'center' | 'end' | 'stretch' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
 
   // ── Layout (grid — child) ────────────────────────────────────────────
   /** Grid column position (0-based). Flat widget prop. */
-  gridColumn?: BindProp<number>;
+  gridColumn?: Reactive<number>;
   /** Grid row position (0-based). Flat widget prop. */
-  gridRow?: BindProp<number>;
+  gridRow?: Reactive<number>;
   /** Number of grid columns to span. Flat widget prop. */
-  gridColumnSpan?: BindProp<number>;
+  gridColumnSpan?: Reactive<number>;
   /** Number of grid rows to span. Flat widget prop. */
-  gridRowSpan?: BindProp<number>;
+  gridRowSpan?: Reactive<number>;
   /** Per-cell column alignment override. Flat widget prop. */
-  justifySelf?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+  justifySelf?: Reactive<'start' | 'center' | 'end' | 'stretch'>;
   /** Per-cell row alignment override. Flat widget prop. */
-  alignSelf?: BindProp<'start' | 'center' | 'end' | 'stretch'>;
+  alignSelf?: Reactive<'start' | 'center' | 'end' | 'stretch'>;
 
   // ── Widget placement ─────────────────────────────────────────────────
   /** Widget alignment within parent (non-layout positioning). Maps to `align`. */
-  placeSelf?: BindProp<'center' | 'topLeft' | 'topCenter' | 'topRight'
+  placeSelf?: Reactive<'center' | 'topLeft' | 'topCenter' | 'topRight'
             | 'bottomLeft' | 'bottomCenter' | 'bottomRight'
             | 'leftCenter' | 'rightCenter'>;
 
   // ── Scrollbar ────────────────────────────────────────────────────────
   /** Maps to `scrollbarMode`. */
-  scrollbarMode?: BindProp<'off' | 'on' | 'active' | 'auto'>;
+  scrollbarMode?: Reactive<'off' | 'on' | 'active' | 'auto'>;
 }
 
 // ── Composite style type ───────────────────────────────────────────────────

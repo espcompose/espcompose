@@ -107,7 +107,7 @@ function getOrCreateLeafNode(
   return node;
 }
 
-// ── useReactiveTheme hook ──────────────────────────────────────────────────
+// ── useTheme hook ──────────────────────────────────────────────────────────
 
 let cachedProxy: unknown = null;
 
@@ -119,10 +119,10 @@ let cachedProxy: unknown = null;
  * `theme.select()`, all downstream effects recalculate automatically.
  *
  * @example
- * const theme = useReactiveTheme();
+ * const theme = useTheme();
  * const bg = theme.colors.primary.bg; // IRReactiveNode<lv_color_t>
  */
-export function useReactiveTheme(): unknown {
+export function useTheme(): unknown {
   if (!cachedProxy) {
     cachedProxy = createReactiveThemeProxy();
   }

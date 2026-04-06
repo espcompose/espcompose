@@ -2,7 +2,7 @@
 // LVGL Widget Definitions & Style Property Tables
 //
 // Data-driven mapping from ESPHome prop names to LVGL C API setters.
-// Used by the type codegen (lvgl-codegen.ts) to wrap props with BindProp<T>
+// Used by the type codegen (lvgl-codegen.ts) to wrap props with Reactive<T>
 // and by the C++ codegen to generate update calls.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -39,7 +39,7 @@ export const LVGL_UPDATABLE_WIDGETS: Readonly<Record<string, readonly string[]>>
 //
 // Data-driven mapping from ESPHome prop names to LVGL C API setters.
 // Used by both:
-//   1. The type codegen (lvgl-codegen.ts) — to wrap props with BindProp<T>
+//   1. The type codegen (lvgl-codegen.ts) — to wrap props with Reactive<T>
 //   2. The C++ codegen in target-esphome — to generate update calls
 //
 // Each entry specifies:
@@ -169,7 +169,7 @@ export const LVGL_STYLE_PROP_TABLE: Readonly<Record<string, LvglStylePropDescrip
  * Style-level properties that can be reactively updated on any LVGL widget.
  *
  * Derived from LVGL_STYLE_PROP_TABLE — adding a prop to the table
- * automatically enables BindProp<T> wrapping in the type codegen and
+ * automatically enables Reactive<T> wrapping in the type codegen and
  * C++ update codegen in widget-binding Effects.
  */
 export const LVGL_REACTIVE_STYLE_PROPS: ReadonlySet<string> =

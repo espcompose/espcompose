@@ -147,7 +147,7 @@ This compiles to:
 ### Binding Sources
 
 * Home Assistant entities (`useHAEntity()`)
-* Theme tokens (`useReactiveTheme()`)
+* Theme tokens (`useTheme()`)
 * Derived computations (`useMemo()`)
 * Side effects (`useEffect()`)
 
@@ -290,7 +290,7 @@ import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/ui';
 
 Inside components, theme values are reactive:
 ```tsx
-const thm = useReactiveTheme();
+const thm = useTheme();
 const bgColor = thm.colors.primary.bg;  // → ReactiveNode<lv_color_t>
 ```
 
@@ -343,7 +343,7 @@ All reactive expressions compile to C++ via `ExprNode` → `exprToCpp()`.
 | `useHAEntity(entityId)` | Bind to a Home Assistant entity; returns typed signal properties |
 | `useMemo(fn)` | Derive a value from reactive sources |
 | `useEffect(fn)` | Run side effects when reactive sources change |
-| `useReactiveTheme()` | Access reactive theme token values |
+| `useTheme()` | Access reactive theme token values |
 | `useRef<T>()` | Create a typed cross-component reference |
 | `useScript(fn)` | Define a named ESPHome script from an async arrow function |
 | `useImage(path)` | Register an image asset |
@@ -380,7 +380,7 @@ When generating or modifying code:
 ### Prefer:
 
 * Design system components (`<Card>`, `<Text>`, `<Button>`)
-* Reactive hooks (`useMemo`, `useHAEntity`, `useReactiveTheme`)
+* Reactive hooks (`useMemo`, `useHAEntity`, `useTheme`)
 * Design tokens over raw styles (`status="primary"` not `bgColor="#123456"`)
 * Layout components (`VStack`, `HStack`, `Grid`)
 * Input components (`Slider`, `Switch`, `Dropdown`)

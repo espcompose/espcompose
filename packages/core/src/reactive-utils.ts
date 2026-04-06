@@ -12,19 +12,19 @@ import { __espcompose } from './__espcompose';
 import type { TriggerHandler, BINDING_BRAND } from './types';
 import type { CssStyleProps } from './style-types';
 
-// ── BindProp<T>: the reactive prop type alias ──────────────────────────────
+// ── Reactive<T>: the reactive prop type alias ─────────────────────────────
 
 /**
  * A prop value that can be static, a reactive node, or a reactive function.
  * Component authors use this to declare which props support reactive binding.
  */
-export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
+export type Reactive<T> = T | (() => T) | IRReactiveNode<T>;
 
 // ── WidgetProps<T>: mapped type for design-system widget props ─────────────
 
 /**
  * Maps a plain props interface into widget-ready props by wrapping each
- * property in `BindProp<T>` — except for `children`, `style`, any
+ * property in `Reactive<T>` — except for `children`, `style`, any
  * `TriggerHandler` properties, any `BINDING_BRAND` types (bindings, refs,
  * actions), and any keys listed in `Skip`.
  *
@@ -39,7 +39,7 @@ export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
  *   binding: LightBinding;
  *   width?: SizeValue;
  * }>;
- * // → { label: BindProp<string>; value?: BindProp<boolean>; onChange?: TriggerHandler<…>; binding: LightBinding; width?: BindProp<SizeValue>; style?: CssStyleProps }
+ * // → { label: Reactive<string>; value?: Reactive<boolean>; onChange?: TriggerHandler<…>; binding: LightBinding; width?: Reactive<SizeValue>; style?: CssStyleProps }
  */
 export type WidgetProps<T, Skip extends keyof T = never> = {
   [K in keyof T]: K extends 'children' | 'style' | Skip
@@ -48,10 +48,10 @@ export type WidgetProps<T, Skip extends keyof T = never> = {
       ? T[K]
       : NonNullable<T[K]> extends { readonly [BINDING_BRAND]?: true }
         ? T[K]
-        : BindProp<NonNullable<T[K]>> | Extract<T[K], undefined>;
+        : Reactive<NonNullable<T[K]>> | Extract<T[K], undefined>;
 } & { style?: CssStyleProps };
 
-// ── resolveBindProp ────────────────────────────────────────────────────────
+// ── useReactive ────────────────────────────────────────────────────────────
 
 /**
  * Normalize a prop value that may be static, reactive node, or reactive function.
@@ -60,7 +60,7 @@ export type WidgetProps<T, Skip extends keyof T = never> = {
  * - `() => T` → evaluate with dependency tracking → IRReactiveNode or literal
  * - `T` → literal (no reactivity)
  */
-export function resolveBindProp<T>(prop: BindProp<T>): T | IRReactiveNode<T> {
+export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
   if (isIRReactiveNode(prop)) {
     return prop as IRReactiveNode<T>;
   }
