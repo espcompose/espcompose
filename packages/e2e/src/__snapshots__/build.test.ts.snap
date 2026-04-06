@@ -1617,3 +1617,90 @@ script:
       - logger.log: Light dimmed to 50%
 "
 `;
+
+exports[`ESPHome Compose Build > trigger-variable-device 1`] = `
+"esphome:
+  name: trigger-variable-device
+  comment: Trigger variable and primitive slot tests
+  includes:
+    - espcompose_bindings.h
+    - espcompose_reactive.h
+  on_boot:
+    priority: -10
+    then:
+      - lambda: espcompose::setup();
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: HomeWifi
+  password: s3cr3t!!
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - button:
+            on_press:
+              - homeassistant.action:
+                  action: homeassistant.toggle
+                  data:
+                    entity_id: light.office
+            widgets:
+              - label:
+                  text: !lambda "return espcompose::memo_0.get().c_str();"
+                  id: rw_ref1
+        - button:
+            on_press:
+              - homeassistant.action:
+                  action: homeassistant.toggle
+                  data:
+                    entity_id: light.office
+            widgets:
+              - label:
+                  text: Direct
+        - button:
+            on_press:
+              - homeassistant.action:
+                  action: homeassistant.toggle
+                  data:
+                    entity_id: light.office
+            widgets:
+              - label:
+                  text: Conditional
+        - label:
+            text: !lambda "return espcompose::memo_1.get().c_str();"
+            id: rw_ref2
+binary_sensor:
+  platform: homeassistant
+  id: ha_light_office
+  entity_id: light.office
+  trigger_on_initial_state: true
+  on_state:
+    - lambda: !lambda "espcompose::sig_ha_light_office.set(x);
+        espcompose::Scheduler::instance().flush();"
+sensor:
+  platform: homeassistant
+  id: ha_light_office_brightness
+  entity_id: light.office
+  attribute: brightness
+  on_value:
+    - lambda: !lambda "espcompose::sig_ha_light_office_brightness.set(x);
+        espcompose::Scheduler::instance().flush();"
+"
+`;

@@ -31,7 +31,6 @@ export const LightSwitch = createWidgetComponent(
       <Switch
         label={props.label}
         value={props.binding.isOn}
-        // eslint-disable-next-line @espcompose/eslint/no-unsupported-trigger-body -- binding action passthrough
         onChange={() => { props.binding.toggle(); }}
         width={props.width}
       />

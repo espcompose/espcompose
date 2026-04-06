@@ -1,10 +1,9 @@
 import { DisplayRef, Ref, useHAEntity, theme } from "@espcompose/core";
 import {
     Button, Card, HStack, Screen, Text, VStack,
-    LightSlider, LightSwitch,
+    LightSlider, LightSwitch, LightButton, SensorText,
     ThemeProvider, darkTheme, lightTheme,
 } from "@espcompose/ui";
-import { HALight, MyButton } from "./button";
 
 type UIProps = {
     display: Ref<DisplayRef>,
@@ -13,6 +12,8 @@ type UIProps = {
 export const UI = (props: UIProps) => {
 
     const officeLight = useHAEntity('light.office');
+    const gymLight = useHAEntity('light.gym');
+    const hockeyLight = useHAEntity('light.air_hockey_light');
 
     return <>
         <lvgl
@@ -39,15 +40,16 @@ export const UI = (props: UIProps) => {
 
                         <Card>
                             <HStack>
-                                <lvgl-label text={officeLight.stateText} />
-                                <MyButton
+                                <SensorText binding={officeLight} label="Office" />
+                                <Button
+                                    size="lg"
                                     text={officeLight.isOn ? "Office Off" : "Office On"}
                                     onPress={() => { officeLight.toggle(); }}
                                 />
-                                
-                                <HALight entity="light.office" text="Office" />
-                                <HALight entity="light.gym" text="Gym" />
-                                <HALight entity="light.air_hockey_light" text="Hockey" />
+
+                                <LightButton binding={officeLight} label="Office" />
+                                <LightButton binding={gymLight} label="Gym" />
+                                <LightButton binding={hockeyLight} label="Hockey" />
 
                             </HStack>
                         </Card>

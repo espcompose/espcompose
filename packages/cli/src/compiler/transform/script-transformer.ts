@@ -227,8 +227,90 @@ function findAndCompileTriggerHandlers(
     }
   }
 
+  // Variable initializer containing arrow functions typed as TriggerHandler:
+  //   const handler = () => { binding.toggle(); }
+  //   const handler = props.onPress ?? (() => { binding.toggle(); })
+  if (ts.isVariableDeclaration(node) && node.initializer) {
+    const varType = ctx.checker.getTypeAtLocation(node.name);
+    if (isTriggerHandlerType(varType, ctx.checker)) {
+      compileArrowsInExpression(node.initializer, ctx, refTags, scriptHandles, edits);
+    }
+  }
+
   ts.forEachChild(node, child =>
     findAndCompileTriggerHandlers(child, ctx, refTags, scriptHandles, edits));
+}
+
+/**
+ * Check if a TypeScript type is a TriggerHandler-like function type.
+ *
+ * TriggerHandler is defined as `(() => void) | (() => Promise<void>)` (with
+ * optional trigger variable parameter). We detect any callable type whose
+ * return type is void or Promise<void>.
+ */
+function isTriggerHandlerType(type: ts.Type, checker: ts.TypeChecker): boolean {
+  // Unwrap union members (e.g. TriggerHandler | undefined from optional props)
+  const types = type.isUnion() ? type.types : [type];
+  for (const t of types) {
+    const sigs = t.getCallSignatures();
+    if (sigs.length === 0) continue;
+    for (const sig of sigs) {
+      const ret = checker.getReturnTypeOfSignature(sig);
+      // void return
+      if (ret.flags & ts.TypeFlags.Void) return true;
+      // Promise<void> return
+      if ((ret as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments?.[0]?.flags
+          && ((ret as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments![0].flags & ts.TypeFlags.Void)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Walk an expression tree to find arrow functions and compile them.
+ *
+ * Handles:
+ *   - Direct arrows: `() => { binding.toggle(); }`
+ *   - Nullish coalescing: `props.onPress ?? (() => { binding.toggle(); })`
+ *   - Logical OR: `props.onPress || (() => { binding.toggle(); })`
+ *   - Ternary branches: `cond ? () => { a() } : () => { b() }`
+ *   - Parenthesized: `(() => { binding.toggle(); })`
+ */
+function compileArrowsInExpression(
+  expr: ts.Expression,
+  ctx: TransformContext,
+  refTags: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, string>,
+  edits: SourceEdit[],
+): void {
+  if (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr)) {
+    compileAndInjectTriggerHandler(expr, ctx, refTags, scriptHandles, edits);
+    return;
+  }
+
+  if (ts.isParenthesizedExpression(expr)) {
+    compileArrowsInExpression(expr.expression, ctx, refTags, scriptHandles, edits);
+    return;
+  }
+
+  if (ts.isBinaryExpression(expr)) {
+    // ?? or || — the right-hand side may contain an arrow fallback
+    if (expr.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken ||
+        expr.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
+      compileArrowsInExpression(expr.right, ctx, refTags, scriptHandles, edits);
+      // Left side could also be an arrow (unusual but possible)
+      compileArrowsInExpression(expr.left, ctx, refTags, scriptHandles, edits);
+      return;
+    }
+  }
+
+  if (ts.isConditionalExpression(expr)) {
+    compileArrowsInExpression(expr.whenTrue, ctx, refTags, scriptHandles, edits);
+    compileArrowsInExpression(expr.whenFalse, ctx, refTags, scriptHandles, edits);
+    return;
+  }
 }
 
 function compileAndInjectTriggerHandler(

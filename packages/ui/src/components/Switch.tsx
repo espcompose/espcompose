@@ -9,6 +9,7 @@
 import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, useTheme } from '@espcompose/core';
 import { useTypography, useFont } from '../hooks';
+import { Theme } from '../theme/types';
 
 export type SwitchProps = WidgetProps<{
   /** Label text displayed next to the switch. */
@@ -31,8 +32,7 @@ export const Switch = createWidgetComponent(
   (props: SwitchProps): EspComposeElement => {
     const typo = useTypography('body');
     const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useTheme() as any;
+    const theme = useTheme<Theme>();
 
     return (
       <lvgl-obj

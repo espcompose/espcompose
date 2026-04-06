@@ -96,6 +96,9 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
 
     case 'to_string': {
       const inner = exprToCpp(node.expr, ctx);
+      // If the inner expression is already a std::string (literal or concat),
+      // skip the to_string wrapper — std::to_string only accepts numeric types.
+      if (node.expr.kind === 'literal' && node.expr.type === 'string') return inner;
       return `std::to_string(${inner})`;
     }
 

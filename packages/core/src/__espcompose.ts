@@ -101,15 +101,18 @@ export const __espcompose = {
     const allDeps: IRDependency[] = [];
 
     for (let i = 0; i < meta.slots; i++) {
-      const sig = signals[i] as IRReactiveNode<unknown> | undefined;
+      const sig = signals[i];
       if (!sig) continue;
-      allDeps.push(...sig.dependencies);
+      // Only extract dependencies from IRReactiveNode values; skip plain primitives
+      if (sig instanceof IRReactiveNode) {
+        allDeps.push(...sig.dependencies);
+      }
     }
 
     const node = __espcompose.derivedMemo<R>({
       exprType: meta.type,
       dependencies: allDeps,
-      exprIR: resolveIRExprSlots(meta.expr, signals as IRReactiveNode[]),
+      exprIR: resolveIRExprSlots(meta.expr, signals),
     });
 
     return node;
@@ -141,22 +144,27 @@ export const __espcompose = {
  * Walk an IRExprNode tree and replace IRExprSlot nodes with resolved entity/theme
  * references from the provided signal IRReactiveNodes.
  */
-function resolveIRExprSlots(expr: IRExprNode, signals: IRReactiveNode[]): IRExprNode {
+function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
   if (expr.kind === 'slot') {
     const sig = signals[expr.slotIndex];
-    if (!sig) return expr;
-    // If the signal already has exprIR, use it directly
-    if (sig.exprIR) return sig.exprIR;
+    if (sig == null) return expr;
+    // Plain primitive values → literal nodes
+    if (typeof sig === 'string') return { kind: 'literal', value: sig, type: 'string' };
+    if (typeof sig === 'number') return { kind: 'literal', value: sig, type: 'float' };
+    if (typeof sig === 'boolean') return { kind: 'literal', value: sig, type: 'bool' };
+    // IRReactiveNode: use exprIR if available
+    const node = sig as IRReactiveNode;
+    if (node.exprIR) return node.exprIR;
     // Resolve from dependency metadata
-    const dep = sig.dependencies[0];
+    const dep = node.dependencies[0];
     if (dep?.sourceType === 'theme') {
       const path = dep.sourceId === '__theme__' ? dep.triggerType : '';
-      return { kind: 'theme_read', path, type: sig.exprType ?? 'float' };
+      return { kind: 'theme_read', path, type: node.exprType ?? 'float' };
     }
     // Default: entity prop
-    const sourceId = sig.sourceId ?? dep?.sourceId ?? '';
-    const property = sig.property ?? 'value';
-    return { kind: 'entity_prop', entityId: sourceId, property, type: sig.exprType ?? 'float' };
+    const sourceId = node.sourceId ?? dep?.sourceId ?? '';
+    const property = node.property ?? 'value';
+    return { kind: 'entity_prop', entityId: sourceId, property, type: node.exprType ?? 'float' };
   }
 
   // Recursively resolve children

@@ -122,11 +122,11 @@ let cachedProxy: unknown = null;
  * const theme = useTheme();
  * const bg = theme.colors.primary.bg; // IRReactiveNode<lv_color_t>
  */
-export function useTheme(): unknown {
+export function useTheme<T>(): T {
   if (!cachedProxy) {
     cachedProxy = createReactiveThemeProxy();
   }
-  return cachedProxy;
+  return cachedProxy as T;
 }
 
 /** Reset the cached proxy between compile runs. */

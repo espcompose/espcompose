@@ -6,7 +6,7 @@
  */
 
 import type { EspComposeElement, TriggerHandler, LightBinding, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent } from '@espcompose/core';
+import { createWidgetComponent, useMemo } from '@espcompose/core';
 import { Button } from './Button';
 import type { ButtonVariant } from './shared-types';
 import type { StatusToken, SizeToken } from '../theme/types';
@@ -37,8 +37,7 @@ type LightButtonProps = WidgetProps<{
  */
 export const LightButton = createWidgetComponent(
   (props: LightButtonProps): EspComposeElement => {
-    // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- binding signals tracked by caller
-    const text = props.text ?? (props.binding.isOn ? `${props.label} On` : `${props.label} Off`);
+    const text = props.text ?? useMemo(() => (props.binding.isOn ? `${props.label} On` : `${props.label} Off`));
     const onPress = props.onPress ?? (() => { props.binding.toggle(); });
 
     return (

@@ -6,7 +6,7 @@
  */
 
 import type { EspComposeElement, SensorBinding, BinarySensorBinding, LightBinding, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent } from '@espcompose/core';
+import { createWidgetComponent, useMemo } from '@espcompose/core';
 import { Text } from './Text';
 import type { TextVariant, StatusToken } from '../theme/types';
 
@@ -33,7 +33,7 @@ type SensorTextProps = WidgetProps<{
 export const SensorText = createWidgetComponent(
   (props: SensorTextProps): EspComposeElement => {
     const stateText = props.binding.stateText;
-    const text = props.text ?? `${props.label}: ${stateText}`;
+    const text = props.text ?? useMemo(() => `${props.label}: ${stateText}`);
 
     return (
       <Text

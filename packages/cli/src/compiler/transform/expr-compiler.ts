@@ -587,6 +587,15 @@ function isStringLikeType(type: ts.Type): boolean {
   return false;
 }
 
+/** Check if a TS type is a primitive (string, number, or boolean). */
+function isPrimitiveType(type: ts.Type): boolean {
+  const flags = type.flags;
+  if (flags & (ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike)) return true;
+  if (type.isIntersection()) return type.types.some(t => isPrimitiveType(t));
+  if (type.isUnion()) return type.types.some(t => isPrimitiveType(t));
+  return false;
+}
+
 export interface ExprIRResult {
   expr: IRExprNode;
   exprType: ExprType;
@@ -635,6 +644,10 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
   if (ts.isIdentifier(node)) {
     const type = ctx.checker.getTypeAtLocation(node);
     if (hasSignalBrand(type)) {
+      return assignSlotIR(node, ctx);
+    }
+    // Slot non-signal identifiers with primitive types (e.g. local string variables)
+    if (isPrimitiveType(type)) {
       return assignSlotIR(node, ctx);
     }
   }
@@ -746,6 +759,11 @@ function compilePropertyAccessIR(
     }
   }
 
+  // Slot non-signal property accesses with primitive types (e.g. props.label)
+  if (isPrimitiveType(type)) {
+    return assignSlotIR(node, ctx);
+  }
+
   return null;
 }
 
@@ -849,8 +867,7 @@ function compileTemplateLiteralIR(
     if (exprIR === null) return null;
 
     const exprType = ctx.checker.getTypeAtLocation(span.expression);
-    const isString = (exprType.flags & ts.TypeFlags.StringLike) !== 0
-      || (exprType.isIntersection() && exprType.types.some(t => (t.flags & ts.TypeFlags.StringLike) !== 0));
+    const isString = isStringLikeType(exprType);
 
     parts.push(isString ? exprIR : { kind: 'to_string', expr: exprIR });
 

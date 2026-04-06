@@ -177,4 +177,9 @@ describe('ESPHome Compose Build', () => {
   it('fancy-light-cascade-device', async () => {
     await createProjectTest(projectsDir, 'fancy-light-cascade-device');
   });
+
+  // TriggerHandler in variable initializers + primitive slots in useMemo
+  it('trigger-variable-device', async () => {
+    await createProjectTest(projectsDir, 'trigger-variable-device');
+  });
 });
