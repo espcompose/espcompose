@@ -65,7 +65,7 @@ export const Slider = createWidgetComponent(
           minValue={props.min}
           maxValue={props.max}
           value={props.value}
-          {...(props.onChange != null ? { onValue: props.onChange } : {})}
+          {...(props.onChange != null ? { onRelease: props.onChange } : {})}
           style={{
             width: '100%'
           }}

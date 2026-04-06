@@ -73,7 +73,7 @@ export function useFont(props: FontProps): Ref<FontRef> {
     file: props.file,
   };
   if (props.size != null) config.size = props.size;
-  if (props.bpp != null) config.bpp = props.bpp;
+  if (props.bpp != null) config.bpp = Number(props.bpp);
   if (props.glyphsets != null) config.glyphsets = props.glyphsets;
   if (props.glyphs != null) config.glyphs = props.glyphs;
   if (props.ignoreMissingGlyphs != null) config.ignore_missing_glyphs = props.ignoreMissingGlyphs;

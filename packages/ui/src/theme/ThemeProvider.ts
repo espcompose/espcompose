@@ -51,18 +51,18 @@ function registerThemeFonts(themes: Record<string, Theme>): Map<string, Ref<Font
     // Collect tokens from typography
     for (const token of Object.values(theme.typography)) {
       if (isFontToken(token)) {
-        const key = `${token.file}|${token.size}`;
+        const key = `${token.file}|${token.size}|${token.bpp}`;
         if (!fontRefs.has(key)) {
-          fontRefs.set(key, useFont({ file: token.file, size: token.size }));
+          fontRefs.set(key, useFont({ file: token.file, size: token.size, bpp: token.bpp }));
         }
       }
     }
     // Collect tokens from sizes
     for (const dim of Object.values(theme.sizes)) {
       if (isFontToken(dim.font)) {
-        const key = `${dim.font.file}|${dim.font.size}`;
+        const key = `${dim.font.file}|${dim.font.size}|${dim.font.bpp}`;
         if (!fontRefs.has(key)) {
-          fontRefs.set(key, useFont({ file: dim.font.file, size: dim.font.size }));
+          fontRefs.set(key, useFont({ file: dim.font.file, size: dim.font.size, bpp: dim.font.bpp }));
         }
       }
     }
@@ -87,7 +87,7 @@ function resolveThemeFonts(
   const typography: Record<string, unknown> = {};
   for (const [variant, token] of Object.entries(theme.typography)) {
     if (isFontToken(token)) {
-      typography[variant] = fontRefs.get(`${token.file}|${token.size}`)!;
+      typography[variant] = fontRefs.get(`${token.file}|${token.size}|${token.bpp}`)!;
     } else {
       typography[variant] = token;
     }
@@ -99,7 +99,7 @@ function resolveThemeFonts(
   for (const [sizeName, dim] of Object.entries(theme.sizes)) {
     const cloned: Record<string, unknown> = { ...dim };
     if (isFontToken(dim.font)) {
-      cloned.font = fontRefs.get(`${dim.font.file}|${dim.font.size}`)!;
+      cloned.font = fontRefs.get(`${dim.font.file}|${dim.font.size}|${dim.font.bpp}`)!;
     }
     sizes[sizeName] = cloned;
   }

@@ -741,8 +741,8 @@ Memo<int32_t> thm_radii_md([]() -> int32_t {
   return thm_radii_md_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_sizes_sm_font_vals[] = {id(r_ref15).get_lv_font()};
 Memo<const lv_font_t*> thm_sizes_sm_font([]() -> const lv_font_t* {
+  static const lv_font_t* thm_sizes_sm_font_vals[] = {id(r_ref15).get_lv_font()};
   return thm_sizes_sm_font_vals[theme_index.get()];
 });
 
@@ -766,18 +766,18 @@ Memo<int32_t> thm_spacing_md([]() -> int32_t {
   return thm_spacing_md_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_body_vals[] = {id(r_ref13).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_body([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_body_vals[] = {id(r_ref13).get_lv_font()};
   return thm_typography_body_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_subtitle_vals[] = {id(r_ref12).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_subtitle([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_subtitle_vals[] = {id(r_ref12).get_lv_font()};
   return thm_typography_subtitle_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_title_vals[] = {id(r_ref11).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_title([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_title_vals[] = {id(r_ref11).get_lv_font()};
   return thm_typography_title_vals[theme_index.get()];
 });
 
@@ -1329,7 +1329,6 @@ lvgl:
               - label:
                   text: Smart Home
                   text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                  text_font: !lambda "return espcompose::thm_typography_title.get();"
                   id: rw_ref2
               - obj:
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
@@ -1347,7 +1346,6 @@ lvgl:
                     - label:
                         text: Living Room
                         text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                        text_font: !lambda "return espcompose::thm_typography_subtitle.get();"
                         id: rw_ref4
                     - obj:
                         bg_opa: TRANSP
@@ -1361,7 +1359,6 @@ lvgl:
                           - label:
                               text: Brightness
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                              text_font: !lambda "return espcompose::thm_typography_body.get();"
                               width: 100%
                               id: rw_ref5
                           - slider:
@@ -1382,7 +1379,6 @@ lvgl:
                           - label:
                               text: Power
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                              text_font: !lambda "return espcompose::thm_typography_body.get();"
                               id: rw_ref6
                           - switch: {}
               - obj:
@@ -1411,7 +1407,6 @@ lvgl:
                           - label:
                               text: Turn On
                               text_color: !lambda "return espcompose::thm_colors_success_text.get();"
-                              text_font: !lambda "return espcompose::thm_sizes_sm_font.get();"
                               text_align: CENTER
                               align: CENTER
                               id: rw_ref8
@@ -1430,7 +1425,6 @@ lvgl:
                           - label:
                               text: Turn Off
                               text_color: !lambda "return espcompose::thm_colors_danger_bg.get();"
-                              text_font: !lambda "return espcompose::thm_sizes_sm_font.get();"
                               text_align: CENTER
                               align: CENTER
                               id: rw_ref10
@@ -1438,24 +1432,31 @@ font:
   - id: r_ref11
     file: gfonts://Montserrat
     size: 28
+    bpp: 4
   - id: r_ref12
     file: gfonts://Montserrat
     size: 20
+    bpp: 4
   - id: r_ref13
     file: gfonts://Montserrat
     size: 16
+    bpp: 4
   - id: r_ref14
     file: gfonts://Montserrat
     size: 12
+    bpp: 4
   - id: r_ref15
     file: gfonts://Montserrat
     size: 14
+    bpp: 4
   - id: r_ref16
     file: gfonts://Montserrat
     size: 18
+    bpp: 4
   - id: r_ref17
     file: gfonts://Montserrat
     size: 22
+    bpp: 4
 "
 `;
 
@@ -1603,8 +1604,8 @@ Memo<lv_color_t> thm_colors_success_text([]() -> lv_color_t {
   return thm_colors_success_text_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_sizes_md_font_vals[] = {id(r_ref11).get_lv_font(), id(r_ref11).get_lv_font()};
 Memo<const lv_font_t*> thm_sizes_md_font([]() -> const lv_font_t* {
+  static const lv_font_t* thm_sizes_md_font_vals[] = {id(r_ref11).get_lv_font(), id(r_ref18).get_lv_font()};
   return thm_sizes_md_font_vals[theme_index.get()];
 });
 
@@ -2220,7 +2221,6 @@ lvgl:
                     - label:
                         text: !lambda "return espcompose::memo_1.get().c_str();"
                         text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
-                        text_font: !lambda "return espcompose::thm_sizes_md_font.get();"
                         text_align: CENTER
                         align: CENTER
                         id: rw_ref4
@@ -2244,7 +2244,6 @@ lvgl:
                     - label:
                         text: !lambda "return espcompose::memo_3.get().c_str();"
                         text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
-                        text_font: !lambda "return espcompose::thm_sizes_md_font.get();"
                         text_align: CENTER
                         align: CENTER
                         id: rw_ref6
@@ -2265,7 +2264,6 @@ lvgl:
                     - label:
                         text: Toggle Theme
                         text_color: !lambda "return espcompose::thm_colors_success_text.get();"
-                        text_font: !lambda "return espcompose::thm_sizes_md_font.get();"
                         text_align: CENTER
                         align: CENTER
                         id: rw_ref8
@@ -2328,24 +2326,59 @@ font:
   - id: r_ref9
     file: gfonts://Montserrat
     size: 28
+    bpp: 4
   - id: r_ref10
     file: gfonts://Montserrat
     size: 20
+    bpp: 4
   - id: r_ref11
     file: gfonts://Montserrat
     size: 16
+    bpp: 4
   - id: r_ref12
     file: gfonts://Montserrat
     size: 12
+    bpp: 4
   - id: r_ref13
     file: gfonts://Montserrat
     size: 14
+    bpp: 4
   - id: r_ref14
     file: gfonts://Montserrat
     size: 18
+    bpp: 4
   - id: r_ref15
     file: gfonts://Montserrat
     size: 22
+    bpp: 4
+  - id: r_ref16
+    file: gfonts://Playwrite+IE
+    size: 28
+    bpp: 4
+  - id: r_ref17
+    file: gfonts://Playwrite+IE
+    size: 20
+    bpp: 4
+  - id: r_ref18
+    file: gfonts://Playwrite+IE
+    size: 16
+    bpp: 4
+  - id: r_ref19
+    file: gfonts://Playwrite+IE
+    size: 12
+    bpp: 4
+  - id: r_ref20
+    file: gfonts://Playwrite+IE
+    size: 14
+    bpp: 4
+  - id: r_ref21
+    file: gfonts://Playwrite+IE
+    size: 18
+    bpp: 4
+  - id: r_ref22
+    file: gfonts://Playwrite+IE
+    size: 22
+    bpp: 4
 "
 `;
 
@@ -4441,8 +4474,8 @@ Memo<int32_t> thm_radii_md([]() -> int32_t {
   return thm_radii_md_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_sizes_md_font_vals[] = {id(r_ref12).get_lv_font(), id(r_ref12).get_lv_font()};
 Memo<const lv_font_t*> thm_sizes_md_font([]() -> const lv_font_t* {
+  static const lv_font_t* thm_sizes_md_font_vals[] = {id(r_ref12).get_lv_font(), id(r_ref19).get_lv_font()};
   return thm_sizes_md_font_vals[theme_index.get()];
 });
 
@@ -4466,18 +4499,18 @@ Memo<int32_t> thm_spacing_md([]() -> int32_t {
   return thm_spacing_md_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_body_vals[] = {id(r_ref12).get_lv_font(), id(r_ref12).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_body([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_body_vals[] = {id(r_ref12).get_lv_font(), id(r_ref19).get_lv_font()};
   return thm_typography_body_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_subtitle_vals[] = {id(r_ref11).get_lv_font(), id(r_ref11).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_subtitle([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_subtitle_vals[] = {id(r_ref11).get_lv_font(), id(r_ref18).get_lv_font()};
   return thm_typography_subtitle_vals[theme_index.get()];
 });
 
-static const lv_font_t* thm_typography_title_vals[] = {id(r_ref10).get_lv_font(), id(r_ref10).get_lv_font()};
 Memo<const lv_font_t*> thm_typography_title([]() -> const lv_font_t* {
+  static const lv_font_t* thm_typography_title_vals[] = {id(r_ref10).get_lv_font(), id(r_ref17).get_lv_font()};
   return thm_typography_title_vals[theme_index.get()];
 });
 
@@ -5049,7 +5082,6 @@ lvgl:
               - label:
                   text: Theme Test
                   text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                  text_font: !lambda "return espcompose::thm_typography_title.get();"
                   id: rw_ref2
               - obj:
                   bg_color: !lambda "return espcompose::thm_colors_surfaceAlt.get();"
@@ -5067,7 +5099,6 @@ lvgl:
                     - label:
                         text: Controls
                         text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                        text_font: !lambda "return espcompose::thm_typography_subtitle.get();"
                         id: rw_ref4
                     - obj:
                         bg_opa: TRANSP
@@ -5081,7 +5112,6 @@ lvgl:
                           - label:
                               text: Brightness
                               text_color: !lambda "return espcompose::thm_colors_textPrimary.get();"
-                              text_font: !lambda "return espcompose::thm_typography_body.get();"
                               width: 100%
                               id: rw_ref5
                           - slider:
@@ -5115,7 +5145,6 @@ lvgl:
                           - label:
                               text: Dark
                               text_color: !lambda "return espcompose::thm_colors_primary_text.get();"
-                              text_font: !lambda "return espcompose::thm_sizes_md_font.get();"
                               text_align: CENTER
                               align: CENTER
                               id: rw_ref7
@@ -5136,7 +5165,6 @@ lvgl:
                           - label:
                               text: Light
                               text_color: !lambda "return espcompose::thm_colors_secondary_text.get();"
-                              text_font: !lambda "return espcompose::thm_sizes_md_font.get();"
                               text_align: CENTER
                               align: CENTER
                               id: rw_ref9
@@ -5144,24 +5172,59 @@ font:
   - id: r_ref10
     file: gfonts://Montserrat
     size: 28
+    bpp: 4
   - id: r_ref11
     file: gfonts://Montserrat
     size: 20
+    bpp: 4
   - id: r_ref12
     file: gfonts://Montserrat
     size: 16
+    bpp: 4
   - id: r_ref13
     file: gfonts://Montserrat
     size: 12
+    bpp: 4
   - id: r_ref14
     file: gfonts://Montserrat
     size: 14
+    bpp: 4
   - id: r_ref15
     file: gfonts://Montserrat
     size: 18
+    bpp: 4
   - id: r_ref16
     file: gfonts://Montserrat
     size: 22
+    bpp: 4
+  - id: r_ref17
+    file: gfonts://Playwrite+IE
+    size: 28
+    bpp: 4
+  - id: r_ref18
+    file: gfonts://Playwrite+IE
+    size: 20
+    bpp: 4
+  - id: r_ref19
+    file: gfonts://Playwrite+IE
+    size: 16
+    bpp: 4
+  - id: r_ref20
+    file: gfonts://Playwrite+IE
+    size: 12
+    bpp: 4
+  - id: r_ref21
+    file: gfonts://Playwrite+IE
+    size: 14
+    bpp: 4
+  - id: r_ref22
+    file: gfonts://Playwrite+IE
+    size: 18
+    bpp: 4
+  - id: r_ref23
+    file: gfonts://Playwrite+IE
+    size: 22
+    bpp: 4
 "
 `;
 

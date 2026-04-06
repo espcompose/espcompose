@@ -18,6 +18,7 @@ export type {
   ThemeParts,
   PartColors,
   FontToken,
+  FontBpp,
   createFontToken,
   FONT_TOKEN_BRAND,
   SizeDimensions,

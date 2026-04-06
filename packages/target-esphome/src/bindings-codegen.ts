@@ -208,16 +208,28 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       const arrName = `${tm.name}_vals`;
       const valStrs = tm.values.map((v) => toCppLiteral(v, tm.cppType));
       const arrType = cppArrayType(tm.cppType);
-      // Avoid `static const const char*` — the type already carries `const`
-      const storagePrefix = arrType.startsWith('const ') ? 'static' : 'static const';
-      lines.push(`${storagePrefix} ${arrType} ${arrName}[] = {${valStrs.join(', ')}};`);
-      lines.push(`Memo<${tm.cppType}> ${tm.name}([]() -> ${tm.cppType} {`);
-      if (tm.cppType === 'std::string') {
-        lines.push(`  return std::string(${arrName}[theme_index.get()]);`);
-      } else {
+
+      if (tm.cppType === 'const lv_font_t*') {
+        // Font pointers must be resolved lazily — ESPHome Font components
+        // aren't ready at static-init time.  Use a local static inside the
+        // lambda so the array is initialised on first access (after setup()).
+        const storagePrefix = arrType.startsWith('const ') ? 'static' : 'static const';
+        lines.push(`Memo<${tm.cppType}> ${tm.name}([]() -> ${tm.cppType} {`);
+        lines.push(`  ${storagePrefix} ${arrType} ${arrName}[] = {${valStrs.join(', ')}};`);
         lines.push(`  return ${arrName}[theme_index.get()];`);
+        lines.push('});');
+      } else {
+        // Avoid `static const const char*` — the type already carries `const`
+        const storagePrefix = arrType.startsWith('const ') ? 'static' : 'static const';
+        lines.push(`${storagePrefix} ${arrType} ${arrName}[] = {${valStrs.join(', ')}};`);
+        lines.push(`Memo<${tm.cppType}> ${tm.name}([]() -> ${tm.cppType} {`);
+        if (tm.cppType === 'std::string') {
+          lines.push(`  return std::string(${arrName}[theme_index.get()]);`);
+        } else {
+          lines.push(`  return ${arrName}[theme_index.get()];`);
+        }
+        lines.push('});');
       }
-      lines.push('});');
       lines.push('');
     }
 

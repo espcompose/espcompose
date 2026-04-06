@@ -10,7 +10,7 @@ import type { Theme } from './types';
 import { createFontToken } from './types';
 
 // ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
-const montserrat = (size: number) => createFontToken('gfonts://Montserrat', size);
+const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
 
 export const darkTheme: Theme = {
   name: 'Dark',

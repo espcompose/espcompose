@@ -37,17 +37,22 @@ export type TextVariant = 'title' | 'subtitle' | 'body' | 'caption';
  */
 export const FONT_TOKEN_BRAND: unique symbol = Symbol('FontToken');
 
+/** Anti-aliasing bit depth for font rendering. */
+export type FontBpp = '1' | '2' | '4' | '8';
+
 export interface FontToken {
   readonly [FONT_TOKEN_BRAND]: true;
   /** Font file path or gfonts:// URI (e.g. `'gfonts://Montserrat'`). */
   file: string;
   /** Font size in pixels. */
   size: number;
+  /** Anti-aliasing bit depth (1 = none, 2 = basic, 4 = good, 8 = best). Defaults to '4'. */
+  bpp: FontBpp;
 }
 
 /** Create a branded FontToken. */
-export function createFontToken(file: string, size: number): FontToken {
-  return { [FONT_TOKEN_BRAND]: true as const, file, size };
+export function createFontToken(file: string, size: number, bpp: FontBpp = '4'): FontToken {
+  return { [FONT_TOKEN_BRAND]: true as const, file, size, bpp };
 }
 
 export interface SizeDimensions {

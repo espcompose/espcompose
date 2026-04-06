@@ -34,6 +34,9 @@ function createYamlSecret(key: string): Scalar {
   return s;
 }
 
+/** Sentinel returned by irValueToYaml to signal "omit this entry from the parent object". */
+const SKIP_ENTRY = Symbol('SKIP_ENTRY');
+
 // ── Lambda marker restoration ────────────────────────────────────────────
 // Action trees use { __lambda__: "code" } markers for lambda values
 // (they must survive JSON.stringify in the script transformer).
@@ -157,8 +160,16 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
       }
       return node.value;
 
-    case 'reactive':
-      return createYamlLambda(generateInitialValueLambda(node.node, ctx));
+    case 'reactive': {
+      // font_ptr values are set by the reactive Effect after on_boot —
+      // skip emitting an initial-value lambda in the YAML because ESPHome
+      // evaluates it during LVGL widget setup, before fonts are ready.
+      const reactiveNode = (node as { node: { exprType?: string } }).node;
+      if (reactiveNode?.exprType === 'font_ptr') {
+        return SKIP_ENTRY;
+      }
+      return createYamlLambda(generateInitialValueLambda(reactiveNode, ctx));
+    }
 
     case 'ref':
       return node.token;
@@ -187,7 +198,10 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
     case 'object': {
       const obj: Record<string, unknown> = {};
       for (const entry of (node as IRObject).entries) {
-        obj[entry.key] = irValueToYaml(entry.value, ctx);
+        const val = irValueToYaml(entry.value, ctx);
+        if (val !== SKIP_ENTRY) {
+          obj[entry.key] = val;
+        }
       }
       return obj;
     }
