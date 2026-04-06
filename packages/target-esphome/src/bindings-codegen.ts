@@ -94,8 +94,6 @@ export interface ReactiveRuntimeConfig {
   themeDefaultIndex?: number;
   /** Ordered theme names (index corresponds to theme_index values). */
   themeNames?: string[];
-  /** All distinct font name strings across themes (for font lookup generation). */
-  fontNames?: string[];
   /** Compiled trigger functions (from device.inline/device.script AST compilation). */
   triggerFunctions?: TriggerFunctionDecl[];
 }
@@ -232,22 +230,6 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         lines.push(`  ${cond} (strcmp(name, "${themeNames[i]}") == 0) { theme_index.set(${i}); }`);
       }
       lines.push('  Scheduler::instance().flush();');
-      lines.push('}');
-      lines.push('');
-    }
-
-    // Font lookup helper (if any font names are present)
-    const fontNames = config.fontNames ?? [];
-    if (fontNames.length > 0) {
-      lines.push('static const lv_font_t* resolve_font(const std::string& name) {');
-      for (const fn of fontNames) {
-        lines.push(`  if (name == "${fn}") return &lv_font_${fn};`);
-      }
-      lines.push(`  return &lv_font_${fontNames[0]};`);
-      lines.push('}');
-      lines.push('');
-      lines.push('static const lv_font_t* resolve_font(const std::string& family, float size) {');
-      lines.push('  return resolve_font(family + "_" + std::to_string(static_cast<int>(size)));');
       lines.push('}');
       lines.push('');
     }
@@ -546,12 +528,9 @@ function generateWidgetUpdateCode(binding: WidgetBindingDecl): string {
       ].join(' ');
     }
 
-    // Special: text_font needs resolve_font() lookup (unless memo already returns lv_font_t*)
+    // Special: text_font — the value is already const lv_font_t* (from theme font_ptr memo)
     if (descriptor.special === 'text_font') {
-      if (cppType === 'const lv_font_t*') {
-        return `lv_obj_set_style_text_font(${obj}, ${valueExpr}, ${STYLE_FLAG});`;
-      }
-      return `lv_obj_set_style_text_font(${obj}, resolve_font(${valueExpr}), ${STYLE_FLAG});`;
+      return `lv_obj_set_style_text_font(${obj}, ${valueExpr}, ${STYLE_FLAG});`;
     }
 
     // Special: width/height use lv_obj_set_width/height (not set_style_*)
@@ -579,6 +558,11 @@ function toCppLiteral(value: unknown, cppType: string): string {
   if (cppType === 'lv_color_t') {
     const hex = String(value).replace(/^#/, '');
     return `lv_color_hex(0x${hex})`;
+  }
+  if (cppType === 'const lv_font_t*') {
+    // Font ref token (e.g. 'r_abc123') — id() returns esphome::font::Font,
+    // call .get_lv_font() to obtain the const lv_font_t* pointer.
+    return `id(${String(value)}).get_lv_font()`;
   }
   if (cppType === 'std::string' || cppType === 'const char*') {
     return `"${String(value)}"`;

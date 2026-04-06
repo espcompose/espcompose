@@ -5,8 +5,9 @@
  */
 
 import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme } from '@espcompose/core';
-import { useTypography, useFont, useStatus } from '../hooks';
+import { createWidgetComponent, useTheme, useReactiveMap } from '@espcompose/core';
+import { useStatus } from '../hooks';
+import { themeLeaf } from '../hooks/utils';
 import type { TextVariant, StatusToken, Theme } from '../theme/types';
 
 type TextProps = WidgetProps<{
@@ -33,8 +34,7 @@ type TextProps = WidgetProps<{
 export const Text = createWidgetComponent(
   (props: TextProps): EspComposeElement => {
     const variant = props.variant ?? 'body';
-    const typo = useTypography(variant);
-    const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
+    const font = useReactiveMap(variant, (v) => themeLeaf('typography', v));
     const theme = useTheme<Theme>();
     const textColor = props.color != null
       ? useStatus(props.color).text

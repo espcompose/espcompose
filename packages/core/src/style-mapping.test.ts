@@ -123,8 +123,9 @@ describe('expandCssProps', () => {
   });
 
   it('maps font alias', () => {
-    const result = expandCssProps({ font: 'montserrat_14' });
-    expect(result).toEqual({ textFont: 'montserrat_14' });
+    const fontRef = { toString: () => 'r_font_abc' };
+    const result = expandCssProps({ font: fontRef });
+    expect(result).toEqual({ textFont: fontRef });
   });
 
   it('maps textDecoration alias', () => {
@@ -150,12 +151,13 @@ describe('expandCssProps', () => {
   });
 
   it('maps backgroundImage aliases', () => {
+    const imgRef = { toString: () => 'r_img_abc' };
     const result = expandCssProps({
-      backgroundImage: 'my-image-ref',
+      backgroundImage: imgRef,
       backgroundImageOpacity: '50%',
     });
     expect(result).toEqual({
-      bgImageSrc: 'my-image-ref',
+      bgImageSrc: imgRef,
       bgImageOpa: '50%',
     });
   });

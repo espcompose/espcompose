@@ -10,13 +10,13 @@ import { themeLeaf } from './utils';
 
 export function useSize(value: Reactive<SizeToken>): {
   height: Signal<number>;
-  fontSize: Signal<number>;
+  font: Signal<unknown>;
   paddingX: Signal<number>;
   paddingY: Signal<number>;
 } {
   return {
     height: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'height')),
-    fontSize: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'fontSize')),
+    font: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'font')),
     paddingX: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'paddingX')),
     paddingY: useReactiveMap(value, (v) => themeLeaf('sizes', v, 'paddingY')),
   };

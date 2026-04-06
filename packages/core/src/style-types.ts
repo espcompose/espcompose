@@ -12,7 +12,7 @@
 
 import type { Reactive } from './types';
 import type { LvglStyleProps } from './generated/components/lvgl';
-import type { ImageRef } from './component-aliases';
+import type { FontRef, ImageRef } from './component-aliases';
 import type { RefProp } from './types';
 
 // ── Utility types ──────────────────────────────────────────────────────────
@@ -102,8 +102,8 @@ export interface CssAliasProps {
   columnGap?: Reactive<number | string>;
 
   // ── Text ─────────────────────────────────────────────────────────────
-  /** Font reference. Maps to `textFont`. */
-  font?: Reactive<string | LvglStyleProps['textFont'] extends Reactive<infer T> ? T : never>;
+  /** Font reference — accepts a Ref<FontRef> from useFont(). Maps to `textFont`. */
+  font?: Reactive<RefProp<FontRef>>;
   /** Maps to `textDecor`. */
   textDecoration?: Reactive<'none' | 'underline' | 'strikethrough'>;
   /** Maps to `textAlign`. */
@@ -129,7 +129,7 @@ export interface CssAliasProps {
 
   // ── Background image ─────────────────────────────────────────────────
   /** Maps to `bgImageSrc`. */
-  backgroundImage?: string | RefProp<ImageRef>;
+  backgroundImage?: RefProp<ImageRef>;
   /** Maps to `bgImageOpa`. */
   backgroundImageOpacity?: Reactive<OpacityValue>;
 

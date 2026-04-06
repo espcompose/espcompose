@@ -8,7 +8,8 @@
 
 import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, useTheme } from '@espcompose/core';
-import { useSpacing, useTypography, useFont } from '../hooks';
+import { useSpacing } from '../hooks';
+import { themeLeaf } from '../hooks/utils';
 import type { SpacingToken, Theme } from '../theme/types';
 
 export type SliderProps = WidgetProps<{
@@ -37,8 +38,7 @@ export type SliderProps = WidgetProps<{
 export const Slider = createWidgetComponent(
   (props: SliderProps): EspComposeElement => {
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const typo = useTypography('body');
-    const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
+    const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();
 
     return (

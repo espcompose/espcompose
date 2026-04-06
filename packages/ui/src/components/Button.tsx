@@ -6,9 +6,9 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, WidgetProps, Reactive, IRReactiveNode } from '@espcompose/core';
+import type { EspComposeElement, TriggerHandler, WidgetProps, Reactive } from '@espcompose/core';
 import { createWidgetComponent, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
-import { useSize, useTypography, useFont, useStatus } from '../hooks';
+import { useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
 
@@ -76,8 +76,6 @@ export const Button = createWidgetComponent(
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');
     const vs = useButtonVariant(props.variant ?? 'solid', sc);
-    const typo = useTypography('body');
-    const font = useFont({ fontFamily: typo.fontFamily, fontSize: dims.fontSize });
 
     // Width: derived from reactive paddingX if no override.
     const width = props.style?.width ?? useMemo(() => dims.paddingX * 2 + 80);
@@ -103,7 +101,7 @@ export const Button = createWidgetComponent(
           text={props.text ?? ''}
           style={{
             color: vs.textColor,
-            font: font,
+            font: dims.font,
             textAlign: 'center',
             placeSelf: 'center',
           }}

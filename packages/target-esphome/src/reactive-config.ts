@@ -299,7 +299,6 @@ export function buildRuntimeConfig(
 
   // Build theme memos from theme data
   const allThemeMemos: ThemeMemoDecl[] = [];
-  const fontNames = new Set<string>();
 
   if (themeData && themeData.themeNames.length > 0) {
     for (const [signalPath, leaf] of themeData.leafData) {
@@ -337,24 +336,6 @@ export function buildRuntimeConfig(
     ? allThemeMemos.filter(tm => referencedThemeMemos.has(tm.name))
     : allThemeMemos;
 
-  // Collect font names only from retained typography theme memos.
-  if (themeData && themeData.themeNames.length > 0) {
-    for (const tm of themeMemos) {
-      const signalPath = tm.name.replace(/^thm_/, '');
-      if (signalPath.startsWith('typography_') && signalPath.endsWith('_fontFamily')) {
-        const basePath = signalPath.replace(/_fontFamily$/, '_fontSize');
-        const sizeLeaf = themeData.leafData.get(basePath);
-        if (sizeLeaf) {
-          for (let i = 0; i < themeData.themeNames.length; i++) {
-            const family = String(tm.values[i]);
-            const size = Number(sizeLeaf.values[i]);
-            fontNames.add(`${family}_${size}`);
-          }
-        }
-      }
-    }
-  }
-
   return {
     signals: Array.from(signalMap.values()),
     memos,
@@ -363,7 +344,6 @@ export function buildRuntimeConfig(
     themeMemos: themeMemos.length > 0 ? themeMemos : undefined,
     themeDefaultIndex: themeData?.defaultIndex,
     themeNames: themeData && themeData.themeNames.length > 0 ? themeData.themeNames : undefined,
-    fontNames: fontNames.size > 0 ? Array.from(fontNames) : undefined,
     triggerFunctions: compiledTriggers && compiledTriggers.length > 0 ? compiledTriggers : undefined,
   };
 }
@@ -413,14 +393,14 @@ export function injectReactiveBindingsRuntime(
     injectSignalTrigger(result, sourceId, sig.name, sig.cppType);
   }
 
-  // Step 4: Inject build_flags to enable LVGL fonts used by theme memos
-  if (runtimeConfig.fontNames && runtimeConfig.fontNames.length > 0) {
-    result = injectFontBuildFlags(result, runtimeConfig.fontNames);
-  }
-
-  // Step 5: Inject build_flag for HA service calls in compiled triggers
+  // Step 4: Inject build_flag for HA service calls in compiled triggers
   if (runtimeConfig.triggerFunctions?.some(fn => fn.body.includes('call_ha_service('))) {
     result = injectBuildFlag(result, 'USE_API_HOMEASSISTANT_SERVICES');
+  }
+
+  // Step 5: Inject USE_LVGL_FONT when theme memos contain font_ptr values
+  if (runtimeConfig.themeMemos?.some(tm => tm.cppType === 'const lv_font_t*')) {
+    result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 
   return result;
@@ -488,11 +468,6 @@ function injectBuildFlags(config: Record<string, unknown>, flags: string[]): Rec
   esphome.platformio_options = pioOpts;
   result.esphome = esphome;
   return result;
-}
-
-function injectFontBuildFlags(config: Record<string, unknown>, fontNames: string[]): Record<string, unknown> {
-  const flags = fontNames.map(fn => `-DLV_FONT_${fn.toUpperCase()}=1`);
-  return injectBuildFlags(config, flags);
 }
 
 function injectBuildFlag(config: Record<string, unknown>, define: string): Record<string, unknown> {

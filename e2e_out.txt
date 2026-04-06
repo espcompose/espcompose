@@ -1,0 +1,14 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/jomorris/repos/personal/espcompose/packages/e2e
+
+stderr | src/build.test.ts > ESPHome Compose Build > basic-device
+
+  ⚠ Null value at api — is an environment variable or prop missing?
+
+
+stderr | src/build.test.ts > ESPHome Compose Build > function-component-device
+
+  ⚠ Null value at api — is an environment variable or prop missing?
+
+

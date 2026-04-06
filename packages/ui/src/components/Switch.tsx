@@ -8,7 +8,7 @@
 
 import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createWidgetComponent, useTheme } from '@espcompose/core';
-import { useTypography, useFont } from '../hooks';
+import { themeLeaf } from '../hooks/utils';
 import { Theme } from '../theme/types';
 
 export type SwitchProps = WidgetProps<{
@@ -30,8 +30,7 @@ export type SwitchProps = WidgetProps<{
  */
 export const Switch = createWidgetComponent(
   (props: SwitchProps): EspComposeElement => {
-    const typo = useTypography('body');
-    const font = useFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
+    const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();
 
     return (
