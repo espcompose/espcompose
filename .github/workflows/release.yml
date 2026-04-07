@@ -79,7 +79,7 @@ jobs:
   deploy-docs:
     name: Deploy Docs to GitHub Pages
     needs: release
-    if: "github.event.head_commit.message == 'chore: version packages'"
+    if: "contains(github.event.head_commit.message, 'chore: version packages')"
     runs-on: ubuntu-latest
 
     permissions:

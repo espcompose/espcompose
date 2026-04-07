@@ -1,8 +1,0 @@
-{
-  "extends": "@espcompose/core/tsconfig.sdk.json",
-  "compilerOptions": {
-    "types": ["node"]
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}

@@ -67,8 +67,7 @@ The project is a pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 | `packages/target-simulator` | `@espcompose/target-simulator` | Browser preview backend — walks Semantic IR to produce an interactive HTML page with canvas-rendered LVGL widgets, JS reactive runtime (Signal/Memo/Scheduler), mock HA entity provider |
 | `packages/eslint` | `@espcompose/eslint` | ESLint plugin with custom rules (JSX children intent validation, trigger body validation) |
 | `packages/ui` | `@espcompose/ui` | Design system — reusable LVGL components (Screen, Button, Card, Text, etc.), reactive theme system, token resolvers, pre-built dark/light themes |
-| `packages/e2e` | `espcompose-e2e` (private) | End-to-end snapshot tests — 20 test projects built by the full pipeline, YAML snapshot-tested |
-| `packages/demo` | (private) | Example project for development and manual testing |
+| `tests/e2e` | `espcompose-e2e` (private) | End-to-end snapshot tests — 20 test projects built by the full pipeline, YAML snapshot-tested |
 
 ## Targets (ComposeTarget Interface)
 
@@ -399,7 +398,7 @@ Output is always written to `<projectDir>/.espcompose/esphome.yaml`.
 
 ## E2E Test Projects
 
-The `packages/e2e/projects/` directory contains 20 sample projects that serve
+The `tests/e2e/projects/` directory contains 20 sample projects that serve
 as integration tests. Each is built by the full compiler pipeline and the
 generated YAML is snapshot-tested.
 

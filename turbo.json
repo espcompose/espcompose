@@ -9,10 +9,6 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "espcompose-demo#build": {
-      "dependsOn": ["^build"],
-      "outputs": [".espcompose/**"]
-    },
     "espcompose-docs#build": {
       "dependsOn": [],
       "outputs": ["dist/**"]
