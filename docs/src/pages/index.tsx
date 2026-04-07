@@ -1,5 +1,6 @@
 import React from "react";
 import Layout from "@theme/Layout";
+import Link from "@docusaurus/Link";
 import { useColorMode } from "@docusaurus/theme-common";
 import { Highlight, themes } from "prism-react-renderer";
 
@@ -101,6 +102,9 @@ function Hero(): React.ReactElement {
         Build touchscreen UIs and device configs with TSX &mdash;
         reusable components, real data binding, compiled to standard YAML.
       </p>
+      <Link to="/docs/intro" className="coming-soon__docs-link">
+        Read the Documentation
+      </Link>
       <div className="coming-soon__links">
         <a
           href="https://github.com/espcompose/espcompose"
@@ -213,33 +217,14 @@ function CodeComparison(): React.ReactElement {
   );
 }
 
-function ClosingCTA(): React.ReactElement {
-  return (
-    <section className="coming-soon__closing">
-      <h2 className="coming-soon__closing-heading">Coming Soon</h2>
-      <p className="coming-soon__closing-text">
-        ESPCompose is in active development. Star the repo to follow along.
-      </p>
-      <a
-        href="https://github.com/espcompose/espcompose"
-        className="coming-soon__link coming-soon__link--primary"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        ★ Star on GitHub
-      </a>
-    </section>
-  );
-}
-
 function Community(): React.ReactElement {
   return (
     <section className="coming-soon__community">
-      <h2 className="coming-soon__section-title">Get Involved</h2>
+      <h2 className="coming-soon__section-title">A New System, Get Involved</h2>
       <p className="coming-soon__community-text">
-        ESPCompose is open source and community-driven. Whether you want to
-        report bugs, suggest features, contribute code, or just hang out &mdash;
-        we&apos;d love to have you.
+        ESPCompose is a new system that is evolving quickly and shaped by the
+        community. Report bugs, suggest features, contribute code, and help
+        guide what comes next.
       </p>
       <div className="coming-soon__links">
         <a
@@ -263,6 +248,32 @@ function Community(): React.ReactElement {
   );
 }
 
+function Support(): React.ReactElement {
+  return (
+    <section className="coming-soon__support">
+      <h2 className="coming-soon__section-title">Support ESPCompose</h2>
+      <p className="coming-soon__support-text">
+        If ESPCompose saves you time or helps your projects ship faster, a small
+        coffee keeps development moving. Your support funds new features,
+        documentation, and maintenance.
+      </p>
+      <a
+        href="https://www.buymeacoffee.com/xmlguy74"
+        className="coming-soon__coffee-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Buy me a coffee"
+      >
+        <img
+          src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+          alt="Buy Me a Coffee"
+          className="coming-soon__coffee-logo"
+        />
+      </a>
+    </section>
+  );
+}
+
 export default function Home(): React.ReactElement {
   return (
     <Layout description="Build touchscreen UIs and device configs with TSX — reusable components, real data binding, compiled to standard YAML.">
@@ -270,8 +281,8 @@ export default function Home(): React.ReactElement {
         <Hero />
         <ValueProps />
         <CodeComparison />
-        <ClosingCTA />
         <Community />
+        <Support />
       </main>
     </Layout>
   );
