@@ -1,5 +1,14 @@
 # @espcompose/cli
 
+## 0.1.1
+
+### Patch Changes
+
+- [#14](https://github.com/espcompose/espcompose/pull/14) [`e9cb67f`](https://github.com/espcompose/espcompose/commit/e9cb67f4dd52e95dc6d761af5e0c91b500d6cff2) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Fixed dependency issues
+
+- Updated dependencies [[`e9cb67f`](https://github.com/espcompose/espcompose/commit/e9cb67f4dd52e95dc6d761af5e0c91b500d6cff2)]:
+  - @espcompose/eslint@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

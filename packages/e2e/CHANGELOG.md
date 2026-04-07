@@ -1,5 +1,13 @@
 # espcompose-e2e
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`e9cb67f`](https://github.com/espcompose/espcompose/commit/e9cb67f4dd52e95dc6d761af5e0c91b500d6cff2)]:
+  - @espcompose/cli@0.1.1
+  - @espcompose/ui@0.1.0
+
 ## 0.1.0
 
 ### Minor Changes
