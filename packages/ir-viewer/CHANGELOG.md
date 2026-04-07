@@ -1,5 +1,11 @@
 # espcompose-ir-viewer
 
+## 0.1.1
+
+### Patch Changes
+
+- [#12](https://github.com/espcompose/espcompose/pull/12) [`38b145c`](https://github.com/espcompose/espcompose/commit/38b145cddfe70f7786251649c2cca980056cadea) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Added docs site to the monorepo
+
 ## 0.1.0
 
 ### Minor Changes
