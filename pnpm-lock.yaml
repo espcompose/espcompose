@@ -178,34 +178,6 @@ importers:
         specifier: 'catalog:'
         version: 3.25.76
 
-  packages/demo:
-    dependencies:
-      '@espcompose/core':
-        specifier: workspace:*
-        version: link:../core
-      '@espcompose/ui':
-        specifier: workspace:*
-        version: link:../ui
-      dotenv:
-        specifier: ^17.3.1
-        version: 17.3.1
-    devDependencies:
-      '@espcompose/cli':
-        specifier: workspace:*
-        version: link:../cli
-      '@espcompose/eslint':
-        specifier: workspace:*
-        version: link:../eslint
-      '@types/node':
-        specifier: 'catalog:'
-        version: 22.19.15
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.4(jiti@2.6.1)
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-
   packages/docs:
     dependencies:
       '@docusaurus/core':
@@ -4129,10 +4101,6 @@ packages:
   dot-prop@6.0.1:
     resolution: {integrity: sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==}
     engines: {node: '>=10'}
-
-  dotenv@17.3.1:
-    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
-    engines: {node: '>=12'}
 
   dotenv@8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
@@ -11995,8 +11963,6 @@ snapshots:
   dot-prop@6.0.1:
     dependencies:
       is-obj: 2.0.0
-
-  dotenv@17.3.1: {}
 
   dotenv@8.6.0: {}
 

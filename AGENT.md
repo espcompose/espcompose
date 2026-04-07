@@ -68,7 +68,6 @@ The project is a pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 | `packages/eslint` | `@espcompose/eslint` | ESLint plugin with custom rules (JSX children intent validation, trigger body validation) |
 | `packages/ui` | `@espcompose/ui` | Design system — reusable LVGL components (Screen, Button, Card, Text, etc.), reactive theme system, token resolvers, pre-built dark/light themes |
 | `packages/e2e` | `espcompose-e2e` (private) | End-to-end snapshot tests — 20 test projects built by the full pipeline, YAML snapshot-tested |
-| `packages/demo` | (private) | Example project for development and manual testing |
 
 ## Targets (ComposeTarget Interface)
 

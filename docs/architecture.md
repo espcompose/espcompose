@@ -12,7 +12,6 @@ packages/
   target-simulator/ Browser preview — HTML/JS output from the same IR
   ui/               Pre-built UI components and theme system
   eslint/           Custom lint rules for JSX correctness
-  demo/             Example projects
   e2e/              Integration tests with snapshot verification
 ```
 
