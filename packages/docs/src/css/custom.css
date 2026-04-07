@@ -1,0 +1,328 @@
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Navbar Icons */
+
+.navbar-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  color: var(--ifm-navbar-link-color);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: color 0.15s;
+}
+
+.navbar-icon:hover {
+  color: var(--ifm-color-primary);
+}
+
+.navbar-icon svg {
+  display: block;
+}
+
+/* Coming Soon Page */
+
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero */
+
+.coming-soon__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px - 200px);
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+}
+
+.coming-soon__logo {
+  max-width: 640px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 3.5rem;
+}
+
+.coming-soon__headline {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.coming-soon__subheadline {
+  font-size: 1.3rem;
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+  max-width: 540px;
+  line-height: 1.5;
+}
+
+.coming-soon__links {
+  display: flex;
+  gap: 1rem;
+}
+
+.coming-soon__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.coming-soon__link:hover {
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+  text-decoration: none;
+}
+
+.coming-soon__link--primary {
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.coming-soon__link--primary:hover {
+  background-color: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
+/* Value Propositions */
+
+.coming-soon__valueprops {
+  width: 100%;
+  max-width: 960px;
+  padding: 3rem 2rem;
+}
+
+.coming-soon__section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.coming-soon__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.coming-soon__card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+}
+
+.coming-soon__card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.coming-soon__card-desc {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Code Comparison */
+
+.coming-soon__comparison {
+  width: 100%;
+  max-width: 1400px;
+  padding: 3rem 2rem;
+}
+
+.coming-soon__code-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.coming-soon__code-block {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  min-width: 0;
+}
+
+.coming-soon__code-block pre {
+  margin: 0;
+}
+
+/* YAML syntax highlighting boost — Prism treats most values as plain tokens */
+.coming-soon__code-block .token.key.atrule {
+  color: #d73a49;
+  font-weight: 600;
+}
+
+.coming-soon__code-block .token.boolean,
+.coming-soon__code-block .token.number {
+  color: #005cc5;
+}
+
+.coming-soon__code-block .token.string {
+  color: #032f62;
+}
+
+.coming-soon__code-block .token.important {
+  color: #e36209;
+}
+
+.coming-soon__code-block .token.punctuation {
+  color: #6a737d;
+}
+
+[data-theme="dark"] .coming-soon__code-block .token.key.atrule {
+  color: #8be9fd;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .coming-soon__code-block .token.boolean,
+[data-theme="dark"] .coming-soon__code-block .token.number {
+  color: #bd93f9;
+}
+
+[data-theme="dark"] .coming-soon__code-block .token.string {
+  color: #f1fa8c;
+}
+
+[data-theme="dark"] .coming-soon__code-block .token.important {
+  color: #ffb86c;
+}
+
+[data-theme="dark"] .coming-soon__code-block .token.punctuation {
+  color: #6272a4;
+}
+
+.coming-soon__code-label {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ifm-color-emphasis-600);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+}
+
+.coming-soon__code-label--after {
+  color: var(--ifm-color-primary);
+}
+
+/* Closing CTA */
+
+.coming-soon__closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem 5rem;
+}
+
+.coming-soon__closing-heading {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.coming-soon__closing-text {
+  font-size: 1.1rem;
+  opacity: 0.75;
+  margin-bottom: 2rem;
+  max-width: 420px;
+}
+
+/* Community */
+
+.coming-soon__community {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem 5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  max-width: 640px;
+}
+
+.coming-soon__community-text {
+  font-size: 1.05rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .coming-soon__code-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .coming-soon__logo {
+    max-width: 260px;
+  }
+
+  .coming-soon__headline {
+    font-size: 2rem;
+  }
+
+  .coming-soon__subheadline {
+    font-size: 1.05rem;
+  }
+
+  .coming-soon__links {
+    flex-direction: column;
+  }
+
+  .coming-soon__section-title {
+    font-size: 1.4rem;
+  }
+
+  .coming-soon__closing-heading {
+    font-size: 1.6rem;
+  }
+}

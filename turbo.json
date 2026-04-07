@@ -13,6 +13,10 @@
       "dependsOn": ["^build"],
       "outputs": [".espcompose/**"]
     },
+    "espcompose-docs#build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "cache": true
