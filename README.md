@@ -25,13 +25,13 @@ ESPHome Compose provides a JSX authoring layer that compiles to valid ESPHome YA
 
 ## How It Works
 
-<img style="background-color:#DDDDDD" src="./docs/images/espcompose-flow.svg" />
+<img style="background-color:#DDDDDD" src="./docs/docs/architecture/images/espcompose-flow.svg" />
 
 There is no JavaScript runtime on the device. ESPHome Compose is purely a build-time transpiler — the output is standard ESPHome YAML that gets compiled to firmware through the normal ESPHome toolchain.
 
 ## Quick Start
 
-> **New here?** Check out the [Getting Started guide](docs/getting-started.md) for a step-by-step walkthrough of creating your first project.
+> **New here?** Check out the [Getting Started guide](https://espcompose.io/docs/architecture/getting-started) for a step-by-step walkthrough of creating your first project.
 
 ### Prerequisites
 
