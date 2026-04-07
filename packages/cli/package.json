@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true});\"",
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external @espcompose/target-simulator --external @espcompose/target-esphome --external typescript-eslint",
+    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external esbuild --external typescript --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -41,24 +41,21 @@
     "access": "public"
   },
   "dependencies": {
-    "@espcompose/core": "workspace:*",
     "@espcompose/eslint": "workspace:*",
-    "@espcompose/target-esphome": "workspace:*",
-    "@espcompose/target-simulator": "workspace:*",
-    "commander": "catalog:",
     "esbuild": "catalog:",
     "eslint": "catalog:",
-    "handlebars": "^4.7.8",
-    "picocolors": "^1.1.1",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
-    "which": "catalog:",
-    "yaml": "catalog:"
+    "typescript-eslint": "catalog:"
   },
   "devDependencies": {
+    "@espcompose/core": "workspace:*",
+    "@espcompose/target-esphome": "workspace:*",
+    "@espcompose/target-simulator": "workspace:*",
     "@types/node": "catalog:",
-    "@types/which": "catalog:",
+    "commander": "catalog:",
     "espcompose-ir-viewer": "workspace:*",
+    "handlebars": "^4.7.8",
+    "picocolors": "^1.1.1",
     "tsup": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"
