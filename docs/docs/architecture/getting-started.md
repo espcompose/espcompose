@@ -1,6 +1,13 @@
+---
+sidebar_label: Getting Started
+sidebar_position: 2
+---
+
 # Getting Started
 
 This guide walks you through creating your first ESPHome Compose project — writing ESP device configurations in TypeScript/TSX instead of YAML.
+
+For a complete working example, see the [espcompose-demo](https://github.com/espcompose/espcompose-demo) repository.
 
 ## Prerequisites
 
@@ -12,26 +19,26 @@ This guide walks you through creating your first ESPHome Compose project — wri
 Use the `init` command to scaffold a new project:
 
 ```bash
-npx espcompose init my-device
+npx @espcompose/cli init my-device
 ```
 
-This creates a `my-device/` directory with the following files:
+This creates a `my-device/` directory with:
 
 | File | Purpose |
 |------|---------|
 | `index.tsx` | Device configuration entry point |
-| `package.json` | Dependencies (`@espcompose/core` SDK + CLI + ESLint plugin) |
-| `tsconfig.json` | TypeScript config extending the SDK's base config |
+| `package.json` | Dependencies (`@espcompose/core`, CLI, ESLint plugin) |
+| `tsconfig.json` | TypeScript config extending `@espcompose/core/tsconfig.sdk.json` |
 | `eslint.config.mjs` | ESLint config with ESPHome Compose rules |
-| `.gitignore` | Ignores `node_modules/`, `.espcompose/`, and `dist/` |
+| `.gitignore` | Ignores `node_modules/`, `.espcompose/`, `.espcompose-build/`, and `dist/` |
 
-You can optionally specify a board:
+You can optionally specify a board (defaults to `esp32dev`):
 
 ```bash
-npx espcompose init my-device --board esp32-s3-devkitc-1
+npx @espcompose/cli init my-device --board esp32-s3-devkitc-1
 ```
 
-Next, install dependencies and transpile:
+Then install dependencies and transpile:
 
 ```bash
 cd my-device
@@ -46,10 +53,12 @@ The generated YAML is written to `.espcompose/esphome.yaml`.
 The scaffolded `index.tsx` is a minimal device configuration:
 
 ```tsx
+import { secret } from '@espcompose/core';
+
 export default (
   <esphome name="my-device" comment="An ESPHome Compose device">
     <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="!secret wifi_ssid" password="!secret wifi_password" />
+    <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
     <api />
     <ota platform="esphome" />
     <logger level="DEBUG" />
@@ -64,17 +73,10 @@ automatically converted to snake_case in the output.
 
 ## Function Components
 
-Just like React, you can extract reusable pieces into function components:
+Extract reusable pieces into function components:
 
 ```tsx
-interface WifiConfigProps {
-  ssid: string;
-  password: string;
-}
-
-function WifiConfig({ ssid, password }: WifiConfigProps) {
-  return <wifi ssid={ssid} password={password} />;
-}
+import { secret } from '@espcompose/core';
 
 function CoreInfrastructure() {
   return (
@@ -89,7 +91,7 @@ function CoreInfrastructure() {
 export default (
   <esphome name="my-device">
     <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <WifiConfig ssid="HomeWifi" password="s3cr3t!!" />
+    <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
     <CoreInfrastructure />
   </esphome>
 );
@@ -101,10 +103,10 @@ Fragments (`<>...</>`) let a component return multiple sibling elements without 
 
 ESPHome uses string IDs to link components together (e.g. a light referencing an output). ESPHome Compose replaces manual ID strings with typed refs.
 
-Call `useRef<T>()` to create a typed reference, pass it to an element's `ref` prop to assign it, and pass it to other elements' ID props to reference it:
+Call `useRef<T>()` to create a typed reference, pass it to an element's `ref` prop to register it, and use it in other elements to reference it:
 
 ```tsx
-import { useRef } from '@espcompose/core';
+import { secret, useRef } from '@espcompose/core';
 import type { FloatOutputRef, LightOutputRef } from '@espcompose/core';
 
 const outputRef = useRef<FloatOutputRef>();
@@ -113,7 +115,7 @@ const lightRef = useRef<LightOutputRef>();
 export default (
   <esphome name="my-device">
     <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid="HomeWifi" password="s3cr3t!!" />
+    <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
     <api />
     <logger level="DEBUG" />
     <output platform="ledc" ref={outputRef} pin={19} frequency="1000Hz" />
@@ -122,7 +124,7 @@ export default (
 );
 ```
 
-The compiler generates unique IDs automatically and wires them in the YAML output:
+The compiler generates unique IDs and wires them in the YAML output:
 
 ```yaml
 output:
@@ -137,21 +139,23 @@ light:
   output: r_a1b2c3d4e
 ```
 
-The type parameter (e.g. `FloatOutputRef`) provides type safety — your IDE will catch it if you pass a ref of the wrong type to a prop that expects a different component kind.
+The type parameter (e.g. `FloatOutputRef`) provides type safety — your IDE will error if you pass a ref of the wrong type to a prop that expects a different component kind.
 
 ## Event Handlers and Scripts
 
 ### Inline Event Handlers
 
-Trigger props (props starting with `on`) accept inline arrow functions. The function body is compiled directly into an ESPHome action list:
+Trigger props (props starting with `on`) accept async arrow functions. The function body is compiled into an ESPHome action list:
 
 ```tsx
+import { delay } from '@espcompose/core';
+
 <binary_sensor
   platform="gpio"
   pin={4}
   name="Button"
-  onRelease={() => {
-    delay(100);
+  onRelease={async () => {
+    await delay(100);
   }}
 />
 ```
@@ -169,10 +173,10 @@ binary_sensor:
 
 ### Named Scripts
 
-Use `useScript()` to create named ESPHome `script:` components. The async arrow function body is compiled at the AST level by the action tree compiler — it is never executed at runtime. Must be called inside a component function body:
+Use `useScript()` to create reusable ESPHome `script:` components. The async arrow function body is compiled at the AST level — it is never executed at runtime. Must be called inside a function component body:
 
 ```tsx
-import { delay, logger, useScript } from '@espcompose/core';
+import { delay, logger, secret, useScript } from '@espcompose/core';
 
 function App() {
   const greet = useScript(async () => {
@@ -181,9 +185,9 @@ function App() {
   });
 
   return (
-    <esphome name="script-device">
+    <esphome name="my-device">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
       <api />
       <logger level="INFO" />
       <binary_sensor
@@ -199,36 +203,6 @@ function App() {
 export default <App />;
 ```
 
-This compiles to:
-
-```yaml
-binary_sensor:
-  platform: gpio
-  pin: 4
-  name: Button
-  on_press:
-    - script.execute: <auto-id>
-    - script.wait: <auto-id>
-script:
-  - id: <auto-id>
-    then:
-      - logger.log: Hello from ESPCompose!
-      - delay: 500ms
-```
-
-### Inline Trigger Handlers
-
-Use async arrow functions directly on trigger props for one-off handlers:
-
-```tsx
-<binary_sensor
-  platform="gpio"
-  pin={4}
-  name="Button"
-  onRelease={async () => { await delay(100); }}
-/>
-```
-
 ### Action Primitives
 
 Import action primitives from `@espcompose/core` to use inside script bodies and trigger handlers:
@@ -236,15 +210,15 @@ Import action primitives from `@espcompose/core` to use inside script bodies and
 | Function | YAML Output |
 |----------|-------------|
 | `await delay(ms)` | `delay: <ms>ms` |
+| `await delay('1s')` | `delay: 1s` |
 | `logger.log(message, level?)` | `logger.log: { message, level }` |
-| `await waitUntil(() => cond)` | `wait_until: { condition: !lambda ... }` |
 
 ### Ref Actions
 
 Refs to actionable components (lights, switches, etc.) provide typed action methods. Inside `useScript()` or trigger handlers, calling these methods emits the corresponding ESPHome actions:
 
 ```tsx
-import { delay, logger, useRef, useScript } from '@espcompose/core';
+import { delay, secret, useRef, useScript } from '@espcompose/core';
 import type { LightOutputRef, SwitchRef, FloatOutputRef } from '@espcompose/core';
 
 function App() {
@@ -258,15 +232,10 @@ function App() {
     switchRef.toggle();
   });
 
-  const dimLight = useScript(async () => {
-    lightRef.turnOn({ brightness: 0.5 });
-    logger.log('Light dimmed to 50%');
-  });
-
   return (
-    <esphome name="trigger-device">
+    <esphome name="my-device">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-      <wifi ssid="HomeWifi" password="s3cr3t!!" />
+      <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
       <api />
       <logger level="DEBUG" />
       <output platform="ledc" ref={outputRef} pin={19} frequency="1000Hz" />
@@ -282,7 +251,6 @@ function App() {
           await delay(100);
           switchRef.turnOff();
         }}
-        onDoubleClick={async () => { await dimLight(); }}
       />
     </esphome>
   );
@@ -293,17 +261,15 @@ export default <App />;
 
 ## CLI Commands
 
-Once your project is ready, use the CLI to build and deploy:
-
-| Command | Description |
-|---------|-------------|
-| `espcompose transpile [dir]` | Transpile TSX to YAML |
-| `espcompose transpile --library [dir]` | Run AST transforms on a component library |
-| `espcompose config [dir]` | Transpile + validate via `esphome config` |
-| `espcompose build [dir]` | Transpile + compile firmware |
-| `espcompose build --library [dir]` | Build a component library (ESM + .d.ts) |
-| `espcompose run [dir]` | Transpile + compile + upload to device |
-| `espcompose logs [dir]` | Transpile + stream serial logs |
+| Command | Description | Requires ESPHome |
+|---------|-------------|:----------------:|
+| `espcompose init <name>` | Scaffold a new project (`--board`, `--library`) | |
+| `espcompose transpile [dir]` | Transpile TSX to YAML | |
+| `espcompose config [dir]` | Transpile + validate via `esphome config` | Yes |
+| `espcompose build [dir]` | Transpile + compile firmware | Yes |
+| `espcompose run [dir]` | Transpile + compile + upload to device | Yes |
+| `espcompose logs [dir]` | Stream serial logs | Yes |
+| `espcompose simulate [dir]` | Open LVGL UI simulator in browser | |
 
 Pass extra flags to ESPHome after `--`:
 
@@ -313,20 +279,17 @@ espcompose run ./my-device -- --device /dev/ttyUSB0
 
 ## Secrets
 
-Use the `secret()` function to create `!secret` references for sensitive values
-like Wi-Fi passwords and API keys:
+Use the `secret()` function to reference values from your ESPHome `secrets.yaml` file:
 
 ```tsx
 import { secret } from '@espcompose/core';
 
-export default (
-  <esphome name="my-device">
-    <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
-    <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
-    <api encryption={{ key: secret('api_key') }} />
-  </esphome>
-);
+<wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
+<api encryption={{ key: secret('api_encryption_key') }} />
 ```
 
-The compiler collects secret references and emits a `secrets.yaml` file
-alongside the main config.
+The compiler emits `!secret <key>` references in the YAML output.
+
+## Next Steps
+
+See the [espcompose-demo](https://github.com/espcompose/espcompose-demo) repository for a full working project with components, refs, scripts, and more.

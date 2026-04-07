@@ -1,6 +1,8 @@
 packages:
   - packages/*
   - scripts
+  - docs
+  - tests/*
 
 catalog:
   '@types/node': ^22.19.15
