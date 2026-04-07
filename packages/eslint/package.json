@@ -42,11 +42,11 @@
   },
   "dependencies": {
     "@espcompose/core": "workspace:*",
-    "@typescript-eslint/utils": "^8.0.0",
-    "typescript-eslint": "catalog:"
+    "@typescript-eslint/utils": "^8.0.0"
   },
   "peerDependencies": {
-    "eslint": ">=9.0.0"
+    "eslint": ">=9.0.0",
+    "typescript-eslint": ">=8.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/rule-tester": "^8.0.0",

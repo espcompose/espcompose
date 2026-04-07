@@ -101,55 +101,46 @@ importers:
 
   packages/cli:
     dependencies:
-      '@espcompose/core':
-        specifier: workspace:*
-        version: link:../core
       '@espcompose/eslint':
         specifier: workspace:*
         version: link:../eslint
-      '@espcompose/target-esphome':
-        specifier: workspace:*
-        version: link:../target-esphome
-      '@espcompose/target-simulator':
-        specifier: workspace:*
-        version: link:../target-simulator
-      commander:
-        specifier: 'catalog:'
-        version: 12.1.0
       esbuild:
         specifier: 'catalog:'
         version: 0.21.5
       eslint:
         specifier: 'catalog:'
         version: 9.39.4(jiti@2.6.1)
-      handlebars:
-        specifier: ^4.7.8
-        version: 4.7.9
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      which:
-        specifier: 'catalog:'
-        version: 6.0.1
-      yaml:
-        specifier: 'catalog:'
-        version: 2.8.2
     devDependencies:
+      '@espcompose/core':
+        specifier: workspace:*
+        version: link:../core
+      '@espcompose/target-esphome':
+        specifier: workspace:*
+        version: link:../target-esphome
+      '@espcompose/target-simulator':
+        specifier: workspace:*
+        version: link:../target-simulator
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
-      '@types/which':
+      commander:
         specifier: 'catalog:'
-        version: 3.0.4
+        version: 12.1.0
       espcompose-ir-viewer:
         specifier: workspace:*
         version: link:../ir-viewer
+      handlebars:
+        specifier: ^4.7.8
+        version: 4.7.9
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -292,7 +283,7 @@ importers:
         specifier: ^8.0.0
         version: 8.57.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       typescript-eslint:
-        specifier: 'catalog:'
+        specifier: '>=8.0.0'
         version: 8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
     devDependencies:
       '@typescript-eslint/rule-tester':
