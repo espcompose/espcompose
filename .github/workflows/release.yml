@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pullRequestNumber: ${{ steps.changesets.outputs.pullRequestNumber }}
+      published: ${{ steps.changesets.outputs.published }}
 
     permissions:
       contents: write
@@ -74,3 +75,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESET_BOT_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+
+  deploy-docs:
+    name: Deploy Docs to GitHub Pages
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm --filter espcompose-docs build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/docs/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
