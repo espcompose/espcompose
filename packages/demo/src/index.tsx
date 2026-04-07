@@ -1,10 +1,11 @@
 import 'dotenv/config';
-import { DisplayRef, secret, useRef } from '@espcompose/core';
+import { DisplayRef, LvglComponentRef, secret, useRef } from '@espcompose/core';
 import { UI } from './lvgl';
 import { Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 } from './hardware';
 
 function App() {
   const display = useRef<DisplayRef>();
+  const lvgl = useRef<LvglComponentRef>();
 
   return (
     <esphome
@@ -15,19 +16,22 @@ function App() {
 
       <api
         encryption={{
-          key: process.env.AP_ENCRYPTION
+          key: secret(process.env.AP_ENCRYPTION!)
+        }}
+        onClientConnected={() => {
+          lvgl.pageNext();
         }}
       />
 
       <ota
         platform="esphome"
-        password={process.env.OTA_PASSWORD}
+        password={secret(process.env.OTA_PASSWORD!)}
       />
 
       <logger level="DEBUG" hardwareUart="UART0" />
 
       <Waveshare_ESP32P4_WIFI6_Touch_LCD_10_1 display={display} />
-      <UI display={display} />
+      <UI display={display} lvgl={lvgl} />
 
     </esphome>
   );

@@ -41,6 +41,7 @@ export type AnimationRef = Components.Animation.AnimationRef;
 export type DisplayRef = Components.Display.DisplayRef;
 export type FontRef = Components.Font.FontRef;
 export type ImageRef = Components.Image.ImageRef;
+export type LvglComponentRef = Components.Lvgl.LvglComponentRef;
 export type TouchscreenRef = Components.Touchscreen.TouchscreenRef;
 
 // ── Output ───────────────────────────────────────────────────────────────────

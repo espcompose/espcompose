@@ -1,4 +1,5 @@
 import type { SchemaDefinition } from './schema-types.js';
+import type { ActionEntry } from './schema-action-extractor.js';
 
 /**
  * Manual overrides for ESPHome schema fields that are incorrectly tagged in
@@ -104,6 +105,59 @@ export const COMPONENT_SCHEMA_OVERRIDES = new Map<string, SchemaDefinition>([
         },
       },
     },
+  ],
+]);
+
+/**
+ * Manual action overrides for ESPHome actions that are not present in the
+ * JSON schema files (e.g. LVGL page navigation actions are registered in
+ * Python but not exported by the ESPHome schema dumper).
+ *
+ * Key: C++ class name (must match use_id_type from the schema)
+ * Value: array of ActionEntry objects to merge into the class's action list
+ */
+export const ACTION_OVERRIDES = new Map<string, ActionEntry[]>([
+  [
+    'lvgl::LvglComponent',
+    [
+      {
+        yamlKey: 'lvgl.page.next',
+        shortName: 'page_next',
+        methodName: 'pageNext',
+        targetClass: 'lvgl::LvglComponent',
+        idFieldName: 'lvgl_id',
+        params: [
+          { yamlKey: 'animation', tsName: 'animation', tsType: '"NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM"', required: false, doc: 'Page transition animation. Defaults to NONE.' },
+          { yamlKey: 'time', tsName: 'time', tsType: 'string', required: false, doc: 'Animation duration (e.g. "300ms"). Defaults to 50ms.' },
+        ],
+        doc: 'Navigate to the next LVGL page.',
+      },
+      {
+        yamlKey: 'lvgl.page.previous',
+        shortName: 'page_previous',
+        methodName: 'pagePrevious',
+        targetClass: 'lvgl::LvglComponent',
+        idFieldName: 'lvgl_id',
+        params: [
+          { yamlKey: 'animation', tsName: 'animation', tsType: '"NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM"', required: false, doc: 'Page transition animation. Defaults to NONE.' },
+          { yamlKey: 'time', tsName: 'time', tsType: 'string', required: false, doc: 'Animation duration (e.g. "300ms"). Defaults to 50ms.' },
+        ],
+        doc: 'Navigate to the previous LVGL page.',
+      },
+      {
+        yamlKey: 'lvgl.page.show',
+        shortName: 'page_show',
+        methodName: 'pageShow',
+        targetClass: 'lvgl::LvglComponent',
+        idFieldName: 'lvgl_id',
+        params: [
+          { yamlKey: 'id', tsName: 'id', tsType: 'unknown', required: true, doc: 'The page ref to navigate to.' },
+          { yamlKey: 'animation', tsName: 'animation', tsType: '"NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM"', required: false, doc: 'Page transition animation. Defaults to NONE.' },
+          { yamlKey: 'time', tsName: 'time', tsType: 'string', required: false, doc: 'Animation duration (e.g. "300ms"). Defaults to 50ms.' },
+        ],
+        doc: 'Navigate to a specific LVGL page by ref.',
+      },
+    ],
   ],
 ]);
 

@@ -1,15 +1,18 @@
-import { DisplayRef, Ref, useHAEntity, theme } from "@espcompose/core";
+import { DisplayRef, LvglComponentRef, Ref, useHAEntity, useImage, theme } from "@espcompose/core";
 import {
-    Button, Card, HStack, Screen, Text, VStack,
+    Button, Card, HStack, Image, Screen, Space, Spinner, Text, VStack,
     LightSlider, LightSwitch, LightButton, SensorText,
     ThemeProvider, darkTheme, lightTheme,
 } from "@espcompose/ui";
 
 type UIProps = {
     display: Ref<DisplayRef>,
+    lvgl: Ref<LvglComponentRef>,
 }
 
 export const UI = (props: UIProps) => {
+
+    const logo = useImage({ file: './assets/logo.png', type: 'RGB565', resize: '150x150' });
 
     const officeLight = useHAEntity('light.office');
     const gymLight = useHAEntity('light.gym');
@@ -17,12 +20,24 @@ export const UI = (props: UIProps) => {
 
     return <>
         <lvgl
+            ref={props.lvgl}
             byteOrder="little_endian"
             bufferSize="100%"
             drawRounding={2}
             displays={[props.display]}
         >
             <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
+                {/* Boot screen — shown on startup until HA connects */}
+                <Screen skip>
+                    <VStack align="center" crossAlign="center" style={{height: '100%'}}>
+                        <Image src={logo} />
+                        <Text variant="title" text="ESPCompose" />
+                        <Spinner size="lg" />
+                        <Text variant="caption" text="Connecting to Home Assistant..." />
+                    </VStack>
+                </Screen>
+
+                {/* Main UI — navigated to on api.onClientConnected */}
                 <Screen>
                     <VStack>
                         <Text variant="title" text="Theme Demo" />

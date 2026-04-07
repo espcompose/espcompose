@@ -3,7 +3,7 @@ import type { SchemaConfigVar, SchemaDefinition, SchemaRegistry } from './schema
 import { OPTIONAL_FIELD_OVERRIDES, TYPE_OVERRIDES } from './overrides.js';
 import { keyword, typeRef, stringLiteralType, unionType, arrayType, recordType, refPropType, triggerType, propSig, addJsDoc } from './ast-helpers.js';
 import { inferDocTypeString } from './doc-type-inference.js';
-import { TRIGGER_REGISTRY } from '../../packages/core/src/trigger-registry.js';
+import { TRIGGER_REGISTRY } from '../../packages/core/src/trigger-registry.ts';
 import { mergeExtends } from './schema-merge-utils.js';
 
 // ────────────────────────────────────────────────────────────────────────────

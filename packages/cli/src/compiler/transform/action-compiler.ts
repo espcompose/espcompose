@@ -528,12 +528,70 @@ function compileRefAction(
   ctx: ActionCompilerContext,
 ): IRActionNode[] | null {
   const snakeMethod = camelToSnake(methodName);
-  const actionKey = tag ? `${tag}.${snakeMethod}` : snakeMethod;
+  let actionKey = tag ? `${tag}.${snakeMethod}` : snakeMethod;
+
+  // Remap LVGL page navigation action keys — the snake_case convention
+  // produces "lvgl.page_next" but ESPHome expects "lvgl.page.next".
+  actionKey = LVGL_ACTION_KEY_REMAP.get(actionKey) ?? actionKey;
+
+  // LVGL page actions use auto-resolved lvgl_id, so we must NOT inject
+  // the caller ref as `id`. Build config from params only.
+  if (LVGL_PAGE_ACTIONS.has(actionKey)) {
+    const config = buildLvglPageActionConfig(call, ctx);
+    return [irNativeAction(actionKey, config)];
+  }
 
   // Build action config — always include the ref ID
   const config: IRActionConfig = buildRefActionConfig(call, refName, ctx);
 
   return [irNativeAction(actionKey, config)];
+}
+
+/**
+ * Remap table for LVGL page navigation action keys.
+ * camelToSnake produces "page_next" but ESPHome expects "page.next".
+ */
+const LVGL_ACTION_KEY_REMAP = new Map<string, string>([
+  ['lvgl.page_next', 'lvgl.page.next'],
+  ['lvgl.page_previous', 'lvgl.page.previous'],
+  ['lvgl.page_show', 'lvgl.page.show'],
+]);
+
+/** Set of LVGL page action keys that use auto-resolved lvgl_id. */
+const LVGL_PAGE_ACTIONS = new Set<string>([
+  'lvgl.page.next',
+  'lvgl.page.previous',
+  'lvgl.page.show',
+]);
+
+/**
+ * Build action config for LVGL page actions.
+ * These actions do NOT include the caller ref as `id` — ESPHome auto-resolves
+ * the `lvgl_id`. Only explicit params from the call are included.
+ */
+function buildLvglPageActionConfig(
+  call: ts.CallExpression,
+  ctx: ActionCompilerContext,
+): IRActionConfig {
+  if (call.arguments.length === 0) {
+    return {};
+  }
+
+  const arg = call.arguments[0];
+  if (!ts.isObjectLiteralExpression(arg)) {
+    return {};
+  }
+
+  const config: Record<string, IRActionParam | string | number | boolean> = {};
+  for (const prop of arg.properties) {
+    if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+      const paramValue = compileActionParam(prop.initializer, ctx);
+      if (paramValue) {
+        config[camelToSnake(prop.name.text)] = paramValue;
+      }
+    }
+  }
+  return config;
 }
 
 function buildRefActionConfig(
