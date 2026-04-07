@@ -2032,6 +2032,29 @@ export interface LvglComponent_PauseParams {
   showSnow?: unknown;
 }
 
+export interface LvglComponent_PageNextParams {
+  /** Page transition animation. Defaults to NONE. */
+  animation?: "NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM";
+  /** Animation duration (e.g. "300ms"). Defaults to 50ms. */
+  time?: string;
+}
+
+export interface LvglComponent_PagePreviousParams {
+  /** Page transition animation. Defaults to NONE. */
+  animation?: "NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM";
+  /** Animation duration (e.g. "300ms"). Defaults to 50ms. */
+  time?: string;
+}
+
+export interface LvglComponent_PageShowParams {
+  /** The page ref to navigate to. */
+  id: unknown;
+  /** Page transition animation. Defaults to NONE. */
+  animation?: "NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM";
+  /** Animation duration (e.g. "300ms"). Defaults to 50ms. */
+  time?: string;
+}
+
 export interface LvglComponentActions {
   /** This [action](/automations/actions#actions-action) allows changing/updating the `disp_bg_color` or `disp_bg_image` configuration variables of the main component, making it possible to change the background color or wallpaper at any time. */
   update(params?: LvglComponent_UpdateParams): void;
@@ -2039,6 +2062,12 @@ export interface LvglComponentActions {
   pause(params?: LvglComponent_PauseParams): void;
   /** This [action](/automations/actions#actions-action) resumes the activity of LVGL, including rendering. */
   resume(): void;
+  /** Navigate to the next LVGL page. */
+  pageNext(params?: LvglComponent_PageNextParams): void;
+  /** Navigate to the previous LVGL page. */
+  pagePrevious(params?: LvglComponent_PagePreviousParams): void;
+  /** Navigate to a specific LVGL page by ref. */
+  pageShow(params?: LvglComponent_PageShowParams): void;
 }
 
 // ── max17043::MAX17043Component ──────────────────────────────────────

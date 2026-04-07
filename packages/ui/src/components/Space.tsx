@@ -65,7 +65,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
         display: 'flex',
         flexDirection: flexDir,
         ...(props.align ? { justifyContent: props.align } : {}),
-        ...(props.crossAlign ? { alignItems: props.crossAlign } : {}),
+        ...(props.crossAlign ? { alignItems: props.crossAlign, flexTrackAlign: props.crossAlign } : {}),
         ...(gap != null ? { [gapKey]: gap } : {}),
       }}
     >

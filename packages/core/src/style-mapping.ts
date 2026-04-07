@@ -178,6 +178,7 @@ const _cssToLvglMap = {
   flexDirection:         { kind: 'layout-transform', lvglProp: 'flexFlow', valueMap: FLEX_FLOW_VALUES },
   justifyContent:        { kind: 'layout-transform', lvglProp: 'flexAlignMain', valueMap: FLEX_ALIGN_MAIN_VALUES },
   alignItems:            { kind: 'layout-transform', lvglProp: 'flexAlignCross', valueMap: FLEX_ALIGN_CROSS_VALUES },
+  flexTrackAlign:        { kind: 'layout-transform', lvglProp: 'flexAlignTrack', valueMap: FLEX_ALIGN_CROSS_VALUES },
   flexGrow:              { kind: 'direct', lvglProp: 'flexGrow' },
 
   // ── Layout (grid — parent) ────────────────────────────────────────

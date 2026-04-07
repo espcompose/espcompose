@@ -85,6 +85,11 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'style-device');
   });
 
+  // Boot screen with LVGL page navigation actions
+  it('boot-screen-device', async () => {
+    await createProjectTest(projectsDir, 'boot-screen-device');
+  });
+
   // Untransformed library detection — build should fail with a clear error
   it('uncompiled-lib-device (detects untransformed library)', async () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');

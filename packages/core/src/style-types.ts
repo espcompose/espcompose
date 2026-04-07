@@ -236,6 +236,8 @@ export interface CssAliasProps {
   justifyContent?: Reactive<'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'>;
   /** Cross-axis alignment (flex). Maps to `flexAlignCross` inside `layout:`. */
   alignItems?: Reactive<'start' | 'center' | 'end' | 'stretch'>;
+  /** Track alignment on the cross axis (flex). Maps to `flexAlignTrack` inside `layout:`. */
+  flexTrackAlign?: Reactive<'start' | 'center' | 'end' | 'stretch'>;
   /** Flex grow factor for child within flex parent. Flat widget prop. */
   flexGrow?: Reactive<number>;
 

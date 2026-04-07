@@ -40,6 +40,7 @@ import {
 import { buildLvglFileContent } from './lvgl-codegen.js';
 import { generateActionsFile } from './action-codegen.js';
 import { extractSchemaActions } from './schema-action-extractor.js';
+import { ACTION_OVERRIDES } from './overrides.js';
 import {
   collectMarkerClasses, collectRegistryClasses,
   buildMarkerClassMap, buildMarkersFileContent,
@@ -380,6 +381,14 @@ async function run(): Promise<void> {
 
   // ── Extract schema-defined actions ──────────────────────────────────────
   const { classActions, shortcomings } = extractSchemaActions(SCHEMAS_DIR, schemaRegistry);
+
+  // Merge manual action overrides (for actions not exported by the schema dumper)
+  for (const [cls, overrideActions] of ACTION_OVERRIDES) {
+    const existing = classActions.get(cls) ?? [];
+    existing.push(...overrideActions);
+    classActions.set(cls, existing);
+  }
+
   console.log(`  Schema actions: ${classActions.size} target classes, ${shortcomings.length} shortcomings`);
 
   // ── Build marker → action class map ───────────────────────────────────────
