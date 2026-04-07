@@ -61,7 +61,7 @@ function registerSecret(value: string): string {
  * <wifi ssid="MyNetwork" password={secret('my-wifi-password')} />
  * <api encryption={{ key: secret(process.env.API_KEY!) }} />
  */
-export function secret(value: string): SecretValue {
+export function secret(value: string): string {
   const key = registerSecret(value);
-  return new SecretValue(value, key);
+  return new SecretValue(value, key) as unknown as string;
 }

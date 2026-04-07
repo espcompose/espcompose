@@ -182,4 +182,9 @@ describe('ESPHome Compose Build', () => {
   it('trigger-variable-device', async () => {
     await createProjectTest(projectsDir, 'trigger-variable-device');
   });
+
+  // secret() — emits !secret references in YAML and writes secrets.yaml
+  it('secret-device', async () => {
+    await createProjectTest(projectsDir, 'secret-device');
+  });
 });

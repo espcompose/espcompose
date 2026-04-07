@@ -24,6 +24,8 @@ export interface EmitRequest {
   outDir: string;
   /** Absolute path to the source directory (for asset resolution). */
   sourceDir: string;
+  /** Collected secrets (key → value) from secret() calls. */
+  secrets?: ReadonlyMap<string, string>;
 }
 
 /** Result returned from a target's `emit()` method. */

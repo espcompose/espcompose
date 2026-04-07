@@ -75,6 +75,13 @@ export async function createProjectTest(
     expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
   }
 
+  // Snapshot secrets.yaml when the build produces one (secret() was used).
+  const secretsPath = path.join(outDir, 'secrets.yaml');
+  if (fs.existsSync(secretsPath)) {
+    const secretsContent = fs.readFileSync(secretsPath, 'utf8');
+    expect(secretsContent).toMatchSnapshot('secrets.yaml');
+  }
+
   // Validate the generated YAML with the real ESPHome config validator.
   await esphomeConfig(yamlPath);
 

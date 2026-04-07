@@ -5205,6 +5205,36 @@ script:
 "
 `;
 
+exports[`ESPHome Compose Build > secret-device > secrets.yaml 1`] = `
+"secret_0: "my_wifi_ssid"
+secret_1: "my_wifi_pass"
+secret_2: "rED+EOS+LZiE4iPjZzc0DafT/etTkzVKlr+7jGljdJI="
+secret_3: "my_ota_pass"
+"
+`;
+
+exports[`ESPHome Compose Build > secret-device 1`] = `
+"esphome:
+  name: secret-device
+  comment: Device using secrets
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: !secret secret_0
+  password: !secret secret_1
+api:
+  encryption:
+    key: !secret secret_2
+ota:
+  platform: esphome
+  password: !secret secret_3
+logger:
+  level: DEBUG
+"
+`;
+
 exports[`ESPHome Compose Build > sensor-device 1`] = `
 "esphome:
   name: sensor-device
