@@ -19,7 +19,7 @@ export function createEsphomeTarget(): ComposeTarget {
     name: 'esphome',
 
   async emit(request: EmitRequest): Promise<EmitResult> {
-    const { ir, outDir, sourceDir } = request;
+    const { ir, outDir, sourceDir, secrets } = request;
     const files: string[] = [];
 
     // ── Generate C++ headers from semantic IR ───────────────────────────
@@ -52,6 +52,16 @@ export function createEsphomeTarget(): ComposeTarget {
     fs.mkdirSync(path.dirname(yamlPath), { recursive: true });
     fs.writeFileSync(yamlPath, yamlOutput, 'utf8');
     files.push(yamlPath);
+
+    // ── Write secrets.yaml when secret() was used ───────────────────────
+    if (secrets && secrets.size > 0) {
+      const secretsLines = Array.from(secrets.entries())
+        .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+        .join('\n') + '\n';
+      const secretsPath = path.join(outDir, 'secrets.yaml');
+      fs.writeFileSync(secretsPath, secretsLines, 'utf8');
+      files.push(secretsPath);
+    }
 
     return { files };
   },

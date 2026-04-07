@@ -7,7 +7,7 @@
  * Hardware definitions live in hardware.tsx (mirroring the YAML packages
  * pattern).
  */
-import { Display, logger, useRef, useScript } from '@espcompose/core';
+import { DisplayRef, logger, useRef, useScript } from '@espcompose/core';
 import { Hardware } from './hardware';
 
 function ConnectivityConfig() {
@@ -71,7 +71,7 @@ function HomeAssistantSensors() {
 }
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
   const playClickSound = useScript(async () => {
     logger.log('Click sound disabled for testing');
   });

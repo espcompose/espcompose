@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { esphome_dsmr_Dsmr, uart_UARTComponent } from "../markers";
+import type { __marker_esphome_dsmr_Dsmr, __marker_uart_UARTComponent } from "../markers";
 export interface DsmrProps {
     /** @yamlKey decryption_key */
     decryptionKey?: unknown;
@@ -23,12 +23,12 @@ export interface DsmrProps {
     /** @yamlKey receive_timeout */
     receiveTimeout?: TimePeriod;
     /** @yamlKey uart_id */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            dsmr: DsmrProps & ComponentProps<esphome_dsmr_Dsmr>;
+            dsmr: DsmrProps & ComponentProps<__marker_esphome_dsmr_Dsmr>;
         }
     }
 }

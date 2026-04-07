@@ -92,7 +92,7 @@ export { RefHandle } from './types';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive-node';
-export { resolveBindProp, reactiveIsNaN } from './reactive-utils';
+export { useReactive, reactiveIsNaN } from './reactive-utils';
 export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
 
 // ── Secrets ────────────────────────────────────────────────────────────────

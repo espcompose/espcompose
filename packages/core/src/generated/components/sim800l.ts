@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { sim800l_Sim800LComponent, uart_UARTComponent } from "../markers";
+import type { __marker_sim800l_Sim800LComponent, __marker_uart_UARTComponent } from "../markers";
 export interface Sim800lProps extends _CoreComponent {
     /**
      * [Automation](/automations): An action to be performed when an SMS is received. See [`on_sms_received` Trigger](https:...
@@ -35,12 +35,12 @@ export interface Sim800lProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sim800l: Sim800lProps & ComponentProps<sim800l_Sim800LComponent>;
+            sim800l: Sim800lProps & ComponentProps<__marker_sim800l_Sim800LComponent>;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { fingerprint_grow_FingerprintGrowComponent, uart_UARTComponent } from "../markers";
+import type { __marker_fingerprint_grow_FingerprintGrowComponent, __marker_uart_UARTComponent } from "../markers";
 export interface FingerprintGrowProps extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): Pin connected to the reader's finger detection signal (WAKEUP) ...
@@ -75,12 +75,12 @@ export interface FingerprintGrowProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            fingerprint_grow: FingerprintGrowProps & ComponentProps<fingerprint_grow_FingerprintGrowComponent>;
+            fingerprint_grow: FingerprintGrowProps & ComponentProps<__marker_fingerprint_grow_FingerprintGrowComponent>;
         }
     }
 }

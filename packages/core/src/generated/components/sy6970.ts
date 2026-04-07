@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { i2c_I2CBus, sy6970_SY6970Component } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_sy6970_SY6970Component } from "../markers";
 export interface Sy6970Props extends _CoreComponent {
     /**
      * boolean: Enable or disable the status LED on the IC. Defaults to `true`.
@@ -42,14 +42,14 @@ export interface Sy6970Props extends _CoreComponent {
      */
     updateInterval?: TimePeriod;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the device. Defaults to `0x6A`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sy6970: Sy6970Props & ComponentProps<sy6970_SY6970Component>;
+            sy6970: Sy6970Props & ComponentProps<__marker_sy6970_SY6970Component>;
         }
     }
 }

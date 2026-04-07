@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { ble_nus_BLENUS } from "../markers";
+import type { __marker_ble_nus_BLENUS } from "../markers";
 export interface BleNusProps extends _CoreComponent {
     /** string: Mode of operation. One of `logs` or `uart`. `logs` streams ESPHome logs. `uart` provides bi-directional commu... */
     type?: "logs" | "uart";
@@ -25,7 +25,7 @@ export interface BleNusProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            ble_nus: BleNusProps & ComponentProps<ble_nus_BLENUS>;
+            ble_nus: BleNusProps & ComponentProps<__marker_ble_nus_BLENUS>;
         }
     }
 }

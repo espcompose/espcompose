@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _UartDevice } from "../bases";
-import type { zwave_proxy_ZWaveProxy } from "../markers";
+import type { __marker_zwave_proxy_ZWaveProxy } from "../markers";
 export interface ZwaveProxyProps extends _CoreComponent, _UartDevice {
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            zwave_proxy: ZwaveProxyProps & ComponentProps<zwave_proxy_ZWaveProxy>;
+            zwave_proxy: ZwaveProxyProps & ComponentProps<__marker_zwave_proxy_ZWaveProxy>;
         }
     }
 }

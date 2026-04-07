@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { modbus_Modbus, modbus_controller_ModbusController } from "../markers";
+import type { __marker_modbus_Modbus, __marker_modbus_controller_ModbusController } from "../markers";
 export interface ModbusControllerServerCourtesyResponseProps {
     /** boolean: Whether to enable the courtesy response feature. Defaults to `false`. */
     enabled?: boolean;
@@ -94,14 +94,14 @@ export interface ModbusControllerProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the `modbus` hub.
      * @yamlKey modbus_id
      */
-    modbusId?: RefProp<modbus_Modbus>;
+    modbusId?: RefProp<__marker_modbus_Modbus>;
     /** int: start address of the first register in a range (can be decimal or hexadecimal). */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            modbus_controller: ModbusControllerProps & ComponentProps<modbus_controller_ModbusController>;
+            modbus_controller: ModbusControllerProps & ComponentProps<__marker_modbus_controller_ModbusController>;
         }
     }
 }

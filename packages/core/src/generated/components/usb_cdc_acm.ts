@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { usb_cdc_acm_USBCDCACMComponent } from "../markers";
+import type { __marker_usb_cdc_acm_USBCDCACMComponent } from "../markers";
 export interface UsbCdcAcmInterfacesProps {
 }
 export interface UsbCdcAcmProps extends _CoreComponent {
@@ -25,7 +25,7 @@ export interface UsbCdcAcmProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            usb_cdc_acm: UsbCdcAcmProps & ComponentProps<usb_cdc_acm_USBCDCACMComponent>;
+            usb_cdc_acm: UsbCdcAcmProps & ComponentProps<__marker_usb_cdc_acm_USBCDCACMComponent>;
         }
     }
 }

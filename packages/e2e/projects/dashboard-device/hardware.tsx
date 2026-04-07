@@ -5,25 +5,25 @@
  * from the family-dashboard project.
  */
 import {
-  Display,
+  DisplayRef,
   createElement,
   useRef,
   type Ref,
-  type i2c_I2CBus,
-  type i2s_audio_I2SAudioComponent,
-  type output_FloatOutput,
-  type speaker_Speaker,
+  type I2CBusRef,
+  type I2SAudioComponentRef,
+  type FloatOutputRef,
+  type SpeakerRef,
 } from '@espcompose/core';
 
-export function Hardware({ displayRef }: { displayRef: Ref<Display> }) {
+export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
   // ── Cross-component refs ──────────────────────────────────────────────
-  const i2cBus = useRef<i2c_I2CBus>();
-  const audioBus = useRef<i2s_audio_I2SAudioComponent>();
-  const backlightPwm = useRef<output_FloatOutput>();
-  const mainSpeaker = useRef<speaker_Speaker>();
-  const announcementMixInput = useRef<speaker_Speaker>();
-  const mediaMixInput = useRef<speaker_Speaker>();
-  const announcementResampler = useRef<speaker_Speaker>();
+  const i2cBus = useRef<I2CBusRef>();
+  const audioBus = useRef<I2SAudioComponentRef>();
+  const backlightPwm = useRef<FloatOutputRef>();
+  const mainSpeaker = useRef<SpeakerRef>();
+  const announcementMixInput = useRef<SpeakerRef>();
+  const mediaMixInput = useRef<SpeakerRef>();
+  const announcementResampler = useRef<SpeakerRef>();
 
   return (
     <>

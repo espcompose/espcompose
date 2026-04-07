@@ -5,10 +5,10 @@
 
 import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { time_RealTimeClock, wireguard_Wireguard } from "../markers";
+import type { __marker_time_RealTimeClock, __marker_wireguard_Wireguard } from "../markers";
 export interface WireguardProps extends _CoreComponent {
     /** @yamlKey time_id */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** IPv4 address: The local VPN address of the device. If you intend to upload firmwares through the VPN link you probabl... */
     address: IPv4Address;
     /** IPv4 address: The netmask for the configured address. Default to `255.255.255.255`. See section [Static routes and ou... */
@@ -67,7 +67,7 @@ export interface WireguardProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            wireguard: WireguardProps & ComponentProps<wireguard_Wireguard>;
+            wireguard: WireguardProps & ComponentProps<__marker_wireguard_Wireguard>;
         }
     }
 }

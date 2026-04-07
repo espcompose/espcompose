@@ -2,48 +2,39 @@
  * Row / Col — AntD-aligned flex grid components.
  *
  * Row is a horizontal flex container (like Ant's <Row>).
- * Col wraps a child with `flex_grow` for proportional sizing (like Ant's <Col span>).
+ * Col wraps a child with `flexGrow` for proportional sizing (like Ant's <Col span>).
  *
  * Under the hood:
- *   Row  → <lvgl-obj layout: { type: flex, flex_flow: ROW_WRAP }>
- *   Col  → <lvgl-obj> with `flex_grow: span` on the child widget
+ *   Row  → <lvgl-obj> with flex layout via CSS-like style props
+ *   Col  → <lvgl-obj> with `flexGrow: span` in style
  *
- * Gutter is emitted as `pad_column` inside the Row's layout dict and
- * optional vertical gutter as `pad_row`.
+ * Gutter is emitted as `columnGap` / `rowGap` in the Row's style.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
-import { resolveSpacing } from '../theme/resolvers';
+import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Row
 // ────────────────────────────────────────────────────────────────────────────
 
-type FlexAlign = 'START' | 'CENTER' | 'END' | 'SPACE_BETWEEN' | 'SPACE_AROUND' | 'SPACE_EVENLY';
-type CrossAlign = 'START' | 'CENTER' | 'END' | 'STRETCH';
+type FlexAlign = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
+type CrossAlign = 'start' | 'center' | 'end' | 'stretch';
 
-interface RowProps {
+type RowProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
-  /** Horizontal gutter (space between columns). Token or pixel value. */
-  gutter?: SpacingToken | number | [SpacingToken | number, SpacingToken | number];
-  /** Main-axis justify. Default: 'START'. */
+  /** Horizontal gutter (space between columns). Token or tuple of [horizontal, vertical] tokens. */
+  gutter?: SpacingToken | [SpacingToken, SpacingToken];
+  /** Main-axis justify. Default: 'start'. */
   justify?: FlexAlign;
-  /** Cross-axis alignment. Default: 'START'. */
+  /** Cross-axis alignment. Default: 'start'. */
   align?: CrossAlign;
   /** Whether row wraps. Default: true. */
   wrap?: boolean;
-  /** Width. Default: '100%'. */
-  width?: number | string;
-  /** Height. */
-  height?: number | string;
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+}, 'gutter'>;
 
 /**
  * Row — a horizontal flex container that wraps children.
@@ -54,37 +45,35 @@ interface RowProps {
  *   <Col span={12}><Text text="Right" /></Col>
  * </Row>
  */
-export const Row = createIntentComponent(
+export const Row = createWidgetComponent(
   (props: RowProps): EspComposeElement => {
     const wrap = props.wrap !== false;
-    const flow = wrap ? 'ROW_WRAP' : 'ROW';
+    const flexDir = wrap ? 'row-wrap' as const : 'row' as const;
 
     // Gutter can be [horizontal, vertical] or a single value
-    let padColumn: unknown;
-    let padRow: unknown;
+    let padColumn: ReturnType<typeof useSpacing> | undefined;
+    let padRow: ReturnType<typeof useSpacing> | undefined;
     if (Array.isArray(props.gutter)) {
-      padColumn = resolveSpacing(props.gutter[0]);
-      padRow = resolveSpacing(props.gutter[1]);
+      padColumn = useSpacing(props.gutter[0]);
+      padRow = useSpacing(props.gutter[1]);
     } else if (props.gutter != null) {
-      padColumn = resolveSpacing(props.gutter);
+      padColumn = useSpacing(props.gutter);
     }
 
     return (
       <lvgl-obj
-        width={props.width ?? '100%'}
-        height={props.height}
-        bgOpa="TRANSP"
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
-        x:custom={{
-          layout: {
-            type: 'flex',
-            flex_flow: flow,
-            ...(props.justify ? { flex_align_main: props.justify } : {}),
-            ...(props.align ? { flex_align_cross: props.align } : {}),
-            ...(padColumn != null ? { pad_column: padColumn } : {}),
-            ...(padRow != null ? { pad_row: padRow } : {}),
-          },
+        style={{
+          width: props.style?.width ?? '100%',
+          height: props.style?.height,
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          display: 'flex',
+          flexDirection: flexDir,
+          ...(props.justify ? { justifyContent: props.justify } : {}),
+          ...(props.align ? { alignItems: props.align } : {}),
+          ...(padColumn != null ? { columnGap: padColumn } : {}),
+          ...(padRow != null ? { rowGap: padRow } : {}),
         }}
       >
         {props.children}
@@ -92,7 +81,6 @@ export const Row = createIntentComponent(
     );
   },
   {
-    intents: [LVGL_INTENTS.WIDGET] as const,
     allowedChildIntents: [COMPOSE_UI_INTENTS.COL] as const,
     contextTransparent: true as const,
   },
@@ -102,27 +90,19 @@ export const Row = createIntentComponent(
 // Col
 // ────────────────────────────────────────────────────────────────────────────
 
-interface ColProps {
+type ColProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
   /**
-   * Proportional width (flex_grow value).
-   * Like AntD's `span` but using flex_grow instead of a 24-column grid.
+   * Proportional width (flexGrow value).
+   * Like AntD's `span` but using flexGrow instead of a 24-column grid.
    * A Col with span={2} takes twice the space of span={1}.
    * Default: 1.
    */
   span?: number;
-  /** Width override (disables flex_grow). */
-  width?: number | string;
-  /** Height. */
-  height?: number | string;
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+}>;
 
 /**
- * Col — a column within a Row that uses `flex_grow` for proportional sizing.
+ * Col — a column within a Row that uses `flexGrow` for proportional sizing.
  *
  * @example
  * <Row gutter="sm">
@@ -130,25 +110,27 @@ interface ColProps {
  *   <Col span={2}><Text text="2/3" /></Col>
  * </Row>
  */
-export const Col = createIntentComponent(
+export const Col = createWidgetComponent(
   (props: ColProps): EspComposeElement => {
     const span = props.span ?? 1;
 
     return (
       <lvgl-obj
-        bgOpa="TRANSP"
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
-        width={props.width}
-        height={props.height}
-        x:custom={{ flex_grow: span }}
+        style={{
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          width: props.style?.width,
+          height: props.style?.height,
+          flexGrow: span,
+        }}
       >
         {props.children}
       </lvgl-obj>
     );
   },
   {
-    intents: [COMPOSE_UI_INTENTS.COL, LVGL_INTENTS.WIDGET] as const,
+    additionalIntents: [COMPOSE_UI_INTENTS.COL] as const,
     allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
     contextTransparent: true as const,
   },

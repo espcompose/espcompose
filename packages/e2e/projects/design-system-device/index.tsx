@@ -2,10 +2,10 @@
  * Sample project: design-system-device
  *
  * Demonstrates the high-level LVGL design system components:
- * Screen, VStack, HStack, Text, Button, Card, SliderField, SwitchField.
+ * Screen, VStack, HStack, Text, Button, Card, Slider, Switch.
  */
 import {
-  Display,
+  DisplayRef,
   useRef,
 } from '@espcompose/core';
 import {
@@ -15,14 +15,14 @@ import {
   Text,
   Button,
   Card,
-  SliderField,
-  SwitchField,
+  Slider,
+  Switch,
   ThemeProvider,
   darkTheme,
 } from '@espcompose/ui';
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   return (
     <esphome name="design-system-device" comment="Design system demo">
@@ -52,11 +52,11 @@ function App() {
 
               <Card>
                 <Text variant="subtitle" text="Living Room" />
-                <SliderField label="Brightness" min={0} max={255} />
-                <SwitchField label="Power" />
+                <Slider label="Brightness" min={0} max={255} />
+                <Switch label="Power" />
               </Card>
 
-              <HStack align="SPACE_BETWEEN">
+              <HStack align="spaceBetween">
                 <Button text="Turn On" status="success" size="sm" />
                 <Button text="Turn Off" status="danger" size="sm" variant="outline" />
               </HStack>

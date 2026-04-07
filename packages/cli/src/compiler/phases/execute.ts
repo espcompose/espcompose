@@ -82,6 +82,12 @@ export function executePhase(ctx: PhaseContext): void {
         themes: themeData,
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
+
+  // Collect secrets before they are cleared on the next run.
+  const secretsMap: ReadonlyMap<string, string> = cjsSDK.getSecrets();
+  if (secretsMap.size > 0) {
+    ctx.secrets = new Map(secretsMap);
+  }
 }
 
 /**

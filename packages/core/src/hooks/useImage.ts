@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { ImageProps } from '../generated/components/image';
-import type { image_Image } from '../generated/markers';
+import type { ImageRef } from '../component-aliases';
 import type { Ref } from '../types';
 import { RefHandle } from '../types';
 import { assertHookContext } from './useState';
@@ -20,7 +20,7 @@ import { registerComponent } from './useReactiveScope';
 // Cache — deduplication within a render pass
 // ────────────────────────────────────────────────────────────────────────────
 
-const imageCache = new Map<string, Ref<image_Image>>();
+const imageCache = new Map<string, Ref<ImageRef>>();
 
 /** Clear the image cache. Called at the start of each render pass. */
 export function clearImageCache(): void {
@@ -58,14 +58,14 @@ function imageCacheKey(props: ImageProps): string {
  * const bg = useImage({ file: './assets/background.png', type: 'RGB565', resize: '320x240' });
  * <lvgl-image src={bg} />
  */
-export function useImage(props: ImageProps): Ref<image_Image> {
+export function useImage(props: ImageProps): Ref<ImageRef> {
   assertHookContext('useImage()');
 
   const key = imageCacheKey(props);
   const cached = imageCache.get(key);
   if (cached) return cached;
 
-  const ref = new RefHandle<image_Image>() as unknown as Ref<image_Image>;
+  const ref = new RefHandle<ImageRef>() as unknown as Ref<ImageRef>;
   const id = ref.toString();
 
   registerComponent({

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { tlc5947_TLC5947 } from "../markers";
+import type { __marker_tlc5947_TLC5947 } from "../markers";
 export interface Tlc5947Props extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to DIN.
@@ -36,7 +36,7 @@ export interface Tlc5947Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            tlc5947: Tlc5947Props & ComponentProps<tlc5947_TLC5947>;
+            tlc5947: Tlc5947Props & ComponentProps<__marker_tlc5947_TLC5947>;
         }
     }
 }

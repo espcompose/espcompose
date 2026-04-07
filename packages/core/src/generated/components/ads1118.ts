@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { ads1118_ADS1118, spi_SPIComponent } from "../markers";
+import type { __marker_ads1118_ADS1118, __marker_spi_SPIComponent } from "../markers";
 export interface Ads1118Props {
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -23,7 +23,7 @@ export interface Ads1118Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            ads1118: Ads1118Props & ComponentProps<ads1118_ADS1118>;
+            ads1118: Ads1118Props & ComponentProps<__marker_ads1118_ADS1118>;
         }
     }
 }

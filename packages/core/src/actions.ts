@@ -18,17 +18,17 @@
 //   }}
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ACTION_BRAND } from './types';
+import type { BINDING_BRAND } from './types';
 
 /** Branded action function type. */
 interface ActionFunction<F extends (...args: never[]) => unknown> {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   (...args: Parameters<F>): ReturnType<F>;
 }
 
 /** Branded action namespace type. */
 interface ActionLogger {
-  readonly [ACTION_BRAND]?: true;
+  readonly [BINDING_BRAND]?: true;
   log(message: string, level?: string): void;
 }
 

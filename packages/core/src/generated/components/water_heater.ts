@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
-import type { template__TemplateWaterHeater } from "../markers";
+import type { __marker_template__TemplateWaterHeater } from "../markers";
 interface WaterHeaterVisualProps {
     /** @yamlKey min_temperature */
     minTemperature?: unknown;
@@ -57,7 +57,7 @@ interface TemplateProps extends _CoreComponent {
 }
 export type WaterHeaterProps = WaterHeaterBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateWaterHeater>;
+} & TemplateProps & ComponentProps<__marker_template__TemplateWaterHeater>;
 declare global {
     namespace JSX {
         interface IntrinsicElements {

@@ -96,6 +96,27 @@ export function hasSignalBrand(type: ts.Type): boolean {
   return false;
 }
 
+/**
+ * Detect whether a TS type is (or contains) IRReactiveNode<T>.
+ *
+ * IRReactiveNode declares `readonly [REACTIVE_NODE_BRAND]?: T` which
+ * the compiler mangles to `__@REACTIVE_NODE_BRAND@NNN`.
+ */
+export function hasReactiveNodeBrand(type: ts.Type): boolean {
+  if (type.isIntersection()) {
+    return type.types.some(t => hasReactiveNodeBrand(t));
+  }
+  if (type.isUnion()) {
+    return type.types.some(t => hasReactiveNodeBrand(t));
+  }
+  for (const prop of type.getProperties()) {
+    if (/^__@REACTIVE_NODE_BRAND@\d+$/.test(prop.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Signal property resolution
 // ────────────────────────────────────────────────────────────────────────────
@@ -566,6 +587,15 @@ function isStringLikeType(type: ts.Type): boolean {
   return false;
 }
 
+/** Check if a TS type is a primitive (string, number, or boolean). */
+function isPrimitiveType(type: ts.Type): boolean {
+  const flags = type.flags;
+  if (flags & (ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike)) return true;
+  if (type.isIntersection()) return type.types.some(t => isPrimitiveType(t));
+  if (type.isUnion()) return type.types.some(t => isPrimitiveType(t));
+  return false;
+}
+
 export interface ExprIRResult {
   expr: IRExprNode;
   exprType: ExprType;
@@ -614,6 +644,10 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
   if (ts.isIdentifier(node)) {
     const type = ctx.checker.getTypeAtLocation(node);
     if (hasSignalBrand(type)) {
+      return assignSlotIR(node, ctx);
+    }
+    // Slot non-signal identifiers with primitive types (e.g. local string variables)
+    if (isPrimitiveType(type)) {
       return assignSlotIR(node, ctx);
     }
   }
@@ -725,6 +759,11 @@ function compilePropertyAccessIR(
     }
   }
 
+  // Slot non-signal property accesses with primitive types (e.g. props.label)
+  if (isPrimitiveType(type)) {
+    return assignSlotIR(node, ctx);
+  }
+
   return null;
 }
 
@@ -801,6 +840,14 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
       }
       return { kind: 'string_method', method: methodName as StringMethod, object: obj, args };
     }
+
+    // .get() on IRReactiveNode<T> → slot (resolved at runtime)
+    if (methodName === 'get' && node.arguments.length === 0) {
+      const objType = ctx.checker.getTypeAtLocation(objectExpr);
+      if (hasReactiveNodeBrand(objType)) {
+        return assignSlotIR(objectExpr, ctx);
+      }
+    }
   }
 
   return null;
@@ -820,8 +867,7 @@ function compileTemplateLiteralIR(
     if (exprIR === null) return null;
 
     const exprType = ctx.checker.getTypeAtLocation(span.expression);
-    const isString = (exprType.flags & ts.TypeFlags.StringLike) !== 0
-      || (exprType.isIntersection() && exprType.types.some(t => (t.flags & ts.TypeFlags.StringLike) !== 0));
+    const isString = isStringLikeType(exprType);
 
     parts.push(isString ? exprIR : { kind: 'to_string', expr: exprIR });
 

@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { aic3204_AIC3204, es8156_ES8156, es8311_ES8311, es8388_ES8388, i2c_I2CBus } from "../markers";
+import type { __marker_aic3204_AIC3204, __marker_es8156_ES8156, __marker_es8311_ES8311, __marker_es8388_ES8388, __marker_i2c_I2CBus } from "../markers";
 interface Aic3204Props extends _CoreComponent {
     /**
      * The ID of the [I²C bus](/components/i2c) the AIC3204 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: number;
 }
@@ -20,7 +20,7 @@ interface Es8156Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8156 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: number;
 }
@@ -54,7 +54,7 @@ interface Es8311Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8311 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x18`. */
     address?: number;
 }
@@ -63,19 +63,19 @@ interface Es8388Props extends _CoreComponent {
      * The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
      * @yamlKey i2c_id
      */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the driver. Defaults to `0x10`. */
     address?: number;
 }
 export type AudioDacProps = ({
     platform: "aic3204";
-} & Aic3204Props & ComponentProps<aic3204_AIC3204>) | ({
+} & Aic3204Props & ComponentProps<__marker_aic3204_AIC3204>) | ({
     platform: "es8156";
-} & Es8156Props & ComponentProps<es8156_ES8156>) | ({
+} & Es8156Props & ComponentProps<__marker_es8156_ES8156>) | ({
     platform: "es8311";
-} & Es8311Props & ComponentProps<es8311_ES8311>) | ({
+} & Es8311Props & ComponentProps<__marker_es8311_ES8311>) | ({
     platform: "es8388";
-} & Es8388Props & ComponentProps<es8388_ES8388>);
+} & Es8388Props & ComponentProps<__marker_es8388_ES8388>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

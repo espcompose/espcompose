@@ -80,6 +80,11 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'image-font-device');
   });
 
+  // CSS-like style prop expansion and mergeStyles
+  it('style-device', async () => {
+    await createProjectTest(projectsDir, 'style-device');
+  });
+
   // Untransformed library detection — build should fail with a clear error
   it('uncompiled-lib-device (detects untransformed library)', async () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');
@@ -161,5 +166,25 @@ describe('ESPHome Compose Build', () => {
   // Action tree compiler — bare arrow functions → ESPHome action sequences
   it('action-tree-device', async () => {
     await createProjectTest(projectsDir, 'action-tree-device');
+  });
+
+  // Reactive theme switching: two themes, theme.select(), full token reactivity
+  it('reactive-theme-device', async () => {
+    await createProjectTest(projectsDir, 'reactive-theme-device');
+  });
+
+  // Component cascade: ReactiveNode flows through 3 component layers
+  it('fancy-light-cascade-device', async () => {
+    await createProjectTest(projectsDir, 'fancy-light-cascade-device');
+  });
+
+  // TriggerHandler in variable initializers + primitive slots in useMemo
+  it('trigger-variable-device', async () => {
+    await createProjectTest(projectsDir, 'trigger-variable-device');
+  });
+
+  // secret() — emits !secret references in YAML and writes secrets.yaml
+  it('secret-device', async () => {
+    await createProjectTest(projectsDir, 'secret-device');
   });
 });

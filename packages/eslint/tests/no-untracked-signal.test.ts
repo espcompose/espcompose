@@ -150,6 +150,16 @@ describe('no-untracked-signal', () => {
           useEffect(() => { console.log(temp > 72); });
         `,
       },
+      {
+        name: 'Signal extracted inside useMemo — type-aware',
+        filename: 'test.tsx',
+        code: `
+          import type { Signal } from '@espcompose/core';
+          import { useMemo } from '@espcompose/core';
+          declare const binding: { stateText: Signal<string> };
+          const text = useMemo(() => { const st = binding.stateText; return st; });
+        `,
+      },
     ],
     invalid: [
       {
@@ -189,6 +199,26 @@ describe('no-untracked-signal', () => {
           import type { Signal } from '@espcompose/core';
           declare const temp: Signal<number>;
           const label = \`Temperature: \${temp}\`;
+        `,
+        errors: [{ messageId: 'untrackedSignalType' }],
+      },
+      {
+        name: 'Signal extracted from binding to variable — type-aware',
+        filename: 'test.tsx',
+        code: `
+          import type { Signal } from '@espcompose/core';
+          declare const binding: { stateText: Signal<string> };
+          const stateText = binding.stateText;
+        `,
+        errors: [{ messageId: 'untrackedSignalType' }],
+      },
+      {
+        name: 'Signal extracted from props to variable — type-aware',
+        filename: 'test.tsx',
+        code: `
+          import type { Signal } from '@espcompose/core';
+          declare const props: { binding: { isOn: Signal<boolean> } };
+          const isOn = props.binding.isOn;
         `,
         errors: [{ messageId: 'untrackedSignalType' }],
       },

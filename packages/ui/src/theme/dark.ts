@@ -7,6 +7,10 @@
  */
 
 import type { Theme } from './types';
+import { createFontToken } from './types';
+
+// ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
+const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
 
 export const darkTheme: Theme = {
   name: 'Dark',
@@ -29,10 +33,10 @@ export const darkTheme: Theme = {
   },
 
   typography: {
-    title:    { fontFamily: 'montserrat', fontSize: 28 },
-    subtitle: { fontFamily: 'montserrat', fontSize: 20 },
-    body:     { fontFamily: 'montserrat', fontSize: 16 },
-    caption:  { fontFamily: 'montserrat', fontSize: 12 },
+    title:    montserrat(28),
+    subtitle: montserrat(20),
+    body:     montserrat(16),
+    caption:  montserrat(12),
   },
 
   spacing: {
@@ -53,11 +57,11 @@ export const darkTheme: Theme = {
   },
 
   sizes: {
-    xs: { height: 28, fontSize: 12, paddingX: 8,  paddingY: 4  },
-    sm: { height: 36, fontSize: 14, paddingX: 12, paddingY: 6  },
-    md: { height: 44, fontSize: 16, paddingX: 16, paddingY: 8  },
-    lg: { height: 52, fontSize: 18, paddingX: 20, paddingY: 10 },
-    xl: { height: 64, fontSize: 22, paddingX: 24, paddingY: 12 },
+    xs: { height: 28, font: montserrat(12), paddingX: 8,  paddingY: 4  },
+    sm: { height: 36, font: montserrat(14), paddingX: 12, paddingY: 6  },
+    md: { height: 44, font: montserrat(16), paddingX: 16, paddingY: 8  },
+    lg: { height: 52, font: montserrat(18), paddingX: 20, paddingY: 10 },
+    xl: { height: 64, font: montserrat(22), paddingX: 24, paddingY: 12 },
   },
 
   parts: {

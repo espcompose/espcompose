@@ -161,9 +161,9 @@ Supported control flow inside `useScript` bodies: `if/else`, `while`, `for` loop
 Use `useRef()` to create typed references between components — no manual ID strings needed:
 
 ```tsx
-import { useRef, type i2c_I2CBus } from '@espcompose/core';
+import { useRef, type I2CBusRef } from '@espcompose/core';
 
-const i2cBus = useRef<i2c_I2CBus>();
+const i2cBus = useRef<I2CBusRef>();
 
 export default (
   <esphome name="sensor-hub">

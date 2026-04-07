@@ -61,7 +61,7 @@ The project is a pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 
 | Package | npm name | Purpose |
 |---------|----------|---------|
-| `packages/core` | `@espcompose/core` | Core SDK — JSX runtime, hooks (`useRef`, `useScript`, `useMemo`, `useEffect`, `useHAEntity`, `useImage`, `useFont`), `secret()` helper, `ReactiveNode<T>`, action primitives (`delay`, `logger`), Semantic IR types, `ComposeTarget` interface, theme infrastructure (`registerTheme`, `useReactiveTheme`, `theme.select`), generated component types (316 components), intent system |
+| `packages/core` | `@espcompose/core` | Core SDK — JSX runtime, hooks (`useRef`, `useScript`, `useMemo`, `useEffect`, `useHAEntity`, `useImage`, `useFont`), `secret()` helper, `ReactiveNode<T>`, action primitives (`delay`, `logger`), Semantic IR types, `ComposeTarget` interface, theme infrastructure (`registerTheme`, `useTheme`, `theme.select`), generated component types (316 components), intent system |
 | `packages/cli` | `@espcompose/cli` / `espcompose` | CLI binary & compiler pipeline — type-check, lint, AST transforms (reactive + script), esbuild bundle, execute & render, target dispatch, ESPHome CLI wrappers, library pre-compilation |
 | `packages/target-esphome` | `@espcompose/target-esphome` | ESPHome backend — YAML config generation, C++ reactive runtime headers (`espcompose_bindings.h`, `espcompose_reactive.h`), `ExprNode` → C++ lowering, HA sensor injection, asset pipeline |
 | `packages/target-simulator` | `@espcompose/target-simulator` | Browser preview backend — walks Semantic IR to produce an interactive HTML page with canvas-rendered LVGL widgets, JS reactive runtime (Signal/Memo/Scheduler), mock HA entity provider |
@@ -172,10 +172,10 @@ component function body.
 
 ```tsx
 import { delay, logger, useRef, useScript } from '@espcompose/core';
-import type { Switch } from '@espcompose/core';
+import type { SwitchRef } from '@espcompose/core';
 
 function App() {
-  const switchRef = useRef<Switch>();
+  const switchRef = useRef<SwitchRef>();
 
   const blink = useScript(async () => {
     switchRef.toggle();
@@ -257,7 +257,7 @@ value is wrapped in a typed node:
 | `IRArray` | Ordered list of IR values |
 | `IRNull` | Null value |
 | `IRReactive` | Reactive binding — wraps a `ReactiveNode` with full metadata |
-| `IRRef` | Cross-component reference (e.g. `useRef<typeof Light>()`) |
+| `IRRef` | Cross-component reference (e.g. `useRef<LightRef>()`) |
 | `IRAction` | Compiled action tree (12 action kinds) |
 | `IRSecret` | Secret reference (`!secret` in YAML) |
 | `IRTriggerVar` | Trigger variable for lambda injection |
@@ -269,7 +269,7 @@ radius, and size values. The reactive theme system works as follows:
 
 1. `<ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">`
    registers themes during the render pass
-2. `useReactiveTheme()` returns a deep Proxy where leaf access creates cached
+2. `useTheme()` returns a deep Proxy where leaf access creates cached
    `ReactiveNode<T>` values (e.g. `theme.colors.primary.bg` → reactive signal)
 3. The compiler generates C++ theme value arrays indexed by a `theme_index`
    signal. Each leaf becomes a `Memo<T>` reading from the array.
@@ -282,7 +282,7 @@ creates a typed, auto-generated ID token. Generated ref tokens follow the
 pattern `r_<random>` and are collision-resistant within a single config.
 
 ```tsx
-const i2cBus = useRef<i2c_I2CBus>();
+const i2cBus = useRef<I2CBusRef>();
 
 return (
   <>

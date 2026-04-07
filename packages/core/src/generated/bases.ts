@@ -7,7 +7,7 @@
 /* eslint-disable */
 
 import type { IPv4Address, MACAddress, Pin, RefProp, TimePeriod, TriggerHandler } from "../types";
-import type { Color, audio_dac_AudioDac, bedjet_BedJetHub, binary_sensor_BinarySensor, ble_client_BLEClient, display_Display, emc2101_Emc2101Component, esp32_ble_tracker_ESP32BLETracker, i2s_audio_I2SAudioComponent, modbus_controller_ModbusController, msa3xx_MSA3xxComponent, nextion_Nextion, packet_transport_PacketTransport, pipsolar_Pipsolar, power_supply_PowerSupply, pylontech_PylontechComponent, sensor_Sensor, spi_QuadSPIComponent, teleinfo_TeleInfo, time_RealTimeClock, uart_UARTComponent, udp_UDPComponent, uponor_smatrix_UponorSmatrixComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "./markers";
+import type { __marker_Color, __marker_audio_dac_AudioDac, __marker_bedjet_BedJetHub, __marker_binary_sensor_BinarySensor, __marker_ble_client_BLEClient, __marker_display_Display, __marker_emc2101_Emc2101Component, __marker_esp32_ble_tracker_ESP32BLETracker, __marker_i2s_audio_I2SAudioComponent, __marker_modbus_controller_ModbusController, __marker_msa3xx_MSA3xxComponent, __marker_nextion_Nextion, __marker_packet_transport_PacketTransport, __marker_pipsolar_Pipsolar, __marker_power_supply_PowerSupply, __marker_pylontech_PylontechComponent, __marker_sensor_Sensor, __marker_spi_QuadSPIComponent, __marker_teleinfo_TeleInfo, __marker_time_RealTimeClock, __marker_uart_UARTComponent, __marker_udp_UDPComponent, __marker_uponor_smatrix_UponorSmatrixComponent, __marker_web_server_WebServer, __marker_zigbee_ZigbeeComponent } from "./markers";
 export interface EthernetBaseManualIpProps {
     /**
      * IPv4 address: The static IP of your node.
@@ -82,7 +82,7 @@ export interface CoreMqttComponentAvailabilityProps {
 }
 export interface AlarmControlPanelWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -90,7 +90,7 @@ export interface AlarmControlPanelWebServerProps {
 }
 export interface BinarySensorWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -137,7 +137,7 @@ export interface TouchscreenCalibrationProps {
 }
 export interface ButtonWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -145,7 +145,7 @@ export interface ButtonWebServerProps {
 }
 export interface ClimateWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -165,7 +165,7 @@ export interface ClimateVisualProps {
 }
 export interface CoverWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -192,7 +192,7 @@ export interface QspiDbiDisplayBaseDimensionsProps {
 }
 export interface FanWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -200,7 +200,7 @@ export interface FanWebServerProps {
 }
 export interface LightWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -227,7 +227,7 @@ export interface LightInitialStateProps {
 }
 export interface SensorWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -235,7 +235,7 @@ export interface SensorWebServerProps {
 }
 export interface TextSensorWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -243,7 +243,7 @@ export interface TextSensorWebServerProps {
 }
 export interface DatetimeWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -251,7 +251,7 @@ export interface DatetimeWebServerProps {
 }
 export interface EventWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -259,7 +259,7 @@ export interface EventWebServerProps {
 }
 export interface LockWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -267,7 +267,7 @@ export interface LockWebServerProps {
 }
 export interface NumberWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -277,12 +277,12 @@ export interface PacketTransportEncryptionEncryptionProps {
     key: string;
 }
 export interface PacketTransportTransportSensorsProps {
-    id: RefProp<sensor_Sensor>;
+    id: RefProp<__marker_sensor_Sensor>;
     /** @yamlKey broadcast_id */
     broadcastId?: unknown;
 }
 export interface PacketTransportTransportBinarySensorsProps {
-    id: RefProp<binary_sensor_BinarySensor>;
+    id: RefProp<__marker_binary_sensor_BinarySensor>;
     /** @yamlKey broadcast_id */
     broadcastId?: unknown;
 }
@@ -295,7 +295,7 @@ export interface PacketTransportTransportProvidersProps {
 }
 export interface SelectWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -303,7 +303,7 @@ export interface SelectWebServerProps {
 }
 export interface SwitchWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -311,7 +311,7 @@ export interface SwitchWebServerProps {
 }
 export interface TextWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -319,7 +319,7 @@ export interface TextWebServerProps {
 }
 export interface UpdateWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -327,7 +327,7 @@ export interface UpdateWebServerProps {
 }
 export interface ValveWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -529,7 +529,7 @@ export interface _Bk72xxConfig {
 //  bthome_mithermometer.BLE_DEVICE_SCHEMA
 export interface _BthomeMithermometerBleDevice {
     /** @yamlKey esp32_ble_id */
-    esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
+    esp32BleId?: RefProp<__marker_esp32_ble_tracker_ESP32BLETracker>;
 }
 //  msa3xx._COMMON_SCHEMA
 export interface _Msa3xxCommon extends _CoreComponent {
@@ -638,7 +638,7 @@ export interface _UartDevice {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 //  alarm_control_panel._ALARM_CONTROL_PANEL_SCHEMA
 export interface _AlarmControlPanel extends _CoreEntityBase, _CoreMqttCommandComponent {
@@ -690,7 +690,7 @@ export interface _BinarySensor extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey web_server */
     webServer?: BinarySensorWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey publish_initial_state */
     publishInitialState?: unknown;
     /** @yamlKey trigger_on_initial_state */
@@ -732,17 +732,17 @@ export interface _NextionBinarySensorConfigBinarySensor {
      * [ID](/guides/configuration-types#id): The ID of the Nextion display.
      * @yamlKey nextion_id
      */
-    nextionId?: RefProp<nextion_Nextion>;
+    nextionId?: RefProp<__marker_nextion_Nextion>;
     /**
      * [Color](/components/display#config-color): The background color
      * @yamlKey background_color
      */
-    backgroundColor?: RefProp<Color>;
+    backgroundColor?: RefProp<__marker_Color>;
     /**
      * [Color](/components/display#config-color): The foreground color
      * @yamlKey foreground_color
      */
-    foregroundColor?: RefProp<Color>;
+    foregroundColor?: RefProp<__marker_Color>;
     /** boolean: Visible or not */
     visible?: boolean;
     /**
@@ -759,14 +759,14 @@ export interface _NextionBinarySensorConfigBinarySensor {
 //  packet_transport.binary_sensor.STATUS_SENSOR_SCHEMA
 export interface _PacketTransportBinarySensorStatusSensor extends _BinarySensor {
     /** @yamlKey transport_id */
-    transportId?: RefProp<packet_transport_PacketTransport>;
+    transportId?: RefProp<__marker_packet_transport_PacketTransport>;
     /** string: The name of the provider node. */
     provider: string;
 }
 //  touchscreen.TOUCHSCREEN_SCHEMA
 export interface _Touchscreen extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The display to use this touchscreen with. */
-    display?: RefProp<display_Display>;
+    display?: RefProp<__marker_display_Display>;
     /** Transform the touchscreen presentation using hardware. All defaults are `false`. */
     transform?: TouchscreenTransformProps;
     /**
@@ -800,7 +800,7 @@ export interface _Touchscreen extends _CoreComponent {
 //  modbus_controller.ModbusItemBaseSchema
 export interface _ModbusControllerModbusitembaseschema {
     /** @yamlKey modbus_controller_id */
-    modbusControllerId?: RefProp<modbus_controller_ModbusController>;
+    modbusControllerId?: RefProp<__marker_modbus_controller_ModbusController>;
     address?: number;
     /** @yamlKey custom_command */
     customCommand?: Array<number>;
@@ -819,12 +819,12 @@ export interface _ModbusControllerModbusitembaseschema {
 //  msa3xx.MSA_SENSOR_SCHEMA
 export interface _Msa3xxMsaSensor {
     /** @yamlKey msa3xx_id */
-    msa3xxId?: RefProp<msa3xx_MSA3xxComponent>;
+    msa3xxId?: RefProp<__marker_msa3xx_MSA3xxComponent>;
 }
 //  pipsolar.PIPSOLAR_COMPONENT_SCHEMA
 export interface _PipsolarComponent {
     /** @yamlKey pipsolar_id */
-    pipsolarId: RefProp<pipsolar_Pipsolar>;
+    pipsolarId: RefProp<__marker_pipsolar_Pipsolar>;
 }
 //  button._BUTTON_SCHEMA
 export interface _Button extends _CoreEntityBase, _CoreMqttCommandComponent {
@@ -904,7 +904,7 @@ export interface _BedjetClient {
      * [ID](/guides/configuration-types#id): The ID of the Bedjet component.
      * @yamlKey bedjet_id
      */
-    bedjetId?: RefProp<bedjet_BedJetHub>;
+    bedjetId?: RefProp<__marker_bedjet_BedJetHub>;
 }
 //  uponor_smatrix.UPONOR_SMATRIX_DEVICE_SCHEMA
 export interface _UponorSmatrixDevice {
@@ -912,7 +912,7 @@ export interface _UponorSmatrixDevice {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the `uponor_smatrix` hub component if you want to us...
      * @yamlKey uponor_smatrix_id
      */
-    uponorSmatrixId?: RefProp<uponor_smatrix_UponorSmatrixComponent>;
+    uponorSmatrixId?: RefProp<__marker_uponor_smatrix_UponorSmatrixComponent>;
     /** int: The 32 bit device address of the thermostat. See [Getting started](https://esphome.io/components/uponor_smatrix#... */
     address: number;
 }
@@ -977,7 +977,7 @@ export interface _BleClient {
      * [ID](/guides/configuration-types#id): ID of the associated BLE client.
      * @yamlKey ble_client_id
      */
-    bleClientId?: RefProp<ble_client_BLEClient>;
+    bleClientId?: RefProp<__marker_ble_client_BLEClient>;
 }
 //  qspi_dbi.display.BASE_SCHEMA
 export interface _QspiDbiDisplayBase extends _DisplayFullDisplay {
@@ -1006,7 +1006,7 @@ export interface _QspiDbiDisplayBase extends _DisplayFullDisplay {
     /** int: A brightness value in the range 0-255 */
     brightness?: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_QuadSPIComponent>;
+    spiId?: RefProp<__marker_spi_QuadSPIComponent>;
     /**
      * int: Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz` (default), `5MH...
      * @yamlKey data_rate
@@ -1067,7 +1067,7 @@ export interface _LightAddressableLight extends _LightRgbLight {
     /** @yamlKey color_correct */
     colorCorrect?: unknown;
     /** @yamlKey power_supply */
-    powerSupply?: RefProp<power_supply_PowerSupply>;
+    powerSupply?: RefProp<__marker_power_supply_PowerSupply>;
 }
 //  light.RGB_LIGHT_SCHEMA
 export interface _LightRgbLight extends _LightBrightnessOnlyLight {
@@ -1166,20 +1166,20 @@ export interface _OutputFloatOutput extends _OutputBinaryOutput {
 //  output.BINARY_OUTPUT_SCHEMA
 export interface _OutputBinaryOutput {
     /** @yamlKey power_supply */
-    powerSupply?: RefProp<power_supply_PowerSupply>;
+    powerSupply?: RefProp<__marker_power_supply_PowerSupply>;
     inverted?: boolean;
 }
 //  emc2101.EMC2101_COMPONENT_SCHEMA
 export interface _Emc2101Component {
     /** @yamlKey emc2101_id */
-    emc2101Id?: RefProp<emc2101_Emc2101Component>;
+    emc2101Id?: RefProp<__marker_emc2101_Emc2101Component>;
 }
 //  sensor._SENSOR_SCHEMA
 export interface _Sensor extends _CoreEntityBase, _CoreMqttComponent {
     /** @yamlKey web_server */
     webServer?: SensorWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -1217,14 +1217,14 @@ export interface _PylontechComponent {
      * Manually specify the ID of the pylontech instance if there are multiple.
      * @yamlKey pylontech_id
      */
-    pylontechId?: RefProp<pylontech_PylontechComponent>;
+    pylontechId?: RefProp<__marker_pylontech_PylontechComponent>;
     /** Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries. */
     battery: number;
 }
 //  teleinfo.TELEINFO_LISTENER_SCHEMA
 export interface _TeleinfoListener {
     /** @yamlKey teleinfo_id */
-    teleinfoId?: RefProp<teleinfo_TeleInfo>;
+    teleinfoId?: RefProp<__marker_teleinfo_TeleInfo>;
     /** @yamlKey tag_name */
     tagName: string;
 }
@@ -1246,12 +1246,12 @@ export interface _Speaker {
      * [ID](/guides/configuration-types#id): The [audio DAC](/components/audio_dac/) to use for volume control.
      * @yamlKey audio_dac
      */
-    audioDac?: RefProp<audio_dac_AudioDac>;
+    audioDac?: RefProp<__marker_audio_dac_AudioDac>;
 }
 //  i2s_audio.speaker.BASE_SCHEMA
 export interface _I2sAudioSpeakerBase extends _Speaker, _CoreComponent {
     /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<i2s_audio_I2SAudioComponent>;
+    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
     channel?: "mono" | "left" | "right" | "stereo";
     /** @yamlKey i2s_mode */
     i2sMode?: "primary" | "secondary";
@@ -1318,7 +1318,7 @@ export interface _Datetime extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey on_value */
     onValue?: TriggerHandler;
     /** @yamlKey time_id */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** @yamlKey web_server */
     webServer?: DatetimeWebServerProps;
 }
@@ -1365,7 +1365,7 @@ export interface _Lock extends _CoreEntityBase, _CoreMqttCommandComponent {
 //  i2s_audio.microphone.BASE_SCHEMA
 export interface _I2sAudioMicrophoneBase extends _Microphone, _CoreComponent {
     /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<i2s_audio_I2SAudioComponent>;
+    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
     channel?: "mono" | "left" | "right" | "stereo";
     /** @yamlKey i2s_mode */
     i2sMode?: "primary" | "secondary";
@@ -1400,7 +1400,7 @@ export interface _Number extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: NumberWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: number;
@@ -1446,7 +1446,7 @@ export interface _PacketTransportEncryption {
 //  udp.UDP_SCHEMA
 export interface _Udp {
     /** @yamlKey udp_id */
-    udpId?: RefProp<udp_UDPComponent>;
+    udpId?: RefProp<__marker_udp_UDPComponent>;
 }
 //  select._SELECT_SCHEMA
 export interface _Select extends _CoreEntityBase, _CoreMqttCommandComponent {
@@ -1462,7 +1462,7 @@ export interface _Switch extends _CoreEntityBase, _CoreMqttCommandComponent {
     /** @yamlKey web_server */
     webServer?: SwitchWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     inverted?: boolean;
     /** @yamlKey restore_mode */
     restoreMode?: "RESTORE_DEFAULT_OFF" | "RESTORE_DEFAULT_ON" | "ALWAYS_OFF" | "ALWAYS_ON" | "RESTORE_INVERTED_DEFAULT_OFF" | "RESTORE_INVERTED_DEFAULT_ON" | "DISABLED";

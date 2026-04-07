@@ -343,51 +343,56 @@ function compileActionCall(
   }
 
   // ref.method(args) — component action
-  if (ts.isPropertyAccessExpression(call.expression) &&
-      ts.isIdentifier(call.expression.expression)) {
-    const objNode = call.expression.expression;
-    const objName = objNode.text;
+  if (ts.isPropertyAccessExpression(call.expression)) {
     const methodName = call.expression.name.text;
 
-    // scriptHandle.execute() / scriptHandle.stop()
-    const scriptId = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
-    if (scriptId) {
-      if (methodName === 'execute') return [irScriptExecute(scriptId)];
-      if (methodName === 'stop') return [irScriptStop(scriptId)];
-      return emitError(call, ctx,
-        `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
+    // ── Symbol-based resolution (direct identifier access) ──────────
+    if (ts.isIdentifier(call.expression.expression)) {
+      const objNode = call.expression.expression;
+      const objName = objNode.text;
+
+      // scriptHandle.execute() / scriptHandle.stop()
+      const scriptId = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
+      if (scriptId) {
+        if (methodName === 'execute') return [irScriptExecute(scriptId)];
+        if (methodName === 'stop') return [irScriptStop(scriptId)];
+        return emitError(call, ctx,
+          `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
+      }
+
+      // HA entity action (symbol-based)
+      const haEntity = lookupBySymbol(ctx.haEntities, objNode, ctx.checker);
+      if (haEntity) {
+        return compileHAAction(call, haEntity, methodName, ctx);
+      }
+
+      // Component ref action (symbol-based)
+      const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
+      if (refTag !== undefined) {
+        return compileRefAction(call, objName, refTag, methodName, ctx);
+      }
     }
 
-    // HA entity action
-    const haEntity = lookupBySymbol(ctx.haEntities, objNode, ctx.checker);
-    if (haEntity) {
-      return compileHAAction(call, haEntity, methodName, ctx);
-    }
+    // ── Type-based resolution (works for any expression depth) ──────
+    // Handles: props.entity.toggle(), this.light.turnOn(), etc.
+    const objExpr = call.expression.expression;
+    const objType = ctx.checker.getTypeAtLocation(objExpr);
 
-    // Type-based HA entity fallback: if the variable wasn't scanned
-    // (e.g., dynamic entity from prop) but has HA entity type shape,
-    // infer domain from the type and compile as dynamic action.
-    const objType = ctx.checker.getTypeAtLocation(objNode);
+    // HA entity action (type-based)
     const inferredDomain = inferHAEntityDomainFromType(objType);
     if (inferredDomain) {
       const dynamicEntity: HAEntityInfo = {
         entityId: '__dynamic__',
         domain: inferredDomain,
         isDynamic: true,
-        entityIdExpr: objName,
+        entityIdExpr: objExpr.getText(),
       };
       return compileHAAction(call, dynamicEntity, methodName, ctx);
     }
 
-    // Component ref action
-    const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
-    if (refTag !== undefined) {
-      return compileRefAction(call, objName, refTag, methodName, ctx);
-    }
-
-    // Check if it's a ref by type (fallback for refs not in refTags map)
-    const type = ctx.checker.getTypeAtLocation(objNode);
-    if (hasRefBrand(type)) {
+    // Component ref action (type-based)
+    if (hasRefBrand(objType)) {
+      const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
       return compileRefAction(call, objName, undefined, methodName, ctx);
     }
   }
@@ -474,19 +479,27 @@ function compileHAAction(
   methodName: string,
   ctx: ActionCompilerContext,
 ): IRActionNode[] | null {
-  // Build the HA action name: domain.method (camelCase → snake_case)
   const snakeMethod = camelToSnake(methodName);
-  const action = `${entity.domain}.${snakeMethod}`;
 
   // entity_id: static literal for known entities, runtime expression for dynamic
   const data: Record<string, IRActionParam> = {};
+
+  let action: string;
   if (entity.isDynamic && entity.entityIdExpr) {
-    // Dynamic entity: resolve entity_id at runtime from the binding's __entityId__ property
+    // Dynamic entity: resolve entity_id at runtime from the binding's __entityId__ property.
+    // Use domain-agnostic homeassistant.* actions so toggle/turn_on/turn_off work
+    // regardless of the actual entity domain (light, switch, fan, etc.).
     const varName = ts.isPropertyAccessExpression(call.expression) && ts.isIdentifier(call.expression.expression)
       ? call.expression.expression.text
       : entity.entityIdExpr;
     data.entity_id = { kind: 'expression', jsExpression: `${varName}.__entityId__` };
+    const GENERIC_METHODS = new Set(['toggle', 'turn_on', 'turn_off']);
+    action = GENERIC_METHODS.has(snakeMethod)
+      ? `homeassistant.${snakeMethod}`
+      : `${entity.domain}.${snakeMethod}`;
   } else {
+    // Static entity: use domain-specific action (e.g. light.toggle)
+    action = `${entity.domain}.${snakeMethod}`;
     data.entity_id = { kind: 'literal', value: entity.entityId };
   }
 
@@ -806,11 +819,11 @@ function hasRefBrand(type: ts.Type): boolean {
 }
 
 /**
- * Check if a type has the ACTION_BRAND marker (HA entity binding or similar).
+ * Check if a type has the BINDING_BRAND marker (HA entity binding or similar).
  */
-function hasActionBrand(type: ts.Type): boolean {
+function hasBindingBrand(type: ts.Type): boolean {
   for (const prop of type.getProperties()) {
-    if (/^__@ACTION_BRAND@\d+$/.test(prop.name)) {
+    if (/^__@BINDING_BRAND@\d+$/.test(prop.name)) {
       return true;
     }
   }
@@ -826,11 +839,12 @@ function hasActionBrand(type: ts.Type): boolean {
  *   - SwitchBinding: has 'toggle' + 'isOn', no 'brightness'/'isOpen' → 'switch'
  *   - FanBinding: identical shape to SwitchBinding, so we also check for 'isOpen'
  *   - CoverBinding: has 'isOpen' property → 'cover'
- *   - SensorBinding/BinarySensorBinding: no ACTION_BRAND → not matched here
+ *   - SensorBinding: has 'value' property, no action methods → 'sensor'
+ *   - BinarySensorBinding: has 'isOn' property, no action methods → 'binary_sensor'
  */
 function inferHAEntityDomainFromType(type: ts.Type): string | undefined {
-  if (!hasActionBrand(type)) return undefined;
-  // Exclude refs — they also have ACTION_BRAND-like markers but use REF_BRAND
+  if (!hasBindingBrand(type)) return undefined;
+  // Exclude refs — they also have BINDING_BRAND but use REF_BRAND
   if (hasRefBrand(type)) return undefined;
 
   const propNames = new Set(type.getProperties().map(p => p.name));
@@ -842,6 +856,9 @@ function inferHAEntityDomainFromType(type: ts.Type): string | undefined {
   // will be the same (toggle → toggle, turnOn → turn_on) regardless.
   // The entity_id in the data payload determines the actual target.
   if (propNames.has('toggle') && propNames.has('isOn')) return 'switch';
+  // Read-only bindings (no action methods)
+  if (propNames.has('value') && propNames.has('stateText') && !propNames.has('toggle')) return 'sensor';
+  if (propNames.has('isOn') && propNames.has('stateText') && !propNames.has('toggle')) return 'binary_sensor';
 
   return undefined;
 }

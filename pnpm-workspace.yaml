@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - scripts
 
 catalog:
   '@types/node': ^22.19.15

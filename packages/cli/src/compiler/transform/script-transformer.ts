@@ -106,8 +106,12 @@ function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
 
 /**
  * Scan for `const ref = useRef<...>()` patterns and build a map of
- * declaration symbol → element tag. Tags are inferred from the generic type
- * parameter if possible (e.g. `light_LightOutput` → 'light').
+ * declaration symbol → element tag. Tags are inferred from the resolved type's
+ * `__brand_` properties — the first brand containing an underscore gives the
+ * C++ namespace which maps to the ESPHome component tag.
+ *
+ * Handles all naming schemes: `useRef<LightRef>()`,
+ * `useRef<Components.Light.LightRef>()`, `useRef<__marker_light_Light>()`.
  */
 function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, string> {
   const refTags = new Map<ts.Symbol, string>();
@@ -116,15 +120,15 @@ function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map
       if (ts.isCallExpression(node.initializer)) {
         const callee = node.initializer.expression;
         if (ts.isIdentifier(callee) && callee.text === 'useRef') {
-          // Try to extract tag from type argument: useRef<light_LightOutput>()
           const typeArgs = node.initializer.typeArguments;
           if (typeArgs && typeArgs.length > 0) {
-            const typeText = typeArgs[0].getText();
-            const underscoreIdx = typeText.indexOf('_');
-            if (underscoreIdx > 0) {
+            const resolvedType = checker.getTypeFromTypeNode(typeArgs[0]);
+            // Walk properties looking for __brand_<namespace>_<Class> pattern
+            const tag = extractTagFromBrands(resolvedType, checker);
+            if (tag) {
               const sym = checker.getSymbolAtLocation(node.name);
               if (sym) {
-                refTags.set(sym, typeText.slice(0, underscoreIdx));
+                refTags.set(sym, tag);
               }
             }
           }
@@ -135,6 +139,33 @@ function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map
   };
   walk(sourceFile);
   return refTags;
+}
+
+/**
+ * Extract the ESPHome component tag from a marker type's brand properties.
+ * Finds the first `__brand_` property whose name (after stripping `__brand_`)
+ * contains an underscore — the part before the first underscore is the C++ namespace
+ * which maps to the component tag.
+ *
+ * Uses the type's *own* symbol name (the first brand) as the canonical brand.
+ * E.g. `__brand_light_LightOutput` → tag = "light".
+ */
+function extractTagFromBrands(type: ts.Type, checker: ts.TypeChecker): string | undefined {
+  const props = checker.getPropertiesOfType(type);
+  // Sort properties to get a deterministic result — the most specific brand
+  // (the type's own identity) is the first __brand_ property alphabetically.
+  const brandProps = props
+    .filter(p => p.name.startsWith('__brand_'))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const prop of brandProps) {
+    const stripped = prop.name.slice('__brand_'.length);
+    const underscoreIdx = stripped.indexOf('_');
+    if (underscoreIdx > 0) {
+      return stripped.slice(0, underscoreIdx);
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -196,8 +227,90 @@ function findAndCompileTriggerHandlers(
     }
   }
 
+  // Variable initializer containing arrow functions typed as TriggerHandler:
+  //   const handler = () => { binding.toggle(); }
+  //   const handler = props.onPress ?? (() => { binding.toggle(); })
+  if (ts.isVariableDeclaration(node) && node.initializer) {
+    const varType = ctx.checker.getTypeAtLocation(node.name);
+    if (isTriggerHandlerType(varType, ctx.checker)) {
+      compileArrowsInExpression(node.initializer, ctx, refTags, scriptHandles, edits);
+    }
+  }
+
   ts.forEachChild(node, child =>
     findAndCompileTriggerHandlers(child, ctx, refTags, scriptHandles, edits));
+}
+
+/**
+ * Check if a TypeScript type is a TriggerHandler-like function type.
+ *
+ * TriggerHandler is defined as `(() => void) | (() => Promise<void>)` (with
+ * optional trigger variable parameter). We detect any callable type whose
+ * return type is void or Promise<void>.
+ */
+function isTriggerHandlerType(type: ts.Type, checker: ts.TypeChecker): boolean {
+  // Unwrap union members (e.g. TriggerHandler | undefined from optional props)
+  const types = type.isUnion() ? type.types : [type];
+  for (const t of types) {
+    const sigs = t.getCallSignatures();
+    if (sigs.length === 0) continue;
+    for (const sig of sigs) {
+      const ret = checker.getReturnTypeOfSignature(sig);
+      // void return
+      if (ret.flags & ts.TypeFlags.Void) return true;
+      // Promise<void> return
+      if ((ret as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments?.[0]?.flags
+          && ((ret as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments![0].flags & ts.TypeFlags.Void)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Walk an expression tree to find arrow functions and compile them.
+ *
+ * Handles:
+ *   - Direct arrows: `() => { binding.toggle(); }`
+ *   - Nullish coalescing: `props.onPress ?? (() => { binding.toggle(); })`
+ *   - Logical OR: `props.onPress || (() => { binding.toggle(); })`
+ *   - Ternary branches: `cond ? () => { a() } : () => { b() }`
+ *   - Parenthesized: `(() => { binding.toggle(); })`
+ */
+function compileArrowsInExpression(
+  expr: ts.Expression,
+  ctx: TransformContext,
+  refTags: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, string>,
+  edits: SourceEdit[],
+): void {
+  if (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr)) {
+    compileAndInjectTriggerHandler(expr, ctx, refTags, scriptHandles, edits);
+    return;
+  }
+
+  if (ts.isParenthesizedExpression(expr)) {
+    compileArrowsInExpression(expr.expression, ctx, refTags, scriptHandles, edits);
+    return;
+  }
+
+  if (ts.isBinaryExpression(expr)) {
+    // ?? or || — the right-hand side may contain an arrow fallback
+    if (expr.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken ||
+        expr.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
+      compileArrowsInExpression(expr.right, ctx, refTags, scriptHandles, edits);
+      // Left side could also be an arrow (unusual but possible)
+      compileArrowsInExpression(expr.left, ctx, refTags, scriptHandles, edits);
+      return;
+    }
+  }
+
+  if (ts.isConditionalExpression(expr)) {
+    compileArrowsInExpression(expr.whenTrue, ctx, refTags, scriptHandles, edits);
+    compileArrowsInExpression(expr.whenFalse, ctx, refTags, scriptHandles, edits);
+    return;
+  }
 }
 
 function compileAndInjectTriggerHandler(

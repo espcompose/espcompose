@@ -110,7 +110,8 @@ export const TRIGGER_REGISTRY: Readonly<Record<string, Record<string, TriggerSig
   },
 
   lvgl_slider: {
-    on_value: { variables: [{ name: 'x', cppType: 'float', tsType: 'number' }] },
+    on_value:   { variables: [{ name: 'x', cppType: 'float', tsType: 'number' }] },
+    on_release: { variables: [{ name: 'x', cppType: 'float', tsType: 'number' }] },
   },
 
   lvgl_arc: {

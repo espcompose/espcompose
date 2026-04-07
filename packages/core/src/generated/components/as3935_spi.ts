@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _As3935, _CoreComponent } from "../bases";
-import type { as3935_spi_SPIAS3935Component, spi_SPIComponent } from "../markers";
+import type { __marker_as3935_spi_SPIAS3935Component, __marker_spi_SPIComponent } from "../markers";
 export interface As3935SpiProps extends _As3935, _CoreComponent {
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -24,7 +24,7 @@ export interface As3935SpiProps extends _As3935, _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            as3935_spi: As3935SpiProps & ComponentProps<as3935_spi_SPIAS3935Component>;
+            as3935_spi: As3935SpiProps & ComponentProps<__marker_as3935_spi_SPIAS3935Component>;
         }
     }
 }

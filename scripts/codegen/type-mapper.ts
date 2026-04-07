@@ -22,16 +22,63 @@ export interface NestedInterface {
 export type InterfaceAccumulator = NestedInterface[];
 
 /**
- * Convert a C++ class name (e.g. "i2c::I2CBus") to the marker interface name
- * used in markers.ts (e.g. "i2c_I2CBus").
+ * Convert a C++ class name (e.g. "i2c::I2CBus") to the flat marker name
+ * used internally in brand properties (e.g. "i2c_I2CBus").
  */
 export function cppClassToMarkerName(cppClass: string): string {
   return cppClass.replace(/::/g, '_');
 }
 
+/**
+ * Convert a C++ class name to the internal `__marker_`-prefixed interface name
+ * used in generated markers.ts. Strips leading `::` before flattening.
+ *
+ * e.g. "i2c::I2CBus" → "__marker_i2c_I2CBus"
+ *      "::esphome::hub75::HUB75Display" → "__marker_esphome_hub75_HUB75Display"
+ */
+export function internalMarkerName(cppClass: string): string {
+  const cleaned = cppClass.replace(/^::/, '');
+  return `__marker_${cleaned.replace(/::/g, '_')}`;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Naming helpers
 // ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Known acronyms that should be rendered in ALL-CAPS when converting
+ * snake_case component keys to PascalCase group names.
+ */
+const KNOWN_ACRONYMS = new Set([
+  'i2c', 'i2s', 'uart', 'ble', 'spi', 'usb', 'adc', 'gpio',
+  'ntc', 'pwm', 'dac', 'rgb', 'led', 'nfc', 'pn532', 'pn7150',
+  'pn7160', 'rc522', 'ip', 'tcp', 'udp', 'http', 'dns', 'ota',
+]);
+
+/**
+ * Convert an ESPHome component key (the C++ namespace part) to a PascalCase
+ * group name, normalizing known acronyms to ALL-CAPS.
+ *
+ * Strips trailing underscores (C++ reserved-word escapes like `switch_`).
+ *
+ * Examples:
+ *   "light" → "Light"
+ *   "binary_sensor" → "BinarySensor"
+ *   "i2c" → "I2C"
+ *   "uart" → "UART"
+ *   "ble_client" → "BLEClient"
+ *   "modbus_controller" → "ModbusController"
+ *   "switch_" → "Switch"
+ *   "i2s_audio" → "I2SAudio"
+ */
+export function componentKeyToGroupName(key: string): string {
+  // Strip trailing underscore(s) used for C++ reserved-word escapes
+  const cleaned = key.replace(/_+$/, '');
+  return cleaned
+    .split('_')
+    .map(part => KNOWN_ACRONYMS.has(part) ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
 
 /** Convert snake_case (or kebab-case) identifier to PascalCase. */
 export function toPascalCase(name: string): string {
@@ -230,7 +277,7 @@ function resolveBaseType(
         const primitiveType = CPP_PRIMITIVE_TO_TS.get(cppClass);
         if (primitiveType) return keyword(primitiveType as 'string' | 'number' | 'boolean');
 
-        const markerName = cppClass.replace(/::/g, '_');
+        const markerName = internalMarkerName(cppClass);
         const validIdent = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
         if (validIdent.test(markerName)) {
           markerRefs.add(markerName);

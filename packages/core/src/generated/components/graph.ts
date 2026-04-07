@@ -4,22 +4,22 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { Color, font_Font, graph_Graph, sensor_Sensor } from "../markers";
+import type { __marker_Color, __marker_font_Font, __marker_graph_Graph, __marker_sensor_Sensor } from "../markers";
 export interface GraphTracesProps {
-    sensor: RefProp<sensor_Sensor>;
+    sensor: RefProp<__marker_sensor_Sensor>;
     name?: string;
     /** @yamlKey line_thickness */
     lineThickness?: number;
     /** @yamlKey line_type */
     lineType?: "SOLID" | "DOTTED" | "DASHED";
-    color?: RefProp<Color>;
+    color?: RefProp<__marker_Color>;
     continuous?: boolean;
 }
 export interface GraphLegendProps {
     /** @yamlKey name_font */
-    nameFont: RefProp<font_Font>;
+    nameFont: RefProp<__marker_font_Font>;
     /** @yamlKey value_font */
-    valueFont?: RefProp<font_Font>;
+    valueFont?: RefProp<__marker_font_Font>;
     width?: number;
     height?: number;
     border?: boolean;
@@ -51,7 +51,7 @@ export interface GraphProps {
     /** boolean: Draw a border around the legend. Defaults to `true`. */
     border?: boolean;
     /** [ID](/guides/configuration-types#id): The sensor value to plot */
-    sensor?: RefProp<sensor_Sensor>;
+    sensor?: RefProp<__marker_sensor_Sensor>;
     /**
      * Defaults to 3
      * @yamlKey line_thickness
@@ -63,7 +63,7 @@ export interface GraphProps {
      */
     lineType?: "SOLID" | "DOTTED" | "DASHED";
     /** Sets the color of the sensor trace. */
-    color?: RefProp<Color>;
+    color?: RefProp<__marker_Color>;
     /**
      * Specifies the minimum Y-axis value.
      * @yamlKey min_value
@@ -92,7 +92,7 @@ export interface GraphProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            graph: GraphProps & ComponentProps<graph_Graph>;
+            graph: GraphProps & ComponentProps<__marker_graph_Graph>;
         }
     }
 }

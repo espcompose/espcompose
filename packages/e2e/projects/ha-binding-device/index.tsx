@@ -5,7 +5,7 @@
  * LVGL widgets with automatic two-way reactive wiring, plus using LVGL
  * button events to trigger HA entity actions.
  */
-import { Display, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
@@ -13,10 +13,10 @@ function ActionButton(props: {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
 }) {
-  const { onRelease, children, ...rest } = props;
+  const { onRelease, children, x, y, width, height } = props;
   return (
     <lvgl-button
-      {...rest}
+      style={{ left: x, top: y, width, height }}
       x:custom={onRelease != null ? { on_release: onRelease } : undefined}
     >
       {children}
@@ -25,7 +25,7 @@ function ActionButton(props: {
 }
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
   const kitchenLight = useHAEntity('light.kitchen_floods');
   const tempSensor = useHAEntity('sensor.living_room_temperature');
 
@@ -52,8 +52,7 @@ function App() {
         <lvgl-page>
           {/* Light status label — bound to HA light entity */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={kitchenLight.stateText}
           />
 
@@ -67,13 +66,12 @@ function App() {
               kitchenLight.toggle();
             }}
           >
-            <lvgl-label text="Toggle" align="CENTER" />
+            <lvgl-label text="Toggle" style={{ placeSelf: 'center' }} />
           </ActionButton>
 
           {/* Temperature readout — bound to HA sensor entity */}
           <lvgl-label
-            x={10}
-            y={100}
+            style={{ left: 10, top: 100 }}
             text={tempSensor.stateText}
           />
         </lvgl-page>

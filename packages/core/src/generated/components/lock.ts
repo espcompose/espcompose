@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { copy_CopyLock, lock_Lock, output_BinaryOutput, output_OutputLock, template__TemplateLock, web_server_WebServer } from "../markers";
+import type { __marker_copy_CopyLock, __marker_lock_Lock, __marker_output_BinaryOutput, __marker_output_OutputLock, __marker_template__TemplateLock, __marker_web_server_WebServer } from "../markers";
 interface LockWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -27,11 +27,11 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The lock that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<lock_Lock>;
+    sourceId: RefProp<__marker_lock_Lock>;
 }
 interface OutputProps extends _CoreComponent {
     /** [ID](/guides/configuration-types#id): The ID of the output component to use. */
-    output: RefProp<output_BinaryOutput>;
+    output: RefProp<__marker_output_BinaryOutput>;
 }
 interface TemplateProps extends _CoreComponent {
     /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state of the lock. */
@@ -58,11 +58,11 @@ interface TemplateProps extends _CoreComponent {
 }
 export type LockProps = (LockBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopyLock>) | (LockBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopyLock>) | (LockBaseProps & {
     platform: "output";
-} & OutputProps & ComponentProps<output_OutputLock>) | (LockBaseProps & {
+} & OutputProps & ComponentProps<__marker_output_OutputLock>) | (LockBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateLock>);
+} & TemplateProps & ComponentProps<__marker_template__TemplateLock>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

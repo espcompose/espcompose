@@ -190,7 +190,8 @@ export default createRule<[], MessageIds>({
     }
 
     return {
-      // Track HA entity variable declarations (heuristic)
+      // Track HA entity variable declarations (heuristic) +
+      // detect Signal directly extracted to variable (type-aware)
       VariableDeclarator(node) {
         if (
           node.id.type === 'Identifier' &&
@@ -198,6 +199,18 @@ export default createRule<[], MessageIds>({
           isEntityCreation(node.init)
         ) {
           entityVars.add(node.id.name);
+        }
+
+        // Type-aware: Signal directly assigned to variable outside reactive context.
+        // Catches: const stateText = props.binding.stateText;
+        // This breaks tracking-proxy reactivity because the proxy access
+        // happens eagerly, outside of useMemo/useEffect dependency tracking.
+        if (checker && reactiveDepth === 0 && node.init) {
+          if (node.init.type === 'MemberExpression' || node.init.type === 'Identifier') {
+            if (!isInJsxAttribute(node.init) && nodeHasSignalType(node.init)) {
+              reportTypeAware(node.init);
+            }
+          }
         }
       },
 

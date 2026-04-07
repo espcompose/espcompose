@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { sun_Sun, time_RealTimeClock } from "../markers";
+import type { __marker_sun_Sun, __marker_time_RealTimeClock } from "../markers";
 export interface SunProps {
     /** @yamlKey time_id */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** float: The latitude for performing the calculation. */
     latitude: number;
     /** float: The longitude for performing the calculation. */
@@ -26,7 +26,7 @@ export interface SunProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sun: SunProps & ComponentProps<sun_Sun>;
+            sun: SunProps & ComponentProps<__marker_sun_Sun>;
         }
     }
 }

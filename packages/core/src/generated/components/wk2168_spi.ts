@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { spi_SPIComponent, weikai_spi_WeikaiComponentSPI } from "../markers";
+import type { __marker_spi_SPIComponent, __marker_weikai_spi_WeikaiComponentSPI } from "../markers";
 export interface Wk2168SpiProps {
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -20,7 +20,7 @@ export interface Wk2168SpiProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            wk2168_spi: Wk2168SpiProps & ComponentProps<weikai_spi_WeikaiComponentSPI>;
+            wk2168_spi: Wk2168SpiProps & ComponentProps<__marker_weikai_spi_WeikaiComponentSPI>;
         }
     }
 }

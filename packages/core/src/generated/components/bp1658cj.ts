@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { bp1658cj_BP1658CJ } from "../markers";
+import type { __marker_bp1658cj_BP1658CJ } from "../markers";
 export interface Bp1658cjProps extends _CoreComponent {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): The pin used for DATA.
@@ -31,7 +31,7 @@ export interface Bp1658cjProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            bp1658cj: Bp1658cjProps & ComponentProps<bp1658cj_BP1658CJ>;
+            bp1658cj: Bp1658cjProps & ComponentProps<__marker_bp1658cj_BP1658CJ>;
         }
     }
 }

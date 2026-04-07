@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { time_RealTimeClock, tuya_Tuya, uart_UARTComponent } from "../markers";
+import type { __marker_time_RealTimeClock, __marker_tuya_Tuya, __marker_uart_UARTComponent } from "../markers";
 export interface TuyaProps extends _CoreComponent {
     /**
      * [ID](/guides/configuration-types#id): Some Tuya devices support obtaining local time from ESPHome. Specify the ID of ...
      * @yamlKey time_id
      */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /**
      * list: A list of datapoints to ignore MCU updates for. Useful for certain broken/erratic hardware and debugging.
      * @yamlKey ignore_mcu_update_on_datapoints
@@ -28,12 +28,12 @@ export interface TuyaProps extends _CoreComponent {
      */
     onDatapointUpdate?: TriggerHandler;
     /** @yamlKey uart_id */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            tuya: TuyaProps & ComponentProps<tuya_Tuya>;
+            tuya: TuyaProps & ComponentProps<__marker_tuya_Tuya>;
         }
     }
 }

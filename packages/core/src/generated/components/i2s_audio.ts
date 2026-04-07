@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { i2s_audio_I2SAudioComponent } from "../markers";
+import type { __marker_i2s_audio_I2SAudioComponent } from "../markers";
 export interface I2sAudioProps {
     /**
      * [Pin](/guides/configuration-types#pin): The GPIO pin to use for the I²S `LRCLK` *(Left/Right Clock)* signal, also ref...
@@ -30,7 +30,7 @@ export interface I2sAudioProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            i2s_audio: I2sAudioProps & ComponentProps<i2s_audio_I2SAudioComponent>;
+            i2s_audio: I2sAudioProps & ComponentProps<__marker_i2s_audio_I2SAudioComponent>;
         }
     }
 }

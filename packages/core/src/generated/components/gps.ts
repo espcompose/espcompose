@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { gps_GPS, uart_UARTComponent, web_server_WebServer, zigbee_ZigbeeComponent } from "../markers";
+import type { __marker_gps_GPS, __marker_uart_UARTComponent, __marker_web_server_WebServer, __marker_zigbee_ZigbeeComponent } from "../markers";
 export interface GpsLatitudePropsAvailabilityProps {
     topic: unknown;
     /** @yamlKey payload_available */
@@ -15,7 +15,7 @@ export interface GpsLatitudePropsAvailabilityProps {
 }
 export interface GpsLatitudePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -51,7 +51,7 @@ export interface GpsLatitudeProps {
     /** @yamlKey web_server */
     webServer?: GpsLatitudePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -81,7 +81,7 @@ export interface GpsLongitudePropsAvailabilityProps {
 }
 export interface GpsLongitudePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -117,7 +117,7 @@ export interface GpsLongitudeProps {
     /** @yamlKey web_server */
     webServer?: GpsLongitudePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -147,7 +147,7 @@ export interface GpsSpeedPropsAvailabilityProps {
 }
 export interface GpsSpeedPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -183,7 +183,7 @@ export interface GpsSpeedProps {
     /** @yamlKey web_server */
     webServer?: GpsSpeedPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -213,7 +213,7 @@ export interface GpsCoursePropsAvailabilityProps {
 }
 export interface GpsCoursePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -249,7 +249,7 @@ export interface GpsCourseProps {
     /** @yamlKey web_server */
     webServer?: GpsCoursePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -279,7 +279,7 @@ export interface GpsAltitudePropsAvailabilityProps {
 }
 export interface GpsAltitudePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -315,7 +315,7 @@ export interface GpsAltitudeProps {
     /** @yamlKey web_server */
     webServer?: GpsAltitudePropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -345,7 +345,7 @@ export interface GpsSatellitesPropsAvailabilityProps {
 }
 export interface GpsSatellitesPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -381,7 +381,7 @@ export interface GpsSatellitesProps {
     /** @yamlKey web_server */
     webServer?: GpsSatellitesPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -411,7 +411,7 @@ export interface GpsHdopPropsAvailabilityProps {
 }
 export interface GpsHdopPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -447,7 +447,7 @@ export interface GpsHdopProps {
     /** @yamlKey web_server */
     webServer?: GpsHdopPropsWebServerProps;
     /** @yamlKey zigbee_id */
-    zigbeeId?: RefProp<zigbee_ZigbeeComponent>;
+    zigbeeId?: RefProp<__marker_zigbee_ZigbeeComponent>;
     /** @yamlKey unit_of_measurement */
     unitOfMeasurement?: string;
     /** @yamlKey accuracy_decimals */
@@ -489,12 +489,12 @@ export interface GpsProps extends _CoreComponent {
      */
     updateInterval?: TimePeriod;
     /** @yamlKey uart_id */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            gps: GpsProps & ComponentProps<gps_GPS>;
+            gps: GpsProps & ComponentProps<__marker_gps_GPS>;
         }
     }
 }

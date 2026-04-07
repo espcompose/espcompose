@@ -167,12 +167,12 @@ export function componentPropsType(markerName?: string): ts.TypeReferenceNode {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Wrap a type in `BindProp<T>` for props that accept reactive bindings.
- * `BindProp<T>` is already a union of `T | (() => T) | IRReactiveNode<T>`.
- * Example: `string` → `BindProp<string>`
+ * Wrap a type in `Reactive<T>` for props that accept reactive bindings.
+ * `Reactive<T>` is already a union of `T | (() => T) | IRReactiveNode<T>`.
+ * Example: `string` → `Reactive<string>`
  */
-export function bindPropType(baseType: ts.TypeNode): ts.TypeReferenceNode {
-  return typeRef('BindProp', [baseType]);
+export function reactivePropType(baseType: ts.TypeNode): ts.TypeReferenceNode {
+  return typeRef('Reactive', [baseType]);
 }
 
 // ────────────────────────────────────────────────────────────────────────────

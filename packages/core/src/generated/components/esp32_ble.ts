@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp32_ble_ESP32BLE } from "../markers";
+import type { __marker_esp32_ble_ESP32BLE } from "../markers";
 export interface Esp32BleProps extends _CoreComponent {
     /** string: The name of the BLE device. */
     name?: string;
@@ -65,7 +65,7 @@ export interface Esp32BleProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp32_ble: Esp32BleProps & ComponentProps<esp32_ble_ESP32BLE>;
+            esp32_ble: Esp32BleProps & ComponentProps<__marker_esp32_ble_ESP32BLE>;
         }
     }
 }

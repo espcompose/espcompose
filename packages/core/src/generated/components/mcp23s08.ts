@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { mcp23s08_MCP23S08, spi_SPIComponent } from "../markers";
+import type { __marker_mcp23s08_MCP23S08, __marker_spi_SPIComponent } from "../markers";
 export interface Mcp23s08Props extends _CoreComponent {
     /** int: The address of the chip. Defaults to `0`. */
     deviceaddress?: number;
@@ -15,7 +15,7 @@ export interface Mcp23s08Props extends _CoreComponent {
      */
     openDrainInterrupt?: boolean;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -31,7 +31,7 @@ export interface Mcp23s08Props extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mcp23s08: Mcp23s08Props & ComponentProps<mcp23s08_MCP23S08>;
+            mcp23s08: Mcp23s08Props & ComponentProps<__marker_mcp23s08_MCP23S08>;
         }
     }
 }

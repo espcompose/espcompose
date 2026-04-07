@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { binary_sensor_BinarySensor, template__TemplateAlarmControlPanel, web_server_WebServer } from "../markers";
+import type { __marker_binary_sensor_BinarySensor, __marker_template__TemplateAlarmControlPanel, __marker_web_server_WebServer } from "../markers";
 interface AlarmControlPanelWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -16,7 +16,7 @@ interface AlarmControlPanelWebServerProps {
 }
 interface TemplateBinarySensorsProps {
     /** string: The id of the binary sensor component */
-    input: RefProp<binary_sensor_BinarySensor>;
+    input: RefProp<__marker_binary_sensor_BinarySensor>;
     /**
      * boolean: This binary sensor will not trigger the alarm when in `armed_home` state.
      * @yamlKey bypass_armed_home
@@ -109,7 +109,7 @@ interface TemplateProps extends _CoreComponent {
 }
 export type AlarmControlPanelProps = AlarmControlPanelBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateAlarmControlPanel>;
+} & TemplateProps & ComponentProps<__marker_template__TemplateAlarmControlPanel>;
 declare global {
     namespace JSX {
         interface IntrinsicElements {

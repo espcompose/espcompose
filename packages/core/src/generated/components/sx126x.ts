@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { spi_SPIComponent, sx126x_SX126x } from "../markers";
+import type { __marker_spi_SPIComponent, __marker_sx126x_SX126x } from "../markers";
 export interface Sx126xProps extends _CoreComponent {
     /** enum: Bandwidth can be `4_8kHz`, `5_8kHz`, `7_3kHz`, `9_7kHz`, `11_7kHz`, `14_6kHz`, `19_5kHz`, `23_4kHz`, `29_3kHz`,... */
     bandwidth?: "4_8kHz" | "5_8kHz" | "7_3kHz" | "9_7kHz" | "11_7kHz" | "14_6kHz" | "19_5kHz" | "23_4kHz" | "29_3kHz" | "39_0kHz" | "46_9kHz" | "58_6kHz" | "78_2kHz" | "93_8kHz" | "117_3kHz" | "156_2kHz" | "187_2kHz" | "234_3kHz" | "312_0kHz" | "373_6kHz" | "467_0kHz" | "7_8kHz" | "10_4kHz" | "15_6kHz" | "20_8kHz" | "31_3kHz" | "41_7kHz" | "62_5kHz" | "125_0kHz" | "250_0kHz" | "500_0kHz";
@@ -130,7 +130,7 @@ export interface Sx126xProps extends _CoreComponent {
      */
     tcxoDelay?: TimePeriod;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -146,7 +146,7 @@ export interface Sx126xProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sx126x: Sx126xProps & ComponentProps<sx126x_SX126x>;
+            sx126x: Sx126xProps & ComponentProps<__marker_sx126x_SX126x>;
         }
     }
 }

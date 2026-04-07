@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { esp32_ble_ESP32BLE, esp32_ble_tracker_ESP32BLETracker } from "../markers";
+import type { __marker_esp32_ble_ESP32BLE, __marker_esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface Esp32BleTrackerScanParametersProps {
     /** [Time](/guides/configuration-types#time): The duration of each complete scan. This has no real impact on the device b... */
     duration?: TimePeriod;
@@ -20,7 +20,7 @@ export interface Esp32BleTrackerScanParametersProps {
 }
 export interface Esp32BleTrackerProps extends _CoreComponent {
     /** @yamlKey ble_id */
-    bleId?: RefProp<esp32_ble_ESP32BLE>;
+    bleId?: RefProp<__marker_esp32_ble_ESP32BLE>;
     /**
      * int: DEPRECATED - This option has been moved to the [Esp32 Ble](/components/esp32_ble/) component. Please configure `...
      * @yamlKey max_connections
@@ -60,7 +60,7 @@ export interface Esp32BleTrackerProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            esp32_ble_tracker: Esp32BleTrackerProps & ComponentProps<esp32_ble_tracker_ESP32BLETracker>;
+            esp32_ble_tracker: Esp32BleTrackerProps & ComponentProps<__marker_esp32_ble_tracker_ESP32BLETracker>;
         }
     }
 }

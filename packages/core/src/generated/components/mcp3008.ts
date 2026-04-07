@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { mcp3008_MCP3008, spi_SPIComponent } from "../markers";
+import type { __marker_mcp3008_MCP3008, __marker_spi_SPIComponent } from "../markers";
 export interface Mcp3008Props {
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -23,7 +23,7 @@ export interface Mcp3008Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mcp3008: Mcp3008Props & ComponentProps<mcp3008_MCP3008>;
+            mcp3008: Mcp3008Props & ComponentProps<__marker_mcp3008_MCP3008>;
         }
     }
 }

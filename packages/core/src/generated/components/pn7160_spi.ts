@@ -4,13 +4,13 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { pn7160_spi_PN7160Spi, spi_SPIComponent } from "../markers";
+import type { __marker_pn7160_spi_PN7160Spi, __marker_spi_SPIComponent } from "../markers";
 export interface Pn7160SpiProps {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -26,7 +26,7 @@ export interface Pn7160SpiProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            pn7160_spi: Pn7160SpiProps & ComponentProps<pn7160_spi_PN7160Spi>;
+            pn7160_spi: Pn7160SpiProps & ComponentProps<__marker_pn7160_spi_PN7160Spi>;
         }
     }
 }

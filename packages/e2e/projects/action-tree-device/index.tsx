@@ -17,10 +17,10 @@ import {
   logger,
   useRef,
 } from '@espcompose/core';
-import type { switch__Switch } from '@espcompose/core';
+import type { SwitchRef } from '@espcompose/core';
 
 function App() {
-  const switchRef = useRef<switch__Switch>();
+  const switchRef = useRef<SwitchRef>();
 
   return (
     <esphome name="action-tree-device" comment="Action tree compiler test">

@@ -495,9 +495,9 @@ async function run(): Promise<void> {
 
   // ── Actions ────────────────────────────────────────────────────────────────
   const actionsPath = path.join(GENERATED_DIR, 'actions.ts');
-  fs.writeFileSync(actionsPath, generateActionsFile({ classActions, markerClassMap, classBrandMap }), 'utf8');
+  fs.writeFileSync(actionsPath, generateActionsFile({ classActions, classBrandMap }), 'utf8');
   writtenPaths.push(actionsPath);
-  console.log(`  Actions → ${actionsPath} (${classActions.size} classes, ${markerClassMap.size} marker mappings)`);
+  console.log(`  Actions → ${actionsPath} (${classActions.size} classes)`);
 
   // ── Barrel ─────────────────────────────────────────────────────────────────
   const barrelPath = path.join(GENERATED_DIR, 'index.ts');

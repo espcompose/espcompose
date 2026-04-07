@@ -15,6 +15,7 @@ import { getTriggerSignature } from '@espcompose/core/internals';
 import { injectHASensorImports } from './reactive-injector.js';
 import { injectReactiveBindingsRuntime } from './reactive-config.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
+import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
 import { lowerActionTree } from './action-lowering.js';
 
@@ -32,6 +33,9 @@ function createYamlSecret(key: string): Scalar {
   s.tag = '!secret';
   return s;
 }
+
+/** Sentinel returned by irValueToYaml to signal "omit this entry from the parent object". */
+const SKIP_ENTRY = Symbol('SKIP_ENTRY');
 
 // ── Lambda marker restoration ────────────────────────────────────────────
 // Action trees use { __lambda__: "code" } markers for lambda values
@@ -156,8 +160,16 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
       }
       return node.value;
 
-    case 'reactive':
-      return createYamlLambda(generateInitialValueLambda(node.node, ctx));
+    case 'reactive': {
+      // font_ptr values are set by the reactive Effect after on_boot —
+      // skip emitting an initial-value lambda in the YAML because ESPHome
+      // evaluates it during LVGL widget setup, before fonts are ready.
+      const reactiveNode = (node as { node: { exprType?: string } }).node;
+      if (reactiveNode?.exprType === 'font_ptr') {
+        return SKIP_ENTRY;
+      }
+      return createYamlLambda(generateInitialValueLambda(reactiveNode, ctx));
+    }
 
     case 'ref':
       return node.token;
@@ -186,7 +198,10 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
     case 'object': {
       const obj: Record<string, unknown> = {};
       for (const entry of (node as IRObject).entries) {
-        obj[entry.key] = irValueToYaml(entry.value, ctx);
+        const val = irValueToYaml(entry.value, ctx);
+        if (val !== SKIP_ENTRY) {
+          obj[entry.key] = val;
+        }
       }
       return obj;
     }
@@ -232,12 +247,7 @@ export function lowerToYamlConfig(
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
   if (cppResult) {
-    const entityComponentIds = new Map<string, string>();
-    for (const entity of ir.esphome.haEntities) {
-      if (entity.entityId && entity.generatedId) {
-        entityComponentIds.set(entity.entityId, entity.generatedId);
-      }
-    }
+    const entityComponentIds = buildEntityComponentIds(ir.esphome.haEntities);
     const themeVarNames = new Map<string, string>();
     if (ir.espcompose.themes) {
       for (const signalPath of ir.espcompose.themes.leafData.keys()) {

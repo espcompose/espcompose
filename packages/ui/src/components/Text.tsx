@@ -4,62 +4,54 @@
  * Compiles to <lvgl-label> with theme-driven typography via reactive tokens.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
-import { resolveTypography, resolveFont } from '../theme/resolvers';
-import type { TextVariant } from '../theme/types';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, useTheme, useReactiveMap } from '@espcompose/core';
+import { useStatus } from '../hooks';
+import { themeLeaf } from '../hooks/utils';
+import type { TextVariant, StatusToken, Theme } from '../theme/types';
 
-interface TextProps {
+type TextProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
   /** Typography variant. Determines font size. Default: 'body'. */
   variant?: TextVariant;
   /** Static text content. Use this or children. */
   text?: string;
   /** Text alignment within the label. */
-  align?: 'LEFT' | 'CENTER' | 'RIGHT' | 'AUTO';
-  /** Text color (hex). If omitted, uses theme textPrimary. */
-  color?: string;
+  align?: 'left' | 'center' | 'right' | 'auto';
+  /** Text color as a StatusToken (e.g. 'primary'). If omitted, uses theme textPrimary. */
+  color?: StatusToken;
   /** Long text mode. */
   longMode?: 'WRAP' | 'DOT' | 'SCROLL' | 'SCROLL_CIRCULAR' | 'CLIP';
-  /** X position (pixels). */
-  x?: number;
-  /** Y position (pixels). */
-  y?: number;
-  /** Width. */
-  width?: number | string;
-}
+}, 'longMode'>;
 
 /**
  * Text — a styled label component.
  *
  * @example
  * <Text variant="title">Living Room</Text>
- * <Text variant="caption" color="#888888">Last updated: 5m ago</Text>
+ * <Text variant="caption" color="primary">Last updated: 5m ago</Text>
  */
-export const Text = createIntentComponent(
+export const Text = createWidgetComponent(
   (props: TextProps): EspComposeElement => {
     const variant = props.variant ?? 'body';
-    const typo = resolveTypography(variant);
-    const font = resolveFont({ fontFamily: typo.fontFamily, fontSize: typo.fontSize });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useReactiveTheme() as any;
-    const textColor = props.color ?? theme?.colors?.textPrimary;
+    const font = useReactiveMap(variant, (v) => themeLeaf('typography', v));
+    const theme = useTheme<Theme>();
+    const textColor = props.color != null
+      ? useStatus(props.color).text
+      : theme?.colors?.textPrimary;
 
     return (
       <lvgl-label
-        textColor={textColor}
-        textFont={font}
         text={props.text}
-        textAlign={props.align}
         longMode={props.longMode}
-        x={props.x}
-        y={props.y}
-        width={props.width}
+        style={{
+          color: textColor,
+          font: font,
+          textAlign: props.align,
+          width: props.style?.width,
+          height: props.style?.height,
+        }}
       />
     );
-  },
-  {
-    intents: [LVGL_INTENTS.WIDGET] as const,
-    allowedChildIntents: [] as const,
   },
 );

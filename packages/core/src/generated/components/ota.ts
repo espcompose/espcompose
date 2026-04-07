@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _OtaBaseOta } from "../bases";
-import type { esphome_ESPHomeOTAComponent, http_request_HttpRequestComponent, http_request_OtaHttpRequestComponent, web_server_WebServerOTAComponent, zephyr_CdcAcm, zephyr_mcumgr_OTAComponent } from "../markers";
+import type { __marker_esphome_ESPHomeOTAComponent, __marker_http_request_HttpRequestComponent, __marker_http_request_OtaHttpRequestComponent, __marker_web_server_WebServerOTAComponent, __marker_zephyr_CdcAcm, __marker_zephyr_mcumgr_OTAComponent } from "../markers";
 interface ZephyrMcumgrTransportProps {
     ble?: boolean;
     /** @yamlKey hardware_uart */
@@ -39,7 +39,7 @@ interface EsphomeProps extends _OtaBaseOta, _CoreComponent {
 }
 interface HttpRequestProps extends _OtaBaseOta, _CoreComponent {
     /** @yamlKey http_request_id */
-    httpRequestId?: RefProp<http_request_HttpRequestComponent>;
+    httpRequestId?: RefProp<__marker_http_request_HttpRequestComponent>;
 }
 interface Nrf52Props {
     /** string: The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Oth... */
@@ -56,15 +56,15 @@ interface WebServerProps extends _OtaBaseOta, _CoreComponent {
 }
 export type OtaProps = ({
     platform: "zephyr_mcumgr";
-} & ZephyrMcumgrProps & ComponentProps<zephyr_mcumgr_OTAComponent>) | ({
+} & ZephyrMcumgrProps & ComponentProps<__marker_zephyr_mcumgr_OTAComponent>) | ({
     platform: "esphome";
-} & EsphomeProps & ComponentProps<esphome_ESPHomeOTAComponent>) | ({
+} & EsphomeProps & ComponentProps<__marker_esphome_ESPHomeOTAComponent>) | ({
     platform: "http_request";
-} & HttpRequestProps & ComponentProps<http_request_OtaHttpRequestComponent>) | ({
+} & HttpRequestProps & ComponentProps<__marker_http_request_OtaHttpRequestComponent>) | ({
     platform: "nrf52";
-} & Nrf52Props & ComponentProps<zephyr_CdcAcm>) | ({
+} & Nrf52Props & ComponentProps<__marker_zephyr_CdcAcm>) | ({
     platform: "web_server";
-} & WebServerProps & ComponentProps<web_server_WebServerOTAComponent>);
+} & WebServerProps & ComponentProps<__marker_web_server_WebServerOTAComponent>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

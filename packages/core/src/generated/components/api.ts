@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { api_APIServer } from "../markers";
+import type { __marker_api_APIServer } from "../markers";
 export interface ApiServicesProps {
     service?: string;
     action?: string;
@@ -84,7 +84,7 @@ export interface ApiProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            api: ApiProps & ComponentProps<api_APIServer>;
+            api: ApiProps & ComponentProps<__marker_api_APIServer>;
         }
     }
 }

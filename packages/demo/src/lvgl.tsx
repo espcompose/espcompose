@@ -1,17 +1,19 @@
-import { Display, Ref, useHAEntity, theme } from "@espcompose/core";
+import { DisplayRef, Ref, useHAEntity, theme } from "@espcompose/core";
 import {
-    Button, Card, HStack, Screen, SliderField, SwitchField, Text, VStack,
+    Button, Card, HStack, Screen, Text, VStack,
+    LightSlider, LightSwitch, LightButton, SensorText,
     ThemeProvider, darkTheme, lightTheme,
 } from "@espcompose/ui";
-import { HALight, MyButton } from "./button";
 
 type UIProps = {
-    display: Ref<Display>,
+    display: Ref<DisplayRef>,
 }
 
 export const UI = (props: UIProps) => {
 
     const officeLight = useHAEntity('light.office');
+    const gymLight = useHAEntity('light.gym');
+    const hockeyLight = useHAEntity('light.air_hockey_light');
 
     return <>
         <lvgl
@@ -26,30 +28,31 @@ export const UI = (props: UIProps) => {
                         <Text variant="title" text="Theme Demo" />
 
                         <Card>
-                            <SliderField
+                            <LightSlider
+                                binding={officeLight}
                                 label="Brightness"
                                 min={0}
                                 max={255}
-                                value={isNaN(officeLight.brightness) ? 0 : officeLight.brightness}
-                                onChange={(args) => {
-                                    officeLight.turnOn({ brightness: args.x })
-                                }}
                             />
 
-                            <SwitchField label="Power" />
+                            <LightSwitch binding={officeLight} label="Power" />
                         </Card>
 
                         <Card>
                             <HStack>
-                                <lvgl-label text={officeLight.stateText} />
-                                <MyButton
-                                    text={officeLight.isOn ? "Office Off" : "Office On"}
+                                <SensorText binding={officeLight} label="Office" />
+                                <Button
+                                    size="lg"
+                                    text={officeLight.isOn ? "Office On" : "Office Off"}
                                     onPress={() => { officeLight.toggle(); }}
                                 />
-                                
-                                <HALight entity="light.office" text="Office" />
-                                <HALight entity="light.gym" text="Gym" />
-                                <HALight entity="light.air_hockey_light" text="Hockey" />
+
+                                <LightButton binding={officeLight} label="Office" size="sm" />
+
+
+                                <LightButton binding={officeLight} label="Office" />
+                                <LightButton binding={gymLight} label="Gym" />
+                                <LightButton binding={hockeyLight} label="Hockey" />
 
                             </HStack>
                         </Card>

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { serial_proxy_SerialProxy, uart_UARTComponent } from "../markers";
+import type { __marker_serial_proxy_SerialProxy, __marker_uart_UARTComponent } from "../markers";
 export interface SerialProxyProps extends _CoreComponent {
     /** string: A human-readable name for this serial port, used to identify it to API clients. */
     name: string;
@@ -28,12 +28,12 @@ export interface SerialProxyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The ID of the [UART](/components/uart/) component this proxy is attached to.
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            serial_proxy: SerialProxyProps & ComponentProps<serial_proxy_SerialProxy>;
+            serial_proxy: SerialProxyProps & ComponentProps<__marker_serial_proxy_SerialProxy>;
         }
     }
 }

@@ -6,18 +6,9 @@
  */
 
 // Theme system
-export { useReactiveTheme } from './theme/context';
 export { ThemeProvider } from './theme/ThemeProvider';
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
-export {
-  resolveSpacing,
-  resolveSize,
-  resolveStatus,
-  resolveTypography,
-  resolveRadius,
-  resolveFont as fontDefToLvgl,
-} from './theme/resolvers';
 
 // Theme types
 export type {
@@ -26,7 +17,10 @@ export type {
   ThemeTypography,
   ThemeParts,
   PartColors,
-  FontDef,
+  FontToken,
+  FontBpp,
+  createFontToken,
+  FONT_TOKEN_BRAND,
   SizeDimensions,
   StatusColors,
   SpacingToken,
@@ -35,9 +29,6 @@ export type {
   StatusToken,
   TextVariant,
 } from './theme/types';
-
-// Intent constants
-export { COMPOSE_UI_INTENTS } from './intents';
 
 // Components
 export { Screen } from './components/Screen';
@@ -48,6 +39,16 @@ export type { TrackSize } from './components/Grid';
 export { Text } from './components/Text';
 export { Button } from './components/Button';
 export { Card } from './components/Card';
-export { SliderField } from './components/SliderField';
-export { SwitchField } from './components/SwitchField';
-export { DropdownField } from './components/DropdownField';
+export { Slider } from './components/Slider';
+export type { SliderProps } from './components/Slider';
+export { Switch } from './components/Switch';
+export type { SwitchProps } from './components/Switch';
+export { Dropdown } from './components/Dropdown';
+export type { DropdownProps } from './components/Dropdown';
+export type { StyleProps, ButtonVariant } from './components/shared-types';
+
+// Binding-driven components
+export { LightButton } from './components/LightButton';
+export { LightSwitch } from './components/LightSwitch';
+export { LightSlider } from './components/LightSlider';
+export { SensorText } from './components/SensorText';

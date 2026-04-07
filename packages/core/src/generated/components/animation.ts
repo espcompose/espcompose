@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { animation_Animation } from "../markers";
+import type { __marker_animation_Animation } from "../markers";
 export interface AnimationLoopProps {
     /**
      * int: The frame to loop back to when `end_frame` is reached. Defaults to the first frame in the animation.
@@ -39,7 +39,7 @@ export interface AnimationProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            animation: AnimationProps & ComponentProps<animation_Animation>;
+            animation: AnimationProps & ComponentProps<__marker_animation_Animation>;
         }
     }
 }

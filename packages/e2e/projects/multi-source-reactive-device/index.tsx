@@ -5,10 +5,10 @@
  *   - useMemo() combining two HA entities into a derived text value
  *   - LVGL label displaying the memo-derived status text
  */
-import { Display, useRef, useHAEntity, useMemo } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo } from '@espcompose/core';
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
   const kitchenLight = useHAEntity('light.kitchen_floods');
   const tempSensor = useHAEntity('sensor.temp_inside');
 
@@ -40,8 +40,7 @@ function App() {
         <lvgl-page>
           {/* Status label — bound to memo-derived value from two HA entities */}
           <lvgl-label
-            x={10}
-            y={10}
+            style={{ left: 10, top: 10 }}
             text={status}
           />
         </lvgl-page>

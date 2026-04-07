@@ -27,6 +27,10 @@
     "test": {
       "dependsOn": ["build"],
       "cache": false
+    },
+    "espcompose-scripts#test": {
+      "dependsOn": [],
+      "cache": false
     }
   }
 }

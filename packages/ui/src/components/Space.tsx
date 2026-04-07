@@ -4,91 +4,69 @@
  * Space is the primary flex-layout component (similar to AntD's Space).
  * VStack and HStack are convenience wrappers that set direction.
  *
- * Compiles to <lvgl-obj> with ESPHome LVGL flex layout configuration.
- * Gap (pad_row / pad_column) is placed INSIDE the layout dict per ESPHome docs.
+ * Compiles to <lvgl-obj> with flex layout via CSS-like style props.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS } from '@espcompose/core';
-import { resolveSpacing } from '../theme/resolvers';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
+import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
 // ────────────────────────────────────────────────────────────────────────────
 
-type FlexAlign = 'START' | 'CENTER' | 'END' | 'SPACE_BETWEEN' | 'SPACE_AROUND' | 'SPACE_EVENLY';
-type CrossAlign = 'START' | 'CENTER' | 'END' | 'STRETCH';
+type FlexAlign = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
+type CrossAlign = 'start' | 'center' | 'end' | 'stretch';
 
-interface SpaceProps {
+type SpaceProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
   /** Layout direction. Default: 'vertical'. */
   direction?: 'horizontal' | 'vertical';
-  /** Gap between children. Token name or pixel value. */
-  gap?: SpacingToken | number;
-  /** Padding around the container. Token name or pixel value. */
-  padding?: SpacingToken | number;
+  /** Gap between children. Token name. */
+  gap?: SpacingToken;
+  /** Padding around the container. Token name. */
+  padding?: SpacingToken;
   /** Main axis alignment. */
   align?: FlexAlign;
   /** Cross axis alignment. */
   crossAlign?: CrossAlign;
   /** Enable wrapping (ROW_WRAP / COLUMN_WRAP). Default: false. */
   wrap?: boolean;
-  /** Width. Numeric pixels, percentage string, or 'SIZE_CONTENT'. */
-  width?: number | string;
-  /** Height. Numeric pixels, percentage string, or 'SIZE_CONTENT'. */
-  height?: number | string;
-  /** Background color (hex). */
-  bgColor?: string;
-  /** Background opacity. */
-  bgOpa?: 'TRANSP' | 'COVER';
-  /** Border radius. */
-  radius?: number;
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+}>;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ────────────────────────────────────────────────────────────────────────────
 
-function buildFlexLayout(
-  flow: string,
-  gapKey: 'pad_row' | 'pad_column',
-  props: SpaceProps,
-): Record<string, unknown> {
-  const gap = props.gap != null ? resolveSpacing(props.gap) : undefined;
-  return {
-    type: 'flex',
-    flex_flow: flow,
-    ...(props.align ? { flex_align_main: props.align } : {}),
-    ...(props.crossAlign ? { flex_align_cross: props.crossAlign } : {}),
-    ...(gap != null ? { [gapKey]: gap } : {}),
-  };
-}
+type FlexDirection = 'row' | 'column' | 'row-wrap' | 'column-wrap';
 
 function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const isRow = (props.direction ?? 'vertical') === 'horizontal';
-  const baseFlow = isRow ? 'ROW' : 'COLUMN';
-  const flow = props.wrap ? `${baseFlow}_WRAP` : baseFlow;
-  const gapKey = isRow ? 'pad_column' : 'pad_row';
-  const padding = props.padding != null ? resolveSpacing(props.padding) : undefined;
+  const baseDir = isRow ? 'row' : 'column';
+  const flexDir: FlexDirection = props.wrap ? `${baseDir}-wrap` : baseDir;
+  const gapKey = isRow ? 'columnGap' : 'rowGap';
+  const gap = props.gap != null ? useSpacing(props.gap) : undefined;
+  const padding = props.padding != null ? useSpacing(props.padding) : undefined;
+  const borderRadius = props.style?.borderRadius;
 
   return (
     <lvgl-obj
-      width={props.width ?? '100%'}
-      height={props.height ?? 'SIZE_CONTENT'}
-      padAll={padding}
-      bgColor={props.bgColor}
-      bgOpa={props.bgOpa ?? 'TRANSP'}
-      radius={props.radius as unknown as string}
-      borderWidth={props.borderWidth ?? 0}
-      borderColor={props.borderColor}
-      x:custom={{
-        scrollbar_mode: 'OFF',
-        layout: buildFlexLayout(flow, gapKey, props),
+      style={{
+        width: props.style?.width ?? '100%',
+        height: props.style?.height ?? 'fit-content',
+        padding: padding,
+        backgroundColor: props.style?.backgroundColor,
+        backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+        borderRadius: borderRadius,
+        borderWidth: props.style?.borderWidth ?? 0,
+        borderColor: props.style?.borderColor,
+        scrollbarMode: 'off',
+        display: 'flex',
+        flexDirection: flexDir,
+        ...(props.align ? { justifyContent: props.align } : {}),
+        ...(props.crossAlign ? { alignItems: props.crossAlign } : {}),
+        ...(gap != null ? { [gapKey]: gap } : {}),
       }}
     >
       {props.children}
@@ -96,8 +74,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   );
 }
 
-const LAYOUT_INTENTS = {
-  intents: [LVGL_INTENTS.WIDGET] as const,
+const LAYOUT_OVERRIDES = {
   allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
   contextTransparent: true as const,
 };
@@ -124,9 +101,9 @@ const LAYOUT_INTENTS = {
  *   <Button text="C" />
  * </Space>
  */
-export const Space = createIntentComponent(
+export const Space = createWidgetComponent(
   (props: SpaceProps): EspComposeElement => buildSpaceElement(props),
-  LAYOUT_INTENTS,
+  LAYOUT_OVERRIDES,
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -142,10 +119,10 @@ export const Space = createIntentComponent(
  *   <Button text="Click me" />
  * </VStack>
  */
-export const VStack = createIntentComponent(
+export const VStack = createWidgetComponent(
   (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
     buildSpaceElement({ ...props, direction: 'vertical' }),
-  LAYOUT_INTENTS,
+  LAYOUT_OVERRIDES,
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -156,13 +133,13 @@ export const VStack = createIntentComponent(
  * Horizontal stack layout — shorthand for `<Space direction="horizontal">`.
  *
  * @example
- * <HStack gap="sm" align="SPACE_BETWEEN">
+ * <HStack gap="sm" align="spaceBetween">
  *   <Text>Left</Text>
  *   <Text>Right</Text>
  * </HStack>
  */
-export const HStack = createIntentComponent(
+export const HStack = createWidgetComponent(
   (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
     buildSpaceElement({ ...props, direction: 'horizontal' }),
-  LAYOUT_INTENTS,
+  LAYOUT_OVERRIDES,
 );

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { libretiny_LTComponent } from "../markers";
+import type { __marker_libretiny_LTComponent } from "../markers";
 export interface Bk72xxFrameworkProps {
     version?: string;
     source?: string;
@@ -26,7 +26,7 @@ export interface Bk72xxProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            bk72xx: Bk72xxProps & ComponentProps<libretiny_LTComponent>;
+            bk72xx: Bk72xxProps & ComponentProps<__marker_libretiny_LTComponent>;
         }
     }
 }

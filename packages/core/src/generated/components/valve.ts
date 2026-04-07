@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { template__TemplateValve, web_server_WebServer } from "../markers";
+import type { __marker_template__TemplateValve, __marker_web_server_WebServer } from "../markers";
 interface ValveWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -73,7 +73,7 @@ interface TemplateProps extends _CoreComponent {
 }
 export type ValveProps = ValveBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateValve>;
+} & TemplateProps & ComponentProps<__marker_template__TemplateValve>;
 declare global {
     namespace JSX {
         interface IntrinsicElements {

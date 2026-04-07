@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { spi_SPIComponent, sx127x_SX127x } from "../markers";
+import type { __marker_spi_SPIComponent, __marker_sx127x_SX127x } from "../markers";
 export interface Sx127xProps extends _CoreComponent {
     /**
      * bool: Enable automatic image calibration on temperature changes. Defaults to `true`.
@@ -117,7 +117,7 @@ export interface Sx127xProps extends _CoreComponent {
      */
     syncValue?: Array<number>;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -133,7 +133,7 @@ export interface Sx127xProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            sx127x: Sx127xProps & ComponentProps<sx127x_SX127x>;
+            sx127x: Sx127xProps & ComponentProps<__marker_sx127x_SX127x>;
         }
     }
 }

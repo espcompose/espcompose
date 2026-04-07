@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { font_Glyph } from "../markers";
+import type { __marker_font_Glyph } from "../markers";
 export interface FontExtrasProps {
     /** string: The path of the font file with the extra glyphs. */
     file: string;
@@ -33,7 +33,7 @@ export interface FontProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            font: FontProps & ComponentProps<font_Glyph>;
+            font: FontProps & ComponentProps<__marker_font_Glyph>;
         }
     }
 }

@@ -4,18 +4,18 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { syslog_Syslog, time_RealTimeClock, udp_UDPComponent } from "../markers";
+import type { __marker_syslog_Syslog, __marker_time_RealTimeClock, __marker_udp_UDPComponent } from "../markers";
 export interface SyslogProps {
     /**
      * [ID](/guides/configuration-types#id): The ID of the UDP client to use for sending logs. May be omitted if only one UD...
      * @yamlKey udp_id
      */
-    udpId?: RefProp<udp_UDPComponent>;
+    udpId?: RefProp<__marker_udp_UDPComponent>;
     /**
      * [ID](/guides/configuration-types#id): The ID of the time client to use for time-stamping logs. May be omitted if only...
      * @yamlKey time_id
      */
-    timeId?: RefProp<time_RealTimeClock>;
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** int: The port to send logs to. Defaults to `514`. */
     port?: number;
     /** string: The highest log level to send to the syslog server. Defaults to `DEBUG`. */
@@ -27,7 +27,7 @@ export interface SyslogProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            syslog: SyslogProps & ComponentProps<syslog_Syslog>;
+            syslog: SyslogProps & ComponentProps<__marker_syslog_Syslog>;
         }
     }
 }

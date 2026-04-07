@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { power_supply_PowerSupply } from "../markers";
+import type { __marker_power_supply_PowerSupply } from "../markers";
 export interface PowerSupplyProps extends _CoreComponent {
     /** [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to control the power supply on. */
     pin: Pin;
@@ -28,7 +28,7 @@ export interface PowerSupplyProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            power_supply: PowerSupplyProps & ComponentProps<power_supply_PowerSupply>;
+            power_supply: PowerSupplyProps & ComponentProps<__marker_power_supply_PowerSupply>;
         }
     }
 }

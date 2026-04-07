@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { deep_sleep_DeepSleepComponent } from "../markers";
+import type { __marker_deep_sleep_DeepSleepComponent } from "../markers";
 export interface DeepSleepEsp32Ext1WakeupProps {
     /** list of pin numbers: The pins to wake up on. */
     pins: Array<Pin>;
@@ -47,7 +47,7 @@ export interface DeepSleepProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            deep_sleep: DeepSleepProps & ComponentProps<deep_sleep_DeepSleepComponent>;
+            deep_sleep: DeepSleepProps & ComponentProps<__marker_deep_sleep_DeepSleepComponent>;
         }
     }
 }

@@ -5,9 +5,9 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { micro_wake_word_MicroWakeWord, microphone_Microphone } from "../markers";
+import type { __marker_micro_wake_word_MicroWakeWord, __marker_microphone_Microphone } from "../markers";
 export interface MicroWakeWordMicrophoneProps {
-    microphone?: RefProp<microphone_Microphone>;
+    microphone?: RefProp<__marker_microphone_Microphone>;
     /** @yamlKey bits_per_sample */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
@@ -40,7 +40,7 @@ export interface MicroWakeWordProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            micro_wake_word: MicroWakeWordProps & ComponentProps<micro_wake_word_MicroWakeWord>;
+            micro_wake_word: MicroWakeWordProps & ComponentProps<__marker_micro_wake_word_MicroWakeWord>;
         }
     }
 }

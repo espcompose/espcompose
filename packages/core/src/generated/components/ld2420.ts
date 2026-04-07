@@ -5,15 +5,15 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { ld2420_LD2420Component, uart_UARTComponent } from "../markers";
+import type { __marker_ld2420_LD2420Component, __marker_uart_UARTComponent } from "../markers";
 export interface Ld2420Props extends _CoreComponent {
     /** @yamlKey uart_id */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            ld2420: Ld2420Props & ComponentProps<ld2420_LD2420Component>;
+            ld2420: Ld2420Props & ComponentProps<__marker_ld2420_LD2420Component>;
         }
     }
 }

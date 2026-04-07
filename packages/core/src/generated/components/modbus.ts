@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { modbus_Modbus, uart_UARTComponent } from "../markers";
+import type { __marker_modbus_Modbus, __marker_uart_UARTComponent } from "../markers";
 export interface ModbusProps extends _CoreComponent {
     /** string: The role of this component, `client` or `server`. Defaults to `client`. */
     role?: "client" | "server";
@@ -33,12 +33,12 @@ export interface ModbusProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            modbus: ModbusProps & ComponentProps<modbus_Modbus>;
+            modbus: ModbusProps & ComponentProps<__marker_modbus_Modbus>;
         }
     }
 }

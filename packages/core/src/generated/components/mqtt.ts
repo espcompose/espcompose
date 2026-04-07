@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
-import type { mqtt_MQTTClientComponent } from "../markers";
+import type { __marker_mqtt_MQTTClientComponent } from "../markers";
 export interface MqttBirthMessageProps {
     topic: unknown;
     qos?: unknown;
@@ -177,7 +177,7 @@ export interface MqttProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mqtt: MqttProps & ComponentProps<mqtt_MQTTClientComponent>;
+            mqtt: MqttProps & ComponentProps<__marker_mqtt_MQTTClientComponent>;
         }
     }
 }

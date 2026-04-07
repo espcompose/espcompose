@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { factory_reset_FactoryResetComponent } from "../markers";
+import type { __marker_factory_reset_FactoryResetComponent } from "../markers";
 export interface FactoryResetProps extends _CoreComponent {
     /**
      * [Time](/guides/configuration-types#time): The maximum delay between power cycles. Default: 10s
@@ -23,7 +23,7 @@ export interface FactoryResetProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            factory_reset: FactoryResetProps & ComponentProps<factory_reset_FactoryResetComponent>;
+            factory_reset: FactoryResetProps & ComponentProps<__marker_factory_reset_FactoryResetComponent>;
         }
     }
 }

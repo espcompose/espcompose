@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
-import type { i2s_audio_I2SAudioComponent, i2s_audio_I2SAudioMediaPlayer, media_source_MediaSource, speaker_Speaker, speaker_SpeakerMediaPlayer, speaker_source_SpeakerSourceMediaPlayer } from "../markers";
+import type { __marker_i2s_audio_I2SAudioComponent, __marker_i2s_audio_I2SAudioMediaPlayer, __marker_media_source_MediaSource, __marker_speaker_Speaker, __marker_speaker_SpeakerMediaPlayer, __marker_speaker_source_SpeakerSourceMediaPlayer } from "../markers";
 interface SpeakerAnnouncementPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<speaker_Speaker>;
+    speaker: RefProp<__marker_speaker_Speaker>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
     format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
     /**
@@ -24,7 +24,7 @@ interface SpeakerAnnouncementPipelineProps {
 }
 interface SpeakerMediaPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<speaker_Speaker>;
+    speaker: RefProp<__marker_speaker_Speaker>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
     format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
     /**
@@ -44,9 +44,9 @@ interface SpeakerFilesProps {
 }
 interface SpeakerSourceAnnouncementPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<speaker_Speaker>;
+    speaker: RefProp<__marker_speaker_Speaker>;
     /** list of [IDs](/guides/configuration-types#id): A list of [media source](/components/media_source/) component IDs to u... */
-    sources: Array<RefProp<media_source_MediaSource>>;
+    sources: Array<RefProp<__marker_media_source_MediaSource>>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
     format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
     /**
@@ -62,9 +62,9 @@ interface SpeakerSourceAnnouncementPipelineProps {
 }
 interface SpeakerSourceMediaPipelineProps {
     /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<speaker_Speaker>;
+    speaker: RefProp<__marker_speaker_Speaker>;
     /** list of [IDs](/guides/configuration-types#id): A list of [media source](/components/media_source/) component IDs to u... */
-    sources: Array<RefProp<media_source_MediaSource>>;
+    sources: Array<RefProp<__marker_media_source_MediaSource>>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
     format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
     /**
@@ -213,12 +213,12 @@ interface SpeakerSourceProps extends _CoreComponent {
 }
 interface I2sAudioInternalProps extends _CoreComponent {
     /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<i2s_audio_I2SAudioComponent>;
+    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
     mode: "left" | "right" | "stereo";
 }
 interface I2sAudioExternalProps extends _CoreComponent {
     /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<i2s_audio_I2SAudioComponent>;
+    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
     /** @yamlKey i2s_dout_pin */
     i2sDoutPin: Pin;
     /** @yamlKey mute_pin */
@@ -229,15 +229,15 @@ interface I2sAudioExternalProps extends _CoreComponent {
 }
 export type MediaPlayerProps = (MediaPlayerBaseProps & {
     platform: "speaker";
-} & SpeakerProps & ComponentProps<speaker_SpeakerMediaPlayer>) | (MediaPlayerBaseProps & {
+} & SpeakerProps & ComponentProps<__marker_speaker_SpeakerMediaPlayer>) | (MediaPlayerBaseProps & {
     platform: "speaker_source";
-} & SpeakerSourceProps & ComponentProps<speaker_source_SpeakerSourceMediaPlayer>) | (MediaPlayerBaseProps & {
+} & SpeakerSourceProps & ComponentProps<__marker_speaker_source_SpeakerSourceMediaPlayer>) | (MediaPlayerBaseProps & {
     platform: "i2s_audio";
     dacType: "internal";
-} & I2sAudioInternalProps & ComponentProps<i2s_audio_I2SAudioMediaPlayer>) | (MediaPlayerBaseProps & {
+} & I2sAudioInternalProps & ComponentProps<__marker_i2s_audio_I2SAudioMediaPlayer>) | (MediaPlayerBaseProps & {
     platform: "i2s_audio";
     dacType: "external";
-} & I2sAudioExternalProps & ComponentProps<i2s_audio_I2SAudioMediaPlayer>);
+} & I2sAudioExternalProps & ComponentProps<__marker_i2s_audio_I2SAudioMediaPlayer>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

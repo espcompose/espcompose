@@ -9,9 +9,9 @@
 //
 //   Type level — InferReactiveProperties<T> uses the phantom brands on
 //   marker types to narrow which reactive properties are available:
-//     Ref<sensor_Sensor>.value      → IRReactiveNode<number>
-//     Ref<binary_sensor_BinarySensor>.isOn → IRReactiveNode<boolean>
-//     Ref<light_LightState>.brightness     → IRReactiveNode<number>
+//     Ref<SensorRef>.value             → IRReactiveNode<number>
+//     Ref<BinarySensorRef>.isOn        → IRReactiveNode<boolean>
+//     Ref<Components.Light.LightStateRef>.brightness → IRReactiveNode<number>
 //
 //   Runtime level — REACTIVE_PROPERTY_MAP is consulted by the RefHandle
 //   Proxy to create IRReactiveNode instances when a reactive property is

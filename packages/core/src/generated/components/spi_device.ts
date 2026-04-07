@@ -4,12 +4,12 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { spi_SPIComponent, spi_device_SPIDeviceComponent } from "../markers";
+import type { __marker_spi_SPIComponent, __marker_spi_device_SPIDeviceComponent } from "../markers";
 export interface SpiDeviceProps {
     /** @yamlKey bit_order */
     bitOrder?: "msb_first" | "lsb_first";
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -22,7 +22,7 @@ export interface SpiDeviceProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            spi_device: SpiDeviceProps & ComponentProps<spi_device_SPIDeviceComponent>;
+            spi_device: SpiDeviceProps & ComponentProps<__marker_spi_device_SPIDeviceComponent>;
         }
     }
 }

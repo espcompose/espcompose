@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { dfplayer_DFPlayer, uart_UARTComponent } from "../markers";
+import type { __marker_dfplayer_DFPlayer, __marker_uart_UARTComponent } from "../markers";
 export interface DfplayerProps {
     /**
      * [Automation](/automations): An action to be performed when playback is finished.
@@ -15,12 +15,12 @@ export interface DfplayerProps {
      * [ID](/guides/configuration-types#id): Manually specify the ID of the UART hub.
      * @yamlKey uart_id
      */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            dfplayer: DfplayerProps & ComponentProps<dfplayer_DFPlayer>;
+            dfplayer: DfplayerProps & ComponentProps<__marker_dfplayer_DFPlayer>;
         }
     }
 }

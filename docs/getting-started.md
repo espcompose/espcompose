@@ -105,10 +105,10 @@ Call `useRef<T>()` to create a typed reference, pass it to an element's `ref` pr
 
 ```tsx
 import { useRef } from '@espcompose/core';
-import type { output_FloatOutput, light_LightOutput } from '@espcompose/core';
+import type { FloatOutputRef, LightOutputRef } from '@espcompose/core';
 
-const outputRef = useRef<output_FloatOutput>();
-const lightRef = useRef<light_LightOutput>();
+const outputRef = useRef<FloatOutputRef>();
+const lightRef = useRef<LightOutputRef>();
 
 export default (
   <esphome name="my-device">
@@ -137,7 +137,7 @@ light:
   output: r_a1b2c3d4e
 ```
 
-The type parameter (e.g. `output_FloatOutput`) provides type safety — your IDE will catch it if you pass a ref of the wrong type to a prop that expects a different component kind.
+The type parameter (e.g. `FloatOutputRef`) provides type safety — your IDE will catch it if you pass a ref of the wrong type to a prop that expects a different component kind.
 
 ## Event Handlers and Scripts
 
@@ -245,12 +245,12 @@ Refs to actionable components (lights, switches, etc.) provide typed action meth
 
 ```tsx
 import { delay, logger, useRef, useScript } from '@espcompose/core';
-import type { light_LightOutput, switch__Switch, output_FloatOutput } from '@espcompose/core';
+import type { LightOutputRef, SwitchRef, FloatOutputRef } from '@espcompose/core';
 
 function App() {
-  const lightRef = useRef<light_LightOutput>();
-  const switchRef = useRef<switch__Switch>();
-  const outputRef = useRef<output_FloatOutput>();
+  const lightRef = useRef<LightOutputRef>();
+  const switchRef = useRef<SwitchRef>();
+  const outputRef = useRef<FloatOutputRef>();
 
   const toggleAll = useScript(async () => {
     lightRef.toggle();
@@ -289,6 +289,7 @@ function App() {
 }
 
 export default <App />;
+```
 
 ## CLI Commands
 

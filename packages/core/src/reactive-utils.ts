@@ -9,16 +9,49 @@
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
 import { __espcompose } from './__espcompose';
+import type { TriggerHandler, BINDING_BRAND } from './types';
+import type { CssStyleProps } from './style-types';
 
-// ── BindProp<T>: the reactive prop type alias ──────────────────────────────
+// ── Reactive<T>: the reactive prop type alias ─────────────────────────────
 
 /**
  * A prop value that can be static, a reactive node, or a reactive function.
  * Component authors use this to declare which props support reactive binding.
  */
-export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
+export type Reactive<T> = T | (() => T) | IRReactiveNode<T>;
 
-// ── resolveBindProp ────────────────────────────────────────────────────────
+// ── WidgetProps<T>: mapped type for design-system widget props ─────────────
+
+/**
+ * Maps a plain props interface into widget-ready props by wrapping each
+ * property in `Reactive<T>` — except for `children`, `style`, any
+ * `TriggerHandler` properties, any `BINDING_BRAND` types (bindings, refs,
+ * actions), and any keys listed in `Skip`.
+ *
+ * A `style?: CssStyleProps` property is always included automatically —
+ * component authors do not need to declare it in their base interface.
+ *
+ * @example
+ * export type SwitchProps = WidgetProps<{
+ *   label: string;
+ *   value?: boolean;
+ *   onChange?: TriggerHandler<{ x: boolean }>;
+ *   binding: LightBinding;
+ *   width?: SizeValue;
+ * }>;
+ * // → { label: Reactive<string>; value?: Reactive<boolean>; onChange?: TriggerHandler<…>; binding: LightBinding; width?: Reactive<SizeValue>; style?: CssStyleProps }
+ */
+export type WidgetProps<T, Skip extends keyof T = never> = {
+  [K in keyof T]: K extends 'children' | 'style' | Skip
+    ? T[K]
+    : NonNullable<T[K]> extends TriggerHandler<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+      ? T[K]
+      : NonNullable<T[K]> extends { readonly [BINDING_BRAND]?: true }
+        ? T[K]
+        : Reactive<NonNullable<T[K]>> | Extract<T[K], undefined>;
+} & { style?: CssStyleProps };
+
+// ── useReactive ────────────────────────────────────────────────────────────
 
 /**
  * Normalize a prop value that may be static, reactive node, or reactive function.
@@ -27,7 +60,7 @@ export type BindProp<T> = T | (() => T) | IRReactiveNode<T>;
  * - `() => T` → evaluate with dependency tracking → IRReactiveNode or literal
  * - `T` → literal (no reactivity)
  */
-export function resolveBindProp<T>(prop: BindProp<T>): T | IRReactiveNode<T> {
+export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
   if (isIRReactiveNode(prop)) {
     return prop as IRReactiveNode<T>;
   }
@@ -35,6 +68,31 @@ export function resolveBindProp<T>(prop: BindProp<T>): T | IRReactiveNode<T> {
     return useMemo(prop as () => T);
   }
   return prop as T;
+}
+
+// ── useReactiveMap ─────────────────────────────────────────────────────────
+
+/**
+ * Map a `Reactive<T>` prop through a pure function, returning a reactive
+ * result when the input is reactive.
+ *
+ * Encapsulates the common `useReactive` → `isIRReactiveNode` → `useMemo`
+ * pattern so that hook authors never need to deal with the branch manually.
+ *
+ * @example
+ * export function useSpacing(value: Reactive<SpacingToken>): Signal<number> {
+ *   return useReactiveMap(value, (v) => themeLeaf('spacing', v));
+ * }
+ */
+export function useReactiveMap<T, R>(
+  prop: Reactive<T>,
+  fn: (value: T) => R,
+): R {
+  const resolved = useReactive(prop);
+  if (isIRReactiveNode(resolved)) {
+    return useMemo(() => fn((resolved as IRReactiveNode<T>).get())) as R;
+  }
+  return fn(resolved as T);
 }
 
 // ── reactiveIsNaN ──────────────────────────────────────────────────────────

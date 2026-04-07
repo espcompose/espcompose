@@ -4,24 +4,18 @@
  * Compiles to <lvgl-page> with background from the `ds-bg` style definition.
  */
 
-import type { EspComposeElement } from '@espcompose/core';
-import { createIntentComponent, LVGL_INTENTS, useReactiveTheme } from '@espcompose/core';
-import { resolveSpacing } from '../theme/resolvers';
-import type { SpacingToken } from '../theme/types';
+import type { EspComposeElement, WidgetProps } from '@espcompose/core';
+import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
+import { useSpacing } from '../hooks';
+import type { SpacingToken, Theme } from '../theme/types';
 
-interface ScreenProps {
+type ScreenProps = WidgetProps<{
   children?: EspComposeElement | EspComposeElement[];
-  /** Padding around the page content. Token name or pixel value. */
-  padding?: SpacingToken | number;
+  /** Padding around the page content. Token name. */
+  padding?: SpacingToken;
   /** Skip this page in the page list. */
   skip?: boolean;
-  /** Background color override (hex). If set, overrides the style definition. */
-  bgColor?: string;
-  /** Border width in pixels. Default: 0. */
-  borderWidth?: number;
-  /** Border color (hex). */
-  borderColor?: string;
-}
+}, 'skip'>;
 
 /**
  * Screen — a top-level LVGL page container.
@@ -36,28 +30,26 @@ interface ScreenProps {
  *   </VStack>
  * </Screen>
  */
-export const Screen = createIntentComponent(
+export const Screen = createWidgetComponent(
   (props: ScreenProps): EspComposeElement => {
-    const padding = props.padding != null ? resolveSpacing(props.padding) : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const theme = useReactiveTheme() as any;
-    const bgColor = props.bgColor ?? theme?.colors?.background;
+    const padding = props.padding != null ? useSpacing(props.padding) : undefined;
+    const theme = useTheme<Theme>();
+    const bgColor = props.style?.backgroundColor ?? theme?.colors?.background;
 
     return (
       <lvgl-page
-        bgColor={bgColor}
-        borderWidth={props.borderWidth ?? 0}
-        borderColor={props.borderColor}
-        padAll={padding}
         skip={props.skip}
-        x:custom={{ scrollbar_mode: 'OFF' }}
+        style={{
+          backgroundColor: bgColor,
+          borderWidth: props.style?.borderWidth ?? 0,
+          ...(props.style?.borderColor != null ? { borderColor: props.style.borderColor } : {}),
+          ...(padding != null ? { padding: padding } : {}),
+          scrollbarMode: 'off',
+        }}
       >
         {props.children}
       </lvgl-page>
     );
   },
-  {
-    intents: [LVGL_INTENTS.WIDGET] as const,
-    allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
-  },
+  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );

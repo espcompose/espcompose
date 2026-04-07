@@ -5,13 +5,13 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _Rc522 } from "../bases";
-import type { rc522_spi_RC522Spi, spi_SPIComponent } from "../markers";
+import type { __marker_rc522_spi_RC522Spi, __marker_spi_SPIComponent } from "../markers";
 export interface Rc522SpiProps extends _Rc522 {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID of the [SPI Component](/components/spi) if you want to ...
      * @yamlKey spi_id
      */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -27,7 +27,7 @@ export interface Rc522SpiProps extends _Rc522 {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            rc522_spi: Rc522SpiProps & ComponentProps<rc522_spi_RC522Spi>;
+            rc522_spi: Rc522SpiProps & ComponentProps<__marker_rc522_spi_RC522Spi>;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { apds9960_APDS9960, i2c_I2CBus } from "../markers";
+import type { __marker_apds9960_APDS9960, __marker_i2c_I2CBus } from "../markers";
 export interface Apds9960Props extends _CoreComponent {
     /**
      * int: The LED drive level in mA. One of 100mA, 50mA, 25mA, 12.5mA. Defaults to `100mA`.
@@ -43,14 +43,14 @@ export interface Apds9960Props extends _CoreComponent {
      */
     updateInterval?: TimePeriod;
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /** int: The I²C address of the sensor. Defaults to `0x39`. */
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            apds9960: Apds9960Props & ComponentProps<apds9960_APDS9960>;
+            apds9960: Apds9960Props & ComponentProps<__marker_apds9960_APDS9960>;
         }
     }
 }

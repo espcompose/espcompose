@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { image_Image } from "../markers";
+import type { __marker_image_Image } from "../markers";
 export interface ImageProps {
     /** @filePath — path (relative to YAML), MDI icon (mdi:name), or URL. */
     file: string;
@@ -28,7 +28,7 @@ export interface ImageProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            image: ImageProps & ComponentProps<image_Image>;
+            image: ImageProps & ComponentProps<__marker_image_Image>;
         }
     }
 }

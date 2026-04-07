@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { zephyr_CdcAcm } from "../markers";
+import type { __marker_zephyr_CdcAcm } from "../markers";
 export interface Nrf52DfuProps {
     /** @yamlKey reset_pin */
     resetPin: Pin;
@@ -36,7 +36,7 @@ export interface Nrf52Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            nrf52: Nrf52Props & ComponentProps<zephyr_CdcAcm>;
+            nrf52: Nrf52Props & ComponentProps<__marker_zephyr_CdcAcm>;
         }
     }
 }

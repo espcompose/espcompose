@@ -7,7 +7,7 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { Display, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
@@ -15,10 +15,10 @@ function ActionButton(props: {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
 }) {
-  const { onRelease, children, ...rest } = props;
+  const { onRelease, children, x, y, width, height } = props;
   return (
     <lvgl-button
-      {...rest}
+      style={{ left: x, top: y, width, height }}
       x:custom={onRelease != null ? { on_release: onRelease } : undefined}
     >
       {children}
@@ -37,8 +37,7 @@ function HALightControl(props: { entity: string; label: string }) {
     <>
       {/* Reactive state passthrough */}
       <lvgl-label
-        x={10}
-        y={10}
+        style={{ left: 10, top: 10 }}
         text={light.stateText}
       />
 
@@ -52,14 +51,14 @@ function HALightControl(props: { entity: string; label: string }) {
           light.toggle();
         }}
       >
-        <lvgl-label text={props.label} align="CENTER" />
+        <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
       </ActionButton>
     </>
   );
 }
 
 function App() {
-  const displayRef = useRef<Display>();
+  const displayRef = useRef<DisplayRef>();
 
   return (
     <esphome name="ha-dynamic-device" comment="Dynamic HA entity binding demo">

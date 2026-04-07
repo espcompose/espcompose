@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { EntityBase, copy_CopySelect, es8388_ES8388, ld2410_LD2410Component, ld2412_LD2412Component, ld2420_LD2420Component, ld2450_LD2450Component, logger_Logger, logger_LoggerLevelSelect, lvgl_LVGLSelect, modbus_controller_ModbusController, modbus_controller_ModbusSelect, seeed_mr24hpc1_MR24HPC1Component, seeed_mr60fda2_MR60FDA2Component, select_Select, template__TemplateSelect, tuya_Tuya, tuya_TuyaSelect, web_server_WebServer } from "../markers";
+import type { __marker_EntityBase, __marker_copy_CopySelect, __marker_es8388_ES8388, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2450_LD2450Component, __marker_logger_Logger, __marker_logger_LoggerLevelSelect, __marker_lvgl_LVGLSelect, __marker_modbus_controller_ModbusController, __marker_modbus_controller_ModbusSelect, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_seeed_mr60fda2_MR60FDA2Component, __marker_select_Select, __marker_template__TemplateSelect, __marker_tuya_Tuya, __marker_tuya_TuyaSelect, __marker_web_server_WebServer } from "../markers";
 interface SelectWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -23,7 +23,7 @@ interface Es8388DacOutputPropsAvailabilityProps {
 }
 interface Es8388DacOutputPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -76,7 +76,7 @@ interface Es8388AdcInputMicPropsAvailabilityProps {
 }
 interface Es8388AdcInputMicPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -129,7 +129,7 @@ interface Ld2410DistanceResolutionPropsAvailabilityProps {
 }
 interface Ld2410DistanceResolutionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -182,7 +182,7 @@ interface Ld2410LightFunctionPropsAvailabilityProps {
 }
 interface Ld2410LightFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -235,7 +235,7 @@ interface Ld2410OutPinLevelPropsAvailabilityProps {
 }
 interface Ld2410OutPinLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -288,7 +288,7 @@ interface Ld2410BaudRatePropsAvailabilityProps {
 }
 interface Ld2410BaudRatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -341,7 +341,7 @@ interface Ld2412BaudRatePropsAvailabilityProps {
 }
 interface Ld2412BaudRatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -394,7 +394,7 @@ interface Ld2412DistanceResolutionPropsAvailabilityProps {
 }
 interface Ld2412DistanceResolutionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -447,7 +447,7 @@ interface Ld2412LightFunctionPropsAvailabilityProps {
 }
 interface Ld2412LightFunctionPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -500,7 +500,7 @@ interface Ld2412OutPinLevelPropsAvailabilityProps {
 }
 interface Ld2412OutPinLevelPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -553,7 +553,7 @@ interface Ld2420OperatingModePropsAvailabilityProps {
 }
 interface Ld2420OperatingModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -606,7 +606,7 @@ interface Ld2450BaudRatePropsAvailabilityProps {
 }
 interface Ld2450BaudRatePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -659,7 +659,7 @@ interface Ld2450ZoneTypePropsAvailabilityProps {
 }
 interface Ld2450ZoneTypePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -712,7 +712,7 @@ interface SeeedMr24hpc1SceneModePropsAvailabilityProps {
 }
 interface SeeedMr24hpc1SceneModePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -765,7 +765,7 @@ interface SeeedMr24hpc1UnmanTimePropsAvailabilityProps {
 }
 interface SeeedMr24hpc1UnmanTimePropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -818,7 +818,7 @@ interface SeeedMr24hpc1ExistenceBoundaryPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1ExistenceBoundaryPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -871,7 +871,7 @@ interface SeeedMr24hpc1MotionBoundaryPropsAvailabilityProps {
 }
 interface SeeedMr24hpc1MotionBoundaryPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -924,7 +924,7 @@ interface SeeedMr60fda2InstallHeightPropsAvailabilityProps {
 }
 interface SeeedMr60fda2InstallHeightPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -977,7 +977,7 @@ interface SeeedMr60fda2HeightThresholdPropsAvailabilityProps {
 }
 interface SeeedMr60fda2HeightThresholdPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1030,7 +1030,7 @@ interface SeeedMr60fda2SensitivityPropsAvailabilityProps {
 }
 interface SeeedMr60fda2SensitivityPropsWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -1087,14 +1087,14 @@ interface CopyProps extends _CoreComponent {
      * [ID](/guides/configuration-types#id): The select that should be mirrored.
      * @yamlKey source_id
      */
-    sourceId: RefProp<select_Select>;
+    sourceId: RefProp<__marker_select_Select>;
 }
 interface Es8388Props {
     /**
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
      * @yamlKey es8388_id
      */
-    es8388Id?: RefProp<es8388_ES8388>;
+    es8388Id?: RefProp<__marker_es8388_ES8388>;
     /**
      * Control the DAC Audio output.
      * @yamlKey dac_output
@@ -1111,7 +1111,7 @@ interface Ld2410Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
      * @yamlKey ld2410_id
      */
-    ld2410Id?: RefProp<ld2410_LD2410Component>;
+    ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
     /**
      * Control the gates distance resolution. Can be `0.75m` or `0.2m`. Defaults to `0.75m`. All options from [Select](/comp...
      * @yamlKey distance_resolution
@@ -1138,7 +1138,7 @@ interface Ld2412Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
      * @yamlKey ld2412_id
      */
-    ld2412Id?: RefProp<ld2412_LD2412Component>;
+    ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
     /**
      * Allows changing the baud rate of the LD2412's serial port. Defaults to `115200`. Once changed, sensors will stop work...
      * @yamlKey baud_rate
@@ -1162,7 +1162,7 @@ interface Ld2412Props {
 }
 interface Ld2420Props {
     /** @yamlKey ld2420_id */
-    ld2420Id?: RefProp<ld2420_LD2420Component>;
+    ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
     /**
      * Provisions the operating mode select component. May contain any options from [Select](/components/select#config-select).
      * @yamlKey operating_mode
@@ -1174,7 +1174,7 @@ interface Ld2450Props {
      * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
      * @yamlKey ld2450_id
      */
-    ld2450Id?: RefProp<ld2450_LD2450Component>;
+    ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
     /**
      * Control the UART serial port baud rate. Defaults to `256000`. Once changed, all sensors will stop working until a fre...
      * @yamlKey baud_rate
@@ -1191,7 +1191,7 @@ interface LoggerProps {
     entityCategory?: unknown;
     icon?: unknown;
     /** @yamlKey logger_id */
-    loggerId?: RefProp<logger_Logger>;
+    loggerId?: RefProp<__marker_logger_Logger>;
 }
 interface LvglProps {
     widget: RefProp<unknown>;
@@ -1201,7 +1201,7 @@ interface LvglProps {
 }
 interface ModbusControllerProps extends _CoreComponent {
     /** @yamlKey modbus_controller_id */
-    modbusControllerId?: RefProp<modbus_controller_ModbusController>;
+    modbusControllerId?: RefProp<__marker_modbus_controller_ModbusController>;
     address: number;
     /** @yamlKey value_type */
     valueType?: "RAW" | "U_WORD" | "S_WORD" | "U_DWORD" | "U_DWORD_R" | "S_DWORD" | "S_DWORD_R" | "U_QWORD" | "U_QWORD_R" | "S_QWORD" | "S_QWORD_R";
@@ -1221,7 +1221,7 @@ interface ModbusControllerProps extends _CoreComponent {
 }
 interface SeeedMr24hpc1Props {
     /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: RefProp<seeed_mr24hpc1_MR24HPC1Component>;
+    mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
     /**
      * Valid only in [standard mode](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-standard_mode). Used to sel...
      * @yamlKey scene_mode
@@ -1245,7 +1245,7 @@ interface SeeedMr24hpc1Props {
 }
 interface SeeedMr60fda2Props {
     /** @yamlKey mr60fda2_id */
-    mr60fda2Id?: RefProp<seeed_mr60fda2_MR60FDA2Component>;
+    mr60fda2Id?: RefProp<__marker_seeed_mr60fda2_MR60FDA2Component>;
     /**
      * Before using the MR60FDA2, please select the installation height of the radar according to the actual situation in or...
      * @yamlKey install_height
@@ -1289,7 +1289,7 @@ interface TemplateProps extends _CoreComponent {
 }
 interface TuyaProps extends _CoreComponent {
     /** @yamlKey tuya_id */
-    tuyaId?: RefProp<tuya_Tuya>;
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey enum_datapoint */
     enumDatapoint?: number;
     /** @yamlKey int_datapoint */
@@ -1299,31 +1299,31 @@ interface TuyaProps extends _CoreComponent {
 }
 export type SelectProps = (SelectBaseProps & {
     platform: "copy";
-} & CopyProps & ComponentProps<copy_CopySelect>) | (SelectBaseProps & {
+} & CopyProps & ComponentProps<__marker_copy_CopySelect>) | (SelectBaseProps & {
     platform: "es8388";
-} & Es8388Props & ComponentProps<select_Select>) | (SelectBaseProps & {
+} & Es8388Props & ComponentProps<__marker_select_Select>) | (SelectBaseProps & {
     platform: "ld2410";
-} & Ld2410Props & ComponentProps<EntityBase>) | (SelectBaseProps & {
+} & Ld2410Props & ComponentProps<__marker_EntityBase>) | (SelectBaseProps & {
     platform: "ld2412";
-} & Ld2412Props & ComponentProps<EntityBase>) | (SelectBaseProps & {
+} & Ld2412Props & ComponentProps<__marker_EntityBase>) | (SelectBaseProps & {
     platform: "ld2420";
-} & Ld2420Props & ComponentProps<select_Select>) | (SelectBaseProps & {
+} & Ld2420Props & ComponentProps<__marker_select_Select>) | (SelectBaseProps & {
     platform: "ld2450";
-} & Ld2450Props & ComponentProps<EntityBase>) | (SelectBaseProps & {
+} & Ld2450Props & ComponentProps<__marker_EntityBase>) | (SelectBaseProps & {
     platform: "logger";
-} & LoggerProps & ComponentProps<logger_LoggerLevelSelect>) | (SelectBaseProps & {
+} & LoggerProps & ComponentProps<__marker_logger_LoggerLevelSelect>) | (SelectBaseProps & {
     platform: "lvgl";
-} & LvglProps & ComponentProps<lvgl_LVGLSelect>) | (SelectBaseProps & {
+} & LvglProps & ComponentProps<__marker_lvgl_LVGLSelect>) | (SelectBaseProps & {
     platform: "modbus_controller";
-} & ModbusControllerProps & ComponentProps<modbus_controller_ModbusSelect>) | (SelectBaseProps & {
+} & ModbusControllerProps & ComponentProps<__marker_modbus_controller_ModbusSelect>) | (SelectBaseProps & {
     platform: "seeed_mr24hpc1";
-} & SeeedMr24hpc1Props & ComponentProps<select_Select>) | (SelectBaseProps & {
+} & SeeedMr24hpc1Props & ComponentProps<__marker_select_Select>) | (SelectBaseProps & {
     platform: "seeed_mr60fda2";
-} & SeeedMr60fda2Props & ComponentProps<select_Select>) | (SelectBaseProps & {
+} & SeeedMr60fda2Props & ComponentProps<__marker_select_Select>) | (SelectBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateSelect>) | (SelectBaseProps & {
+} & TemplateProps & ComponentProps<__marker_template__TemplateSelect>) | (SelectBaseProps & {
     platform: "tuya";
-} & TuyaProps & ComponentProps<tuya_TuyaSelect>);
+} & TuyaProps & ComponentProps<__marker_tuya_TuyaSelect>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

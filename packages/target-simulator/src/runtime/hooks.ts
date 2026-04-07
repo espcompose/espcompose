@@ -447,7 +447,7 @@ export function getIRReactiveNodeClass(): (new (config: Record<string, unknown>)
   return _IRReactiveNodeClass;
 }
 
-// ── useReactiveTheme() ───────────────────────────────────────────────────────
+// ── useTheme() ─────────────────────────────────────────────────────────────
 
 /** Reference to SDK's getThemeRegistry, set during build setup. */
 let _getThemeRegistry: (() => { getThemes(): Map<string, { values: Map<string, unknown> }> }) | null = null;
@@ -457,7 +457,7 @@ export function setGetThemeRegistry(fn: () => unknown): void {
 }
 
 /**
- * Simulator version of useReactiveTheme().
+ * Simulator version of useTheme().
  *
  * Returns a deeply-nested proxy where leaf access returns either:
  * - The actual theme value (for the active/first theme) for static rendering
@@ -466,7 +466,7 @@ export function setGetThemeRegistry(fn: () => unknown): void {
  * Reads from the SDK's global theme registry (populated by ThemeProvider
  * during render) to get the first theme's flattened values.
  */
-export function useReactiveTheme(): unknown {
+export function useTheme(): unknown {
   // Get flattened theme data from the SDK registry
   const flatValues = getActiveThemeValues();
   return createThemeProxy(flatValues, []);

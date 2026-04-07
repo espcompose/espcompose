@@ -5,7 +5,7 @@
 
 import type { ComponentProps, MACAddress, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { ble_client_BLEClient, esp32_ble_tracker_ESP32BLETracker } from "../markers";
+import type { __marker_ble_client_BLEClient, __marker_esp32_ble_tracker_ESP32BLETracker } from "../markers";
 export interface BleClientProps extends _CoreComponent {
     /**
      * MAC Address: The MAC address of the BLE device to connect to.
@@ -44,12 +44,12 @@ export interface BleClientProps extends _CoreComponent {
      */
     onNumericComparisonRequest?: TriggerHandler;
     /** @yamlKey esp32_ble_id */
-    esp32BleId?: RefProp<esp32_ble_tracker_ESP32BLETracker>;
+    esp32BleId?: RefProp<__marker_esp32_ble_tracker_ESP32BLETracker>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            ble_client: BleClientProps & ComponentProps<ble_client_BLEClient>;
+            ble_client: BleClientProps & ComponentProps<__marker_ble_client_BLEClient>;
         }
     }
 }

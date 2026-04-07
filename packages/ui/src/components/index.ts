@@ -12,6 +12,16 @@ export type { TrackSize } from './Grid';
 export { Text } from './Text';
 export { Button } from './Button';
 export { Card } from './Card';
-export { SliderField } from './SliderField';
-export { SwitchField } from './SwitchField';
-export { DropdownField } from './DropdownField';
+export { Slider } from './Slider';
+export type { SliderProps } from './Slider';
+export { Switch } from './Switch';
+export type { SwitchProps } from './Switch';
+export { Dropdown } from './Dropdown';
+export type { DropdownProps } from './Dropdown';
+export type { StyleProps, ButtonVariant } from './shared-types';
+
+// Binding-driven components
+export { LightButton } from './LightButton';
+export { LightSwitch } from './LightSwitch';
+export { LightSlider } from './LightSlider';
+export { SensorText } from './SensorText';

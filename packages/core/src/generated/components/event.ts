@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _UartDevice } from "../bases";
-import type { template__TemplateEvent, uart_UARTEvent, web_server_WebServer } from "../markers";
+import type { __marker_template__TemplateEvent, __marker_uart_UARTEvent, __marker_web_server_WebServer } from "../markers";
 interface EventWebServerProps {
     /** @yamlKey web_server_id */
-    webServerId?: RefProp<web_server_WebServer>;
+    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
@@ -35,9 +35,9 @@ interface UartProps extends _UartDevice, _CoreComponent {
 }
 export type EventProps = (EventBaseProps & {
     platform: "template";
-} & TemplateProps & ComponentProps<template__TemplateEvent>) | (EventBaseProps & {
+} & TemplateProps & ComponentProps<__marker_template__TemplateEvent>) | (EventBaseProps & {
     platform: "uart";
-} & UartProps & ComponentProps<uart_UARTEvent>);
+} & UartProps & ComponentProps<__marker_uart_UARTEvent>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

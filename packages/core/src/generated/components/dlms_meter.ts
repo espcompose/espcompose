@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { dlms_meter_DlmsMeterComponent, uart_UARTComponent } from "../markers";
+import type { __marker_dlms_meter_DlmsMeterComponent, __marker_uart_UARTComponent } from "../markers";
 export interface DlmsMeterProps extends _CoreComponent {
     /**
      * string: Key used to decrypt DLMS telegrams. Obtain this from your provider / grid operator.
@@ -15,12 +15,12 @@ export interface DlmsMeterProps extends _CoreComponent {
     /** Grid operator profile. Options: */
     provider?: "generic" | "netznoe";
     /** @yamlKey uart_id */
-    uartId?: RefProp<uart_UARTComponent>;
+    uartId?: RefProp<__marker_uart_UARTComponent>;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            dlms_meter: DlmsMeterProps & ComponentProps<dlms_meter_DlmsMeterComponent>;
+            dlms_meter: DlmsMeterProps & ComponentProps<__marker_dlms_meter_DlmsMeterComponent>;
         }
     }
 }

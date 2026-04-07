@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _I2sAudioSpeakerBase, _Speaker } from "../bases";
-import type { audio_dac_AudioDac, mixer_speaker_MixerSpeaker, resampler_ResamplerSpeaker, speaker_Speaker } from "../markers";
+import type { __marker_audio_dac_AudioDac, __marker_mixer_speaker_MixerSpeaker, __marker_resampler_ResamplerSpeaker, __marker_speaker_Speaker } from "../markers";
 interface MixerSourceSpeakersProps {
     /**
      * positive integer: The audio sample bit depth after resampling. Defaults to the output speaker's bits per sample.
@@ -23,7 +23,7 @@ interface MixerSourceSpeakersProps {
      * [ID](/guides/configuration-types#id): The [audio DAC](/components/audio_dac/) to use for volume control.
      * @yamlKey audio_dac
      */
-    audioDac?: RefProp<audio_dac_AudioDac>;
+    audioDac?: RefProp<__marker_audio_dac_AudioDac>;
     /**
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values can reduce stutteri...
      * @yamlKey buffer_duration
@@ -37,7 +37,7 @@ interface MixerProps {
      * [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the mixed audio.
      * @yamlKey output_speaker
      */
-    outputSpeaker: RefProp<speaker_Speaker>;
+    outputSpeaker: RefProp<__marker_speaker_Speaker>;
     /**
      * list: A list of source speaker inputs. Must have at least 2 and at most 8 speakers.
      * @yamlKey source_speakers
@@ -64,7 +64,7 @@ interface ResamplerProps extends _Speaker, _CoreComponent {
      * [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the resampled audio.
      * @yamlKey output_speaker
      */
-    outputSpeaker: RefProp<speaker_Speaker>;
+    outputSpeaker: RefProp<__marker_speaker_Speaker>;
     /**
      * [Time](/guides/configuration-types#time): The duration of the internal ring buffer. Larger values may reduce stutteri...
      * @yamlKey buffer_duration
@@ -91,9 +91,9 @@ interface I2sAudioExternalProps extends _I2sAudioSpeakerBase {
 }
 export type SpeakerProps = ({
     platform: "mixer";
-} & MixerProps & ComponentProps<mixer_speaker_MixerSpeaker>) | ({
+} & MixerProps & ComponentProps<__marker_mixer_speaker_MixerSpeaker>) | ({
     platform: "resampler";
-} & ResamplerProps & ComponentProps<resampler_ResamplerSpeaker>) | ({
+} & ResamplerProps & ComponentProps<__marker_resampler_ResamplerSpeaker>) | ({
     platform: "i2s_audio";
     dacType: "internal";
 } & I2sAudioInternalProps & ComponentProps) | ({

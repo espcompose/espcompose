@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { tm1651_TM1651Display } from "../markers";
+import type { __marker_tm1651_TM1651Display } from "../markers";
 export interface Tm1651Props {
     /**
      * [Pin Schema](/guides/configuration-types#pin-schema): CLK pin
@@ -20,7 +20,7 @@ export interface Tm1651Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            tm1651: Tm1651Props & ComponentProps<tm1651_TM1651Display>;
+            tm1651: Tm1651Props & ComponentProps<__marker_tm1651_TM1651Display>;
         }
     }
 }

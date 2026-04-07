@@ -34,6 +34,8 @@ export interface PhaseContext {
   transformedEntry?: string;
   /** Semantic IR from the execute phase (device pipeline only). */
   ir?: SemanticIR;
+  /** Collected secrets (key → value) from the execute phase. */
+  secrets?: ReadonlyMap<string, string>;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
 }

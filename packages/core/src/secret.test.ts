@@ -7,7 +7,7 @@ describe('secret', () => {
   });
 
   it('creates a SecretValue with the correct key', () => {
-    const val = secret('my-password');
+    const val = secret('my-password') as unknown as SecretValue;
     expect(val).toBeInstanceOf(SecretValue);
     expect(val.value).toBe('my-password');
     expect(val.key).toBe('secret_0');
@@ -20,8 +20,8 @@ describe('secret', () => {
   });
 
   it('assigns incrementing keys', () => {
-    const s0 = secret('first');
-    const s1 = secret('second');
+    const s0 = secret('first') as unknown as SecretValue;
+    const s1 = secret('second') as unknown as SecretValue;
     expect(s0.key).toBe('secret_0');
     expect(s1.key).toBe('secret_1');
     expect(getSecrets().size).toBe(2);

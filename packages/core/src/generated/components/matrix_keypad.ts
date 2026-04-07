@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
-import type { matrix_keypad_MatrixKeypad } from "../markers";
+import type { __marker_matrix_keypad_MatrixKeypad } from "../markers";
 export interface MatrixKeypadRowsProps {
     pin: Pin;
 }
@@ -37,7 +37,7 @@ export interface MatrixKeypadProps extends _CoreComponent {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            matrix_keypad: MatrixKeypadProps & ComponentProps<matrix_keypad_MatrixKeypad>;
+            matrix_keypad: MatrixKeypadProps & ComponentProps<__marker_matrix_keypad_MatrixKeypad>;
         }
     }
 }

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { mcp3204_MCP3204, spi_SPIComponent } from "../markers";
+import type { __marker_mcp3204_MCP3204, __marker_spi_SPIComponent } from "../markers";
 export interface Mcp3204Props {
     /**
      * float: The reference voltage. Defaults to `3.3V`.
@@ -12,7 +12,7 @@ export interface Mcp3204Props {
      */
     referenceVoltage?: number;
     /** @yamlKey spi_id */
-    spiId?: RefProp<spi_SPIComponent>;
+    spiId?: RefProp<__marker_spi_SPIComponent>;
     /** @yamlKey data_rate */
     dataRate?: unknown;
     /** @yamlKey spi_mode */
@@ -28,7 +28,7 @@ export interface Mcp3204Props {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            mcp3204: Mcp3204Props & ComponentProps<mcp3204_MCP3204>;
+            mcp3204: Mcp3204Props & ComponentProps<__marker_mcp3204_MCP3204>;
         }
     }
 }

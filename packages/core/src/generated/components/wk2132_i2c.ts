@@ -4,16 +4,16 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
-import type { i2c_I2CBus, weikai_i2c_WeikaiComponentI2C } from "../markers";
+import type { __marker_i2c_I2CBus, __marker_weikai_i2c_WeikaiComponentI2C } from "../markers";
 export interface Wk2132I2cProps {
     /** @yamlKey i2c_id */
-    i2cId?: RefProp<i2c_I2CBus>;
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     address?: number;
 }
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            wk2132_i2c: Wk2132I2cProps & ComponentProps<weikai_i2c_WeikaiComponentI2C>;
+            wk2132_i2c: Wk2132I2cProps & ComponentProps<__marker_weikai_i2c_WeikaiComponentI2C>;
         }
     }
 }
