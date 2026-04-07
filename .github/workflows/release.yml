@@ -79,7 +79,7 @@ jobs:
   deploy-docs:
     name: Deploy Docs to GitHub Pages
     needs: release
-    if: needs.release.outputs.published == 'true'
+    #if: needs.release.outputs.published == 'true'
     runs-on: ubuntu-latest
 
     permissions:
