@@ -258,7 +258,7 @@ function restoreLambdaMarkers(value: unknown): unknown {
  * Serialize a IRReactiveNode as a lambda marker.
  *
  * Generates a placeholder lambda body; the actual target-specific code generation
- * happens in the target's lowering layer (e.g. target-esphome's lower-yaml.ts).
+ * happens in the target's lowering layer (e.g. esphome-target's lower-yaml.ts).
  */
 function serializeIRReactiveNode(node: IRReactiveNode): unknown {
   if (node.kind === 'expression' && node.sourceId && node.property) {

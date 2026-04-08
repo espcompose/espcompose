@@ -36,7 +36,7 @@ export function registerTranspileCommand(program: Command) {
         console.log(`✓ ${result.filesWritten} file(s) written, ${result.filesTransformed} transformed`);
       } else {
         const { build } = await import('../compiler');
-        const { createEsphomeTarget } = await import('@espcompose/target-esphome');
+        const { createEsphomeTarget } = await import('@espcompose/esphome-target');
         const { resolvedDir, yamlPath } = resolvePaths(projectDir);
         await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug });
       }

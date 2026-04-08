@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { build } from '@espcompose/cli';
-import { createEsphomeTarget } from '@espcompose/target-esphome';
+import { createEsphomeTarget } from '@espcompose/esphome-target';
 import { createProjectTest } from './helpers';
 
 const projectsDir = path.resolve(__dirname, '..', 'projects');

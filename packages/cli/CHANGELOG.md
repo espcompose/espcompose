@@ -23,5 +23,5 @@
 - Updated dependencies [[`f8e2819`](https://github.com/espcompose/espcompose/commit/f8e28194022680b7af86b8501a4a3682e3ed6a9b)]:
   - @espcompose/core@0.1.0
   - @espcompose/eslint@0.1.0
-  - @espcompose/target-esphome@0.1.0
-  - @espcompose/target-simulator@0.1.0
+  - @espcompose/esphome-target@0.1.0
+  - @espcompose/simulator-target@0.1.0

@@ -1,4 +1,4 @@
-# @espcompose/target-simulator
+# @espcompose/esphome-target
 
 ## 0.1.0
 

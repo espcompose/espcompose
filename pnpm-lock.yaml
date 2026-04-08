@@ -166,15 +166,15 @@ importers:
       '@espcompose/core':
         specifier: workspace:*
         version: link:../core
+      '@espcompose/esphome-target':
+        specifier: workspace:*
+        version: link:../esphome-target
       '@espcompose/simulator-app':
         specifier: workspace:*
         version: link:../simulator-app
-      '@espcompose/target-esphome':
+      '@espcompose/simulator-target':
         specifier: workspace:*
-        version: link:../target-esphome
-      '@espcompose/target-simulator':
-        specifier: workspace:*
-        version: link:../target-simulator
+        version: link:../simulator-target
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
@@ -245,6 +245,43 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 9.39.4(jiti@2.6.1)
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
+
+  packages/esphome-codegen:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
+
+  packages/esphome-target:
+    dependencies:
+      '@espcompose/core':
+        specifier: workspace:*
+        version: link:../core
+      which:
+        specifier: 'catalog:'
+        version: 6.0.1
+      yaml:
+        specifier: 'catalog:'
+        version: 2.8.2
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.15
+      '@types/which':
+        specifier: 'catalog:'
+        version: 3.0.4
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -350,35 +387,7 @@ importers:
         specifier: 'catalog:'
         version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
 
-  packages/target-esphome:
-    dependencies:
-      '@espcompose/core':
-        specifier: workspace:*
-        version: link:../core
-      which:
-        specifier: 'catalog:'
-        version: 6.0.1
-      yaml:
-        specifier: 'catalog:'
-        version: 2.8.2
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 22.19.15
-      '@types/which':
-        specifier: 'catalog:'
-        version: 3.0.4
-      tsup:
-        specifier: 'catalog:'
-        version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
-
-  packages/target-simulator:
+  packages/simulator-target:
     dependencies:
       '@espcompose/core':
         specifier: workspace:*
@@ -443,15 +452,6 @@ importers:
         specifier: 'catalog:'
         version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
 
-  scripts:
-    devDependencies:
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 2.1.9(@types/node@22.19.15)(terser@5.46.1)
-
   tests/e2e:
     dependencies:
       '@espcompose/cli':
@@ -460,9 +460,9 @@ importers:
       '@espcompose/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@espcompose/target-esphome':
+      '@espcompose/esphome-target':
         specifier: workspace:*
-        version: link:../../packages/target-esphome
+        version: link:../../packages/esphome-target
       '@espcompose/ui':
         specifier: workspace:*
         version: link:../../packages/ui

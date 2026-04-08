@@ -32,7 +32,7 @@
       "dependsOn": ["build"],
       "cache": false
     },
-    "espcompose-scripts#test": {
+    "@espcompose/esphome-codegen#test": {
       "dependsOn": [],
       "cache": false
     }

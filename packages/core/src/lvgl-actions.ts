@@ -40,7 +40,7 @@ export const LVGL_UPDATABLE_WIDGETS: Readonly<Record<string, readonly string[]>>
 // Data-driven mapping from ESPHome prop names to LVGL C API setters.
 // Used by both:
 //   1. The type codegen (lvgl-codegen.ts) — to wrap props with Reactive<T>
-//   2. The C++ codegen in target-esphome — to generate update calls
+//   2. The C++ codegen in esphome-target — to generate update calls
 //
 // Each entry specifies:
 //   - lvglSetter: name suffix for lv_obj_set_style_<name>(obj, value, selector)

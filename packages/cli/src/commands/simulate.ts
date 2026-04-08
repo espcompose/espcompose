@@ -22,7 +22,7 @@ export function registerSimulateCommand(program: Command) {
       opts?: { port?: string; debug?: boolean; open?: boolean },
     ) => {
       const { compileToIR } = await import('../compiler');
-      const { startDevServer, startFileWatcher } = await import('@espcompose/target-simulator');
+      const { startDevServer, startFileWatcher } = await import('@espcompose/simulator-target');
 
       const resolvedDir = path.resolve(projectDir ?? '.');
       const port = Number(opts?.port ?? 5420);

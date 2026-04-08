@@ -22,5 +22,5 @@
 - Updated dependencies [[`f8e2819`](https://github.com/espcompose/espcompose/commit/f8e28194022680b7af86b8501a4a3682e3ed6a9b)]:
   - @espcompose/cli@0.1.0
   - @espcompose/core@0.1.0
-  - @espcompose/target-esphome@0.1.0
+  - @espcompose/esphome-target@0.1.0
   - @espcompose/ui@0.1.0

@@ -38,7 +38,7 @@ export function registerBuildCommand(program: Command) {
         console.log(`✓ Bundled ESM + DTS → ${opts.outDir ?? 'dist'}/`);
       } else {
         const { build } = await import('../compiler');
-        const { createEsphomeTarget, esphomeCompile } = await import('@espcompose/target-esphome');
+        const { createEsphomeTarget, esphomeCompile } = await import('@espcompose/esphome-target');
         const { resolvedDir, yamlPath } = resolvePaths(projectDir);
         const extraArgs = extractPassthroughArgs();
         await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug });

@@ -1,4 +1,4 @@
-// @espcompose/target-esphome — YAML/C++ firmware target backend
+// @espcompose/esphome-target — YAML/C++ firmware target backend
 // Lowers SemanticIR to ESPHome YAML config + C++ reactive runtime headers.
 
 // ComposeTarget implementation

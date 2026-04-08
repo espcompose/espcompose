@@ -1,5 +1,5 @@
 {
-  "name": "espcompose-scripts",
+  "name": "@espcompose/esphome-codegen",
   "version": "0.1.0",
   "private": true,
   "type": "module",

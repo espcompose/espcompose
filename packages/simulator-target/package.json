@@ -1,5 +1,5 @@
 {
-  "name": "@espcompose/target-simulator",
+  "name": "@espcompose/simulator-target",
   "version": "0.1.0",
   "description": "ESPHome Compose Simulator — Browser-based LVGL UI preview for fast iteration",
   "private": true,

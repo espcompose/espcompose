@@ -8,7 +8,7 @@ instances, etc.) to produce a structured JSON file that the TypeScript codegen
 can consume.
 
 Usage:
-    .cache/venv/bin/python scripts/codegen/extract_lvgl_schema.py \
+    .cache/venv/bin/python packages/esphome-codegen/src/extract_lvgl_schema.py \
         --esphome-path .cache/esphome \
         --output .cache/schemas/lvgl-schema.json
 """

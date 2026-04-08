@@ -50,8 +50,8 @@
   "devDependencies": {
     "@espcompose/core": "workspace:*",
     "@espcompose/simulator-app": "workspace:*",
-    "@espcompose/target-esphome": "workspace:*",
-    "@espcompose/target-simulator": "workspace:*",
+    "@espcompose/esphome-target": "workspace:*",
+    "@espcompose/simulator-target": "workspace:*",
     "@types/node": "catalog:",
     "commander": "catalog:",
     "espcompose-ir-viewer": "workspace:*",

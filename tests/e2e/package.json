@@ -11,7 +11,7 @@
   "dependencies": {
     "@espcompose/core": "workspace:*",
     "@espcompose/cli": "workspace:*",
-    "@espcompose/target-esphome": "workspace:*",
+    "@espcompose/esphome-target": "workspace:*",
     "@espcompose/ui": "workspace:*",
     "yaml": "catalog:"
   },

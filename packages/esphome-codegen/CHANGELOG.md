@@ -1,4 +1,4 @@
-# @espcompose/target-esphome
+# @espcompose/esphome-codegen
 
 ## 0.1.0
 
@@ -8,8 +8,3 @@
   Implemented a first pass of the UI library of components.
   Updated the demo project to leverage UI components.
   Added boot screen demo.
-
-### Patch Changes
-
-- Updated dependencies [[`f8e2819`](https://github.com/espcompose/espcompose/commit/f8e28194022680b7af86b8501a4a3682e3ed6a9b)]:
-  - @espcompose/core@0.1.0

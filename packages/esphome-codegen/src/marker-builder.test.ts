@@ -2,7 +2,7 @@
  * Unit tests for marker-builder.ts — verifies the generated markers.ts output
  * shape including Components namespace, top-level aliases, and brand stability.
  *
- * Run with: npx vitest run scripts/codegen/marker-builder.test.ts
+ * Run with: npx vitest run packages/esphome-codegen/src/marker-builder.test.ts
  */
 import { describe, it, expect } from 'vitest';
 import { buildMarkersFileContent } from './marker-builder.js';

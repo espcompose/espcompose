@@ -5,7 +5,7 @@
 // These carry the same duck-type shape {value, tag?, type?} that the IR
 // builder detects, so build.ts works unchanged without importing yaml.
 //
-// Targets that need real yaml.Scalar instances (target-esphome) create
+// Targets that need real yaml.Scalar instances (esphome-target) create
 // them in their own lowering layer.
 // ────────────────────────────────────────────────────────────────────────────
 

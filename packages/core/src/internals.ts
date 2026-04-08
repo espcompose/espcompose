@@ -5,8 +5,8 @@
  *
  * This sub-path export provides typed access to SDK internals consumed by:
  *   - @espcompose/cli (compiler)
- *   - @espcompose/target-esphome (code-generation)
- *   - @espcompose/target-simulator (code-generation)
+ *   - @espcompose/esphome-target (code-generation)
+ *   - @espcompose/simulator-target (code-generation)
  *   - @espcompose/eslint (lint rules)
  *
  * Do NOT import from this path in user application code.
@@ -61,7 +61,7 @@ export type { TriggerSignature, TriggerVariable } from './trigger-registry';
 // ── Intent registry (eslint validation) ────────────────────────────────────
 export { INTRINSIC_INTENT_REGISTRY } from './intent-registry';
 
-// ── LVGL codegen tables (target-esphome) ───────────────────────────────────
+// ── LVGL codegen tables (esphome-target) ───────────────────────────────────
 export {
   LVGL_STYLE_PROP_TABLE,
   LVGL_REACTIVE_STYLE_PROPS,
