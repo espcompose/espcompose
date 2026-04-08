@@ -1,17 +1,10 @@
 // ────────────────────────────────────────────────────────────────────────────
-// @espcompose/target-simulator — Browser-based LVGL UI preview
+// @espcompose/target-simulator/browser — Browser-safe exports only
+//
+// This entry point contains NO Node.js built-in imports (fs, http, path, etc.)
+// and is safe to bundle with Vite/Rollup for browser consumption.
+// The simulator React app should import from this entry point.
 // ────────────────────────────────────────────────────────────────────────────
-
-// ComposeTarget implementation (static HTML export path)
-export { createSimulatorTarget, type SimulatorTargetOptions } from './target';
-export { simulatorBuildFromIR, type SimulatorBuildResult } from './build';
-
-// Display config extraction from IR
-export { extractDisplayConfig, type DisplayConfig } from './extract-display-config';
-
-// Dev server (live reload path)
-export { startDevServer, type DevServer, type DevServerOptions } from './server/dev-server';
-export { startFileWatcher, type FileWatcher, type FileWatcherOptions } from './server/file-watcher';
 
 // WS protocol types (shared between server and React app)
 export {

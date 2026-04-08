@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@espcompose/core": "workspace:*",
+    "@espcompose/simulator-app": "workspace:*",
     "@espcompose/target-esphome": "workspace:*",
     "@espcompose/target-simulator": "workspace:*",
     "@types/node": "catalog:",

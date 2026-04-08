@@ -1,10 +1,14 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Simulator render — traverses JSX element tree and produces RuntimeNode[]
 //
-// Mirrors the SDK's render pipeline (runtime.ts + lvgl.ts) but produces
-// RuntimeNode trees instead of YAML-ready objects. Resolves functional
-// components, flattens fragments, extracts LVGL widget hierarchy, and
-// classifies props as static, reactive, action, or ref.
+// @deprecated This module is the LEGACY element-tree render path.
+// The production simulator pipeline uses the IR-based renderer in
+// backends/ir-renderer.ts (lowerToSimulator) which consumes SemanticIR
+// directly without hook interception or Proxy wrapping.
+//
+// This module is retained for unit/integration tests that exercise
+// the element→RuntimeNode conversion in isolation. It should NOT be
+// used in the build pipeline.
 //
 // Key difference from SDK render:
 //   - Does NOT convert keys to snake_case

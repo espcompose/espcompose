@@ -13,6 +13,10 @@
       "dependsOn": [],
       "outputs": ["dist/**"]
     },
+    "@espcompose/simulator-app#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "cache": true

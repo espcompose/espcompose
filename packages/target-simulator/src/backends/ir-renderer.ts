@@ -1,9 +1,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 // IR-based simulator renderer — SemanticIR → RuntimeNode[]
 //
-// Walks the SemanticIR config tree and produces the same RuntimeNode[] that
-// the old hook-patching renderer creates, but without any SDK hook
-// interception, Proxy, or withScriptScope wrapping.
+// Walks the SemanticIR config tree and produces RuntimeNode[] for the
+// browser simulator.
 //
 // The renderer:
 //   1. Finds the LVGL section in ir.sections
@@ -11,13 +10,11 @@
 //   3. Classifies each prop: IRReactive → ReactiveProp, IRRef → RefProp,
 //      IRAction → ActionProp, IRScalar → StaticProp
 //   4. Wires reactive props to JS Signal/Memo for MockProvider-driven updates
-//
-// This replaces: runtime/hooks.ts + runtime/render.ts for the build pipeline.
-// The existing hooks/render are kept for standalone use (testing, REPL).
+//   5. Populates theme getters from IR theme leaf data
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExprNode } from '@espcompose/core';
-import type { SemanticIR, IRValue, IRObject, IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar, IRActionNode } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRObject, IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar, IRActionNode, IRThemeData } from '@espcompose/core/internals';
 import type { RuntimeNode, RuntimeProp, RuntimeDependency, ActionStep } from '../types';
 import { Signal, Scheduler } from '../runtime/signals';
 import type { MockProvider } from '../providers/mock-provider';
@@ -88,6 +85,10 @@ interface IRRenderContext {
   entityRegistry: EntitySignalRegistry;
   provider: MockProvider;
   nodeCounter: number;
+  /** Theme data from the SemanticIR (undefined if no themes registered). */
+  themeData?: IRThemeData;
+  /** Active theme index — mutable so theme_select actions can update it. */
+  themeIndex: number;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -216,26 +217,78 @@ function entityIdToGeneratedId(entityId: string): string {
 
 /**
  * Walk an IRExprNode tree and call the visitor on each node.
+ *
+ * Covers every variant in the IRExprNode union. Adding a new variant
+ * without updating this function will cause a compile error via the
+ * exhaustive check in the default branch.
  */
 function walkIRExprNode(node: IRExprNode, visitor: (n: IRExprNode) => void): void {
   visitor(node);
   switch (node.kind) {
-    case 'binary': walkIRExprNode(node.left, visitor); walkIRExprNode(node.right, visitor); break;
-    case 'unary': case 'postfix': walkIRExprNode(node.operand, visitor); break;
-    case 'ternary': walkIRExprNode(node.test, visitor); walkIRExprNode(node.consequent, visitor); walkIRExprNode(node.alternate, visitor); break;
-    case 'call': node.args.forEach(a => walkIRExprNode(a, visitor)); break;
-    case 'concat': node.parts.forEach(p => walkIRExprNode(p, visitor)); break;
-    case 'to_string': case 'group': walkIRExprNode(node.expr, visitor); break;
-    case 'resolve_font': walkIRExprNode(node.family, visitor); walkIRExprNode(node.size, visitor); break;
+    case 'literal':
+    case 'signal_read':
+    case 'memo_read':
+    case 'theme_read':
+    case 'entity_prop':
+    case 'component_read':
+    case 'trigger_var':
+    case 'slot':
+      // Leaf nodes — no children to recurse into.
+      break;
+    case 'binary':
+      walkIRExprNode(node.left, visitor);
+      walkIRExprNode(node.right, visitor);
+      break;
+    case 'unary':
+    case 'postfix':
+      walkIRExprNode(node.operand, visitor);
+      break;
+    case 'ternary':
+      walkIRExprNode(node.test, visitor);
+      walkIRExprNode(node.consequent, visitor);
+      walkIRExprNode(node.alternate, visitor);
+      break;
+    case 'call':
+      node.args.forEach(a => walkIRExprNode(a, visitor));
+      break;
+    case 'concat':
+      node.parts.forEach(p => walkIRExprNode(p, visitor));
+      break;
+    case 'to_string':
+    case 'group':
+    case 'type_cast':
+    case 'format_string':
+      walkIRExprNode(node.expr, visitor);
+      break;
+    case 'resolve_font':
+      walkIRExprNode(node.family, visitor);
+      walkIRExprNode(node.size, visitor);
+      break;
+    case 'null_coalesce':
+      walkIRExprNode(node.left, visitor);
+      walkIRExprNode(node.right, visitor);
+      break;
+    case 'string_method':
+      walkIRExprNode(node.object, visitor);
+      node.args.forEach(a => walkIRExprNode(a, visitor));
+      break;
+    default: {
+      // Exhaustive check — if a new IRExprNode kind is added and not handled
+      // above, TypeScript will report an error here at compile time.
+      const _exhaustive: never = node;
+      throw new Error(`Unhandled IRExprNode kind in walkIRExprNode: ${(_exhaustive as IRExprNode).kind}`);
+    }
   }
 }
 
 /**
  * Build a JsLoweringContext for evaluating an IRExprNode in the simulator.
- * Creates entity getters wired to the EntitySignalRegistry.
+ * Creates entity getters wired to the EntitySignalRegistry and theme getters
+ * wired to the IR theme leaf data.
  */
 function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext): JsLoweringContext {
   const entityGetters = new Map<string, () => unknown>();
+  const themeGetters = new Map<string, () => unknown>();
 
   walkIRExprNode(exprIR, (node) => {
     if (node.kind === 'entity_prop') {
@@ -266,6 +319,15 @@ function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext): JsLow
           entityGetters.set(key, () => signals.stateSignal.get());
       }
     }
+
+    if (node.kind === 'theme_read') {
+      if (themeGetters.has(node.path)) return;
+      const leaf = ctx.themeData?.leafData.get(node.path);
+      if (leaf) {
+        // Closure captures ctx so theme_select updates are reflected.
+        themeGetters.set(node.path, () => leaf.values[ctx.themeIndex] ?? leaf.values[0]);
+      }
+    }
   });
 
   return {
@@ -273,7 +335,7 @@ function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext): JsLow
     memoGetters: new Map(),
     slotGetters: new Map(),
     entityGetters,
-    themeGetters: new Map(),
+    themeGetters,
   };
 }
 
@@ -433,6 +495,19 @@ async function executeActionStep(step: ActionStep, ctx: IRRenderContext): Promis
     case 'component_action':
       console.log(`[Simulator] ${step.target}.${step.method}()`);
       break;
+    case 'theme_select': {
+      if (ctx.themeData) {
+        const idx = ctx.themeData.themeNames.indexOf(step.themeName);
+        if (idx >= 0) {
+          ctx.themeIndex = idx;
+          console.log(`[Simulator] theme.select('${step.themeName}') → index ${idx}`);
+          Scheduler.instance().flush();
+        } else {
+          console.warn(`[Simulator] Unknown theme name: '${step.themeName}'. Available: ${ctx.themeData.themeNames.join(', ')}`);
+        }
+      }
+      break;
+    }
   }
 }
 
@@ -611,10 +686,14 @@ export function lowerToSimulator(
 ): RuntimeNode[] {
   Scheduler.reset();
 
+  const themeData = ir.espcompose.themes;
+
   const ctx: IRRenderContext = {
     entityRegistry: new EntitySignalRegistry(provider),
     provider,
     nodeCounter: 0,
+    themeData,
+    themeIndex: themeData?.defaultIndex ?? 0,
   };
 
   // Register all HA entities from the IR so the MockProvider has them

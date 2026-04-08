@@ -2,73 +2,148 @@
 // DOM-based LVGL renderer — maps RuntimeNodes to HTML elements
 //
 // Produces a visual approximation of an LVGL display in the browser.
-// Each widget type maps to appropriate HTML elements with CSS styling
-// that approximates LVGL's default dark theme.
+// Widget-type-specific rendering is handled by the widget registry
+// (renderer/widget-registry.ts). Theme colors are emitted as CSS custom
+// properties (renderer/theme-css.ts) so widgets can reference them and
+// theme switching updates only CSS variables on the viewport root.
 //
-// This renderer generates a self-contained HTML string that can be served
-// by the dev server. It includes:
-//   - The LVGL viewport (fixed-size container)
-//   - Rendered widget tree
-//   - Inline CSS for LVGL approximation
-//   - Control panel for mock entity manipulation
-//   - Action log panel
+// Layout: canvas (left, 70%) + sidebar (right, 30%) with a draggable
+// splitter. The display viewport is zoom-fitted into the canvas area.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { RuntimeNode, RuntimeProp } from '../types';
+import type { RuntimeNode } from '../types';
 import type { MockProvider } from '../providers/mock-provider';
+import type { IRThemeData } from '@espcompose/core/internals';
+import { escapeHtml } from './lvgl-styles';
+import { renderWidgetToHtml } from './widget-registry';
+import { generateThemeStyleBlock, generateThemeSwitchScript } from './theme-css';
 
 // ── CSS ──────────────────────────────────────────────────────────────────────
 
 const LVGL_CSS = `
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body { height: 100%; overflow: hidden; }
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #1a1a2e;
+  background: #111;
   color: #e0e0e0;
-  display: flex;
-  gap: 24px;
-  padding: 24px;
-  min-height: 100vh;
 }
 
-.sim-viewport {
-  border: 2px solid #444;
-  border-radius: 8px;
+/* ── Shell layout ─────────────────────────────────────────────────────────── */
+
+.sim-shell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Canvas — left side, contains the centered display */
+.sim-canvas {
+  flex: 7;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  background: #0d0d0d;
   overflow: hidden;
+}
+
+.sim-canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #1a1a2e;
+  border-bottom: 1px solid #333;
   flex-shrink: 0;
-  background: #000;
+}
+
+.sim-canvas-header .title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.sim-canvas-header .meta {
+  font-size: 12px;
+  color: #666;
+}
+
+.sim-canvas-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   position: relative;
 }
 
+/* The viewport is the actual display at its native pixel size, then scaled */
+.sim-viewport {
+  position: absolute;
+  overflow: hidden;
+  background: #000;
+  transform-origin: center center;
+  /* Crisp pixel scaling for small displays */
+  image-rendering: pixelated;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  border-radius: 4px;
+
+  /* Default theme fallbacks — overridden by theme CSS variables */
+  --thm-colors-background: #1a1a1a;
+  --thm-colors-primary-bg: #2196f3;
+  --thm-colors-primary-text: #fff;
+  --thm-colors-primary-bg-pressed: #1565c0;
+}
+
+/* ── Splitter ─────────────────────────────────────────────────────────────── */
+
+.sim-splitter {
+  width: 5px;
+  cursor: col-resize;
+  background: #222;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.sim-splitter:hover, .sim-splitter.dragging {
+  background: #2196f3;
+}
+
+/* ── Sidebar — right side ─────────────────────────────────────────────────── */
+
 .sim-sidebar {
-  flex: 1;
-  max-width: 400px;
+  flex: 3;
+  min-width: 200px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  background: #16213e;
+  overflow-y: auto;
 }
 
 .sim-panel {
-  background: #16213e;
-  border: 1px solid #333;
-  border-radius: 8px;
   padding: 16px;
+  border-bottom: 1px solid #1f2f4f;
 }
 
+.sim-panel:last-child { border-bottom: none; }
+
 .sim-panel h3 {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   color: #87ceeb;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* LVGL widget base styles */
+/* ── LVGL widget base styles ──────────────────────────────────────────────── */
+
 .lvgl-page {
   width: 100%;
   height: 100%;
-  background: #1a1a1a;
+  background: var(--thm-colors-background, #1a1a1a);
   overflow-y: auto;
   padding: 0;
   position: relative;
@@ -79,7 +154,7 @@ body {
 }
 
 .lvgl-label {
-  color: #fff;
+  color: var(--thm-colors-primary-text, #fff);
   font-size: 14px;
   line-height: 1.4;
   padding: 2px;
@@ -87,8 +162,8 @@ body {
 }
 
 .lvgl-button {
-  background: #2196f3;
-  color: #fff;
+  background: var(--thm-colors-primary-bg, #2196f3);
+  color: var(--thm-colors-primary-text, #fff);
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
@@ -101,207 +176,163 @@ body {
   min-height: 32px;
 }
 
-.lvgl-button:hover { background: #1976d2; }
-.lvgl-button:active { background: #1565c0; }
+.lvgl-button:hover { filter: brightness(0.9); }
+.lvgl-button:active { background: var(--thm-colors-primary-bg-pressed, #1565c0); }
 
 .lvgl-slider {
   width: 100%;
-  accent-color: #2196f3;
+  accent-color: var(--thm-colors-primary-bg, #2196f3);
 }
 
 .lvgl-switch {
   width: 50px;
   height: 28px;
-  accent-color: #2196f3;
+  accent-color: var(--thm-colors-primary-bg, #2196f3);
 }
 
 .lvgl-bar {
   width: 100%;
   height: 20px;
-  accent-color: #2196f3;
+  accent-color: var(--thm-colors-primary-bg, #2196f3);
   border-radius: 4px;
 }
 
 .lvgl-arc {
-  /* Placeholder — SVG-based in future */
   width: 100px;
   height: 100px;
-  border: 3px solid #2196f3;
+  border: 3px solid var(--thm-colors-primary-bg, #2196f3);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Entity control panel */
+.lvgl-image {
+  background: #333;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lvgl-dropdown {
+  background: var(--thm-colors-background, #1a1a1a);
+  color: var(--thm-colors-primary-text, #fff);
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.lvgl-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333;
+  border-top-color: var(--thm-colors-primary-bg, #2196f3);
+  border-radius: 50%;
+  animation: lvgl-spin 1s linear infinite;
+}
+
+@keyframes lvgl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.lvgl-textarea {
+  background: var(--thm-colors-background, #1a1a1a);
+  color: var(--thm-colors-primary-text, #fff);
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.lvgl-checkbox {
+  color: var(--thm-colors-primary-text, #fff);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  accent-color: var(--thm-colors-primary-bg, #2196f3);
+}
+
+/* ── Entity control panel ─────────────────────────────────────────────────── */
+
 .entity-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #333;
+  padding: 6px 0;
+  border-bottom: 1px solid #1f2f4f;
 }
 
 .entity-row:last-child { border-bottom: none; }
 
 .entity-id {
   font-family: monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: #87ceeb;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .entity-state {
   font-family: monospace;
-  font-size: 12px;
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 4px;
-  min-width: 40px;
+  min-width: 36px;
   text-align: center;
 }
 
 .entity-state.on { background: #2e7d32; color: #fff; }
-.entity-state.off { background: #555; color: #aaa; }
+.entity-state.off { background: #444; color: #aaa; }
 
 .entity-toggle-btn {
-  background: #333;
-  color: #fff;
-  border: 1px solid #555;
+  background: #2a2a4a;
+  color: #ccc;
+  border: 1px solid #444;
   border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 12px;
+  padding: 3px 10px;
+  font-size: 11px;
   cursor: pointer;
 }
 
-.entity-toggle-btn:hover { background: #444; }
+.entity-toggle-btn:hover { background: #3a3a5a; }
 
-/* Action log */
+/* ── Action log ───────────────────────────────────────────────────────────── */
+
 .action-log {
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
   font-family: monospace;
   font-size: 11px;
 }
 
 .action-entry {
-  padding: 4px 0;
-  border-bottom: 1px solid #222;
-  color: #aaa;
+  padding: 3px 0;
+  border-bottom: 1px solid #1a2540;
+  color: #888;
 }
 
-.action-entry .timestamp { color: #666; }
+.action-entry .timestamp { color: #555; }
 .action-entry .action-text { color: #4fc3f7; }
 
-.sim-header {
-  font-size: 18px;
-  color: #fff;
-  margin-bottom: 8px;
-}
+/* ── Zoom label ───────────────────────────────────────────────────────────── */
 
-.sim-meta {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 16px;
+.sim-zoom-label {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  color: #555;
+  pointer-events: none;
+  user-select: none;
 }
 `;
-
-// ── Widget rendering ─────────────────────────────────────────────────────────
-
-function getStaticValue(prop: RuntimeProp | undefined): unknown {
-  if (!prop) return undefined;
-  if (prop.kind === 'static') return prop.value;
-  if (prop.kind === 'reactive') return prop.current;
-  if (prop.kind === 'ref') return prop.refId;
-  return undefined;
-}
-
-function renderWidgetToHtml(node: RuntimeNode, depth: number): string {
-  const indent = '  '.repeat(depth);
-  const id = node.id;
-  const dataAttr = `data-node-id="${id}" data-node-type="${node.type}"`;
-
-  switch (node.type) {
-    case 'page':
-      return `${indent}<div class="lvgl-page" ${dataAttr}>\n${
-        node.children.map(c => renderWidgetToHtml(c, depth + 1)).join('\n')
-      }\n${indent}</div>`;
-
-    case 'label': {
-      const text = getStaticValue(node.props.text) ?? '';
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const style = positionStyle(x, y);
-      return `${indent}<span class="lvgl-label" ${dataAttr} style="${style}">${escapeHtml(String(text))}</span>`;
-    }
-
-    case 'button': {
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const w = getStaticValue(node.props.width);
-      const h = getStaticValue(node.props.height);
-      const style = positionStyle(x, y, w, h);
-      const children = node.children.length > 0
-        ? node.children.map(c => renderWidgetToHtml(c, depth + 1)).join('\n')
-        : '';
-      return `${indent}<button class="lvgl-button" ${dataAttr} style="${style}" onclick="window.__simAction('${id}', 'onRelease')">\n${children}\n${indent}</button>`;
-    }
-
-    case 'slider': {
-      const min = getStaticValue(node.props.minValue) ?? 0;
-      const max = getStaticValue(node.props.maxValue) ?? 100;
-      const val = getStaticValue(node.props.value) ?? 0;
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const style = positionStyle(x, y);
-      return `${indent}<input type="range" class="lvgl-slider" ${dataAttr} style="${style}" min="${min}" max="${max}" value="${val}" />`;
-    }
-
-    case 'switch': {
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const style = positionStyle(x, y);
-      return `${indent}<input type="checkbox" class="lvgl-switch" ${dataAttr} style="${style}" />`;
-    }
-
-    case 'bar': {
-      const val = getStaticValue(node.props.value) ?? 0;
-      const max = getStaticValue(node.props.maxValue) ?? 100;
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const style = positionStyle(x, y);
-      return `${indent}<progress class="lvgl-bar" ${dataAttr} style="${style}" value="${val}" max="${max}"></progress>`;
-    }
-
-    case 'obj':
-    default: {
-      const x = getStaticValue(node.props.x);
-      const y = getStaticValue(node.props.y);
-      const w = getStaticValue(node.props.width);
-      const h = getStaticValue(node.props.height);
-      const style = positionStyle(x, y, w, h);
-      const children = node.children.map(c => renderWidgetToHtml(c, depth + 1)).join('\n');
-      return `${indent}<div class="lvgl-obj" ${dataAttr} style="${style}">\n${children}\n${indent}</div>`;
-    }
-  }
-}
-
-function positionStyle(
-  x?: unknown, y?: unknown, w?: unknown, h?: unknown
-): string {
-  const parts: string[] = [];
-  if (x != null || y != null) {
-    parts.push('position: absolute');
-    if (x != null) parts.push(`left: ${x}px`);
-    if (y != null) parts.push(`top: ${y}px`);
-  }
-  if (w != null) parts.push(`width: ${typeof w === 'number' ? `${w}px` : w}`);
-  if (h != null) parts.push(`height: ${typeof h === 'number' ? `${h}px` : h}`);
-  return parts.join('; ');
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 // ── Entity control panel ─────────────────────────────────────────────────────
 
@@ -331,17 +362,25 @@ export interface RenderPageOptions {
   height?: number;
   provider: MockProvider;
   projectName?: string;
+  /** Theme data for CSS custom property generation. */
+  themeData?: IRThemeData;
 }
 
 /**
  * Generate the complete simulator HTML page.
+ *
+ * Layout: canvas (left, resizable) + splitter + sidebar (right).
+ * The display viewport is zoom-fitted into the canvas area.
  */
 export function renderSimulatorPage(options: RenderPageOptions): string {
-  const { nodes, width = 320, height = 480, provider, projectName = 'espcompose' } = options;
+  const { nodes, width = 320, height = 480, provider, projectName = 'espcompose', themeData } = options;
 
-  const widgetHtml = nodes.map(n => renderWidgetToHtml(n, 3)).join('\n');
+  const widgetHtml = nodes.map(n => renderWidgetToHtml(n, 4)).join('\n');
   const entityIds = provider.getEntityIds();
   const entityPanelHtml = renderEntityPanel(entityIds);
+  const themeCss = themeData ? generateThemeStyleBlock(themeData) : '';
+  const themeScript = themeData ? generateThemeSwitchScript(themeData) : '';
+  const defaultThemeName = themeData ? (themeData.themeNames[themeData.defaultIndex] ?? '') : '';
 
   // Build node registry for client-side reactive updates
   const nodeRegistry = buildNodeRegistry(nodes);
@@ -353,49 +392,119 @@ export function renderSimulatorPage(options: RenderPageOptions): string {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(projectName)} — ESPCompose Simulator</title>
   <style>${LVGL_CSS}</style>
+${themeCss ? `  <style>\n${themeCss}\n  </style>` : ''}
 </head>
 <body>
-  <div>
-    <div class="sim-header">ESPCompose Simulator</div>
-    <div class="sim-meta">${escapeHtml(projectName)} · ${width}×${height}</div>
-    <div class="sim-viewport" style="width: ${width}px; height: ${height}px;">
+  <div class="sim-shell">
+    <!-- ── Canvas (left) ──────────────────────────────────────────────── -->
+    <div class="sim-canvas" id="simCanvas">
+      <div class="sim-canvas-header">
+        <span class="title">ESPCompose Simulator</span>
+        <span class="meta">${escapeHtml(projectName)} · ${width}×${height}</span>
+      </div>
+      <div class="sim-canvas-body" id="simCanvasBody">
+        <div class="sim-viewport" id="simViewport"
+             style="width: ${width}px; height: ${height}px;"
+             ${defaultThemeName ? `data-theme="${escapeHtml(defaultThemeName)}"` : ''}>
 ${widgetHtml}
-    </div>
-  </div>
-
-  <div class="sim-sidebar">
-    <div class="sim-panel">
-      <h3>Entity Controls</h3>
-      ${entityPanelHtml}
+        </div>
+        <div class="sim-zoom-label" id="simZoomLabel"></div>
+      </div>
     </div>
 
-    <div class="sim-panel">
-      <h3>Action Log</h3>
-      <div class="action-log" id="actionLog"></div>
-    </div>
+    <!-- ── Splitter ───────────────────────────────────────────────────── -->
+    <div class="sim-splitter" id="simSplitter"></div>
 
-    <div class="sim-panel">
-      <h3>Widget Tree</h3>
-      <pre style="font-size: 11px; color: #aaa; overflow: auto; max-height: 300px;">${escapeHtml(JSON.stringify(nodeRegistry, null, 2))}</pre>
+    <!-- ── Sidebar (right) ────────────────────────────────────────────── -->
+    <div class="sim-sidebar" id="simSidebar">
+      <div class="sim-panel">
+        <h3>Entity Controls</h3>
+        ${entityPanelHtml}
+      </div>
+
+      <div class="sim-panel" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+        <h3>Action Log</h3>
+        <div class="action-log" id="actionLog" style="flex:1;"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    // ── Client-side simulator runtime ──
-    const nodeRegistry = ${JSON.stringify(nodeRegistry)};
+    // ── Zoom-fit ─────────────────────────────────────────────────────────
+    var DISPLAY_W = ${width};
+    var DISPLAY_H = ${height};
+    var viewport = document.getElementById('simViewport');
+    var canvasBody = document.getElementById('simCanvasBody');
+    var zoomLabel = document.getElementById('simZoomLabel');
+
+    function applyZoomFit() {
+      var rect = canvasBody.getBoundingClientRect();
+      var pad = 32; // breathing room around display
+      var availW = rect.width - pad;
+      var availH = rect.height - pad;
+      if (availW <= 0 || availH <= 0) return;
+      var scale = Math.min(availW / DISPLAY_W, availH / DISPLAY_H, 2);
+      viewport.style.transform = 'scale(' + scale + ')';
+      zoomLabel.textContent = Math.round(scale * 100) + '%';
+    }
+
+    window.addEventListener('resize', applyZoomFit);
+    applyZoomFit();
+
+    // ── Splitter drag ────────────────────────────────────────────────────
+    (function() {
+      var splitter = document.getElementById('simSplitter');
+      var canvas = document.getElementById('simCanvas');
+      var sidebar = document.getElementById('simSidebar');
+      var dragging = false;
+      var startX, startCanvasFlex, startSidebarFlex;
+
+      splitter.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        dragging = true;
+        splitter.classList.add('dragging');
+        startX = e.clientX;
+        startCanvasFlex = canvas.getBoundingClientRect().width;
+        startSidebarFlex = sidebar.getBoundingClientRect().width;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!dragging) return;
+        var dx = e.clientX - startX;
+        var newCanvasW = Math.max(200, startCanvasFlex + dx);
+        var newSidebarW = Math.max(200, startSidebarFlex - dx);
+        canvas.style.flex = '0 0 ' + newCanvasW + 'px';
+        sidebar.style.flex = '0 0 ' + newSidebarW + 'px';
+        applyZoomFit();
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (!dragging) return;
+        dragging = false;
+        splitter.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        applyZoomFit();
+      });
+    })();
+
+    // ── Client-side simulator runtime ────────────────────────────────────
+    var nodeRegistry = ${JSON.stringify(nodeRegistry)};
+${themeScript}
 
     // Action handler — called when buttons are clicked
     window.__simAction = function(nodeId, event) {
       logAction(event + ' on ' + nodeId);
-      // Send to server for execution
       fetch('/api/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nodeId, event }),
-      }).then(r => r.json()).then(data => {
+        body: JSON.stringify({ nodeId: nodeId, event: event }),
+      }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.stateUpdates) {
-          for (const [entityId, state] of Object.entries(data.stateUpdates)) {
-            updateEntityDisplay(entityId, state);
+          for (var entityId in data.stateUpdates) {
+            updateEntityDisplay(entityId, data.stateUpdates[entityId]);
           }
         }
       });
@@ -406,8 +515,8 @@ ${widgetHtml}
       fetch('/api/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entityId }),
-      }).then(r => r.json()).then(data => {
+        body: JSON.stringify({ entityId: entityId }),
+      }).then(function(r) { return r.json(); }).then(function(data) {
         updateEntityDisplay(entityId, data.state);
         logAction('toggle ' + entityId + ' → ' + data.state.state);
       });
@@ -418,14 +527,14 @@ ${widgetHtml}
       fetch('/api/set-sensor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entityId, value }),
-      }).then(r => r.json()).then(data => {
+        body: JSON.stringify({ entityId: entityId, value: value }),
+      }).then(function(r) { return r.json(); }).then(function(data) {
         updateEntityDisplay(entityId, data.state);
       });
     };
 
     function updateEntityDisplay(entityId, state) {
-      const el = document.querySelector('[data-entity-state="' + entityId + '"]');
+      var el = document.querySelector('[data-entity-state="' + entityId + '"]');
       if (el) {
         el.textContent = state.state;
         el.className = 'entity-state ' + (state.state === 'on' ? 'on' : 'off');
@@ -433,19 +542,19 @@ ${widgetHtml}
     }
 
     function logAction(text) {
-      const log = document.getElementById('actionLog');
-      const entry = document.createElement('div');
+      var log = document.getElementById('actionLog');
+      var entry = document.createElement('div');
       entry.className = 'action-entry';
       entry.innerHTML = '<span class="timestamp">' + new Date().toLocaleTimeString() + '</span> <span class="action-text">' + text + '</span>';
       log.prepend(entry);
     }
 
     // SSE for reactive updates from the server
-    const evtSource = new EventSource('/api/updates');
+    var evtSource = new EventSource('/api/updates');
     evtSource.onmessage = function(event) {
-      const data = JSON.parse(event.data);
+      var data = JSON.parse(event.data);
       if (data.type === 'prop-update') {
-        const el = document.querySelector('[data-node-id="' + data.nodeId + '"]');
+        var el = document.querySelector('[data-node-id="' + data.nodeId + '"]');
         if (el && data.prop === 'text') {
           el.textContent = data.value;
         }
@@ -456,9 +565,9 @@ ${widgetHtml}
     };
 
     // Initialize entity displays
-    fetch('/api/entities').then(r => r.json()).then(entities => {
-      for (const [entityId, state] of Object.entries(entities)) {
-        updateEntityDisplay(entityId, state);
+    fetch('/api/entities').then(function(r) { return r.json(); }).then(function(entities) {
+      for (var entityId in entities) {
+        updateEntityDisplay(entityId, entities[entityId]);
       }
     });
   </script>

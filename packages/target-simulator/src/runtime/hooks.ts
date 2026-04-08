@@ -1,14 +1,16 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Simulator hooks — JS-native replacements for SDK hooks
 //
-// These functions mirror the SDK's hook API (useHAEntity, useMemo, useRef,
-// useEffect, useScript, useImage, useFont) but are backed by the simulator's
-// JS reactive runtime (Signal/Memo/Effect) and MockProvider instead of
-// producing C++ metadata.
+// @deprecated This module is the LEGACY hook-interception render path.
+// The production simulator pipeline uses the IR-based renderer in
+// backends/ir-renderer.ts which consumes SemanticIR directly.
 //
-// During the simulator build, esbuild aliases redirect SDK hook imports to
-// this module. The authored TSX code calls the same hook names but gets
-// simulator-aware implementations.
+// This module is retained for unit/integration tests that exercise
+// individual hooks (useHAEntity, useMemo, useRef, useEffect) in
+// isolation. It should NOT be used in the build pipeline.
+//
+// These functions mirror the SDK's hook API but are backed by the
+// simulator's JS reactive runtime (Signal/Memo/Effect) and MockProvider.
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Signal, Memo, Effect, Scheduler } from './signals';
