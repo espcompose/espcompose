@@ -16,8 +16,7 @@ import {
   isClientMessage,
   parseMessage,
   type ServerMessage,
-} from './ws-protocol';
-import { extractDisplayConfig } from '../extract-display-config';
+} from '@espcompose/simulator-app/runtime';
 
 // ── MIME type map for static file serving ────────────────────────────────────
 
@@ -44,16 +43,16 @@ const MIME_TYPES: Record<string, string> = {
 export interface DevServerOptions {
   /** Absolute path to the directory containing the built React app. */
   staticDir: string;
+  /** Absolute path to the project root (for serving assets). Optional. */
+  projectDir?: string;
+  /** Absolute path to the project source directory (where user .tsx files live). */
+  sourceDir?: string;
   /** Port to listen on. Default: 5420. */
   port?: number;
   /** Initial SemanticIR to send to connecting clients. */
   initialIR?: SemanticIR;
   /** Project name shown in the browser UI. */
   projectName?: string;
-  /** LVGL display width. */
-  displayWidth?: number;
-  /** LVGL display height. */
-  displayHeight?: number;
 }
 
 export interface DevServer {
@@ -74,26 +73,15 @@ export interface DevServer {
 export function startDevServer(options: DevServerOptions): Promise<DevServer> {
   const {
     staticDir,
+    projectDir,
+    sourceDir,
     port = 5420,
     initialIR,
     projectName = 'espcompose',
-    displayWidth: optDisplayWidth,
-    displayHeight: optDisplayHeight,
   } = options;
 
   let currentIR: SemanticIR | undefined = initialIR;
   const clients = new Set<WebSocket>();
-
-  // Resolve display dimensions: CLI overrides > IR-extracted > defaults
-  function resolveDisplayDims(ir?: SemanticIR): { displayWidth: number; displayHeight: number } {
-    const irConfig = ir ? extractDisplayConfig(ir) : undefined;
-    return {
-      displayWidth: optDisplayWidth ?? irConfig?.width ?? 320,
-      displayHeight: optDisplayHeight ?? irConfig?.height ?? 480,
-    };
-  }
-
-  let { displayWidth, displayHeight } = resolveDisplayDims(initialIR);
 
   // ── HTTP server: serve static files ──────────────────────────────────────
 
@@ -106,35 +94,63 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       filePath = path.join(staticDir, 'index.html');
     }
 
-    // Prevent path traversal
-    const resolved = path.resolve(filePath);
-    if (!resolved.startsWith(path.resolve(staticDir))) {
-      res.writeHead(403);
-      res.end('Forbidden');
-      return;
-    }
-
-    fs.stat(resolved, (err, stats) => {
-      if (err || !stats?.isFile()) {
-        // SPA fallback: serve index.html for non-file paths
-        const indexPath = path.join(staticDir, 'index.html');
-        fs.readFile(indexPath, (indexErr, data) => {
-          if (indexErr) {
-            res.writeHead(404);
-            res.end('Not Found');
+    // Try to serve from project source directory if available
+    // This handles image/font assets referenced in source code (e.g. ./assets/logo.png)
+    const assetRoot = sourceDir ?? projectDir;
+    if (assetRoot && url.pathname.startsWith('/__project__/')) {
+      const relativePath = decodeURIComponent(url.pathname.slice('/__project__/'.length));
+      const assetPath = path.join(assetRoot, relativePath);
+      const resolved = path.resolve(assetPath);
+      const allowedRoot = path.resolve(assetRoot);
+      
+      if (resolved.startsWith(allowedRoot)) {
+        fs.stat(resolved, (err, stats) => {
+          if (!err && stats?.isFile()) {
+            const ext = path.extname(resolved).toLowerCase();
+            const contentType = MIME_TYPES[ext] ?? 'application/octet-stream';
+            res.writeHead(200, { 'Content-Type': contentType });
+            fs.createReadStream(resolved).pipe(res);
             return;
           }
-          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-          res.end(data);
+          serveStaticFile();
         });
         return;
       }
+    }
 
-      const ext = path.extname(resolved).toLowerCase();
-      const contentType = MIME_TYPES[ext] ?? 'application/octet-stream';
-      res.writeHead(200, { 'Content-Type': contentType });
-      fs.createReadStream(resolved).pipe(res);
-    });
+    serveStaticFile();
+
+    function serveStaticFile() {
+      // Prevent path traversal
+      const resolved = path.resolve(filePath);
+      if (!resolved.startsWith(path.resolve(staticDir))) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
+
+      fs.stat(resolved, (err, stats) => {
+        if (err || !stats?.isFile()) {
+          // SPA fallback: serve index.html for non-file paths
+          const indexPath = path.join(staticDir, 'index.html');
+          fs.readFile(indexPath, (indexErr, data) => {
+            if (indexErr) {
+              res.writeHead(404);
+              res.end('Not Found');
+              return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(data);
+          });
+          return;
+        }
+
+        const ext = path.extname(resolved).toLowerCase();
+        const contentType = MIME_TYPES[ext] ?? 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': contentType });
+        fs.createReadStream(resolved).pipe(res);
+      });
+    }
   });
 
   // ── WebSocket server ─────────────────────────────────────────────────────
@@ -147,7 +163,7 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
     // Send connected message with server info
     sendToClient(ws, {
       type: 'connected',
-      payload: { projectName, version: '0.1.0', port, displayWidth, displayHeight },
+      payload: { projectName, version: '0.1.0', port },
     });
 
     ws.on('message', (raw: unknown) => {
@@ -196,16 +212,7 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
 
         broadcastIR(ir: SemanticIR) {
           currentIR = ir;
-          // Re-extract display dimensions from the new IR
-          const dims = resolveDisplayDims(ir);
-          displayWidth = dims.displayWidth;
-          displayHeight = dims.displayHeight;
           broadcast({ type: 'ir_update', payload: { ir } });
-          // Notify clients of updated display dimensions
-          broadcast({
-            type: 'connected',
-            payload: { projectName, version: '0.1.0', port, displayWidth, displayHeight },
-          });
         },
 
         broadcastBuildStart() {

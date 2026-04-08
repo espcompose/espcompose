@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exprToJs, type JsLoweringContext } from './expr-to-js';
+import { exprToJs, type JsLoweringContext } from '@espcompose/simulator-app/runtime';
 import type { IRExprNode } from '@espcompose/core';
 
 function emptyCtx(): JsLoweringContext {

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SemanticIR } from '@espcompose/core/internals';
 import {
+  extractDisplayConfig,
   lowerToSimulator,
   MockProvider,
   Scheduler,
   type RuntimeNode,
   type ServerMessage,
-} from '@espcompose/target-simulator/browser';
+} from '../runtime';
 import { useWebSocket, type ConnectionStatus } from './use-websocket';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -83,8 +84,6 @@ export function useSimulator(): SimulatorState {
     switch (msg.type) {
       case 'connected':
         setProjectName(msg.payload.projectName);
-        setDisplayWidth(msg.payload.displayWidth);
-        setDisplayHeight(msg.payload.displayHeight);
         // Request the current IR from the server
         send({ type: 'ready' });
         break;
@@ -99,10 +98,13 @@ export function useSimulator(): SimulatorState {
         Scheduler.reset();
         const newProvider = new MockProvider();
         const newNodes = lowerToSimulator(newIR, newProvider);
+        const display = extractDisplayConfig(newIR);
 
         providerRef.current = newProvider;
         setProvider(newProvider);
         setNodes(newNodes);
+        setDisplayWidth(display?.width ?? 320);
+        setDisplayHeight(display?.height ?? 480);
         setRenderVersion((v: number) => v + 1);
         break;
       }

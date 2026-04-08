@@ -9,6 +9,21 @@
  * at runtime from IRThemeData. Fallback values are provided.
  */
 
+/* ── App shell defaults (outside viewport) ───────────────────────────────── */
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #141414;
+  color: #fff;
+}
+
 /* ── Viewport container ───────────────────────────────────────────────────── */
 
 .sim-viewport {
@@ -17,6 +32,8 @@
   transform-origin: center center;
   image-rendering: pixelated;
   position: absolute;
+  font-family: sans-serif;
+  font-size: 14px;
 
   /* Default theme fallbacks */
   --thm-colors-background: #1a1a1a;
@@ -42,7 +59,6 @@
 
 .sim-viewport .lvgl-label {
   color: var(--thm-colors-primary-text, #fff);
-  font-size: 14px;
   line-height: 1.4;
   padding: 2px;
   white-space: pre-wrap;
@@ -54,7 +70,6 @@
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
-  font-size: 14px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -95,12 +110,17 @@
 }
 
 .sim-viewport .lvgl-image {
-  background: #333;
   min-width: 32px;
   min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.sim-viewport .lvgl-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .sim-viewport .lvgl-dropdown {

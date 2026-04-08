@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MockProvider } from './mock-provider';
+import { MockProvider } from '@espcompose/simulator-app/runtime';
 
 let provider: MockProvider;
 

@@ -12,12 +12,9 @@ import { exec } from 'child_process';
 import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/internals';
 import { simulatorBuildFromIR } from './build';
 
-export interface SimulatorTargetOptions {
-  width?: number;
-  height?: number;
-}
+export type SimulatorTargetOptions = Record<string, never>;
 
-export function createSimulatorTarget(options?: SimulatorTargetOptions): ComposeTarget {
+export function createSimulatorTarget(_options?: SimulatorTargetOptions): ComposeTarget {
   return {
     name: 'simulator',
 
@@ -26,8 +23,6 @@ export function createSimulatorTarget(options?: SimulatorTargetOptions): Compose
       const projectName = path.basename(path.resolve(projectDir));
 
       const result = simulatorBuildFromIR(ir, {
-        width: options?.width,
-        height: options?.height,
         projectName,
       });
 

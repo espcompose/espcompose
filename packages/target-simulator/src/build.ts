@@ -5,12 +5,8 @@
 // SimulatorBuildResult containing RuntimeNode[] and rendered HTML.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { Scheduler } from './runtime/signals';
-import { MockProvider } from './providers/mock-provider';
+import { Scheduler, MockProvider, lowerToSimulator, extractDisplayConfig, type RuntimeNode } from '@espcompose/simulator-app/runtime';
 import { renderSimulatorPage } from './renderer/lvgl-dom';
-import { lowerToSimulator } from './backends/ir-renderer';
-import { extractDisplayConfig } from './extract-display-config';
-import type { RuntimeNode } from './types';
 import type { SemanticIR } from '@espcompose/core/internals';
 
 // ── Build result ─────────────────────────────────────────────────────────────
@@ -35,8 +31,6 @@ export interface SimulatorBuildResult {
 export function simulatorBuildFromIR(
   ir: SemanticIR,
   options?: {
-    width?: number;
-    height?: number;
     projectName?: string;
   },
 ): SimulatorBuildResult {
@@ -47,10 +41,10 @@ export function simulatorBuildFromIR(
 
   console.log(`  Rendered ${countNodes(nodes)} widget(s) (IR path)`);
 
-  // Resolve display dimensions: explicit options > IR-extracted > defaults
+  // Resolve display dimensions from the frontend-owned runtime helpers.
   const irConfig = extractDisplayConfig(ir);
-  const width = options?.width ?? irConfig?.width ?? 320;
-  const height = options?.height ?? irConfig?.height ?? 480;
+  const width = irConfig?.width ?? 320;
+  const height = irConfig?.height ?? 480;
 
   const html = renderSimulatorPage({
     nodes,

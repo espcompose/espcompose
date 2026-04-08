@@ -6,8 +6,8 @@
 // registerWidgetRenderer() — no changes to the core render loop needed.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { RuntimeNode } from '../types';
-import { getStaticValue, lvglPropsToStyle, escapeHtml } from './lvgl-styles';
+import type { RuntimeNode } from '@espcompose/simulator-app/runtime';
+import { getStaticValue, lvglPropsToStyle, escapeHtml } from '@espcompose/simulator-app/runtime';
 
 // ── Registry types ───────────────────────────────────────────────────────────
 

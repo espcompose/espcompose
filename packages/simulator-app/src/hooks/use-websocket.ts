@@ -5,7 +5,7 @@ import {
   isServerMessage,
   parseMessage,
   encodeClientMessage,
-} from '@espcompose/target-simulator/browser';
+} from '../runtime';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

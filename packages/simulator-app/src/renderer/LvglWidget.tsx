@@ -1,6 +1,6 @@
 import React from 'react';
-import type { RuntimeNode, RuntimeProp } from '@espcompose/target-simulator/browser';
-import { lvglPropsToStyle } from '@espcompose/target-simulator/browser';
+import type { RuntimeNode, RuntimeProp } from '../runtime';
+import { lvglPropsToStyle } from '../runtime';
 
 // ── Style helpers ────────────────────────────────────────────────────────────
 

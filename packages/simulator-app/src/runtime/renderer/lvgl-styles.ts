@@ -91,7 +91,7 @@ const STYLE_MAP: Record<string, StyleMapping> = {
   radius:          { css: 'border-radius', convert: dimToCss },
 
   // Text
-  text_font:       { css: 'font-family', convert: v => typeof v === 'string' ? v : undefined },
+  text_font:       { css: 'font', convert: v => typeof v === 'string' ? v : undefined },
   text_letter_space: { css: 'letter-spacing', convert: dimToCss },
   text_line_space: { css: 'line-height', convert: dimToCss },
   text_align:      { css: 'text-align', convert: v => typeof v === 'string' ? v.toLowerCase() : undefined },
@@ -114,6 +114,32 @@ function mapFlexFlow(value: unknown): string | undefined {
   }
 }
 
+/** Convert LVGL flex alignment values to CSS justify-content equivalents. */
+function mapFlexAlignMain(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  switch (value.toUpperCase()) {
+    case 'START': return 'flex-start';
+    case 'CENTER': return 'center';
+    case 'END': return 'flex-end';
+    case 'SPACE_BETWEEN': return 'space-between';
+    case 'SPACE_AROUND': return 'space-around';
+    case 'SPACE_EVENLY': return 'space-evenly';
+    default: return undefined;
+  }
+}
+
+/** Convert LVGL flex alignment values to CSS align-items/align-content equivalents. */
+function mapFlexAlignCross(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  switch (value.toUpperCase()) {
+    case 'START': return 'flex-start';
+    case 'CENTER': return 'center';
+    case 'END': return 'flex-end';
+    case 'STRETCH': return 'stretch';
+    default: return undefined;
+  }
+}
+
 // ── Public API ───────────────────────────────────────────────────────────────
 
 /**
@@ -122,14 +148,20 @@ function mapFlexFlow(value: unknown): string | undefined {
  * Walks known LVGL style properties and converts them to CSS.
  * Returns a complete style string (e.g. "background-color: #1a1a2e; padding: 8px").
  * Position is set to absolute if x or y is present.
+ * 
+ * Also handles nested `layout:` objects containing flex/grid alignment properties.
  */
 export function lvglPropsToStyle(
   props: Record<string, RuntimeProp>,
 ): string {
   const parts: string[] = [];
   let hasPosition = false;
+  let hasFlexFlow = false;
 
   for (const [key, prop] of Object.entries(props)) {
+    // Skip layout object — will be processed separately below
+    if (key === 'layout') continue;
+
     const mapping = STYLE_MAP[key];
     if (!mapping) continue;
 
@@ -142,14 +174,59 @@ export function lvglPropsToStyle(
     parts.push(`${mapping.css}: ${cssValue}`);
 
     if (key === 'x' || key === 'y') hasPosition = true;
+    if (key === 'flex_flow') hasFlexFlow = true;
   }
 
   if (hasPosition) {
     parts.unshift('position: absolute');
   }
 
-  // Flex container detection
-  if (props.flex_flow) {
+  // Handle nested layout object from IR
+  const layoutProp = props.layout;
+  if (layoutProp) {
+    const layoutObj = getStaticValue(layoutProp);
+    if (layoutObj && typeof layoutObj === 'object') {
+      const layout = layoutObj as Record<string, unknown>;
+
+      // Detect flex container
+      if (layout.type === 'flex') {
+        parts.push('display: flex');
+        hasFlexFlow = true;
+
+        // Map flexFlow if present (IR uses snake_case: flex_flow)
+        if (layout.flex_flow) {
+          const flexDir = mapFlexFlow(layout.flex_flow);
+          if (flexDir) parts.push(`flex-direction: ${flexDir}`);
+        }
+
+        // Map main axis alignment (justify-content)
+        if (layout.flex_align_main) {
+          const justify = mapFlexAlignMain(layout.flex_align_main);
+          if (justify) parts.push(`justify-content: ${justify}`);
+        }
+
+        // Map cross axis alignment (align-items)
+        if (layout.flex_align_cross) {
+          const align = mapFlexAlignCross(layout.flex_align_cross);
+          if (align) parts.push(`align-items: ${align}`);
+        }
+
+        // Map track alignment (align-content)
+        if (layout.flex_align_track) {
+          const alignContent = mapFlexAlignCross(layout.flex_align_track);
+          if (alignContent) parts.push(`align-content: ${alignContent}`);
+        }
+
+        // Handle flex-wrap
+        if (typeof layout.flex_flow === 'string' && layout.flex_flow.toUpperCase().includes('WRAP')) {
+          parts.push('flex-wrap: wrap');
+        }
+      }
+    }
+  }
+
+  // Fallback: detect flex container from flex_flow prop if layout object wasn't found
+  if (!hasFlexFlow && props.flex_flow) {
     parts.push('display: flex');
     const flow = getStaticValue(props.flex_flow);
     if (typeof flow === 'string' && flow.toUpperCase().includes('WRAP')) {

@@ -1,5 +1,9 @@
 import type { SemanticIR } from '@espcompose/core/internals';
 
+function entry(key: string, value: Exclude<SemanticIR['esphome']['sections'][number]['value'], never>): { kind: 'entry'; key: string; value: typeof value } {
+  return { kind: 'entry', key, value };
+}
+
 /**
  * Sample SemanticIR fixture for standalone React app development.
  *
@@ -12,68 +16,75 @@ export const sampleIR: SemanticIR = {
     kind: 'esphome_data',
     sections: [
       {
-        platform: 'lvgl',
-        config: {
+        kind: 'section',
+        key: 'lvgl',
+        value: {
           kind: 'object',
           entries: [
-            {
-              key: 'pages',
-              value: {
+            entry('pages', {
                 kind: 'array',
                 items: [
                   {
                     kind: 'object',
                     entries: [
-                      { key: 'id', value: { kind: 'scalar', value: 'main_page' } },
-                      {
-                        key: 'widgets',
-                        value: {
+                      entry('id', { kind: 'scalar', value: 'main_page' }),
+                      entry('widgets', {
                           kind: 'array',
                           items: [
                             {
                               kind: 'object',
                               entries: [
-                                { key: 'label', value: { kind: 'object', entries: [
-                                  { key: 'text', value: { kind: 'scalar', value: 'Hello Simulator' } },
-                                  { key: 'align', value: { kind: 'scalar', value: 'TOP_MID' } },
-                                  { key: 'y', value: { kind: 'scalar', value: 20 } },
-                                ]}},
+                                entry('label', { kind: 'object', entries: [
+                                  entry('text', { kind: 'scalar', value: 'Hello Simulator' }),
+                                  entry('align', { kind: 'scalar', value: 'TOP_MID' }),
+                                  entry('y', { kind: 'scalar', value: 20 }),
+                                ]}),
                               ],
                             },
                             {
                               kind: 'object',
                               entries: [
-                                { key: 'button', value: { kind: 'object', entries: [
-                                  { key: 'text', value: { kind: 'scalar', value: 'Toggle Light' } },
-                                  { key: 'align', value: { kind: 'scalar', value: 'CENTER' } },
-                                ]}},
+                                entry('button', { kind: 'object', entries: [
+                                  entry('text', { kind: 'scalar', value: 'Toggle Light' }),
+                                  entry('align', { kind: 'scalar', value: 'CENTER' }),
+                                ]}),
                               ],
                             },
                             {
                               kind: 'object',
                               entries: [
-                                { key: 'label', value: { kind: 'object', entries: [
-                                  { key: 'text', value: { kind: 'scalar', value: 'Sensor: 22°C' } },
-                                  { key: 'align', value: { kind: 'scalar', value: 'BOTTOM_MID' } },
-                                  { key: 'y', value: { kind: 'scalar', value: -20 } },
-                                ]}},
+                                entry('label', { kind: 'object', entries: [
+                                  entry('text', { kind: 'scalar', value: 'Sensor: 22°C' }),
+                                  entry('align', { kind: 'scalar', value: 'BOTTOM_MID' }),
+                                  entry('y', { kind: 'scalar', value: -20 }),
+                                ]}),
                               ],
                             },
                           ],
-                        },
-                      },
+                        }),
                     ],
                   },
                 ],
-              },
-            },
+              }),
           ],
         },
       },
     ],
     haEntities: [
-      { entityId: 'light.kitchen', domain: 'light', name: 'Kitchen Light' },
-      { entityId: 'sensor.temperature', domain: 'sensor', name: 'Temperature' },
+      {
+        kind: 'ha_entity',
+        entityId: 'light.kitchen',
+        domain: 'light',
+        sensorType: 'binary_sensor',
+        generatedId: 'ha_light_kitchen',
+      },
+      {
+        kind: 'ha_entity',
+        entityId: 'sensor.temperature',
+        domain: 'sensor',
+        sensorType: 'sensor',
+        generatedId: 'ha_sensor_temperature',
+      },
     ],
     components: [],
     scripts: [],

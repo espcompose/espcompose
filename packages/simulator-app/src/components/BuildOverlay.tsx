@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, Spin } from 'antd';
 import { LoadingOutlined, DisconnectOutlined } from '@ant-design/icons';
-import type { BuildStatus, SimulatorState } from '../hooks/use-simulator';
+import type { BuildStatus } from '../hooks/use-simulator';
 import type { ConnectionStatus } from '../hooks/use-websocket';
 
 interface BuildOverlayProps {

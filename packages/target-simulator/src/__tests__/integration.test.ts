@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Scheduler } from '../runtime/signals';
-import { MockProvider } from '../providers/mock-provider';
-import { lowerToSimulator } from '../backends/ir-renderer';
+import { Scheduler, MockProvider, lowerToSimulator } from '@espcompose/simulator-app/runtime';
 import { IRReactiveNode } from '@espcompose/core';
 import type { SemanticIR, IRValue } from '@espcompose/core/internals';
 

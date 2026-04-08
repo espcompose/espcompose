@@ -6,7 +6,7 @@ import {
   parseMessage,
   isServerMessage,
   type ServerMessage,
-} from './ws-protocol';
+} from '@espcompose/simulator-app/runtime';
 
 // ── IR helpers (mirrors integration.test.ts) ─────────────────────────────────
 

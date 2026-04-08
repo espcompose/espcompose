@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Typography } from 'antd';
-import type { RuntimeNode } from '@espcompose/target-simulator/browser';
+import type { RuntimeNode } from '../runtime';
 import { LvglWidget } from '../renderer/LvglWidget';
 
 const { Text } = Typography;
@@ -13,7 +13,7 @@ interface CanvasProps {
   defaultThemeName?: string;
   onAction?: (nodeId: string, event: string) => void;
   /** Changes when reactive state is flushed, forcing a re-render. */
-  renderVersion: number;
+  _renderVersion: number;
 }
 
 /**
@@ -29,7 +29,7 @@ export function Canvas({
   themeStyleHtml,
   defaultThemeName,
   onAction,
-  renderVersion,
+  _renderVersion,
 }: CanvasProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);

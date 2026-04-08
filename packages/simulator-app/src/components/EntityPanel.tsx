@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { InputNumber, Switch, Tag, Typography, Space } from 'antd';
-import type { MockProvider, EntityState } from '@espcompose/target-simulator/browser';
+import { InputNumber, Switch, Tag, Typography } from 'antd';
+import type { MockProvider, EntityState } from '../runtime';
 
 const { Text } = Typography;
 

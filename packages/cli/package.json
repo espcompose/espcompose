@@ -14,7 +14,7 @@
     "assets"
   ],
   "scripts": {
-    "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true});\"",
+    "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true}); fs.rmSync('assets/simulator-app-dist',{recursive:true,force:true}); fs.cpSync('../simulator-app/dist','assets/simulator-app-dist',{recursive:true,force:true});\"",
     "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external esbuild --external typescript --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",

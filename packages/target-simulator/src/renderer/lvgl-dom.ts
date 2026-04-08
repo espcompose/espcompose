@@ -11,12 +11,10 @@
 // splitter. The display viewport is zoom-fitted into the canvas area.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { RuntimeNode } from '../types';
-import type { MockProvider } from '../providers/mock-provider';
 import type { IRThemeData } from '@espcompose/core/internals';
-import { escapeHtml } from './lvgl-styles';
+import type { RuntimeNode, MockProvider } from '@espcompose/simulator-app/runtime';
+import { escapeHtml, generateThemeStyleBlock, generateThemeSwitchScript } from '@espcompose/simulator-app/runtime';
 import { renderWidgetToHtml } from './widget-registry';
-import { generateThemeStyleBlock, generateThemeSwitchScript } from './theme-css';
 
 // ── CSS ──────────────────────────────────────────────────────────────────────
 
@@ -155,7 +153,6 @@ body {
 
 .lvgl-label {
   color: var(--thm-colors-primary-text, #fff);
-  font-size: 14px;
   line-height: 1.4;
   padding: 2px;
   white-space: pre-wrap;
@@ -167,7 +164,6 @@ body {
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
-  font-size: 14px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

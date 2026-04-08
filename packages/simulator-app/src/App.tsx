@@ -5,7 +5,7 @@ import { useSimulator } from './hooks/use-simulator';
 import { Canvas } from './components/Canvas';
 import { Sidebar } from './components/Sidebar';
 import { BuildOverlay } from './components/BuildOverlay';
-import { generateThemeStyleBlock } from '@espcompose/target-simulator/browser';
+import { generateThemeStyleBlock } from './runtime';
 import type { ActionLogEntry } from './components/ActionLog';
 
 const { Header } = Layout;
@@ -109,7 +109,7 @@ export function App() {
                 themeStyleHtml={themeStyleHtml}
                 defaultThemeName={defaultThemeName}
                 onAction={handleAction}
-                renderVersion={sim.renderVersion}
+                _renderVersion={sim.renderVersion}
               />
               <BuildOverlay
                 buildStatus={sim.buildStatus}

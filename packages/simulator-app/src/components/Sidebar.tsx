@@ -2,7 +2,7 @@ import React from 'react';
 import { Collapse, theme } from 'antd';
 import { EntityPanel } from './EntityPanel';
 import { ActionLog } from './ActionLog';
-import type { MockProvider } from '@espcompose/target-simulator/browser';
+import type { MockProvider } from '../runtime';
 import type { ActionLogEntry } from './ActionLog';
 
 const { useToken } = theme;

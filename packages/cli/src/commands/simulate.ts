@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { exec } from 'child_process';
 import type { Command } from 'commander';
 import { withErrorHandler } from '../utils';
@@ -13,28 +14,27 @@ export function registerSimulateCommand(program: Command) {
       'When files change, the project is recompiled and the browser updates\n' +
       'automatically via WebSocket hot reload.',
     )
-    .option('-w, --width <px>', 'Viewport width in pixels (auto-detected from project if omitted)')
-    .option('--height <px>', 'Viewport height in pixels (auto-detected from project if omitted)')
     .option('-p, --port <port>', 'Dev server port', '5420')
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
     .option('--no-open', 'Do not open the browser automatically')
     .action(withErrorHandler('Simulator', async (
       projectDir?: string,
-      opts?: { width?: string; height?: string; port?: string; debug?: boolean; open?: boolean },
+      opts?: { port?: string; debug?: boolean; open?: boolean },
     ) => {
       const { compileToIR } = await import('../compiler');
       const { startDevServer, startFileWatcher } = await import('@espcompose/target-simulator');
 
       const resolvedDir = path.resolve(projectDir ?? '.');
       const port = Number(opts?.port ?? 5420);
-      // Pass undefined when not explicitly set so the dev server can auto-detect from IR
-      const displayWidth = opts?.width != null ? Number(opts.width) : undefined;
-      const displayHeight = opts?.height != null ? Number(opts.height) : undefined;
       const projectName = path.basename(resolvedDir);
 
-      // Resolve the pre-built simulator-app dist directory
-      const appPkgPath = require.resolve('@espcompose/simulator-app/package.json');
-      const staticDir = path.join(path.dirname(appPkgPath), 'dist');
+      // Resolve the pre-built simulator-app dist directory (copied into cli assets at build time)
+      const staticDir = path.join(__dirname, '..', 'assets', 'simulator-app-dist');
+
+      // Resolve source directory from package.json main field
+      const pkgPath = path.join(resolvedDir, 'package.json');
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) as { main?: string };
+      const sourceDir = pkg.main ? path.dirname(path.resolve(resolvedDir, pkg.main)) : resolvedDir;
 
       // ── Initial compile ──────────────────────────────────────────────────
       console.log(`Building simulator for ${resolvedDir}…`);
@@ -44,11 +44,11 @@ export function registerSimulateCommand(program: Command) {
       // ── Start dev server ─────────────────────────────────────────────────
       const server = await startDevServer({
         staticDir,
+        projectDir: resolvedDir,
+        sourceDir,
         port,
         initialIR: currentIR,
         projectName,
-        displayWidth,
-        displayHeight,
       });
 
       const url = `http://localhost:${server.port}`;

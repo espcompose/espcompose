@@ -18,8 +18,6 @@ export interface ConnectedMessage {
     projectName: string;
     version: string;
     port: number;
-    displayWidth: number;
-    displayHeight: number;
   };
 }
 
