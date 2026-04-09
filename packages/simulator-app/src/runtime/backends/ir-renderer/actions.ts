@@ -7,7 +7,7 @@ export function irActionToRuntimeProp(
   action: IRAction,
   ctx: IRRenderContext,
 ): RuntimeProp {
-  const steps = interpretActionSteps(action.actions);
+  const steps = interpretActionSteps(action.actions, ctx);
 
   const handler = async (..._args: unknown[]) => {
     for (const step of steps) {
@@ -23,10 +23,37 @@ export function irActionToRuntimeProp(
 }
 
 /**
+ * Resolve an IRActionParam to a plain JS value.
+ *
+ * IRActionParam can be:
+ *   - `{ kind: 'literal', value: 'light.office' }` → return the value directly
+ *   - `{ kind: 'expression', jsExpression: '...' }` → not evaluatable in simulator; return empty
+ *   - a plain string (legacy/pre-resolved) → return as-is
+ */
+function resolveActionParam(param: unknown): unknown {
+  if (param == null) return undefined;
+  if (typeof param === 'string' || typeof param === 'number' || typeof param === 'boolean') return param;
+  if (typeof param === 'object' && 'kind' in param) {
+    const p = param as { kind: string; value?: unknown; jsExpression?: string };
+    if (p.kind === 'literal') return p.value;
+    if (p.kind === 'expression') {
+      // Expression params reference runtime JS variables (e.g. `props.binding.__entityId__`).
+      // These are resolved during the compile-time execute phase and embedded as literals
+      // in the SemanticIR. If we still see an expression here, it means it wasn't resolved.
+      // Log a warning and return undefined.
+      console.warn(`[Simulator] Unresolved expression param: ${p.jsExpression}`);
+      return undefined;
+    }
+    if (p.kind === 'trigger_var') return undefined;
+  }
+  return undefined;
+}
+
+/**
  * Convert IRActionNode[] from SemanticIR to simulator-friendly ActionStep[] format.
  * IRActionNode is the target-agnostic IR from the CLI compiler.
  */
-export function interpretActionSteps(actions: IRActionNode[]): ActionStep[] {
+export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderContext): ActionStep[] {
   const steps: ActionStep[] = [];
   for (const action of actions) {
     if (action == null || typeof action !== 'object') continue;
@@ -52,21 +79,21 @@ export function interpretActionSteps(actions: IRActionNode[]): ActionStep[] {
           break;
         }
         case 'ha_service': {
-          const rawEntityId = node.data?.entity_id;
-          const entityId = rawEntityId == null ? ''
-            : typeof rawEntityId === 'string' ? rawEntityId
-            : String((rawEntityId as { value?: unknown }).value ?? '');
+          // Resolve entity_id from IRActionParam (may be literal object or plain string)
+          const rawEntityId = resolveActionParam(node.data?.entity_id);
+          const entityId = typeof rawEntityId === 'string' ? rawEntityId : '';
+
           const data: Record<string, unknown> = {};
           if (node.data) {
             for (const [k, v] of Object.entries(node.data)) {
-              if (typeof v !== 'object' || v === null) {
-                data[k] = v;
-              } else {
-                data[k] = (v as { kind: string; value?: unknown }).kind === 'literal'
-                  ? (v as { value: unknown }).value
-                  : v;
+              const resolved = resolveActionParam(v);
+              if (resolved !== undefined) {
+                data[k] = resolved;
               }
             }
+          }
+          if (entityId) {
+            data.entity_id = entityId;
           }
           steps.push({
             type: 'ha_service',
@@ -103,8 +130,8 @@ export function interpretActionSteps(actions: IRActionNode[]): ActionStep[] {
           steps.push({
             type: 'conditional',
             condition: () => true, // TODO: evaluate condition
-            then: interpretActionSteps(node.then),
-            else: node.else ? interpretActionSteps(node.else) : undefined,
+            then: interpretActionSteps(node.then, ctx),
+            else: node.else ? interpretActionSteps(node.else, ctx) : undefined,
           });
           break;
         // Ignore other action types for simulator (they'd need more complex handling)
@@ -120,9 +147,14 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext):
   switch (step.type) {
     case 'ha_service': {
       const parts = step.action.split('.');
-      const domain = parts[0] ?? '';
+      let domain = parts[0] ?? '';
       const service = parts[1] ?? '';
       const entityId = step.entityId;
+      // homeassistant.* actions are domain-agnostic (from dynamic useHAEntity bindings).
+      // Resolve the actual domain from the entity_id (e.g. 'light.office' → 'light').
+      if (domain === 'homeassistant' && entityId) {
+        domain = entityId.split('.')[0] ?? domain;
+      }
       if (domain && service && entityId) {
         ctx.provider.callService(domain, service, entityId, step.data as Record<string, unknown>);
         Scheduler.instance().flush();

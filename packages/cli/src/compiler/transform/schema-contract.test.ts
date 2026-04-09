@@ -172,14 +172,6 @@ describe('Library Format Schema Contract (Producer)', () => {
       expect(CompiledActionsMetaSchema.safeParse(meta).success).toBe(true);
     });
 
-    it('compiled actions with haBindings match schema', () => {
-      const meta = {
-        __compiledActions: [{ 'homeassistant.service': { service: 'light.turn_on' } }],
-        __haBindings: { entity: 'light.office' },
-      };
-      expect(CompiledActionsMetaSchema.safeParse(meta).success).toBe(true);
-    });
-
     it('rejects metadata missing __compiledActions', () => {
       const bad = { __refBindings: {} };
       expect(CompiledActionsMetaSchema.safeParse(bad).success).toBe(false);

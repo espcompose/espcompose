@@ -40,8 +40,10 @@ class Bridge:
         self._enable_mdns = enable_mdns
         # entity_key → entity definition dict (for command resolution)
         self._entities_by_key: dict[int, dict[str, Any]] = {}
-        # entity_id → domain (for state updates)
+        # entity_id → domain (for state updates on device-owned entities)
         self._entity_domains: dict[str, str] = {}
+        # entity_id → domain (for HA entity imports the device reads from HA)
+        self._ha_import_domains: dict[str, str] = {}
 
     async def run(self) -> None:
         """Main loop: read messages from stdin, dispatch handlers."""
@@ -96,10 +98,17 @@ class Bridge:
         # Build entity lookup tables
         self._entities_by_key.clear()
         self._entity_domains.clear()
+        self._ha_import_domains.clear()
         for entity in entities:
             key = _stable_key(entity["entity_id"])
             self._entities_by_key[key] = entity
             self._entity_domains[entity["entity_id"]] = entity.get("domain", "")
+
+        # Store HA entity imports so we can route their interactions correctly
+        for imp in ha_imports:
+            eid = imp.get("entity_id", "")
+            if eid:
+                self._ha_import_domains[eid] = imp.get("domain", eid.split(".")[0])
 
         # Build ListEntities responses
         list_responses = []
@@ -120,9 +129,19 @@ class Bridge:
             on_command_callback=self._on_ha_command,
             on_client_connected_callback=self._on_ha_client_connected,
             on_client_disconnected_callback=self._on_ha_client_disconnected,
+            on_ha_state_callback=self._on_ha_state_update,
             enable_mdns=self._enable_mdns,
         )
         self._server.set_entities(list_responses)
+
+        # Register HA entity subscriptions so HA knows which entities to push
+        ha_subs: list[dict[str, str]] = []
+        for imp in ha_imports:
+            ha_subs.append({
+                "entity_id": imp.get("entity_id", ""),
+                "attribute": imp.get("attribute", ""),
+            })
+        self._server.ha_state_subscriptions = ha_subs
 
         # Seed initial default states so HA gets a state response on SubscribeStates
         for entity in entities:
@@ -144,22 +163,63 @@ class Bridge:
         })
 
     def _handle_entity_state_update(self, payload: dict[str, Any]) -> None:
-        """Handle single entity state update from Node → push to HA."""
+        """Handle single entity state update from Node → push to HA.
+
+        For device-owned entities: resolve the action to a state and push a
+        state-response to all subscribed HA clients.
+
+        For HA entity imports: send a HomeassistantActionRequest so HA
+        executes the service call (e.g. light.toggle) on the user's behalf.
+        """
         entity_id = payload.get("entity_id", "")
         state = payload.get("state", "")
+        action = payload.get("action", "")
         attributes = payload.get("attributes")
         domain = self._entity_domains.get(entity_id, "")
+
+        # Check if this is an HA entity import (not owned by device)
+        ha_import_domain = self._ha_import_domains.get(entity_id, "")
+        if ha_import_domain and action and self._server is not None:
+            # Build the HA service name: domain.action (e.g. light.toggle)
+            service = f"{ha_import_domain}.{action}"
+            data: dict[str, str] = {"entity_id": entity_id}
+            if attributes:
+                for k, v in attributes.items():
+                    if k != "entity_id":
+                        data[k] = str(v)
+            self._server.send_ha_action(service, data)
+            logger.debug("HA action forwarded: %s %s", service, data)
+            return
 
         if not domain:
             logger.warning("State update for unknown entity: %s", entity_id)
             return
+
+        # Resolve state from action when state is empty (browser interactions)
+        if not state and action:
+            state = self._resolve_state_from_action(entity_id, domain, action)
 
         state_msg = build_state_response(entity_id, domain, state, attributes)
         if state_msg is not None and self._server is not None:
             key = _stable_key(entity_id)
             self._server.update_state(key, state_msg)
 
-        logger.debug("Entity state update: %s = %s", entity_id, state)
+        logger.debug("Entity state update: %s = %s (action=%s)", entity_id, state, action)
+
+    def _resolve_state_from_action(self, entity_id: str, domain: str, action: str) -> str:
+        """Derive a state string from a service-call action, using cached state for toggle."""
+        if action in ("turn_on", "open", "lock"):
+            return "on"
+        if action in ("turn_off", "close", "unlock"):
+            return "off"
+        if action == "toggle":
+            # Flip current cached state
+            key = _stable_key(entity_id)
+            current = self._server.get_state(key) if self._server else None
+            if current is not None and hasattr(current, "state"):
+                return "off" if current.state else "on"
+            return "on"  # Default to on when unknown
+        return action  # Fallback: use action as-is
 
     def _handle_batch_entity_state_update(self, payload: dict[str, Any]) -> None:
         """Handle batch entity state update from Node."""
@@ -196,6 +256,18 @@ class Bridge:
             "payload": {"address": address},
         })
         logger.info("HA client disconnected: %s", address)
+
+    def _on_ha_state_update(self, entity_id: str, state: str, attribute: str) -> None:
+        """Forward HA entity state push to Node so the simulator can update."""
+        write_message({
+            "type": "ha_state_update",
+            "payload": {
+                "entity_id": entity_id,
+                "state": state,
+                "attribute": attribute,
+            },
+        })
+        logger.info("HA state → Node: %s = %s (attr=%s)", entity_id, state, attribute)
 
     def _request_shutdown(self) -> None:
         logger.info("Shutdown requested")

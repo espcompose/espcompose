@@ -31,6 +31,12 @@ export class MockProvider implements DataProvider {
   private entities = new Map<string, EntityState>();
   private listeners = new Map<string, Set<(state: EntityState) => void>>();
 
+  /** When true, callService skips local state effects — state comes from HA only. */
+  bridgeMode = false;
+
+  /** Optional callback invoked after every callService — used to forward to bridge. */
+  onServiceCallHook?: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void;
+
   /**
    * Ensure an entity exists with default state for its domain.
    * Called automatically during render when useHAEntity() registers entities.
@@ -70,7 +76,26 @@ export class MockProvider implements DataProvider {
   }
 
   callService(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void {
-    // Apply common state effects for well-known actions
+    // In bridge mode, skip local mock state — the real state comes from HA.
+    if (!this.bridgeMode) {
+      this._applyServiceEffect(domain, action, entityId, data);
+    }
+
+    // Notify hook (e.g. bridge forwarding) after state has been applied
+    this.onServiceCallHook?.(domain, action, entityId, data);
+  }
+
+  /**
+   * Apply a service call's state effect coming from the remote HA bridge.
+   * Updates local state so the UI reflects the change, but does NOT fire the
+   * bridge hook (would cause an infinite loop back to HA).
+   */
+  applyRemoteService(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void {
+    this._applyServiceEffect(domain, action, entityId, data);
+  }
+
+  /** Apply common state effects for well-known service calls. */
+  private _applyServiceEffect(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void {
     const fullAction = `${domain}.${action}`;
     switch (fullAction) {
       case 'light.toggle':

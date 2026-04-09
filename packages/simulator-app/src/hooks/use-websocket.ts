@@ -6,6 +6,7 @@ import {
   parseMessage,
   encodeClientMessage,
 } from '../runtime';
+import { debug } from '../utils/debug';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,8 +15,10 @@ export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 export interface UseWebSocketReturn {
   /** Current connection status. */
   status: ConnectionStatus;
-  /** Last parsed server message received. */
-  lastMessage: ServerMessage | null;
+  /** Queue of server messages received since last drain. */
+  messageQueue: ServerMessage[];
+  /** Clear the message queue after processing. */
+  drainMessages: () => void;
   /** Send a typed client message to the server. */
   send: (msg: ClientMessage) => void;
 }
@@ -37,7 +40,7 @@ const RECONNECT_MULTIPLIER = 1.5;
  */
 export function useWebSocket(url: string): UseWebSocketReturn {
   const [status, setStatus] = useState<ConnectionStatus>('connecting');
-  const [lastMessage, setLastMessage] = useState<ServerMessage | null>(null);
+  const [messageQueue, setMessageQueue] = useState<ServerMessage[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectDelayRef = useRef(INITIAL_RECONNECT_MS);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -46,12 +49,14 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   const connect = useCallback(() => {
     if (unmountedRef.current) return;
 
+    debug('ws', `connecting to ${url}`);
     const ws = new WebSocket(url);
     wsRef.current = ws;
     setStatus('connecting');
 
     ws.onopen = () => {
       if (unmountedRef.current) { ws.close(); return; }
+      debug('ws', 'connection opened');
       setStatus('connected');
       reconnectDelayRef.current = INITIAL_RECONNECT_MS;
     };
@@ -59,12 +64,16 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onmessage = (event) => {
       const parsed = parseMessage(String(event.data));
       if (isServerMessage(parsed)) {
-        setLastMessage(parsed);
+        debug('ws', `recv: ${parsed.type}`);
+        setMessageQueue(prev => [...prev, parsed]);
+      } else {
+        debug('ws', 'recv: unknown/invalid message', parsed);
       }
     };
 
     ws.onclose = () => {
       if (unmountedRef.current) return;
+      debug('ws', 'connection closed, scheduling reconnect');
       setStatus('disconnected');
       wsRef.current = null;
       scheduleReconnect();
@@ -87,10 +96,17 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     }, delay);
   }, [connect]);
 
+  const drainMessages = useCallback(() => {
+    setMessageQueue([]);
+  }, []);
+
   const send = useCallback((msg: ClientMessage) => {
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
+      debug('ws', `send: ${msg.type}`);
       ws.send(encodeClientMessage(msg));
+    } else {
+      debug('ws', `send DROPPED (not open): ${msg.type}`);
     }
   }, []);
 
@@ -111,5 +127,5 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     };
   }, [connect]);
 
-  return { status, lastMessage, send };
+  return { status, messageQueue, drainMessages, send };
 }

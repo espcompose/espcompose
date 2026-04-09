@@ -293,3 +293,158 @@ class TestBridgeShutdown:
         assert bridge._server is None
         await bridge._shutdown()  # Should not raise
         assert bridge._server is None
+
+
+SAMPLE_HA_IMPORTS = [
+    {"entity_id": "light.office", "domain": "light", "generated_id": "ha_light_office"},
+    {"entity_id": "switch.fan", "domain": "switch", "generated_id": "ha_switch_fan"},
+]
+
+
+class TestBridgeHAImportActions:
+    """Tests for HA entity import action forwarding (device → HA service calls)."""
+
+    @pytest.mark.asyncio
+    async def test_ha_import_domains_populated(self) -> None:
+        captured, patcher = _capture_writes()
+        bridge = Bridge(enable_mdns=False)
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "test",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": SAMPLE_HA_IMPORTS,
+            })
+
+        assert bridge._ha_import_domains["light.office"] == "light"
+        assert bridge._ha_import_domains["switch.fan"] == "switch"
+        # Native entities should not be in ha_import_domains
+        assert "light.living_room" not in bridge._ha_import_domains
+
+        await bridge._shutdown()
+
+    @pytest.mark.asyncio
+    async def test_ha_import_action_sends_ha_action(self) -> None:
+        """Button click on an HA import entity should send HomeassistantActionRequest."""
+        captured, patcher = _capture_writes()
+        bridge = Bridge(enable_mdns=False)
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "test",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": SAMPLE_HA_IMPORTS,
+            })
+
+        # Mock send_ha_action on the server to capture calls
+        calls: list[tuple[str, dict]] = []
+        original_send = bridge._server.send_ha_action
+        def mock_send(service: str, data: dict | None = None) -> None:
+            calls.append((service, data or {}))
+        bridge._server.send_ha_action = mock_send
+
+        # Simulate a button click interaction for an HA import entity
+        bridge._handle_entity_state_update({
+            "entity_id": "light.office",
+            "state": "",
+            "action": "toggle",
+        })
+
+        assert len(calls) == 1
+        assert calls[0][0] == "light.toggle"
+        assert calls[0][1]["entity_id"] == "light.office"
+
+        await bridge._shutdown()
+
+    @pytest.mark.asyncio
+    async def test_ha_import_action_with_data(self) -> None:
+        """HA import actions should forward extra data attributes."""
+        captured, patcher = _capture_writes()
+        bridge = Bridge(enable_mdns=False)
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "test",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": SAMPLE_HA_IMPORTS,
+            })
+
+        calls: list[tuple[str, dict]] = []
+        bridge._server.send_ha_action = lambda service, data=None: calls.append((service, data or {}))
+
+        bridge._handle_entity_state_update({
+            "entity_id": "light.office",
+            "state": "",
+            "action": "turn_on",
+            "attributes": {"brightness": 200, "entity_id": "light.office"},
+        })
+
+        assert len(calls) == 1
+        assert calls[0][0] == "light.turn_on"
+        assert calls[0][1]["entity_id"] == "light.office"
+        assert calls[0][1]["brightness"] == "200"
+
+        await bridge._shutdown()
+
+    @pytest.mark.asyncio
+    async def test_native_entity_still_uses_state_update(self) -> None:
+        """Device-owned entity interactions should still push state updates, not HA actions."""
+        captured, patcher = _capture_writes()
+        bridge = Bridge(enable_mdns=False)
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "test",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": SAMPLE_HA_IMPORTS,
+            })
+
+        calls: list[tuple[str, dict]] = []
+        bridge._server.send_ha_action = lambda service, data=None: calls.append((service, data or {}))
+
+        # Action on a NATIVE entity → should NOT call send_ha_action
+        bridge._handle_entity_state_update({
+            "entity_id": "light.living_room",
+            "state": "",
+            "action": "toggle",
+        })
+
+        assert len(calls) == 0  # Should use state update path instead
+        # Verify state was updated
+        key = _stable_key("light.living_room")
+        state = bridge._server.get_state(key)
+        assert state is not None
+
+        await bridge._shutdown()
+
+    @pytest.mark.asyncio
+    async def test_redefine_clears_ha_imports(self) -> None:
+        """Redefining the node should clear previous HA import domains."""
+        captured, patcher = _capture_writes()
+        bridge = Bridge(enable_mdns=False)
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "v1",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": SAMPLE_HA_IMPORTS,
+            })
+
+        assert "light.office" in bridge._ha_import_domains
+
+        with patcher:
+            await bridge._handle_define_node({
+                "name": "v2",
+                "port": 0,
+                "entities": SAMPLE_ENTITIES,
+                "ha_entity_imports": [],  # No HA imports this time
+            })
+
+        assert "light.office" not in bridge._ha_import_domains
+
+        await bridge._shutdown()

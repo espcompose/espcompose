@@ -79,6 +79,7 @@ export async function createBridgeManager(options: BridgeManagerOptions): Promis
   let intentionalShutdown = false;
   let restartDelay = INITIAL_RESTART_DELAY_MS;
   let restartTimer: ReturnType<typeof setTimeout> | null = null;
+  let lastDefineNode: NodeToBridgeMessage | null = null;
 
   function setStatus(newStatus: BridgeStatus, error?: string): void {
     status = newStatus;
@@ -107,13 +108,9 @@ export async function createBridgeManager(options: BridgeManagerOptions): Promis
       }
     });
 
-    // Readiness timeout
-    readyTimer = setTimeout(() => {
-      if (status === 'starting') {
-        console.error('  ✗ Bridge did not become ready within timeout');
-        setStatus('error', 'Bridge ready timeout');
-      }
-    }, readyTimeoutMs);
+    // NOTE: ready timer is NOT started here — it starts when the first
+    // define_node is sent, since the bridge can't respond with bridge_ready
+    // until it receives entity definitions (which require the browser round-trip).
 
     child.on('exit', (code, signal) => {
       clearReadyTimer();
@@ -133,6 +130,10 @@ export async function createBridgeManager(options: BridgeManagerOptions): Promis
         console.log(`  ↻ Restarting bridge (backoff ${restartDelay}ms)…`);
         restartDelay = Math.min(restartDelay * 2, MAX_RESTART_DELAY_MS);
         startProcess();
+        // Re-send buffered define_node so the restarted bridge can re-register entities
+        if (lastDefineNode) {
+          send(lastDefineNode);
+        }
       }, restartDelay);
     });
 
@@ -164,8 +165,23 @@ export async function createBridgeManager(options: BridgeManagerOptions): Promis
   }
 
   function send(msg: NodeToBridgeMessage): void {
+    if (msg.type === 'define_node') {
+      lastDefineNode = msg;
+
+      // Start the ready timer now — the bridge has what it needs to start
+      // the Native API server and respond with bridge_ready.
+      clearReadyTimer();
+      readyTimer = setTimeout(() => {
+        if (status !== 'ready') {
+          console.error('  ✗ Bridge did not become ready within timeout');
+          setStatus('error', 'Bridge ready timeout');
+        }
+      }, readyTimeoutMs);
+    }
     if (child?.stdin?.writable) {
       child.stdin.write(JSON.stringify(msg) + '\n');
+    } else {
+      console.error(`  ✗ Bridge stdin not writable (child=${!!child}, writable=${child?.stdin?.writable})`);
     }
   }
 

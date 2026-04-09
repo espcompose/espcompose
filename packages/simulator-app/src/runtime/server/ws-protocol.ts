@@ -18,6 +18,8 @@ export interface ConnectedMessage {
     projectName: string;
     version: string;
     port: number;
+    /** When true, the server was started with --ha-bridge. */
+    bridgeMode?: boolean;
   };
 }
 
@@ -61,6 +63,16 @@ export interface HACommandMessage {
   };
 }
 
+/** Server forwards an HA entity state push from the bridge. */
+export interface HAStateUpdateMessage {
+  type: 'ha_state_update';
+  payload: {
+    entity_id: string;
+    state: string;
+    attribute: string;
+  };
+}
+
 /** Union of all messages the server can send to a client. */
 export type ServerMessage =
   | ConnectedMessage
@@ -68,7 +80,8 @@ export type ServerMessage =
   | BuildStartMessage
   | BuildErrorMessage
   | BridgeStatusMessage
-  | HACommandMessage;
+  | HACommandMessage
+  | HAStateUpdateMessage;
 
 // ── Client → Server messages ─────────────────────────────────────────────────
 
@@ -125,7 +138,7 @@ export function isServerMessage(data: unknown): data is ServerMessage {
     data !== null &&
     'type' in data &&
     typeof (data as { type: unknown }).type === 'string' &&
-    ['connected', 'ir_update', 'build_start', 'build_error', 'bridge_status', 'ha_command'].includes(
+    ['connected', 'ir_update', 'build_start', 'build_error', 'bridge_status', 'ha_command', 'ha_state_update'].includes(
       (data as { type: string }).type,
     )
   );

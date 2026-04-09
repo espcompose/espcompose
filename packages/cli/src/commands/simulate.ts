@@ -50,6 +50,7 @@ export function registerSimulateCommand(program: Command) {
         port,
         initialIR: currentIR,
         projectName,
+        bridgeMode: !!opts?.haBridge,
       });
 
       // ── Optionally start HA bridge ───────────────────────────────────────
@@ -78,12 +79,19 @@ export function registerSimulateCommand(program: Command) {
                 action: 'client_connected',
                 data: msg.payload as Record<string, unknown>,
               });
+            } else if (msg.type === 'ha_state_update' && msg.payload) {
+              // Forward HA entity state push to the browser
+              server.broadcastHAStateUpdate(msg.payload as {
+                entity_id: string;
+                state: string;
+                attribute: string;
+              });
             }
           },
         });
       }
 
-      const url = `http://localhost:${server.port}`;
+      const url = `http://localhost:${server.port}${opts?.debug ? '?debug=1' : ''}`;
       console.log(`\n  Simulator running at ${url}`);
       if (server.bridge) {
         console.log('  HA bridge enabled — waiting for bridge ready…');

@@ -346,9 +346,6 @@ function compileAndInjectTriggerHandler(
   const refNameSet = symbolMapToNameSet(refTags);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
-  // Collect dynamic HA entity variable names (needed for runtime entity_id resolution)
-  const haEntityNames = collectDynamicHAEntityNames(result.actions, ctx.haEntities);
-
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
   // Store IRActionNode[] directly - lowering to target format happens in target packages
   const arrowStart = callback.getStart();
@@ -361,19 +358,13 @@ function compileAndInjectTriggerHandler(
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';
 
-  // Build __haBindings object literal: { entity: entity }
-  const haBindingsEntries = haEntityNames.map(name => `${name}: ${name}`);
-  const haBindingsLiteral = haEntityNames.length > 0
-    ? `, __haBindings: { ${haBindingsEntries.join(', ')} }`
-    : '';
-
   edits.push({
     position: arrowStart,
     text: `Object.assign(`,
   });
   edits.push({
     position: arrowEnd,
-    text: `, { __compiledActions: ${metaJson}${refBindingsLiteral}${haBindingsLiteral} })`,
+    text: `, { __compiledActions: ${metaJson}${refBindingsLiteral} })`,
   });
 }
 
@@ -485,49 +476,6 @@ function collectRefNamesFromActions(
   };
   walk(actions);
   return Array.from(names);
-}
-
-/**
- * Collect HA entity variable names referenced by dynamic actions.
- * These bindings need to be captured in the Object.assign so the
- * serializer can read __entityId__ at runtime.
- */
-function collectDynamicHAEntityNames(
-  actions: IRActionNode[],
-  haEntities: Map<ts.Symbol, HAEntityInfo>,
-): string[] {
-  // Build reverse map: variable name → entity info
-  const dynamicNames = new Set<string>();
-  for (const [sym, info] of haEntities) {
-    if (info.isDynamic) {
-      dynamicNames.add(sym.name);
-    }
-  }
-
-  const found = new Set<string>();
-  const walk = (actionList: IRActionNode[]): void => {
-    for (const action of actionList) {
-      if (action.kind === 'ha_service' && action.data) {
-        for (const param of Object.values(action.data)) {
-          if (param.kind === 'expression') {
-            // Extract variable name from expressions like 'entity.__entityId__'
-            const dotIdx = param.jsExpression.indexOf('.');
-            if (dotIdx > 0) {
-              const varName = param.jsExpression.slice(0, dotIdx);
-              if (dynamicNames.has(varName)) {
-                found.add(varName);
-              }
-            }
-          }
-        }
-      }
-      if (action.kind === 'if') { walk(action.then); if (action.else) walk(action.else); }
-      if (action.kind === 'while') walk(action.then);
-      if (action.kind === 'repeat') walk(action.then);
-    }
-  };
-  walk(actions);
-  return Array.from(found);
 }
 
 /**

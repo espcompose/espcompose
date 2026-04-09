@@ -44,6 +44,7 @@ export interface EntityStateUpdateMessage {
   payload: {
     entity_id: string;
     state: string;
+    action?: string;
     attributes?: Record<string, unknown>;
   };
 }
@@ -109,13 +110,23 @@ export interface BridgeErrorMessage {
   };
 }
 
+export interface HAStateUpdateMessage {
+  type: 'ha_state_update';
+  payload: {
+    entity_id: string;
+    state: string;
+    attribute: string;
+  };
+}
+
 /** Union of all messages the Python bridge can send to Node. */
 export type BridgeToNodeMessage =
   | BridgeReadyMessage
   | EntityCommandMessage
   | ClientConnectedMessage
   | ClientDisconnectedMessage
-  | BridgeErrorMessage;
+  | BridgeErrorMessage
+  | HAStateUpdateMessage;
 
 // ── Type guard ───────────────────────────────────────────────────────────────
 
@@ -125,6 +136,7 @@ const BRIDGE_TO_NODE_TYPES = new Set([
   'client_connected',
   'client_disconnected',
   'bridge_error',
+  'ha_state_update',
 ]);
 
 export function isBridgeToNodeMessage(data: unknown): data is BridgeToNodeMessage {

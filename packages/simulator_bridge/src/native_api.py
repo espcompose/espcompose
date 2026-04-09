@@ -52,6 +52,12 @@ from aioesphomeapi.api_pb2 import (  # type: ignore
     ListEntitiesRequest,
     ListEntitiesDoneResponse,
     SubscribeStatesRequest,
+    SubscribeHomeAssistantStatesRequest,
+    SubscribeHomeAssistantStateResponse,
+    HomeAssistantStateResponse,
+    HomeassistantActionRequest,
+    HomeassistantServiceMap,
+    SubscribeHomeassistantServicesRequest,
     LightCommandRequest,
     SwitchCommandRequest,
     FanCommandRequest,
@@ -276,6 +282,27 @@ class NativeAPIClient:
             await self.flush()
             self._close()
 
+        elif isinstance(msg, SubscribeHomeAssistantStatesRequest):
+            logger.info("SubscribeHomeAssistantStates from %s", self.address)
+            # Tell HA which HA entities the device wants to track
+            for sub in self._server.ha_state_subscriptions:
+                resp = SubscribeHomeAssistantStateResponse(
+                    entity_id=sub["entity_id"],
+                    attribute=sub.get("attribute", ""),
+                    once=False,
+                )
+                self.send(resp)
+            await self.flush()
+
+        elif isinstance(msg, SubscribeHomeassistantServicesRequest):
+            logger.info("SubscribeHomeassistantServices from %s", self.address)
+            self._server.add_service_subscriber(self)
+
+        elif isinstance(msg, HomeAssistantStateResponse):
+            logger.info("HA state update: %s = %s (attr=%s)",
+                        msg.entity_id, msg.state, msg.attribute)
+            self._server.on_ha_state(msg.entity_id, msg.state, msg.attribute)
+
         elif isinstance(msg, (
             LightCommandRequest,
             SwitchCommandRequest,
@@ -297,6 +324,7 @@ class NativeAPIClient:
             return
         self._closed = True
         self._server.remove_subscriber(self)
+        self._server.remove_service_subscriber(self)
         try:
             self._writer.close()
         except Exception:
@@ -321,6 +349,7 @@ class NativeAPIServer:
         on_command_callback: Callable[[ProtoMessage], None] | None = None,
         on_client_connected_callback: Callable[[str, str], None] | None = None,
         on_client_disconnected_callback: Callable[[str], None] | None = None,
+        on_ha_state_callback: Callable[[str, str, str], None] | None = None,
         enable_mdns: bool = False,
     ) -> None:
         self.device_name = device_name
@@ -329,14 +358,17 @@ class NativeAPIServer:
         self._on_command = on_command_callback
         self._on_client_connected = on_client_connected_callback
         self._on_client_disconnected = on_client_disconnected_callback
+        self._on_ha_state = on_ha_state_callback
         self._enable_mdns = enable_mdns
 
         self.list_entities_responses: list[ProtoMessage] = []
         self._entity_states: dict[str, ProtoMessage] = {}
         self._subscribers: set[NativeAPIClient] = set()
+        self._service_subscribers: set[NativeAPIClient] = set()
         self._server: asyncio.Server | None = None
         self._zeroconf: Any | None = None
         self._service_info: Any | None = None
+        self.ha_state_subscriptions: list[dict[str, str]] = []
 
     async def start(self) -> None:
         """Start listening for connections and announce via mDNS."""
@@ -372,6 +404,10 @@ class NativeAPIServer:
             # Fire-and-forget drain — we don't want to block state pushes
             asyncio.ensure_future(client.flush())
 
+    def get_state(self, entity_key: int) -> ProtoMessage | None:
+        """Return the cached state for a given entity key, or None."""
+        return self._entity_states.get(entity_key)
+
     def current_state_responses(self) -> list[ProtoMessage]:
         """Return all current entity state messages."""
         return list(self._entity_states.values())
@@ -381,6 +417,37 @@ class NativeAPIServer:
 
     def remove_subscriber(self, client: NativeAPIClient) -> None:
         self._subscribers.discard(client)
+
+    def add_service_subscriber(self, client: NativeAPIClient) -> None:
+        self._service_subscribers.add(client)
+
+    def remove_service_subscriber(self, client: NativeAPIClient) -> None:
+        self._service_subscribers.discard(client)
+
+    def send_ha_action(self, service: str, data: dict[str, str] | None = None) -> None:
+        """Send a HomeassistantActionRequest to all connected HA clients.
+
+        This tells HA to execute a service call (e.g. light.toggle) on behalf
+        of the device — used when buttons interact with HA entities.
+
+        Real ESPHome devices send this to any connected API client, so we
+        use ``_subscribers`` (clients that have subscribed to device states)
+        rather than ``_service_subscribers`` which may be empty if HA does
+        not send ``SubscribeHomeassistantServicesRequest``.
+        """
+        msg = HomeassistantActionRequest()
+        msg.service = service
+        if data:
+            for key, value in data.items():
+                entry = msg.data.add()
+                entry.key = key
+                entry.value = str(value)
+        targets = self._subscribers or self._service_subscribers
+        for client in list(targets):
+            client.send(msg)
+            asyncio.ensure_future(client.flush())
+        logger.info("HA action sent to %d client(s): %s %s",
+                    len(targets), service, data or {})
 
     def on_client_connected(self, client: NativeAPIClient) -> None:
         if self._on_client_connected:
@@ -393,6 +460,11 @@ class NativeAPIServer:
     def on_command(self, msg: ProtoMessage) -> None:
         if self._on_command:
             self._on_command(msg)
+
+    def on_ha_state(self, entity_id: str, state: str, attribute: str) -> None:
+        """Called when HA pushes a state update for a subscribed HA entity."""
+        if self._on_ha_state:
+            self._on_ha_state(entity_id, state, attribute)
 
     async def _register_mdns(self) -> None:
         """Register the device on mDNS so Home Assistant can auto-discover it."""

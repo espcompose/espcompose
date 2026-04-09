@@ -233,6 +233,38 @@ class TestNativeAPIServer:
         server.on_client_connected(client)
         callback.assert_called_once_with("127.0.0.1:5555", "test")
 
+    @pytest.mark.asyncio
+    async def test_send_ha_action_targets_subscribers(self) -> None:
+        """send_ha_action uses _subscribers when _service_subscribers is empty."""
+        server = NativeAPIServer()
+        client = mock.MagicMock()
+        client._closed = False
+        client.flush = mock.AsyncMock()
+        server.add_subscriber(client)
+        # _service_subscribers is empty — should still send
+        server.send_ha_action("light.toggle", {"entity_id": "light.office"})
+        client.send.assert_called_once()
+        msg = client.send.call_args[0][0]
+        assert msg.service == "light.toggle"
+
+    @pytest.mark.asyncio
+    async def test_send_ha_action_prefers_subscribers_over_service_subs(self) -> None:
+        """send_ha_action sends to _subscribers even when _service_subscribers exists."""
+        server = NativeAPIServer()
+        sub_client = mock.MagicMock()
+        sub_client._closed = False
+        sub_client.flush = mock.AsyncMock()
+        svc_client = mock.MagicMock()
+        svc_client._closed = False
+        svc_client.flush = mock.AsyncMock()
+        server.add_subscriber(sub_client)
+        server.add_service_subscriber(svc_client)
+        server.send_ha_action("light.turn_on", {"entity_id": "light.gym"})
+        # Both _subscribers and _service_subscribers are non-empty;
+        # _subscribers takes priority
+        sub_client.send.assert_called_once()
+        svc_client.send.assert_not_called()
+
 
 # ── Integration: full TCP handshake ───────────────────────────────────────────
 

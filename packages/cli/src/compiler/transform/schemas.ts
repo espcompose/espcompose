@@ -50,7 +50,6 @@ export const SlottedReactiveSchema = z.object({
 export const CompiledActionsMetaSchema = z.object({
   __compiledActions: z.array(z.unknown()),
   __refBindings: z.record(z.unknown()).optional(),
-  __haBindings: z.record(z.unknown()).optional(),
 });
 
 /** Metadata attached to createScript() functions via Object.assign. */

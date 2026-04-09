@@ -10,6 +10,7 @@ import {
   type LoweringResult,
 } from '../runtime';
 import { useWebSocket, type ConnectionStatus } from './use-websocket';
+import { debug } from '../utils/debug';
 
 // ── Entity domain keys that ESPHome exposes to HA ────────────────────────────
 
@@ -159,7 +160,7 @@ export function useSimulator(): SimulatorState {
     return `${protocol}//${window.location.host}/ws`;
   }, []);
 
-  const { status: connectionStatus, lastMessage, send } = useWebSocket(wsUrl);
+  const { status: connectionStatus, messageQueue, drainMessages, send } = useWebSocket(wsUrl);
 
   const [nodes, setNodes] = useState<RuntimeNode[]>([]);
   const [provider, setProvider] = useState<MockProvider | null>(null);
@@ -183,6 +184,9 @@ export function useSimulator(): SimulatorState {
   // Track whether the HA bridge is active (suppresses mock timers)
   const bridgeActiveRef = useRef(false);
 
+  // Track whether the server was started with --ha-bridge (never mock in this mode)
+  const bridgeModeRef = useRef(false);
+
   const flushAndRerender = useCallback(() => {
     Scheduler.instance().flush();
     setRenderVersion((v: number) => v + 1);
@@ -191,18 +195,21 @@ export function useSimulator(): SimulatorState {
   // ── Process incoming WS messages ──────────────────────────────────────────
 
   useEffect(() => {
-    if (!lastMessage) return;
+    if (messageQueue.length === 0) return;
 
-    const msg: ServerMessage = lastMessage;
+    for (const msg of messageQueue) {
 
     switch (msg.type) {
       case 'connected':
+        debug('sim', `connected – project=${msg.payload.projectName} bridgeMode=${!!msg.payload.bridgeMode}`);
         setProjectName(msg.payload.projectName);
+        bridgeModeRef.current = !!msg.payload.bridgeMode;
         // Request the current IR from the server
         send({ type: 'ready' });
         break;
 
       case 'ir_update': {
+        debug('sim', 'ir_update received');
         const newIR = msg.payload.ir;
         setIR(newIR);
         setBuildStatus('ready');
@@ -215,13 +222,27 @@ export function useSimulator(): SimulatorState {
         // Lower IR → LoweringResult
         Scheduler.reset();
         const newProvider = new MockProvider();
+        newProvider.bridgeMode = bridgeModeRef.current;
         const result = lowerToSimulator(newIR, newProvider);
         const display = extractDisplayConfig(newIR);
+        debug('sim', `lowered: ${result.nodes.length} nodes, ${result.automations.length} automations`);
 
         // Wire the re-render callback so page navigation triggers React updates
         result.setRerenderCallback(() => {
           setRenderVersion((v: number) => v + 1);
         });
+
+        // Forward entity service calls to the bridge when in bridge mode.
+        // In bridge mode this always forwards (even before bridge reports ready)
+        // so the message is queued on the server side for the bridge process.
+        newProvider.onServiceCallHook = (domain, action, entityId, data) => {
+          if (bridgeModeRef.current) {
+            send({
+              type: 'entity_interaction',
+              payload: { entity_id: entityId, domain, action, data },
+            });
+          }
+        };
 
         loweringRef.current = result;
         providerRef.current = newProvider;
@@ -238,8 +259,12 @@ export function useSimulator(): SimulatorState {
         // `haEntities` which are imports FROM HA (platform: homeassistant).
         const nativeEntities = extractNativeEntities(newIR);
         const haEntities = newIR.esphome?.haEntities ?? [];
+        debug('sim', `entities: native=${nativeEntities.length} ha=${haEntities.length}`);
+        if (nativeEntities.length > 0) debug('sim', 'nativeEntities', nativeEntities);
+        if (haEntities.length > 0) debug('sim', 'haEntities', haEntities);
 
         if (nativeEntities.length > 0 || haEntities.length > 0) {
+          debug('sim', 'sending entity_definitions');
           // Extract device name from the esphome section
           const esphomeSection = newIR.esphome?.sections.find((s) => s.key === 'esphome');
           const deviceName =
@@ -263,12 +288,14 @@ export function useSimulator(): SimulatorState {
               ),
             },
           });
+        } else {
+          debug('sim', 'SKIPPED entity_definitions — no entities found');
         }
 
-        // Schedule mock automations only when bridge is NOT active.
+        // Schedule mock automations only when NOT in bridge mode.
         // When the bridge is active, the real client_connected event comes
         // from HA via the bridge → Node → ha_command WS message.
-        if (!bridgeActiveRef.current) {
+        if (!bridgeModeRef.current) {
           for (const auto of result.automations) {
             if (auto.trigger === 'api.on_client_connected') {
               const timer = setTimeout(() => {
@@ -295,6 +322,7 @@ export function useSimulator(): SimulatorState {
 
       case 'bridge_status': {
         const active = msg.payload.status === 'ready';
+        debug('sim', `bridge_status: ${msg.payload.status}`);
         bridgeActiveRef.current = active;
         if (active) {
           // Bridge just became ready — cancel any mock timers
@@ -306,9 +334,9 @@ export function useSimulator(): SimulatorState {
       }
 
       case 'ha_command': {
-        // Real HA command — fire the matching automation
-        const { entity_id, domain, action } = msg.payload;
-        console.log(`[Simulator] HA command: ${domain}.${action} → ${entity_id}`);
+        // Real HA command — apply to simulator state and fire automations
+        const { entity_id, domain, action, data } = msg.payload;
+        debug('sim', `ha_command: ${domain}.${action} → ${entity_id}`, data);
 
         // Fire on_client_connected automations when HA subscribes
         if (action === 'client_connected') {
@@ -320,11 +348,41 @@ export function useSimulator(): SimulatorState {
               }
             }
           }
+        } else {
+          // Apply state change from HA without firing the bridge hook
+          // (avoids infinite loop back to HA)
+          const p = providerRef.current;
+          if (p) {
+            p.applyRemoteService(domain, action, entity_id, data as Record<string, unknown> | undefined);
+            flushAndRerender();
+          }
+        }
+        break;
+      }
+
+      case 'ha_state_update': {
+        // HA pushed a state change for an imported entity — update MockProvider
+        const { entity_id, state, attribute } = msg.payload;
+        debug('sim', `ha_state_update: ${entity_id} = ${state} (attr=${attribute})`);
+
+        const p = providerRef.current;
+        if (p) {
+          if (attribute) {
+            // Attribute-specific update (e.g. brightness)
+            p.setEntityState(entity_id, { attributes: { [attribute]: state } });
+          } else {
+            // Main state update
+            p.setEntityState(entity_id, { state });
+          }
+          flushAndRerender();
         }
         break;
       }
     }
-  }, [lastMessage, send]);
+    } // end for
+
+    drainMessages();
+  }, [messageQueue, send, drainMessages]);
 
   const getCurrentPageIndex = useCallback(
     () => loweringRef.current?.getCurrentPageIndex() ?? 0,
