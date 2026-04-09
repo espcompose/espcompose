@@ -81,18 +81,3 @@ export function generateThemeStyleBlock(themeData: IRThemeData): string {
   return blocks.join('\n\n');
 }
 
-/**
- * Generate the client-side JS needed to support theme switching.
- * Sets the data-theme attribute on the viewport element.
- */
-export function generateThemeSwitchScript(themeData: IRThemeData): string {
-  return `
-    window.__simThemeNames = ${JSON.stringify(themeData.themeNames)};
-    window.__simDefaultTheme = ${JSON.stringify(themeData.themeNames[themeData.defaultIndex] ?? '')};
-    window.__simSelectTheme = function(name) {
-      const viewport = document.querySelector('.sim-viewport');
-      if (viewport) viewport.setAttribute('data-theme', name);
-      logAction('theme.select(' + name + ')');
-    };
-  `;
-}

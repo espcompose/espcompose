@@ -135,7 +135,6 @@ export interface LogActionStep {
 
 /**
  * Abstraction for supplying simulated data to the UI.
- * Implementations: MockProvider, ScenarioProvider, LiveHABridge.
  */
 export interface DataProvider {
   getEntityState(entityId: string): EntityState;

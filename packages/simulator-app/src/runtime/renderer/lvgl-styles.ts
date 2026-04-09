@@ -236,10 +236,3 @@ export function lvglPropsToStyle(
 
   return parts.join('; ');
 }
-
-/**
- * Escape a string for safe use in HTML attributes.
- */
-export function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}

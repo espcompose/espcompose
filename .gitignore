@@ -149,6 +149,8 @@ vite.config.ts.timestamp-*
 
 .DS_Store
 
-packages/cli/assets/**/*.*
+packages/cli/assets/
 
 __pycache__/
+
+.notes/

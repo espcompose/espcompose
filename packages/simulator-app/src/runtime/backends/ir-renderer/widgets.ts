@@ -4,15 +4,8 @@ import type { IRRenderContext } from './lowering-context.js';
 import { irValueToRuntimeProp, irValueToPlain } from './props.js';
 import { irActionToRuntimeProp, interpretActionSteps, executeActionStep } from './actions.js';
 
-/** Known LVGL trigger/event prop names (snake_case in IR). */
-const TRIGGER_PROPS = new Set([
-  'on_press', 'on_release', 'on_click', 'on_long_press',
-  'on_long_press_repeat', 'on_value_change', 'on_value',
-  'on_checked_change', 'on_ready', 'on_cancel',
-]);
-
 function isActionPropKey(key: string): boolean {
-  return TRIGGER_PROPS.has(key) || key.startsWith('on_');
+  return key.startsWith('on_');
 }
 
 /**

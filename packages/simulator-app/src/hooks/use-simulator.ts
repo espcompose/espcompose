@@ -7,7 +7,6 @@ import {
   Scheduler,
   entityIdToGeneratedId,
   type RuntimeNode,
-  type ServerMessage,
   type LoweringResult,
 } from '../runtime';
 import { useWebSocket, type ConnectionStatus } from './use-websocket';
