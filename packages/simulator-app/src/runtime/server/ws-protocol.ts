@@ -41,12 +41,34 @@ export interface BuildErrorMessage {
   };
 }
 
+export interface BridgeStatusMessage {
+  type: 'bridge_status';
+  payload: {
+    status: string;
+    ha_clients: number;
+    port?: number;
+    error?: string;
+  };
+}
+
+export interface HACommandMessage {
+  type: 'ha_command';
+  payload: {
+    entity_id: string;
+    domain: string;
+    action: string;
+    data?: Record<string, unknown>;
+  };
+}
+
 /** Union of all messages the server can send to a client. */
 export type ServerMessage =
   | ConnectedMessage
   | IRUpdateMessage
   | BuildStartMessage
-  | BuildErrorMessage;
+  | BuildErrorMessage
+  | BridgeStatusMessage
+  | HACommandMessage;
 
 // ── Client → Server messages ─────────────────────────────────────────────────
 
@@ -55,8 +77,45 @@ export interface ReadyMessage {
   type: 'ready';
 }
 
+/** Client sends extracted entity definitions to the server for bridge forwarding. */
+export interface EntityDefinitionsMessage {
+  type: 'entity_definitions';
+  payload: {
+    device_name: string;
+    api_encryption_key?: string;
+    /** Native device entities to expose to HA via the ESPHome API. */
+    entities: Array<{
+      entity_id: string;
+      domain: string;
+      name: string;
+      unique_id: string;
+    }>;
+    /** HA entities the device imports (platform: homeassistant sensor imports). */
+    ha_entity_imports?: Array<{
+      entity_id: string;
+      domain: string;
+      generated_id: string;
+      attribute?: string;
+    }>;
+  };
+}
+
+/** Client sends an entity interaction (service call) for bridge forwarding. */
+export interface EntityInteractionMessage {
+  type: 'entity_interaction';
+  payload: {
+    entity_id: string;
+    domain: string;
+    action: string;
+    data?: Record<string, unknown>;
+  };
+}
+
 /** Union of all messages a client can send to the server. */
-export type ClientMessage = ReadyMessage;
+export type ClientMessage =
+  | ReadyMessage
+  | EntityDefinitionsMessage
+  | EntityInteractionMessage;
 
 // ── Type guards ──────────────────────────────────────────────────────────────
 
@@ -66,7 +125,7 @@ export function isServerMessage(data: unknown): data is ServerMessage {
     data !== null &&
     'type' in data &&
     typeof (data as { type: unknown }).type === 'string' &&
-    ['connected', 'ir_update', 'build_start', 'build_error'].includes(
+    ['connected', 'ir_update', 'build_start', 'build_error', 'bridge_status', 'ha_command'].includes(
       (data as { type: string }).type,
     )
   );
@@ -78,7 +137,7 @@ export function isClientMessage(data: unknown): data is ClientMessage {
     data !== null &&
     'type' in data &&
     typeof (data as { type: unknown }).type === 'string' &&
-    ['ready'].includes((data as { type: string }).type)
+    ['ready', 'entity_definitions', 'entity_interaction'].includes((data as { type: string }).type)
   );
 }
 

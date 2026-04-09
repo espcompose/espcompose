@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { SemanticIR } from '@espcompose/core/internals';
+import type { SemanticIR, IRObject } from '@espcompose/core/internals';
 import {
   extractDisplayConfig,
   lowerToSimulator,
@@ -7,8 +7,111 @@ import {
   Scheduler,
   type RuntimeNode,
   type ServerMessage,
+  type LoweringResult,
 } from '../runtime';
 import { useWebSocket, type ConnectionStatus } from './use-websocket';
+
+// ── Entity domain keys that ESPHome exposes to HA ────────────────────────────
+
+const ENTITY_DOMAIN_KEYS = new Set([
+  'light',
+  'switch',
+  'sensor',
+  'binary_sensor',
+  'fan',
+  'cover',
+  'climate',
+  'number',
+  'select',
+  'text_sensor',
+  'button',
+  'lock',
+  'media_player',
+  'siren',
+  'valve',
+  'alarm_control_panel',
+  'update',
+  'text',
+  'date',
+  'time',
+  'datetime',
+  'event',
+]);
+
+/**
+ * Extract native device entities from IR sections.
+ *
+ * In ESPHome, an entity is exposed to HA when:
+ * - It has a `name` property (no name → implicitly internal)
+ * - It is NOT marked `internal: true`
+ * - Its section key is a recognised entity domain
+ */
+function extractNativeEntities(
+  ir: SemanticIR,
+): Array<{ entity_id: string; domain: string; name: string; unique_id: string }> {
+  const sections = ir.esphome?.sections ?? [];
+
+  // Get device name for building entity_id
+  const esphomeSection = sections.find((s) => s.key === 'esphome');
+  const deviceSlug =
+    esphomeSection?.value.kind === 'object'
+      ? String(
+          (esphomeSection.value.entries.find((e) => e.key === 'name')?.value as { value?: string })?.value ??
+            'espcompose',
+        )
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_')
+      : 'espcompose';
+
+  const entities: Array<{ entity_id: string; domain: string; name: string; unique_id: string }> = [];
+
+  for (const section of sections) {
+    if (!ENTITY_DOMAIN_KEYS.has(section.key)) continue;
+    if (section.value.kind !== 'object') continue;
+
+    // A section may be a single entity (object) or an array of entities.
+    // Walk all objects that could be entity configs.
+    const objects: IRObject[] = [];
+    if (section.value.kind === 'object') {
+      // Check if this is an array section (items inside)
+      objects.push(section.value);
+    }
+
+    for (const obj of objects) {
+      const nameEntry = obj.entries.find((e) => e.key === 'name');
+      const internalEntry = obj.entries.find((e) => e.key === 'internal');
+
+      // No name → implicitly internal, skip
+      if (!nameEntry || nameEntry.value.kind !== 'scalar') continue;
+
+      const name = String(nameEntry.value.value);
+      if (!name) continue;
+
+      // Explicitly internal → skip
+      if (
+        internalEntry &&
+        internalEntry.value.kind === 'scalar' &&
+        internalEntry.value.value === true
+      ) {
+        continue;
+      }
+
+      // Build entity_id: domain.device_slug_entity_slug
+      const entitySlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+      const entityId = `${section.key}.${entitySlug}`;
+      const uniqueId = `${deviceSlug}_${entitySlug}`;
+
+      entities.push({
+        entity_id: entityId,
+        domain: section.key,
+        name,
+        unique_id: uniqueId,
+      });
+    }
+  }
+
+  return entities;
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,6 +139,8 @@ export interface SimulatorState {
   renderVersion: number;
   /** Call after modifying entity state to flush reactive updates. */
   flushAndRerender: () => void;
+  /** Current active page index (for page visibility in Canvas). */
+  getCurrentPageIndex: () => number;
 }
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
@@ -69,6 +174,15 @@ export function useSimulator(): SimulatorState {
   // Keep a ref to the current provider so flushAndRerender always uses the latest
   const providerRef = useRef<MockProvider | null>(null);
 
+  // Keep a ref to the latest lowering result so the page index getter works
+  const loweringRef = useRef<LoweringResult | null>(null);
+
+  // Track automation timers so they're cleaned up on re-lower
+  const automationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Track whether the HA bridge is active (suppresses mock timers)
+  const bridgeActiveRef = useRef(false);
+
   const flushAndRerender = useCallback(() => {
     Scheduler.instance().flush();
     setRenderVersion((v: number) => v + 1);
@@ -94,18 +208,78 @@ export function useSimulator(): SimulatorState {
         setBuildStatus('ready');
         setBuildError(null);
 
-        // Lower IR → RuntimeNode[]
+        // Cancel any pending automation timers from a previous lowering
+        for (const t of automationTimersRef.current) clearTimeout(t);
+        automationTimersRef.current = [];
+
+        // Lower IR → LoweringResult
         Scheduler.reset();
         const newProvider = new MockProvider();
-        const newNodes = lowerToSimulator(newIR, newProvider);
+        const result = lowerToSimulator(newIR, newProvider);
         const display = extractDisplayConfig(newIR);
 
+        // Wire the re-render callback so page navigation triggers React updates
+        result.setRerenderCallback(() => {
+          setRenderVersion((v: number) => v + 1);
+        });
+
+        loweringRef.current = result;
         providerRef.current = newProvider;
         setProvider(newProvider);
-        setNodes(newNodes);
+        setNodes(result.nodes);
         setDisplayWidth(display?.width ?? 320);
         setDisplayHeight(display?.height ?? 480);
         setRenderVersion((v: number) => v + 1);
+
+        // Send native device entities to the server for bridge forwarding.
+        // Native entities are IR sections with entity-domain keys (light,
+        // switch, sensor, …) that have a `name` and are not `internal: true`.
+        // These are the entities the device OWNS and exposes to HA — NOT the
+        // `haEntities` which are imports FROM HA (platform: homeassistant).
+        const nativeEntities = extractNativeEntities(newIR);
+        const haEntities = newIR.esphome?.haEntities ?? [];
+
+        if (nativeEntities.length > 0 || haEntities.length > 0) {
+          // Extract device name from the esphome section
+          const esphomeSection = newIR.esphome?.sections.find((s) => s.key === 'esphome');
+          const deviceName =
+            esphomeSection?.value.kind === 'object'
+              ? (esphomeSection.value.entries.find((e) => e.key === 'name')?.value as { value?: string })
+                  ?.value ?? 'espcompose'
+              : 'espcompose';
+
+          send({
+            type: 'entity_definitions',
+            payload: {
+              device_name: deviceName,
+              entities: nativeEntities,
+              ha_entity_imports: haEntities.map(
+                (e: { entityId: string; domain: string; generatedId: string; attribute?: string }) => ({
+                  entity_id: e.entityId,
+                  domain: e.domain,
+                  generated_id: e.generatedId,
+                  attribute: e.attribute,
+                }),
+              ),
+            },
+          });
+        }
+
+        // Schedule mock automations only when bridge is NOT active.
+        // When the bridge is active, the real client_connected event comes
+        // from HA via the bridge → Node → ha_command WS message.
+        if (!bridgeActiveRef.current) {
+          for (const auto of result.automations) {
+            if (auto.trigger === 'api.on_client_connected') {
+              const timer = setTimeout(() => {
+                console.log('[Simulator] Mock: api.on_client_connected fired');
+                auto.execute();
+              }, 10_000);
+              automationTimersRef.current.push(timer);
+            }
+          }
+        }
+
         break;
       }
 
@@ -118,8 +292,44 @@ export function useSimulator(): SimulatorState {
         setBuildStatus('error');
         setBuildError(msg.payload.message);
         break;
+
+      case 'bridge_status': {
+        const active = msg.payload.status === 'ready';
+        bridgeActiveRef.current = active;
+        if (active) {
+          // Bridge just became ready — cancel any mock timers
+          for (const t of automationTimersRef.current) clearTimeout(t);
+          automationTimersRef.current = [];
+          console.log('[Simulator] HA bridge ready — mock timers cancelled');
+        }
+        break;
+      }
+
+      case 'ha_command': {
+        // Real HA command — fire the matching automation
+        const { entity_id, domain, action } = msg.payload;
+        console.log(`[Simulator] HA command: ${domain}.${action} → ${entity_id}`);
+
+        // Fire on_client_connected automations when HA subscribes
+        if (action === 'client_connected') {
+          const result = loweringRef.current;
+          if (result) {
+            for (const auto of result.automations) {
+              if (auto.trigger === 'api.on_client_connected') {
+                auto.execute();
+              }
+            }
+          }
+        }
+        break;
+      }
     }
   }, [lastMessage, send]);
+
+  const getCurrentPageIndex = useCallback(
+    () => loweringRef.current?.getCurrentPageIndex() ?? 0,
+    [],
+  );
 
   return {
     nodes,
@@ -133,5 +343,6 @@ export function useSimulator(): SimulatorState {
     displayHeight,
     renderVersion,
     flushAndRerender,
+    getCurrentPageIndex,
   };
 }

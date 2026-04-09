@@ -16,7 +16,7 @@ export {
 } from './server/ws-protocol';
 
 export { exprToJs, type JsLoweringContext } from './backends/expr-to-js';
-export { lowerToSimulator } from './backends/ir-renderer';
+export { lowerToSimulator, type LoweringResult, type AutomationTrigger } from './backends/ir-renderer';
 
 export type {
   RuntimeNode,

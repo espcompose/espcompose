@@ -35,6 +35,22 @@
     "@espcompose/esphome-codegen#test": {
       "dependsOn": [],
       "cache": false
+    },
+    "@espcompose/simulator-bridge#build": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "@espcompose/simulator-bridge#typecheck": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "@espcompose/simulator-bridge#lint": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "@espcompose/simulator-bridge#test": {
+      "dependsOn": [],
+      "cache": false
     }
   }
 }

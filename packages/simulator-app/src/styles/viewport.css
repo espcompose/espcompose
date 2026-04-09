@@ -49,12 +49,14 @@ body {
   height: 100%;
   background: var(--thm-colors-background, #1a1a1a);
   overflow-y: auto;
-  padding: 0;
+  padding: 8px;
   position: relative;
 }
 
 .sim-viewport .lvgl-obj {
   position: relative;
+  padding: 8px;
+  gap: 8px;
 }
 
 .sim-viewport .lvgl-label {

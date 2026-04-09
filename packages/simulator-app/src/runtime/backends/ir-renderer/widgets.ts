@@ -154,6 +154,9 @@ function irWidgetsArrayToRuntimeNodes(
  *
  * LVGL section structure:
  *   lvgl: { displays: [...], pages: [{ widgets: [...] }, ...] }
+ *
+ * Also populates ctx.pageCount and ctx.skipPages so the page navigator
+ * and Canvas know which pages exist and which are excluded from cycling.
  */
 export function buildLvglNodesFromIR(lvglValue: IRValue, ctx: IRRenderContext): RuntimeNode[] {
   if (lvglValue.kind !== 'object') return [];
@@ -163,6 +166,7 @@ export function buildLvglNodesFromIR(lvglValue: IRValue, ctx: IRRenderContext): 
   if (!pagesEntry || pagesEntry.value.kind !== 'array') return [];
 
   const nodes: RuntimeNode[] = [];
+  let pageIndex = 0;
 
   for (const page of pagesEntry.value.items) {
     if (page.kind !== 'object') continue;
@@ -171,6 +175,12 @@ export function buildLvglNodesFromIR(lvglValue: IRValue, ctx: IRRenderContext): 
     const id = findScalarEntry(pageObj, 'id') ?? `sim_page_${ctx.nodeCounter++}`;
     const pageProps: Record<string, RuntimeProp> = {};
     const pageChildren: RuntimeNode[] = [];
+
+    // Check for skip flag
+    const skipEntry = pageObj.entries.find(e => e.key === 'skip');
+    if (skipEntry && skipEntry.value.kind === 'scalar' && skipEntry.value.value === true) {
+      ctx.skipPages.add(pageIndex);
+    }
 
     for (const entry of pageObj.entries) {
       if (entry.key === 'id') continue;
@@ -181,8 +191,14 @@ export function buildLvglNodesFromIR(lvglValue: IRValue, ctx: IRRenderContext): 
       pageProps[entry.key] = irValueToRuntimeProp(entry.key, entry.value, ctx);
     }
 
+    // Embed the page index so Canvas can control visibility
+    pageProps['__pageIndex'] = { kind: 'static', value: pageIndex };
+
     nodes.push({ id, type: 'page', props: pageProps, children: pageChildren });
+    pageIndex++;
   }
+
+  ctx.pageCount = pageIndex;
 
   return nodes;
 }

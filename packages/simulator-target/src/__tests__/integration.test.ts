@@ -64,7 +64,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].type).toBe('page');
@@ -124,7 +124,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].children).toHaveLength(1);
@@ -179,7 +179,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     const label = nodes[0].children[0];
     expect(label.id).toBe('lbl_1');
@@ -232,7 +232,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     const button = nodes[0].children[0];
     expect(button.props.on_press.kind).toBe('action');
@@ -275,7 +275,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     const label = nodes[0].children[0];
     expect(label.props.display.kind).toBe('ref');
@@ -290,7 +290,7 @@ describe('IR-based simulator renderer', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
     expect(nodes).toHaveLength(0);
   });
 
@@ -410,7 +410,7 @@ describe('Theme integration', () => {
     );
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     const label = nodes[0].children[0];
     expect(label.id).toBe('lbl_themed');
@@ -446,7 +446,7 @@ describe('Theme integration', () => {
     );
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
 
     const label = nodes[0].children[0];
     if (label.props.bg_color.kind === 'reactive') {
@@ -483,7 +483,7 @@ describe('Theme integration', () => {
     ]);
 
     const provider = new MockProvider();
-    const nodes = lowerToSimulator(ir, provider);
+    const { nodes } = lowerToSimulator(ir, provider);
     expect(nodes).toHaveLength(1);
     expect(nodes[0].children[0].type).toBe('label');
   });

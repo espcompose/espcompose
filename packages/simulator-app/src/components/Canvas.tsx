@@ -14,6 +14,8 @@ interface CanvasProps {
   onAction?: (nodeId: string, event: string) => void;
   /** Changes when reactive state is flushed, forcing a re-render. */
   _renderVersion: number;
+  /** Returns the index of the currently visible page. */
+  getCurrentPageIndex?: () => number;
 }
 
 /**
@@ -30,6 +32,7 @@ export function Canvas({
   defaultThemeName,
   onAction,
   _renderVersion,
+  getCurrentPageIndex,
 }: CanvasProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -79,9 +82,21 @@ export function Canvas({
           }}
           data-theme={defaultThemeName}
         >
-          {nodes.map((node) => (
-            <LvglWidget key={node.id} node={node} onAction={onAction} />
-          ))}
+          {nodes.map((node) => {
+            // Only show the current page — hide others via display: none
+            if (node.type === 'page' && getCurrentPageIndex) {
+              const idx = node.props['__pageIndex'];
+              const pageIndex = idx?.kind === 'static' ? idx.value : undefined;
+              if (typeof pageIndex === 'number' && pageIndex !== getCurrentPageIndex()) {
+                return (
+                  <div key={node.id} style={{ display: 'none' }}>
+                    <LvglWidget node={node} onAction={onAction} />
+                  </div>
+                );
+              }
+            }
+            return <LvglWidget key={node.id} node={node} onAction={onAction} />;
+          })}
         </div>
 
         <Text

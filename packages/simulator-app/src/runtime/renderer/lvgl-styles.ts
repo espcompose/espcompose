@@ -14,7 +14,7 @@ import type { RuntimeProp } from '../types';
 export function getStaticValue(prop: RuntimeProp | undefined): unknown {
   if (!prop) return undefined;
   if (prop.kind === 'static') return prop.value;
-  if (prop.kind === 'reactive') return prop.current;
+  if (prop.kind === 'reactive') return prop.evaluate();
   if (prop.kind === 'ref') return prop.refId;
   return undefined;
 }

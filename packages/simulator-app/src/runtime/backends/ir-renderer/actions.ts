@@ -36,15 +36,17 @@ export function interpretActionSteps(actions: IRActionNode[]): ActionStep[] {
     if ('kind' in node) {
       switch (node.kind) {
         case 'native': {
-          // Parse actionKey like 'light.toggle' into target and method
-          const [target, method] = node.actionKey.split('.');
+          // Parse actionKey like 'light.toggle' or 'lvgl.page.next'
+          const parts = node.actionKey.split('.');
+          const target = parts[0];
+          const method = parts.slice(1).join('.');
           const config = typeof node.config === 'string'
             ? { id: node.config }
             : node.config as Record<string, unknown>;
           steps.push({
             type: 'component_action',
             target: String(config.id ?? target),
-            method: method ?? 'toggle',
+            method: method || 'toggle',
             params: config,
           });
           break;
@@ -136,7 +138,17 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext):
       console.log(`[Simulator] ${step.level}: ${step.message}`);
       break;
     case 'component_action':
-      console.log(`[Simulator] ${step.target}.${step.method}()`);
+      if (step.target === 'lvgl') {
+        if (step.method === 'page.next') {
+          navigatePage(ctx, 1);
+        } else if (step.method === 'page.previous') {
+          navigatePage(ctx, -1);
+        } else {
+          console.log(`[Simulator] ${step.target}.${step.method}()`);
+        }
+      } else {
+        console.log(`[Simulator] ${step.target}.${step.method}()`);
+      }
       break;
     case 'theme_select': {
       if (ctx.themeData) {
@@ -145,6 +157,7 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext):
           ctx.themeIndex = idx;
           console.log(`[Simulator] theme.select('${step.themeName}') → index ${idx}`);
           Scheduler.instance().flush();
+          ctx.requestRerender?.();
         } else {
           console.warn(`[Simulator] Unknown theme name: '${step.themeName}'. Available: ${ctx.themeData.themeNames.join(', ')}`);
         }
@@ -162,5 +175,24 @@ function parseDelay(duration: string): number {
     case 's': return val * 1000;
     case 'min': return val * 60000;
     default: return val;
+  }
+}
+
+/**
+ * Navigate to the next or previous non-skip page.
+ * Direction: +1 for next, -1 for previous.
+ */
+function navigatePage(ctx: IRRenderContext, direction: 1 | -1): void {
+  if (ctx.pageCount === 0) return;
+
+  let next = ctx.currentPageIndex;
+  for (let i = 0; i < ctx.pageCount; i++) {
+    next = (next + direction + ctx.pageCount) % ctx.pageCount;
+    if (!ctx.skipPages.has(next)) break;
+  }
+
+  if (next !== ctx.currentPageIndex) {
+    ctx.currentPageIndex = next;
+    ctx.requestRerender?.();
   }
 }

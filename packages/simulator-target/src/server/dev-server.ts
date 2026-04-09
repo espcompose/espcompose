@@ -17,6 +17,7 @@ import {
   parseMessage,
   type ServerMessage,
 } from '@espcompose/simulator-app/runtime';
+import type { BridgeManager } from './bridge-manager';
 
 // ── MIME type map for static file serving ────────────────────────────────────
 
@@ -58,12 +59,18 @@ export interface DevServerOptions {
 export interface DevServer {
   /** The port the server is listening on. */
   readonly port: number;
+  /** Set the bridge manager for HA integration. Can be set after creation. */
+  bridge: BridgeManager | undefined;
   /** Broadcast an IR update to all connected clients. */
   broadcastIR(ir: SemanticIR): void;
   /** Broadcast a build-start event to all connected clients. */
   broadcastBuildStart(): void;
   /** Broadcast a build-error event to all connected clients. */
   broadcastBuildError(message: string, phase?: string, stack?: string): void;
+  /** Broadcast bridge status to all connected clients. */
+  broadcastBridgeStatus(status: string, haClients?: number, port?: number, error?: string): void;
+  /** Broadcast an HA command to all connected browser clients. */
+  broadcastHACommand(cmd: { entity_id: string; domain: string; action: string; data?: Record<string, unknown> }): void;
   /** Gracefully shut down the HTTP and WebSocket servers. */
   close(): Promise<void>;
 }
@@ -81,6 +88,7 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
   } = options;
 
   let currentIR: SemanticIR | undefined = initialIR;
+  let bridge: BridgeManager | undefined;
   const clients = new Set<WebSocket>();
 
   // ── HTTP server: serve static files ──────────────────────────────────────
@@ -173,6 +181,30 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       if (parsed.type === 'ready' && currentIR) {
         sendToClient(ws, { type: 'ir_update', payload: { ir: currentIR } });
       }
+
+      // Forward bridge-related messages to the Python bridge
+      if (bridge) {
+        if (parsed.type === 'entity_definitions') {
+          bridge.send({
+            type: 'define_node',
+            payload: {
+              name: parsed.payload.device_name,
+              api_encryption_key: parsed.payload.api_encryption_key,
+              entities: parsed.payload.entities,
+              ha_entity_imports: parsed.payload.ha_entity_imports,
+            },
+          });
+        } else if (parsed.type === 'entity_interaction') {
+          bridge.send({
+            type: 'entity_state_update',
+            payload: {
+              entity_id: parsed.payload.entity_id,
+              state: '', // State resolved by entity state store in later phase
+              attributes: parsed.payload.data,
+            },
+          });
+        }
+      }
     });
 
     ws.on('close', () => {
@@ -210,6 +242,9 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       resolve({
         port,
 
+        get bridge() { return bridge; },
+        set bridge(b: BridgeManager | undefined) { bridge = b; },
+
         broadcastIR(ir: SemanticIR) {
           currentIR = ir;
           broadcast({ type: 'ir_update', payload: { ir } });
@@ -221,6 +256,25 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
 
         broadcastBuildError(message: string, phase?: string, stack?: string) {
           broadcast({ type: 'build_error', payload: { message, phase, stack } });
+        },
+
+        broadcastBridgeStatus(
+          bridgeStatus: string,
+          haClients?: number,
+          bridgePort?: number,
+          error?: string,
+        ) {
+          broadcast({
+            type: 'bridge_status',
+            payload: { status: bridgeStatus, ha_clients: haClients ?? 0, port: bridgePort, error },
+          });
+        },
+
+        broadcastHACommand(cmd: { entity_id: string; domain: string; action: string; data?: Record<string, unknown> }) {
+          broadcast({
+            type: 'ha_command',
+            payload: cmd,
+          });
         },
 
         async close() {

@@ -37,7 +37,8 @@ export function simulatorBuildFromIR(
   const provider = new MockProvider();
   Scheduler.reset();
 
-  const nodes = lowerToSimulator(ir, provider);
+  const result = lowerToSimulator(ir, provider);
+  const nodes = result.nodes;
 
   console.log(`  Rendered ${countNodes(nodes)} widget(s) (IR path)`);
 

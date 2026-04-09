@@ -137,8 +137,8 @@ function generateHTML(irJson: string): string {
   // Locate the pre-built single-file viewer HTML. In the compiled bundle
   // __dirname is dist/ (one level from package root); under vitest it is
   // src/compiler/phases/emit/ (four levels from package root). Try production path first.
-  const prodPath = path.resolve(__dirname, '..', 'assets', 'ir-viewer-dist', 'index.html');
-  const devPath  = path.resolve(__dirname, '..', '..', '..', '..', 'assets', 'ir-viewer-dist', 'index.html');
+  const prodPath = path.resolve(__dirname, '..', 'assets', 'ir-viewer', 'index.html');
+  const devPath  = path.resolve(__dirname, '..', '..', '..', '..', 'assets', 'ir-viewer', 'index.html');
   const templatePath = fs.existsSync(prodPath) ? prodPath : devPath;
   const template = fs.readFileSync(templatePath, 'utf8');
 

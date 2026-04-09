@@ -18,6 +18,14 @@ export interface IRRenderContext {
   imageMap: Map<string, { file: string; resize?: string }>;
   /** Mapping from font component ref tokens to CSS font strings (e.g. "28px 'Roboto', sans-serif"). */
   fontMap: Map<string, string>;
+  /** Active page index — mutable so page navigation actions can update it. */
+  currentPageIndex: number;
+  /** Total number of LVGL pages. */
+  pageCount: number;
+  /** Page indices marked with skip: true (excluded from page cycling). */
+  skipPages: Set<number>;
+  /** Callback to notify React of state changes (page navigation, etc). */
+  requestRerender?: () => void;
 }
 
 // ── ExprIR → JS lowering context builder ─────────────────────────────────────

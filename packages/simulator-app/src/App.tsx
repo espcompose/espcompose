@@ -110,6 +110,7 @@ export function App() {
                 defaultThemeName={defaultThemeName}
                 onAction={handleAction}
                 _renderVersion={sim.renderVersion}
+                getCurrentPageIndex={sim.getCurrentPageIndex}
               />
               <BuildOverlay
                 buildStatus={sim.buildStatus}
