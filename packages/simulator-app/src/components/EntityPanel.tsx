@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { InputNumber, Switch, Tag, Typography } from 'antd';
 import type { MockProvider, EntityState } from '../runtime';
+import { ENTITY_DOMAINS, getEntityDomain } from '@espcompose/core/internals';
 
 const { Text } = Typography;
 
@@ -9,8 +10,12 @@ interface EntityPanelProps {
   onEntityChange: () => void;
 }
 
-const TOGGLEABLE_DOMAINS = new Set(['light', 'switch', 'fan', 'cover']);
-const SENSOR_DOMAINS = new Set(['sensor', 'number']);
+const TOGGLEABLE_DOMAINS = new Set(
+  Object.values(ENTITY_DOMAINS).filter(d => d.uiCategory === 'toggleable' || d.uiCategory === 'cover').map(d => d.domain),
+);
+const SENSOR_DOMAINS = new Set(
+  Object.values(ENTITY_DOMAINS).filter(d => d.uiCategory === 'sensor').map(d => d.domain),
+);
 
 /**
  * Entity control panel — lists all registered entities with
@@ -71,7 +76,8 @@ export function EntityPanel({ provider, onEntityChange }: EntityPanelProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {Array.from(entityStates.entries()).map(([entityId, state]) => {
         const domain = entityId.split('.')[0];
-        const isOn = state.state === 'on' || state.state === 'open';
+        const desc = getEntityDomain(domain);
+        const isOn = desc?.activeState ? state.state === desc.activeState : false;
 
         return (
           <div

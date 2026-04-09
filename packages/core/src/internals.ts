@@ -54,6 +54,23 @@ export type { ThemeLeaf } from './theme-signals';
 // ── Reactive property map (compiler dispatch tables) ───────────────────────
 export { REACTIVE_PROPERTY_MAP } from './reactive-properties';
 
+// ── Entity domain metadata (generated from metadata/entity-domains.json) ───
+export {
+  ENTITY_DOMAINS,
+  KNOWN_DOMAIN_NAMES,
+  getEntityDomain,
+  isKnownDomain,
+  getDomainSensorType,
+  defaultStateForDomain,
+} from './generated/entity-domains.js';
+export type {
+  EntityDomainDescriptor,
+  EntityPropertyDescriptor,
+  EntityActionDescriptor,
+  SensorPlatform,
+  UICategory,
+} from './generated/entity-domains.js';
+
 // ── Trigger registry (target codegen) ──────────────────────────────────────
 export { TRIGGER_REGISTRY, getTriggerSignature } from './trigger-registry';
 export type { TriggerSignature, TriggerVariable } from './trigger-registry';

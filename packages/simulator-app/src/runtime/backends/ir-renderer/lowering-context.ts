@@ -1,5 +1,6 @@
 import type { IRExprNode } from '@espcompose/core';
 import type { IRReactive, IRThemeData } from '@espcompose/core/internals';
+import { REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
 import type { JsLoweringContext } from '../expr-to-js.js';
 import type { EntitySignalRegistry } from './entity-registry.js';
 import type { MockProvider } from '../../providers/mock-provider';
@@ -121,25 +122,31 @@ export function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext)
       const genId = entityIdToGeneratedId(node.entityId);
       const signals = ctx.entityRegistry.getOrCreate(genId);
 
-      switch (node.property) {
-        case 'isOn':
-        case 'isOpen':
+      // 'state' is a raw passthrough — not in REACTIVE_PROPERTY_MAP
+      if (node.property === 'state') {
+        entityGetters.set(key, () => signals.stateSignal.get());
+        return;
+      }
+
+      const propDesc = REACTIVE_PROPERTY_MAP[node.property];
+      if (!propDesc) {
+        throw new Error(`Unknown entity property '${node.property}' for entity '${node.entityId}'`);
+      }
+
+      switch (propDesc.exprType) {
+        case 'bool':
           entityGetters.set(key, () => signals.isOnSignal.get());
           break;
-        case 'value':
-        case 'brightness':
+        case 'float':
           entityGetters.set(key, () => {
             const raw = signals.stateSignal.get();
             const num = Number(raw);
             return isNaN(num) ? 0 : num;
           });
           break;
-        case 'stateText':
-        case 'state':
+        case 'string':
           entityGetters.set(key, () => signals.stateSignal.get());
           break;
-        default:
-          entityGetters.set(key, () => signals.stateSignal.get());
       }
     }
 

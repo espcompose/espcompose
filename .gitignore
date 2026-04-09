@@ -152,5 +152,6 @@ vite.config.ts.timestamp-*
 packages/cli/assets/
 
 __pycache__/
+.pytest_cache/
 
 .notes/

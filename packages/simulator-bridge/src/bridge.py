@@ -26,6 +26,7 @@ from entity_map import (
     state_from_command,
     _stable_key,
 )
+from generated.entity_domains import ACTION_RESULT_STATES, DOMAINS
 
 logger = logging.getLogger("espcompose_bridge")
 
@@ -208,18 +209,26 @@ class Bridge:
 
     def _resolve_state_from_action(self, entity_id: str, domain: str, action: str) -> str:
         """Derive a state string from a service-call action, using cached state for toggle."""
-        if action in ("turn_on", "open", "lock"):
-            return "on"
-        if action in ("turn_off", "close", "unlock"):
-            return "off"
-        if action == "toggle":
-            # Flip current cached state
+        result_key = f"{domain}.{action}"
+        result_state = ACTION_RESULT_STATES.get(result_key)
+
+        if result_state is not None:
+            return result_state
+
+        # None means toggle/unknown — flip current cached state
+        if result_key in ACTION_RESULT_STATES:
+            desc = DOMAINS.get(domain)
             key = _stable_key(entity_id)
             current = self._server.get_state(key) if self._server else None
-            if current is not None and hasattr(current, "state"):
-                return "off" if current.state else "on"
-            return "on"  # Default to on when unknown
-        return action  # Fallback: use action as-is
+            if current is not None and hasattr(current, "state") and desc:
+                active = desc.get("active_state", "on")
+                default = desc.get("default_state", "off")
+                return default if current.state else active
+            logger.warning("Toggle with no cached state for %s, returning 'unknown'", entity_id)
+            return "unknown"
+
+        logger.error("Unknown action '%s' for domain '%s' (entity: %s)", action, domain, entity_id)
+        return ""
 
     def _handle_batch_entity_state_update(self, payload: dict[str, Any]) -> None:
         """Handle batch entity state update from Node."""

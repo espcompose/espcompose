@@ -51,6 +51,15 @@
     "@espcompose/simulator-bridge#test": {
       "dependsOn": [],
       "cache": false
+    },
+    "codegen:domains": {
+      "inputs": ["metadata/entity-domains.json", "metadata/entity-domains.schema.json", "metadata/generate.ts", "metadata/generators/**"],
+      "outputs": [
+        "packages/core/src/generated/entity-domains.ts",
+        "packages/core/src/generated/entity-domains-triggers.ts",
+        "packages/simulator-bridge/src/generated/entity_domains.py"
+      ],
+      "cache": true
     }
   }
 }

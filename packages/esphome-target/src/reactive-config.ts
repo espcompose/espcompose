@@ -15,15 +15,16 @@ import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType } from '@espcompose/core/internals';
+import { getEntityDomain } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Sensor type → C++ type mapping
 // ────────────────────────────────────────────────────────────────────────────
 
 function mapSensorTypeToCppType(sensorType: string): string {
-  if (sensorType === 'sensor') return 'float';
-  if (sensorType === 'text_sensor') return 'std::string';
-  return 'bool';
+  const domain = getEntityDomain(sensorType);
+  if (!domain) throw new Error(`Unknown sensor type / entity domain: '${sensorType}'`);
+  return domain.cppType;
 }
 
 /**

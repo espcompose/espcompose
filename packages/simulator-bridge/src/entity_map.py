@@ -53,6 +53,8 @@ from aioesphomeapi.api_pb2 import (  # type: ignore
     ButtonCommandRequest,
 )
 
+from generated.entity_domains import DEFAULT_STATES
+
 logger = logging.getLogger("espcompose_bridge.entity_map")
 
 
@@ -307,26 +309,11 @@ _STATE_BUILDERS = {
     "text_sensor": _build_text_sensor_state,
 }
 
-# Default state strings per domain — used to seed initial entity state
-# so HA gets a state response immediately on SubscribeStates.
-_DEFAULT_STATES: dict[str, str] = {
-    "light": "off",
-    "switch": "off",
-    "sensor": "0",
-    "binary_sensor": "off",
-    "fan": "off",
-    "cover": "closed",
-    "number": "0",
-    "select": "",
-    "text_sensor": "",
-}
-
-
 def build_default_state(entity: dict[str, Any]) -> ProtoMessage | None:
     """Build a default *StateResponse for an entity definition."""
     domain = entity.get("domain", "")
     entity_id = entity.get("entity_id", "")
-    default = _DEFAULT_STATES.get(domain)
+    default = DEFAULT_STATES.get(domain)
     if default is None:
         return None
     return build_state_response(entity_id, domain, default)

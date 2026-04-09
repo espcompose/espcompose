@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SemanticIR, IRObject } from '@espcompose/core/internals';
+import { KNOWN_DOMAIN_NAMES } from '@espcompose/core/internals';
 import {
   extractDisplayConfig,
   lowerToSimulator,
@@ -11,33 +12,6 @@ import {
 } from '../runtime';
 import { useWebSocket, type ConnectionStatus } from './use-websocket';
 import { debug } from '../utils/debug';
-
-// ── Entity domain keys that ESPHome exposes to HA ────────────────────────────
-
-const ENTITY_DOMAIN_KEYS = new Set([
-  'light',
-  'switch',
-  'sensor',
-  'binary_sensor',
-  'fan',
-  'cover',
-  'climate',
-  'number',
-  'select',
-  'text_sensor',
-  'button',
-  'lock',
-  'media_player',
-  'siren',
-  'valve',
-  'alarm_control_panel',
-  'update',
-  'text',
-  'date',
-  'time',
-  'datetime',
-  'event',
-]);
 
 /**
  * Extract native device entities from IR sections.
@@ -67,7 +41,7 @@ function extractNativeEntities(
   const entities: Array<{ entity_id: string; domain: string; name: string; unique_id: string }> = [];
 
   for (const section of sections) {
-    if (!ENTITY_DOMAIN_KEYS.has(section.key)) continue;
+    if (!KNOWN_DOMAIN_NAMES.has(section.key)) continue;
     if (section.value.kind !== 'object') continue;
 
     // A section may be a single entity (object) or an array of entities.

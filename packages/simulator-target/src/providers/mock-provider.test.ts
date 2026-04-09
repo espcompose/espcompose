@@ -71,4 +71,37 @@ describe('MockProvider', () => {
     provider.ensureEntity('sensor.b');
     expect(provider.getEntityIds().sort()).toEqual(['light.a', 'sensor.b']);
   });
+
+  describe('entity aliases', () => {
+    it('resolves raw HA entity ID to generated ID in callService', () => {
+      // Register entity under the generated ID (as lowerToSimulator does)
+      provider.ensureEntity('ha_light_office');
+      provider.registerEntityAlias('light.office', 'ha_light_office');
+
+      // Listener subscribes to the generated ID
+      const log: string[] = [];
+      provider.onEntityChange('ha_light_office', (s) => log.push(s.state));
+
+      // Action uses the raw HA entity ID
+      provider.callService('light', 'toggle', 'light.office');
+      expect(provider.getEntityState('ha_light_office').state).toBe('on');
+      expect(log).toEqual(['on']);
+
+      provider.callService('light', 'toggle', 'light.office');
+      expect(provider.getEntityState('ha_light_office').state).toBe('off');
+      expect(log).toEqual(['on', 'off']);
+    });
+
+    it('forwards raw entity ID to service call hook', () => {
+      provider.ensureEntity('ha_light_office');
+      provider.registerEntityAlias('light.office', 'ha_light_office');
+
+      const hookCalls: string[] = [];
+      provider.onServiceCallHook = (_d, _a, entityId) => hookCalls.push(entityId);
+
+      provider.callService('light', 'toggle', 'light.office');
+      // Hook should receive the raw entity ID, not the generated one
+      expect(hookCalls).toEqual(['light.office']);
+    });
+  });
 });

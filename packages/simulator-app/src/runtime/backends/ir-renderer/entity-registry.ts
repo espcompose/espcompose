@@ -1,10 +1,20 @@
 import { Signal, Scheduler } from '../../runtime/signals';
 import type { MockProvider } from '../../providers/mock-provider';
+import { getEntityDomain } from '@espcompose/core/internals';
 
 export interface EntitySignals {
   stateSignal: Signal<string>;
   isOnSignal: Signal<boolean>;
   attributeSignals: Map<string, Signal<unknown>>;
+}
+
+/** Determine active state for an entity based on its domain descriptor. */
+function isActiveState(entityId: string, stateStr: string): boolean {
+  const domain = entityId.split('.')[0] ?? '';
+  const desc = getEntityDomain(domain);
+  // Unknown domain or domain with no active state concept → never "active"
+  if (!desc?.activeState) return false;
+  return stateStr === desc.activeState;
 }
 
 export class EntitySignalRegistry {
@@ -23,7 +33,7 @@ export class EntitySignalRegistry {
     const state = this.provider.getEntityState(entityId);
 
     const stateSignal = new Signal<string>(state.state);
-    const isOnSignal = new Signal<boolean>(state.state === 'on');
+    const isOnSignal = new Signal<boolean>(isActiveState(entityId, state.state));
     const attributeSignals = new Map<string, Signal<unknown>>();
 
     for (const [key, val] of Object.entries(state.attributes)) {
@@ -36,7 +46,7 @@ export class EntitySignalRegistry {
     // Subscribe to provider changes
     this.provider.onEntityChange(entityId, (newState) => {
       stateSignal.set(newState.state);
-      isOnSignal.set(newState.state === 'on');
+      isOnSignal.set(isActiveState(entityId, newState.state));
       for (const [key, val] of Object.entries(newState.attributes)) {
         let attrSig = attributeSignals.get(key);
         if (!attrSig) {

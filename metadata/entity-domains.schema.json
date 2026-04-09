@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Entity Domain Metadata",
+  "description": "Centralized metadata for Home Assistant entity domains used across the espcompose monorepo.",
+  "type": "object",
+  "required": ["domains"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "domains": {
+      "type": "object",
+      "description": "Map of domain name to its descriptor.",
+      "additionalProperties": {
+        "$ref": "#/$defs/DomainDescriptor"
+      }
+    }
+  },
+  "$defs": {
+    "DomainDescriptor": {
+      "type": "object",
+      "required": [
+        "sensorPlatform",
+        "cppType",
+        "defaultState",
+        "activeState",
+        "uiCategory",
+        "properties",
+        "actions",
+        "triggers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sensorPlatform": {
+          "description": "ESPHome sensor platform type this domain maps to for codegen.",
+          "enum": ["binary_sensor", "sensor", "text_sensor"]
+        },
+        "cppType": {
+          "type": "string",
+          "description": "C++ signal type for esphome-target codegen (e.g. 'bool', 'float', 'std::string')."
+        },
+        "defaultState": {
+          "type": "string",
+          "description": "Default state string for simulator mock (e.g. 'off', '0', 'closed')."
+        },
+        "activeState": {
+          "type": ["string", "null"],
+          "description": "State string that means 'active' (e.g. 'on', 'open'). Null for sensors/read-only entities."
+        },
+        "uiCategory": {
+          "description": "UI category for the simulator entity panel.",
+          "enum": ["toggleable", "sensor", "binary", "cover", "button"]
+        },
+        "properties": {
+          "type": "array",
+          "description": "Reactive properties exposed by the binding interface.",
+          "items": {
+            "$ref": "#/$defs/PropertyDescriptor"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "description": "Actions the user can call (empty for read-only entities).",
+          "items": {
+            "$ref": "#/$defs/ActionDescriptor"
+          }
+        },
+        "triggers": {
+          "type": "object",
+          "description": "ESPHome trigger signatures. Keys are snake_case trigger names (e.g. 'on_state').",
+          "additionalProperties": {
+            "$ref": "#/$defs/TriggerSignature"
+          }
+        }
+      }
+    },
+    "PropertyDescriptor": {
+      "type": "object",
+      "required": ["name", "cppPath", "triggerType", "exprType", "sourceDomain"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "camelCase property name matching the binding interface (e.g. 'isOn', 'brightness')."
+        },
+        "cppPath": {
+          "type": "string",
+          "description": "C++ access path on the component (e.g. '.state', '.current_values.get_brightness()')."
+        },
+        "triggerType": {
+          "type": "string",
+          "description": "ESPHome trigger name to subscribe (e.g. 'on_state', 'on_value')."
+        },
+        "exprType": {
+          "description": "Target-agnostic value type.",
+          "enum": ["bool", "float", "string"]
+        },
+        "sourceDomain": {
+          "type": "string",
+          "description": "Domain used for trigger registry lookup. Usually the sensorPlatform, but for properties like brightness or isOpen it is the entity domain itself (e.g. 'light', 'cover')."
+        }
+      }
+    },
+    "ActionDescriptor": {
+      "type": "object",
+      "required": ["name", "service"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "camelCase method name from the binding interface (e.g. 'turnOn', 'open')."
+        },
+        "service": {
+          "type": "string",
+          "description": "HA service suffix (e.g. 'turn_on' → domain.turn_on)."
+        },
+        "resultState": {
+          "type": ["string", "null"],
+          "description": "State the entity transitions to after this action (for mock provider). Null for toggle-like actions."
+        },
+        "defaultAttributes": {
+          "type": ["object", "null"],
+          "description": "Attribute side-effects for mock provider (e.g. { \"brightness\": 255 })."
+        }
+      }
+    },
+    "TriggerSignature": {
+      "type": "object",
+      "required": ["variables"],
+      "additionalProperties": false,
+      "properties": {
+        "variables": {
+          "type": "array",
+          "description": "Variables available inside the trigger's lambda scope. Empty array means no variables.",
+          "items": {
+            "$ref": "#/$defs/TriggerVariable"
+          }
+        }
+      }
+    },
+    "TriggerVariable": {
+      "type": "object",
+      "required": ["name", "cppType", "tsType"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Variable name available in the trigger lambda (e.g. 'x')."
+        },
+        "cppType": {
+          "type": "string",
+          "description": "C++ type of the variable (e.g. 'bool', 'float', 'std::string')."
+        },
+        "tsType": {
+          "type": "string",
+          "description": "TypeScript type equivalent (e.g. 'boolean', 'number', 'string')."
+        }
+      }
+    }
+  }
+}

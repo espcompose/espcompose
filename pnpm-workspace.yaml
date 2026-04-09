@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - metadata
   - docs
   - tests/*
 

@@ -158,6 +158,7 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext):
       if (domain && service && entityId) {
         ctx.provider.callService(domain, service, entityId, step.data as Record<string, unknown>);
         Scheduler.instance().flush();
+        ctx.requestRerender?.();
       }
       break;
     }

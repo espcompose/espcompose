@@ -7,35 +7,40 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { DataProvider, EntityState } from '../types';
+import { getEntityDomain } from '@espcompose/core/internals';
 
 /** Default state for entities by domain. */
 function defaultStateForDomain(domain: string): EntityState {
-  switch (domain) {
-    case 'light':
-    case 'switch':
-    case 'fan':
-      return { state: 'off', attributes: { brightness: 0 }, domain };
-    case 'cover':
-      return { state: 'closed', attributes: {}, domain };
-    case 'sensor':
-    case 'number':
-      return { state: '0', attributes: { unit_of_measurement: '' }, domain };
-    case 'binary_sensor':
-      return { state: 'off', attributes: {}, domain };
-    default:
-      return { state: 'unknown', attributes: {}, domain };
-  }
+  const desc = getEntityDomain(domain);
+  if (!desc) return { state: 'unknown', attributes: {}, domain };
+  return { state: desc.defaultState, attributes: {}, domain };
 }
 
 export class MockProvider implements DataProvider {
   private entities = new Map<string, EntityState>();
   private listeners = new Map<string, Set<(state: EntityState) => void>>();
+  /** Maps raw HA entity IDs (e.g. 'light.office') to generated IDs (e.g. 'ha_light_office'). */
+  private entityAliases = new Map<string, string>();
 
   /** When true, callService skips local state effects — state comes from HA only. */
   bridgeMode = false;
 
   /** Optional callback invoked after every callService — used to forward to bridge. */
   onServiceCallHook?: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void;
+
+  /**
+   * Register an alias so that service calls using a raw HA entity ID
+   * (e.g. 'light.office') resolve to the generated ID used internally
+   * (e.g. 'ha_light_office').
+   */
+  registerEntityAlias(rawId: string, generatedId: string): void {
+    this.entityAliases.set(rawId, generatedId);
+  }
+
+  /** Resolve an entity ID through the alias map, falling back to the original ID. */
+  private resolveEntityId(entityId: string): string {
+    return this.entityAliases.get(entityId) ?? entityId;
+  }
 
   /**
    * Ensure an entity exists with default state for its domain.
@@ -78,10 +83,14 @@ export class MockProvider implements DataProvider {
   callService(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void {
     // In bridge mode, skip local mock state — the real state comes from HA.
     if (!this.bridgeMode) {
-      this._applyServiceEffect(domain, action, entityId, data);
+      // Resolve raw HA entity IDs (e.g. 'light.office') to generated IDs
+      // (e.g. 'ha_light_office') so the state update reaches the correct
+      // entity signals.
+      this._applyServiceEffect(domain, action, this.resolveEntityId(entityId), data);
     }
 
-    // Notify hook (e.g. bridge forwarding) after state has been applied
+    // Notify hook with the raw entity ID (bridge forwarding needs the
+    // original HA entity ID, not the generated one).
     this.onServiceCallHook?.(domain, action, entityId, data);
   }
 
@@ -96,47 +105,48 @@ export class MockProvider implements DataProvider {
 
   /** Apply common state effects for well-known service calls. */
   private _applyServiceEffect(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void {
-    const fullAction = `${domain}.${action}`;
-    switch (fullAction) {
-      case 'light.toggle':
-      case 'switch.toggle':
-      case 'fan.toggle': {
-        const current = this.getEntityState(entityId);
-        const newState = current.state === 'on' ? 'off' : 'on';
-        const attrs: Record<string, unknown> = { ...current.attributes };
-        if (domain === 'light' && newState === 'on') {
-          attrs.brightness = data?.brightness ?? attrs.brightness ?? 255;
-        }
-        this.setEntityState(entityId, { state: newState, attributes: attrs });
-        break;
-      }
-      case 'light.turn_on':
-      case 'switch.turn_on':
-      case 'fan.turn_on': {
-        const attrs: Record<string, unknown> = {};
-        if (data?.brightness != null) attrs.brightness = data.brightness;
-        this.setEntityState(entityId, { state: 'on', attributes: attrs });
-        break;
-      }
-      case 'light.turn_off':
-      case 'switch.turn_off':
-      case 'fan.turn_off':
-        this.setEntityState(entityId, { state: 'off' });
-        break;
-      case 'cover.open':
-        this.setEntityState(entityId, { state: 'open' });
-        break;
-      case 'cover.close':
-        this.setEntityState(entityId, { state: 'closed' });
-        break;
-      case 'cover.stop':
-        this.setEntityState(entityId, { state: 'stopped' });
-        break;
-      default:
-        // Unknown action — log but don't crash
-        console.log(`[MockProvider] service call: ${fullAction}(${entityId})`, data ?? '');
-        break;
+    const desc = getEntityDomain(domain);
+    if (!desc) {
+      console.error(`[MockProvider] Unknown entity domain '${domain}' for service call: ${domain}.${action}(${entityId})`);
+      return;
     }
+
+    const actionDesc = desc.actions.find(a => a.service === action);
+    if (!actionDesc) {
+      console.error(`[MockProvider] Unknown action '${action}' for domain '${domain}': ${domain}.${action}(${entityId})`);
+      return;
+    }
+
+    // Toggle actions: flip between active and default state
+    if (actionDesc.resultState === null && desc.activeState !== null) {
+      const current = this.getEntityState(entityId);
+      const newState = current.state === desc.activeState ? desc.defaultState : desc.activeState;
+      const attrs: Record<string, unknown> = { ...current.attributes };
+      // Apply default attributes when transitioning to active
+      if (newState === desc.activeState && actionDesc.defaultAttributes) {
+        for (const [k, v] of Object.entries(actionDesc.defaultAttributes)) {
+          attrs[k] = data?.[k] ?? attrs[k] ?? v;
+        }
+      }
+      this.setEntityState(entityId, { state: newState, attributes: attrs });
+      return;
+    }
+
+    // Explicit result state actions
+    if (actionDesc.resultState !== null) {
+      const attrs: Record<string, unknown> = {};
+      // Apply any data overrides (e.g. brightness for light.turn_on)
+      if (data) {
+        for (const [k, v] of Object.entries(data)) {
+          if (v != null) attrs[k] = v;
+        }
+      }
+      this.setEntityState(entityId, { state: actionDesc.resultState, attributes: attrs });
+      return;
+    }
+
+    // Fallback for actions with no result state and no active state (e.g. button.press)
+    console.log(`[MockProvider] service call: ${domain}.${action}(${entityId})`, data ?? '');
   }
 
   /** Get all registered entity IDs. */

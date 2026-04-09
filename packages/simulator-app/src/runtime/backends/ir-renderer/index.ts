@@ -100,9 +100,16 @@ export function lowerToSimulator(
   // Register all HA entities from the IR so the MockProvider has them.
   // Use the generated ID (ha_light_office) because the EntitySignalRegistry
   // subscribes to provider changes using generated IDs, not raw entity IDs.
+  // Also register aliases so service calls using raw HA entity IDs
+  // (e.g. from button onPress actions) resolve to the correct generated ID.
   for (const entity of ir.esphome.haEntities) {
-    const genId = entity.generatedId || `ha_${entity.entityId.replace('.', '_')}`;
-    provider.ensureEntity(genId);
+    if (!entity.generatedId) {
+      throw new Error(`IRHAEntity missing generatedId for entity '${entity.entityId}'`);
+    }
+    provider.ensureEntity(entity.generatedId);
+    if (entity.entityId) {
+      provider.registerEntityAlias(entity.entityId, entity.generatedId);
+    }
   }
 
   // Find the LVGL section
