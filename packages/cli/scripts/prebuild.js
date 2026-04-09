@@ -11,7 +11,7 @@ const assets = path.resolve(__dirname, '..', 'assets');
 const copies = [
   { src: '../../ir-viewer/dist',        dest: 'ir-viewer' },
   { src: '../../simulator-app/dist',    dest: 'simulator-app' },
-  { src: '../../simulator_bridge/src',  dest: 'simulator-bridge' },
+  { src: '../../simulator-bridge/src',  dest: 'simulator-bridge' },
 ];
 
 for (const { src, dest } of copies) {

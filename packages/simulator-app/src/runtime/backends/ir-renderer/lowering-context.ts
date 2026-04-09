@@ -34,7 +34,7 @@ export interface IRRenderContext {
  * Derive the generated sensor ID from an HA entity ID.
  * Matches the pattern used by the SDK: `ha_${entityId.replace('.', '_')}`
  */
-function entityIdToGeneratedId(entityId: string): string {
+export function entityIdToGeneratedId(entityId: string): string {
   return `ha_${entityId.replace('.', '_')}`;
 }
 

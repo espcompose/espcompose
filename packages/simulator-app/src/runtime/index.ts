@@ -17,6 +17,7 @@ export {
 
 export { exprToJs, type JsLoweringContext } from './backends/expr-to-js';
 export { lowerToSimulator, type LoweringResult, type AutomationTrigger } from './backends/ir-renderer';
+export { entityIdToGeneratedId } from './backends/ir-renderer/lowering-context';
 
 export type {
   RuntimeNode,

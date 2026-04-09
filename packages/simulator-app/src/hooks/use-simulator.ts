@@ -5,6 +5,7 @@ import {
   lowerToSimulator,
   MockProvider,
   Scheduler,
+  entityIdToGeneratedId,
   type RuntimeNode,
   type ServerMessage,
   type LoweringResult,
@@ -361,18 +362,21 @@ export function useSimulator(): SimulatorState {
       }
 
       case 'ha_state_update': {
-        // HA pushed a state change for an imported entity — update MockProvider
+        // HA pushed a state change for an imported entity — update MockProvider.
+        // Map raw HA entity ID (light.office) to the generated ID used by the
+        // EntitySignalRegistry (ha_light_office) so reactive signals update.
         const { entity_id, state, attribute } = msg.payload;
-        debug('sim', `ha_state_update: ${entity_id} = ${state} (attr=${attribute})`);
+        const genId = entityIdToGeneratedId(entity_id);
+        debug('sim', `ha_state_update: ${entity_id} → ${genId} = ${state} (attr=${attribute})`);
 
         const p = providerRef.current;
         if (p) {
           if (attribute) {
             // Attribute-specific update (e.g. brightness)
-            p.setEntityState(entity_id, { attributes: { [attribute]: state } });
+            p.setEntityState(genId, { attributes: { [attribute]: state } });
           } else {
             // Main state update
-            p.setEntityState(entity_id, { state });
+            p.setEntityState(genId, { state });
           }
           flushAndRerender();
         }
