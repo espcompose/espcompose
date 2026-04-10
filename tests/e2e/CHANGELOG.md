@@ -1,5 +1,17 @@
 # espcompose-e2e
 
+## 0.2.1
+
+### Patch Changes
+
+- [#23](https://github.com/espcompose/espcompose/pull/23) [`fd5cb47`](https://github.com/espcompose/espcompose/commit/fd5cb4703b9aaec5b6870e64b50766f63827d075) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Resolved issues with simulator hot reload. Updated docs.
+
+- Updated dependencies [[`fd5cb47`](https://github.com/espcompose/espcompose/commit/fd5cb4703b9aaec5b6870e64b50766f63827d075)]:
+  - @espcompose/cli@0.2.1
+  - @espcompose/core@0.2.1
+  - @espcompose/esphome-target@0.2.1
+  - @espcompose/ui@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
