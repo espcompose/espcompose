@@ -15,7 +15,7 @@ interface EntityPanelProps {
  * Entity control panel — lists all registered entities with
  * controls appropriate to each entity's domain.
  */
-export function EntityPanel({ entityStore, onToggle, onSensorChange }: EntityPanelProps) {
+export function EntityPanel({ entityStore, onToggle: _onToggle, onSensorChange: _onSensorChange }: EntityPanelProps) {
   const [entityStates, setEntityStates] = useState<Map<string, EntityState>>(new Map());
 
   // Sync state from entity store
