@@ -165,7 +165,12 @@ export function exprToJs(node: IRExprNode, ctx: JsLoweringContext): () => unknow
 
 function makeBinaryEval(op: string, left: () => unknown, right: () => unknown): () => unknown {
   switch (op) {
-    case '+': return () => (left() as number) + (right() as number);
+    case '+': return () => {
+      const l = left();
+      const r = right();
+      if (typeof l === 'string' || typeof r === 'string') return String(l) + String(r);
+      return (l as number) + (r as number);
+    };
     case '-': return () => (left() as number) - (right() as number);
     case '*': return () => (left() as number) * (right() as number);
     case '/': return () => (left() as number) / (right() as number);

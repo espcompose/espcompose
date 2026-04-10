@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SemanticIR, IRObject } from '@espcompose/core/internals';
 import { KNOWN_DOMAIN_NAMES } from '@espcompose/core/internals';
 import {
@@ -313,7 +313,9 @@ export function useSimulator(): SimulatorState {
   const { status: connectionStatus, send } = useWebSocket(wsUrl, handleMessage);
 
   // Keep sendRef current so callbacks created during lowering use the latest `send`
-  sendRef.current = send;
+  useEffect(() => {
+    sendRef.current = send;
+  }, [send]);
 
   const getCurrentPageIndex = useCallback(
     () => loweringRef.current?.getCurrentPageIndex() ?? 0,

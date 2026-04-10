@@ -2,6 +2,11 @@ import type { SemanticIR } from '@espcompose/core/internals';
 
 const loadedFontFamilies = new Set<string>();
 
+/** Reset the loaded font tracking set. Call before re-lowering IR. */
+export function resetLoadedFonts(): void {
+  loadedFontFamilies.clear();
+}
+
 /**
  * Build a map from font component ref tokens (e.g. "r_abc123") to CSS font
  * strings (e.g. "28px 'Roboto', sans-serif").

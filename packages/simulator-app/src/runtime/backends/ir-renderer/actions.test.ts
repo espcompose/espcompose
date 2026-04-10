@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { interpretActionSteps } from './actions';
 import type { IRActionNode } from '@espcompose/core/internals';
+import type { HAServiceActionStep } from '../../types';
 
 describe('interpretActionSteps', () => {
   describe('ha_service actions', () => {
@@ -19,7 +20,7 @@ describe('interpretActionSteps', () => {
         action: 'light.toggle',
         entityId: 'light.office',
       });
-      expect(steps[0].data).toMatchObject({ entity_id: 'light.office' });
+      expect((steps[0] as HAServiceActionStep).data).toMatchObject({ entity_id: 'light.office' });
     });
 
     it('resolves entity_id from plain string (legacy format)', () => {
@@ -52,7 +53,7 @@ describe('interpretActionSteps', () => {
       ];
       const steps = interpretActionSteps(actions);
       expect(steps).toHaveLength(1);
-      expect(steps[0].data).toMatchObject({
+      expect((steps[0] as HAServiceActionStep).data).toMatchObject({
         entity_id: 'light.office',
         brightness: 200,
       });

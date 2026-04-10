@@ -58,7 +58,7 @@ export function Canvas({
   }, [recalcZoom]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0d0d0d' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#343434' }}>
       <div
         ref={bodyRef}
         style={{

@@ -84,9 +84,40 @@ body {
 .sim-viewport .lvgl-button:hover { filter: brightness(0.9); }
 .sim-viewport .lvgl-button:active { background: var(--thm-colors-primary-bg-pressed, #1565c0); }
 
+/* ── LVGL Slider ─────────────────────────────────────────────────────────── */
+/* Matches LVGL v9 default theme: rounded track, colored indicator, circular knob.
+   Track height ~10px, knob extends ~6px beyond track on each side.              */
 .sim-viewport .lvgl-slider {
+  position: relative;
   width: 100%;
-  accent-color: var(--thm-colors-primary-bg, #2196f3);
+  height: 10px;
+  background: var(--thm-colors-primary-bg, #2196f3);
+  background-color: color-mix(in srgb, var(--thm-colors-primary-bg, #2196f3) 20%, transparent);
+  border-radius: 9999px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.sim-viewport .lvgl-slider-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--thm-colors-primary-bg, #2196f3);
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.sim-viewport .lvgl-slider-knob {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--thm-colors-primary-bg, #2196f3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .sim-viewport .lvgl-switch {

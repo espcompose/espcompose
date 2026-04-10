@@ -1,7 +1,9 @@
-import type { IRAction, IRActionNode } from '@espcompose/core/internals';
+import type { IRAction, IRActionNode, IRCondition } from '@espcompose/core/internals';
 import type { RuntimeProp, ActionStep } from '../../types';
 import { Scheduler } from '../../runtime/signals';
-import type { IRRenderContext } from './lowering-context.js';export function irActionToRuntimeProp(
+import { exprToJs } from '../expr-to-js.js';
+import type { IRRenderContext } from './lowering-context.js';
+import { buildJsLoweringContext } from './lowering-context.js';export function irActionToRuntimeProp(
   action: IRAction,
   ctx: IRRenderContext,
 ): RuntimeProp {
@@ -134,14 +136,16 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
             themeName: node.themeName,
           });
           break;
-        case 'if':
+        case 'if': {
+          const conditionFn = evaluateCondition(node.condition, ctx);
           steps.push({
             type: 'conditional',
-            condition: () => true, // TODO: evaluate condition
+            condition: conditionFn,
             then: interpretActionSteps(node.then, ctx),
             else: node.else ? interpretActionSteps(node.else, ctx) : undefined,
           });
           break;
+        }
         // Ignore other action types for simulator (they'd need more complex handling)
         default:
           break;
@@ -168,9 +172,10 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext, 
         const resolvedData = { ...step.data };
         if (step.rawParams && triggerVars) {
           for (const [k, v] of Object.entries(step.rawParams)) {
-            const param = v as { kind: string; name?: string };
-            if (param.kind === 'trigger_var' && param.name && param.name in triggerVars) {
-              resolvedData[k] = triggerVars[param.name];
+            const param = v as { kind: string; varName?: string; name?: string };
+            const varName = param.varName ?? param.name;
+            if (param.kind === 'trigger_var' && varName && varName in triggerVars) {
+              resolvedData[k] = triggerVars[varName];
             }
           }
         }
@@ -225,6 +230,26 @@ function parseDelay(duration: string): number {
     case 'min': return val * 60000;
     default: return val;
   }
+}
+
+/**
+ * Evaluate an IR condition into a boolean-returning function.
+ * Lambda conditions use exprToJs for evaluation; native conditions
+ * are not yet supported and default to true.
+ */
+function evaluateCondition(condition: IRCondition, ctx?: IRRenderContext): () => boolean {
+  if (condition.kind === 'lambda' && ctx) {
+    try {
+      const jsCtx = buildJsLoweringContext(condition.exprIR, ctx);
+      const evaluator = exprToJs(condition.exprIR, jsCtx);
+      return () => Boolean(evaluator());
+    } catch {
+      console.warn('[Simulator] Failed to compile conditional expression, defaulting to true');
+      return () => true;
+    }
+  }
+  // Native conditions (e.g. binary_sensor.is_on) are not evaluatable in the simulator
+  return () => true;
 }
 
 /**

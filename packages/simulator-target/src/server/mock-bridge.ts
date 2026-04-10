@@ -84,6 +84,7 @@ export function createMockBridge(options: Pick<BridgeManagerOptions, 'onMessage'
 
   function handleEntityStateUpdate(msg: NodeToBridgeMessage & { type: 'entity_state_update' }): void {
     const { entity_id, action, attributes } = msg.payload;
+    console.log(`  [mock-bridge] entity_state_update: ${entity_id} action=${action} attrs=${JSON.stringify(attributes)}`);
     if (!action) return;
 
     // Parse "domain.service" from the action field, or derive domain from entity_id
@@ -123,10 +124,27 @@ export function createMockBridge(options: Pick<BridgeManagerOptions, 'onMessage'
           newAttrs[k] = attributes?.[k] ?? newAttrs[k] ?? v;
         }
       }
+      // When toggling to the off/default state, clear numeric attributes to NaN
+      // to match real Home Assistant behaviour.
+      if (newState === desc.defaultState) {
+        for (const k of Object.keys(newAttrs)) {
+          if (typeof newAttrs[k] === 'number' || !isNaN(Number(newAttrs[k]))) {
+            newAttrs[k] = 'NaN';
+          }
+        }
+      }
     }
     // Explicit result state actions
     else if (actionDesc.resultState !== null) {
       newState = actionDesc.resultState;
+      // When transitioning to the off/default state, clear numeric attributes.
+      if (newState === desc.defaultState) {
+        for (const k of Object.keys(newAttrs)) {
+          if (typeof newAttrs[k] === 'number' || !isNaN(Number(newAttrs[k]))) {
+            newAttrs[k] = 'NaN';
+          }
+        }
+      }
       if (attributes) {
         for (const [k, v] of Object.entries(attributes)) {
           if (v != null) newAttrs[k] = v;
@@ -144,6 +162,7 @@ export function createMockBridge(options: Pick<BridgeManagerOptions, 'onMessage'
     });
 
     // Emit ha_state_update for the main state
+    console.log(`  [mock-bridge] → ha_state_update: ${entity_id} state=${newState}`);
     emit({
       type: 'ha_state_update',
       payload: { entity_id, state: newState, attribute: '' },
@@ -151,6 +170,7 @@ export function createMockBridge(options: Pick<BridgeManagerOptions, 'onMessage'
 
     // Emit ha_state_update for each attribute that changed
     for (const [key, val] of Object.entries(newAttrs)) {
+      console.log(`  [mock-bridge] → ha_state_update: ${entity_id} ${key}=${String(val)}`);
       emit({
         type: 'ha_state_update',
         payload: { entity_id, state: String(val), attribute: key },

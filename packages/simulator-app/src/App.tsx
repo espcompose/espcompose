@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { ConfigProvider, Layout, Splitter, Tag, Typography, theme } from 'antd';
 import { ApiOutlined, CheckCircleOutlined, SyncOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useSimulator } from './hooks/use-simulator';
@@ -11,11 +11,10 @@ import type { ActionLogEntry } from './components/ActionLog';
 const { Header } = Layout;
 const { Text } = Typography;
 
-let nextLogId = 1;
-
 export function App() {
   const sim = useSimulator();
   const [actionLog, setActionLog] = useState<ActionLogEntry[]>([]);
+  const nextLogIdRef = useRef(1);
 
   // Generate theme CSS from current IR
   const themeStyleHtml = useMemo(() => {
@@ -32,7 +31,7 @@ export function App() {
   const handleAction = useCallback((nodeId: string, event: string) => {
     setActionLog((prev) => [
       {
-        id: nextLogId++,
+        id: nextLogIdRef.current++,
         timestamp: new Date().toLocaleTimeString(),
         text: `${event} on ${nodeId}`,
       },

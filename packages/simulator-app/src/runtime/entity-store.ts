@@ -22,6 +22,7 @@ function defaultState(domain: string): EntityState {
 export class EntityStore {
   private entities = new Map<string, EntityState>();
   private listeners = new Map<string, Set<(state: EntityState) => void>>();
+  private storeListeners = new Set<() => void>();
 
   /** Ensure an entity exists. If not, creates it with a default state. */
   ensureEntity(entityId: string, meta?: { domain?: string; sensorType?: EntityState['sensorType'] }): void {
@@ -30,6 +31,7 @@ export class EntityStore {
       const state = defaultState(domain);
       if (meta?.sensorType) state.sensorType = meta.sensorType;
       this.entities.set(entityId, state);
+      this.notifyStoreListeners();
     } else if (meta?.sensorType) {
       const existing = this.entities.get(entityId)!;
       if (!existing.sensorType) {
@@ -50,6 +52,7 @@ export class EntityStore {
       state: partial.state ?? current.state,
       attributes: { ...current.attributes, ...partial.attributes },
       domain: current.domain,
+      sensorType: partial.sensorType ?? current.sensorType,
     };
     this.entities.set(entityId, updated);
     this.notifyListeners(entityId, updated);
@@ -63,6 +66,12 @@ export class EntityStore {
     return () => {
       this.listeners.get(entityId)?.delete(cb);
     };
+  }
+
+  /** Subscribe to store-level changes (new entities added). */
+  onStoreChange(cb: () => void): () => void {
+    this.storeListeners.add(cb);
+    return () => { this.storeListeners.delete(cb); };
   }
 
   /** Get all registered entity IDs. */
@@ -85,6 +94,12 @@ export class EntityStore {
       for (const cb of cbs) {
         cb(state);
       }
+    }
+  }
+
+  private notifyStoreListeners(): void {
+    for (const cb of this.storeListeners) {
+      cb();
     }
   }
 }

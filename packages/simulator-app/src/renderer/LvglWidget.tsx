@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import type { RuntimeNode, RuntimeProp } from '../runtime';
 import { lvglPropsToStyle } from '../runtime';
 
@@ -101,17 +101,30 @@ function ButtonWidget({ node, onAction }: WidgetProps) {
 
 function SliderWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
-  const propValue = Number(getPropValue(node.props.value) ?? 0);
-  const min = Number(getPropValue(node.props.min) ?? 0);
-  const max = Number(getPropValue(node.props.max) ?? 100);
+  const rawPropValue = Number(getPropValue(node.props.value) ?? 0);
+  const propValue = Number.isFinite(rawPropValue) ? rawPropValue : 0;
+  const min = Number(getPropValue(node.props.min_value) ?? 0);
+  const max = Number(getPropValue(node.props.max_value) ?? 100);
 
   // Local state allows the slider to move immediately (optimistic update).
   // Syncs back when the reactive prop updates from the server round-trip.
   const [localValue, setLocalValue] = useState(propValue);
   useEffect(() => { setLocalValue(propValue); }, [propValue]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const clamp = (v: number) => Math.max(min, Math.min(max, v));
+  const pct = max > min ? Math.max(0, Math.min(100, ((clamp(localValue) - min) / (max - min)) * 100)) : 0;
+
+  const valueFromPointer = (clientX: number): number => {
+    const track = trackRef.current;
+    if (!track) return localValue;
+    const rect = track.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    return clamp(Math.round(min + ratio * (max - min)));
+  };
+
+  const commit = (newValue: number) => {
     setLocalValue(newValue);
     const actionProp = node.props.on_value ?? node.props.on_release;
     if (actionProp?.kind === 'action') {
@@ -120,17 +133,34 @@ function SliderWidget({ node, onAction }: WidgetProps) {
     onAction?.(node.id, 'value_changed');
   };
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    commit(valueFromPointer(e.clientX));
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (e.buttons === 0) return;
+    setLocalValue(valueFromPointer(e.clientX));
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    commit(valueFromPointer(e.clientX));
+  };
+
   return (
-    <input
-      type="range"
+    <div
+      ref={trackRef}
       className="lvgl-slider"
       style={style}
       data-node-id={node.id}
-      value={localValue}
-      min={min}
-      max={max}
-      onChange={handleChange}
-    />
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+    >
+      <div className="lvgl-slider-indicator" style={{ width: `${pct}%` }} />
+      <div className="lvgl-slider-knob" style={{ left: `${pct}%` }} />
+    </div>
   );
 }
 
@@ -200,14 +230,27 @@ function ImageWidget({ node }: WidgetProps) {
   );
 }
 
-function DropdownWidget({ node }: WidgetProps) {
+function DropdownWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
   const options = getPropString(node.props.options);
   const items = options ? options.split('\n') : [];
-  const selected = Number(getPropValue(node.props.selected) ?? 0);
+  const propSelected = Number(getPropValue(node.props.selected) ?? 0);
+
+  const [localSelected, setLocalSelected] = useState(propSelected);
+  useEffect(() => { setLocalSelected(propSelected); }, [propSelected]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = Number(e.target.value);
+    setLocalSelected(newValue);
+    const actionProp = node.props.on_value;
+    if (actionProp?.kind === 'action') {
+      actionProp.handler(newValue);
+    }
+    onAction?.(node.id, 'value_changed');
+  };
 
   return (
-    <select className="lvgl-dropdown" style={style} data-node-id={node.id} value={selected}>
+    <select className="lvgl-dropdown" style={style} data-node-id={node.id} value={localSelected} onChange={handleChange}>
       {items.map((item, i) => (
         <option key={i} value={i}>{item}</option>
       ))}
@@ -220,18 +263,27 @@ function SpinnerWidget({ node }: WidgetProps) {
   return <div className="lvgl-spinner" style={style} data-node-id={node.id} />;
 }
 
-function TextareaWidget({ node }: WidgetProps) {
+function TextareaWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
-  const text = getPropString(node.props.text);
+  const propText = getPropString(node.props.text);
   const placeholder = getPropString(node.props.placeholder);
+
+  const [localText, setLocalText] = useState(propText);
+  useEffect(() => { setLocalText(propText); }, [propText]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setLocalText(e.target.value);
+    onAction?.(node.id, 'text_changed');
+  };
 
   return (
     <textarea
       className="lvgl-textarea"
       style={style}
       data-node-id={node.id}
-      defaultValue={text}
+      value={localText}
       placeholder={placeholder}
+      onChange={handleChange}
     />
   );
 }
@@ -239,14 +291,27 @@ function TextareaWidget({ node }: WidgetProps) {
 function CheckboxWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
   const text = getPropString(node.props.text);
-  const checked = Boolean(getPropValue(node.props.checked) ?? false);
+  const propChecked = Boolean(getPropValue(node.props.checked) ?? false);
+
+  const [localChecked, setLocalChecked] = useState(propChecked);
+  useEffect(() => { setLocalChecked(propChecked); }, [propChecked]);
+
+  const handleChange = () => {
+    const newValue = !localChecked;
+    setLocalChecked(newValue);
+    const actionProp = node.props.on_state;
+    if (actionProp?.kind === 'action') {
+      actionProp.handler(newValue);
+    }
+    onAction?.(node.id, 'value_changed');
+  };
 
   return (
     <label className="lvgl-checkbox" style={style} data-node-id={node.id}>
       <input
         type="checkbox"
-        checked={checked}
-        onChange={() => onAction?.(node.id, 'value_changed')}
+        checked={localChecked}
+        onChange={handleChange}
       />
       {text}
     </label>

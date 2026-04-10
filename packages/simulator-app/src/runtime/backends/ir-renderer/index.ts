@@ -21,7 +21,7 @@ import type { EntityStore } from '../../entity-store';
 import { EntitySignalRegistry } from './entity-registry.js';
 import type { IRRenderContext } from './lowering-context.js';
 import { buildLvglNodesFromIR } from './widgets.js';
-import { loadFontsFromIR, buildFontRefMap } from './fonts.js';
+import { loadFontsFromIR, buildFontRefMap, resetLoadedFonts } from './fonts.js';
 import { interpretActionSteps, executeActionStep } from './actions.js';
 
 // ── Public types ─────────────────────────────────────────────────────────────
@@ -78,6 +78,9 @@ export function lowerToSimulator(
       }
     }
   }
+
+  // Reset font tracking so re-lowering can re-inject changed fonts
+  resetLoadedFonts();
 
   // Load fonts referenced by IR components
   loadFontsFromIR(ir);

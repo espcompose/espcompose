@@ -238,13 +238,16 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       }
 
       if (parsed.type === 'entity_interaction') {
+        console.log(`  [dev-server] entity_interaction: ${parsed.payload.domain}.${parsed.payload.action} → ${parsed.payload.entity_id}`, parsed.payload.data);
+        // Strip entity_id from data before forwarding — it's routing metadata, not an entity attribute.
+        const { entity_id: _eid, ...serviceData } = parsed.payload.data ?? {};
         bridge.send({
           type: 'entity_state_update',
           payload: {
             entity_id: parsed.payload.entity_id,
             state: '',
             action: parsed.payload.action,
-            attributes: parsed.payload.data,
+            attributes: Object.keys(serviceData).length > 0 ? serviceData : undefined,
           },
         });
       }
