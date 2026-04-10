@@ -1,6 +1,6 @@
 {
   "name": "@espcompose/ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "LVGL Design System components for ESPHome Compose",
   "type": "module",
   "types": "dist/index.d.ts",
