@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { RuntimeNode, RuntimeProp } from '../runtime';
 import { lvglPropsToStyle } from '../runtime';
 
@@ -101,12 +101,18 @@ function ButtonWidget({ node, onAction }: WidgetProps) {
 
 function SliderWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
-  const value = Number(getPropValue(node.props.value) ?? 0);
+  const propValue = Number(getPropValue(node.props.value) ?? 0);
   const min = Number(getPropValue(node.props.min) ?? 0);
   const max = Number(getPropValue(node.props.max) ?? 100);
 
+  // Local state allows the slider to move immediately (optimistic update).
+  // Syncs back when the reactive prop updates from the server round-trip.
+  const [localValue, setLocalValue] = useState(propValue);
+  useEffect(() => { setLocalValue(propValue); }, [propValue]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value);
+    setLocalValue(newValue);
     const actionProp = node.props.on_value ?? node.props.on_release;
     if (actionProp?.kind === 'action') {
       actionProp.handler(newValue);
@@ -120,7 +126,7 @@ function SliderWidget({ node, onAction }: WidgetProps) {
       className="lvgl-slider"
       style={style}
       data-node-id={node.id}
-      value={value}
+      value={localValue}
       min={min}
       max={max}
       onChange={handleChange}
@@ -130,10 +136,15 @@ function SliderWidget({ node, onAction }: WidgetProps) {
 
 function SwitchWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
-  const checked = Boolean(getPropValue(node.props.checked) ?? false);
+  const propChecked = Boolean(getPropValue(node.props.checked) ?? false);
+
+  // Local state for optimistic toggle — syncs back from reactive prop.
+  const [localChecked, setLocalChecked] = useState(propChecked);
+  useEffect(() => { setLocalChecked(propChecked); }, [propChecked]);
 
   const handleChange = () => {
-    const newValue = !checked;
+    const newValue = !localChecked;
+    setLocalChecked(newValue);
     const actionProp = node.props.on_state;
     if (actionProp?.kind === 'action') {
       actionProp.handler(newValue);
@@ -145,7 +156,7 @@ function SwitchWidget({ node, onAction }: WidgetProps) {
     <label className="lvgl-switch" style={style} data-node-id={node.id}>
       <input
         type="checkbox"
-        checked={checked}
+        checked={localChecked}
         onChange={handleChange}
       />
       <span className="lvgl-switch-track" />

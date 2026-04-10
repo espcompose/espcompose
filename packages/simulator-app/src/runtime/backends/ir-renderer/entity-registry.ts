@@ -12,7 +12,7 @@ export interface EntitySignals {
  *  Raw:       'light.office'      → 'light'
  *  Generated: 'ha_light_office'   → 'light'
  */
-function domainFromEntityId(entityId: string): string {
+export function domainFromEntityId(entityId: string): string {
   if (entityId.includes('.')) return entityId.split('.')[0] ?? '';
   if (entityId.startsWith('ha_')) return entityId.slice(3).split('_')[0] ?? '';
   return '';

@@ -49,8 +49,10 @@ function irWidgetObjectToRuntimeNode(
       const steps = interpretActionSteps(actionItems);
       props[key] = {
         kind: 'action',
-        handler: async () => {
-          for (const step of steps) await executeActionStep(step, ctx);
+        handler: async (...args: unknown[]) => {
+          const triggerVars: Record<string, unknown> = {};
+          if (args.length > 0) triggerVars['x'] = args[0];
+          for (const step of steps) await executeActionStep(step, ctx, triggerVars);
         },
         meta: steps,
       };

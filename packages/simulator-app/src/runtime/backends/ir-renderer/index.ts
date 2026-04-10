@@ -106,7 +106,10 @@ export function lowerToSimulator(
     if (!entity.generatedId) {
       throw new Error(`IRHAEntity missing generatedId for entity '${entity.entityId}'`);
     }
-    entityStore.ensureEntity(entity.generatedId);
+    entityStore.ensureEntity(entity.generatedId, {
+      domain: entity.domain,
+      sensorType: entity.sensorType,
+    });
   }
 
   // Find the LVGL section

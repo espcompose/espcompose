@@ -10,6 +10,8 @@ export interface EntityState {
   state: string;
   attributes: Record<string, unknown>;
   domain: string;
+  /** The ESPHome sensor platform type (binary_sensor, sensor, text_sensor). */
+  sensorType?: 'binary_sensor' | 'sensor' | 'text_sensor';
 }
 
 /** Default state for an entity based on its domain prefix. */
@@ -22,10 +24,17 @@ export class EntityStore {
   private listeners = new Map<string, Set<(state: EntityState) => void>>();
 
   /** Ensure an entity exists. If not, creates it with a default state. */
-  ensureEntity(entityId: string): void {
+  ensureEntity(entityId: string, meta?: { domain?: string; sensorType?: EntityState['sensorType'] }): void {
     if (!this.entities.has(entityId)) {
-      const domain = entityId.split('.')[0] ?? 'unknown';
-      this.entities.set(entityId, defaultState(domain));
+      const domain = meta?.domain ?? (entityId.includes('.') ? entityId.split('.')[0] : 'unknown');
+      const state = defaultState(domain);
+      if (meta?.sensorType) state.sensorType = meta.sensorType;
+      this.entities.set(entityId, state);
+    } else if (meta?.sensorType) {
+      const existing = this.entities.get(entityId)!;
+      if (!existing.sensorType) {
+        existing.sensorType = meta.sensorType;
+      }
     }
   }
 

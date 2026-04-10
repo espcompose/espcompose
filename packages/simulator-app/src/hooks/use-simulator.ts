@@ -294,7 +294,12 @@ export function useSimulator(): SimulatorState {
         const store = entityStoreRef.current;
         if (store) {
           if (attribute) {
+            // Update the parent entity's attributes (e.g. ha_light_office.attributes.brightness)
             store.setEntityState(genId, { attributes: { [attribute]: state } });
+            // Also update the attribute-specific entity's state (e.g. ha_light_office_brightness.state)
+            // because the SDK registers separate sensor entities for each attribute.
+            const attrGenId = `${genId}_${attribute}`;
+            store.setEntityState(attrGenId, { state });
           } else {
             store.setEntityState(genId, { state });
           }
