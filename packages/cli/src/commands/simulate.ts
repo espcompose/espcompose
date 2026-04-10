@@ -23,7 +23,7 @@ export function registerSimulateCommand(program: Command) {
       opts?: { port?: string; debug?: boolean; open?: boolean; haBridge?: boolean },
     ) => {
       const { compileToIR } = await import('../compiler');
-      const { startDevServer, startFileWatcher, createBridgeManager } = await import('@espcompose/simulator-target');
+      const { startDevServer, startFileWatcher, createBridgeManager, createMockBridge } = await import('@espcompose/simulator-target');
 
       const resolvedDir = path.resolve(projectDir ?? '.');
       const port = Number(opts?.port ?? 5420);
@@ -42,6 +42,55 @@ export function registerSimulateCommand(program: Command) {
       let currentIR = await compileToIR(resolvedDir);
       console.log('✓ Initial build complete');
 
+      // ── Create bridge (mock or real HA) ──────────────────────────────────
+      // Both bridge types implement BridgeManager and produce identical
+      // BridgeToNodeMessage output. The dev server and frontend are agnostic.
+      //
+      // serverRef is populated after startDevServer resolves. Bridge callbacks
+      // are only invoked after the server is running, so the ref is always set.
+      let serverRef: Awaited<ReturnType<typeof startDevServer>> | undefined; // eslint-disable-line prefer-const
+      const bridgeCallbacks = {
+        onStatusChange: (status: string, error?: string) => {
+          serverRef?.broadcastBridgeStatus(status, undefined, undefined, error);
+        },
+        onMessage: (msg: { type: string; payload?: Record<string, unknown> }) => {
+          if (!serverRef) return;
+          if (msg.type === 'entity_command' && msg.payload) {
+            serverRef.broadcastHACommand(msg.payload as {
+              entity_id: string;
+              domain: string;
+              action: string;
+              data?: Record<string, unknown>;
+            });
+          } else if (msg.type === 'client_connected' && msg.payload) {
+            serverRef.broadcastHACommand({
+              entity_id: '',
+              domain: 'api',
+              action: 'client_connected',
+              data: msg.payload as Record<string, unknown>,
+            });
+          } else if (msg.type === 'ha_state_update' && msg.payload) {
+            serverRef.broadcastHAStateUpdate(msg.payload as {
+              entity_id: string;
+              state: string;
+              attribute: string;
+            });
+          }
+        },
+      };
+
+      let bridge;
+      if (opts?.haBridge) {
+        console.log('  Setting up HA bridge…');
+        bridge = await createBridgeManager({
+          bridgePath: path.join(__dirname, '..', 'assets', 'simulator-bridge', 'main.py'),
+          projectDir: resolvedDir,
+          ...bridgeCallbacks,
+        });
+      } else {
+        bridge = createMockBridge(bridgeCallbacks);
+      }
+
       // ── Start dev server ─────────────────────────────────────────────────
       const server = await startDevServer({
         staticDir,
@@ -50,50 +99,13 @@ export function registerSimulateCommand(program: Command) {
         port,
         initialIR: currentIR,
         projectName,
-        bridgeMode: !!opts?.haBridge,
+        bridge,
       });
+      serverRef = server;
 
-      // ── Optionally start HA bridge ───────────────────────────────────────
-      if (opts?.haBridge) {
-        console.log('  Setting up HA bridge…');
-        server.bridge = await createBridgeManager({
-          bridgePath: path.join(__dirname, '..', 'assets', 'simulator-bridge', 'main.py'),
-          projectDir: resolvedDir,
-          onStatusChange: (status: string, error?: string) => {
-            server.broadcastBridgeStatus(status, undefined, undefined, error);
-          },
-          onMessage: (msg: { type: string; payload?: Record<string, unknown> }) => {
-            if (msg.type === 'entity_command' && msg.payload) {
-              server.broadcastHACommand(msg.payload as {
-                entity_id: string;
-                domain: string;
-                action: string;
-                data?: Record<string, unknown>;
-              });
-            } else if (msg.type === 'client_connected' && msg.payload) {
-              // Forward as ha_command with a synthetic 'client_connected' action
-              // so the browser can fire api.on_client_connected automations
-              server.broadcastHACommand({
-                entity_id: '',
-                domain: 'api',
-                action: 'client_connected',
-                data: msg.payload as Record<string, unknown>,
-              });
-            } else if (msg.type === 'ha_state_update' && msg.payload) {
-              // Forward HA entity state push to the browser
-              server.broadcastHAStateUpdate(msg.payload as {
-                entity_id: string;
-                state: string;
-                attribute: string;
-              });
-            }
-          },
-        });
-      }
-
-      const url = `http://localhost:${server.port}${opts?.debug ? '?debug=1' : ''}`;
+      const url = `http://127.0.0.1:${server.port}${opts?.debug ? '?debug=1' : ''}`;
       console.log(`\n  Simulator running at ${url}`);
-      if (server.bridge) {
+      if (opts?.haBridge) {
         console.log('  HA bridge enabled — waiting for bridge ready…');
       }
       console.log('');
@@ -126,9 +138,7 @@ export function registerSimulateCommand(program: Command) {
       const shutdown = async () => {
         console.log('\n  Shutting down simulator…');
         watcher.close();
-        if (server.bridge) {
-          await server.bridge.close();
-        }
+        await bridge.close();
         await server.close();
         process.exit(0);
       };

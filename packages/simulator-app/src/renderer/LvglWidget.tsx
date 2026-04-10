@@ -105,6 +105,15 @@ function SliderWidget({ node, onAction }: WidgetProps) {
   const min = Number(getPropValue(node.props.min) ?? 0);
   const max = Number(getPropValue(node.props.max) ?? 100);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
+    const actionProp = node.props.on_value ?? node.props.on_release;
+    if (actionProp?.kind === 'action') {
+      actionProp.handler(newValue);
+    }
+    onAction?.(node.id, 'value_changed');
+  };
+
   return (
     <input
       type="range"
@@ -114,7 +123,7 @@ function SliderWidget({ node, onAction }: WidgetProps) {
       value={value}
       min={min}
       max={max}
-      onChange={() => onAction?.(node.id, 'value_changed')}
+      onChange={handleChange}
     />
   );
 }
@@ -123,15 +132,24 @@ function SwitchWidget({ node, onAction }: WidgetProps) {
   const style = getNodeStyle(node.props);
   const checked = Boolean(getPropValue(node.props.checked) ?? false);
 
+  const handleChange = () => {
+    const newValue = !checked;
+    const actionProp = node.props.on_state;
+    if (actionProp?.kind === 'action') {
+      actionProp.handler(newValue);
+    }
+    onAction?.(node.id, 'value_changed');
+  };
+
   return (
-    <input
-      type="checkbox"
-      className="lvgl-switch"
-      style={style}
-      data-node-id={node.id}
-      checked={checked}
-      onChange={() => onAction?.(node.id, 'value_changed')}
-    />
+    <label className="lvgl-switch" style={style} data-node-id={node.id}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={handleChange}
+      />
+      <span className="lvgl-switch-track" />
+    </label>
   );
 }
 

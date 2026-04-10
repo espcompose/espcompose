@@ -1,17 +1,19 @@
 import type { IRAction, IRActionNode } from '@espcompose/core/internals';
 import type { RuntimeProp, ActionStep } from '../../types';
 import { Scheduler } from '../../runtime/signals';
-import type { IRRenderContext } from './lowering-context.js';
-
-export function irActionToRuntimeProp(
+import type { IRRenderContext } from './lowering-context.js';export function irActionToRuntimeProp(
   action: IRAction,
   ctx: IRRenderContext,
 ): RuntimeProp {
   const steps = interpretActionSteps(action.actions, ctx);
 
-  const handler = async (..._args: unknown[]) => {
+  const handler = async (...args: unknown[]) => {
+    // Build trigger variables map (convention: first arg is trigger var 'x')
+    const triggerVars: Record<string, unknown> = {};
+    if (args.length > 0) triggerVars['x'] = args[0];
+
     for (const step of steps) {
-      await executeActionStep(step, ctx);
+      await executeActionStep(step, ctx, triggerVars);
     }
   };
 
@@ -84,11 +86,16 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
           const entityId = typeof rawEntityId === 'string' ? rawEntityId : '';
 
           const data: Record<string, unknown> = {};
+          const rawParams: Record<string, unknown> = {};
           if (node.data) {
             for (const [k, v] of Object.entries(node.data)) {
               const resolved = resolveActionParam(v);
               if (resolved !== undefined) {
                 data[k] = resolved;
+              }
+              // Preserve trigger_var params for runtime resolution
+              if (typeof v === 'object' && v !== null && 'kind' in v && (v as { kind: string }).kind === 'trigger_var') {
+                rawParams[k] = v;
               }
             }
           }
@@ -100,6 +107,7 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
             action: node.action,
             entityId,
             data,
+            rawParams: Object.keys(rawParams).length > 0 ? rawParams : undefined,
           });
           break;
         }
@@ -143,7 +151,7 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
   return steps;
 }
 
-export async function executeActionStep(step: ActionStep, ctx: IRRenderContext): Promise<void> {
+export async function executeActionStep(step: ActionStep, ctx: IRRenderContext, triggerVars?: Record<string, unknown>): Promise<void> {
   switch (step.type) {
     case 'ha_service': {
       const parts = step.action.split('.');
@@ -156,9 +164,17 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext):
         domain = entityId.split('.')[0] ?? domain;
       }
       if (domain && service && entityId) {
-        ctx.provider.callService(domain, service, entityId, step.data as Record<string, unknown>);
-        Scheduler.instance().flush();
-        ctx.requestRerender?.();
+        // Resolve trigger_var params at execution time
+        const resolvedData = { ...step.data };
+        if (step.rawParams && triggerVars) {
+          for (const [k, v] of Object.entries(step.rawParams)) {
+            const param = v as { kind: string; name?: string };
+            if (param.kind === 'trigger_var' && param.name && param.name in triggerVars) {
+              resolvedData[k] = triggerVars[param.name];
+            }
+          }
+        }
+        ctx.onEntityInteraction(domain, service, entityId, resolvedData);
       }
       break;
     }

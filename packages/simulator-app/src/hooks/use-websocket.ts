@@ -15,10 +15,6 @@ export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 export interface UseWebSocketReturn {
   /** Current connection status. */
   status: ConnectionStatus;
-  /** Queue of server messages received since last drain. */
-  messageQueue: ServerMessage[];
-  /** Clear the message queue after processing. */
-  drainMessages: () => void;
   /** Send a typed client message to the server. */
   send: (msg: ClientMessage) => void;
 }
@@ -35,16 +31,22 @@ const RECONNECT_MULTIPLIER = 1.5;
  * WebSocket client hook with auto-reconnect.
  *
  * Connects to the simulator dev server's WS endpoint, parses incoming
- * server messages, and provides a typed `send()` for client messages.
+ * server messages, and invokes the `onMessage` callback immediately.
  * Automatically reconnects with exponential backoff on disconnect.
  */
-export function useWebSocket(url: string): UseWebSocketReturn {
+export function useWebSocket(
+  url: string,
+  onMessage: (msg: ServerMessage) => void,
+): UseWebSocketReturn {
   const [status, setStatus] = useState<ConnectionStatus>('connecting');
-  const [messageQueue, setMessageQueue] = useState<ServerMessage[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectDelayRef = useRef(INITIAL_RECONNECT_MS);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unmountedRef = useRef(false);
+
+  // Always read the latest onMessage without re-creating the WS connection
+  const onMessageRef = useRef(onMessage);
+  onMessageRef.current = onMessage;
 
   const connect = useCallback(() => {
     if (unmountedRef.current) return;
@@ -65,14 +67,18 @@ export function useWebSocket(url: string): UseWebSocketReturn {
       const parsed = parseMessage(String(event.data));
       if (isServerMessage(parsed)) {
         debug('ws', `recv: ${parsed.type}`);
-        setMessageQueue(prev => [...prev, parsed]);
+        onMessageRef.current(parsed);
       } else {
         debug('ws', 'recv: unknown/invalid message', parsed);
       }
     };
 
     ws.onclose = () => {
-      if (unmountedRef.current) return;
+      // Ignore close events from stale sockets (e.g. StrictMode teardown).
+      // Without this check, a cleanup-closed WS fires onclose after
+      // the remount has already created a new connection, causing a
+      // spurious reconnect attempt.
+      if (unmountedRef.current || wsRef.current !== ws) return;
       debug('ws', 'connection closed, scheduling reconnect');
       setStatus('disconnected');
       wsRef.current = null;
@@ -95,10 +101,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
       connect();
     }, delay);
   }, [connect]);
-
-  const drainMessages = useCallback(() => {
-    setMessageQueue([]);
-  }, []);
 
   const send = useCallback((msg: ClientMessage) => {
     const ws = wsRef.current;
@@ -127,5 +129,5 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     };
   }, [connect]);
 
-  return { status, messageQueue, drainMessages, send };
+  return { status, send };
 }

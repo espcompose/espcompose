@@ -44,9 +44,13 @@ export function App() {
     setActionLog([]);
   }, []);
 
-  const handleEntityChange = useCallback(() => {
-    sim.flushAndRerender();
-  }, [sim.flushAndRerender]);
+  const handleToggle = useCallback((entityId: string, domain: string) => {
+    sim.sendEntityInteraction(domain, 'toggle', entityId);
+  }, [sim.sendEntityInteraction]);
+
+  const handleSensorChange = useCallback((entityId: string, value: number) => {
+    sim.sendEntityInteraction(entityId.split('.')[0], 'set_value', entityId, { state: String(value) });
+  }, [sim.sendEntityInteraction]);
 
   // Connection status indicator
   const statusTag = useMemo(() => {
@@ -122,10 +126,11 @@ export function App() {
 
           <Splitter.Panel defaultSize="30%" min="15%" max="50%">
             <Sidebar
-              provider={sim.provider}
+              entityStore={sim.entityStore}
               actionLog={actionLog}
               onClearLog={handleClearLog}
-              onEntityChange={handleEntityChange}
+              onToggle={handleToggle}
+              onSensorChange={handleSensorChange}
             />
           </Splitter.Panel>
         </Splitter>

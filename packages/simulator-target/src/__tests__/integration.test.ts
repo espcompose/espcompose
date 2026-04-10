@@ -1,11 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Scheduler, MockProvider, lowerToSimulator } from '@espcompose/simulator-app/runtime';
+import { Scheduler, EntityStore, lowerToSimulator } from '@espcompose/simulator-app/runtime';
 import { IRReactiveNode } from '@espcompose/core';
 import type { SemanticIR, IRValue } from '@espcompose/core/internals';
 
 beforeEach(() => {
   Scheduler.reset();
 });
+
+// Noop entity interaction handler for tests
+const noopInteraction = () => {};
 
 // ── IR helpers ───────────────────────────────────────────────────────────────
 
@@ -63,8 +66,8 @@ describe('IR-based simulator renderer', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].type).toBe('page');
@@ -123,8 +126,8 @@ describe('IR-based simulator renderer', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].children).toHaveLength(1);
@@ -178,8 +181,8 @@ describe('IR-based simulator renderer', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     const label = nodes[0].children[0];
     expect(label.id).toBe('lbl_1');
@@ -231,8 +234,8 @@ describe('IR-based simulator renderer', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     const button = nodes[0].children[0];
     expect(button.props.on_press.kind).toBe('action');
@@ -274,8 +277,8 @@ describe('IR-based simulator renderer', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     const label = nodes[0].children[0];
     expect(label.props.display.kind).toBe('ref');
@@ -289,8 +292,8 @@ describe('IR-based simulator renderer', () => {
       { key: 'esphome', value: irObject([{ key: 'name', value: irScalar('test') }]) },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
     expect(nodes).toHaveLength(0);
   });
 
@@ -317,13 +320,12 @@ describe('IR-based simulator renderer', () => {
       espcompose: { kind: 'espcompose_data', reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] } },
     };
 
-    const provider = new MockProvider();
-    lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    lowerToSimulator(ir, store, noopInteraction);
 
-    // Entity should be registered with default state
-    const state = provider.getEntityState('light.kitchen');
-    expect(state.state).toBe('off');
-    expect(state.domain).toBe('light');
+    // Entity should be registered with generated ID
+    const state = store.getEntityState('ha_light_kitchen');
+    expect(state.state).toBe('');
   });
 });
 
@@ -409,8 +411,8 @@ describe('Theme integration', () => {
       ],
     );
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     const label = nodes[0].children[0];
     expect(label.id).toBe('lbl_themed');
@@ -445,8 +447,8 @@ describe('Theme integration', () => {
       ],
     );
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
 
     const label = nodes[0].children[0];
     if (label.props.bg_color.kind === 'reactive') {
@@ -482,8 +484,8 @@ describe('Theme integration', () => {
       },
     ]);
 
-    const provider = new MockProvider();
-    const { nodes } = lowerToSimulator(ir, provider);
+    const store = new EntityStore();
+    const { nodes } = lowerToSimulator(ir, store, noopInteraction);
     expect(nodes).toHaveLength(1);
     expect(nodes[0].children[0].type).toBe('label');
   });

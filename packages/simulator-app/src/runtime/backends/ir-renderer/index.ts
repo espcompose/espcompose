@@ -9,7 +9,7 @@
 //   2. Walks the IR tree extracting pages and widgets
 //   3. Classifies each prop: IRReactive → ReactiveProp, IRRef → RefProp,
 //      IRAction → ActionProp, IRScalar → StaticProp
-//   4. Wires reactive props to JS Signal/Memo for MockProvider-driven updates
+//   4. Wires reactive props to JS Signal/Memo for EntityStore-driven updates
 //   5. Populates theme getters from IR theme leaf data
 //   6. Extracts automation triggers (e.g. api.on_client_connected)
 // ────────────────────────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@
 import type { SemanticIR, IRObject, IRAction } from '@espcompose/core/internals';
 import type { RuntimeNode } from '../../types';
 import { Scheduler } from '../../runtime/signals';
-import type { MockProvider } from '../../providers/mock-provider';
+import type { EntityStore } from '../../entity-store';
 import { EntitySignalRegistry } from './entity-registry.js';
 import type { IRRenderContext } from './lowering-context.js';
 import { buildLvglNodesFromIR } from './widgets.js';
@@ -53,12 +53,13 @@ export interface LoweringResult {
  *
  * Walks the IR config tree looking for the LVGL section, then converts
  * pages and widgets into RuntimeNodes with classified props.
- * Wires reactive props to JS Signals from the MockProvider.
+ * Wires reactive props to JS Signals from the EntityStore.
  * Extracts automation triggers from sections like `api`.
  */
 export function lowerToSimulator(
   ir: SemanticIR,
-  provider: MockProvider,
+  entityStore: EntityStore,
+  onEntityInteraction: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void,
 ): LoweringResult {
   Scheduler.reset();
 
@@ -85,8 +86,9 @@ export function lowerToSimulator(
   const fontMap = buildFontRefMap(ir);
 
   const ctx: IRRenderContext = {
-    entityRegistry: new EntitySignalRegistry(provider),
-    provider,
+    entityRegistry: new EntitySignalRegistry(entityStore),
+    entityStore,
+    onEntityInteraction,
     nodeCounter: 0,
     themeData,
     themeIndex: themeData?.defaultIndex ?? 0,
@@ -97,19 +99,14 @@ export function lowerToSimulator(
     skipPages: new Set(),
   };
 
-  // Register all HA entities from the IR so the MockProvider has them.
+  // Register all HA entities from the IR so the EntityStore has them.
   // Use the generated ID (ha_light_office) because the EntitySignalRegistry
-  // subscribes to provider changes using generated IDs, not raw entity IDs.
-  // Also register aliases so service calls using raw HA entity IDs
-  // (e.g. from button onPress actions) resolve to the correct generated ID.
+  // subscribes to store changes using generated IDs, not raw entity IDs.
   for (const entity of ir.esphome.haEntities) {
     if (!entity.generatedId) {
       throw new Error(`IRHAEntity missing generatedId for entity '${entity.entityId}'`);
     }
-    provider.ensureEntity(entity.generatedId);
-    if (entity.entityId) {
-      provider.registerEntityAlias(entity.entityId, entity.generatedId);
-    }
+    entityStore.ensureEntity(entity.generatedId);
   }
 
   // Find the LVGL section

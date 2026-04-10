@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { SemanticIR, IRObject } from '@espcompose/core/internals';
 import { KNOWN_DOMAIN_NAMES } from '@espcompose/core/internals';
 import {
   extractDisplayConfig,
   lowerToSimulator,
-  MockProvider,
+  EntityStore,
   Scheduler,
   entityIdToGeneratedId,
+  type ServerMessage,
   type RuntimeNode,
   type LoweringResult,
 } from '../runtime';
@@ -95,8 +96,8 @@ export type BuildStatus = 'idle' | 'building' | 'error' | 'ready';
 export interface SimulatorState {
   /** Current RuntimeNode tree (lowered from IR). */
   nodes: RuntimeNode[];
-  /** Mock entity provider. */
-  provider: MockProvider | null;
+  /** Entity state store. */
+  entityStore: EntityStore | null;
   /** Current SemanticIR (raw, for devtools / theme extraction). */
   ir: SemanticIR | null;
   /** Build lifecycle status. */
@@ -114,6 +115,8 @@ export interface SimulatorState {
   renderVersion: number;
   /** Call after modifying entity state to flush reactive updates. */
   flushAndRerender: () => void;
+  /** Send an entity interaction to the server (toggle, sensor change, etc.). */
+  sendEntityInteraction: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void;
   /** Current active page index (for page visibility in Canvas). */
   getCurrentPageIndex: () => number;
 }
@@ -125,7 +128,7 @@ export interface SimulatorState {
  *
  * Connects to the dev server WS, receives SemanticIR updates,
  * lowers them to RuntimeNode[] via `lowerToSimulator()`, and
- * manages the MockProvider + Scheduler lifecycle.
+ * manages the EntityStore + Scheduler lifecycle.
  */
 export function useSimulator(): SimulatorState {
   // Derive WS URL from current page location
@@ -134,10 +137,8 @@ export function useSimulator(): SimulatorState {
     return `${protocol}//${window.location.host}/ws`;
   }, []);
 
-  const { status: connectionStatus, messageQueue, drainMessages, send } = useWebSocket(wsUrl);
-
   const [nodes, setNodes] = useState<RuntimeNode[]>([]);
-  const [provider, setProvider] = useState<MockProvider | null>(null);
+  const [entityStore, setEntityStore] = useState<EntityStore | null>(null);
   const [ir, setIR] = useState<SemanticIR | null>(null);
   const [buildStatus, setBuildStatus] = useState<BuildStatus>('idle');
   const [buildError, setBuildError] = useState<string | null>(null);
@@ -146,40 +147,38 @@ export function useSimulator(): SimulatorState {
   const [displayHeight, setDisplayHeight] = useState(480);
   const [renderVersion, setRenderVersion] = useState(0);
 
-  // Keep a ref to the current provider so flushAndRerender always uses the latest
-  const providerRef = useRef<MockProvider | null>(null);
+  // Keep a ref to the current entity store so callbacks always use the latest
+  const entityStoreRef = useRef<EntityStore | null>(null);
 
   // Keep a ref to the latest lowering result so the page index getter works
   const loweringRef = useRef<LoweringResult | null>(null);
 
-  // Track automation timers so they're cleaned up on re-lower
-  const automationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  // Track whether the HA bridge is active (suppresses mock timers)
-  const bridgeActiveRef = useRef(false);
-
-  // Track whether the server was started with --ha-bridge (never mock in this mode)
-  const bridgeModeRef = useRef(false);
+  // Keep a stable ref to `send` so the onEntityInteraction callback doesn't go stale
+  const sendRef = useRef<(msg: import('../runtime').ClientMessage) => void>(() => {});
 
   const flushAndRerender = useCallback(() => {
     Scheduler.instance().flush();
     setRenderVersion((v: number) => v + 1);
   }, []);
 
-  // ── Process incoming WS messages ──────────────────────────────────────────
+  /** Send an entity interaction to the server via WS. */
+  const sendEntityInteraction = useCallback(
+    (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => {
+      sendRef.current({
+        type: 'entity_interaction',
+        payload: { entity_id: entityId, domain, action, data },
+      });
+    },
+    [],
+  );
 
-  useEffect(() => {
-    if (messageQueue.length === 0) return;
+  // ── Process WS messages immediately via callback ──────────────────────────
 
-    for (const msg of messageQueue) {
-
+  const handleMessage = useCallback((msg: ServerMessage) => {
     switch (msg.type) {
       case 'connected':
-        debug('sim', `connected – project=${msg.payload.projectName} bridgeMode=${!!msg.payload.bridgeMode}`);
+        debug('sim', `connected – project=${msg.payload.projectName}`);
         setProjectName(msg.payload.projectName);
-        bridgeModeRef.current = !!msg.payload.bridgeMode;
-        // Request the current IR from the server
-        send({ type: 'ready' });
         break;
 
       case 'ir_update': {
@@ -189,15 +188,18 @@ export function useSimulator(): SimulatorState {
         setBuildStatus('ready');
         setBuildError(null);
 
-        // Cancel any pending automation timers from a previous lowering
-        for (const t of automationTimersRef.current) clearTimeout(t);
-        automationTimersRef.current = [];
-
         // Lower IR → LoweringResult
         Scheduler.reset();
-        const newProvider = new MockProvider();
-        newProvider.bridgeMode = bridgeModeRef.current;
-        const result = lowerToSimulator(newIR, newProvider);
+        const newStore = new EntityStore();
+
+        const onEntityInteraction = (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => {
+          sendRef.current({
+            type: 'entity_interaction',
+            payload: { entity_id: entityId, domain, action, data },
+          });
+        };
+
+        const result = lowerToSimulator(newIR, newStore, onEntityInteraction);
         const display = extractDisplayConfig(newIR);
         debug('sim', `lowered: ${result.nodes.length} nodes, ${result.automations.length} automations`);
 
@@ -206,31 +208,15 @@ export function useSimulator(): SimulatorState {
           setRenderVersion((v: number) => v + 1);
         });
 
-        // Forward entity service calls to the bridge when in bridge mode.
-        // In bridge mode this always forwards (even before bridge reports ready)
-        // so the message is queued on the server side for the bridge process.
-        newProvider.onServiceCallHook = (domain, action, entityId, data) => {
-          if (bridgeModeRef.current) {
-            send({
-              type: 'entity_interaction',
-              payload: { entity_id: entityId, domain, action, data },
-            });
-          }
-        };
-
         loweringRef.current = result;
-        providerRef.current = newProvider;
-        setProvider(newProvider);
+        entityStoreRef.current = newStore;
+        setEntityStore(newStore);
         setNodes(result.nodes);
         setDisplayWidth(display?.width ?? 320);
         setDisplayHeight(display?.height ?? 480);
         setRenderVersion((v: number) => v + 1);
 
         // Send native device entities to the server for bridge forwarding.
-        // Native entities are IR sections with entity-domain keys (light,
-        // switch, sensor, …) that have a `name` and are not `internal: true`.
-        // These are the entities the device OWNS and exposes to HA — NOT the
-        // `haEntities` which are imports FROM HA (platform: homeassistant).
         const nativeEntities = extractNativeEntities(newIR);
         const haEntities = newIR.esphome?.haEntities ?? [];
         debug('sim', `entities: native=${nativeEntities.length} ha=${haEntities.length}`);
@@ -239,7 +225,6 @@ export function useSimulator(): SimulatorState {
 
         if (nativeEntities.length > 0 || haEntities.length > 0) {
           debug('sim', 'sending entity_definitions');
-          // Extract device name from the esphome section
           const esphomeSection = newIR.esphome?.sections.find((s) => s.key === 'esphome');
           const deviceName =
             esphomeSection?.value.kind === 'object'
@@ -247,7 +232,7 @@ export function useSimulator(): SimulatorState {
                   ?.value ?? 'espcompose'
               : 'espcompose';
 
-          send({
+          sendRef.current({
             type: 'entity_definitions',
             payload: {
               device_name: deviceName,
@@ -266,21 +251,6 @@ export function useSimulator(): SimulatorState {
           debug('sim', 'SKIPPED entity_definitions — no entities found');
         }
 
-        // Schedule mock automations only when NOT in bridge mode.
-        // When the bridge is active, the real client_connected event comes
-        // from HA via the bridge → Node → ha_command WS message.
-        if (!bridgeModeRef.current) {
-          for (const auto of result.automations) {
-            if (auto.trigger === 'api.on_client_connected') {
-              const timer = setTimeout(() => {
-                console.log('[Simulator] Mock: api.on_client_connected fired');
-                auto.execute();
-              }, 10_000);
-              automationTimersRef.current.push(timer);
-            }
-          }
-        }
-
         break;
       }
 
@@ -295,24 +265,14 @@ export function useSimulator(): SimulatorState {
         break;
 
       case 'bridge_status': {
-        const active = msg.payload.status === 'ready';
         debug('sim', `bridge_status: ${msg.payload.status}`);
-        bridgeActiveRef.current = active;
-        if (active) {
-          // Bridge just became ready — cancel any mock timers
-          for (const t of automationTimersRef.current) clearTimeout(t);
-          automationTimersRef.current = [];
-          console.log('[Simulator] HA bridge ready — mock timers cancelled');
-        }
         break;
       }
 
       case 'ha_command': {
-        // Real HA command — apply to simulator state and fire automations
         const { entity_id, domain, action, data } = msg.payload;
         debug('sim', `ha_command: ${domain}.${action} → ${entity_id}`, data);
 
-        // Fire on_client_connected automations when HA subscribes
         if (action === 'client_connected') {
           const result = loweringRef.current;
           if (result) {
@@ -322,44 +282,33 @@ export function useSimulator(): SimulatorState {
               }
             }
           }
-        } else {
-          // Apply state change from HA without firing the bridge hook
-          // (avoids infinite loop back to HA)
-          const p = providerRef.current;
-          if (p) {
-            p.applyRemoteService(domain, action, entity_id, data as Record<string, unknown> | undefined);
-            flushAndRerender();
-          }
         }
         break;
       }
 
       case 'ha_state_update': {
-        // HA pushed a state change for an imported entity — update MockProvider.
-        // Map raw HA entity ID (light.office) to the generated ID used by the
-        // EntitySignalRegistry (ha_light_office) so reactive signals update.
         const { entity_id, state, attribute } = msg.payload;
         const genId = entityIdToGeneratedId(entity_id);
         debug('sim', `ha_state_update: ${entity_id} → ${genId} = ${state} (attr=${attribute})`);
 
-        const p = providerRef.current;
-        if (p) {
+        const store = entityStoreRef.current;
+        if (store) {
           if (attribute) {
-            // Attribute-specific update (e.g. brightness)
-            p.setEntityState(genId, { attributes: { [attribute]: state } });
+            store.setEntityState(genId, { attributes: { [attribute]: state } });
           } else {
-            // Main state update
-            p.setEntityState(genId, { state });
+            store.setEntityState(genId, { state });
           }
           flushAndRerender();
         }
         break;
       }
     }
-    } // end for
+  }, [flushAndRerender]);
 
-    drainMessages();
-  }, [messageQueue, send, drainMessages]);
+  const { status: connectionStatus, send } = useWebSocket(wsUrl, handleMessage);
+
+  // Keep sendRef current so callbacks created during lowering use the latest `send`
+  sendRef.current = send;
 
   const getCurrentPageIndex = useCallback(
     () => loweringRef.current?.getCurrentPageIndex() ?? 0,
@@ -368,7 +317,7 @@ export function useSimulator(): SimulatorState {
 
   return {
     nodes,
-    provider,
+    entityStore,
     ir,
     buildStatus,
     buildError,
@@ -378,6 +327,7 @@ export function useSimulator(): SimulatorState {
     displayHeight,
     renderVersion,
     flushAndRerender,
+    sendEntityInteraction,
     getCurrentPageIndex,
   };
 }

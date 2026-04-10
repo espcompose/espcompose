@@ -3,13 +3,15 @@ import type { IRReactive, IRThemeData } from '@espcompose/core/internals';
 import { REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
 import type { JsLoweringContext } from '../expr-to-js.js';
 import type { EntitySignalRegistry } from './entity-registry.js';
-import type { MockProvider } from '../../providers/mock-provider';
+import type { EntityStore } from '../../entity-store';
 
 // ── Walk context shared across the ir-renderer modules ───────────────────────
 
 export interface IRRenderContext {
   entityRegistry: EntitySignalRegistry;
-  provider: MockProvider;
+  entityStore: EntityStore;
+  /** Callback to send an entity interaction (service call) to the server. */
+  onEntityInteraction: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void;
   nodeCounter: number;
   /** Theme data from the SemanticIR (undefined if no themes registered). */
   themeData?: IRThemeData;
@@ -139,6 +141,13 @@ export function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext)
           break;
         case 'float':
           entityGetters.set(key, () => {
+            // Float properties (e.g. brightness) are stored as attributes, not main state
+            const attrSig = signals.attributeSignals.get(node.property);
+            if (attrSig) {
+              const num = Number(attrSig.get());
+              return isNaN(num) ? 0 : num;
+            }
+            // Fallback: try parsing main state as a number (e.g. sensor values)
             const raw = signals.stateSignal.get();
             const num = Number(raw);
             return isNaN(num) ? 0 : num;

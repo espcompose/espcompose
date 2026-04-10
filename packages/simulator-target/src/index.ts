@@ -8,6 +8,7 @@ export { startFileWatcher, type FileWatcher, type FileWatcherOptions } from './s
 
 // Bridge (HA integration)
 export { createBridgeManager, type BridgeManager, type BridgeManagerOptions, type BridgeStatus } from './server/bridge-manager';
+export { createMockBridge } from './server/mock-bridge';
 export type {
   EntityDefinition,
   HAEntityImport,

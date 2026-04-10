@@ -1,5 +1,5 @@
 import { Signal, Scheduler } from '../../runtime/signals';
-import type { MockProvider } from '../../providers/mock-provider';
+import type { EntityStore } from '../../entity-store';
 import { getEntityDomain } from '@espcompose/core/internals';
 
 export interface EntitySignals {
@@ -8,9 +8,19 @@ export interface EntitySignals {
   attributeSignals: Map<string, Signal<unknown>>;
 }
 
+/** Extract the HA domain from an entity ID (raw or generated).
+ *  Raw:       'light.office'      → 'light'
+ *  Generated: 'ha_light_office'   → 'light'
+ */
+function domainFromEntityId(entityId: string): string {
+  if (entityId.includes('.')) return entityId.split('.')[0] ?? '';
+  if (entityId.startsWith('ha_')) return entityId.slice(3).split('_')[0] ?? '';
+  return '';
+}
+
 /** Determine active state for an entity based on its domain descriptor. */
 function isActiveState(entityId: string, stateStr: string): boolean {
-  const domain = entityId.split('.')[0] ?? '';
+  const domain = domainFromEntityId(entityId);
   const desc = getEntityDomain(domain);
   // Unknown domain or domain with no active state concept → never "active"
   if (!desc?.activeState) return false;
@@ -19,18 +29,18 @@ function isActiveState(entityId: string, stateStr: string): boolean {
 
 export class EntitySignalRegistry {
   private entitySignals = new Map<string, EntitySignals>();
-  private provider: MockProvider;
+  private entityStore: EntityStore;
 
-  constructor(provider: MockProvider) {
-    this.provider = provider;
+  constructor(entityStore: EntityStore) {
+    this.entityStore = entityStore;
   }
 
   getOrCreate(entityId: string): EntitySignals {
     let entry = this.entitySignals.get(entityId);
     if (entry) return entry;
 
-    this.provider.ensureEntity(entityId);
-    const state = this.provider.getEntityState(entityId);
+    this.entityStore.ensureEntity(entityId);
+    const state = this.entityStore.getEntityState(entityId);
 
     const stateSignal = new Signal<string>(state.state);
     const isOnSignal = new Signal<boolean>(isActiveState(entityId, state.state));
@@ -43,8 +53,8 @@ export class EntitySignalRegistry {
     entry = { stateSignal, isOnSignal, attributeSignals };
     this.entitySignals.set(entityId, entry);
 
-    // Subscribe to provider changes
-    this.provider.onEntityChange(entityId, (newState) => {
+    // Subscribe to entity store changes
+    this.entityStore.onEntityChange(entityId, (newState) => {
       stateSignal.set(newState.state);
       isOnSignal.set(isActiveState(entityId, newState.state));
       for (const [key, val] of Object.entries(newState.attributes)) {

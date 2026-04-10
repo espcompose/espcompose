@@ -106,6 +106,8 @@ export interface HAServiceActionStep {
   action: string;
   entityId: string;
   data?: Record<string, unknown>;
+  /** Raw params containing trigger_var entries for runtime resolution. */
+  rawParams?: Record<string, unknown>;
 }
 
 export interface DelayActionStep {
@@ -131,20 +133,6 @@ export interface LogActionStep {
   level?: string;
 }
 
-// ── Data provider interface ──────────────────────────────────────────────────
+// ── Entity state (re-exported from entity-store) ─────────────────────────────
 
-/**
- * Abstraction for supplying simulated data to the UI.
- */
-export interface DataProvider {
-  getEntityState(entityId: string): EntityState;
-  setEntityState(entityId: string, state: Partial<EntityState>): void;
-  onEntityChange(entityId: string, cb: (state: EntityState) => void): () => void;
-  callService(domain: string, action: string, entityId: string, data?: Record<string, unknown>): void;
-}
-
-export interface EntityState {
-  state: string;
-  attributes: Record<string, unknown>;
-  domain: string;
-}
+export type { EntityState } from './entity-store';

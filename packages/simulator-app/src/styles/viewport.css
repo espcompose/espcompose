@@ -60,10 +60,11 @@ body {
 }
 
 .sim-viewport .lvgl-label {
+  display: inline-block;
   color: var(--thm-colors-primary-text, #fff);
   line-height: 1.4;
   padding: 2px;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 .sim-viewport .lvgl-button {
@@ -89,9 +90,49 @@ body {
 }
 
 .sim-viewport .lvgl-switch {
+  position: relative;
+  display: inline-block;
   width: 50px;
   height: 28px;
-  accent-color: var(--thm-colors-primary-bg, #2196f3);
+  cursor: pointer;
+}
+
+.sim-viewport .lvgl-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.sim-viewport .lvgl-switch .lvgl-switch-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555;
+  border-radius: 14px;
+  transition: background-color 0.2s;
+}
+
+.sim-viewport .lvgl-switch .lvgl-switch-track::before {
+  content: '';
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.sim-viewport .lvgl-switch input:checked + .lvgl-switch-track {
+  background-color: var(--thm-colors-primary-bg, #2196f3);
+}
+
+.sim-viewport .lvgl-switch input:checked + .lvgl-switch-track::before {
+  transform: translateX(22px);
 }
 
 .sim-viewport .lvgl-bar {

@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { InputNumber, Switch, Tag, Typography } from 'antd';
-import type { MockProvider, EntityState } from '../runtime';
+import type { EntityStore, EntityState } from '../runtime';
 import { ENTITY_DOMAINS, getEntityDomain } from '@espcompose/core/internals';
 
 const { Text } = Typography;
 
 interface EntityPanelProps {
-  provider: MockProvider | null;
-  onEntityChange: () => void;
+  entityStore: EntityStore | null;
+  onToggle: (entityId: string, domain: string) => void;
+  onSensorChange: (entityId: string, value: number) => void;
 }
 
 const TOGGLEABLE_DOMAINS = new Set(
@@ -21,55 +22,53 @@ const SENSOR_DOMAINS = new Set(
  * Entity control panel — lists all registered entities with
  * controls appropriate to each entity's domain.
  */
-export function EntityPanel({ provider, onEntityChange }: EntityPanelProps) {
+export function EntityPanel({ entityStore, onToggle, onSensorChange }: EntityPanelProps) {
   const [entityStates, setEntityStates] = useState<Map<string, EntityState>>(new Map());
 
-  // Sync state from provider
+  // Sync state from entity store
   const syncAll = useCallback(() => {
-    if (!provider) return;
+    if (!entityStore) return;
     const map = new Map<string, EntityState>();
-    for (const id of provider.getEntityIds()) {
-      map.set(id, provider.getEntityState(id));
+    for (const id of entityStore.getEntityIds()) {
+      map.set(id, entityStore.getEntityState(id));
     }
     setEntityStates(map);
-  }, [provider]);
+  }, [entityStore]);
 
   useEffect(() => {
     syncAll();
   }, [syncAll]);
 
-  // Subscribe to entity change events from provider
+  // Subscribe to entity change events from store
   useEffect(() => {
-    if (!provider) return;
+    if (!entityStore) return;
     const unsubscribers: (() => void)[] = [];
-    for (const id of provider.getEntityIds()) {
+    for (const id of entityStore.getEntityIds()) {
       unsubscribers.push(
-        provider.onEntityChange(id, () => {
+        entityStore.onEntityChange(id, () => {
           setEntityStates((prev) => {
             const next = new Map(prev);
-            next.set(id, provider.getEntityState(id));
+            next.set(id, entityStore.getEntityState(id));
             return next;
           });
         }),
       );
     }
     return () => unsubscribers.forEach((unsub) => unsub());
-  }, [provider]);
+  }, [entityStore]);
 
-  if (!provider || entityStates.size === 0) {
+  if (!entityStore || entityStates.size === 0) {
     return <Text type="secondary">No entities registered</Text>;
   }
 
   const handleToggle = (entityId: string) => {
     const domain = entityId.split('.')[0];
-    provider!.callService(domain, 'toggle', entityId);
-    onEntityChange();
+    onToggle(entityId, domain);
   };
 
   const handleSensorChange = (entityId: string, value: number | null) => {
     if (value == null) return;
-    provider!.setEntityState(entityId, { state: String(value) });
-    onEntityChange();
+    onSensorChange(entityId, value);
   };
 
   return (

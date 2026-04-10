@@ -27,12 +27,11 @@ export type {
   ActionProp,
   RefProp,
   ActionStep,
-  DataProvider,
   EntityState,
 } from './types';
 
 export { Signal, Memo, Effect, Scheduler } from './runtime/signals';
-export { MockProvider } from './providers/mock-provider';
+export { EntityStore } from './entity-store';
 export { lvglPropsToStyle, lvglColorToCss, getStaticValue } from './renderer/lvgl-styles';
 export { generateThemeStyleBlock, themePathToCssVar } from './renderer/theme-css';
 export { extractDisplayConfig, type DisplayConfig } from './extract-display-config';

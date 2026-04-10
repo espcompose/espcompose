@@ -18,7 +18,6 @@ import {
   type ServerMessage,
 } from '@espcompose/simulator-app/runtime';
 import type { BridgeManager } from './bridge-manager';
-import type { NodeToBridgeMessage } from './bridge-protocol';
 
 // ── MIME type map for static file serving ────────────────────────────────────
 
@@ -55,15 +54,13 @@ export interface DevServerOptions {
   initialIR?: SemanticIR;
   /** Project name shown in the browser UI. */
   projectName?: string;
-  /** Whether the server was launched with HA bridge mode. */
-  bridgeMode?: boolean;
+  /** Bridge manager (mock or real HA bridge). Always required. */
+  bridge: BridgeManager;
 }
 
 export interface DevServer {
   /** The port the server is listening on. */
   readonly port: number;
-  /** Set the bridge manager for HA integration. Can be set after creation. */
-  bridge: BridgeManager | undefined;
   /** Broadcast an IR update to all connected clients. */
   broadcastIR(ir: SemanticIR): void;
   /** Broadcast a build-start event to all connected clients. */
@@ -90,11 +87,10 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
     port = 5420,
     initialIR,
     projectName = 'espcompose',
-    bridgeMode = false,
+    bridge,
   } = options;
 
   let currentIR: SemanticIR | undefined = initialIR;
-  let bridge: BridgeManager | undefined;
   const clients = new Set<WebSocket>();
 
   // ── Cached state for late-joining clients ────────────────────────────────
@@ -104,9 +100,6 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
 
   /** Cached HA entity states keyed by "entity_id" or "entity_id::attribute". */
   const haStateCache = new Map<string, { entity_id: string; state: string; attribute: string }>();
-
-  /** Buffered define_node payload — sent when bridge becomes available. */
-  let pendingDefineNode: NodeToBridgeMessage | undefined;
 
   // ── HTTP server: serve static files ──────────────────────────────────────
 
@@ -164,7 +157,10 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
               res.end('Not Found');
               return;
             }
-            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.writeHead(200, {
+              'Content-Type': 'text/html; charset=utf-8',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+            });
             res.end(data);
           });
           return;
@@ -172,7 +168,11 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
 
         const ext = path.extname(resolved).toLowerCase();
         const contentType = MIME_TYPES[ext] ?? 'application/octet-stream';
-        res.writeHead(200, { 'Content-Type': contentType });
+        // Hashed assets (Vite output) get long cache; HTML gets no-cache
+        const cacheControl = ext === '.html'
+          ? 'no-cache, no-store, must-revalidate'
+          : 'public, max-age=31536000, immutable';
+        res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': cacheControl });
         fs.createReadStream(resolved).pipe(res);
       });
     }
@@ -189,8 +189,21 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
     // Send connected message with server info
     sendToClient(ws, {
       type: 'connected',
-      payload: { projectName, version: '0.1.0', port, bridgeMode },
+      payload: { projectName, version: '0.1.0', port },
     });
+
+    // Send current IR immediately — no round-trip handshake needed.
+    if (currentIR) {
+      sendToClient(ws, { type: 'ir_update', payload: { ir: currentIR } });
+    }
+    // Send cached bridge status so the client knows the bridge state.
+    if (lastBridgeStatus) {
+      sendToClient(ws, lastBridgeStatus);
+    }
+    // Send cached HA entity states so the client starts with current values.
+    for (const update of haStateCache.values()) {
+      sendToClient(ws, { type: 'ha_state_update', payload: update });
+    }
 
     ws.on('message', (raw: unknown) => {
       const parsed = parseMessage(String(raw));
@@ -198,43 +211,33 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       console.log(`  [dev-server] WS message: ${(parsed as { type: string }).type}`);
 
       if (parsed.type === 'ready') {
+        // Client explicitly requests state — resend everything.
         if (currentIR) {
           sendToClient(ws, { type: 'ir_update', payload: { ir: currentIR } });
         }
-        // Send cached bridge status so reconnecting clients know the bridge is ready
         if (lastBridgeStatus) {
           sendToClient(ws, lastBridgeStatus);
         }
-        // Send cached HA entity states so reconnecting clients start with current values
         for (const update of haStateCache.values()) {
           sendToClient(ws, { type: 'ha_state_update', payload: update });
         }
       }
 
-      // Forward bridge-related messages to the Python bridge
-      const defineNodePayload = parsed.type === 'entity_definitions'
-        ? {
-            type: 'define_node' as const,
-            payload: {
-              name: parsed.payload.device_name,
-              api_encryption_key: parsed.payload.api_encryption_key,
-              entities: parsed.payload.entities,
-              ha_entity_imports: parsed.payload.ha_entity_imports,
-            },
-          }
-        : undefined;
-
-      if (defineNodePayload) {
-        console.log(`  [dev-server] entity_definitions received, bridge=${!!bridge}`);
-        if (bridge) {
-          bridge.send(defineNodePayload);
-        } else {
-          // Bridge not ready yet — buffer so it's sent when bridge is assigned
-          pendingDefineNode = defineNodePayload;
-        }
+      // Forward bridge-related messages to the bridge
+      if (parsed.type === 'entity_definitions') {
+        console.log('  [dev-server] entity_definitions received');
+        bridge.send({
+          type: 'define_node',
+          payload: {
+            name: parsed.payload.device_name,
+            api_encryption_key: parsed.payload.api_encryption_key,
+            entities: parsed.payload.entities,
+            ha_entity_imports: parsed.payload.ha_entity_imports,
+          },
+        });
       }
 
-      if (bridge && parsed.type === 'entity_interaction') {
+      if (parsed.type === 'entity_interaction') {
         bridge.send({
           type: 'entity_state_update',
           payload: {
@@ -281,16 +284,6 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
     server.listen(port, () => {
       resolve({
         port,
-
-        get bridge() { return bridge; },
-        set bridge(b: BridgeManager | undefined) {
-          bridge = b;
-          // Flush buffered entity_definitions that arrived before bridge was ready
-          if (b && pendingDefineNode) {
-            b.send(pendingDefineNode);
-            pendingDefineNode = undefined;
-          }
-        },
 
         broadcastIR(ir: SemanticIR) {
           currentIR = ir;
