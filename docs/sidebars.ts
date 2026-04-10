@@ -3,6 +3,8 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebars: SidebarsConfig = {
   defaultSidebar: [
     "intro",
+    "getting-started",
+    "simulator",
     {
       type: "category",
       label: "Architecture",

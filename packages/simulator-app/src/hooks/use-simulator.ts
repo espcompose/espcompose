@@ -226,16 +226,20 @@ export function useSimulator(): SimulatorState {
         if (nativeEntities.length > 0 || haEntities.length > 0) {
           debug('sim', 'sending entity_definitions');
           const esphomeSection = newIR.esphome?.sections.find((s) => s.key === 'esphome');
+          const esphomeObj =
+            esphomeSection?.value.kind === 'object' ? esphomeSection.value : null;
           const deviceName =
-            esphomeSection?.value.kind === 'object'
-              ? (esphomeSection.value.entries.find((e) => e.key === 'name')?.value as { value?: string })
-                  ?.value ?? 'espcompose'
-              : 'espcompose';
+            (esphomeObj?.entries.find((e) => e.key === 'name')?.value as { value?: string })
+              ?.value ?? 'espcompose';
+          const friendlyName =
+            (esphomeObj?.entries.find((e) => e.key === 'friendly_name')?.value as { value?: string })
+              ?.value ?? undefined;
 
           sendRef.current({
             type: 'entity_definitions',
             payload: {
               device_name: deviceName,
+              friendly_name: friendlyName,
               entities: nativeEntities,
               ha_entity_imports: haEntities.map(
                 (e: { entityId: string; domain: string; generatedId: string; attribute?: string }) => ({

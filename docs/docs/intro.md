@@ -60,9 +60,11 @@ Every ESPHome platform, LVGL widget, and UI component has full TypeScript types,
 
 The `@espcompose/ui` package provides high-level components — `Screen`, `Card`, `VStack`, `HStack`, `Button`, `Slider`, `Switch`, `Text`, and more — with built-in theming, flex layouts, and runtime theme switching. You can drop down to raw LVGL intrinsic elements whenever you need full control.
 
-### Instant Preview *(coming soon)*
+### Instant Preview
 
-A built-in browser simulator will render your LVGL UI from the same compiled output, with mock Home Assistant state — letting you iterate on layouts and interactions without flashing hardware.
+A built-in browser simulator renders your LVGL UI from the same compiled output — no hardware required. Run `espcompose simulate` to start a live dev server on `localhost:5420`. The browser opens automatically and hot-reloads whenever you save a source file.
+
+By default, the simulator uses a mock Home Assistant bridge with simulated entity states. Pass `--ha-bridge` to connect a real Home Assistant instance over the ESPHome Native API, letting you interact with live entity state during development. See the [Simulator guide](./simulator) for details.
 
 ### Works With the Ecosystem
 
@@ -94,7 +96,7 @@ npm install
 npx espcompose transpile
 ```
 
-The generated YAML lands in `.espcompose/esphome.yaml`, ready for `esphome run`. See the [Getting Started guide](architecture/getting-started.md) for the full walkthrough.
+The generated YAML lands in `.espcompose/esphome.yaml`, ready for `esphome run`. See the [Getting Started guide](./getting-started.md) for the full walkthrough.
 
 ## Get Involved
 

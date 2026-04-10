@@ -76,24 +76,31 @@ class Bridge:
         await self._shutdown()
 
     async def _handle_define_node(self, payload: dict[str, Any]) -> None:
-        """Handle define_node message — start the Native API server.
+        """Handle define_node message — (re)configure the Native API server.
 
         `entities` are native device entities (light, switch, etc.) that the
         device owns and should expose to HA via the ESPHome API.
 
         `ha_entity_imports` are HA entities the device reads from HA
         (platform: homeassistant sensor imports) — stored for future use.
+
+        On the first call, a new NativeAPIServer is created and started.
+        On subsequent calls (hot reload), the existing server's entity
+        definitions are updated in place and connected HA clients receive a
+        DisconnectRequest so they perform a fresh handshake with the updated
+        entity list.
         """
         self._node_config = payload
         name = payload.get("name", "espcompose")
+        friendly_name = payload.get("friendly_name", name)
         mac_address = payload.get("mac_address", "AA:BB:CC:DD:EE:FF")
         port = payload.get("port", 6053)
         entities = payload.get("entities", [])
         ha_imports = payload.get("ha_entity_imports", [])
 
         logger.info(
-            "Node defined: name=%s, native_entities=%d, ha_imports=%d, port=%d",
-            name, len(entities), len(ha_imports), port,
+            "Node defined: name=%s, friendly_name=%s, native_entities=%d, ha_imports=%d, port=%d",
+            name, friendly_name, len(entities), len(ha_imports), port,
         )
 
         # Build entity lookup tables
@@ -118,40 +125,63 @@ class Bridge:
             if resp is not None:
                 list_responses.append(resp)
 
-        # Stop existing server if redefining
-        if self._server is not None:
-            await self._server.stop()
-
-        # Create and start the server
-        self._server = NativeAPIServer(
-            device_name=name,
-            mac_address=mac_address,
-            port=port,
-            on_command_callback=self._on_ha_command,
-            on_client_connected_callback=self._on_ha_client_connected,
-            on_client_disconnected_callback=self._on_ha_client_disconnected,
-            on_ha_state_callback=self._on_ha_state_update,
-            enable_mdns=self._enable_mdns,
-        )
-        self._server.set_entities(list_responses)
-
-        # Register HA entity subscriptions so HA knows which entities to push
+        # HA state subscriptions
         ha_subs: list[dict[str, str]] = []
         for imp in ha_imports:
             ha_subs.append({
                 "entity_id": imp.get("entity_id", ""),
                 "attribute": imp.get("attribute", ""),
             })
-        self._server.ha_state_subscriptions = ha_subs
 
-        # Seed initial default states so HA gets a state response on SubscribeStates
-        for entity in entities:
-            state_msg = build_default_state(entity)
-            if state_msg is not None:
-                key = _stable_key(entity["entity_id"])
-                self._server.update_state(key, state_msg)
+        # If the server is already running on the same port, update in place
+        # and disconnect HA clients so they reconnect with a fresh handshake.
+        # This avoids TCP teardown/rebind issues during hot reload.
+        # Skip in-place update for port 0 (auto-assign) since each call
+        # should bind to a fresh random port.
+        if self._server is not None and port != 0 and self._server.port == port:
+            logger.info("Hot reload: updating server in place, disconnecting clients")
+            self._server.device_name = name
+            self._server.friendly_name = friendly_name
+            self._server.set_entities(list_responses)
+            self._server.ha_state_subscriptions = ha_subs
+            self._server.clear_states()
 
-        await self._server.start()
+            # Seed initial default states
+            for entity in entities:
+                state_msg = build_default_state(entity)
+                if state_msg is not None:
+                    key = _stable_key(entity["entity_id"])
+                    self._server.update_state(key, state_msg, push=False)
+
+            # Disconnect clients — HA will reconnect and do a fresh handshake
+            await self._server.disconnect_clients()
+        else:
+            # First start, or port changed — full server (re)start
+            if self._server is not None:
+                await self._server.stop()
+
+            self._server = NativeAPIServer(
+                device_name=name,
+                friendly_name=friendly_name,
+                mac_address=mac_address,
+                port=port,
+                on_command_callback=self._on_ha_command,
+                on_client_connected_callback=self._on_ha_client_connected,
+                on_client_disconnected_callback=self._on_ha_client_disconnected,
+                on_ha_state_callback=self._on_ha_state_update,
+                enable_mdns=self._enable_mdns,
+            )
+            self._server.set_entities(list_responses)
+            self._server.ha_state_subscriptions = ha_subs
+
+            # Seed initial default states
+            for entity in entities:
+                state_msg = build_default_state(entity)
+                if state_msg is not None:
+                    key = _stable_key(entity["entity_id"])
+                    self._server.update_state(key, state_msg, push=False)
+
+            await self._server.start()
 
         # Signal readiness back to Node
         write_message({

@@ -67,7 +67,7 @@ The bundled file is loaded in Node.js. The SDK's render function walks the JSX t
 The compiler delegates to a target backend, passing the Semantic IR and project paths. The compiler has no knowledge of what the target does.
 
 - **ESPHome target** — Generates C++ headers for the reactive runtime, a full ESPHome YAML configuration, and copies asset files.
-- **Simulator target** — Converts the IR into an HTML page with canvas rendering and mock HA entity state, then opens it in the browser.
+- **Simulator target** — Starts an HTTP + WebSocket dev server hosting the React simulator app. Entity state can flow from a built-in mock bridge or from a real Home Assistant instance via the Python HA bridge (`--ha-bridge` flag). The server broadcasts IR updates over WebSocket so the browser hot-reloads on every source change.
 
 ## Reactive System
 

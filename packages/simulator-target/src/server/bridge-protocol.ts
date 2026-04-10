@@ -29,6 +29,7 @@ export interface DefineNodeMessage {
   type: 'define_node';
   payload: {
     name: string;
+    friendly_name?: string;
     mac_address?: string;
     api_encryption_key?: string;
     port?: number;
