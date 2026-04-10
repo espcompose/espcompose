@@ -93,6 +93,7 @@ export interface EntityDefinitionsMessage {
   type: 'entity_definitions';
   payload: {
     device_name: string;
+    friendly_name?: string;
     api_encryption_key?: string;
     /** Native device entities to expose to HA via the ESPHome API. */
     entities: Array<{

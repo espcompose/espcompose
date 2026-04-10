@@ -226,10 +226,28 @@ export function startDevServer(options: DevServerOptions): Promise<DevServer> {
       // Forward bridge-related messages to the bridge
       if (parsed.type === 'entity_definitions') {
         console.log('  [dev-server] entity_definitions received');
+
+        // ── Simulator identity: use ESPHome's name_add_mac_suffix pattern ──
+        // A fixed locally-administered MAC ensures the simulated device registers
+        // as a distinct device in HA, separate from any real flashed device.
+        const SIMULATOR_MAC = '02:EC:53:49:4D:01';
+        const macSuffix = SIMULATOR_MAC.replace(/:/g, '').slice(-6).toLowerCase();
+        const deviceName = parsed.payload.device_name;
+        const simDeviceName = `${deviceName}-${macSuffix}`;
+
+        // Derive a friendly name: use the user's friendlyName if provided,
+        // otherwise title-case the device name slug.
+        const baseFriendlyName =
+          parsed.payload.friendly_name ??
+          deviceName.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        const simFriendlyName = `${baseFriendlyName} (Simulator)`;
+
         bridge.send({
           type: 'define_node',
           payload: {
-            name: parsed.payload.device_name,
+            name: simDeviceName,
+            friendly_name: simFriendlyName,
+            mac_address: SIMULATOR_MAC,
             api_encryption_key: parsed.payload.api_encryption_key,
             entities: parsed.payload.entities,
             ha_entity_imports: parsed.payload.ha_entity_imports,

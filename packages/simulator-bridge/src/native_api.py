@@ -240,7 +240,7 @@ class NativeAPIClient:
             resp = DeviceInfoResponse(
                 uses_password=False,
                 name=self._server.device_name,
-                friendly_name=self._server.device_name,
+                friendly_name=self._server.friendly_name,
                 mac_address=self._server.mac_address,
                 compilation_time="",
                 model="ESPCompose Simulator",
@@ -331,6 +331,20 @@ class NativeAPIClient:
             pass
         self._server.on_client_disconnected(self)
 
+    async def disconnect(self) -> None:
+        """Send a DisconnectRequest and close.
+
+        This tells HA to reconnect, matching real ESPHome OTA behaviour.
+        """
+        if self._closed:
+            return
+        try:
+            self.send(DisconnectRequest())
+            await self.flush()
+        except Exception:
+            pass
+        self._close()
+
 
 # ── Server ────────────────────────────────────────────────────────────────────
 
@@ -344,6 +358,7 @@ class NativeAPIServer:
     def __init__(
         self,
         device_name: str = "espcompose",
+        friendly_name: str | None = None,
         mac_address: str = "AA:BB:CC:DD:EE:FF",
         port: int = 6053,
         on_command_callback: Callable[[ProtoMessage], None] | None = None,
@@ -353,6 +368,7 @@ class NativeAPIServer:
         enable_mdns: bool = False,
     ) -> None:
         self.device_name = device_name
+        self.friendly_name = friendly_name or device_name
         self.mac_address = mac_address
         self.port = port
         self._on_command = on_command_callback
@@ -363,6 +379,7 @@ class NativeAPIServer:
 
         self.list_entities_responses: list[ProtoMessage] = []
         self._entity_states: dict[str, ProtoMessage] = {}
+        self._clients: set[NativeAPIClient] = set()
         self._subscribers: set[NativeAPIClient] = set()
         self._service_subscribers: set[NativeAPIClient] = set()
         self._server: asyncio.Server | None = None
@@ -388,21 +405,39 @@ class NativeAPIServer:
             self._server.close()
             await self._server.wait_closed()
             self._server = None
-        for client in list(self._subscribers):
-            client._close()
+        await self.disconnect_clients()
+
+    async def disconnect_clients(self) -> None:
+        """Send DisconnectRequest to every connected client and close them.
+
+        aioesphomeapi treats an incoming DisconnectRequest as a signal to
+        reconnect, so HA will perform a fresh handshake shortly after.
+        """
+        clients = list(self._clients)
+        if clients:
+            logger.info("Disconnecting %d client(s) via DisconnectRequest", len(clients))
+        for client in clients:
+            await client.disconnect()
+        self._clients.clear()
         self._subscribers.clear()
+        self._service_subscribers.clear()
 
     def set_entities(self, list_responses: list[ProtoMessage]) -> None:
         """Set the list of entity responses returned during ListEntities."""
         self.list_entities_responses = list_responses
 
-    def update_state(self, entity_key: int, state_msg: ProtoMessage) -> None:
-        """Update a cached entity state and push to all subscribed clients."""
+    def update_state(self, entity_key: int, state_msg: ProtoMessage, *, push: bool = True) -> None:
+        """Update a cached entity state and optionally push to subscribers."""
         self._entity_states[entity_key] = state_msg
-        for client in list(self._subscribers):
-            client.send(state_msg)
-            # Fire-and-forget drain — we don't want to block state pushes
-            asyncio.ensure_future(client.flush())
+        if push:
+            for client in list(self._subscribers):
+                client.send(state_msg)
+                # Fire-and-forget drain — we don't want to block state pushes
+                asyncio.ensure_future(client.flush())
+
+    def clear_states(self) -> None:
+        """Remove all cached entity states."""
+        self._entity_states.clear()
 
     def get_state(self, entity_key: int) -> ProtoMessage | None:
         """Return the cached state for a given entity key, or None."""
@@ -527,5 +562,9 @@ class NativeAPIServer:
         writer: asyncio.StreamWriter,
     ) -> None:
         client = NativeAPIClient(reader, writer, self)
+        self._clients.add(client)
         logger.info("New connection from %s", client.address)
-        await client.run()
+        try:
+            await client.run()
+        finally:
+            self._clients.discard(client)

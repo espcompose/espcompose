@@ -17,6 +17,11 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "@espcompose/cli#build": {
+      "dependsOn": ["^build", "typecheck", "lint"],
+      "inputs": ["src/**", "scripts/**", "templates/**", "../../packages/simulator-bridge/src/**"],
+      "outputs": ["dist/**", "assets/**"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "cache": true

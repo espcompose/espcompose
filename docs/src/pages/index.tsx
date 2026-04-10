@@ -134,6 +134,10 @@ function ValueProps(): React.ReactElement {
       desc: "Build touchscreen interfaces from reusable components — Screen, Card, HStack, Button, and more.",
     },
     {
+      title: "Hot Reload, No Flashing",
+      desc: "Iterate on your UI instantly — changes hot-reload in seconds without waiting for C++ compilation or device flashing.",
+    },
+    {
       title: "Home Assistant Data Binding",
       desc: "Bind HA entities to UI with useHAEntity. Toggle lights, read state, control devices — no lambdas.",
     },
@@ -146,12 +150,20 @@ function ValueProps(): React.ReactElement {
       desc: "Built-in dark and light themes, flex layouts, and a design system you can customize or extend.",
     },
     {
+      title: "Live Home Assistant Data",
+      desc: "Run your UI in the simulator against a live HA instance — test with real entities, real state, real interactions.",
+    },
+    {
       title: "Targets ESPHome Directly",
       desc: "Generates standard ESPHome YAML and triggers the compiler automatically — seamless from code to device.",
     },
     {
       title: "Built on Node.js",
       desc: "Tap into TypeScript and the entire NPM ecosystem — use any package or tooling to power your build pipeline.",
+    },
+    {
+      title: "Open Source",
+      desc: "Fully open source and community-driven. Inspect the code, contribute features, and shape the project's future.",
     },
   ];
 
