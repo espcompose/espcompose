@@ -13,6 +13,7 @@ import {
   type HAEntityInfo,
   type ScriptTransformContext,
 } from './expr-compiler.js';
+import { ENTITY_DOMAINS } from '@espcompose/core/internals';
 import {
   type IRActionNode,
   type IRActionParam,
@@ -907,18 +908,30 @@ function inferHAEntityDomainFromType(type: ts.Type): string | undefined {
 
   const propNames = new Set(type.getProperties().map(p => p.name));
 
-  if (propNames.has('brightness')) return 'light';
-  if (propNames.has('isOpen')) return 'cover';
-  // Both switch and fan have: toggle, turnOn, turnOff, isOn
-  // For now, default to 'switch' for matching shapes — the HA action name
-  // will be the same (toggle → toggle, turnOn → turn_on) regardless.
-  // The entity_id in the data payload determines the actual target.
-  if (propNames.has('toggle') && propNames.has('isOn')) return 'switch';
-  // Read-only bindings (no action methods)
-  if (propNames.has('value') && propNames.has('stateText') && !propNames.has('toggle')) return 'sensor';
-  if (propNames.has('isOn') && propNames.has('stateText') && !propNames.has('toggle')) return 'binary_sensor';
+  // Score each domain by how many of its declared properties + actions match.
+  // The domain with the most unique matches wins. Ties use 'homeassistant'
+  // — the generic HA domain — since the actual domain is resolved at runtime
+  // from the entity's __entityId__ stamp.
+  let bestDomain: string | undefined;
+  let bestScore = 0;
+  let tied = false;
 
-  return undefined;
+  for (const [domain, desc] of Object.entries(ENTITY_DOMAINS)) {
+    const candidates = [
+      ...desc.properties.map(p => p.name),
+      ...desc.actions.map(a => a.name),
+    ];
+    const score = candidates.filter(n => propNames.has(n)).length;
+    if (score > bestScore) {
+      bestScore = score;
+      bestDomain = domain;
+      tied = false;
+    } else if (score === bestScore && score > 0) {
+      tied = true;
+    }
+  }
+
+  return tied ? 'homeassistant' : bestDomain;
 }
 
 function emitError(

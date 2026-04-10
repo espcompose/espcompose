@@ -96,7 +96,7 @@ export interface IRESPComposeData {
  * The complete semantic IR for a device project.
  *
  * This is the central contract between the compiler frontend (TSX → IR) and
- * target backends (target-esphome, target-simulator). Backends consume a
+ * target backends (esphome-target, simulator-target). Backends consume a
  * SemanticIR and produce target-specific output (YAML + C++ headers, or
  * RuntimeNode[] + HTML for the browser simulator).
  *

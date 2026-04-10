@@ -22,7 +22,6 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { Signal } from './reactive-node';
-import type { ExprType } from './ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Type-level reactive property interfaces
@@ -85,23 +84,10 @@ export type InferReactiveProperties<T> =
 //
 // Consulted by the RefHandle Proxy to create IRReactiveNode instances.
 // Keys are camelCase property names matching the interfaces above.
+//
+// Generated from metadata/entity-domains.json — see REACTIVE_PROPERTY_MAP
+// in generated/entity-domains.ts.
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface ReactivePropertyConfig {
-  /** C++ property access path on the component (e.g. `.state`). */
-  property: string;
-  /** ESPHome trigger name to subscribe on the source (e.g. `on_value`). */
-  triggerType: string;
-  /** Component domain for trigger registry lookup (e.g. `sensor`). */
-  sourceDomain: string;
-  /** Target-agnostic value type for the reactive runtime (e.g. `bool`, `float`, `string`). */
-  exprType: ExprType;
-}
-
-export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {
-  value:      { property: '.state',                          triggerType: 'on_value', sourceDomain: 'sensor',        exprType: 'float' },
-  isOn:       { property: '.state',                          triggerType: 'on_state', sourceDomain: 'binary_sensor', exprType: 'bool' },
-  isOpen:     { property: '.position',                       triggerType: 'on_state', sourceDomain: 'cover',         exprType: 'float' },
-  stateText:  { property: '.state',                          triggerType: 'on_value', sourceDomain: 'text_sensor',   exprType: 'string' },
-  brightness: { property: '.current_values.get_brightness()', triggerType: 'on_state', sourceDomain: 'light',         exprType: 'float' },
-};
+export type { ReactivePropertyConfig } from './generated/entity-domains.js';
+export { REACTIVE_PROPERTY_MAP } from './generated/entity-domains.js';

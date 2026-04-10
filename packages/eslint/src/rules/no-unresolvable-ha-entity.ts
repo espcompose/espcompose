@@ -19,17 +19,13 @@
 import { ESLintUtils } from '@typescript-eslint/utils';
 import type { TSESTree } from '@typescript-eslint/utils';
 import type ts from 'typescript';
+import { KNOWN_DOMAIN_NAMES } from '@espcompose/core/internals';
 
 const createRule = ESLintUtils.RuleCreator(
   (name) => `https://github.com/xmlguy74/espcompose/blob/main/docs/rules/${name}.md`,
 );
 
 type MessageIds = 'unresolvableDomain';
-
-const KNOWN_DOMAINS = new Set([
-  'light', 'sensor', 'binary_sensor', 'switch', 'fan', 'cover',
-  'number', 'text_sensor', 'select', 'lock',
-]);
 
 /**
  * Try to infer the HA domain from a TypeScript type.
@@ -43,7 +39,7 @@ function inferDomainFromTsType(type: ts.Type, checker: ts.TypeChecker): string |
     const dotIdx = type.value.indexOf('.');
     if (dotIdx >= 0) {
       const d = type.value.slice(0, dotIdx);
-      return KNOWN_DOMAINS.has(d) ? d : undefined;
+      return KNOWN_DOMAIN_NAMES.has(d) ? d : undefined;
     }
     return undefined;
   }
@@ -51,7 +47,7 @@ function inferDomainFromTsType(type: ts.Type, checker: ts.TypeChecker): string |
   // Template literal type: checker prints it as `light.${string}`
   const typeStr = checker.typeToString(type);
   const templateMatch = typeStr.match(/^`(\w+)\.\$\{string\}`$/);
-  if (templateMatch && KNOWN_DOMAINS.has(templateMatch[1])) {
+  if (templateMatch && KNOWN_DOMAIN_NAMES.has(templateMatch[1])) {
     return templateMatch[1];
   }
 
@@ -61,13 +57,13 @@ function inferDomainFromTsType(type: ts.Type, checker: ts.TypeChecker): string |
     for (const t of type.types) {
       const tStr = checker.typeToString(t);
       const m = tStr.match(/^`(\w+)\.\$\{string\}`$/);
-      if (m && KNOWN_DOMAINS.has(m[1])) {
+      if (m && KNOWN_DOMAIN_NAMES.has(m[1])) {
         domains.add(m[1]);
       } else if (t.isStringLiteral()) {
         const dotIdx = t.value.indexOf('.');
         if (dotIdx >= 0) {
           const d = t.value.slice(0, dotIdx);
-          if (KNOWN_DOMAINS.has(d)) domains.add(d);
+          if (KNOWN_DOMAIN_NAMES.has(d)) domains.add(d);
         }
       }
     }
@@ -93,7 +89,7 @@ function hasDomainHint(args: TSESTree.CallExpressionArgument[]): boolean {
       prop.value.type === 'Literal' &&
       typeof prop.value.value === 'string'
     ) {
-      return KNOWN_DOMAINS.has(prop.value.value);
+      return KNOWN_DOMAIN_NAMES.has(prop.value.value);
     }
   }
   return false;

@@ -14,6 +14,7 @@
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod } from '@espcompose/core/internals';
+import { getDomainSensorType, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -122,88 +123,52 @@ export function hasReactiveNodeBrand(type: ts.Type): boolean {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Domain → sensor type mapping (mirrors useHAEntity.ts sensorTypeForDomain).
- */
-function sensorTypeForDomain(domain: string): string {
-  switch (domain) {
-    case 'light':
-    case 'switch':
-    case 'binary_sensor':
-    case 'fan':
-    case 'lock':
-    case 'cover':
-      return 'binary_sensor';
-    case 'sensor':
-    case 'number':
-      return 'sensor';
-    case 'text_sensor':
-    case 'select':
-      return 'text_sensor';
-    default:
-      return 'binary_sensor';
-  }
-}
-
-/**
  * Resolve the C++ signal info for a property access on an HA entity binding.
  *
- * Maps property names to their signal names and types, mirroring the
- * runtime behavior in useHAEntity.ts.
+ * Property metadata (sourceDomain, triggerType, exprType) is looked up from
+ * the generated REACTIVE_PROPERTY_MAP. Signal IDs are derived from entity IDs.
  */
 function resolveSignalProperty(
   varName: string,
   propName: string,
   entity: HAEntityInfo,
 ): SignalPropertyInfo | null {
-  const sourceId = `ha_${entity.entityId.replace('.', '_')}`;
-  const sensorDomain = sensorTypeForDomain(entity.domain);
+  const propConfig = REACTIVE_PROPERTY_MAP[propName];
+  if (!propConfig) return null;
 
-  switch (propName) {
-    case 'isOn':
-      return {
-        signalName: `sig_${sourceId}`,
-        valueType: 'bool',
-        sourceDomain: 'binary_sensor',
-        sourceId,
-        triggerType: 'on_state',
-      };
-    case 'isOpen':
-      return {
-        signalName: `sig_${sourceId}`,
-        valueType: 'bool',
-        sourceDomain: 'binary_sensor',
-        sourceId,
-        triggerType: 'on_state',
-      };
-    case 'value':
-      return {
-        signalName: `sig_${sourceId}`,
-        valueType: 'float',
-        sourceDomain: 'sensor',
-        sourceId,
-        triggerType: 'on_value',
-      };
-    case 'stateText':
-      return {
-        signalName: `sig_${sourceId}`,
-        valueType: 'string',
-        sourceDomain: sensorDomain,
-        sourceId,
-        triggerType: sensorDomain === 'sensor' ? 'on_value' : 'on_state',
-      };
-    case 'brightness': {
-      const brightnessId = `${sourceId}_brightness`;
-      return {
-        signalName: `sig_${brightnessId}`,
-        valueType: 'float',
-        sourceDomain: 'sensor',
-        sourceId: brightnessId,
-        triggerType: 'on_value',
-      };
-    }
-    default:
-      return null;
+  const sourceId = `ha_${entity.entityId.replace('.', '_')}`;
+
+  // Special cases: some properties use a derived source ID
+  if (propName === 'brightness') {
+    const brightnessId = `${sourceId}_brightness`;
+    return {
+      signalName: `sig_${brightnessId}`,
+      valueType: propConfig.exprType,
+      sourceDomain: propConfig.sourceDomain,
+      sourceId: brightnessId,
+      triggerType: propConfig.triggerType,
+    };
   }
+
+  // stateText uses a domain-specific trigger type override
+  if (propName === 'stateText') {
+    const sensorDomain = getDomainSensorType(entity.domain);
+    return {
+      signalName: `sig_${sourceId}`,
+      valueType: propConfig.exprType,
+      sourceDomain: sensorDomain,
+      sourceId,
+      triggerType: sensorDomain === 'sensor' ? 'on_value' : 'on_state',
+    };
+  }
+
+  return {
+    signalName: `sig_${sourceId}`,
+    valueType: propConfig.exprType,
+    sourceDomain: propConfig.sourceDomain,
+    sourceId,
+    triggerType: propConfig.triggerType,
+  };
 }
 
 // ────────────────────────────────────────────────────────────────────────────

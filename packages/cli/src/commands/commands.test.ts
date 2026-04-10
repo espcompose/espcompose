@@ -66,7 +66,7 @@ describe('command registration', () => {
       name: 'simulate',
       register: registerSimulateCommand,
       expectedName: 'simulate',
-      expectedOptions: ['--width', '--height', '--debug'],
+      expectedOptions: ['--port', '--debug', '--no-open'],
     },
   ];
 

@@ -1,8 +1,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 // ExpressionIR — Typed expression AST for the ESPCompose compiler.
 //
-// Target-agnostic: no C++, no JS strings. Each backend (target-esphome,
-// target-simulator) lowers IRExprNode trees to its own target code.
+// Target-agnostic: no C++, no JS strings. Each backend (esphome-target,
+// simulator-target) lowers IRExprNode trees to its own target code.
 // ────────────────────────────────────────────────────────────────────────────
 
 // ── Value types ──────────────────────────────────────────────────────────────

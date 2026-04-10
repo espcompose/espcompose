@@ -1,0 +1,39 @@
+{
+  "name": "@espcompose/simulator-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    "./runtime": {
+      "types": "./src/runtime/index.ts",
+      "import": "./src/runtime/index.ts",
+      "default": "./src/runtime/index.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "@espcompose/core": "workspace:*",
+    "antd": "^5.24.0",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^6.2.0",
+    "vitest": "catalog:"
+  }
+}

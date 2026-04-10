@@ -14,7 +14,7 @@
     "assets"
   ],
   "scripts": {
-    "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('assets/ir-viewer-dist',{recursive:true,force:true}); fs.cpSync('../ir-viewer/dist','assets/ir-viewer-dist',{recursive:true,force:true});\"",
+    "prebuild": "node scripts/prebuild.js",
     "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external esbuild --external typescript --external typescript-eslint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
@@ -49,8 +49,9 @@
   },
   "devDependencies": {
     "@espcompose/core": "workspace:*",
-    "@espcompose/target-esphome": "workspace:*",
-    "@espcompose/target-simulator": "workspace:*",
+    "@espcompose/simulator-app": "workspace:*",
+    "@espcompose/esphome-target": "workspace:*",
+    "@espcompose/simulator-target": "workspace:*",
     "@types/node": "catalog:",
     "commander": "catalog:",
     "espcompose-ir-viewer": "workspace:*",

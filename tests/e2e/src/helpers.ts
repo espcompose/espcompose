@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { build } from '@espcompose/cli';
-import { createEsphomeTarget, esphomeConfig } from '@espcompose/target-esphome';
+import { createEsphomeTarget, esphomeConfig } from '@espcompose/esphome-target';
 import { expect } from 'vitest';
 
 /**

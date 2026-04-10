@@ -15,4 +15,4 @@ export {
   esphomeCompile,
   esphomeRun,
   esphomeLogs,
-} from '@espcompose/target-esphome';
+} from '@espcompose/esphome-target';

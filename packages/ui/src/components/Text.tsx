@@ -45,11 +45,10 @@ export const Text = createWidgetComponent(
         text={props.text}
         longMode={props.longMode}
         style={{
+          ...props.style,
           color: textColor,
           font: font,
           textAlign: props.align,
-          width: props.style?.width,
-          height: props.style?.height,
         }}
       />
     );

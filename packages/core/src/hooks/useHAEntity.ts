@@ -29,33 +29,7 @@ import type {
   CoverBinding,
   HAEntityBindingMap,
 } from '../ha-bindings';
-
-// ────────────────────────────────────────────────────────────────────────────
-// Domain → sensor type mapping
-// ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Determines the ESPHome sensor platform type to use for importing a HA entity.
- */
-function sensorTypeForDomain(domain: string): 'binary_sensor' | 'sensor' | 'text_sensor' {
-  switch (domain) {
-    case 'light':
-    case 'switch':
-    case 'binary_sensor':
-    case 'fan':
-    case 'lock':
-    case 'cover':
-      return 'binary_sensor';
-    case 'sensor':
-    case 'number':
-      return 'sensor';
-    case 'text_sensor':
-    case 'select':
-      return 'text_sensor';
-    default:
-      return 'binary_sensor';
-  }
-}
+import { getDomainSensorType } from '../generated/entity-domains.js';
 
 /**
  * Generate a deterministic ESPHome component ID from an entity ID.
@@ -317,7 +291,7 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const sensorType = sensorTypeForDomain(domain);
+  const sensorType = getDomainSensorType(domain);
   const generatedId = generateSensorId(entityId);
 
   // Register the entity for auto-import in the YAML output.

@@ -12,7 +12,7 @@ export function registerConfigCommand(program: Command) {
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
     .action(withErrorHandler('Config', async (projectDir?: string, opts?: { debug?: boolean }) => {
       const { build } = await import('../compiler');
-      const { createEsphomeTarget, esphomeConfig } = await import('@espcompose/target-esphome');
+      const { createEsphomeTarget, esphomeConfig } = await import('@espcompose/esphome-target');
       const { resolvedDir, yamlPath } = resolvePaths(projectDir);
       const extraArgs = extractPassthroughArgs();
       await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug });

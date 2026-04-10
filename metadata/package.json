@@ -1,0 +1,14 @@
+{
+  "name": "@espcompose/metadata",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Centralized entity domain metadata and codegen",
+  "type": "module",
+  "scripts": {
+    "generate": "tsx generate.ts"
+  },
+  "devDependencies": {
+    "ajv": "^8.18.0",
+    "tsx": "catalog:"
+  }
+}

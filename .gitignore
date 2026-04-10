@@ -149,4 +149,9 @@ vite.config.ts.timestamp-*
 
 .DS_Store
 
-packages/cli/assets/ir-viewer-dist/
+packages/cli/assets/
+
+__pycache__/
+.pytest_cache/
+
+.notes/
