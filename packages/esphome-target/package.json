@@ -1,6 +1,6 @@
 {
   "name": "@espcompose/esphome-target",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "ESPHome Compose — YAML/C++ firmware target backend",
   "private": true,
   "main": "dist/index.js",

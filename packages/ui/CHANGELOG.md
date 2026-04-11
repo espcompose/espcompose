@@ -1,5 +1,14 @@
 # @espcompose/ui
 
+## 0.2.2
+
+### Patch Changes
+
+- [`85fcfff`](https://github.com/espcompose/espcompose/commit/85fcfffd4fea8c1f99dae3e4d95bde9a3c0fe50c) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Fixed issues with doc references, addded AI instructions, added new upgrade command.
+
+- Updated dependencies [[`85fcfff`](https://github.com/espcompose/espcompose/commit/85fcfffd4fea8c1f99dae3e4d95bde9a3c0fe50c)]:
+  - @espcompose/core@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

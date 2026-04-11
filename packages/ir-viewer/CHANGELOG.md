@@ -1,5 +1,11 @@
 # espcompose-ir-viewer
 
+## 0.1.3
+
+### Patch Changes
+
+- [`85fcfff`](https://github.com/espcompose/espcompose/commit/85fcfffd4fea8c1f99dae3e4d95bde9a3c0fe50c) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Fixed issues with doc references, addded AI instructions, added new upgrade command.
+
 ## 0.1.2
 
 ### Patch Changes
