@@ -6,10 +6,10 @@
  */
 
 import ts from 'typescript';
-import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry, ComponentEntry } from './schema-types.js';
+import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry, ComponentEntry, ConfigSchemaEntry } from './schema-types.js';
 import {
   buildInterfaceBody, toPascalCase, toCamelCase,
-  cppClassToMarkerName, internalMarkerName, CPP_PRIMITIVE_TO_TS, mergeExtends,
+  internalMarkerName, CPP_PRIMITIVE_TO_TS, mergeExtends,
   collectSpecialPropTypesFromMembers, collectSpecialPropTypesFromNested,
   type InterfaceAccumulator,
 } from './type-mapper.js';
@@ -143,7 +143,7 @@ export function buildStandaloneFileContent(
     return buildOpenStandaloneFileContent(target);
   }
 
-  const rawSchema = schemaOverride ?? (configSchemaEntry.schema as SchemaDefinition);
+  const rawSchema = schemaOverride ?? (configSchemaEntry as ConfigSchemaEntry).schema;
   const pascalName = toPascalCase(target.name);
   const interfaceName = `${pascalName}Props`;
 

@@ -16,7 +16,7 @@
  */
 
 import type { ClassActionMap, ActionEntry, ActionParamEntry } from './schema-action-extractor.js';
-import { cppClassToMarkerName, toPascalCase } from './type-mapper.js';
+import { toPascalCase } from './type-mapper.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers

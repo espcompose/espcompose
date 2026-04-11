@@ -5,10 +5,15 @@
   "description": "Centralized entity domain metadata and codegen",
   "type": "module",
   "scripts": {
+    "lint": "eslint generators generate.ts",
+    "typecheck": "tsc --noEmit",
     "generate": "tsx generate.ts"
   },
   "devDependencies": {
     "ajv": "^8.18.0",
-    "tsx": "catalog:"
+    "eslint": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

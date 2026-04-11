@@ -1,0 +1,46 @@
+# {{name}} Agent Guide
+
+## Project Type
+
+This project is an ESPCompose device app that compiles TSX into ESPHome YAML for board {{board}}.
+
+## Primary Files
+
+- `index.tsx`: Device entry point and component tree.
+- `package.json`: Local scripts for build and lint.
+- `.espcompose/esphome.yaml`: Generated output after build.
+- `node_modules/@espcompose/core/skills/espcompose.md`: Exported core skill reference (`@espcompose/core/skills/espcompose.md`).
+
+## Commands
+
+```bash
+npm install
+npm run build
+npm run lint
+```
+
+## Build Flow
+
+1. `index.tsx` is transformed by the ESPCompose compiler.
+2. Reactive and action metadata are compiled.
+3. ESPHome YAML is emitted to `.espcompose/esphome.yaml`.
+
+## Working Rules
+
+- Keep `index.tsx` declarative and side-effect free.
+- Use `secret("...")` or `!secret` patterns for credentials; do not hardcode secrets.
+- Keep platform and board declarations aligned with your actual hardware.
+- Treat generated files under `.espcompose/` as build output.
+
+## First Edits Checklist
+
+1. Set a stable device name in `<esphome name="..." />`.
+2. Confirm `<esp32 board="{{board}}" />` matches your board.
+3. Configure Wi-Fi and API/OTA values for your environment.
+4. Run `npm run build` and confirm YAML generation succeeds.
+
+## Architecture Notes
+
+- JSX elements in `index.tsx` map to a typed semantic IR before target emission.
+- Trigger handlers and scripts are compiled to action IR, not executed in Node runtime.
+- Reactive expressions are lowered to target-specific runtime bindings during emit.

@@ -6,7 +6,9 @@
 
 <div align="center">
 
-[![Discord chat](https://img.shields.io/discord/1484903209461088309)](https://discord.gg/4C28vh6n) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xmlguy74/espcompose/release.yml)](https://github.com/xmlguy74/espcompose/releases)
+[![Discord chat](https://img.shields.io/discord/1484903209461088309)](https://discord.gg/JjKTDUQW) 
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/espcompose/espcompose/release.yml)](https://github.com/xmlguy74/espcompose/releases)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/espcompose/espcompose?filename=%2Fpackages%2Fcore%2Fpackage.json)
 
 
 </div>
@@ -31,7 +33,7 @@ There is no JavaScript runtime on the device. ESPHome Compose is purely a build-
 
 ## Quick Start
 
-> **New here?** Check out the [Getting Started guide](https://espcompose.io/docs/architecture/getting-started) for a step-by-step walkthrough of creating your first project.
+> **New here?** Check out the [Getting Started guide](https://espcompose.io/docs/getting-started) for a step-by-step walkthrough of creating your first project.
 
 ### Prerequisites
 

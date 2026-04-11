@@ -1,0 +1,48 @@
+# {{name}} Agent Guide
+
+## Project Type
+
+This project is an ESPCompose component library that builds distributable JavaScript and type declarations.
+
+## Primary Files
+
+- `src/MyComponent.tsx`: Starter component using `createIntentComponent(...)`.
+- `src/index.ts`: Public exports for library consumers.
+- `package.json`: Build, typecheck, and lint scripts.
+- `dist/`: Generated output after library build.
+- `node_modules/@espcompose/core/skills/espcompose.md`: Exported core skill reference (`@espcompose/core/skills/espcompose.md`).
+
+## Commands
+
+```bash
+npm install
+npm run build
+npm run typecheck
+npm run lint
+```
+
+## Build Flow
+
+1. `espcompose build --library` compiles library sources.
+2. Build emits ESM JavaScript and `dist/index.d.ts`.
+3. Consumers import from your package root export map.
+
+## Working Rules
+
+- Export only public, stable APIs from `src/index.ts`.
+- Keep component intent metadata accurate (`intents`, `allowedChildIntents`).
+- Maintain strict prop types and avoid leaking internal implementation details.
+- Treat `dist/` as generated output.
+
+## First Edits Checklist
+
+1. Rename `MyComponent` and its props to match your domain.
+2. Update `src/index.ts` exports to match intended public API.
+3. Run `npm run typecheck` and `npm run build` before consuming locally.
+4. Validate that `dist/index.js` and `dist/index.d.ts` are generated.
+
+## Architecture Notes
+
+- Intent components provide compile-time constraints for where components can be used.
+- Reactive expressions in component props are compiled by downstream app builds.
+- Library output format must remain compatible with the consuming ESPCompose CLI version.

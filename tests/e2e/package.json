@@ -4,6 +4,8 @@
   "private": true,
   "description": "End-to-end tests for the ESPHome Compose pipeline",
   "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "echo \"no build step for e2e\""
@@ -17,7 +19,9 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "eslint": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }
