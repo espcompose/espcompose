@@ -8,6 +8,7 @@ import {
   registerRunCommand,
   registerLogsCommand,
   registerSimulateCommand,
+  registerUpgradeCommand,
 } from './index';
 
 /** Helper: register a command and return its Commander metadata. */
@@ -67,6 +68,12 @@ describe('command registration', () => {
       register: registerSimulateCommand,
       expectedName: 'simulate',
       expectedOptions: ['--port', '--debug', '--no-open'],
+    },
+    {
+      name: 'upgrade',
+      register: registerUpgradeCommand,
+      expectedName: 'upgrade',
+      expectedOptions: ['--pm'],
     },
   ];
 

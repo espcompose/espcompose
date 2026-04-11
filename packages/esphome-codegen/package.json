@@ -4,10 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "devDependencies": {
+    "eslint": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

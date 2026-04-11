@@ -14,6 +14,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import Ajv from 'ajv';
 import { generators } from './generators/index.js';
+import type { DomainMap } from './generators/types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -23,8 +24,8 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const dataPath = path.join(__dirname, 'entity-domains.json');
 const schemaPath = path.join(__dirname, 'entity-domains.schema.json');
 
-const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+const data = JSON.parse(fs.readFileSync(dataPath, 'utf8')) as { domains: DomainMap };
+const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8')) as object;
 
 const ajv = new Ajv({ allErrors: true });
 const validate = ajv.compile(schema);

@@ -8,13 +8,12 @@
 import ts from 'typescript';
 import type { SchemaDefinition, SchemaConfigVar, SchemaRegistry, ComponentSchemas } from './schema-types.js';
 import {
-  buildInterfaceBody, toPascalCase, toCamelCase,
+  buildInterfaceBody, toPascalCase,
   collectSpecialPropTypesFromMembers, collectSpecialPropTypesFromNested,
   type InterfaceAccumulator,
 } from './type-mapper.js';
 import {
   printStatements, addFileHeader, addLineComment,
-  keyword, typeRef,
   interfaceDecl, importTypeDecl,
 } from './ast-helpers.js';
 

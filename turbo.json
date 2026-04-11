@@ -6,11 +6,11 @@
       "outputs": ["dist/**", "assets/**"]
     },
     "espcompose-e2e#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "typecheck", "lint"],
       "outputs": []
     },
     "espcompose-docs#build": {
-      "dependsOn": [],
+      "dependsOn": ["typecheck", "lint"],
       "outputs": ["dist/**"]
     },
     "@espcompose/simulator-app#build": {

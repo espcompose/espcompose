@@ -9,6 +9,7 @@ import {
   registerRunCommand,
   registerLogsCommand,
   registerSimulateCommand,
+  registerUpgradeCommand,
 } from './commands';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -26,5 +27,6 @@ registerBuildCommand(program);
 registerRunCommand(program);
 registerLogsCommand(program);
 registerSimulateCommand(program);
+registerUpgradeCommand(program);
 
 program.parse();

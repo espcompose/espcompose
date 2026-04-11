@@ -10,14 +10,13 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 import ts from 'typescript';
 import { toPascalCase, toCamelCase, internalMarkerName } from './type-mapper.js';
 import {
   printStatements, addFileHeader, addJsDoc, addBlankLineBefore,
   keyword, typeRef, stringLiteralType, unionType, intersectionType,
-  propSig, indexSig, typeLiteral,
-  interfaceDecl, typeAliasDecl,
+  propSig, typeLiteral,
+  interfaceDecl,
   importTypeDecl,
   globalJsxAugmentation,
   reactivePropType,
@@ -118,6 +117,7 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
   }
 }
 
+// @ts-expect-error Cross-package import resolves at runtime via monorepo layout
 import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../packages/core/src/lvgl-actions.js';
 
 // ────────────────────────────────────────────────────────────────────────────
