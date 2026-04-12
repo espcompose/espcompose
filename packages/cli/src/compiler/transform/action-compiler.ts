@@ -67,8 +67,8 @@ export interface ActionCompilerContext {
   haEntities: Map<ts.Symbol, HAEntityInfo>;
   /** Map of declaration symbol → script ID (scope-aware). */
   scriptHandles: Map<ts.Symbol, string>;
-  /** Map of declaration symbol → element tag (scope-aware). */
-  refTags: Map<ts.Symbol, string>;
+  /** Set of declaration symbols that are component refs. */
+  refSymbols: Set<ts.Symbol>;
   /** Name of the trigger args parameter (e.g. 'args'), empty if no parameter. */
   triggerParamName: string;
   /** Source file path for diagnostics. */
@@ -97,14 +97,14 @@ export function compileActionBody(
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   scriptHandles: Map<ts.Symbol, string>,
-  refTags: Map<ts.Symbol, string>,
+  refSymbols: Set<ts.Symbol>,
   filePath: string,
 ): ActionCompileResult {
   const ctx: ActionCompilerContext = {
     checker,
     haEntities,
     scriptHandles,
-    refTags,
+    refSymbols,
     triggerParamName: '',
     filePath,
     diagnostics: [],
@@ -368,9 +368,9 @@ function compileActionCall(
       }
 
       // Component ref action (symbol-based)
-      const refTag = lookupBySymbol(ctx.refTags, objNode, ctx.checker);
-      if (refTag !== undefined) {
-        return compileRefAction(call, objName, refTag, methodName, ctx);
+      const objSym = ctx.checker.getSymbolAtLocation(objNode);
+      if (objSym && ctx.refSymbols.has(objSym)) {
+        return compileRefAction(call, objName, methodName, ctx);
       }
     }
 
@@ -394,7 +394,7 @@ function compileActionCall(
     // Component ref action (type-based)
     if (hasRefBrand(objType)) {
       const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
-      return compileRefAction(call, objName, undefined, methodName, ctx);
+      return compileRefAction(call, objName, methodName, ctx);
     }
   }
 
@@ -524,16 +524,17 @@ function compileHAAction(
 function compileRefAction(
   call: ts.CallExpression,
   refName: string,
-  tag: string | undefined,
   methodName: string,
   ctx: ActionCompilerContext,
 ): IRActionNode[] | null {
-  const snakeMethod = camelToSnake(methodName);
-  let actionKey = tag ? `${tag}.${snakeMethod}` : snakeMethod;
-
-  // Remap LVGL page navigation action keys — the snake_case convention
-  // produces "lvgl.page_next" but ESPHome expects "lvgl.page.next".
-  actionKey = LVGL_ACTION_KEY_REMAP.get(actionKey) ?? actionKey;
+  // Resolve the YAML action key from the @actionKey JSDoc tag on the method declaration.
+  // This is the source of truth — embedded by the codegen from ESPHome schema data.
+  const actionKey = resolveActionKeyFromJSDoc(call, ctx.checker);
+  if (!actionKey) {
+    return emitError(call, ctx,
+      `Unable to resolve action key for '${methodName}'. ` +
+      'The method declaration is missing an @actionKey JSDoc tag.');
+  }
 
   // LVGL page actions use auto-resolved lvgl_id, so we must NOT inject
   // the caller ref as `id`. Build config from params only.
@@ -549,14 +550,31 @@ function compileRefAction(
 }
 
 /**
- * Remap table for LVGL page navigation action keys.
- * camelToSnake produces "page_next" but ESPHome expects "page.next".
+ * Resolve the YAML action key from the `@actionKey` JSDoc tag on a method's
+ * declaration. The codegen emits this tag on every action interface method,
+ * making it the single source of truth for action key resolution.
  */
-const LVGL_ACTION_KEY_REMAP = new Map<string, string>([
-  ['lvgl.page_next', 'lvgl.page.next'],
-  ['lvgl.page_previous', 'lvgl.page.previous'],
-  ['lvgl.page_show', 'lvgl.page.show'],
-]);
+function resolveActionKeyFromJSDoc(
+  call: ts.CallExpression,
+  checker: ts.TypeChecker,
+): string | undefined {
+  if (!ts.isPropertyAccessExpression(call.expression)) return undefined;
+  const methodSymbol = checker.getSymbolAtLocation(call.expression.name);
+  if (!methodSymbol) return undefined;
+
+  const declarations = methodSymbol.getDeclarations();
+  if (!declarations || declarations.length === 0) return undefined;
+
+  for (const decl of declarations) {
+    const jsdocTags = ts.getJSDocTags(decl);
+    for (const tag of jsdocTags) {
+      if (tag.tagName.text === 'actionKey' && typeof tag.comment === 'string') {
+        return tag.comment.trim();
+      }
+    }
+  }
+  return undefined;
+}
 
 /** Set of LVGL page action keys that use auto-resolved lvgl_id. */
 const LVGL_PAGE_ACTIONS = new Set<string>([

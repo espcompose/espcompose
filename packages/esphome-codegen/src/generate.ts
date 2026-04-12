@@ -79,16 +79,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Read the pinned ESPHome version from the workspace root package.json
 // so the schema URL stays in sync with the version used in .devcontainer.
 const rootPkg = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf-8'),
+  fs.readFileSync(path.resolve(__dirname, '../../../package.json'), 'utf-8'),
 );
 const ESPHOME_VERSION: string = rootPkg.esphome?.version;
 if (!ESPHOME_VERSION) {
   throw new Error('Missing esphome.version in root package.json');
 }
 
-const SCHEMAS_DIR = path.resolve(__dirname, '../../.cache/schemas');
+const SCHEMAS_DIR = path.resolve(__dirname, '../../../.cache/schemas');
 
-const GENERATED_DIR = path.resolve(__dirname, '../../packages/core/src/generated');
+const GENERATED_DIR = path.resolve(__dirname, '../../core/src/generated');
 const COMPONENTS_DIR = path.join(GENERATED_DIR, 'components');
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -387,6 +387,8 @@ async function run(): Promise<void> {
     const existing = classActions.get(cls) ?? [];
     existing.push(...overrideActions);
     classActions.set(cls, existing);
+    // Ensure the override target class gets a marker even if no schema references it
+    allCppClasses.add(cls);
   }
 
   console.log(`  Schema actions: ${classActions.size} target classes, ${shortcomings.length} shortcomings`);

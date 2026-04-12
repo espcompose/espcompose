@@ -100,7 +100,14 @@ function generateClassActionsInterface(
     const paramsInterfaceName = `${classPrefix}_${actionPascal}Params`;
     const hasParams = action.params.length > 0;
 
-    const doc = action.doc ? `  /** ${action.doc} */\n` : '';
+    // Build JSDoc with @actionKey tag — the compiler reads this to resolve
+    // the full YAML action key without computing it from the ref type.
+    let doc: string;
+    if (action.doc) {
+      doc = `  /**\n   * ${action.doc}\n   * @actionKey ${action.yamlKey}\n   */\n`;
+    } else {
+      doc = `  /** @actionKey ${action.yamlKey} */\n`;
+    }
     const paramType = hasParams ? `params?: ${paramsInterfaceName}` : '';
     methods.push(`${doc}  ${action.methodName}(${paramType}): void;`);
   }

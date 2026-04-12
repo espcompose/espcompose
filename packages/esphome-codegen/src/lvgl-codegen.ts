@@ -117,8 +117,7 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
   }
 }
 
-// @ts-expect-error Cross-package import resolves at runtime via monorepo layout
-import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../packages/core/src/lvgl-actions.js';
+import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../core/src/lvgl-actions.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Known type overrides for widget props
