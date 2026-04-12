@@ -168,6 +168,7 @@ export function buildLvglNodesFromIR(lvglValue: IRValue, ctx: IRRenderContext): 
     const pageObj = page as IRObject;
 
     const id = findScalarEntry(pageObj, 'id') ?? `sim_page_${ctx.nodeCounter++}`;
+    ctx.pageIdToIndex.set(id, pageIndex);
     const pageProps: Record<string, RuntimeProp> = {};
     const pageChildren: RuntimeNode[] = [];
 

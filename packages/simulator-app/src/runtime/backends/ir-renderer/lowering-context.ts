@@ -27,6 +27,8 @@ export interface IRRenderContext {
   pageCount: number;
   /** Page indices marked with skip: true (excluded from page cycling). */
   skipPages: Set<number>;
+  /** Mapping from LVGL page ID/token to page index for page.show navigation. */
+  pageIdToIndex: Map<string, number>;
   /** Callback to notify React of state changes (page navigation, etc). */
   requestRerender?: () => void;
 }

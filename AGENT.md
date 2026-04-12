@@ -107,4 +107,36 @@ returns the `SemanticIR` directly.
 - ✅ Confirm all test suites pass (core tests, E2E tests, per-package tests)
 - ✅ Do NOT declare work done until the full build succeeds end-to-end
 
+## Completion Gate (Enforced)
+
+These are hard rules, not guidance.
+
+1. Completion claim gate
+- The agent must not claim completion unless a successful `pnpm build:full` run happened after the final code edit in the current turn.
+
+2. Required proof in final response
+- Include: command run, workspace root path, and explicit success signal (exit code 0 or equivalent terminal completion evidence).
+- If output is truncated, the agent must continue fetching terminal output until completion status is known.
+
+3. If full build has not been run or did not pass
+- The agent must explicitly state: work is not complete; full-build validation is pending or failed.
+- The agent must not use completion language such as "done", "fixed", or "resolved".
+
+4. Validation order
+- Make edits.
+- Run targeted checks as needed.
+- Run full build gate last (`pnpm build:full`).
+- Only then provide completion status.
+
+5. User-requested strictness
+- If the user asks for stricter completion criteria, those criteria become mandatory for the remainder of the conversation.
+
+6. Cross-target parity for bug fixes
+- If a bug is fixed in one target backend (`packages/simulator-target`, `packages/simulator-app`, or `packages/esphome-target`), the agent must evaluate the equivalent behavior in the other target backend(s).
+- The agent must either:
+  - implement the capability in both targets, or
+  - explicitly document why parity is not applicable (with concrete scope limits).
+- Before claiming completion, run validation for both targets when applicable (targeted tests plus full build gate).
+- Do not close a target bug as complete if the same user-facing capability remains broken in another supported target.
+
 This ensures code changes don't introduce TypeScript errors, linting violations, or test failures that would block downstream work. A successful `pnpm build:full` run is the gate for job completion.

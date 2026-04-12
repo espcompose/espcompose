@@ -3,11 +3,13 @@ import type { RuntimeProp, ActionStep } from '../../types';
 import { Scheduler } from '../../runtime/signals';
 import { exprToJs } from '../expr-to-js.js';
 import type { IRRenderContext } from './lowering-context.js';
-import { buildJsLoweringContext } from './lowering-context.js';export function irActionToRuntimeProp(
+import { buildJsLoweringContext } from './lowering-context.js';
+
+export function irActionToRuntimeProp(
   action: IRAction,
   ctx: IRRenderContext,
 ): RuntimeProp {
-  const steps = interpretActionSteps(action.actions, ctx);
+  const steps = interpretActionSteps(action.actions, ctx, action.refBindings);
 
   const handler = async (...args: unknown[]) => {
     // Build trigger variables map (convention: first arg is trigger var 'x')
@@ -57,7 +59,11 @@ function resolveActionParam(param: unknown): unknown {
  * Convert IRActionNode[] from SemanticIR to simulator-friendly ActionStep[] format.
  * IRActionNode is the target-agnostic IR from the CLI compiler.
  */
-export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderContext): ActionStep[] {
+export function interpretActionSteps(
+  actions: IRActionNode[],
+  ctx?: IRRenderContext,
+  refBindings?: Record<string, unknown>,
+): ActionStep[] {
   const steps: ActionStep[] = [];
   for (const action of actions) {
     if (action == null || typeof action !== 'object') continue;
@@ -74,23 +80,25 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
           const config = typeof node.config === 'string'
             ? { id: node.config }
             : node.config as Record<string, unknown>;
+          const resolvedConfig = resolveRefBindingsInValue(config, refBindings) as Record<string, unknown>;
           steps.push({
             type: 'component_action',
-            target: String(config.id ?? target),
+            target: String(resolvedConfig.id ?? target),
             method: method || 'toggle',
-            params: config,
+            params: resolvedConfig,
           });
           break;
         }
         case 'ha_service': {
+          const resolvedNodeData = resolveRefBindingsInValue(node.data, refBindings) as Record<string, unknown> | undefined;
           // Resolve entity_id from IRActionParam (may be literal object or plain string)
-          const rawEntityId = resolveActionParam(node.data?.entity_id);
+          const rawEntityId = resolveActionParam(resolvedNodeData?.entity_id);
           const entityId = typeof rawEntityId === 'string' ? rawEntityId : '';
 
           const data: Record<string, unknown> = {};
           const rawParams: Record<string, unknown> = {};
-          if (node.data) {
-            for (const [k, v] of Object.entries(node.data)) {
+          if (resolvedNodeData) {
+            for (const [k, v] of Object.entries(resolvedNodeData)) {
               const resolved = resolveActionParam(v);
               if (resolved !== undefined) {
                 data[k] = resolved;
@@ -141,8 +149,8 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
           steps.push({
             type: 'conditional',
             condition: conditionFn,
-            then: interpretActionSteps(node.then, ctx),
-            else: node.else ? interpretActionSteps(node.else, ctx) : undefined,
+            then: interpretActionSteps(node.then, ctx, refBindings),
+            else: node.else ? interpretActionSteps(node.else, ctx, refBindings) : undefined,
           });
           break;
         }
@@ -153,6 +161,34 @@ export function interpretActionSteps(actions: IRActionNode[], ctx?: IRRenderCont
     }
   }
   return steps;
+}
+
+function resolveRefBindingsInValue(
+  value: unknown,
+  refBindings?: Record<string, unknown>,
+): unknown {
+  if (!refBindings || value === null || value === undefined) return value;
+  if (typeof value === 'string') {
+    const bound = refBindings[value];
+    if (bound !== undefined) {
+      if (typeof bound === 'string') return bound;
+      if (typeof bound === 'object' && bound !== null && 'toString' in bound) {
+        return bound.toString();
+      }
+    }
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(item => resolveRefBindingsInValue(item, refBindings));
+  }
+  if (typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = resolveRefBindingsInValue(v, refBindings);
+    }
+    return out;
+  }
+  return value;
 }
 
 export async function executeActionStep(step: ActionStep, ctx: IRRenderContext, triggerVars?: Record<string, unknown>): Promise<void> {
@@ -192,7 +228,10 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext, 
       console.log(`[Simulator] ${step.level}: ${step.message}`);
       break;
     case 'component_action':
-      if (step.target === 'lvgl') {
+      if (step.method === 'page.show') {
+        const pageId = typeof step.params?.id === 'string' ? step.params.id : step.target;
+        navigateToPageById(ctx, pageId);
+      } else if (step.target === 'lvgl') {
         if (step.method === 'page.next') {
           navigatePage(ctx, 1);
         } else if (step.method === 'page.previous') {
@@ -267,6 +306,21 @@ function navigatePage(ctx: IRRenderContext, direction: 1 | -1): void {
 
   if (next !== ctx.currentPageIndex) {
     ctx.currentPageIndex = next;
+    ctx.requestRerender?.();
+  }
+}
+
+/**
+ * Navigate to a specific page by its LVGL page ID/token.
+ */
+function navigateToPageById(ctx: IRRenderContext, pageId: string): void {
+  const targetIndex = ctx.pageIdToIndex.get(pageId);
+  if (targetIndex === undefined) {
+    console.warn(`[Simulator] Unknown page id for page.show: '${pageId}'`);
+    return;
+  }
+  if (targetIndex !== ctx.currentPageIndex) {
+    ctx.currentPageIndex = targetIndex;
     ctx.requestRerender?.();
   }
 }

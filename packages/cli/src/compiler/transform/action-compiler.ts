@@ -510,9 +510,12 @@ function compileHAAction(
     if (ts.isObjectLiteralExpression(arg)) {
       for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
-          const paramValue = compileActionParam(prop.initializer, ctx);
+          const paramValue = compileActionConfigValue(prop.initializer, ctx);
           if (!paramValue) return null;
-          data[camelToSnake(prop.name.text)] = paramValue;
+          data[camelToSnake(prop.name.text)] =
+            typeof paramValue === 'object' && paramValue !== null
+              ? paramValue as IRActionParam
+              : { kind: 'literal', value: paramValue };
         }
       }
     }
@@ -604,7 +607,7 @@ function buildLvglPageActionConfig(
   const config: Record<string, IRActionParam | string | number | boolean> = {};
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
-      const paramValue = compileActionParam(prop.initializer, ctx);
+      const paramValue = compileActionConfigValue(prop.initializer, ctx);
       if (paramValue) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
@@ -632,7 +635,7 @@ function buildRefActionConfig(
   const config: Record<string, IRActionParam | string | number | boolean> = { id: refName };
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
-      const paramValue = compileActionParam(prop.initializer, ctx);
+      const paramValue = compileActionConfigValue(prop.initializer, ctx);
       if (paramValue) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
@@ -812,6 +815,26 @@ function compileActionParam(
     'Action parameters must be literal values or trigger variables (args.x). ' +
     'Computed expressions are not supported.');
   return null;
+}
+
+/**
+ * Compile an object-literal action config value.
+ *
+ * In addition to normal action params, this accepts ref identifiers as raw
+ * variable names so they can be resolved later via IRAction.refBindings.
+ */
+function compileActionConfigValue(
+  expr: ts.Expression,
+  ctx: ActionCompilerContext,
+): IRActionParam | string | number | boolean | null {
+  if (ts.isIdentifier(expr)) {
+    const symbol = ctx.checker.getSymbolAtLocation(expr);
+    if (symbol && ctx.refSymbols.has(symbol)) {
+      return expr.text;
+    }
+  }
+
+  return compileActionParam(expr, ctx);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
