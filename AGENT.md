@@ -99,3 +99,12 @@ returns the `SemanticIR` directly.
   compiled to ESPHome action sequences at the AST level — they are never executed.
 - **`useScript()`** declares named scripts compiled the same way; returns a
   `ScriptHandle` for calling from trigger handlers.
+
+## Job Completion Checklist
+
+**Before indicating a job is complete:**
+- ✅ Always run `pnpm build:full` from the workspace root and verify it exits with code 0
+- ✅ Confirm all test suites pass (core tests, E2E tests, per-package tests)
+- ✅ Do NOT declare work done until the full build succeeds end-to-end
+
+This ensures code changes don't introduce TypeScript errors, linting violations, or test failures that would block downstream work. A successful `pnpm build:full` run is the gate for job completion.

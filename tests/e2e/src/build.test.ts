@@ -95,6 +95,11 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'prop-ref-action-device');
   });
 
+  // Ref forwarding through design system widgets (<Screen ref={...}>)
+  it('widget-ref-device', async () => {
+    await createProjectTest(projectsDir, 'widget-ref-device');
+  });
+
   // Untransformed library detection — build should fail with a clear error
   it('uncompiled-lib-device (detects untransformed library)', async () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');

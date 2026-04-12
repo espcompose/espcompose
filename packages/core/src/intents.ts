@@ -8,7 +8,7 @@
  * Adapted from the Resolut project's symbol-based intent branding pattern.
  */
 
-import type { FunctionComponent } from './types';
+import type { FunctionComponent, RefProp } from './types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Symbols — cross-module branding keys
@@ -157,7 +157,7 @@ export function createWidgetComponent<
     allowedChildIntents?: A;
     contextTransparent?: CT;
   },
-): IntentComponent<P, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT> {
+): IntentComponent<P & { ref?: RefProp }, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT> {
   const intents = [
     ...(overrides?.additionalIntents ?? []),
     LVGL_INTENTS.WIDGET,
