@@ -1,5 +1,14 @@
 # @espcompose/ui
 
+## 0.3.1
+
+### Patch Changes
+
+- [#28](https://github.com/espcompose/espcompose/pull/28) [`3cd21da`](https://github.com/espcompose/espcompose/commit/3cd21daae1aa3d5bc4f367fd7b3f18450855e7eb) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Resovled issues with simulator not performing page navigation correctly.
+
+- Updated dependencies [[`3cd21da`](https://github.com/espcompose/espcompose/commit/3cd21daae1aa3d5bc4f367fd7b3f18450855e7eb)]:
+  - @espcompose/core@0.3.1
+
 ## 0.2.2
 
 ### Patch Changes
