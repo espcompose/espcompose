@@ -1,7 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { interpretActionSteps } from './actions';
+import { describe, it, expect, vi } from 'vitest';
+import { interpretActionSteps, executeActionStep } from './actions';
 import type { IRActionNode } from '@espcompose/core/internals';
 import type { HAServiceActionStep } from '../../types';
+import type { IRRenderContext } from './lowering-context';
+import { EntityStore } from '../../entity-store';
+import { EntitySignalRegistry } from './entity-registry';
 
 describe('interpretActionSteps', () => {
   describe('ha_service actions', () => {
@@ -130,6 +133,59 @@ describe('interpretActionSteps', () => {
       const steps = interpretActionSteps(actions);
       expect(steps).toHaveLength(1);
       expect(steps[0]).toMatchObject({ type: 'theme_select', themeName: 'dark' });
+    });
+
+    it('resolves ref-bound native action config ids', () => {
+      const actions: IRActionNode[] = [
+        {
+          kind: 'native',
+          actionKey: 'lvgl.page.show',
+          config: { id: 'mainScreen' },
+        },
+      ];
+
+      const steps = interpretActionSteps(actions, undefined, {
+        mainScreen: { toString: () => 'r_main_screen' },
+      });
+
+      expect(steps).toHaveLength(1);
+      expect(steps[0]).toMatchObject({
+        type: 'component_action',
+        method: 'page.show',
+        target: 'r_main_screen',
+      });
+    });
+
+    it('executes lvgl.page.show by navigating to page id', async () => {
+      const rerender = vi.fn();
+      const entityStore = new EntityStore();
+      const ctx: IRRenderContext = {
+        entityRegistry: new EntitySignalRegistry(entityStore),
+        entityStore,
+        onEntityInteraction: () => {},
+        nodeCounter: 0,
+        themeIndex: 0,
+        imageMap: new Map(),
+        fontMap: new Map(),
+        currentPageIndex: 1,
+        pageCount: 2,
+        skipPages: new Set(),
+        pageIdToIndex: new Map([['main_page', 0]]),
+        requestRerender: rerender,
+      };
+
+      await executeActionStep(
+        {
+          type: 'component_action',
+          target: 'main_page',
+          method: 'page.show',
+          params: { id: 'main_page' },
+        },
+        ctx,
+      );
+
+      expect(ctx.currentPageIndex).toBe(0);
+      expect(rerender).toHaveBeenCalledTimes(1);
     });
   });
 });

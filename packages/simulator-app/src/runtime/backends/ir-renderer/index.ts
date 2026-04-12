@@ -100,6 +100,7 @@ export function lowerToSimulator(
     currentPageIndex: 0,
     pageCount: 0,
     skipPages: new Set(),
+    pageIdToIndex: new Map(),
   };
 
   // Register all HA entities from the IR so the EntityStore has them.
@@ -150,7 +151,7 @@ function extractAutomations(ir: SemanticIR, ctx: IRRenderContext): AutomationTri
       if (entry.value.kind !== 'action') continue;
 
       const action = entry.value as IRAction;
-      const steps = interpretActionSteps(action.actions);
+      const steps = interpretActionSteps(action.actions, ctx, action.refBindings);
 
       automations.push({
         trigger: `${section.key}.${entry.key}`,

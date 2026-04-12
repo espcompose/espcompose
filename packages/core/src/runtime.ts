@@ -52,12 +52,25 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     return mapped.length === 1 ? mapped[0] : mapped;
   }
 
-  // Function component: call it and recurse
+  // Function component: call it and recurse.
+  // Extract `ref` so it is not passed to the component function, then
+  // forward it onto the root element the component returns (matching
+  // React 19-style automatic ref forwarding for design-system widgets).
   if (typeof el.type === 'function') {
-    const result = el.type(el.props as never);
+    const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
+    const result = el.type(propsWithoutRef as never);
     if (result == null) return undefined;
+    if (ref != null) {
+      if (!Array.isArray(result)) {
+        return toPlainObject({ ...result, props: { ...result.props, ref } });
+      } else {
+        console.warn(
+          `Ref passed to function component that returned multiple elements; ref was not forwarded.`,
+        );
+      }
+    }
     return toPlainObject(result);
- }
+  }
 
   // Fragment: recurse into children
   if (el.type === Fragment) {

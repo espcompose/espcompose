@@ -3010,10 +3010,6 @@ export interface __marker_lvgl_LVGLText {
     readonly __brand_text_Text?: true;
     readonly __brand_EntityBase?: true;
 }
-//  lvgl::LvglComponent
-export interface __marker_lvgl_LvglComponent {
-    readonly __brand_lvgl_LvglComponent?: true;
-}
 //  lvgl::LVLight
 export interface __marker_lvgl_LVLight {
     readonly __brand_lvgl_LVLight?: true;
@@ -3025,6 +3021,10 @@ export interface __marker_lvgl_LVLight {
 //  lvgl::LvPseudoButton
 export interface __marker_lvgl_LvPseudoButton {
     readonly __brand_lvgl_LvPseudoButton?: true;
+    readonly __brand_lvgl_LvglComponent?: true;
+}
+//  lvgl::LvglComponent
+export interface __marker_lvgl_LvglComponent {
     readonly __brand_lvgl_LvglComponent?: true;
 }
 //  m5stack_8angle::M5Stack8AngleComponent
@@ -7983,13 +7983,13 @@ export namespace Components {
         export type LTRAlsPs501ComponentRef = __marker_ltr501_LTRAlsPs501Component;
     }
     export namespace Lvgl {
-        export type LvglComponentRef = __marker_lvgl_LvglComponent;
         export type LVGLNumberRef = __marker_lvgl_LVGLNumber;
         export type LVGLSelectRef = __marker_lvgl_LVGLSelect;
         export type LVGLSwitchRef = __marker_lvgl_LVGLSwitch;
         export type LVGLTextRef = __marker_lvgl_LVGLText;
         export type LVLightRef = __marker_lvgl_LVLight;
         export type LvPseudoButtonRef = __marker_lvgl_LvPseudoButton;
+        export type LvglComponentRef = __marker_lvgl_LvglComponent;
     }
     export namespace M5stack8angle {
         export type M5Stack8AngleComponentRef = __marker_m5stack_8angle_M5Stack8AngleComponent;

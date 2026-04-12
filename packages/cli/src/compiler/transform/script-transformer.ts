@@ -60,9 +60,9 @@ export function transformScriptFile(
   // Pass 2: Find arrow functions in JSX attributes and useScript() calls,
   // compile them via the action tree compiler
   const edits: SourceEdit[] = [];
-  const refTags = scanForRefTags(sourceFile, checker);
+  const refSymbols = scanForRefSymbols(sourceFile, checker);
   const scriptHandles = scanForScriptHandles(sourceFile, checker);
-  findAndCompileTriggerHandlers(sourceFile, ctx, refTags, scriptHandles, edits);
+  findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, edits);
 
   // Apply edits in reverse position order so indices stay valid
   let text = sourceFile.getFullText();
@@ -105,32 +105,21 @@ function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Scan for `const ref = useRef<...>()` patterns and build a map of
- * declaration symbol → element tag. Tags are inferred from the resolved type's
- * `__brand_` properties — the first brand containing an underscore gives the
- * C++ namespace which maps to the ESPHome component tag.
- *
- * Handles all naming schemes: `useRef<LightRef>()`,
- * `useRef<Components.Light.LightRef>()`, `useRef<__marker_light_Light>()`.
+ * Scan for `const ref = useRef<...>()` patterns and collect the declaration
+ * symbols of component refs. The action compiler resolves the YAML action
+ * key from `@actionKey` JSDoc tags on the method declaration, so we only
+ * need to know which symbols are refs (not their tags).
  */
-function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, string> {
-  const refTags = new Map<ts.Symbol, string>();
+function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Set<ts.Symbol> {
+  const refSymbols = new Set<ts.Symbol>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer)) {
         const callee = node.initializer.expression;
         if (ts.isIdentifier(callee) && callee.text === 'useRef') {
-          const typeArgs = node.initializer.typeArguments;
-          if (typeArgs && typeArgs.length > 0) {
-            const resolvedType = checker.getTypeFromTypeNode(typeArgs[0]);
-            // Walk properties looking for __brand_<namespace>_<Class> pattern
-            const tag = extractTagFromBrands(resolvedType, checker);
-            if (tag) {
-              const sym = checker.getSymbolAtLocation(node.name);
-              if (sym) {
-                refTags.set(sym, tag);
-              }
-            }
+          const sym = checker.getSymbolAtLocation(node.name);
+          if (sym) {
+            refSymbols.add(sym);
           }
         }
       }
@@ -138,35 +127,10 @@ function scanForRefTags(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map
     ts.forEachChild(node, walk);
   };
   walk(sourceFile);
-  return refTags;
+  return refSymbols;
 }
 
-/**
- * Extract the ESPHome component tag from a marker type's brand properties.
- * Finds the first `__brand_` property whose name (after stripping `__brand_`)
- * contains an underscore — the part before the first underscore is the C++ namespace
- * which maps to the component tag.
- *
- * Uses the type's *own* symbol name (the first brand) as the canonical brand.
- * E.g. `__brand_light_LightOutput` → tag = "light".
- */
-function extractTagFromBrands(type: ts.Type, checker: ts.TypeChecker): string | undefined {
-  const props = checker.getPropertiesOfType(type);
-  // Sort properties to get a deterministic result — the most specific brand
-  // (the type's own identity) is the first __brand_ property alphabetically.
-  const brandProps = props
-    .filter(p => p.name.startsWith('__brand_'))
-    .sort((a, b) => a.name.localeCompare(b.name));
 
-  for (const prop of brandProps) {
-    const stripped = prop.name.slice('__brand_'.length);
-    const underscoreIdx = stripped.indexOf('_');
-    if (underscoreIdx > 0) {
-      return stripped.slice(0, underscoreIdx);
-    }
-  }
-  return undefined;
-}
 
 /**
  * Scan for `const handle = useScript(...)` or `const handle = createScript(...)` patterns
@@ -205,7 +169,7 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
 function findAndCompileTriggerHandlers(
   node: ts.Node,
   ctx: TransformContext,
-  refTags: Map<ts.Symbol, string>,
+  refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
   edits: SourceEdit[],
 ): void {
@@ -213,7 +177,7 @@ function findAndCompileTriggerHandlers(
   if (ts.isJsxAttribute(node) && node.initializer && ts.isJsxExpression(node.initializer)) {
     const expr = node.initializer.expression;
     if (expr && (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr))) {
-      compileAndInjectTriggerHandler(expr, ctx, refTags, scriptHandles, edits);
+      compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, edits);
     }
   }
 
@@ -223,7 +187,7 @@ function findAndCompileTriggerHandlers(
       node.arguments.length >= 1) {
     const arg = node.arguments[0];
     if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
-      compileAndInjectUseScript(node, arg, ctx, refTags, scriptHandles, edits);
+      compileAndInjectUseScript(node, arg, ctx, refSymbols, scriptHandles, edits);
     }
   }
 
@@ -233,12 +197,12 @@ function findAndCompileTriggerHandlers(
   if (ts.isVariableDeclaration(node) && node.initializer) {
     const varType = ctx.checker.getTypeAtLocation(node.name);
     if (isTriggerHandlerType(varType, ctx.checker)) {
-      compileArrowsInExpression(node.initializer, ctx, refTags, scriptHandles, edits);
+      compileArrowsInExpression(node.initializer, ctx, refSymbols, scriptHandles, edits);
     }
   }
 
   ts.forEachChild(node, child =>
-    findAndCompileTriggerHandlers(child, ctx, refTags, scriptHandles, edits));
+    findAndCompileTriggerHandlers(child, ctx, refSymbols, scriptHandles, edits));
 }
 
 /**
@@ -281,17 +245,17 @@ function isTriggerHandlerType(type: ts.Type, checker: ts.TypeChecker): boolean {
 function compileArrowsInExpression(
   expr: ts.Expression,
   ctx: TransformContext,
-  refTags: Map<ts.Symbol, string>,
+  refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
   edits: SourceEdit[],
 ): void {
   if (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr)) {
-    compileAndInjectTriggerHandler(expr, ctx, refTags, scriptHandles, edits);
+    compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, edits);
     return;
   }
 
   if (ts.isParenthesizedExpression(expr)) {
-    compileArrowsInExpression(expr.expression, ctx, refTags, scriptHandles, edits);
+    compileArrowsInExpression(expr.expression, ctx, refSymbols, scriptHandles, edits);
     return;
   }
 
@@ -299,16 +263,16 @@ function compileArrowsInExpression(
     // ?? or || — the right-hand side may contain an arrow fallback
     if (expr.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken ||
         expr.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
-      compileArrowsInExpression(expr.right, ctx, refTags, scriptHandles, edits);
+      compileArrowsInExpression(expr.right, ctx, refSymbols, scriptHandles, edits);
       // Left side could also be an arrow (unusual but possible)
-      compileArrowsInExpression(expr.left, ctx, refTags, scriptHandles, edits);
+      compileArrowsInExpression(expr.left, ctx, refSymbols, scriptHandles, edits);
       return;
     }
   }
 
   if (ts.isConditionalExpression(expr)) {
-    compileArrowsInExpression(expr.whenTrue, ctx, refTags, scriptHandles, edits);
-    compileArrowsInExpression(expr.whenFalse, ctx, refTags, scriptHandles, edits);
+    compileArrowsInExpression(expr.whenTrue, ctx, refSymbols, scriptHandles, edits);
+    compileArrowsInExpression(expr.whenFalse, ctx, refSymbols, scriptHandles, edits);
     return;
   }
 }
@@ -316,7 +280,7 @@ function compileArrowsInExpression(
 function compileAndInjectTriggerHandler(
   callback: ts.ArrowFunction | ts.FunctionExpression,
   ctx: TransformContext,
-  refTags: Map<ts.Symbol, string>,
+  refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
   edits: SourceEdit[],
 ): void {
@@ -325,7 +289,7 @@ function compileAndInjectTriggerHandler(
     ctx.checker,
     ctx.haEntities,
     scriptHandles,
-    refTags,
+    refSymbols,
     ctx.sourceFile.fileName,
   );
 
@@ -343,7 +307,7 @@ function compileAndInjectTriggerHandler(
   if (result.actions.length === 0) return;
 
   // Collect ref variable names used in the actions (needed for runtime resolution)
-  const refNameSet = symbolMapToNameSet(refTags);
+  const refNameSet = symbolSetToNameSet(refSymbols);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
@@ -372,7 +336,7 @@ function compileAndInjectUseScript(
   callExpr: ts.CallExpression,
   callback: ts.ArrowFunction | ts.FunctionExpression,
   ctx: TransformContext,
-  refTags: Map<ts.Symbol, string>,
+  refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
   edits: SourceEdit[],
 ): void {
@@ -381,7 +345,7 @@ function compileAndInjectUseScript(
     ctx.checker,
     ctx.haEntities,
     scriptHandles,
-    refTags,
+    refSymbols,
     ctx.sourceFile.fileName,
   );
 
@@ -404,7 +368,7 @@ function compileAndInjectUseScript(
   }
 
   // Store IRActionNode[] directly - lowering happens in target packages
-  const refNameSet = symbolMapToNameSet(refTags);
+  const refNameSet = symbolSetToNameSet(refSymbols);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
   const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
   const refBindingsLiteral = refNames.length > 0
@@ -426,12 +390,12 @@ function compileAndInjectUseScript(
 }
 
 /**
- * Build a Set<string> of variable names from a symbol-keyed map.
+ * Build a Set<string> of variable names from a symbol set.
  * The ts.Symbol.name gives the original variable identifier text.
  */
-function symbolMapToNameSet(map: Map<ts.Symbol, string>): Set<string> {
+function symbolSetToNameSet(symbols: Set<ts.Symbol>): Set<string> {
   const names = new Set<string>();
-  for (const sym of map.keys()) {
+  for (const sym of symbols) {
     names.add(sym.name);
   }
   return names;

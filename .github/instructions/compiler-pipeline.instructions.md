@@ -42,6 +42,17 @@ Supported action primitives (imported from `@espcompose/core`):
 
 Trigger props (`onPress`, `onRelease`, etc.) accept `TriggerHandler<T>`.
 
+### Generic Action Param Rules
+
+- Avoid property-name-specific logic when compiling action object params.
+- Prefer symbol/type-based handling:
+   - literals remain literals
+   - trigger variables remain `args.x` trigger vars
+   - component ref identifiers should be preserved as ref variable names so
+      `IRAction.refBindings` can resolve them later
+- Keep target-specific assumptions out of compiler transforms whenever possible;
+   lowerers should resolve generic IR semantics.
+
 ## Library Compilation
 
 `espcompose build --library` pre-compiles component libraries:

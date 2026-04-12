@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { Reactive, ComponentProps, RefProp } from "../../types";
+import type { ComponentProps, Reactive, RefProp } from "../../types";
 import type { __marker_image_Image } from "../markers";
 import type { CssStyleProps } from "../../style-types";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */

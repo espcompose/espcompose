@@ -60,9 +60,22 @@ function resolveLvglChildren(
   const resolved: EspComposeElement[] = [];
   for (const el of flat) {
     if (typeof el.type === 'function') {
-      const result = el.type(el.props as never);
+      // Extract ref so it is not passed to the component function, then
+      // forward it onto the root element the component returns.
+      const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
+      const result = el.type(propsWithoutRef as never);
       if (result == null) continue;
-      const rendered = Array.isArray(result) ? result : [result];
+      const results = Array.isArray(result) ? result : [result];
+      let rendered = results;
+      if (ref != null) {
+        if (results.length === 1 && !Array.isArray(results[0])) {
+          rendered = [{ ...results[0], props: { ...results[0].props, ref } }];
+        } else {
+          console.warn(
+            `Ref passed to function component that returned ${results.length} element(s); ref was not forwarded.`,
+          );
+        }
+      }
       resolved.push(...resolveLvglChildren(rendered));
     } else if (el.type === 'context') {
       // Context provider intrinsic: push context and recurse into children

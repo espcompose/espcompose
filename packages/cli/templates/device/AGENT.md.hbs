@@ -4,12 +4,17 @@
 
 This project is an ESPCompose device app that compiles TSX into ESPHome YAML for board {{board}}.
 
+## Required Reading
+
+Before making changes, read these skill files directly (do not use file search — they are in `node_modules` which is gitignored):
+
+- `node_modules/@espcompose/core/skills/espcompose.md` — Core framework reference
+
 ## Primary Files
 
 - `index.tsx`: Device entry point and component tree.
 - `package.json`: Local scripts for build and lint.
 - `.espcompose/esphome.yaml`: Generated output after build.
-- `node_modules/@espcompose/core/skills/espcompose.md`: Exported core skill reference (`@espcompose/core/skills/espcompose.md`).
 
 ## Commands
 
