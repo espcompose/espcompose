@@ -42,6 +42,11 @@ export * from './generated/index';
 // Hand-curated top-level aliases for commonly used component refs.
 export * from './component-aliases';
 
+// Hand-authored ec-canvas intrinsic element types.
+// The wildcard re-export ensures TypeScript processes the `declare global`
+// augmentation that adds ec-* elements to JSX.IntrinsicElements.
+export * from './ec-canvas';
+
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Hooks
 // ────────────────────────────────────────────────────────────────────────────

@@ -16,7 +16,7 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vitest run",
+    "test": "vitest run --reporter=tap",
     "clean": "rimraf dist"
   },
   "dependencies": {

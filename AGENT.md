@@ -112,7 +112,7 @@ returns the `SemanticIR` directly.
 These are hard rules, not guidance.
 
 1. Completion claim gate
-- The agent must not claim completion unless a successful `pnpm build:full` run happened after the final code edit in the current turn.
+- The agent must not claim completion unless a successful `pnpm build:full` run happened after the final code edit in the current turn. Be patient. The full buid takes a couple minutes.
 
 2. Required proof in final response
 - Include: command run, workspace root path, and explicit success signal (exit code 0 or equivalent terminal completion evidence).

@@ -16,6 +16,9 @@
  *   lvgl:root              — <lvgl> element
  *   lvgl:page              — <lvgl-page> container
  *   lvgl:widget            — any LVGL visual element (leaf or container)
+ *   ec:canvas              — <ec-canvas> composited rendering host
+ *   ec:canvas-zone         — <ec-canvas-background>, <ec-canvas-content>, <ec-canvas-overlay>
+ *   ec:paint-primitive     — <ec-rect>, <ec-line>, and future paint primitives
  */
 
 import type { IntrinsicIntentMeta } from './intents';
@@ -224,4 +227,26 @@ export const INTRINSIC_INTENT_REGISTRY: Readonly<Record<string, IntrinsicIntentM
   'lvgl-spinner': { intents: ['lvgl:widget'], allowedChildIntents: [] },
   'lvgl-switch': { intents: ['lvgl:widget'], allowedChildIntents: [] },
   'lvgl-btnmatrix-btn': { intents: ['lvgl:widget'], allowedChildIntents: [] },
+
+  // ─── ec-canvas (composited rendering) ──────────────────────────────────────
+  'ec-canvas': {
+    intents: ['ec:canvas', 'lvgl:widget'],
+    allowedChildIntents: ['ec:canvas-zone'],
+  },
+  'ec-canvas-background': {
+    intents: ['ec:canvas-zone'],
+    allowedChildIntents: ['ec:paint-primitive'],
+  },
+  'ec-canvas-content': {
+    intents: ['ec:canvas-zone'],
+    allowedChildIntents: ['lvgl:widget'],
+  },
+  'ec-canvas-overlay': {
+    intents: ['ec:canvas-zone'],
+    allowedChildIntents: ['ec:paint-primitive'],
+  },
+
+  // Paint primitives — leaf elements, no children
+  'ec-rect': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
+  'ec-line': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
 };

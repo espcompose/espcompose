@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "test": "vitest run"
+    "test": "vitest run --reporter=tap"
   },
   "keywords": [
     "esphome",

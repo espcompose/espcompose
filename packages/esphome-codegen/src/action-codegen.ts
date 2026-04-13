@@ -27,7 +27,7 @@ function indent(lines: string, level: number): string {
   return lines.split('\n').map(l => l ? pad + l : l).join('\n');
 }
 
-const SPECIAL_PARAM_TYPES = ['TimePeriod', 'MACAddress', 'IPv4Address'] as const;
+const SPECIAL_PARAM_TYPES = ['TimePeriod', 'MACAddress', 'IPv4Address', 'Ref'] as const;
 
 function collectSpecialParamTypes(classActions: ClassActionMap): string[] {
   const found = new Set<string>();

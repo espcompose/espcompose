@@ -38,6 +38,20 @@ function irWidgetObjectToRuntimeNode(
       continue;
     }
 
+    // ec-canvas paint scene arrays — preserve as static prop for the renderer
+    if ((key === 'background_scene' || key === 'overlay_scene') && entry.value.kind === 'array') {
+      const sceneItems = entry.value.items.map((item) => {
+        if (item.kind !== 'object') return null;
+        const paintNode: Record<string, RuntimeProp> = {};
+        for (const pEntry of (item as IRObject).entries) {
+          paintNode[pEntry.key] = irValueToRuntimeProp(pEntry.key, pEntry.value, ctx);
+        }
+        return paintNode;
+      }).filter((n): n is Record<string, RuntimeProp> => n !== null);
+      props[key] = { kind: 'static', value: sceneItems };
+      continue;
+    }
+
     // Action/trigger props
     if (isActionPropKey(key) && entry.value.kind === 'action') {
       props[key] = irActionToRuntimeProp(entry.value as IRAction, ctx);

@@ -17,6 +17,7 @@ import {
 import {
   compileActionBody,
 } from './action-compiler.js';
+import { isRefType } from './type-brands.js';
 import { type IRActionNode } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -105,10 +106,13 @@ function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Scan for `const ref = useRef<...>()` patterns and collect the declaration
- * symbols of component refs. The action compiler resolves the YAML action
- * key from `@actionKey` JSDoc tags on the method declaration, so we only
- * need to know which symbols are refs (not their tags).
+ * Scan for component ref symbols. Detects:
+ * - `const ref = useRef<...>()` variable declarations
+ * - Parameters and destructured bindings typed as `Ref<T>` or `RefProp<T>`
+ *
+ * The action compiler resolves the YAML action key from `@actionKey` JSDoc
+ * tags on the method declaration, so we only need to know which symbols
+ * are refs (not their tags).
  */
 function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Set<ts.Symbol> {
   const refSymbols = new Set<ts.Symbol>();
@@ -124,6 +128,15 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
         }
       }
     }
+
+    // Detect Ref-typed parameters and destructured bindings (e.g. props)
+    if ((ts.isBindingElement(node) || ts.isParameter(node)) && ts.isIdentifier(node.name)) {
+      const sym = checker.getSymbolAtLocation(node.name);
+      if (sym && isRefType(checker, sym)) {
+        refSymbols.add(sym);
+      }
+    }
+
     ts.forEachChild(node, walk);
   };
   walk(sourceFile);

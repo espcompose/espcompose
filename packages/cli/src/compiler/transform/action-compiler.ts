@@ -13,6 +13,7 @@ import {
   type HAEntityInfo,
   type ScriptTransformContext,
 } from './expr-compiler.js';
+import { hasRefBrand, hasBindingBrand } from './type-brands.js';
 import { ENTITY_DOMAINS } from '@espcompose/core/internals';
 import {
   type IRActionNode,
@@ -907,27 +908,6 @@ function extractReturnExpr(block: ts.Block): ts.Expression | null {
     }
   }
   return null;
-}
-
-function hasRefBrand(type: ts.Type): boolean {
-  for (const prop of type.getProperties()) {
-    if (/^__@REF_BRAND@\d+$/.test(prop.name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Check if a type has the BINDING_BRAND marker (HA entity binding or similar).
- */
-function hasBindingBrand(type: ts.Type): boolean {
-  for (const prop of type.getProperties()) {
-    if (/^__@BINDING_BRAND@\d+$/.test(prop.name)) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**

@@ -151,7 +151,7 @@ export const ACTION_OVERRIDES = new Map<string, ActionEntry[]>([
         targetClass: 'lvgl::LvglComponent',
         idFieldName: 'lvgl_id',
         params: [
-          { yamlKey: 'id', tsName: 'id', tsType: 'unknown', required: true, doc: 'The page ref to navigate to.' },
+          { yamlKey: 'id', tsName: 'id', tsType: 'Ref', required: true, doc: 'The page ref to navigate to.' },
           { yamlKey: 'animation', tsName: 'animation', tsType: '"NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM"', required: false, doc: 'Page transition animation. Defaults to NONE.' },
           { yamlKey: 'time', tsName: 'time', tsType: 'string', required: false, doc: 'Animation duration (e.g. "300ms"). Defaults to 50ms.' },
         ],

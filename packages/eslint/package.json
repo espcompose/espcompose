@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.check.json",
     "clean": "rimraf dist",
     "lint": "eslint src",
-    "test": "vitest run"
+    "test": "vitest run --reporter=tap"
   },
   "keywords": [
     "esphome",

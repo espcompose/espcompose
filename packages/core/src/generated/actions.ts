@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { TriggerHandler, TimePeriod, MACAddress } from "../types";
+import type { TriggerHandler, TimePeriod, MACAddress, Ref } from "../types";
 
 // ── ::esphome::hub75::HUB75Display ───────────────────────────────────
 
@@ -2566,7 +2566,7 @@ export interface LvglComponent_PagePreviousParams {
 
 export interface LvglComponent_PageShowParams {
   /** The page ref to navigate to. */
-  id: unknown;
+  id: Ref;
   /** Page transition animation. Defaults to NONE. */
   animation?: "NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM";
   /** Animation duration (e.g. "300ms"). Defaults to 50ms. */

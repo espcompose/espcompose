@@ -19,7 +19,7 @@
     },
     "@espcompose/cli#build": {
       "dependsOn": ["^build", "typecheck", "lint"],
-      "inputs": ["src/**", "scripts/**", "templates/**", "../../packages/simulator-bridge/src/**"],
+      "inputs": ["src/**", "scripts/**", "templates/**", "../../packages/simulator-bridge/src/**", "../../packages/simulator-app/dist/**", "../../packages/ir-viewer/dist/**"],
       "outputs": ["dist/**", "assets/**"]
     },
     "typecheck": {

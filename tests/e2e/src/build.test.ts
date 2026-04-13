@@ -202,4 +202,9 @@ describe('ESPHome Compose Build', () => {
   it('secret-device', async () => {
     await createProjectTest(projectsDir, 'secret-device');
   });
+
+  // ec-canvas — composited rendering host with paint primitives + widget content
+  it('canvas-device', async () => {
+    await createProjectTest(projectsDir, 'canvas-device');
+  });
 });
