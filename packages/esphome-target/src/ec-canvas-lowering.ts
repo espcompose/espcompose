@@ -171,6 +171,13 @@ function transformWidgetsArray(widgets: unknown[]): void {
       delete canvasProps.background_scene;
       delete canvasProps.overlay_scene;
 
+      // Make the canvas widget background transparent so undrawn buffer
+      // pixels (e.g. corners of a rounded rect) show the parent background
+      // instead of black artifacts on theme changes.
+      if (canvasProps.bg_opa == null) {
+        canvasProps.bg_opa = 0;
+      }
+
       // Transform ec_canvas → canvas (native ESPHome LVGL canvas widget)
       widgetObj.canvas = canvasProps;
       delete widgetObj.ec_canvas;
