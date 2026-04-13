@@ -8,13 +8,12 @@
 
 import type { SemanticIR } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
-import { generateBindingsHeader, getRuntimeHeaderContent } from './bindings-codegen.js';
+import { generateBindingsHeader } from './bindings-codegen.js';
 import type { ReactiveRuntimeConfig } from './bindings-codegen.js';
 
 export interface CppBackendResult {
   runtimeConfig: ReactiveRuntimeConfig;
   bindingsHeaderContent: string;
-  runtimeHeaderContent: string;
 }
 
 /**
@@ -47,6 +46,5 @@ export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
   return {
     runtimeConfig,
     bindingsHeaderContent: generateBindingsHeader(runtimeConfig),
-    runtimeHeaderContent: getRuntimeHeaderContent(),
   };
 }

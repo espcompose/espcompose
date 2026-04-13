@@ -4,6 +4,10 @@ import { build } from '@espcompose/cli';
 import { createEsphomeTarget, esphomeConfig } from '@espcompose/esphome-target';
 import { expect } from 'vitest';
 
+// Track whether the shared espcompose_reactive.h has already been snapshotted.
+// The runtime header is identical across all projects so we only need one copy.
+let runtimeHeaderSnapshotted = false;
+
 /**
  * Runs the full build pipeline against a project directory and asserts
  * the generated YAML matches the stored snapshot.
@@ -63,7 +67,7 @@ export async function createProjectTest(
   // change there affects every project so we capture it too.
   const outDir = path.join(projectPath, '.espcompose');
   const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
-  const runtimePath = path.join(outDir, 'espcompose_reactive.h');
+  const runtimePath = path.join(outDir, 'external_components', 'espcompose', 'espcompose_reactive.h');
 
   if (fs.existsSync(bindingsPath)) {
     const bindingsContent = stabilise(fs.readFileSync(bindingsPath, 'utf8'));
@@ -71,8 +75,12 @@ export async function createProjectTest(
   }
 
   if (fs.existsSync(runtimePath)) {
-    const runtimeContent = fs.readFileSync(runtimePath, 'utf8');
-    expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
+    if (!runtimeHeaderSnapshotted) {
+      // Snapshot the shared runtime header once — it's identical for all projects.
+      const runtimeContent = fs.readFileSync(runtimePath, 'utf8');
+      expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
+      runtimeHeaderSnapshotted = true;
+    }
   }
 
   // Snapshot secrets.yaml when the build produces one (secret() was used).

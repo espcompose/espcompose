@@ -29,16 +29,35 @@ export function createEsphomeTarget(): ComposeTarget {
     // ── Extract ec-canvas paint scenes for native canvas draw actions ───
     const paintScenes = extractPaintScenesFromIR(ir);
 
-    if (cppResult) {
-      fs.mkdirSync(outDir, { recursive: true });
+    // ── Emit external component (all C++ lives here) ─────────────────────
+    // ESPHome external_components expects: __init__.py, .h/.cpp files all
+    // in one directory. We write the static assets (runtime component class)
+    // plus the project-specific generated headers here.
+    const componentDestDir = path.join(outDir, 'external_components', 'espcompose');
+    fs.mkdirSync(componentDestDir, { recursive: true });
 
+    // Copy static component assets (__init__.py, espcompose_runtime.h/.cpp, espcompose_reactive.h).
+    // __dirname resolves to dist/ when bundled into the CLI (prebuild copies assets there)
+    // or to src/ when running from source under vitest — both use ../assets/.
+    const assetsDir = path.resolve(__dirname, '..', 'assets', 'external-component');
+    for (const assetFile of ['__init__.py', 'espcompose_runtime.h', 'espcompose_runtime.cpp', 'espcompose_reactive.h']) {
+      const src = path.join(assetsDir, assetFile);
+      if (fs.existsSync(src)) {
+        const dest = path.join(componentDestDir, assetFile);
+        fs.copyFileSync(src, dest);
+        files.push(dest);
+      }
+    }
+
+    // Write generated bindings header to the output root (NOT in the external
+    // component directory).  ESPHome compiles external component sources as a
+    // separate translation unit that cannot see the widget ID globals declared
+    // in main.cpp.  Using esphome.includes: places the header into main.cpp's
+    // compilation context where all id() references resolve correctly.
+    if (cppResult) {
       const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
       fs.writeFileSync(bindingsPath, cppResult.bindingsHeaderContent, 'utf8');
       files.push(bindingsPath);
-
-      const runtimePath = path.join(outDir, 'espcompose_reactive.h');
-      fs.writeFileSync(runtimePath, cppResult.runtimeHeaderContent, 'utf8');
-      files.push(runtimePath);
     }
 
     // ── Lower semantic IR to YAML config ────────────────────────────────

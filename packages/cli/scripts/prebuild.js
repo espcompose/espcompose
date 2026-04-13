@@ -3,8 +3,11 @@
  * Copies sibling package build outputs into cli/assets/ so they can be
  * bundled with the published CLI package.
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const assets = path.resolve(__dirname, '..', 'assets');
 
@@ -12,6 +15,7 @@ const copies = [
   { src: '../../ir-viewer/dist',        dest: 'ir-viewer' },
   { src: '../../simulator-app/dist',    dest: 'simulator-app' },
   { src: '../../simulator-bridge/src',  dest: 'simulator-bridge' },
+  { src: '../../esphome-target/assets/external-component', dest: 'external-component' },
 ];
 
 for (const { src, dest } of copies) {
