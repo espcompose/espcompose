@@ -4,11 +4,11 @@
  * consumed by the C++ header generator.
  *
  * Also provides config-level injection helpers: HA sensor imports with
- * signal.set() triggers, esphome.includes, and on_boot wiring.
+ * signal.set() triggers, esphome.includes, and external component wiring.
  */
 
 import { injectHASensorImports } from './reactive-injector.js';
-import { generateSignalSetLambda } from './bindings-codegen.js';
+import { generateSignalSetLambda, computeMaxNodes } from './bindings-codegen.js';
 import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
@@ -385,7 +385,7 @@ export function injectReactiveBindingsRuntime(
   // Step 1: Import HA sensors (sensor imports only, no native widget triggers)
   let result = injectHASensorImports(config, entities);
 
-  // Step 2: Inject includes + on_boot for the C++ runtime
+  // Step 2: Inject includes + runtime bootstrap for the C++ runtime
   result = injectRuntimeIncludes(result);
 
   // Step 3: Inject signal.set() triggers on each HA sensor source
@@ -404,41 +404,53 @@ export function injectReactiveBindingsRuntime(
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 
+  // Step 6: Inject ESPCOMPOSE_MAX_NODES as a build flag so the reactive
+  // engine header (compiled in the external component TU) sees the correct
+  // capacity before any #include.
+  const maxNodes = computeMaxNodes(runtimeConfig);
+  result = injectBuildFlags(result, [`-DESPCOMPOSE_MAX_NODES=${maxNodes}`]);
+
   return result;
 }
 
 /**
- * Inject esphome.includes and on_boot into the config for the C++ runtime.
+ * Inject external_components and espcompose runtime config into the config.
  */
 function injectRuntimeIncludes(config: Record<string, unknown>): Record<string, unknown> {
   const result = { ...config };
 
-  // Inject includes — espcompose_bindings.h MUST come first so its
-  // #define ESPCOMPOSE_MAX_NODES override is seen before reactive.h.
-  // Both files must be listed so ESPHome copies them to the build tree.
+  // Inject esphome.includes for the bindings header.  The bindings header
+  // must be compiled inside main.cpp (via includes:) so that the lambdas can
+  // resolve widget ID globals (rw_xxx) that ESPHome declares in main.cpp.
   const esphome = (result.esphome ?? {}) as Record<string, unknown>;
-  const includes = Array.isArray(esphome.includes) ? [...esphome.includes] : [];
-  includes.push('espcompose_bindings.h', 'espcompose_reactive.h');
+  const includes = Array.isArray(esphome.includes) ? [...esphome.includes as unknown[]] : [];
+  includes.push('espcompose_bindings.h');
   result.esphome = { ...esphome, includes };
 
-  // Inject on_boot to call espcompose::setup()
-  // Priority -10 ensures this runs AFTER LVGL and display are initialised,
-  // so that Effects can safely call LVGL widget APIs.
-  const espHome = result.esphome as Record<string, unknown>;
-  const existingOnBoot = espHome.on_boot;
-  const setupAction = {
-    priority: -10,
-    then: [{
-      lambda: 'espcompose::setup();',
-    }],
-  };
+  // Inject external_components as a top-level key (not under esphome:).
+  // The external component provides the runtime class and reactive engine.
+  const externalComponents = Array.isArray(result.external_components)
+    ? [...(result.external_components as unknown[])]
+    : [];
 
-  if (existingOnBoot) {
-    espHome.on_boot = Array.isArray(existingOnBoot)
-      ? [...existingOnBoot, setupAction]
-      : [existingOnBoot, setupAction];
-  } else {
-    espHome.on_boot = setupAction;
+  // Add espcompose runtime component from relative path.
+  // The path points to the parent directory — ESPHome looks for espcompose/__init__.py inside it.
+  externalComponents.push({
+    source: {
+      type: 'local',
+      path: './external_components',
+    },
+    components: ['espcompose'],
+  });
+
+  result.external_components = externalComponents;
+
+  // Configure the espcompose runtime component with default flush budget (microseconds per loop iteration).
+  // The espcompose platform config is a top-level key.
+  if (!result.espcompose) {
+    result.espcompose = {
+      flush_budget_us: 2000,
+    };
   }
 
   return result;

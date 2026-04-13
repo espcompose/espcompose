@@ -3,18 +3,17 @@
   "version": "0.2.2",
   "description": "ESPHome Compose Simulator — Browser-based LVGL UI preview for fast iteration",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external @espcompose/core --external esbuild --external ws",
+    "build": "tsup src/index.ts --format esm --dts --clean --external @espcompose/core --external esbuild --external ws",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "clean": "rimraf dist",

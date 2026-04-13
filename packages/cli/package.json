@@ -2,6 +2,7 @@
   "name": "@espcompose/cli",
   "version": "0.3.1",
   "description": "ESPCompose CLI - Command-line tools for building ESPCompose projects",
+  "type": "module",
   "bin": {
     "espcompose": "bin/espcompose.js"
   },
@@ -15,7 +16,7 @@
   ],
   "scripts": {
     "prebuild": "node scripts/prebuild.js",
-    "build": "tsup src/cli.ts src/index.ts --format cjs --dts --external eslint --external @espcompose/eslint --external esbuild --external typescript --external typescript-eslint",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",

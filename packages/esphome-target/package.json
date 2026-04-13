@@ -3,10 +3,17 @@
   "version": "0.2.2",
   "description": "ESPHome Compose — YAML/C++ firmware target backend",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external @espcompose/core --external yaml",
+    "build": "tsup src/index.ts --format esm --dts --clean --external @espcompose/core --external yaml",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "clean": "rimraf dist",
