@@ -15,6 +15,7 @@ import {
   stopSerializationCapture,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
+import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
 import { clearRefRegistry } from './ref-registry';
 import { getSecrets, clearSecrets } from './secret';
 import { clearThemeRegistry, getThemeRegistry } from './theme-registry';
@@ -113,6 +114,11 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   // LVGL widget elements: { widget_type: { ...props, widgets?: [...] } }
   if (isLvglElement(type)) {
     return lvglWidgetToPlain(el);
+  }
+
+  // ec-canvas: composited rendering host with paint scenes + widget content
+  if (isEcCanvasElement(type)) {
+    return ecCanvasToPlain(el);
   }
 
   // All other intrinsic elements: { [type]: { ...ownProps, ...childrenMerged } }

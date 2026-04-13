@@ -13,6 +13,7 @@ import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/in
 import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen-cpp.js';
 import { resolveAssets } from './assets.js';
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './ec-canvas-lowering.js';
 
 export function createEsphomeTarget(): ComposeTarget {
   return {
@@ -24,6 +25,9 @@ export function createEsphomeTarget(): ComposeTarget {
 
     // ── Generate C++ headers from semantic IR ───────────────────────────
     const cppResult = generateCppFromIR(ir);
+
+    // ── Extract ec-canvas paint scenes for native canvas draw actions ───
+    const paintScenes = extractPaintScenesFromIR(ir);
 
     if (cppResult) {
       fs.mkdirSync(outDir, { recursive: true });
@@ -39,6 +43,9 @@ export function createEsphomeTarget(): ComposeTarget {
 
     // ── Lower semantic IR to YAML config ────────────────────────────────
     const finalConfig = lowerToYamlConfig(ir, cppResult);
+
+    // ── Emit native lvgl.canvas draw actions for ec-canvas scenes ───────
+    injectEcCanvasDrawActions(finalConfig as Record<string, unknown>, paintScenes);
 
     // ── Resolve asset file paths and copy files to build output ─────────
     const copiedAssets = resolveAssets(finalConfig as Record<string, unknown>, sourceDir, outDir);

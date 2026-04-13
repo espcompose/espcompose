@@ -18,6 +18,7 @@ import type { CppLoweringContext } from './expr-to-cpp.js';
 import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
 import { lowerActionTree } from './action-lowering.js';
+import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 
@@ -302,6 +303,9 @@ export function lowerToYamlConfig(
       then: lowerActionTree(s.then),
     }));
   }
+
+  // Transform ec_canvas widgets → native canvas widgets.
+  transformEcCanvasWidgets(finalConfig);
 
   return finalConfig;
 }

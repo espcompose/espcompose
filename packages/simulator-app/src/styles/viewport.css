@@ -29,6 +29,7 @@ body {
 .sim-viewport {
   overflow: hidden;
   background: #000;
+  color: #000;
   transform-origin: center center;
   image-rendering: pixelated;
   position: absolute;
@@ -61,9 +62,7 @@ body {
 
 .sim-viewport .lvgl-label {
   display: inline-block;
-  color: var(--thm-colors-primary-text, #fff);
-  line-height: 1.4;
-  padding: 2px;
+  color: inherit;
   white-space: nowrap;
 }
 

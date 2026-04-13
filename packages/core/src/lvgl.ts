@@ -29,6 +29,8 @@ import {
 } from './serialize';
 import { expandCssStyle } from './style-mapping';
 
+import { isEcCanvasElement, ecCanvasToPlain } from './ec-canvas-serialize';
+
 // Known LVGL part and state names in camelCase, used for recursive binding detection.
 // Excludes 'main' and 'default' since those are the top-level defaults.
 const PART_NAMES_CAMEL = new Set(
@@ -207,8 +209,9 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   const { allProps, children } = extractElementProps(el);
 
   const widgetChildren = resolveLvglChildren(children);
-  const lvglChildren = widgetChildren.filter((c) => isLvglElement(c.type));
-  const nestedWidgets = lvglChildren.map(lvglWidgetToPlain);
+  const nestedWidgets = widgetChildren
+    .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
+    .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
 
   const data: Record<string, unknown> = { ...allProps };
   hoistStyleProp(data);
@@ -244,7 +247,9 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
     if (child.type === 'lvgl-page') {
       const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
       const pageResolved = resolveLvglChildren(pageChildren);
-      const pageWidgets = pageResolved.filter((c) => isLvglElement(c.type)).map(lvglWidgetToPlain);
+      const pageWidgets = pageResolved
+        .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
+        .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
       const pageData: Record<string, unknown> = { ...pageProps };
       hoistStyleProp(pageData);
       detectAndRegisterReactiveProps(pageData, 'page');
@@ -256,8 +261,9 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
       pages.push(serializedPage);
     } else if (isLvglElement(child.type)) {
       topWidgets.push(lvglWidgetToPlain(child));
+    } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
+      topWidgets.push(ecCanvasToPlain(child));
     }
-    // Non-lvgl children are ignored (shouldn't appear here)
   }
 
   // Serialize own props first, then attach already-serialized children.
