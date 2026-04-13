@@ -12,9 +12,12 @@
 // produces { button: { ...props, widgets: [{ label: {...} }] } }.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { EspComposeElement, FunctionComponent } from './types';
+import type { EspComposeElement, FunctionComponent, Ref } from './types';
+import { RefHandle } from './types';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
+import { LvglContext } from './hooks/useLvgl';
+import type { LvglComponentRef } from './component-aliases';
 import { isIRReactiveNode } from './reactive-node';
 import type { IRReactiveNode } from './reactive-node';
 import { registerReactiveBinding } from './hooks/useReactiveScope';
@@ -237,39 +240,52 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
  * and merges them with the element's own props.
  */
 export function buildLvglSection(el: EspComposeElement): Record<string, unknown> {
-  const { allProps, children } = extractElementProps(el);
+  // Capture the raw ref before extractElementProps converts it to an id string.
+  let lvglRef = (el.props as Record<string, unknown>).ref as Ref<LvglComponentRef> | undefined;
 
-  const resolved = resolveLvglChildren(children);
-  const pages: Record<string, unknown>[] = [];
-  const topWidgets: Record<string, unknown>[] = [];
-
-  for (const child of resolved) {
-    if (child.type === 'lvgl-page') {
-      const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
-      const pageResolved = resolveLvglChildren(pageChildren);
-      const pageWidgets = pageResolved
-        .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
-        .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
-      const pageData: Record<string, unknown> = { ...pageProps };
-      hoistStyleProp(pageData);
-      detectAndRegisterReactiveProps(pageData, 'page');
-      // Serialize own props first, then attach already-serialized child widgets.
-      const serializedPage = stripUndefined(keysToSnakeCase(pageData));
-      if (pageWidgets.length > 0) {
-        serializedPage.widgets = pageWidgets;
-      }
-      pages.push(serializedPage);
-    } else if (isLvglElement(child.type)) {
-      topWidgets.push(lvglWidgetToPlain(child));
-    } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
-      topWidgets.push(ecCanvasToPlain(child));
-    }
+  // Auto-create a ref when <lvgl> has no explicit ref prop, so useLvgl()
+  // works even when the user doesn't need the ref at the call site.
+  if (lvglRef == null) {
+    lvglRef = new RefHandle<LvglComponentRef>() as unknown as Ref<LvglComponentRef>;
+    el = { ...el, props: { ...el.props, ref: lvglRef } };
   }
 
-  // Serialize own props first, then attach already-serialized children.
-  const serialized = stripUndefined(keysToSnakeCase({ ...allProps }));
-  if (pages.length > 0) serialized.pages = pages;
-  if (topWidgets.length > 0) serialized.widgets = topWidgets;
+  const { allProps, children } = extractElementProps(el);
 
-  return serialized;
+  // Push the lvgl ref into context so useLvgl() returns it inside the tree.
+  return withContext(LvglContext, lvglRef, () => {
+    const resolved = resolveLvglChildren(children);
+    const pages: Record<string, unknown>[] = [];
+    const topWidgets: Record<string, unknown>[] = [];
+
+    for (const child of resolved) {
+      if (child.type === 'lvgl-page') {
+        const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
+        const pageResolved = resolveLvglChildren(pageChildren);
+        const pageWidgets = pageResolved
+          .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
+          .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
+        const pageData: Record<string, unknown> = { ...pageProps };
+        hoistStyleProp(pageData);
+        detectAndRegisterReactiveProps(pageData, 'page');
+        // Serialize own props first, then attach already-serialized child widgets.
+        const serializedPage = stripUndefined(keysToSnakeCase(pageData));
+        if (pageWidgets.length > 0) {
+          serializedPage.widgets = pageWidgets;
+        }
+        pages.push(serializedPage);
+      } else if (isLvglElement(child.type)) {
+        topWidgets.push(lvglWidgetToPlain(child));
+      } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
+        topWidgets.push(ecCanvasToPlain(child));
+      }
+    }
+
+    // Serialize own props first, then attach already-serialized children.
+    const serialized = stripUndefined(keysToSnakeCase({ ...allProps }));
+    if (pages.length > 0) serialized.pages = pages;
+    if (topWidgets.length > 0) serialized.widgets = topWidgets;
+
+    return serialized;
+  });
 }

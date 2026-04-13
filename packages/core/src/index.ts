@@ -57,6 +57,7 @@ export { useImage } from './hooks/useImage';
 export { useFont } from './hooks/useFont';
 export { useScript } from './hooks/useScript';
 export { useMemo } from './hooks/useMemo';
+export { useLvgl } from './hooks/useLvgl';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

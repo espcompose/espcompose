@@ -7,3 +7,4 @@ export * from './useReactiveScope';
 export { useHAEntity, clearHAEntityCache } from './useHAEntity';
 export { useImage, clearImageCache } from './useImage';
 export { useFont, clearFontCache } from './useFont';
+export { useLvgl } from './useLvgl';

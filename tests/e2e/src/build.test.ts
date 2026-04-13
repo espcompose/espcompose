@@ -207,4 +207,9 @@ describe('ESPHome Compose Build', () => {
   it('canvas-device', async () => {
     await createProjectTest(projectsDir, 'canvas-device');
   });
+
+  // useLvgl() hook — implicit LVGL ref via context, no prop drilling
+  it('use-lvgl-hook-device', async () => {
+    await createProjectTest(projectsDir, 'use-lvgl-hook-device');
+  });
 });
