@@ -1,5 +1,16 @@
 # @espcompose/cli
 
+## 0.3.2
+
+### Patch Changes
+
+- [#32](https://github.com/espcompose/espcompose/pull/32) [`21b81bf`](https://github.com/espcompose/espcompose/commit/21b81bf6054892cfc1e1a8411f849a864f62ac8e) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Implemented native ESPHome component for reactive runtime.
+
+- [#30](https://github.com/espcompose/espcompose/pull/30) [`e38d4ad`](https://github.com/espcompose/espcompose/commit/e38d4ad5d6b82164b3626b86c97a4ca4562ce10b) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Added initial POC support for canvas elements.
+
+- Updated dependencies []:
+  - @espcompose/eslint@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes
