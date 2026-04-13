@@ -1,5 +1,11 @@
 # @espcompose/core
 
+## 0.3.2
+
+### Patch Changes
+
+- [#30](https://github.com/espcompose/espcompose/pull/30) [`e38d4ad`](https://github.com/espcompose/espcompose/commit/e38d4ad5d6b82164b3626b86c97a4ca4562ce10b) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Added initial POC support for canvas elements.
+
 ## 0.3.1
 
 ### Patch Changes
