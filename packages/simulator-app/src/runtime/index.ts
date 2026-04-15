@@ -33,6 +33,6 @@ export type {
 
 export { Signal, Memo, Effect, Scheduler } from './runtime/signals';
 export { EntityStore } from './entity-store';
-export { lvglPropsToStyle, lvglColorToCss, getStaticValue } from './renderer/lvgl-styles';
+export { lvglPropsToStyle, lvglColorToCss, getStaticValue, type StyleOutput } from './renderer/lvgl-styles';
 export { generateThemeStyleBlock, themePathToCssVar } from './renderer/theme-css';
 export { extractDisplayConfig, type DisplayConfig } from './extract-display-config';

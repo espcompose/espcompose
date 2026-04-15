@@ -1,14 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import type { RuntimeNode, RuntimeProp } from '../runtime';
-import { lvglPropsToStyle } from '../runtime';
+import { lvglPropsToStyle, type StyleOutput } from '../runtime';
 
 // ── Style helpers ────────────────────────────────────────────────────────────
 
 /**
- * Convert the CSS string from `lvglPropsToStyle` to a React-compatible
- * style object. `lvglPropsToStyle` returns a semicolon-delimited string
- * (e.g. "background-color: #fff; padding: 8px") designed for HTML's
- * `style="..."` attribute. React needs `{ backgroundColor: '#fff', padding: '8px' }`.
+ * Convert a CSS string (semicolon-delimited) to a React-compatible
+ * style object.
  */
 function cssStringToStyle(css: string): React.CSSProperties {
   if (!css) return {};
@@ -19,8 +17,7 @@ function cssStringToStyle(css: string): React.CSSProperties {
     const prop = part.slice(0, colon).trim();
     const value = part.slice(colon + 1).trim();
     if (!prop || !value) continue;
-    // Convert kebab-case to camelCase (e.g. "background-color" → "backgroundColor")
-    // but preserve CSS custom properties (--thm-*)
+    // Convert kebab-case to camelCase but preserve CSS custom properties (--thm-*)
     const key = prop.startsWith('--')
       ? prop
       : prop.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
@@ -29,9 +26,95 @@ function cssStringToStyle(css: string): React.CSSProperties {
   return style;
 }
 
-/** Get a React-compatible style object from a RuntimeNode's props. */
-function getNodeStyle(props: Record<string, RuntimeProp>): React.CSSProperties {
-  return cssStringToStyle(lvglPropsToStyle(props));
+/** LVGL state → CSS pseudo-class / attribute mapping. */
+const STATE_TO_CSS_SELECTOR: Record<string, string> = {
+  pressed: ':active',
+  hovered: ':hover',
+  focused: ':focus-within',
+  focus_key: ':focus-visible',
+  disabled: '[data-disabled]',
+  checked: '[data-checked]',
+  edited: '[data-edited]',
+  scrolled: '[data-scrolled]',
+};
+
+/** LVGL part → CSS sub-element class mapping. */
+const PART_TO_CSS_CLASS: Record<string, string> = {
+  indicator: '.lvgl-part-indicator',
+  knob: '.lvgl-part-knob',
+  scrollbar: '.lvgl-part-scrollbar',
+  selected: '.lvgl-part-selected',
+  items: '.lvgl-part-items',
+  ticks: '.lvgl-part-ticks',
+  cursor: '.lvgl-part-cursor',
+  textarea_placeholder: '::placeholder',
+};
+
+interface ResolvedStyles {
+  base: React.CSSProperties;
+  /** Scoped CSS rule text for state pseudo-classes. Empty string if none. */
+  statesCssText: string;
+  /** Part styles keyed by LVGL part name. */
+  parts: Record<string, { base: React.CSSProperties; statesCssText: string }>;
+}
+
+/**
+ * Build scoped CSS rules for state styles.
+ * Returns a CSS text block like:
+ *   [data-node-id="xxx"]:active { background-color: #123456 }
+ */
+function buildStateCssRules(nodeId: string, states: Record<string, string>, selectorPrefix = ''): string {
+  const rules: string[] = [];
+  for (const [state, cssString] of Object.entries(states)) {
+    if (!cssString) continue;
+    const pseudo = STATE_TO_CSS_SELECTOR[state];
+    if (!pseudo) continue;
+    const selector = selectorPrefix
+      ? `${selectorPrefix}${pseudo}`
+      : `[data-node-id="${nodeId}"]${pseudo}`;
+    rules.push(`${selector} { ${cssString} }`);
+  }
+  return rules.join('\n');
+}
+
+/** Get resolved styles from a RuntimeNode's props. */
+function getNodeStyles(props: Record<string, RuntimeProp>, nodeId: string): ResolvedStyles {
+  const output: StyleOutput = lvglPropsToStyle(props);
+
+  const base = cssStringToStyle(output.base);
+  const statesCssText = buildStateCssRules(nodeId, output.states);
+
+  const parts: Record<string, { base: React.CSSProperties; statesCssText: string }> = {};
+  for (const [part, partOutput] of Object.entries(output.parts)) {
+    const partClass = PART_TO_CSS_CLASS[part];
+    const partSelector = partClass
+      ? `[data-node-id="${nodeId}"] ${partClass}`
+      : undefined;
+    parts[part] = {
+      base: cssStringToStyle(partOutput.base),
+      statesCssText: partSelector
+        ? buildStateCssRules(nodeId, partOutput.states, partSelector)
+        : '',
+    };
+  }
+
+  return { base, statesCssText, parts };
+}
+
+/** Inject a scoped <style> tag for state and part-state CSS rules. */
+function StyleInjector({ cssText }: { cssText: string }) {
+  if (!cssText) return null;
+  return <style dangerouslySetInnerHTML={{ __html: cssText }} />;
+}
+
+/** Collect all state CSS text (base + parts) into a single string. */
+function collectAllStateCss(styles: ResolvedStyles): string {
+  const parts: string[] = [];
+  if (styles.statesCssText) parts.push(styles.statesCssText);
+  for (const partStyle of Object.values(styles.parts)) {
+    if (partStyle.statesCssText) parts.push(partStyle.statesCssText);
+  }
+  return parts.join('\n');
 }
 
 // ── Prop helpers ─────────────────────────────────────────────────────────────
@@ -58,9 +141,11 @@ interface WidgetProps {
 }
 
 function PageWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   return (
-    <div className="lvgl-page" style={style} data-node-id={node.id}>
+    <div className="lvgl-page" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {node.children.map((child) => (
         <LvglWidget key={child.id} node={child} onAction={onAction} />
       ))}
@@ -70,16 +155,19 @@ function PageWidget({ node, onAction }: WidgetProps) {
 
 function LabelWidget({ node }: WidgetProps) {
   const text = getPropString(node.props.text);
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   return (
-    <span className="lvgl-label" style={style} data-node-id={node.id}>
+    <span className="lvgl-label" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {text}
     </span>
   );
 }
 
 function ButtonWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const handleClick = () => {
     const actionProp = node.props.on_press ?? node.props.on_click;
     if (actionProp?.kind === 'action') {
@@ -89,7 +177,8 @@ function ButtonWidget({ node, onAction }: WidgetProps) {
   };
 
   return (
-    <button className="lvgl-button" style={style} data-node-id={node.id} onClick={handleClick}>
+    <button className="lvgl-button" style={styles.base} data-node-id={node.id} onClick={handleClick}>
+      <StyleInjector cssText={allCss} />
       {node.children.length > 0
         ? node.children.map((child) => (
             <LvglWidget key={child.id} node={child} onAction={onAction} />
@@ -100,7 +189,8 @@ function ButtonWidget({ node, onAction }: WidgetProps) {
 }
 
 function SliderWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const rawPropValue = Number(getPropValue(node.props.value) ?? 0);
   const propValue = Number.isFinite(rawPropValue) ? rawPropValue : 0;
   const min = Number(getPropValue(node.props.min_value) ?? 0);
@@ -148,24 +238,32 @@ function SliderWidget({ node, onAction }: WidgetProps) {
     commit(valueFromPointer(e.clientX));
   };
 
+  // Part styles for indicator and knob
+  const indicatorPart = styles.parts.indicator;
+  const knobPart = styles.parts.knob;
+  const indicatorStyle: React.CSSProperties = { width: `${pct}%`, ...indicatorPart?.base };
+  const knobStyle: React.CSSProperties = { left: `${pct}%`, ...knobPart?.base };
+
   return (
     <div
       ref={trackRef}
       className="lvgl-slider"
-      style={style}
+      style={styles.base}
       data-node-id={node.id}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      <div className="lvgl-slider-indicator" style={{ width: `${pct}%` }} />
-      <div className="lvgl-slider-knob" style={{ left: `${pct}%` }} />
+      <StyleInjector cssText={allCss} />
+      <div className="lvgl-slider-indicator lvgl-part-indicator" style={indicatorStyle} />
+      <div className="lvgl-slider-knob lvgl-part-knob" style={knobStyle} />
     </div>
   );
 }
 
 function SwitchWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const propChecked = Boolean(getPropValue(node.props.checked) ?? false);
 
   // Local state for optimistic toggle — syncs back from reactive prop.
@@ -182,56 +280,86 @@ function SwitchWidget({ node, onAction }: WidgetProps) {
     onAction?.(node.id, 'value_changed');
   };
 
+  // Part styles for indicator (track) and knob
+  const indicatorPart = styles.parts.indicator;
+  const knobPart = styles.parts.knob;
+
   return (
-    <label className="lvgl-switch" style={style} data-node-id={node.id}>
+    <label className="lvgl-switch" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       <input
         type="checkbox"
         checked={localChecked}
         onChange={handleChange}
       />
-      <span className="lvgl-switch-track" />
+      <span className="lvgl-switch-track lvgl-part-indicator" style={indicatorPart?.base} />
+      {knobPart && <span className="lvgl-switch-knob lvgl-part-knob" style={knobPart.base} />}
     </label>
   );
 }
 
 function BarWidget({ node }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const value = Number(getPropValue(node.props.value) ?? 0);
   const max = Number(getPropValue(node.props.max) ?? 100);
+  const indicatorPart = styles.parts.indicator;
+
+  // Use a div-based bar when indicator part styles are present for CSS control
+  if (indicatorPart && Object.keys(indicatorPart.base).length > 0) {
+    const pct = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
+    return (
+      <div className="lvgl-bar" style={styles.base} data-node-id={node.id}>
+        <StyleInjector cssText={allCss} />
+        <div
+          className="lvgl-bar-indicator lvgl-part-indicator"
+          style={{ width: `${pct}%`, height: '100%', ...indicatorPart.base }}
+        />
+      </div>
+    );
+  }
 
   return (
-    <progress
-      className="lvgl-bar"
-      style={style}
-      data-node-id={node.id}
-      value={value}
-      max={max}
-    />
+    <>
+      <StyleInjector cssText={allCss} />
+      <progress
+        className="lvgl-bar"
+        style={styles.base}
+        data-node-id={node.id}
+        value={value}
+        max={max}
+      />
+    </>
   );
 }
 
 function ArcWidget({ node }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const value = getPropValue(node.props.value);
   return (
-    <div className="lvgl-arc" style={style} data-node-id={node.id}>
+    <div className="lvgl-arc" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {value != null ? String(value) : ''}
     </div>
   );
 }
 
 function ImageWidget({ node }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const src = getPropString(node.props.src);
   return (
-    <div className="lvgl-image" style={style} data-node-id={node.id}>
+    <div className="lvgl-image" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {src ? <img src={src} alt="" /> : '🖼'}
     </div>
   );
 }
 
 function DropdownWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const options = getPropString(node.props.options);
   const items = options ? options.split('\n') : [];
   const propSelected = Number(getPropValue(node.props.selected) ?? 0);
@@ -250,21 +378,30 @@ function DropdownWidget({ node, onAction }: WidgetProps) {
   };
 
   return (
-    <select className="lvgl-dropdown" style={style} data-node-id={node.id} value={localSelected} onChange={handleChange}>
-      {items.map((item, i) => (
-        <option key={i} value={i}>{item}</option>
-      ))}
-    </select>
+    <>
+      <StyleInjector cssText={allCss} />
+      <select className="lvgl-dropdown" style={styles.base} data-node-id={node.id} value={localSelected} onChange={handleChange}>
+        {items.map((item, i) => (
+          <option key={i} value={i}>{item}</option>
+        ))}
+      </select>
+    </>
   );
 }
 
 function SpinnerWidget({ node }: WidgetProps) {
-  const style = getNodeStyle(node.props);
-  return <div className="lvgl-spinner" style={style} data-node-id={node.id} />;
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
+  return (
+    <div className="lvgl-spinner" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
+    </div>
+  );
 }
 
 function TextareaWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const propText = getPropString(node.props.text);
   const placeholder = getPropString(node.props.placeholder);
 
@@ -277,19 +414,23 @@ function TextareaWidget({ node, onAction }: WidgetProps) {
   };
 
   return (
-    <textarea
-      className="lvgl-textarea"
-      style={style}
-      data-node-id={node.id}
-      value={localText}
-      placeholder={placeholder}
-      onChange={handleChange}
-    />
+    <>
+      <StyleInjector cssText={allCss} />
+      <textarea
+        className="lvgl-textarea"
+        style={styles.base}
+        data-node-id={node.id}
+        value={localText}
+        placeholder={placeholder}
+        onChange={handleChange}
+      />
+    </>
   );
 }
 
 function CheckboxWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const text = getPropString(node.props.text);
   const propChecked = Boolean(getPropValue(node.props.checked) ?? false);
 
@@ -307,7 +448,8 @@ function CheckboxWidget({ node, onAction }: WidgetProps) {
   };
 
   return (
-    <label className="lvgl-checkbox" style={style} data-node-id={node.id}>
+    <label className="lvgl-checkbox" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       <input
         type="checkbox"
         checked={localChecked}
@@ -319,9 +461,11 @@ function CheckboxWidget({ node, onAction }: WidgetProps) {
 }
 
 function ObjWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   return (
-    <div className="lvgl-obj" style={style} data-node-id={node.id}>
+    <div className="lvgl-obj" style={styles.base} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {node.children.map((child) => (
         <LvglWidget key={child.id} node={child} onAction={onAction} />
       ))}
@@ -439,9 +583,10 @@ function PaintScene({ scene, zIndex }: { scene: PaintPropMap[]; zIndex: number }
 }
 
 function EcCanvasWidget({ node, onAction }: WidgetProps) {
-  const style = getNodeStyle(node.props);
+  const styles = getNodeStyles(node.props, node.id);
+  const allCss = collectAllStateCss(styles);
   const canvasStyle: React.CSSProperties = {
-    ...style,
+    ...styles.base,
     position: 'relative',
   };
 
@@ -450,6 +595,7 @@ function EcCanvasWidget({ node, onAction }: WidgetProps) {
 
   return (
     <div className="ec-canvas" style={canvasStyle} data-node-id={node.id}>
+      <StyleInjector cssText={allCss} />
       {bgScene && bgScene.length > 0 && <PaintScene scene={bgScene} zIndex={0} />}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {node.children.map((child) => (

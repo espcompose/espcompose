@@ -202,7 +202,8 @@ export function buildRuntimeConfig(
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
       const exprIR: IRExprNode | undefined = node.exprIR;
-      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : 'std::string';
+      const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
 
       const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames);
@@ -263,7 +264,8 @@ export function buildRuntimeConfig(
       const canonNodeId = memoCanonical.get(expr.nodeId) ?? expr.nodeId;
       const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId) ?? 'memo_0';
       valueExpr = `${memoName}.get()`;
-      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : 'std::string';
+      const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       sourceNames = [memoName];
     } else if (expr.dependencies?.[0]?.sourceType === 'theme') {
       // Theme-sourced binding: read from the generated theme memo

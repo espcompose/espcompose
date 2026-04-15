@@ -20,6 +20,7 @@ type MappingEntry =
   | { kind: 'shorthand'; lvglProps: readonly string[] }
   | { kind: 'transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> }
   | { kind: 'layout'; lvglProp: string }
+  | { kind: 'layout-shorthand'; lvglProps: readonly string[] }
   | { kind: 'layout-transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> }
   | { kind: 'layout-array'; lvglProp: string }
   | { kind: 'flat-transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> };
@@ -82,10 +83,10 @@ const _cssToLvglMap = {
   paddingHorizontal:    { kind: 'shorthand', lvglProps: ['padLeft', 'padRight'] },
   paddingVertical:      { kind: 'shorthand', lvglProps: ['padTop', 'padBottom'] },
 
-  // ── Gap (flex layout) ──────────────────────────────────────────────────
-  gap:                  { kind: 'shorthand', lvglProps: ['padRow', 'padColumn'] },
-  rowGap:               { kind: 'direct', lvglProp: 'padRow' },
-  columnGap:            { kind: 'direct', lvglProp: 'padColumn' },
+  // ── Gap (flex/grid layout — these go inside the layout block) ──────────
+  gap:                  { kind: 'layout-shorthand', lvglProps: ['padRow', 'padColumn'] },
+  rowGap:               { kind: 'layout', lvglProp: 'padRow' },
+  columnGap:            { kind: 'layout', lvglProp: 'padColumn' },
 
   // ── Text ───────────────────────────────────────────────────────────────
   font:                 { kind: 'direct', lvglProp: 'textFont' },
@@ -269,6 +270,10 @@ export function expandCssProps(
       for (const lvglProp of mapping.lvglProps) {
         result[lvglProp] = value;
       }
+    } else if (mapping?.kind === 'layout-shorthand') {
+      for (const lvglProp of mapping.lvglProps) {
+        layoutBag[lvglProp] = value;
+      }
     }
   }
 
@@ -328,6 +333,9 @@ export function expandCssProps(
       } else {
         layoutBag[mapping.lvglProp] = value;
       }
+    } else if (mapping?.kind === 'layout') {
+      // Layout block direct prop (padRow, padColumn — gap spacing)
+      layoutBag[mapping.lvglProp] = value;
     } else if (mapping?.kind === 'layout-array') {
       // Layout block array prop (gridTemplateColumns, gridTemplateRows)
       if (Array.isArray(value)) {
@@ -335,7 +343,7 @@ export function expandCssProps(
       } else {
         layoutBag[mapping.lvglProp] = value;
       }
-    } else if (mapping?.kind === 'shorthand') {
+    } else if (mapping?.kind === 'shorthand' || mapping?.kind === 'layout-shorthand') {
       // Already handled in pass 1
     } else {
       const suggestion = CSS_SUGGESTION_MAP[key];
@@ -353,6 +361,14 @@ export function expandCssProps(
 
   // Merge layout block if any layout properties were set
   if (Object.keys(layoutBag).length > 0) {
+    // Auto-inject layout type when flex/grid-specific props are used without explicit display
+    if (!layoutBag.type) {
+      if (layoutBag.flexFlow || layoutBag.flexAlignMain || layoutBag.flexAlignCross || layoutBag.flexAlignTrack) {
+        layoutBag.type = 'flex';
+      } else if (layoutBag.gridColumns || layoutBag.gridRows || layoutBag.gridColumnAlign || layoutBag.gridRowAlign) {
+        layoutBag.type = 'grid';
+      }
+    }
     result.layout = layoutBag;
   }
 

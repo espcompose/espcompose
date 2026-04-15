@@ -41,15 +41,15 @@ export { getSecrets, clearSecrets } from './secret';
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
-} from './theme-registry';
+} from './theme/registry';
 export {
   clearReactiveThemeProxy,
   clearThemeNodeCache,
-} from './reactive-theme';
+} from './theme/reactive-proxy';
 export {
   inferValueType,
-} from './theme-signals';
-export type { ThemeLeaf } from './theme-signals';
+} from './theme/signals';
+export type { ThemeLeaf } from './theme/signals';
 
 // ── Reactive property map (compiler dispatch tables) ───────────────────────
 export { REACTIVE_PROPERTY_MAP } from './reactive-properties';
@@ -116,9 +116,9 @@ export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose
 export { secret, SecretValue, isSecretValue } from './secret';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
-export type { FlattenedTheme } from './theme-registry';
-export { createReactiveThemeProxy } from './reactive-theme';
-export { flattenTheme } from './theme-signals';
+export type { FlattenedTheme } from './theme/registry';
+export { createReactiveThemeProxy } from './theme/reactive-proxy';
+export { flattenTheme } from './theme/signals';
 
 // ── HA binding types ───────────────────────────────────────────────────────
 export type {

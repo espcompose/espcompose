@@ -31,8 +31,8 @@ type CardProps = WidgetProps<{
  */
 export const Card = createWidgetComponent(
   (props: CardProps): EspComposeElement => {
-    const padding = useSpacing(props.padding ?? 'md');
-    const radius = useRadius(props.radius ?? 'md');
+    const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
+    const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const theme = useTheme<Theme>();
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;

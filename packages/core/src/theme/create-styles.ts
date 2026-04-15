@@ -10,9 +10,9 @@
 // and deep-merges state/part sub-objects.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { useTheme } from './reactive-theme';
-import type { CssStyle } from './style-types';
-import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from './style-mapping';
+import { useTheme } from './reactive-proxy';
+import type { CssStyle } from '../style-types';
+import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from '../style-mapping';
 
 // ── createStyles ───────────────────────────────────────────────────────────
 

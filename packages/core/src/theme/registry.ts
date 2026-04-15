@@ -9,9 +9,9 @@
 // to push a theme-switch action that sets the C++ theme_index signal.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { flattenTheme } from './theme-signals';
-import type { ThemeLeaf } from './theme-signals';
-import type { BINDING_BRAND } from './types';
+import { flattenTheme } from './signals';
+import type { ThemeLeaf } from './signals';
+import type { BINDING_BRAND } from '../types';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 

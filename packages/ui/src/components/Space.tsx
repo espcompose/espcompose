@@ -47,7 +47,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const flexDir: FlexDirection = props.wrap ? `${baseDir}-wrap` : baseDir;
   const gapKey = isRow ? 'columnGap' : 'rowGap';
   const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-  const padding = props.padding != null ? useSpacing(props.padding) : undefined;
+  const padding = props.padding != null ? useSpacing(props.padding) : props.style?.padding;
   const borderRadius = props.style?.borderRadius;
 
   return (

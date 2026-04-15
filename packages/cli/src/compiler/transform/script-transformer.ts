@@ -317,7 +317,6 @@ function compileAndInjectTriggerHandler(
   }
 
   if (result.diagnostics.length > 0) return;
-  if (result.actions.length === 0) return;
 
   // Collect ref variable names used in the actions (needed for runtime resolution)
   const refNameSet = symbolSetToNameSet(refSymbols);

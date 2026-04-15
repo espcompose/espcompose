@@ -83,8 +83,22 @@ export { useReactive, useReactiveMap } from './reactive-utils';
 // Public API — Theme
 // ────────────────────────────────────────────────────────────────────────────
 
-export { registerTheme, getThemeRegistry, theme } from './theme-registry';
-export { useTheme } from './reactive-theme';
+export { registerTheme, getThemeRegistry, theme } from './theme/registry';
+export { useTheme } from './theme/reactive-proxy';
+
+// Theme — font tokens
+export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './theme/font-token';
+export type { FontToken, FontBpp } from './theme/font-token';
+
+// Theme — font resolver
+export { collectThemeFonts, substituteThemeFonts } from './theme/font-resolver';
+
+// Theme — leaf accessor
+export { themeLeaf } from './theme/theme-leaf';
+
+// Theme — ThemeProvider component
+export { ThemeProvider } from './theme/ThemeProvider';
+export type { ThemeProviderProps } from './theme/ThemeProvider';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — CSS-like Style System
@@ -92,7 +106,7 @@ export { useTheme } from './reactive-theme';
 
 export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage } from './style-types';
 export { expandCssStyle } from './style-mapping';
-export { createStyles, mergeStyles } from './create-styles';
+export { createStyles, mergeStyles } from './theme/create-styles';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Used by theme resolvers

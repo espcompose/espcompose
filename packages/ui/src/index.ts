@@ -19,8 +19,6 @@ export type {
   PartColors,
   FontToken,
   FontBpp,
-  createFontToken,
-  FONT_TOKEN_BRAND,
   SizeDimensions,
   StatusColors,
   SpacingToken,
@@ -29,6 +27,7 @@ export type {
   StatusToken,
   TextVariant,
 } from './theme/types';
+export { createFontToken, FONT_TOKEN_BRAND } from './theme/types';
 
 // Components
 export { Screen } from './components/Screen';

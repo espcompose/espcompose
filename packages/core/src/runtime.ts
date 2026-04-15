@@ -18,8 +18,8 @@ import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
 import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
 import { clearRefRegistry } from './ref-registry';
 import { getSecrets, clearSecrets } from './secret';
-import { clearThemeRegistry, getThemeRegistry } from './theme-registry';
-import { clearReactiveThemeProxy, clearThemeNodeCache } from './reactive-theme';
+import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
+import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory

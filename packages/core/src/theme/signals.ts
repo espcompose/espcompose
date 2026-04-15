@@ -13,7 +13,7 @@
 // compiler can turn into C++ theme value arrays.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { isRef } from './types';
+import { isRef } from '../types';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 

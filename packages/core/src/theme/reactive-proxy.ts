@@ -11,10 +11,10 @@
 // compiler can wire the memo to the theme signal.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isTracking, trackDependency } from './reactive-node';
-import type { IRDependency } from './reactive-node';
-import { getThemeRegistry } from './theme-registry';
-import type { ExprType } from './ir/expr-types';
+import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
+import type { IRDependency } from '../reactive-node';
+import { getThemeRegistry } from './registry';
+import type { ExprType } from '../ir/expr-types';
 
 // ── Node cache ─────────────────────────────────────────────────────────────
 // Shared cache keyed by signal path → IRReactiveNode.

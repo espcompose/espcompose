@@ -207,6 +207,18 @@ export function serializeValue(v: unknown): unknown {
     }
     return result;
   }
+  // Bare function values that the script transformer didn't compile.
+  // This is a build error — the user needs to move the handler to a
+  // JSX attribute or wrap it so the compiler can detect it.
+  if (typeof v === 'function') {
+    const name = (v as { name?: string }).name || '(anonymous)';
+    throw new Error(
+      `Uncompiled function "${name}" encountered during serialization. ` +
+      `Arrow functions used as event handlers must be direct JSX attribute values ` +
+      `(e.g. onPress={() => { ... }}) so the compiler can transform them into actions. ` +
+      `Functions passed through variables, object literals, or arrays are not detected.`,
+    );
+  }
   if (isRef(v)) {
     const token = v.toString();
     if (_captures) _captures.refs.set(token, v);
