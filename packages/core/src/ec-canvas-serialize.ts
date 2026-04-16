@@ -26,6 +26,7 @@ import {
   extractElementProps,
   flattenFragments,
   keysToSnakeCase,
+  setCurrentSource,
   stripUndefined,
 } from './serialize';
 import { expandCssStyle } from './style-mapping';
@@ -186,6 +187,7 @@ function serializeContentZone(
  *   { ec_canvas: { ...hostProps, background_scene: [...], widgets: [...], overlay_scene: [...] } }
  */
 export function ecCanvasToPlain(el: EspComposeElement): Record<string, unknown> {
+  setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
   // Host props: style expansion (same as LVGL widgets)

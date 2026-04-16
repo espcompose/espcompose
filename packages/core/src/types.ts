@@ -11,9 +11,18 @@ import { assertHookContext } from './hooks/useState';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = Record<string, any>> = (props: P) => EspComposeElement | null;
 
+/** Source location injected by the jsxDEV runtime (esbuild jsxDev mode). */
+export interface JsxSourceLocation {
+  fileName: string;
+  lineNumber: number;
+  columnNumber?: number;
+}
+
 export interface EspComposeElement {
   type: string | symbol | FunctionComponent;
   props: Record<string, unknown> & { children?: EspComposeElement[] };
+  /** Original TSX source location (set in dev/build mode by jsxDEV). */
+  __source?: JsxSourceLocation;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

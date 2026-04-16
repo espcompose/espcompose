@@ -1,4 +1,5 @@
 import type { EspComposeElement } from './types';
+import type { JsxSourceLocation } from './types';
 import { isRef } from './types';
 import { isIRReactiveNode } from './reactive-node';
 import type { IRReactiveNode } from './reactive-node';
@@ -31,6 +32,22 @@ export interface SerializationCaptures {
 }
 
 let _captures: SerializationCaptures | null = null;
+
+// ── JSX source tracking ────────────────────────────────────────────────────
+// Set by runtime.ts before serializing each element's props so that errors
+// thrown inside serializeValue() can report the originating TSX location.
+// ────────────────────────────────────────────────────────────────────────────
+let _currentSource: JsxSourceLocation | undefined;
+
+export function setCurrentSource(source: JsxSourceLocation | undefined): void {
+  _currentSource = source;
+}
+
+/** Format a JsxSourceLocation for display in error messages. */
+function formatSource(source: JsxSourceLocation): string {
+  const col = source.columnNumber != null ? `:${source.columnNumber}` : '';
+  return `${source.fileName}:${source.lineNumber}${col}`;
+}
 
 /**
  * Begin capturing pre-serialization data during serializeValue() calls.
@@ -212,8 +229,9 @@ export function serializeValue(v: unknown): unknown {
   // JSX attribute or wrap it so the compiler can detect it.
   if (typeof v === 'function') {
     const name = (v as { name?: string }).name || '(anonymous)';
+    const loc = _currentSource ? ` at ${formatSource(_currentSource)}` : '';
     throw new Error(
-      `Uncompiled function "${name}" encountered during serialization. ` +
+      `Uncompiled function "${name}" encountered during serialization${loc}. ` +
       `Arrow functions used as event handlers must be direct JSX attribute values ` +
       `(e.g. onPress={() => { ... }}) so the compiler can transform them into actions. ` +
       `Functions passed through variables, object literals, or arrays are not detected.`,

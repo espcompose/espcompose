@@ -13,6 +13,7 @@ import {
   toYamlKey,
   startSerializationCapture,
   stopSerializationCapture,
+  setCurrentSource,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
 import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
@@ -77,6 +78,9 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   if (el.type === Fragment) {
     return toPlainObject(el.props.children as EspComposeElement | EspComposeElement[] | undefined);
   }
+
+  // Track JSX source location so serialization errors can report it.
+  setCurrentSource(el.__source);
 
   const { allProps, children } = extractElementProps(el);
 
