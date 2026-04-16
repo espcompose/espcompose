@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Typography } from 'antd';
 import type { RuntimeNode } from '../runtime';
-import { LvglWidget } from '../renderer/LvglWidget';
+import { LvglWidget } from '../renderer';
 
 const { Text } = Typography;
 

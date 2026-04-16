@@ -11,6 +11,7 @@ ensuring proper integration with ESPHome's framework.
 import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.const import CONF_ID
+from esphome.components.lvgl.defines import get_data, KEY_LV_DEFINES
 
 # Configuration keys
 CONF_FLUSH_BUDGET_US = "flush_budget_us"
@@ -40,11 +41,23 @@ async def to_code(config):
         config: Parsed configuration dictionary containing CONF_FLUSH_BUDGET_US
 
     The generated code:
-    1. Creates a new component instance with configured flush budget
-    2. Registers it with ESPHome via App.register_component()
-    3. Emits a call to espcompose::bootstrap_runtime() to wire the reactive graph
-    4. Component's setup() and loop() are called automatically by ESPHome
+    1. Disables LVGL built-in themes so espcompose controls all widget styling
+    2. Creates a new component instance with configured flush budget
+    3. Registers it with ESPHome via App.register_component()
+    4. Emits a call to espcompose::bootstrap_runtime() to wire the reactive graph
+    5. Component's setup() and loop() are called automatically by ESPHome
     """
+    # Disable LVGL's built-in themes so that all widget styling is controlled
+    # exclusively by espcompose's design system. Without this, ESPHome injects
+    # default padding, colors, borders, and corner radius into every widget.
+    # We write directly to the define data store instead of using add_define()
+    # to avoid "Redefinition" errors when LVGL's own codegen has already
+    # enabled LV_USE_THEME_DEFAULT before our component runs.
+    lv_defines = get_data(KEY_LV_DEFINES)
+    lv_defines["LV_USE_THEME_DEFAULT"] = "0"
+    lv_defines["LV_USE_THEME_SIMPLE"] = "0"
+    lv_defines["LV_THEME_DEFAULT_GROW"] = "0"
+
     var = cg.new_Pvariable(
         config[CONF_ID], config[CONF_FLUSH_BUDGET_US]
     )

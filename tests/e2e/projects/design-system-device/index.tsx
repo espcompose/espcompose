@@ -7,6 +7,7 @@
 import {
   DisplayRef,
   useRef,
+  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
@@ -17,7 +18,6 @@ import {
   Card,
   Slider,
   Switch,
-  ThemeProvider,
   darkTheme,
 } from '@espcompose/ui';
 

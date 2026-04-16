@@ -11,7 +11,7 @@
  *   - Widget bindings for bg_color, text_color, text_font, padding
  *   - theme.select() → theme_index.set(N) + flush() in action lambdas
  */
-import { DisplayRef, useRef, theme } from '@espcompose/core';
+import { DisplayRef, useRef, theme, ThemeProvider } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -20,7 +20,6 @@ import {
   Button,
   Card,
   Slider,
-  ThemeProvider,
   darkTheme,
   lightTheme,
 } from '@espcompose/ui';

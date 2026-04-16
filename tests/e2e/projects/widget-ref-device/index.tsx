@@ -8,13 +8,13 @@ import {
   DisplayRef,
   LvglComponentRef,
   useRef,
+  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
   Button,
   Text,
   VStack,
-  ThemeProvider,
   darkTheme,
 } from '@espcompose/ui';
 

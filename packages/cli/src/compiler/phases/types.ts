@@ -1,5 +1,6 @@
 import type ts from 'typescript';
 import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { SemanticRegistry } from '../transform/semantic-registry.js';
 
 /**
  * Mutable context threaded through the compiler pipeline.
@@ -38,6 +39,8 @@ export interface PhaseContext {
   secrets?: ReadonlyMap<string, string>;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
+  /** Per-file semantic analysis registries (set by transform phase, analysis-only). */
+  semanticAnalysis?: Map<string, SemanticRegistry>;
 }
 
 /**

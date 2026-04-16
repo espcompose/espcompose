@@ -201,7 +201,7 @@ import { mergeStyles } from '@espcompose/core';
 
 ### Register Themes
 
-Register named themes via `registerTheme()` or `<ThemeProvider>` from `@espcompose/ui`.
+Register named themes via `registerTheme()` or `<ThemeProvider>` from `@espcompose/core`.
 The first registered theme is the default.
 
 ```tsx
@@ -220,7 +220,8 @@ registerTheme('light', {
 Or with `@espcompose/ui`:
 
 ```tsx
-import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/ui';
+import { ThemeProvider } from '@espcompose/core';
+import { darkTheme, lightTheme } from '@espcompose/ui';
 
 <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
   {/* children */}

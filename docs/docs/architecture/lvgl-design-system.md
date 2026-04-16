@@ -211,7 +211,8 @@ The `style` prop on any component accepts CSS-like layout properties (`display`,
 Themes are registered at compile time and switchable at runtime:
 
 ```tsx
-import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/ui';
+import { ThemeProvider } from '@espcompose/core';
+import { darkTheme, lightTheme } from '@espcompose/ui';
 
 <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
   <Screen>

@@ -10,13 +10,13 @@ import {
   LvglComponentRef,
   Ref,
   useRef,
+  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
   Button,
   Text,
   VStack,
-  ThemeProvider,
   darkTheme,
   lightTheme,
 } from '@espcompose/ui';

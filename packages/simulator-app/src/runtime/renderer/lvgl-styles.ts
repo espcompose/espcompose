@@ -584,6 +584,9 @@ function applyLayoutStyles(
     if (layout.flex_align_cross) {
       const align = mapFlexAlignCross(layout.flex_align_cross);
       if (align) parts.push(`align-items: ${align}`);
+    } else {
+      // LVGL defaults to LV_FLEX_ALIGN_START; CSS defaults to stretch.
+      parts.push('align-items: flex-start');
     }
 
     if (layout.flex_align_track) {

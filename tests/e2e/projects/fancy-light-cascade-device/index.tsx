@@ -16,13 +16,12 @@
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, theme } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
   VStack,
   Button,
-  ThemeProvider,
   darkTheme,
   lightTheme,
 } from '@espcompose/ui';

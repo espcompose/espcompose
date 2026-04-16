@@ -10,9 +10,6 @@
  * without depending on @espcompose/ui.
  */
 
-// Re-export font token primitives from core
-export { FONT_TOKEN_BRAND, createFontToken } from '@espcompose/core';
-export type { FontToken, FontBpp } from '@espcompose/core';
 
 import type { FontToken } from '@espcompose/core';
 
