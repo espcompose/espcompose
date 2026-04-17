@@ -38,6 +38,12 @@ export interface ExprAnalysis {
   readsSignals: boolean;
   /** True when the expression reads from an IRReactiveNode (memo). */
   readsMemos: boolean;
+  /**
+   * True when the expression is a direct Signal-typed identifier or property
+   * access that the reactive transformer would skip (runtime handles it via
+   * IRReactiveNode). Used to suppress false-positive DerivedFindings.
+   */
+  isDirectPassthrough: boolean;
   /** Signal/dependency identifiers discovered during analysis. */
   dependencyIds: string[];
   /** Human-readable notes for debug inspection. */

@@ -256,11 +256,11 @@ describe('analyzeExpression', () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 describe('mergeClassifications', () => {
-  const s: ExprAnalysis = { kind: 'static', isPure: true, readsSignals: false, readsMemos: false, dependencyIds: [], notes: [] };
-  const r: ExprAnalysis = { kind: 'render', isPure: true, readsSignals: false, readsMemos: false, dependencyIds: [], notes: [] };
-  const rx: ExprAnalysis = { kind: 'reactive', isPure: true, readsSignals: true, readsMemos: false, dependencyIds: ['dep1'], notes: [] };
-  const imp: ExprAnalysis = { kind: 'impure', isPure: false, readsSignals: false, readsMemos: false, dependencyIds: [], notes: [] };
-  const unk: ExprAnalysis = { kind: 'unknown', isPure: false, readsSignals: false, readsMemos: false, dependencyIds: [], notes: [] };
+  const s: ExprAnalysis = { kind: 'static', isPure: true, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: [] };
+  const r: ExprAnalysis = { kind: 'render', isPure: true, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: [] };
+  const rx: ExprAnalysis = { kind: 'reactive', isPure: true, readsSignals: true, readsMemos: false, isDirectPassthrough: false, dependencyIds: ['dep1'], notes: [] };
+  const imp: ExprAnalysis = { kind: 'impure', isPure: false, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: [] };
+  const unk: ExprAnalysis = { kind: 'unknown', isPure: false, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: [] };
 
   it('static + static = static', () => {
     expect(mergeClassifications(s, s).kind).toBe('static');

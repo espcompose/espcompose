@@ -73,30 +73,31 @@ interface AnalysisContext {
 // ────────────────────────────────────────────────────────────────────────────
 
 function staticAnalysis(notes?: string[]): ExprAnalysis {
-  return { kind: 'static', isPure: true, readsSignals: false, readsMemos: false, dependencyIds: [], notes: notes ?? [] };
+  return { kind: 'static', isPure: true, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: notes ?? [] };
 }
 
 function renderAnalysis(notes?: string[]): ExprAnalysis {
-  return { kind: 'render', isPure: true, readsSignals: false, readsMemos: false, dependencyIds: [], notes: notes ?? [] };
+  return { kind: 'render', isPure: true, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: notes ?? [] };
 }
 
-function reactiveAnalysis(opts: { readsSignals?: boolean; readsMemos?: boolean; dependencyIds?: string[]; notes?: string[] }): ExprAnalysis {
+function reactiveAnalysis(opts: { readsSignals?: boolean; readsMemos?: boolean; isDirectPassthrough?: boolean; dependencyIds?: string[]; notes?: string[] }): ExprAnalysis {
   return {
     kind: 'reactive',
     isPure: true,
     readsSignals: opts.readsSignals ?? false,
     readsMemos: opts.readsMemos ?? false,
+    isDirectPassthrough: opts.isDirectPassthrough ?? false,
     dependencyIds: opts.dependencyIds ?? [],
     notes: opts.notes ?? [],
   };
 }
 
 function impureAnalysis(notes?: string[]): ExprAnalysis {
-  return { kind: 'impure', isPure: false, readsSignals: false, readsMemos: false, dependencyIds: [], notes: notes ?? [] };
+  return { kind: 'impure', isPure: false, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: notes ?? [] };
 }
 
 function unknownAnalysis(notes?: string[]): ExprAnalysis {
-  return { kind: 'unknown', isPure: false, readsSignals: false, readsMemos: false, dependencyIds: [], notes: notes ?? [] };
+  return { kind: 'unknown', isPure: false, readsSignals: false, readsMemos: false, isDirectPassthrough: false, dependencyIds: [], notes: notes ?? [] };
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -134,6 +135,9 @@ export function mergeClassifications(a: ExprAnalysis, b: ExprAnalysis): ExprAnal
     isPure: a.isPure && b.isPure,
     readsSignals: a.readsSignals || b.readsSignals,
     readsMemos: a.readsMemos || b.readsMemos,
+    // A merged expression is never a direct passthrough — only bare
+    // identifiers / property accesses qualify.
+    isDirectPassthrough: false,
     dependencyIds: [...a.dependencyIds, ...b.dependencyIds],
     notes: [...a.notes, ...b.notes],
   };
@@ -358,7 +362,7 @@ function analyzeIdentifier(expr: ts.Identifier, ctx: AnalysisContext): ExprAnaly
   const type = ctx.checker.getTypeAtLocation(expr);
 
   if (hasSignalBrand(type)) {
-    return reactiveAnalysis({ readsSignals: true, notes: [`signal: ${expr.text}`] });
+    return reactiveAnalysis({ readsSignals: true, isDirectPassthrough: true, notes: [`signal: ${expr.text}`] });
   }
 
   if (hasReactiveNodeBrand(type)) {
@@ -400,6 +404,7 @@ function analyzePropertyAccess(expr: ts.PropertyAccessExpression, ctx: AnalysisC
     const depId = resolvePropertyDependencyId(expr, ctx);
     return reactiveAnalysis({
       readsSignals: true,
+      isDirectPassthrough: true,
       dependencyIds: depId ? [depId] : [],
       notes: [`signal read: ${expr.getText(ctx.sourceFile)}`],
     });
@@ -658,7 +663,9 @@ function analyzeJsxAttributeExpr(
   const topClassification = analyzeExpression(expr, ctx);
 
   // Check if top-level is a derived/memo candidate
-  if (topClassification.kind === 'reactive' && topClassification.isPure) {
+  // Skip direct signal passthroughs — the reactive transformer skips these
+  // (runtime handles IRReactiveNode directly) so they are not memo candidates.
+  if (topClassification.kind === 'reactive' && topClassification.isPure && !topClassification.isDirectPassthrough) {
     const { line, character } = ctx.sourceFile.getLineAndCharacterOfPosition(expr.getStart(ctx.sourceFile));
     ctx.registry.derivedFindings.push({
       node: expr,
@@ -704,7 +711,7 @@ function analyzeJsxAttributeExpr(
         !ts.isArrowFunction(childExpr) && !ts.isFunctionExpression(childExpr) &&
         !ts.isObjectLiteralExpression(childExpr) && !ts.isArrayLiteralExpression(childExpr)) {
       const childClassification = analyzeExpression(childExpr, ctx);
-      if (childClassification.kind === 'reactive' && childClassification.isPure) {
+      if (childClassification.kind === 'reactive' && childClassification.isPure && !childClassification.isDirectPassthrough) {
         const { line, character } = ctx.sourceFile.getLineAndCharacterOfPosition(
           childExpr.getStart(ctx.sourceFile),
         );
@@ -734,7 +741,8 @@ function analyzeVariableInitializer(
   const classification = analyzeExpression(expr, ctx);
 
   // Record variable initializers that are reactive+pure as derived findings
-  if (classification.kind === 'reactive' && classification.isPure) {
+  // Skip direct signal passthroughs — runtime handles these without compilation.
+  if (classification.kind === 'reactive' && classification.isPure && !classification.isDirectPassthrough) {
     const { line, character } = ctx.sourceFile.getLineAndCharacterOfPosition(
       expr.getStart(ctx.sourceFile),
     );
@@ -798,13 +806,16 @@ export function formatRegistrySummary(registry: SemanticRegistry): string {
 
   // Expression classification summary
   const counts: Record<ExprKind, number> = { static: 0, render: 0, reactive: 0, impure: 0, unknown: 0 };
+  let passthroughCount = 0;
   for (const analysis of registry.exprAnalyses.values()) {
     counts[analysis.kind]++;
+    if (analysis.isDirectPassthrough) passthroughCount++;
   }
   const total = registry.exprAnalyses.size;
   lines.push(
     `Expressions: ${total} analyzed ` +
-    `(${counts.static} static, ${counts.render} render, ${counts.reactive} reactive, ` +
+    `(${counts.static} static, ${counts.render} render, ${counts.reactive} reactive` +
+    `${passthroughCount > 0 ? ` [${passthroughCount} passthrough]` : ''}, ` +
     `${counts.impure} impure, ${counts.unknown} unknown)`,
   );
   lines.push('');
