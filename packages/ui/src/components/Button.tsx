@@ -6,8 +6,8 @@
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, WidgetProps, Reactive } from '@espcompose/core';
-import { createWidgetComponent, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
+import type { TriggerHandler, WidgetProps, Reactive } from '@espcompose/core';
+import { createWidget, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
 import { useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
@@ -71,8 +71,8 @@ function useButtonVariant(
  * <Button text="Toggle Light" status="primary" size="lg" />
  * <Button text="Delete" status="danger" variant="outline" />
  */
-export const Button = createWidgetComponent(
-  (props: ButtonProps): EspComposeElement => {
+export const Button = createWidget<ButtonProps>(
+  (props) => {
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');
     const vs = useButtonVariant(props.variant ?? 'solid', sc);

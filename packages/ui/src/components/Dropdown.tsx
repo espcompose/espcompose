@@ -5,8 +5,8 @@
  * Label uses `ds-text-primary` style reference.
  */
 
-import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme } from '@espcompose/core';
+import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
+import { createWidget, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { SpacingToken, Theme } from '../theme/types';
@@ -32,8 +32,8 @@ export type DropdownProps = WidgetProps<{
  * @example
  * <Dropdown label="Mode" options={"Auto\nCool\nHeat"} />
  */
-export const Dropdown = createWidgetComponent(
-  (props: DropdownProps): EspComposeElement => {
+export const Dropdown = createWidget<DropdownProps>(
+  (props) => {
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();

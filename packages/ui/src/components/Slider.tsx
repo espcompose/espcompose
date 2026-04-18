@@ -6,8 +6,8 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme } from '@espcompose/core';
+import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
+import { createWidget, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { SpacingToken, Theme } from '../theme/types';
@@ -35,8 +35,8 @@ export type SliderProps = WidgetProps<{
  * @example
  * <Slider label="Brightness" min={0} max={255} />
  */
-export const Slider = createWidgetComponent(
-  (props: SliderProps): EspComposeElement => {
+export const Slider = createWidget<SliderProps>(
+  (props) => {
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();

@@ -7,55 +7,67 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createWidget, LVGL_INTENTS } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
-/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-function ActionButton(props: {
+interface ActionButtonProps {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
-}) {
-  const { onRelease, children, x, y, width, height } = props;
-  return (
-    <lvgl-button
-      style={{ left: x, top: y, width, height }}
-      x:custom={onRelease != null ? { on_release: onRelease } : undefined}
-    >
-      {children}
-    </lvgl-button>
-  );
+}
+
+/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
+const ActionButton = createWidget(
+  (props: ActionButtonProps) => {
+    const { onRelease, children, x, y, width, height } = props;
+    return (
+      <lvgl-button
+        style={{ left: x, top: y, width, height }}
+        x:custom={onRelease != null ? { on_release: onRelease } : undefined}
+      >
+        {children}
+      </lvgl-button>
+    );
+  },
+  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
+);
+
+interface HALightControlProps {
+  entity: string;
+  label: string;
 }
 
 /**
  * Dynamic HA light component — receives entity ID as a prop.
  * Uses the domain-hint overload to get a typed LightBinding.
  */
-function HALightControl(props: { entity: string; label: string }) {
-  const light = useHAEntity(props.entity, { domain: 'light' });
+const HALightControl = createWidget(
+  (props: HALightControlProps) => {
+    const light = useHAEntity(props.entity, { domain: 'light' });
 
-  return (
-    <>
-      {/* Reactive state passthrough */}
-      <lvgl-label
-        style={{ left: 10, top: 10 }}
-        text={light.stateText}
-      />
+    return (
+      <>
+        {/* Reactive state passthrough */}
+        <lvgl-label
+          style={{ left: 10, top: 10 }}
+          text={light.stateText}
+        />
 
-      {/* Action with dynamic entity */}
-      <ActionButton
-        x={10}
-        y={40}
-        width={120}
-        height={50}
-        onRelease={() => {
-          light.toggle();
-        }}
-      >
-        <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
-      </ActionButton>
-    </>
-  );
-}
+        {/* Action with dynamic entity */}
+        <ActionButton
+          x={10}
+          y={40}
+          width={120}
+          height={50}
+          onRelease={() => {
+            light.toggle();
+          }}
+        >
+          <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
+        </ActionButton>
+      </>
+    );
+  },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();

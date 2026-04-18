@@ -11,12 +11,14 @@
 
 import { ESLintUtils } from '@typescript-eslint/utils';
 import type { TSESTree } from '@typescript-eslint/utils';
+import type ts from 'typescript';
 import {
   resolveElementIntents,
   findConstrainingParent,
   findNearestContext,
   getJSXTagName,
   isIntrinsicElement,
+  resolveIntentsFromType,
   type ResolvedIntents,
 } from '../utils/intent-resolver';
 
@@ -59,14 +61,56 @@ export default createRule<[], MessageIds>({
     // Maps component variable name → resolved intents or null (unbranded).
     const componentIntentCache = new Map<string, ResolvedIntents | null>();
 
+    // Try to get TypeScript type checker for type-aware intent detection
+    let checker: ts.TypeChecker | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let services: any;
+    try {
+      services = ESLintUtils.getParserServices(context, true);
+      if (services?.program) {
+        checker = services.program.getTypeChecker();
+      }
+    } catch {
+      // No type info available — unbranded components will be flagged
+    }
+
+    /**
+     * Ensure a component element's intents are resolved in the cache.
+     * Uses the TypeScript type checker when available to detect IntentBrand.
+     */
+    function ensureComponentResolved(openingElement: TSESTree.JSXOpeningElement): void {
+      const tagName = getJSXTagName(openingElement);
+      if (isIntrinsicElement(tagName)) return;
+      if (componentIntentCache.has(tagName)) return;
+
+      if (!checker || !services?.esTreeNodeToTSNodeMap) {
+        componentIntentCache.set(tagName, null);
+        return;
+      }
+
+      const tsNode = services.esTreeNodeToTSNodeMap.get(openingElement.name);
+      if (!tsNode) {
+        componentIntentCache.set(tagName, null);
+        return;
+      }
+
+      const type = checker.getTypeAtLocation(tsNode);
+      const resolved = resolveIntentsFromType(type, checker);
+      componentIntentCache.set(tagName, resolved);
+    }
+
     return {
       JSXElement(node: TSESTree.JSXElement) {
+        // Ensure the current element's intents are resolved (for ancestor lookups)
+        ensureComponentResolved(node.openingElement);
+
         const { children } = node;
 
         for (const child of children) {
           if (child.type !== 'JSXElement') continue;
 
           const childOpeningElement = child.openingElement;
+          ensureComponentResolved(childOpeningElement);
           const childTagName = getJSXTagName(childOpeningElement);
           const childResolved = resolveElementIntents(childOpeningElement, componentIntentCache);
 
@@ -83,19 +127,15 @@ export default createRule<[], MessageIds>({
 
             if (!childResolved) {
               // Child is unbranded but parent requires specific intents
-              // Only report if the child is an intrinsic element (function components
-              // without branding are pass-through for backwards compat)
-              if (isIntrinsicElement(childTagName)) {
-                context.report({
-                  node: childOpeningElement,
-                  messageId: 'noIntentsOnChild',
-                  data: {
-                    childTag: childTagName,
-                    parentTag: parentTagName,
-                    allowedIntents: allowed.join(', '),
-                  },
-                });
-              }
+              context.report({
+                node: childOpeningElement,
+                messageId: 'noIntentsOnChild',
+                data: {
+                  childTag: childTagName,
+                  parentTag: parentTagName,
+                  allowedIntents: allowed.join(', '),
+                },
+              });
             } else {
               // Check intersection: child.intents ∩ parent.allowedChildIntents
               const hasMatch = childResolved.intents.some((intent) => allowed.includes(intent));
@@ -124,17 +164,15 @@ export default createRule<[], MessageIds>({
             const contextTagName = getJSXTagName(contextElement.openingElement);
 
             if (!childResolved) {
-              if (isIntrinsicElement(childTagName)) {
-                context.report({
-                  node: childOpeningElement,
-                  messageId: 'noIntentsForContext',
-                  data: {
-                    childTag: childTagName,
-                    requiredContext: requiredContext.join(', '),
-                    contextTag: contextTagName,
-                  },
-                });
-              }
+              context.report({
+                node: childOpeningElement,
+                messageId: 'noIntentsForContext',
+                data: {
+                  childTag: childTagName,
+                  requiredContext: requiredContext.join(', '),
+                  contextTag: contextTagName,
+                },
+              });
             } else {
               // Check that child's intents include all required context values
               const missingContext = requiredContext.filter(

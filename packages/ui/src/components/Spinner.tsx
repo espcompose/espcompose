@@ -9,8 +9,8 @@
  * milliseconds and converts it automatically.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useReactiveMap } from '@espcompose/core';
+import type { WidgetProps } from '@espcompose/core';
+import { createWidget, useReactiveMap } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import type { SizeToken, StatusToken } from '../theme/types';
 
@@ -50,8 +50,8 @@ export type SpinnerProps = WidgetProps<{
  * <Spinner />
  * <Spinner status="success" size="lg" duration={800} />
  */
-export const Spinner = createWidgetComponent(
-  (props: SpinnerProps): EspComposeElement => {
+export const Spinner = createWidget<SpinnerProps>(
+  (props) => {
     const sc = useStatus(props.status ?? 'primary');
     const px = useReactiveMap(props.size ?? 'md', (v) => SPINNER_SIZE[v]);
     const arcWidth = useReactiveMap(props.size ?? 'md', (v) => SPINNER_ARC_WIDTH[v]);

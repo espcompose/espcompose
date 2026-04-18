@@ -10,8 +10,8 @@
  * Grid children are positioned via grid cell style props.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -36,8 +36,7 @@ type GridContainerAlign = GridAlign | 'spaceBetween' | 'spaceAround' | 'spaceEve
 // Grid
 // ────────────────────────────────────────────────────────────────────────────
 
-type GridProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type GridProps = WidgetPropsWithChildren<{
   /** Column track definitions. E.g. ['fr(1)', 'fr(2)', 200] */
   columns: TrackSize[];
   /** Row track definitions. E.g. ['fr(1)', 100] */
@@ -54,6 +53,21 @@ type GridProps = WidgetProps<{
   alignRows?: GridContainerAlign;
 }, 'columns' | 'rows'>;
 
+type GridItemProps = WidgetPropsWithChildren<{
+  /** Column position (0-based). */
+  col: number;
+  /** Row position (0-based). */
+  row: number;
+  /** Number of columns to span. Default: 1. */
+  colSpan?: number;
+  /** Number of rows to span. Default: 1. */
+  rowSpan?: number;
+  /** Column alignment override. */
+  colAlign?: GridAlign;
+  /** Row alignment override. */
+  rowAlign?: GridAlign;
+}>;
+
 /**
  * Grid — a native CSS Grid container for LVGL.
  *
@@ -64,8 +78,9 @@ type GridProps = WidgetProps<{
  *   <GridItem col={0} row={1} colSpan={2}><Text text="Full bottom" /></GridItem>
  * </Grid>
  */
-export const Grid = createWidgetComponent(
-  (props: GridProps): EspComposeElement => {
+export const [Grid, GridItem] = createLayoutWidget(
+  COMPOSE_UI_INTENTS.GRID_ITEM,
+  (props: GridProps) => {
     const colGap = props.columnGap != null
       ? useSpacing(props.columnGap)
       : props.gap != null ? useSpacing(props.gap) : undefined;
@@ -95,42 +110,7 @@ export const Grid = createWidgetComponent(
       </lvgl-obj>
     );
   },
-  {
-    allowedChildIntents: [COMPOSE_UI_INTENTS.GRID_ITEM] as const,
-    contextTransparent: true as const,
-  },
-);
-
-// ────────────────────────────────────────────────────────────────────────────
-// GridItem
-// ────────────────────────────────────────────────────────────────────────────
-
-type GridItemProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
-  /** Column position (0-based). */
-  col: number;
-  /** Row position (0-based). */
-  row: number;
-  /** Number of columns to span. Default: 1. */
-  colSpan?: number;
-  /** Number of rows to span. Default: 1. */
-  rowSpan?: number;
-  /** Column alignment override. */
-  colAlign?: GridAlign;
-  /** Row alignment override. */
-  rowAlign?: GridAlign;
-}>;
-
-/**
- * GridItem — positions a child within a Grid.
- *
- * @example
- * <GridItem col={0} row={0} colSpan={2}>
- *   <Text text="Spans two columns" />
- * </GridItem>
- */
-export const GridItem = createWidgetComponent(
-  (props: GridItemProps): EspComposeElement => {
+  (props: GridItemProps) => {
     return (
       <lvgl-obj
         style={{
@@ -148,10 +128,5 @@ export const GridItem = createWidgetComponent(
         {props.children}
       </lvgl-obj>
     );
-  },
-  {
-    additionalIntents: [COMPOSE_UI_INTENTS.GRID_ITEM] as const,
-    allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
-    contextTransparent: true as const,
   },
 );

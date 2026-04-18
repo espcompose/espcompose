@@ -15,6 +15,7 @@ import type { EspComposeElement } from '../types';
 import { createElement, Fragment } from '../runtime';
 import { registerTheme, getThemeRegistry } from './registry';
 import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
+import { createWidget } from '../intents';
 
 export interface ThemeProviderProps<T extends object = Record<string, unknown>> {
   /** Map of theme name → theme object. */
@@ -37,7 +38,7 @@ export interface ThemeProviderProps<T extends object = Record<string, unknown>> 
  * `(file, size, bpp)` triple, and substitutes the `FontToken` with the
  * resulting `Ref<FontRef>` before the theme is flattened.
  */
-export function ThemeProvider<T extends object>(
+function ThemeProviderImpl<T extends object>(
   props: ThemeProviderProps<T>,
 ): EspComposeElement {
   const registry = getThemeRegistry();
@@ -73,3 +74,13 @@ export function ThemeProvider<T extends object>(
 
   return createElement(Fragment, { children });
 }
+
+/**
+ * Theme provider branded as an LVGL widget so it can sit inside `<lvgl>`.
+ * `allowedChildIntents: undefined` makes it transparent — children are
+ * validated against the next constraining ancestor instead.
+ */
+export const ThemeProvider = createWidget(
+  ThemeProviderImpl as (props: ThemeProviderProps<object>) => EspComposeElement,
+  { allowedChildIntents: undefined, contextTransparent: true as const },
+);

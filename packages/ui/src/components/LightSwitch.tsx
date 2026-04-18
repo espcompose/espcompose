@@ -5,8 +5,8 @@
  * The caller provides the binding (e.g. from useHAEntity).
  */
 
-import type { EspComposeElement, SizeValue, LightBinding, SwitchBinding, FanBinding, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent } from '@espcompose/core';
+import type { SizeValue, LightBinding, SwitchBinding, FanBinding, WidgetProps } from '@espcompose/core';
+import { createWidget } from '@espcompose/core';
 import { Switch } from './Switch';
 
 type LightSwitchProps = WidgetProps<{
@@ -25,8 +25,8 @@ type LightSwitchProps = WidgetProps<{
  * const light = useHAEntity('light.office');
  * <LightSwitch binding={light} label="Office" />
  */
-export const LightSwitch = createWidgetComponent(
-  (props: LightSwitchProps): EspComposeElement => {
+export const LightSwitch = createWidget<LightSwitchProps>(
+  (props) => {
     return (
       <Switch
         label={props.label}

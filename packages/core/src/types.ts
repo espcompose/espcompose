@@ -308,7 +308,7 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 
 // Re-export types for use by generated code
-export type { Reactive, WidgetProps } from './reactive-utils';
+export type { Reactive, WidgetProps, WidgetPropsWithChildren } from './reactive-utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX namespace — base declaration only.

@@ -11,8 +11,8 @@
  * Gutter is emitted as `columnGap` / `rowGap` in the Row's style.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -24,8 +24,7 @@ import type { SpacingToken } from '../theme/types';
 type FlexAlign = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
 type CrossAlign = 'start' | 'center' | 'end' | 'stretch';
 
-type RowProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type RowProps = WidgetPropsWithChildren<{
   /** Horizontal gutter (space between columns). Token or tuple of [horizontal, vertical] tokens. */
   gutter?: SpacingToken | [SpacingToken, SpacingToken];
   /** Main-axis justify. Default: 'start'. */
@@ -36,6 +35,16 @@ type RowProps = WidgetProps<{
   wrap?: boolean;
 }, 'gutter'>;
 
+type ColProps = WidgetPropsWithChildren<{
+  /**
+   * Proportional width (flexGrow value).
+   * Like AntD's `span` but using flexGrow instead of a 24-column grid.
+   * A Col with span={2} takes twice the space of span={1}.
+   * Default: 1.
+   */
+  span?: number;
+}>;
+
 /**
  * Row — a horizontal flex container that wraps children.
  *
@@ -45,8 +54,9 @@ type RowProps = WidgetProps<{
  *   <Col span={12}><Text text="Right" /></Col>
  * </Row>
  */
-export const Row = createWidgetComponent(
-  (props: RowProps): EspComposeElement => {
+export const [Row, Col] = createLayoutWidget(
+  COMPOSE_UI_INTENTS.COL,
+  (props: RowProps) => {
     const wrap = props.wrap !== false;
     const flexDir = wrap ? 'row-wrap' as const : 'row' as const;
 
@@ -80,38 +90,7 @@ export const Row = createWidgetComponent(
       </lvgl-obj>
     );
   },
-  {
-    allowedChildIntents: [COMPOSE_UI_INTENTS.COL] as const,
-    contextTransparent: true as const,
-  },
-);
-
-// ────────────────────────────────────────────────────────────────────────────
-// Col
-// ────────────────────────────────────────────────────────────────────────────
-
-type ColProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
-  /**
-   * Proportional width (flexGrow value).
-   * Like AntD's `span` but using flexGrow instead of a 24-column grid.
-   * A Col with span={2} takes twice the space of span={1}.
-   * Default: 1.
-   */
-  span?: number;
-}>;
-
-/**
- * Col — a column within a Row that uses `flexGrow` for proportional sizing.
- *
- * @example
- * <Row gutter="sm">
- *   <Col span={1}><Text text="1/3" /></Col>
- *   <Col span={2}><Text text="2/3" /></Col>
- * </Row>
- */
-export const Col = createWidgetComponent(
-  (props: ColProps): EspComposeElement => {
+  (props: ColProps) => {
     const span = props.span ?? 1;
 
     return (
@@ -128,10 +107,5 @@ export const Col = createWidgetComponent(
         {props.children}
       </lvgl-obj>
     );
-  },
-  {
-    additionalIntents: [COMPOSE_UI_INTENTS.COL] as const,
-    allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
-    contextTransparent: true as const,
   },
 );

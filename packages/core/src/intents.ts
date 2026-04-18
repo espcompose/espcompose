@@ -85,7 +85,7 @@ export interface IntentBrandOptions<
  * @returns A branded IntentComponent
  *
  * @example
- * const Screen = createIntentComponent(
+ * const Screen = createComponent(
  *   (props: ScreenProps) => <lvgl-page>{props.children}</lvgl-page>,
  *   {
  *     intents: ['compose-ui:screen', 'lvgl:widget'] as const,
@@ -93,7 +93,7 @@ export interface IntentBrandOptions<
  *   }
  * );
  */
-export function createIntentComponent<
+export function createComponent<
   P,
   I extends readonly string[],
   A extends readonly string[] | undefined,
@@ -118,34 +118,47 @@ export function createIntentComponent<
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Create an LVGL widget component with sensible defaults.
+ * Create an LVGL leaf widget component with sensible defaults.
  *
  * Defaults:
  * - `intents: [LVGL_INTENTS.WIDGET]`
  * - `allowedChildIntents: []`
  * - no `contextTransparent`
  *
- * Pass an optional `overrides` object to change any of these (e.g. to
- * allow child widgets for container-style components, or declare
- * additional intents like `COMPOSE_UI_INTENTS.COL`).
+ * Pass an optional `overrides` object to change any of these.
+ *
+ * For container widgets that accept any widget children, use
+ * {@link createContainerWidget} instead.
+ *
+ * For paired parent/child layout components (e.g. Row/Col),
+ * use {@link createLayoutWidget} instead.
  *
  * @example
- * // Leaf widget — zero config:
- * const Switch = createWidgetComponent((props: SwitchProps) => { … });
- *
- * // Container widget:
- * const Card = createWidgetComponent(
- *   (props: CardProps) => { … },
- *   { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const, contextTransparent: true as const },
- * );
- *
- * // Widget with additional intents (e.g. Col inside Row):
- * const Col = createWidgetComponent(
- *   (props: ColProps) => { … },
- *   { additionalIntents: [COMPOSE_UI_INTENTS.COL] as const },
- * );
+ * type SwitchProps = WidgetProps<{ value?: boolean }>;
+ * const Switch = createWidget<SwitchProps>((props) => { … });
  */
-export function createWidgetComponent<
+
+/** Leaf widget (no overrides) — use explicit generic `<P>`. */
+export function createWidget<P>(
+  component: FunctionComponent<P>,
+): IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [], undefined, undefined>;
+
+/** Widget with overrides — `P` is inferred from the annotated function parameter. */
+export function createWidget<
+  P,
+  Extra extends readonly string[] = readonly [],
+  A extends readonly string[] | undefined = readonly [],
+  CT extends boolean | undefined = undefined,
+>(
+  component: FunctionComponent<P>,
+  overrides: {
+    additionalIntents?: Extra;
+    allowedChildIntents?: A;
+    contextTransparent?: CT;
+  },
+): IntentComponent<P & { ref?: RefProp }, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT>;
+
+export function createWidget<
   P,
   Extra extends readonly string[] = readonly [],
   A extends readonly string[] | undefined = readonly [],
@@ -163,11 +176,75 @@ export function createWidgetComponent<
     LVGL_INTENTS.WIDGET,
   ] as const;
 
-  return createIntentComponent(component, {
+  return createComponent(component, {
     intents: intents as unknown as readonly [...Extra, typeof LVGL_INTENTS.WIDGET],
     allowedChildIntents: (overrides?.allowedChildIntents ?? ([] as const)) as A,
     ...(overrides?.contextTransparent ? { contextTransparent: overrides.contextTransparent } : {}),
   });
+}
+
+/**
+ * Create a container widget — an LVGL widget that accepts child widgets and
+ * is context-transparent.
+ *
+ * Fixed behaviour (not overridable):
+ * - `intents: [LVGL_INTENTS.WIDGET]`
+ * - `allowedChildIntents: [LVGL_INTENTS.WIDGET]`
+ * - `contextTransparent: true`
+ *
+ * Use `createWidget` instead when you need custom `allowedChildIntents`,
+ * `additionalIntents`, or when context-transparency should be disabled.
+ *
+ * @example
+ * type CardProps = WidgetPropsWithChildren<{ padding?: SpacingToken }>;
+ * export const Card = createContainerWidget((props: CardProps) => {
+ *   return <lvgl-obj style={{ padding: props.padding }}>{props.children}</lvgl-obj>;
+ * });
+ */
+export function createContainerWidget<P>(
+  component: FunctionComponent<P>,
+): IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [typeof LVGL_INTENTS.WIDGET], undefined, true> {
+  return createWidget(component, {
+    allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
+    contextTransparent: true as const,
+  });
+}
+
+/**
+ * Create a paired layout parent + child, returning both as a tuple.
+ *
+ * The parent is a container widget that only accepts children matching
+ * `slotIntent`. The child declares `slotIntent` as its sole intent
+ * (it is NOT a general widget) and accepts `[LVGL_INTENTS.WIDGET]` children.
+ * Both are context-transparent.
+ *
+ * @example
+ * const [Row, Col] = createLayoutWidget(
+ *   COMPOSE_UI_INTENTS.COL,
+ *   (props: RowProps) => { … },
+ *   (props: ColProps) => { … },
+ * );
+ */
+export function createLayoutWidget<S extends string, P, C>(
+  slotIntent: S,
+  parent: FunctionComponent<P>,
+  child: FunctionComponent<C>,
+): [
+  IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [S], undefined, true>,
+  IntentComponent<C & { ref?: RefProp }, readonly [S], readonly [typeof LVGL_INTENTS.WIDGET], undefined, true>,
+] {
+  const brandedParent = createWidget(parent, {
+    allowedChildIntents: [slotIntent] as readonly [S],
+    contextTransparent: true as const,
+  });
+
+  const brandedChild = createComponent(child, {
+    intents: [slotIntent] as readonly [S],
+    allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
+    contextTransparent: true as const,
+  });
+
+  return [brandedParent, brandedChild];
 }
 
 export interface IntrinsicIntentMeta {

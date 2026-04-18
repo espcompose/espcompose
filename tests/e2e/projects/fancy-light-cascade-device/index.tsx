@@ -16,7 +16,7 @@
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider, createWidget } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
@@ -36,15 +36,17 @@ interface LightButtonProps {
   onPress?: TriggerHandler;
 }
 
-function LightButton(props: LightButtonProps): EspComposeElement {
-  return (
-    <Button
-      text={props.label}
-      status={props.status}
-      onPress={props.onPress}
-    />
-  );
-}
+const LightButton = createWidget<LightButtonProps>(
+  (props) => {
+    return (
+      <Button
+        text={props.label}
+        status={props.status}
+        onPress={props.onPress}
+      />
+    );
+  },
+);
 
 // ── Layer 2: FancyLightButton ─────────────────────────────────────────────
 // Receives a LightBinding entity and derives reactive label + action locally.
@@ -57,21 +59,23 @@ interface FancyLightButtonProps {
   status: StatusToken;
 }
 
-function FancyLightButton(props: FancyLightButtonProps): EspComposeElement {
-  // useMemo with props.entity.isOn → goes through slot path in expr-compiler
-  const lightLabel = useMemo(
-    () => props.entity.isOn ? 'On' : 'Off',
-  );
+const FancyLightButton = createWidget<FancyLightButtonProps>(
+  (props) => {
+    // useMemo with props.entity.isOn → goes through slot path in expr-compiler
+    const lightLabel = useMemo(
+      () => props.entity.isOn ? 'On' : 'Off',
+    );
 
-  return (
-    <LightButton
-      label={lightLabel}
-      status={props.status}
-      // onPress with props.entity.toggle() → goes through type-based action resolution
-      onPress={() => { props.entity.toggle(); }}
-    />
-  );
-}
+    return (
+      <LightButton
+        label={lightLabel}
+        status={props.status}
+        // onPress with props.entity.toggle() → goes through type-based action resolution
+        onPress={() => { props.entity.toggle(); }}
+      />
+    );
+  },
+);
 
 // ── Layer 1 (top-level): App ──────────────────────────────────────────────
 // Entity bindings created here, then passed as props to inner layers.

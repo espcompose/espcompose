@@ -6,8 +6,8 @@
  * radius from the theme's radius scale.
  */
 
-import type { EspComposeElement, Ref, ImageRef, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useReactiveMap } from '@espcompose/core';
+import type { Ref, ImageRef, WidgetProps } from '@espcompose/core';
+import { createWidget, useReactiveMap } from '@espcompose/core';
 import type { SizeToken, RadiusToken } from '../theme/types';
 import { themeLeaf } from '../hooks/utils';
 
@@ -43,8 +43,8 @@ export type ImageProps = WidgetProps<{
  * <Image src={logo} size="lg" radius="md" />
  * <Image src={logo} />
  */
-export const Image = createWidgetComponent(
-  (props: ImageProps): EspComposeElement => {
+export const Image = createWidget<ImageProps>(
+  (props) => {
     const px = props.size != null
       ? useReactiveMap(props.size, (v) => IMAGE_SIZE[v])
       : undefined;

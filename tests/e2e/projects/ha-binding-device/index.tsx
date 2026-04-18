@@ -5,24 +5,29 @@
  * LVGL widgets with automatic two-way reactive wiring, plus using LVGL
  * button events to trigger HA entity actions.
  */
-import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createWidget, LVGL_INTENTS } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
-/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-function ActionButton(props: {
+interface ActionButtonProps {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
-}) {
-  const { onRelease, children, x, y, width, height } = props;
-  return (
-    <lvgl-button
-      style={{ left: x, top: y, width, height }}
-      x:custom={onRelease != null ? { on_release: onRelease } : undefined}
-    >
-      {children}
-    </lvgl-button>
-  );
 }
+
+/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
+const ActionButton = createWidget(
+  (props: ActionButtonProps) => {
+    const { onRelease, children, x, y, width, height } = props;
+    return (
+      <lvgl-button
+        style={{ left: x, top: y, width, height }}
+        x:custom={onRelease != null ? { on_release: onRelease } : undefined}
+      >
+        {children}
+      </lvgl-button>
+    );
+  },
+  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();

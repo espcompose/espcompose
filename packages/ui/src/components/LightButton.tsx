@@ -5,8 +5,8 @@
  * The caller provides the binding (e.g. from useHAEntity).
  */
 
-import type { EspComposeElement, TriggerHandler, LightBinding, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useMemo } from '@espcompose/core';
+import type { TriggerHandler, LightBinding, WidgetProps } from '@espcompose/core';
+import { createWidget, useMemo } from '@espcompose/core';
 import { Button } from './Button';
 import type { ButtonVariant } from './shared-types';
 import type { StatusToken, SizeToken } from '../theme/types';
@@ -35,8 +35,8 @@ type LightButtonProps = WidgetProps<{
  * const light = useHAEntity('light.office');
  * <LightButton binding={light} label="Office" />
  */
-export const LightButton = createWidgetComponent(
-  (props: LightButtonProps): EspComposeElement => {
+export const LightButton = createWidget<LightButtonProps>(
+  (props) => {
     const text = props.text ?? useMemo(() => (props.binding.isOn ? `${props.label} On` : `${props.label} Off`));
     const onPress = props.onPress ?? (() => { props.binding.toggle(); });
 

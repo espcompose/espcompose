@@ -9,7 +9,7 @@
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
 import { __espcompose } from './__espcompose';
-import type { TriggerHandler, BINDING_BRAND } from './types';
+import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from './types';
 import type { CssStyleProps } from './style-types';
 
 // ── Reactive<T>: the reactive prop type alias ─────────────────────────────
@@ -41,7 +41,8 @@ export type Reactive<T> = T | (() => T) | IRReactiveNode<T>;
  * }>;
  * // → { label: Reactive<string>; value?: Reactive<boolean>; onChange?: TriggerHandler<…>; binding: LightBinding; width?: Reactive<SizeValue>; style?: CssStyleProps }
  */
-export type WidgetProps<T, Skip extends keyof T = never> = {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type WidgetProps<T = {}, Skip extends keyof T = never> = {
   [K in keyof T]: K extends 'children' | 'style' | Skip
     ? T[K]
     : NonNullable<T[K]> extends TriggerHandler<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -50,6 +51,24 @@ export type WidgetProps<T, Skip extends keyof T = never> = {
         ? T[K]
         : Reactive<NonNullable<T[K]>> | Extract<T[K], undefined>;
 } & { style?: CssStyleProps };
+
+/**
+ * Convenience wrapper around `WidgetProps` that automatically includes
+ * `children?: EspComposeElement | EspComposeElement[]`, mirroring React's
+ * `PropsWithChildren` pattern.
+ *
+ * @example
+ * type CardProps = WidgetPropsWithChildren<{
+ *   padding?: SpacingToken;
+ *   radius?: RadiusToken;
+ * }>;
+ * // → { padding?: Reactive<SpacingToken>; radius?: Reactive<RadiusToken>; children?: EspComposeElement | EspComposeElement[]; style?: CssStyleProps }
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type WidgetPropsWithChildren<T = {}, Skip extends keyof T = never> = WidgetProps<
+  T & { children?: EspComposeElement | EspComposeElement[] },
+  Skip
+>;
 
 // ── useReactive ────────────────────────────────────────────────────────────
 

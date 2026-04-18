@@ -4,14 +4,13 @@
  * Compiles to <lvgl-label> with theme-driven typography via reactive tokens.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme, useReactiveMap } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createWidget, useTheme, useReactiveMap } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { TextVariant, StatusToken, Theme } from '../theme/types';
 
-type TextProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type TextProps = WidgetPropsWithChildren<{
   /** Typography variant. Determines font size. Default: 'body'. */
   variant?: TextVariant;
   /** Static text content. Use this or children. */
@@ -31,8 +30,8 @@ type TextProps = WidgetProps<{
  * <Text variant="title">Living Room</Text>
  * <Text variant="caption" color="primary">Last updated: 5m ago</Text>
  */
-export const Text = createWidgetComponent(
-  (props: TextProps): EspComposeElement => {
+export const Text = createWidget<TextProps>(
+  (props) => {
     const variant = props.variant ?? 'body';
     const font = useReactiveMap(variant, (v) => themeLeaf('typography', v));
     const theme = useTheme<Theme>();

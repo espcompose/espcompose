@@ -6,8 +6,8 @@
  * styles from the LVGL `theme:` block.
  */
 
-import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme } from '@espcompose/core';
+import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
+import { createWidget, useTheme } from '@espcompose/core';
 import { themeLeaf } from '../hooks/utils';
 import { Theme } from '../theme/types';
 
@@ -28,8 +28,8 @@ export type SwitchProps = WidgetProps<{
  * @example
  * <Switch label="Lamp" />
  */
-export const Switch = createWidgetComponent(
-  (props: SwitchProps): EspComposeElement => {
+export const Switch = createWidget<SwitchProps>(
+  (props) => {
     const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();
 

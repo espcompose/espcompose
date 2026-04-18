@@ -5,13 +5,12 @@
  * Background color comes from the `ds-surface-alt` style definition.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createContainerWidget, useTheme } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
 import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
 
-type CardProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type CardProps = WidgetPropsWithChildren<{
   /** Padding inside the card. Default: 'md'. */
   padding?: SpacingToken;
   /** Corner radius. Default: 'md'. */
@@ -29,8 +28,8 @@ type CardProps = WidgetProps<{
  *   <Slider label="Brightness" />
  * </Card>
  */
-export const Card = createWidgetComponent(
-  (props: CardProps): EspComposeElement => {
+export const Card = createContainerWidget(
+  (props: CardProps) => {
     const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
     const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
@@ -57,5 +56,4 @@ export const Card = createWidgetComponent(
       </lvgl-obj>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const, contextTransparent: true as const },
 );

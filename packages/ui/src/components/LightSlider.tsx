@@ -6,8 +6,8 @@
  * The caller provides the binding (e.g. from useHAEntity).
  */
 
-import type { EspComposeElement, SizeValue, LightBinding, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent } from '@espcompose/core';
+import type { SizeValue, LightBinding, WidgetProps } from '@espcompose/core';
+import { createWidget } from '@espcompose/core';
 import { Slider } from './Slider';
 import type { SpacingToken } from '../theme/types';
 
@@ -33,8 +33,8 @@ type LightSliderProps = WidgetProps<{
  * const light = useHAEntity('light.office');
  * <LightSlider binding={light} label="Brightness" />
  */
-export const LightSlider = createWidgetComponent(
-  (props: LightSliderProps): EspComposeElement => {
+export const LightSlider = createWidget<LightSliderProps>(
+  (props) => {
     return (
       <Slider
         label={props.label}

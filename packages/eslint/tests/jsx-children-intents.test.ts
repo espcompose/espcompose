@@ -149,22 +149,6 @@ ruleTester.run('jsx-children-intents', rule, {
       `,
     },
 
-    // ─── Custom components (PascalCase) are pass-through ─────────────────
-    {
-      name: 'unbranded component inside esphome is pass-through',
-      code: `<esphome><MyComponent /></esphome>`,
-    },
-    {
-      name: 'unbranded component inside lvgl-page is pass-through',
-      code: `
-        <lvgl>
-          <lvgl-page>
-            <MyWidget />
-          </lvgl-page>
-        </lvgl>
-      `,
-    },
-
     // ─── No constraining parent (top-level) ──────────────────────────────
     {
       name: 'elements at top level with no constraining parent',
@@ -323,6 +307,24 @@ ruleTester.run('jsx-children-intents', rule, {
         </lvgl>
       `,
       errors: [{ messageId: 'invalidChildIntent' }],
+    },
+
+    // ─── Unbranded components in constrained parent ────────────────────────
+    {
+      name: 'unbranded component inside esphome (no intents)',
+      code: `<esphome><MyComponent /></esphome>`,
+      errors: [{ messageId: 'noIntentsOnChild' }],
+    },
+    {
+      name: 'unbranded component inside lvgl-page (no intents)',
+      code: `
+        <lvgl>
+          <lvgl-page>
+            <MyWidget />
+          </lvgl-page>
+        </lvgl>
+      `,
+      errors: [{ messageId: 'noIntentsOnChild' }],
     },
 
     // ─── Display component in LVGL context ───────────────────────────────

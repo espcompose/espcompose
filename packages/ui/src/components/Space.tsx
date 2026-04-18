@@ -7,8 +7,8 @@
  * Compiles to <lvgl-obj> with flex layout via CSS-like style props.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { EspComposeElement, WidgetPropsWithChildren } from '@espcompose/core';
+import { createContainerWidget } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
@@ -19,8 +19,7 @@ import type { SpacingToken } from '../theme/types';
 type FlexAlign = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
 type CrossAlign = 'start' | 'center' | 'end' | 'stretch';
 
-type SpaceProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type SpaceProps = WidgetPropsWithChildren<{
   /** Layout direction. Default: 'vertical'. */
   direction?: 'horizontal' | 'vertical';
   /** Gap between children. Token name. */
@@ -74,11 +73,6 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   );
 }
 
-const LAYOUT_OVERRIDES = {
-  allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
-  contextTransparent: true as const,
-};
-
 // ────────────────────────────────────────────────────────────────────────────
 // Space
 // ────────────────────────────────────────────────────────────────────────────
@@ -101,9 +95,8 @@ const LAYOUT_OVERRIDES = {
  *   <Button text="C" />
  * </Space>
  */
-export const Space = createWidgetComponent(
-  (props: SpaceProps): EspComposeElement => buildSpaceElement(props),
-  LAYOUT_OVERRIDES,
+export const Space = createContainerWidget(
+  (props: SpaceProps) => buildSpaceElement(props),
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -119,10 +112,9 @@ export const Space = createWidgetComponent(
  *   <Button text="Click me" />
  * </VStack>
  */
-export const VStack = createWidgetComponent(
-  (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
+export const VStack = createContainerWidget(
+  (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'vertical' }),
-  LAYOUT_OVERRIDES,
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -138,8 +130,7 @@ export const VStack = createWidgetComponent(
  *   <Text>Right</Text>
  * </HStack>
  */
-export const HStack = createWidgetComponent(
-  (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
+export const HStack = createContainerWidget(
+  (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'horizontal' }),
-  LAYOUT_OVERRIDES,
 );

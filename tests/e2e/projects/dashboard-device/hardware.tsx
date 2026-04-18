@@ -8,6 +8,7 @@ import {
   DisplayRef,
   createElement,
   useRef,
+  createComponent,
   type Ref,
   type I2CBusRef,
   type I2SAudioComponentRef,
@@ -15,7 +16,8 @@ import {
   type SpeakerRef,
 } from '@espcompose/core';
 
-export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
+export const Hardware = createComponent(
+  ({ displayRef }: { displayRef: Ref<DisplayRef> }) => {
   // ── Cross-component refs ──────────────────────────────────────────────
   const i2cBus = useRef<I2CBusRef>();
   const audioBus = useRef<I2SAudioComponentRef>();
@@ -188,4 +190,9 @@ export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
       />
     </>
   );
-}
+  },
+  {
+    intents: ['esphome:infrastructure', 'esphome:display'] as const,
+    allowedChildIntents: undefined,
+  },
+);

@@ -11,6 +11,7 @@ import { BadWidget } from '@test/reactive-lib';
 export default (
   <esphome name="uncompiled-lib-device" comment="Uncompiled library detection test">
     <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
+    {/* eslint-disable-next-line @espcompose/eslint/jsx-children-intents -- unresolvable test library type */}
     <BadWidget />
   </esphome>
 );

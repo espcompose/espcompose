@@ -11,6 +11,8 @@ import {
   Ref,
   useRef,
   ThemeProvider,
+  createWidget,
+  createComponent,
 } from '@espcompose/core';
 import {
   Screen,
@@ -32,42 +34,50 @@ interface PageProps {
 }
 
 /** Component using destructured ref props with pageShow({ id }). */
-function NavButton({ lvgl, targetPage }: PageProps) {
-  return (
-    <Button text="Go" onPress={() => { lvgl.pageShow({ id: targetPage }); }} />
-  );
-}
+const NavButton = createWidget<PageProps>(
+  ({ lvgl, targetPage }) => {
+    return (
+      <Button text="Go" onPress={() => { lvgl.pageShow({ id: targetPage }); }} />
+    );
+  },
+);
 
 /** UI component that receives the lvgl ref through props. */
-function UI(props: UIProps) {
-  const screen1Ref = useRef();
-  return (
-    <lvgl ref={props.lvgl} displays={[props.display]}>
-      <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
-        <Screen ref={screen1Ref}>
-          <VStack>
-            <Text variant="title" text="Page 1" />
-            <Button text="Next" onPress={() => { props.lvgl.pageNext(); }} />
-          </VStack>
-        </Screen>
+const UI = createComponent(
+  (props: UIProps) => {
+    const screen1Ref = useRef();
+    return (
+      <lvgl ref={props.lvgl} displays={[props.display]}>
+        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
+          <Screen ref={screen1Ref}>
+            <VStack>
+              <Text variant="title" text="Page 1" />
+              <Button text="Next" onPress={() => { props.lvgl.pageNext(); }} />
+            </VStack>
+          </Screen>
 
-        <Screen>
-          <VStack>
-            <Text variant="title" text="Page 2" />
-            <Button text="Back" onPress={() => { props.lvgl.pagePrevious(); }} />
-          </VStack>
-        </Screen>
+          <Screen>
+            <VStack>
+              <Text variant="title" text="Page 2" />
+              <Button text="Back" onPress={() => { props.lvgl.pagePrevious(); }} />
+            </VStack>
+          </Screen>
 
-        <Screen>
-          <VStack>
-            <Text variant="title" text="Page 3" />
-            <NavButton lvgl={props.lvgl} targetPage={screen1Ref} />
-          </VStack>
-        </Screen>
-      </ThemeProvider>
-    </lvgl>
-  );
-}
+          <Screen>
+            <VStack>
+              <Text variant="title" text="Page 3" />
+              <NavButton lvgl={props.lvgl} targetPage={screen1Ref} />
+            </VStack>
+          </Screen>
+        </ThemeProvider>
+      </lvgl>
+    );
+  },
+  {
+    intents: ['lvgl:root'] as const,
+    allowedChildIntents: undefined,
+  },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();

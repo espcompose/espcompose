@@ -31,6 +31,7 @@ export type {
   Pin,
   Reactive,
   WidgetProps,
+  WidgetPropsWithChildren,
 } from './types';
 export { BINDING_BRAND, useRef, isRef } from './types';
 export * from './intents';
