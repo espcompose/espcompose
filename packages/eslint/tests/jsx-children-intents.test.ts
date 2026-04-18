@@ -58,7 +58,7 @@ ruleTester.run('jsx-children-intents', rule, {
       code: `<esphome><touchscreen /></esphome>`,
     },
 
-    // ─── ESPHome root accepts lvgl:root ──────────────────────────────────
+    // ─── ESPHome root accepts lvgl (esphome:component) ─────────────────
     {
       name: 'lvgl inside esphome',
       code: `<esphome><lvgl /></esphome>`,

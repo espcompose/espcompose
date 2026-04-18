@@ -4,24 +4,20 @@
  * A device composed from custom function components including a
  * fragment-returning component.
  */
-import { createComponent } from '@espcompose/core';
+import { createEspHomeComponent } from '@espcompose/core';
 
 interface WifiConfigProps {
   ssid: string;
   password: string;
 }
 
-const WifiConfig = createComponent(
+const WifiConfig = createEspHomeComponent(
   ({ ssid, password }: WifiConfigProps) => {
     return <wifi ssid={ssid} password={password} />;
   },
-  {
-    intents: ['esphome:infrastructure'] as const,
-    allowedChildIntents: undefined,
-  },
 );
 
-const CoreInfrastructure = createComponent(
+const CoreInfrastructure = createEspHomeComponent(
   () => {
     return (
       <>
@@ -30,10 +26,6 @@ const CoreInfrastructure = createComponent(
         <logger level="INFO" />
       </>
     );
-  },
-  {
-    intents: ['esphome:infrastructure'] as const,
-    allowedChildIntents: undefined,
   },
 );
 

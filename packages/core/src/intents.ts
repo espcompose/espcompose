@@ -32,8 +32,6 @@ export const CONTEXT_TRANSPARENT = Symbol.for('esphome.compose.contextTransparen
 
 /** LVGL intents */
 export const LVGL_INTENTS = {
-  ROOT: 'lvgl:root',
-  PAGE: 'lvgl:page',
   WIDGET: 'lvgl:widget',
 } as const;
 
@@ -114,7 +112,41 @@ export function createComponent<
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Widget shorthand
+// ESPHome component shorthand
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Create an ESPHome grouping component — a function component that wraps
+ * intrinsic ESPHome elements (infrastructure, platforms, display, LVGL)
+ * and is a valid direct child of `<esphome>`.
+ *
+ * Fixed behaviour (not overridable):
+ * - `intents: ['esphome:component']`
+ * - `allowedChildIntents: undefined` (pass-through — no child validation)
+ *
+ * For LVGL widget components, use {@link createLvglWidget} instead.
+ *
+ * @example
+ * const Hardware = createEspHomeComponent(
+ *   (props: HardwareProps) => (
+ *     <>
+ *       <esp32 board="esp32dev" />
+ *       <wifi ssid={props.ssid} password={props.password} />
+ *     </>
+ *   ),
+ * );
+ */
+export function createEspHomeComponent<P>(
+  component: FunctionComponent<P>,
+): IntentComponent<P, readonly ['esphome:component'], undefined, undefined, undefined> {
+  return createComponent(component, {
+    intents: ['esphome:component'] as const,
+    allowedChildIntents: undefined,
+  });
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// LVGL widget shorthand
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -128,23 +160,23 @@ export function createComponent<
  * Pass an optional `overrides` object to change any of these.
  *
  * For container widgets that accept any widget children, use
- * {@link createContainerWidget} instead.
+ * {@link createLvglContainerWidget} instead.
  *
  * For paired parent/child layout components (e.g. Row/Col),
- * use {@link createLayoutWidget} instead.
+ * use {@link createLvglLayoutWidget} instead.
  *
  * @example
  * type SwitchProps = WidgetProps<{ value?: boolean }>;
- * const Switch = createWidget<SwitchProps>((props) => { … });
+ * const Switch = createLvglWidget<SwitchProps>((props) => { … });
  */
 
 /** Leaf widget (no overrides) — use explicit generic `<P>`. */
-export function createWidget<P>(
+export function createLvglWidget<P>(
   component: FunctionComponent<P>,
 ): IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [], undefined, undefined>;
 
 /** Widget with overrides — `P` is inferred from the annotated function parameter. */
-export function createWidget<
+export function createLvglWidget<
   P,
   Extra extends readonly string[] = readonly [],
   A extends readonly string[] | undefined = readonly [],
@@ -158,7 +190,7 @@ export function createWidget<
   },
 ): IntentComponent<P & { ref?: RefProp }, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT>;
 
-export function createWidget<
+export function createLvglWidget<
   P,
   Extra extends readonly string[] = readonly [],
   A extends readonly string[] | undefined = readonly [],
@@ -192,19 +224,19 @@ export function createWidget<
  * - `allowedChildIntents: [LVGL_INTENTS.WIDGET]`
  * - `contextTransparent: true`
  *
- * Use `createWidget` instead when you need custom `allowedChildIntents`,
+ * Use `createLvglWidget` instead when you need custom `allowedChildIntents`,
  * `additionalIntents`, or when context-transparency should be disabled.
  *
  * @example
  * type CardProps = WidgetPropsWithChildren<{ padding?: SpacingToken }>;
- * export const Card = createContainerWidget((props: CardProps) => {
+ * export const Card = createLvglContainerWidget((props: CardProps) => {
  *   return <lvgl-obj style={{ padding: props.padding }}>{props.children}</lvgl-obj>;
  * });
  */
-export function createContainerWidget<P>(
+export function createLvglContainerWidget<P>(
   component: FunctionComponent<P>,
 ): IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [typeof LVGL_INTENTS.WIDGET], undefined, true> {
-  return createWidget(component, {
+  return createLvglWidget(component, {
     allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
     contextTransparent: true as const,
   });
@@ -219,13 +251,13 @@ export function createContainerWidget<P>(
  * Both are context-transparent.
  *
  * @example
- * const [Row, Col] = createLayoutWidget(
+ * const [Row, Col] = createLvglLayoutWidget(
  *   COMPOSE_UI_INTENTS.COL,
  *   (props: RowProps) => { … },
  *   (props: ColProps) => { … },
  * );
  */
-export function createLayoutWidget<S extends string, P, C>(
+export function createLvglLayoutWidget<S extends string, P, C>(
   slotIntent: S,
   parent: FunctionComponent<P>,
   child: FunctionComponent<C>,
@@ -233,7 +265,7 @@ export function createLayoutWidget<S extends string, P, C>(
   IntentComponent<P & { ref?: RefProp }, readonly [typeof LVGL_INTENTS.WIDGET], readonly [S], undefined, true>,
   IntentComponent<C & { ref?: RefProp }, readonly [S], readonly [typeof LVGL_INTENTS.WIDGET], undefined, true>,
 ] {
-  const brandedParent = createWidget(parent, {
+  const brandedParent = createLvglWidget(parent, {
     allowedChildIntents: [slotIntent] as readonly [S],
     contextTransparent: true as const,
   });

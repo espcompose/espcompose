@@ -5,7 +5,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createWidget, useTheme, useReactiveMap } from '@espcompose/core';
+import { createLvglWidget, useTheme, useReactiveMap } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { TextVariant, StatusToken, Theme } from '../theme/types';
@@ -30,7 +30,7 @@ type TextProps = WidgetPropsWithChildren<{
  * <Text variant="title">Living Room</Text>
  * <Text variant="caption" color="primary">Last updated: 5m ago</Text>
  */
-export const Text = createWidget<TextProps>(
+export const Text = createLvglWidget<TextProps>(
   (props) => {
     const variant = props.variant ?? 'body';
     const font = useReactiveMap(variant, (v) => themeLeaf('typography', v));

@@ -6,7 +6,7 @@
  */
 
 import type { SizeValue, LightBinding, SwitchBinding, FanBinding, WidgetProps } from '@espcompose/core';
-import { createWidget } from '@espcompose/core';
+import { createLvglWidget } from '@espcompose/core';
 import { Switch } from './Switch';
 
 type LightSwitchProps = WidgetProps<{
@@ -25,7 +25,7 @@ type LightSwitchProps = WidgetProps<{
  * const light = useHAEntity('light.office');
  * <LightSwitch binding={light} label="Office" />
  */
-export const LightSwitch = createWidget<LightSwitchProps>(
+export const LightSwitch = createLvglWidget<LightSwitchProps>(
   (props) => {
     return (
       <Switch

@@ -5,7 +5,7 @@
  * LVGL widgets with automatic two-way reactive wiring, plus using LVGL
  * button events to trigger HA entity actions.
  */
-import { DisplayRef, useRef, useHAEntity, createWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 interface ActionButtonProps {
@@ -14,7 +14,7 @@ interface ActionButtonProps {
 }
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-const ActionButton = createWidget(
+const ActionButton = createLvglWidget(
   (props: ActionButtonProps) => {
     const { onRelease, children, x, y, width, height } = props;
     return (

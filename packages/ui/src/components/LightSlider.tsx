@@ -7,7 +7,7 @@
  */
 
 import type { SizeValue, LightBinding, WidgetProps } from '@espcompose/core';
-import { createWidget } from '@espcompose/core';
+import { createLvglWidget } from '@espcompose/core';
 import { Slider } from './Slider';
 import type { SpacingToken } from '../theme/types';
 
@@ -33,7 +33,7 @@ type LightSliderProps = WidgetProps<{
  * const light = useHAEntity('light.office');
  * <LightSlider binding={light} label="Brightness" />
  */
-export const LightSlider = createWidget<LightSliderProps>(
+export const LightSlider = createLvglWidget<LightSliderProps>(
   (props) => {
     return (
       <Slider

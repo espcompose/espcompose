@@ -6,7 +6,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createContainerWidget, useTheme } from '@espcompose/core';
+import { createLvglContainerWidget, useTheme } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
 import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
 
@@ -28,7 +28,7 @@ type CardProps = WidgetPropsWithChildren<{
  *   <Slider label="Brightness" />
  * </Card>
  */
-export const Card = createContainerWidget(
+export const Card = createLvglContainerWidget(
   (props: CardProps) => {
     const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
     const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');

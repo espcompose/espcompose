@@ -12,8 +12,8 @@ import {
   useRef,
   useLvgl,
   ThemeProvider,
-  createWidget,
-  createComponent,
+  createLvglWidget,
+  createEspHomeComponent,
 } from '@espcompose/core';
 import {
   Screen,
@@ -25,7 +25,7 @@ import {
 } from '@espcompose/ui';
 
 /** Component using useLvgl() with pageNext — no lvgl prop needed. */
-const NextButton = createWidget(
+const NextButton = createLvglWidget(
   () => {
     const lvgl = useLvgl();
     return (
@@ -35,7 +35,7 @@ const NextButton = createWidget(
 );
 
 /** Component using useLvgl() with pagePrevious. */
-const BackButton = createWidget(
+const BackButton = createLvglWidget(
   () => {
     const lvgl = useLvgl();
     return (
@@ -49,7 +49,7 @@ interface GoToButtonProps {
 }
 
 /** Component using useLvgl() with pageShow({ id }). */
-const GoToButton = createWidget<GoToButtonProps>(
+const GoToButton = createLvglWidget<GoToButtonProps>(
   ({ targetPage }) => {
     const lvgl = useLvgl();
     return (
@@ -58,7 +58,7 @@ const GoToButton = createWidget<GoToButtonProps>(
   },
 );
 
-const UI = createComponent(
+const UI = createEspHomeComponent(
   ({ display }: { display: Ref<DisplayRef> }) => {
     const screen1Ref = useRef();
     return (
@@ -87,10 +87,6 @@ const UI = createComponent(
         </ThemeProvider>
       </lvgl>
     );
-  },
-  {
-    intents: ['lvgl:root'] as const,
-    allowedChildIntents: undefined,
   },
 );
 

@@ -7,7 +7,7 @@
  */
 
 import type { Ref, ImageRef, WidgetProps } from '@espcompose/core';
-import { createWidget, useReactiveMap } from '@espcompose/core';
+import { createLvglWidget, useReactiveMap } from '@espcompose/core';
 import type { SizeToken, RadiusToken } from '../theme/types';
 import { themeLeaf } from '../hooks/utils';
 
@@ -43,7 +43,7 @@ export type ImageProps = WidgetProps<{
  * <Image src={logo} size="lg" radius="md" />
  * <Image src={logo} />
  */
-export const Image = createWidget<ImageProps>(
+export const Image = createLvglWidget<ImageProps>(
   (props) => {
     const px = props.size != null
       ? useReactiveMap(props.size, (v) => IMAGE_SIZE[v])

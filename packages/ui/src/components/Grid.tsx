@@ -11,7 +11,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLayoutWidget } from '@espcompose/core';
+import { createLvglLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -78,7 +78,7 @@ type GridItemProps = WidgetPropsWithChildren<{
  *   <GridItem col={0} row={1} colSpan={2}><Text text="Full bottom" /></GridItem>
  * </Grid>
  */
-export const [Grid, GridItem] = createLayoutWidget(
+export const [Grid, GridItem] = createLvglLayoutWidget(
   COMPOSE_UI_INTENTS.GRID_ITEM,
   (props: GridProps) => {
     const colGap = props.columnGap != null

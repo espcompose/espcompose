@@ -1,4 +1,4 @@
-import { createComponent } from '@espcompose/core';
+import { createEspHomeComponent } from '@espcompose/core';
 
 const deviceName = 'project-demo';
 
@@ -8,7 +8,7 @@ type InfraProps = {
   password: string;
 };
 
-const Infrastructure = createComponent(
+const Infrastructure = createEspHomeComponent(
   (props: InfraProps) => (
     <>
       <wifi ssid={props.ssid} password={props.password} />
@@ -17,13 +17,9 @@ const Infrastructure = createComponent(
       <logger level="DEBUG" />
     </>
   ),
-  {
-    intents: ['esphome:infrastructure'] as const,
-    allowedChildIntents: undefined,
-  },
 );
 
-const SensorArray = createComponent(
+const SensorArray = createEspHomeComponent(
   () => (
     <>
       <sensor
@@ -40,10 +36,6 @@ const SensorArray = createComponent(
       />
     </>
   ),
-  {
-    intents: ['esphome:platform'] as const,
-    allowedChildIntents: undefined,
-  },
 );
 
 export default (

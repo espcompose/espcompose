@@ -7,7 +7,7 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { DisplayRef, useRef, useHAEntity, createWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 interface ActionButtonProps {
@@ -16,7 +16,7 @@ interface ActionButtonProps {
 }
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-const ActionButton = createWidget(
+const ActionButton = createLvglWidget(
   (props: ActionButtonProps) => {
     const { onRelease, children, x, y, width, height } = props;
     return (
@@ -40,7 +40,7 @@ interface HALightControlProps {
  * Dynamic HA light component — receives entity ID as a prop.
  * Uses the domain-hint overload to get a typed LightBinding.
  */
-const HALightControl = createWidget(
+const HALightControl = createLvglWidget(
   (props: HALightControlProps) => {
     const light = useHAEntity(props.entity, { domain: 'light' });
 

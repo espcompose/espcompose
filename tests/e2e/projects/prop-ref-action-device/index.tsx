@@ -11,8 +11,8 @@ import {
   Ref,
   useRef,
   ThemeProvider,
-  createWidget,
-  createComponent,
+  createLvglWidget,
+  createEspHomeComponent,
 } from '@espcompose/core';
 import {
   Screen,
@@ -34,7 +34,7 @@ interface PageProps {
 }
 
 /** Component using destructured ref props with pageShow({ id }). */
-const NavButton = createWidget<PageProps>(
+const NavButton = createLvglWidget<PageProps>(
   ({ lvgl, targetPage }) => {
     return (
       <Button text="Go" onPress={() => { lvgl.pageShow({ id: targetPage }); }} />
@@ -43,7 +43,7 @@ const NavButton = createWidget<PageProps>(
 );
 
 /** UI component that receives the lvgl ref through props. */
-const UI = createComponent(
+const UI = createEspHomeComponent(
   (props: UIProps) => {
     const screen1Ref = useRef();
     return (
@@ -72,10 +72,6 @@ const UI = createComponent(
         </ThemeProvider>
       </lvgl>
     );
-  },
-  {
-    intents: ['lvgl:root'] as const,
-    allowedChildIntents: undefined,
   },
 );
 

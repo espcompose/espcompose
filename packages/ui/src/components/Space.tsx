@@ -8,7 +8,7 @@
  */
 
 import type { EspComposeElement, WidgetPropsWithChildren } from '@espcompose/core';
-import { createContainerWidget } from '@espcompose/core';
+import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
@@ -95,7 +95,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
  *   <Button text="C" />
  * </Space>
  */
-export const Space = createContainerWidget(
+export const Space = createLvglContainerWidget(
   (props: SpaceProps) => buildSpaceElement(props),
 );
 
@@ -112,7 +112,7 @@ export const Space = createContainerWidget(
  *   <Button text="Click me" />
  * </VStack>
  */
-export const VStack = createContainerWidget(
+export const VStack = createLvglContainerWidget(
   (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'vertical' }),
 );
@@ -130,7 +130,7 @@ export const VStack = createContainerWidget(
  *   <Text>Right</Text>
  * </HStack>
  */
-export const HStack = createContainerWidget(
+export const HStack = createLvglContainerWidget(
   (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'horizontal' }),
 );

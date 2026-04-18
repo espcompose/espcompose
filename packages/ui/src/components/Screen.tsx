@@ -5,7 +5,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createWidget, LVGL_INTENTS, useTheme } from '@espcompose/core';
+import { createLvglWidget, LVGL_INTENTS, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken, Theme } from '../theme/types';
 
@@ -29,7 +29,7 @@ type ScreenProps = WidgetPropsWithChildren<{
  *   </VStack>
  * </Screen>
  */
-export const Screen = createWidget(
+export const Screen = createLvglWidget(
   (props: ScreenProps) => {
     const padding = props.padding != null ? useSpacing(props.padding) : undefined;
     const theme = useTheme<Theme>();

@@ -7,7 +7,7 @@
  */
 
 import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidget, useTheme } from '@espcompose/core';
+import { createLvglWidget, useTheme } from '@espcompose/core';
 import { themeLeaf } from '../hooks/utils';
 import { Theme } from '../theme/types';
 
@@ -28,7 +28,7 @@ export type SwitchProps = WidgetProps<{
  * @example
  * <Switch label="Lamp" />
  */
-export const Switch = createWidget<SwitchProps>(
+export const Switch = createLvglWidget<SwitchProps>(
   (props) => {
     const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>();

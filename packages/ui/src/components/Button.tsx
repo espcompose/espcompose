@@ -7,7 +7,7 @@
  */
 
 import type { TriggerHandler, WidgetProps, Reactive } from '@espcompose/core';
-import { createWidget, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
+import { createLvglWidget, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
 import { useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
@@ -71,7 +71,7 @@ function useButtonVariant(
  * <Button text="Toggle Light" status="primary" size="lg" />
  * <Button text="Delete" status="danger" variant="outline" />
  */
-export const Button = createWidget<ButtonProps>(
+export const Button = createLvglWidget<ButtonProps>(
   (props) => {
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');

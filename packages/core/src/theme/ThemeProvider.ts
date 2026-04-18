@@ -15,7 +15,7 @@ import type { EspComposeElement } from '../types';
 import { createElement, Fragment } from '../runtime';
 import { registerTheme, getThemeRegistry } from './registry';
 import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
-import { createWidget } from '../intents';
+import { createLvglWidget } from '../intents';
 
 export interface ThemeProviderProps<T extends object = Record<string, unknown>> {
   /** Map of theme name → theme object. */
@@ -80,7 +80,7 @@ function ThemeProviderImpl<T extends object>(
  * `allowedChildIntents: undefined` makes it transparent — children are
  * validated against the next constraining ancestor instead.
  */
-export const ThemeProvider = createWidget(
+export const ThemeProvider = createLvglWidget(
   ThemeProviderImpl as (props: ThemeProviderProps<object>) => EspComposeElement,
   { allowedChildIntents: undefined, contextTransparent: true as const },
 );

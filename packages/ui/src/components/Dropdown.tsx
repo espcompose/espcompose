@@ -6,7 +6,7 @@
  */
 
 import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidget, useTheme } from '@espcompose/core';
+import { createLvglWidget, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { SpacingToken, Theme } from '../theme/types';
@@ -32,7 +32,7 @@ export type DropdownProps = WidgetProps<{
  * @example
  * <Dropdown label="Mode" options={"Auto\nCool\nHeat"} />
  */
-export const Dropdown = createWidget<DropdownProps>(
+export const Dropdown = createLvglWidget<DropdownProps>(
   (props) => {
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const font = themeLeaf('typography', 'body');

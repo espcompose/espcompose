@@ -10,7 +10,7 @@
  */
 
 import type { WidgetProps } from '@espcompose/core';
-import { createWidget, useReactiveMap } from '@espcompose/core';
+import { createLvglWidget, useReactiveMap } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import type { SizeToken, StatusToken } from '../theme/types';
 
@@ -50,7 +50,7 @@ export type SpinnerProps = WidgetProps<{
  * <Spinner />
  * <Spinner status="success" size="lg" duration={800} />
  */
-export const Spinner = createWidget<SpinnerProps>(
+export const Spinner = createLvglWidget<SpinnerProps>(
   (props) => {
     const sc = useStatus(props.status ?? 'primary');
     const px = useReactiveMap(props.size ?? 'md', (v) => SPINNER_SIZE[v]);

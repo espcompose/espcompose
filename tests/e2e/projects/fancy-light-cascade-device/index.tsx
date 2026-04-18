@@ -16,7 +16,7 @@
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider, createWidget } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider, createLvglWidget } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
@@ -36,7 +36,7 @@ interface LightButtonProps {
   onPress?: TriggerHandler;
 }
 
-const LightButton = createWidget<LightButtonProps>(
+const LightButton = createLvglWidget<LightButtonProps>(
   (props) => {
     return (
       <Button
@@ -59,7 +59,7 @@ interface FancyLightButtonProps {
   status: StatusToken;
 }
 
-const FancyLightButton = createWidget<FancyLightButtonProps>(
+const FancyLightButton = createLvglWidget<FancyLightButtonProps>(
   (props) => {
     // useMemo with props.entity.isOn → goes through slot path in expr-compiler
     const lightLabel = useMemo(

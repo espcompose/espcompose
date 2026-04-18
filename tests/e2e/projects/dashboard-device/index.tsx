@@ -7,10 +7,10 @@
  * Hardware definitions live in hardware.tsx (mirroring the YAML packages
  * pattern).
  */
-import { DisplayRef, logger, useRef, useScript, createComponent } from '@espcompose/core';
+import { DisplayRef, logger, useRef, useScript, createEspHomeComponent } from '@espcompose/core';
 import { Hardware } from './hardware';
 
-const ConnectivityConfig = createComponent(
+const ConnectivityConfig = createEspHomeComponent(
   () => {
     return (
       <>
@@ -28,13 +28,9 @@ const ConnectivityConfig = createComponent(
       </>
     );
   },
-  {
-    intents: ['esphome:infrastructure'] as const,
-    allowedChildIntents: undefined,
-  },
 );
 
-const HomeAssistantSensors = createComponent(
+const HomeAssistantSensors = createEspHomeComponent(
   () => {
     return (
       <>
@@ -75,10 +71,6 @@ const HomeAssistantSensors = createComponent(
         />
       </>
     );
-  },
-  {
-    intents: ['esphome:platform'] as const,
-    allowedChildIntents: undefined,
   },
 );
 

@@ -12,7 +12,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLayoutWidget } from '@espcompose/core';
+import { createLvglLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -54,7 +54,7 @@ type ColProps = WidgetPropsWithChildren<{
  *   <Col span={12}><Text text="Right" /></Col>
  * </Row>
  */
-export const [Row, Col] = createLayoutWidget(
+export const [Row, Col] = createLvglLayoutWidget(
   COMPOSE_UI_INTENTS.COL,
   (props: RowProps) => {
     const wrap = props.wrap !== false;

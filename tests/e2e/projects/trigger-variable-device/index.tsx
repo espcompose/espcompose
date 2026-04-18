@@ -12,7 +12,7 @@
  *    - Template literals with props: `useMemo(() => \`${props.label}: ${signal}\`)`
  *    - Ternary with string concat: `useMemo(() => signal ? \`${label} On\` : \`${label} Off\`)`
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, createWidget } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, createLvglWidget } from '@espcompose/core';
 import type { TriggerHandler, LightBinding } from '@espcompose/core';
 
 // ── Component 1: TriggerHandler in ?? fallback ─────────────────────────
@@ -23,7 +23,7 @@ interface ToggleButtonProps {
   onPress?: TriggerHandler;
 }
 
-const ToggleButton = createWidget<ToggleButtonProps>(
+const ToggleButton = createLvglWidget<ToggleButtonProps>(
   (props) => {
     // Compiler must detect the arrow in the ?? right-hand side
     const onPress = props.onPress ?? (() => { props.binding.toggle(); });
@@ -45,7 +45,7 @@ interface DirectToggleProps {
   binding: LightBinding;
 }
 
-const DirectToggle = createWidget<DirectToggleProps>(
+const DirectToggle = createLvglWidget<DirectToggleProps>(
   (props) => {
     // Direct arrow in variable initializer (no ??)
     const handler: TriggerHandler = () => { props.binding.toggle(); };
@@ -65,7 +65,7 @@ interface ConditionalToggleProps {
   useTurnOff: boolean;
 }
 
-const ConditionalToggle = createWidget<ConditionalToggleProps>(
+const ConditionalToggle = createLvglWidget<ConditionalToggleProps>(
   (props) => {
     // Ternary: both branches are arrows that need compilation
     const handler: TriggerHandler = props.useTurnOff
@@ -87,7 +87,7 @@ interface SensorLabelProps {
   label: string;
 }
 
-const SensorLabel = createWidget<SensorLabelProps>(
+const SensorLabel = createLvglWidget<SensorLabelProps>(
   (props) => {
     // props.label is a plain string, binding.stateText is a Signal
     const text = useMemo(() => `${props.label}: ${props.binding.stateText}`);
