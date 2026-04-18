@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lvglPropsToStyle, lvglColorToCss, getStaticValue, type StyleOutput } from './lvgl-styles';
+import { lvglPropsToStyle, lvglColorToCss, type StyleOutput } from './lvgl-styles';
 import type { RuntimeProp } from '../types';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

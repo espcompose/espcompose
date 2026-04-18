@@ -13,6 +13,10 @@ export { useTheme } from './reactive-proxy';
 export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './font-token';
 export type { FontToken, FontBpp } from './font-token';
 
+// Hex color type
+export { isHexColor } from './hex-color';
+export type { HexColor } from './hex-color';
+
 // Font resolver
 export { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 

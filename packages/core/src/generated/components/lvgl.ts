@@ -6,13 +6,14 @@
 import type { ComponentProps, Reactive, RefProp } from "../../types";
 import type { __marker_image_Image } from "../markers";
 import type { CssStyleProps } from "../../style-types";
+import type { HexColor } from "../../theme/hex-color";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
 //
 export interface LvglStyleProps {
     /** @yamlKey arc_opa */
     arcOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey arc_color */
-    arcColor?: Reactive<string | string>;
+    arcColor?: Reactive<HexColor>;
     /** @yamlKey arc_rounded */
     arcRounded?: Reactive<boolean>;
     /** @yamlKey arc_width */
@@ -20,11 +21,11 @@ export interface LvglStyleProps {
     /** @yamlKey anim_time */
     animTime?: Reactive<number>;
     /** @yamlKey bg_color */
-    bgColor?: Reactive<string | string>;
+    bgColor?: Reactive<HexColor>;
     /** @yamlKey bg_grad */
     bgGrad?: unknown;
     /** @yamlKey bg_grad_color */
-    bgGradColor?: Reactive<string | string>;
+    bgGradColor?: Reactive<HexColor>;
     /** @yamlKey bg_dither_mode */
     bgDitherMode?: "NONE" | "ORDERED" | "ERR_DIFF";
     /** @yamlKey bg_grad_dir */
@@ -34,7 +35,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_image_opa */
     bgImageOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_recolor */
-    bgImageRecolor?: Reactive<string | string>;
+    bgImageRecolor?: Reactive<HexColor>;
     /** @yamlKey bg_image_recolor_opa */
     bgImageRecolorOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
@@ -46,7 +47,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_opa */
     bgOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_color */
-    borderColor?: Reactive<string | string>;
+    borderColor?: Reactive<HexColor>;
     /** @yamlKey border_opa */
     borderOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey border_post */
@@ -61,7 +62,7 @@ export interface LvglStyleProps {
     colorFilterOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     height?: Reactive<string | (number | string | "SIZE_CONTENT")>;
     /** @yamlKey image_recolor */
-    imageRecolor?: Reactive<string | string>;
+    imageRecolor?: Reactive<HexColor>;
     /** @yamlKey image_recolor_opa */
     imageRecolorOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey line_width */
@@ -73,12 +74,12 @@ export interface LvglStyleProps {
     /** @yamlKey line_rounded */
     lineRounded?: Reactive<boolean>;
     /** @yamlKey line_color */
-    lineColor?: Reactive<string | string>;
+    lineColor?: Reactive<HexColor>;
     opa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey opa_layered */
     opaLayered?: "TRANSP" | "COVER";
     /** @yamlKey outline_color */
-    outlineColor?: Reactive<string | string>;
+    outlineColor?: Reactive<HexColor>;
     /** @yamlKey outline_opa */
     outlineOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey outline_pad */
@@ -96,7 +97,7 @@ export interface LvglStyleProps {
     /** @yamlKey pad_top */
     padTop?: Reactive<number | string>;
     /** @yamlKey shadow_color */
-    shadowColor?: Reactive<string | string>;
+    shadowColor?: Reactive<HexColor>;
     /** @yamlKey shadow_ofs_x */
     shadowOfsX?: Reactive<number>;
     /** @yamlKey shadow_ofs_y */
@@ -110,7 +111,7 @@ export interface LvglStyleProps {
     /** @yamlKey text_align */
     textAlign?: Reactive<string | ("LEFT" | "CENTER" | "RIGHT" | "AUTO")>;
     /** @yamlKey text_color */
-    textColor?: Reactive<string | string>;
+    textColor?: Reactive<HexColor>;
     /** @yamlKey text_decor */
     textDecor?: Reactive<string | ("NONE" | "UNDERLINE" | "STRIKETHROUGH")>;
     /** @yamlKey text_font */
@@ -934,7 +935,7 @@ export interface LvglKeyboardProps {
 }
 //
 export interface LvglLedProps {
-    color?: Reactive<string | string>;
+    color?: Reactive<HexColor>;
     brightness?: Reactive<unknown>;
     /**
      * CSS-like style object. All visual properties must be specified here.
@@ -1075,9 +1076,9 @@ export interface LvglMeterProps {
 export interface LvglQrcodeProps {
     text?: string | number;
     /** @yamlKey dark_color */
-    darkColor?: string;
+    darkColor?: HexColor;
     /** @yamlKey light_color */
-    lightColor?: string;
+    lightColor?: HexColor;
     size: number;
     /**
      * CSS-like style object. All visual properties must be specified here.
@@ -1512,7 +1513,7 @@ export interface LvglProps {
     /** @yamlKey top_layer */
     topLayer?: unknown;
     /** @yamlKey transparency_key */
-    transparencyKey?: string;
+    transparencyKey?: HexColor;
     theme?: unknown;
     gradients?: unknown;
     touchscreens?: unknown;
@@ -1523,7 +1524,7 @@ export interface LvglProps {
     /** @yamlKey disp_bg_image */
     dispBgImage?: string | RefProp<__marker_image_Image>;
     /** @yamlKey disp_bg_color */
-    dispBgColor?: string;
+    dispBgColor?: HexColor;
     /** @yamlKey disp_bg_opa */
     dispBgOpa?: number | string;
 }

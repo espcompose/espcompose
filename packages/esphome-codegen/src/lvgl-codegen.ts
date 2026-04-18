@@ -65,10 +65,12 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
       return keyword('boolean');
 
     case 'string':
-    case 'color':
     case 'font':
     case 'icon':
       return keyword('string');
+
+    case 'color':
+      return typeRef('HexColor');
 
     case 'image':
       return unionType([keyword('string'), refPropType(internalMarkerName('image::Image'))]);
@@ -94,9 +96,9 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
 
     case 'enum':
       if (prop.values && prop.values.length > 0) {
-        // Color-like enums with placeholder values → string
+        // Color-like enums with placeholder values → HexColor
         if (prop.values.includes('hex color value') || prop.values.includes('color ID')) {
-          return keyword('string');
+          return typeRef('HexColor');
         }
         // Size-like enums with descriptive placeholders → number | string
         // e.g. ['SIZE_CONTENT', 'number of pixels', 'percentage']
@@ -168,8 +170,12 @@ function buildProps(
     if (shouldBind) {
       // For enum props (e.g. text_font with literal font names), widen to
       // include `string` so computed values from the reactive theme are accepted.
+      // Skip widening for color-like enums — HexColor is already sufficient.
       if (def.type === 'enum' && def.values && def.values.length > 0) {
-        tsType = unionType([keyword('string'), tsType]);
+        const isColorEnum = def.values.includes('hex color value') || def.values.includes('color ID');
+        if (!isColorEnum) {
+          tsType = unionType([keyword('string'), tsType]);
+        }
       }
       tsType = reactivePropType(tsType);
     }
@@ -197,6 +203,7 @@ export function buildLvglFileContent(schemaPath: string): string {
   statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp'], '../../types'));
   statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
+  statements.push(importTypeDecl(['HexColor'], '../../theme/hex-color'));
 
   // ── Layout props to exclude from LvglStyleProps ───────────────────────────
   // These are layout concerns, not visual style — handled by layout components

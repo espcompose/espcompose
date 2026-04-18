@@ -11,7 +11,7 @@
  */
 
 
-import type { FontToken } from '@espcompose/core';
+import type { FontToken, HexColor } from '@espcompose/core';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Token types
@@ -36,9 +36,9 @@ export interface SizeDimensions {
 }
 
 export interface StatusColors {
-  bg: string;
-  text: string;
-  bgPressed: string;
+  bg: HexColor;
+  text: HexColor;
+  bgPressed: HexColor;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -47,9 +47,9 @@ export interface StatusColors {
 
 export interface PartColors {
   /** Primary fill / track color. */
-  bg: string;
+  bg: HexColor;
   /** Knob / handle color. */
-  knob: string;
+  knob: HexColor;
 }
 
 export interface ThemeParts {
@@ -71,15 +71,15 @@ export interface ThemeColors {
   danger: StatusColors;
 
   // Surface colors
-  background: string;
-  surface: string;
-  surfaceAlt: string;
-  border: string;
+  background: HexColor;
+  surface: HexColor;
+  surfaceAlt: HexColor;
+  border: HexColor;
 
   // Text colors
-  textPrimary: string;
-  textSecondary: string;
-  textDisabled: string;
+  textPrimary: HexColor;
+  textSecondary: HexColor;
+  textDisabled: HexColor;
 }
 
 export interface ThemeTypography {

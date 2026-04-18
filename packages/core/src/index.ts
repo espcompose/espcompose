@@ -91,6 +91,10 @@ export { useTheme } from './theme/reactive-proxy';
 export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './theme/font-token';
 export type { FontToken, FontBpp } from './theme/font-token';
 
+// Theme — hex color type
+export { isHexColor } from './theme/hex-color';
+export type { HexColor } from './theme/hex-color';
+
 // Theme — font resolver
 export { collectThemeFonts, substituteThemeFonts } from './theme/font-resolver';
 

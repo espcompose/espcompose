@@ -14,6 +14,7 @@ import type { Reactive } from './types';
 import type { LvglStyleProps } from './generated/components/lvgl';
 import type { FontRef, ImageRef } from './component-aliases';
 import type { RefProp } from './types';
+import type { HexColor } from './theme/hex-color';
 
 // ── Utility types ──────────────────────────────────────────────────────────
 
@@ -69,9 +70,9 @@ export interface CssAliasProps {
 
   // ── Colors ───────────────────────────────────────────────────────────
   /** Maps to `bgColor`. */
-  backgroundColor?: Reactive<string>;
+  backgroundColor?: Reactive<HexColor>;
   /** Maps to `textColor`. */
-  color?: Reactive<string>;
+  color?: Reactive<HexColor>;
 
   // ── Border ───────────────────────────────────────────────────────────
   /** Maps to `radius`. */
@@ -141,7 +142,7 @@ export interface CssAliasProps {
 
   // ── Arc (widget-specific) ─────────────────────────────────────────────
   /** Maps to `arcColor`. */
-  arcColor?: Reactive<string>;
+  arcColor?: Reactive<HexColor>;
   /** Maps to `arcOpa`. */
   arcOpacity?: Reactive<OpacityValue>;
   /** Linecap style for arcs. Maps to `arcRounded`. */
@@ -157,7 +158,7 @@ export interface CssAliasProps {
   /** Maps to `bgGrad`. */
   backgroundGradient?: LvglStyleProps['bgGrad'];
   /** Maps to `bgGradColor`. */
-  backgroundGradientColor?: Reactive<string>;
+  backgroundGradientColor?: Reactive<HexColor>;
   /** Maps to `bgDitherMode`. */
   backgroundGradientDither?: Reactive<'none' | 'ordered' | 'error-diffusion'>;
   /** Maps to `bgGradDir`. */
@@ -169,7 +170,7 @@ export interface CssAliasProps {
 
   // ── Background-image extras ───────────────────────────────────────────
   /** Maps to `bgImageRecolor`. */
-  backgroundImageTint?: Reactive<string>;
+  backgroundImageTint?: Reactive<HexColor>;
   /** Maps to `bgImageRecolorOpa`. */
   backgroundImageTintOpacity?: Reactive<OpacityValue>;
   /** Whether to tile the background image. Maps to `bgImageTiled`. */
@@ -191,7 +192,7 @@ export interface CssAliasProps {
 
   // ── Image (widget-specific) ───────────────────────────────────────────
   /** Maps to `imageRecolor`. */
-  imageTint?: Reactive<string>;
+  imageTint?: Reactive<HexColor>;
   /** Maps to `imageRecolorOpa`. */
   imageTintOpacity?: Reactive<OpacityValue>;
 
@@ -205,7 +206,7 @@ export interface CssAliasProps {
   /** Maps to `lineDashGap`. */
   strokeDashGap?: Reactive<number | string>;
   /** Maps to `lineColor`. */
-  strokeColor?: Reactive<string>;
+  strokeColor?: Reactive<HexColor>;
 
   // ── Layered opacity ───────────────────────────────────────────────────
   /** Maps to `opaLayered`. */
