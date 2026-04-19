@@ -6,6 +6,9 @@
 export { registerTheme, getThemeRegistry, theme } from './registry';
 export type { FlattenedTheme } from './registry';
 
+// Scope hashing
+export { scopeHash } from './scope-hash';
+
 // Reactive proxy
 export { useTheme } from './reactive-proxy';
 

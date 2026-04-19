@@ -159,7 +159,10 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
     const dep = node.dependencies[0];
     if (dep?.sourceType === 'theme') {
       const path = dep.sourceId === '__theme__' ? dep.triggerType : '';
-      return { kind: 'theme_read', path, type: node.exprType ?? 'float' };
+      // Extract scopeId from sourceId pattern __theme_<scopeId>__
+      const match = dep.sourceId.match(/^__theme_([a-f0-9]+)__$/);
+      const scopeId = match?.[1] ?? '';
+      return { kind: 'theme_read', scope: '', scopeId, path, type: node.exprType ?? 'float' };
     }
     // Default: entity prop
     const sourceId = node.sourceId ?? dep?.sourceId ?? '';

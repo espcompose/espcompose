@@ -377,12 +377,14 @@ function makeThemedIR(
     espcompose: {
       kind: 'espcompose_data',
       reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] },
-      themes: {
-        kind: 'theme_data',
+      themeScopes: [{
+        kind: 'theme_scope_data',
+        scope: 'test',
+        scopeId: 'abcd1234',
         themeNames,
         defaultIndex,
         leafData,
-      },
+      }],
     },
   };
 }
@@ -395,11 +397,11 @@ describe('Theme integration', () => {
 
     const reactiveNode = new IRReactiveNode({
       kind: 'expression',
-      dependencies: [{ kind: 'dependency', sourceId: '__theme__', triggerType: 'colors_background', sourceDomain: 'theme', sourceType: 'theme' }],
+      dependencies: [{ kind: 'dependency', sourceId: '__theme_abcd1234__', triggerType: 'colors_background', sourceDomain: 'theme', sourceType: 'theme' }],
       exprType: 'color',
-      sourceId: '__theme__',
+      sourceId: '__theme_abcd1234__',
     });
-    reactiveNode.exprIR = { kind: 'theme_read', path: 'colors_background', type: 'color' };
+    reactiveNode.exprIR = { kind: 'theme_read', scope: 'test', scopeId: 'abcd1234', path: 'colors_background', type: 'color' };
 
     const ir = makeThemedIR(
       ['dark', 'light'],
@@ -431,11 +433,11 @@ describe('Theme integration', () => {
 
     const reactiveNode = new IRReactiveNode({
       kind: 'expression',
-      dependencies: [{ kind: 'dependency', sourceId: '__theme__', triggerType: 'colors_primary_bg', sourceDomain: 'theme', sourceType: 'theme' }],
+      dependencies: [{ kind: 'dependency', sourceId: '__theme_abcd1234__', triggerType: 'colors_primary_bg', sourceDomain: 'theme', sourceType: 'theme' }],
       exprType: 'color',
-      sourceId: '__theme__',
+      sourceId: '__theme_abcd1234__',
     });
-    reactiveNode.exprIR = { kind: 'theme_read', path: 'colors_primary_bg', type: 'color' };
+    reactiveNode.exprIR = { kind: 'theme_read', scope: 'test', scopeId: 'abcd1234', path: 'colors_primary_bg', type: 'color' };
 
     // default index = 1 → light theme
     const ir = makeThemedIR(

@@ -19,6 +19,7 @@ import {
   Slider,
   Switch,
   darkTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -45,7 +46,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme }}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme }}>
           <Screen padding="lg">
             <VStack>
               <Text variant="title" text="Smart Home" />

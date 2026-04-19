@@ -6,7 +6,7 @@
  * rendering surface that approximates LVGL's look.
  *
  * Theme colors use CSS custom properties (--thm-*) that are injected
- * at runtime from IRThemeData. Fallback values are provided.
+ * at runtime from IRThemeScopeData. Fallback values are provided.
  *
  * IMPORTANT: espcompose disables LVGL's built-in themes at compile time
  * (LV_USE_THEME_DEFAULT=0, LV_USE_THEME_SIMPLE=0) so that all widget

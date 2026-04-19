@@ -24,6 +24,7 @@ import {
   Button,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 import type { StatusToken } from '@espcompose/ui';
 
@@ -113,7 +114,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }} default="dark">
           <Screen padding="lg">
             <VStack>
               {/* Temperature status — reactive text from sensor */}
@@ -136,7 +137,7 @@ function App() {
               <Button
                 text="Toggle Theme"
                 status="success"
-                onPress={() => { theme.select('light'); }}
+                onPress={() => { theme.select('espcompose:ui', 'light'); }}
               />
             </VStack>
           </Screen>

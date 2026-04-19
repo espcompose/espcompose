@@ -86,6 +86,7 @@ export { useReactive, useReactiveMap } from './reactive-utils';
 
 export { registerTheme, getThemeRegistry, theme } from './theme/registry';
 export { useTheme } from './theme/reactive-proxy';
+export { scopeHash } from './theme/scope-hash';
 
 // Theme — font tokens
 export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './theme/font-token';

@@ -243,9 +243,11 @@ describe('string_method', () => {
 describe('theme_read', () => {
   it('returns the value from the theme getter', () => {
     const ctx = emptyCtx();
-    ctx.themeGetters.set('colors_background', () => 0x1a1a2e);
+    ctx.themeGetters.set('abcd1234_colors_background', () => 0x1a1a2e);
     const node: IRExprNode = {
       kind: 'theme_read',
+      scope: 'test',
+      scopeId: 'abcd1234',
       path: 'colors_background',
       type: 'color',
     };
@@ -256,9 +258,11 @@ describe('theme_read', () => {
   it('getter is re-evaluated on each call', () => {
     let current = 'dark';
     const ctx = emptyCtx();
-    ctx.themeGetters.set('colors_primary_bg', () => current === 'dark' ? 0x000000 : 0xffffff);
+    ctx.themeGetters.set('abcd1234_colors_primary_bg', () => current === 'dark' ? 0x000000 : 0xffffff);
     const node: IRExprNode = {
       kind: 'theme_read',
+      scope: 'test',
+      scopeId: 'abcd1234',
       path: 'colors_primary_bg',
       type: 'color',
     };
@@ -271,21 +275,23 @@ describe('theme_read', () => {
   it('throws for missing theme path', () => {
     const node: IRExprNode = {
       kind: 'theme_read',
+      scope: 'test',
+      scopeId: 'abcd1234',
       path: 'colors_nonexistent',
       type: 'color',
     };
-    expect(() => exprToJs(node, emptyCtx())).toThrow('Unknown theme path: colors_nonexistent');
+    expect(() => exprToJs(node, emptyCtx())).toThrow('Unknown theme path: abcd1234_colors_nonexistent');
   });
 
   it('works inside a ternary expression', () => {
     const ctx = emptyCtx();
-    ctx.themeGetters.set('colors_primary_bg', () => 0x2196f3);
-    ctx.themeGetters.set('colors_secondary_bg', () => 0xff5722);
+    ctx.themeGetters.set('abcd1234_colors_primary_bg', () => 0x2196f3);
+    ctx.themeGetters.set('abcd1234_colors_secondary_bg', () => 0xff5722);
     const node: IRExprNode = {
       kind: 'ternary',
       test: { kind: 'literal', value: true, type: 'bool' },
-      consequent: { kind: 'theme_read', path: 'colors_primary_bg', type: 'color' },
-      alternate: { kind: 'theme_read', path: 'colors_secondary_bg', type: 'color' },
+      consequent: { kind: 'theme_read', scope: 'test', scopeId: 'abcd1234', path: 'colors_primary_bg', type: 'color' },
+      alternate: { kind: 'theme_read', scope: 'test', scopeId: 'abcd1234', path: 'colors_secondary_bg', type: 'color' },
     };
     const fn = exprToJs(node, ctx);
     expect(fn()).toBe(0x2196f3);

@@ -18,6 +18,8 @@ import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 import { createLvglWidget } from '../intents';
 
 export interface ThemeProviderProps<T extends object = Record<string, unknown>> {
+  /** Theme scope identifier (e.g. 'espcompose:ui', 'lcars'). */
+  scope: string;
   /** Map of theme name → theme object. */
   themes: Record<string, T>;
   /** Name of the default (initial) theme. Defaults to the first registered theme. */
@@ -50,18 +52,18 @@ function ThemeProviderImpl<T extends object>(
 
   // Step 2: Register all themes (with FontToken → Ref<FontRef> substitution)
   for (const [name, themeObj] of Object.entries(props.themes)) {
-    if (!registry.getThemes().has(name)) {
+    if (!registry.getThemes(props.scope).has(name)) {
       const resolved = substituteThemeFonts(
         themeObj as Record<string, unknown>,
         fontRefs,
       );
-      registerTheme(name, resolved);
+      registerTheme(props.scope, name, resolved);
     }
   }
 
   // Step 3: Set the default theme
   if (props.default) {
-    registry.setDefault(props.default);
+    registry.setDefault(props.scope, props.default);
   }
 
   // Pass children through (no wrapping element needed — themes flow via

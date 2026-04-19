@@ -25,11 +25,15 @@ export interface IRScript {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Theme data
+// Theme data (per-scope)
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface IRThemeData {
-  readonly kind: 'theme_data';
+export interface IRThemeScopeData {
+  readonly kind: 'theme_scope_data';
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash of the scope — used as C++ identifier fragment. */
+  scopeId: string;
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
@@ -89,7 +93,7 @@ export interface IRESPComposeData {
   reactive: IRReactiveData;
 
   /** Theme data from the theme registry (undefined if no themes) */
-  themes?: IRThemeData;
+  themeScopes?: IRThemeScopeData[];
 }
 
 /**

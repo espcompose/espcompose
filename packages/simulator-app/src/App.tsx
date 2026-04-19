@@ -18,14 +18,17 @@ export function App() {
 
   // Generate theme CSS from current IR
   const themeStyleHtml = useMemo(() => {
-    if (!sim.ir?.espcompose.themes) return '';
-    return generateThemeStyleBlock(sim.ir.espcompose.themes);
+    const scopes = sim.ir?.espcompose.themeScopes;
+    if (!scopes || scopes.length === 0) return '';
+    return generateThemeStyleBlock(scopes);
   }, [sim.ir]);
 
   const defaultThemeName = useMemo(() => {
-    const themes = sim.ir?.espcompose.themes;
-    if (!themes) return undefined;
-    return themes.themeNames[themes.defaultIndex] ?? undefined;
+    const scopes = sim.ir?.espcompose.themeScopes;
+    if (!scopes || scopes.length === 0) return undefined;
+    // Use the first scope's default theme name for the viewport data-theme attr
+    const first = scopes[0];
+    return first.themeNames[first.defaultIndex] ?? undefined;
   }, [sim.ir]);
 
   const handleAction = useCallback((nodeId: string, event: string) => {

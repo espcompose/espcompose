@@ -7,6 +7,7 @@
 
 import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useTheme } from '@espcompose/core';
+import { UI_THEME_SCOPE } from '../theme/scope';
 import { useSpacing } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import type { SpacingToken, Theme } from '../theme/types';
@@ -36,7 +37,7 @@ export const Dropdown = createLvglWidget<DropdownProps>(
   (props) => {
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
     const font = themeLeaf('typography', 'body');
-    const theme = useTheme<Theme>();
+    const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
       <lvgl-obj

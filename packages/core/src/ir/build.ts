@@ -21,7 +21,7 @@ import type {
   SemanticIR,
   IRSection,
   IRValue,
-  IRThemeData,
+  IRThemeScopeData,
 } from './types';
 import {
   irSection,
@@ -164,8 +164,8 @@ export interface BuildSemanticIRInput {
   /** Reactive nodes registered during the render pass */
   reactiveNodes: IRReactiveNode[];
 
-  /** Theme data from the theme registry */
-  themes?: IRThemeData;
+  /** Theme scope data from the theme registry */
+  themeScopes?: IRThemeScopeData[];
 }
 
 /**
@@ -206,7 +206,7 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
         memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
         effects: input.reactiveNodes.filter(n => n.kind === 'effect'),
       },
-      themes: input.themes,
+      themeScopes: input.themeScopes,
     },
   };
 }

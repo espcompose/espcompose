@@ -8,6 +8,7 @@
 
 import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useTheme } from '@espcompose/core';
+import { UI_THEME_SCOPE } from '../theme/scope';
 import { themeLeaf } from '../hooks/utils';
 import { Theme } from '../theme/types';
 
@@ -31,7 +32,7 @@ export type SwitchProps = WidgetProps<{
 export const Switch = createLvglWidget<SwitchProps>(
   (props) => {
     const font = themeLeaf('typography', 'body');
-    const theme = useTheme<Theme>();
+    const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
       <lvgl-obj

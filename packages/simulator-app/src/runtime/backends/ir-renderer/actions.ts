@@ -141,6 +141,8 @@ export function interpretActionSteps(
         case 'theme_select':
           steps.push({
             type: 'theme_select',
+            scope: node.scope,
+            scopeId: node.scopeId,
             themeName: node.themeName,
           });
           break;
@@ -244,15 +246,16 @@ export async function executeActionStep(step: ActionStep, ctx: IRRenderContext, 
       }
       break;
     case 'theme_select': {
-      if (ctx.themeData) {
-        const idx = ctx.themeData.themeNames.indexOf(step.themeName);
+      const scope = ctx.themeScopes?.find(s => s.scopeId === step.scopeId);
+      if (scope) {
+        const idx = scope.themeNames.indexOf(step.themeName);
         if (idx >= 0) {
-          ctx.themeIndex = idx;
-          console.log(`[Simulator] theme.select('${step.themeName}') → index ${idx}`);
+          ctx.themeIndices.set(step.scopeId, idx);
+          console.log(`[Simulator] theme.select('${step.scope}', '${step.themeName}') → index ${idx}`);
           Scheduler.instance().flush();
           ctx.requestRerender?.();
         } else {
-          console.warn(`[Simulator] Unknown theme name: '${step.themeName}'. Available: ${ctx.themeData.themeNames.join(', ')}`);
+          console.warn(`[Simulator] Unknown theme name: '${step.themeName}' in scope '${step.scope}'. Available: ${scope.themeNames.join(', ')}`);
         }
       }
       break;

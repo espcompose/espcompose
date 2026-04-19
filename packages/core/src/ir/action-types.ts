@@ -94,6 +94,10 @@ export interface IRScriptStop {
 /** Theme selection action */
 export interface IRThemeSelect {
   kind: 'theme_select';
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash of the scope — C++ identifier fragment. */
+  scopeId: string;
   themeName: string;
 }
 
@@ -211,8 +215,8 @@ export function irScriptStop(scriptId: string): IRScriptStop {
   return { kind: 'script_stop', scriptId };
 }
 
-export function irThemeSelect(themeName: string): IRThemeSelect {
-  return { kind: 'theme_select', themeName };
+export function irThemeSelect(scope: string, scopeId: string, themeName: string): IRThemeSelect {
+  return { kind: 'theme_select', scope, scopeId, themeName };
 }
 
 export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {

@@ -88,17 +88,27 @@ export interface TriggerFunctionDecl {
   body: string;
 }
 
+/** Configuration for a single theme scope in the reactive runtime. */
+export interface ThemeScopeConfig {
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash — C++ identifier fragment. */
+  scopeId: string;
+  /** Theme memo declarations within this scope. */
+  themeMemos: ThemeMemoDecl[];
+  /** Default theme index within this scope. */
+  defaultIndex: number;
+  /** Ordered theme variant names. */
+  themeNames: string[];
+}
+
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
   memos: MemoDecl[];
   effects: EffectDecl[];
   widgetBindings: WidgetBindingDecl[];
-  /** Theme memo declarations (one per theme leaf signal). */
-  themeMemos?: ThemeMemoDecl[];
-  /** Default theme index (for theme_index signal initial value). */
-  themeDefaultIndex?: number;
-  /** Ordered theme names (index corresponds to theme_index values). */
-  themeNames?: string[];
+  /** Per-scope theme configurations. */
+  themeScopes?: ThemeScopeConfig[];
   /** Compiled trigger functions (from device.inline/device.script AST compilation). */
   triggerFunctions?: TriggerFunctionDecl[];
 }
@@ -109,7 +119,9 @@ export interface ReactiveRuntimeConfig {
  * Compute the ESPCOMPOSE_MAX_NODES capacity for the reactive runtime.
  */
 export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
-  const themeMemos = config.themeMemos ?? [];
+  const themeScopes = config.themeScopes ?? [];
+  const totalThemeMemos = themeScopes.reduce((sum, sc) => sum + sc.themeMemos.length, 0);
+  const themeSignalCount = themeScopes.length; // one theme_index per scope
   const canonicalMemoCount = config.memos.filter(m => m.canonicalIndex == null).length;
 
   const bindingGroupKeys = new Set<string>();
@@ -120,8 +132,8 @@ export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
 
   const totalNodes =
     config.signals.length +
-    (themeMemos.length > 0 ? 1 : 0) +
-    themeMemos.length +
+    themeSignalCount +
+    totalThemeMemos +
     canonicalMemoCount +
     config.effects.length +
     batchedBindingCount;
@@ -136,7 +148,8 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   const lines: string[] = [];
 
   // ── Compute subscriber counts for the reactive runtime ──────────────
-  const themeMemos = config.themeMemos ?? [];
+  const themeScopes = config.themeScopes ?? [];
+  const allThemeMemos = themeScopes.flatMap(sc => sc.themeMemos);
 
   // Count batched binding Effects (one per unique source group)
   const bindingGroupKeys = new Set<string>();
@@ -144,12 +157,15 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     bindingGroupKeys.add([...b.sourceNames].sort().join(','));
   }
 
-  // Max fan-out: theme_index → all theme memos is typically the largest.
+  // Max fan-out: theme_index_<scopeId> → all theme memos is typically the largest.
   // Also account for signal → memos/bindings and memo → bindings.
   // Only count subscribers for canonical memos (aliases are references).
   const subscriberCounts = new Map<string, number>();
   const incSub = (src: string) => subscriberCounts.set(src, (subscriberCounts.get(src) ?? 0) + 1);
-  for (const _tm of themeMemos) incSub('theme_index');
+  for (const sc of themeScopes) {
+    const indexName = `theme_index_${sc.scopeId}`;
+    for (const _tm of sc.themeMemos) incSub(indexName);
+  }
   for (const memo of config.memos) {
     if (memo.canonicalIndex != null) continue; // alias — no wiring
     for (const s of memo.sourceSignals) incSub(s);
@@ -171,7 +187,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('');
 
   // Provide operator!= for LVGL color types (needed by Signal/Memo<lv_color_t>::update)
-  const hasColorType = config.themeMemos?.some(tm => tm.cppType === 'lv_color_t');
+  const hasColorType = allThemeMemos.some(tm => tm.cppType === 'lv_color_t');
   if (hasColorType) {
     lines.push('inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }');
     lines.push('');
@@ -218,13 +234,14 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('');
   }
 
-  // ── Theme infrastructure ───────────────────────────────────────────────
-  if (themeMemos.length > 0) {
-    lines.push('// ── Theme: index signal + value arrays + memos ──');
-    lines.push(`Signal<int32_t> theme_index;`);
+  // ── Theme infrastructure (per-scope) ────────────────────────────────
+  for (const sc of themeScopes) {
+    const indexName = `theme_index_${sc.scopeId}`;
+    lines.push(`// ── Theme scope: ${sc.scope} (${sc.scopeId}) ──`);
+    lines.push(`Signal<int32_t> ${indexName};`);
     lines.push('');
 
-    for (const tm of themeMemos) {
+    for (const tm of sc.themeMemos) {
       const arrName = `${tm.name}_vals`;
       const valStrs = tm.values.map((v) => toCppLiteral(v, tm.cppType));
       const arrType = cppArrayType(tm.cppType);
@@ -236,30 +253,28 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         const storagePrefix = arrType.startsWith('const ') ? 'static' : 'static const';
         lines.push(`Memo<${tm.cppType}> ${tm.name}([]() -> ${tm.cppType} {`);
         lines.push(`  ${storagePrefix} ${arrType} ${arrName}[] = {${valStrs.join(', ')}};`);
-        lines.push(`  return ${arrName}[theme_index.get()];`);
+        lines.push(`  return ${arrName}[${indexName}.get()];`);
         lines.push('});');
       } else {
-        // Avoid `static const const char*` — the type already carries `const`
         const storagePrefix = arrType.startsWith('const ') ? 'static' : 'static const';
         lines.push(`${storagePrefix} ${arrType} ${arrName}[] = {${valStrs.join(', ')}};`);
         lines.push(`Memo<${tm.cppType}> ${tm.name}([]() -> ${tm.cppType} {`);
         if (tm.cppType === 'std::string') {
-          lines.push(`  return std::string(${arrName}[theme_index.get()]);`);
+          lines.push(`  return std::string(${arrName}[${indexName}.get()]);`);
         } else {
-          lines.push(`  return ${arrName}[theme_index.get()];`);
+          lines.push(`  return ${arrName}[${indexName}.get()];`);
         }
         lines.push('});');
       }
       lines.push('');
     }
 
-    // select_theme(name) — maps theme name to index and requests a scheduled flush
-    const themeNames = config.themeNames ?? [];
-    if (themeNames.length > 0) {
-      lines.push('void select_theme(const char* name) {');
-      for (let i = 0; i < themeNames.length; i++) {
+    // select_theme_<scopeId>(name) — maps theme name to index and requests flush
+    if (sc.themeNames.length > 0) {
+      lines.push(`void select_theme_${sc.scopeId}(const char* name) {`);
+      for (let i = 0; i < sc.themeNames.length; i++) {
         const cond = i === 0 ? 'if' : 'else if';
-        lines.push(`  ${cond} (strcmp(name, "${themeNames[i]}") == 0) { theme_index.set(${i}); }`);
+        lines.push(`  ${cond} (strcmp(name, "${sc.themeNames[i]}") == 0) { ${indexName}.set(${i}); }`);
       }
       lines.push('  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }');
       lines.push('}');
@@ -312,11 +327,11 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('    return;');
   lines.push('  }');
 
-  // Set theme_index default
-  if (themeMemos.length > 0) {
-    lines.push(`  theme_index.set(${config.themeDefaultIndex ?? 0});`);
-    lines.push('');
+  // Set per-scope theme_index defaults
+  for (const sc of themeScopes) {
+    lines.push(`  theme_index_${sc.scopeId}.set(${sc.defaultIndex});`);
   }
+  if (themeScopes.length > 0) lines.push('');
 
   // ── Allocate exact-sized subscriber storage for each node ──────────
   // The codegen knows the full dependency graph, so we emit perfectly-
@@ -387,11 +402,14 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
-  // Wire theme memos (all depend on theme_index)
-  for (const tm of themeMemos) {
-    const src = `${tm.name}_src`;
-    lines.push(`  static NodeBase* ${src}[] = {&theme_index};`);
-    lines.push(`  ${tm.name}.wire(${src}, 1);`);
+  // Wire theme memos (each scope's memos depend on their scope's theme_index)
+  for (const sc of themeScopes) {
+    const indexName = `theme_index_${sc.scopeId}`;
+    for (const tm of sc.themeMemos) {
+      const src = `${tm.name}_src`;
+      lines.push(`  static NodeBase* ${src}[] = {&${indexName}};`);
+      lines.push(`  ${tm.name}.wire(${src}, 1);`);
+    }
   }
 
   // Wire memos (only canonical — aliases are references, not separate nodes)
@@ -433,8 +451,10 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   // Schedule all dirty nodes so the initial flush actually processes them.
   // Constructors set dirty=true but don't enqueue, so we must do it here.
   lines.push('');
-  for (const tm of themeMemos) {
-    lines.push(`  Scheduler::instance().schedule(&${tm.name});`);
+  for (const sc of themeScopes) {
+    for (const tm of sc.themeMemos) {
+      lines.push(`  Scheduler::instance().schedule(&${tm.name});`);
+    }
   }
   // Schedule only canonical memos (aliases are references to canonicals)
   for (const memo of canonicalMemos) {

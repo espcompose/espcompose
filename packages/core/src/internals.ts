@@ -119,7 +119,7 @@ export { secret, SecretValue, isSecretValue } from './secret';
 export type { FlattenedTheme } from './theme/registry';
 export { createReactiveThemeProxy } from './theme/reactive-proxy';
 export { flattenTheme } from './theme/signals';
-
+export { scopeHash } from './theme/scope-hash';
 // ── HA binding types ───────────────────────────────────────────────────────
 export type {
   SensorBinding,
@@ -156,7 +156,7 @@ export { isTriggerVar } from './trigger-args';
 export { buildSemanticIR } from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeData, IRScript,
+  BuildSemanticIRInput, IRThemeScopeData, IRScript,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
 } from './ir/index';

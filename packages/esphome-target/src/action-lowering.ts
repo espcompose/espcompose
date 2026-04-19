@@ -188,7 +188,7 @@ function lowerAction(action: IRActionNode): unknown {
       return { 'script.stop': { id: action.scriptId } };
 
     case 'theme_select':
-      return { lambda: lambdaMarker(`espcompose::select_theme("${escapeStringForCpp(action.themeName)}");`) };
+      return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
   }
 }
 

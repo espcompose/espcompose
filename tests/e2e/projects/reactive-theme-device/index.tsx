@@ -22,6 +22,7 @@ import {
   Slider,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -48,7 +49,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }} default="dark">
           <Screen padding="lg">
             <VStack>
               <Text variant="title" text="Theme Test" />
@@ -62,12 +63,12 @@ function App() {
                 <Button
                   text="Dark"
                   status="primary"
-                  onPress={() => { theme.select('dark'); }}
+                  onPress={() => { theme.select('espcompose:ui', 'dark'); }}
                 />
                 <Button
                   text="Light"
                   status="secondary"
-                  onPress={() => { theme.select('light'); }}
+                  onPress={() => { theme.select('espcompose:ui', 'light'); }}
                 />
               </HStack>
             </VStack>

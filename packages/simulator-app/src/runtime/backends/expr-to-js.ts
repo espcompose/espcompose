@@ -113,8 +113,9 @@ export function exprToJs(node: IRExprNode, ctx: JsLoweringContext): () => unknow
     }
 
     case 'theme_read': {
-      const getter = ctx.themeGetters.get(node.path);
-      if (!getter) throw new Error(`Unknown theme path: ${node.path}`);
+      const scopedKey = `${node.scopeId}_${node.path}`;
+      const getter = ctx.themeGetters.get(scopedKey);
+      if (!getter) throw new Error(`Unknown theme path: ${scopedKey}`);
       return getter;
     }
 

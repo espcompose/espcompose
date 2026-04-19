@@ -20,9 +20,12 @@ import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from '../style-mapping';
  * Create a reusable style sheet from a factory function that receives the
  * reactive theme.
  *
+ * @param scope — theme scope identifier (e.g. 'espcompose:ui')
+ * @param factory — function receiving the reactive theme proxy
+ *
  * @example
  * ```ts
- * const s = createStyles(theme => ({
+ * const s = createStyles('espcompose:ui', theme => ({
  *   card: {
  *     backgroundColor: theme.colors.surface,
  *     padding: theme.spacing.md,
@@ -43,10 +46,11 @@ import { LVGL_STATE_NAMES, LVGL_PART_NAMES } from '../style-mapping';
  * ```
  */
 export function createStyles<K extends string>(
+  scope: string,
   factory: (theme: ReturnType<typeof useTheme>) => Record<K, CssStyle>,
 ): Record<K, CssStyle> {
-  const theme = useTheme();
-  return factory(theme);
+  const thm = useTheme(scope);
+  return factory(thm);
 }
 
 // ── mergeStyles ────────────────────────────────────────────────────────────

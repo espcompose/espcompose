@@ -124,6 +124,8 @@ export interface ConditionalActionStep {
 
 export interface ThemeSelectActionStep {
   type: 'theme_select';
+  scope: string;
+  scopeId: string;
   themeName: string;
 }
 

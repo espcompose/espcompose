@@ -8,6 +8,7 @@
 // Theme system
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
+export { UI_THEME_SCOPE } from './theme/scope';
 
 // Theme types
 export type {

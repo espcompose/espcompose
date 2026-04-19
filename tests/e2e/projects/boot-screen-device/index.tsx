@@ -22,6 +22,7 @@ import {
   VStack,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -53,7 +54,7 @@ function App() {
       />
 
       <lvgl ref={lvgl} displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }}>
           {/* Boot screen — shown on startup, skipped in page cycling */}
           <Screen skip>
             <VStack align="center">

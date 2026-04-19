@@ -120,8 +120,9 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     }
 
     case 'theme_read': {
-      const name = ctx.themeVarNames.get(node.path);
-      if (!name) throw new Error(`Unknown theme path: ${node.path}`);
+      const scopedKey = `${node.scopeId}_${node.path}`;
+      const name = ctx.themeVarNames.get(scopedKey);
+      if (!name) throw new Error(`Unknown theme path: ${node.scope}/${node.path} (key: ${scopedKey})`);
       return `${name}.get()`;
     }
 

@@ -128,6 +128,10 @@ export interface IRExprResolveFont {
 
 export interface IRExprThemeRead {
   readonly kind: 'theme_read';
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  readonly scope: string;
+  /** 8-char hex hash of the scope — C++ identifier fragment. */
+  readonly scopeId: string;
   readonly path: string;
   readonly type: ExprType;
 }

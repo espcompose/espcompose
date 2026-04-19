@@ -8,7 +8,7 @@
 // Convention: theme path "colors_primary_bg" → CSS variable "--thm-colors-primary-bg"
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRThemeData } from '@espcompose/core/internals';
+import type { IRThemeScopeData } from '@espcompose/core/internals';
 import { lvglColorToCss } from './lvgl-styles';
 
 /**
@@ -46,7 +46,7 @@ function themeValueToCss(value: unknown, valueType: string): string {
  *   --thm-spacing-md: 12;
  */
 export function generateThemeCssVars(
-  themeData: IRThemeData,
+  themeData: IRThemeScopeData,
   themeIndex: number,
 ): string {
   const lines: string[] = [];
@@ -61,21 +61,23 @@ export function generateThemeCssVars(
 /**
  * Generate a complete CSS rule that sets theme variables on the viewport.
  *
- * Includes all themes as data-attribute selectors so theme switching
- * can be done client-side by updating the data-theme attribute.
+ * Includes all scopes and themes as data-attribute selectors so theme switching
+ * can be done client-side by updating data-theme-<scopeId> attributes.
  */
-export function generateThemeStyleBlock(themeData: IRThemeData): string {
+export function generateThemeStyleBlock(themeScopes: IRThemeScopeData[]): string {
   const blocks: string[] = [];
 
-  // Default theme (applied to .sim-viewport directly)
-  const defaultVars = generateThemeCssVars(themeData, themeData.defaultIndex);
-  blocks.push(`.sim-viewport {\n${defaultVars}\n}`);
+  for (const scope of themeScopes) {
+    // Default theme for this scope (applied to .sim-viewport directly)
+    const defaultVars = generateThemeCssVars(scope, scope.defaultIndex);
+    blocks.push(`/* scope: ${scope.scope} */\n.sim-viewport {\n${defaultVars}\n}`);
 
-  // Per-theme overrides via data-theme attribute
-  for (let i = 0; i < themeData.themeNames.length; i++) {
-    const name = themeData.themeNames[i];
-    const vars = generateThemeCssVars(themeData, i);
-    blocks.push(`.sim-viewport[data-theme="${name}"] {\n${vars}\n}`);
+    // Per-theme overrides via data-theme-<scopeId> attribute
+    for (let i = 0; i < scope.themeNames.length; i++) {
+      const name = scope.themeNames[i];
+      const vars = generateThemeCssVars(scope, i);
+      blocks.push(`.sim-viewport[data-theme-${scope.scopeId}="${name}"] {\n${vars}\n}`);
+    }
   }
 
   return blocks.join('\n\n');

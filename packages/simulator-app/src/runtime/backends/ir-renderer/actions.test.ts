@@ -129,10 +129,10 @@ describe('interpretActionSteps', () => {
     });
 
     it('interprets theme_select actions', () => {
-      const actions: IRActionNode[] = [{ kind: 'theme_select', themeName: 'dark' }];
+      const actions: IRActionNode[] = [{ kind: 'theme_select', scope: 'test', scopeId: 'abcd1234', themeName: 'dark' }];
       const steps = interpretActionSteps(actions);
       expect(steps).toHaveLength(1);
-      expect(steps[0]).toMatchObject({ type: 'theme_select', themeName: 'dark' });
+      expect(steps[0]).toMatchObject({ type: 'theme_select', scope: 'test', scopeId: 'abcd1234', themeName: 'dark' });
     });
 
     it('resolves ref-bound native action config ids', () => {
@@ -164,7 +164,7 @@ describe('interpretActionSteps', () => {
         entityStore,
         onEntityInteraction: () => {},
         nodeCounter: 0,
-        themeIndex: 0,
+        themeIndices: new Map(),
         imageMap: new Map(),
         fontMap: new Map(),
         currentPageIndex: 1,

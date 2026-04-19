@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
   darkTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -42,7 +43,7 @@ function App() {
       />
 
       <lvgl ref={lvgl} displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme }}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme }}>
           <Screen ref={screenRef} padding="md">
             <VStack>
               <Text variant="title" text="Ref Forwarding" />

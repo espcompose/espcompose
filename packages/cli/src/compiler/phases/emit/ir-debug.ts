@@ -27,7 +27,7 @@ import type { SemanticIR } from '@espcompose/core/internals';
  *     so they are dropped automatically. `__`-prefixed fields (e.g.
  *     __reactive_node__) are preserved in the JSON; the viewer hides them by
  *     default and exposes a toggle to show them.
- *   - IRThemeData.leafData    → Map converted to a plain object
+ *   - IRThemeScopeData.leafData → Map converted to a plain object
  *   - IRBinding.expression → sanitized IRReactiveNode
  *
  * Everything else (IRValue tree, IRExprNode ASTs, scalars) passes through.
@@ -53,13 +53,15 @@ export function serializeIR(ir: SemanticIR): Record<string, unknown> {
         memos: ir.espcompose.reactive.memos.map(sanitizeIRReactiveNode),
         effects: ir.espcompose.reactive.effects.map(sanitizeIRReactiveNode),
       },
-      themes: ir.espcompose.themes
-        ? {
-            kind: ir.espcompose.themes.kind,
-            themeNames: ir.espcompose.themes.themeNames,
-            defaultIndex: ir.espcompose.themes.defaultIndex,
-            leafData: Object.fromEntries(ir.espcompose.themes.leafData),
-          }
+      themeScopes: ir.espcompose.themeScopes
+        ? ir.espcompose.themeScopes.map(scope => ({
+            kind: scope.kind,
+            scope: scope.scope,
+            scopeId: scope.scopeId,
+            themeNames: scope.themeNames,
+            defaultIndex: scope.defaultIndex,
+            leafData: Object.fromEntries(scope.leafData),
+          }))
         : undefined,
     },
   };

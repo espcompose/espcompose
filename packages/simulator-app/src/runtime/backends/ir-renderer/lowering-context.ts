@@ -1,5 +1,5 @@
 import type { IRExprNode } from '@espcompose/core';
-import type { IRReactive, IRThemeData } from '@espcompose/core/internals';
+import type { IRReactive, IRThemeScopeData } from '@espcompose/core/internals';
 import { REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
 import type { JsLoweringContext } from '../expr-to-js.js';
 import type { EntitySignalRegistry } from './entity-registry.js';
@@ -13,10 +13,10 @@ export interface IRRenderContext {
   /** Callback to send an entity interaction (service call) to the server. */
   onEntityInteraction: (domain: string, action: string, entityId: string, data?: Record<string, unknown>) => void;
   nodeCounter: number;
-  /** Theme data from the SemanticIR (undefined if no themes registered). */
-  themeData?: IRThemeData;
-  /** Active theme index — mutable so theme_select actions can update it. */
-  themeIndex: number;
+  /** Theme scope data from the SemanticIR (undefined if no themes registered). */
+  themeScopes?: IRThemeScopeData[];
+  /** Active theme index per scope — mutable so theme_select actions can update it. Keyed by scopeId. */
+  themeIndices: Map<string, number>;
   /** Mapping from image component IDs (tokens) to file path + optional resize. */
   imageMap: Map<string, { file: string; resize?: string }>;
   /** Mapping from font component ref tokens to CSS font strings (e.g. "28px 'Roboto', sans-serif"). */
@@ -162,18 +162,25 @@ export function buildJsLoweringContext(exprIR: IRExprNode, ctx: IRRenderContext)
     }
 
     if (node.kind === 'theme_read') {
-      if (themeGetters.has(node.path)) return;
-      const leaf = ctx.themeData?.leafData.get(node.path);
-      if (leaf) {
+      const scopedKey = `${node.scopeId}_${node.path}`;
+      if (themeGetters.has(scopedKey)) return;
+      const scope = ctx.themeScopes?.find(s => s.scopeId === node.scopeId);
+      const leaf = scope?.leafData.get(node.path);
+      if (leaf && scope) {
+        const { scopeId } = scope;
         if (leaf.valueType === 'font_ptr') {
           // Font pointer leaves store ref tokens — resolve to CSS font strings
-          themeGetters.set(node.path, () => {
-            const refToken = leaf.values[ctx.themeIndex] ?? leaf.values[0];
+          themeGetters.set(scopedKey, () => {
+            const idx = ctx.themeIndices.get(scopeId) ?? 0;
+            const refToken = leaf.values[idx] ?? leaf.values[0];
             return ctx.fontMap.get(String(refToken)) ?? refToken;
           });
         } else {
           // Closure captures ctx so theme_select updates are reflected.
-          themeGetters.set(node.path, () => leaf.values[ctx.themeIndex] ?? leaf.values[0]);
+          themeGetters.set(scopedKey, () => {
+            const idx = ctx.themeIndices.get(scopeId) ?? 0;
+            return leaf.values[idx] ?? leaf.values[0];
+          });
         }
       }
     }

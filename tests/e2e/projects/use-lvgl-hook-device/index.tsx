@@ -22,6 +22,7 @@ import {
   VStack,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 /** Component using useLvgl() with pageNext — no lvgl prop needed. */
@@ -63,7 +64,7 @@ const UI = createEspHomeComponent(
     const screen1Ref = useRef();
     return (
       <lvgl displays={[display]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }}>
           <Screen ref={screen1Ref}>
             <VStack>
               <Text variant="title" text="Page 1" />

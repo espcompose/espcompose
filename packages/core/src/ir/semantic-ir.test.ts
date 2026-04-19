@@ -327,18 +327,20 @@ describe('buildSemanticIR', () => {
       components: [component],
       scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
       reactiveNodes: [],
-      themes: {
-        kind: 'theme_data',
+      themeScopes: [{
+        kind: 'theme_scope_data',
+        scope: 'test',
+        scopeId: 'abcd1234',
         themeNames: ['light', 'dark'],
         defaultIndex: 0,
         leafData: new Map([['colors_primary', { values: [0xFF0000, 0x0000FF], valueType: 'int' }]]),
-      },
+      }],
     });
 
     expect(ir.esphome.haEntities).toEqual([entity]);
     expect(ir.esphome.components).toEqual([component]);
     expect(ir.esphome.scripts).toHaveLength(1);
-    expect(ir.espcompose.themes?.themeNames).toEqual(['light', 'dark']);
+    expect(ir.espcompose.themeScopes?.[0].themeNames).toEqual(['light', 'dark']);
   });
 });
 

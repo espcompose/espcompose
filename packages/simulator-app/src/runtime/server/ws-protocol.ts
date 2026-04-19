@@ -157,7 +157,7 @@ export function isClientMessage(data: unknown): data is ClientMessage {
 
 /**
  * JSON replacer that converts Map instances to plain objects
- * so they survive JSON serialisation (e.g. IRThemeData.leafData).
+ * so they survive JSON serialisation (e.g. IRThemeScopeData.leafData).
  */
 function jsonReplacer(_key: string, value: unknown): unknown {
   if (value instanceof Map) {

@@ -63,7 +63,15 @@ export function lowerToSimulator(
 ): LoweringResult {
   Scheduler.reset();
 
-  const themeData = ir.espcompose.themes;
+  const themeScopes = ir.espcompose.themeScopes;
+
+  // Build per-scope theme indices map (scopeId → active theme index)
+  const themeIndices = new Map<string, number>();
+  if (themeScopes) {
+    for (const scope of themeScopes) {
+      themeIndices.set(scope.scopeId, scope.defaultIndex);
+    }
+  }
 
   // Build image map from IR components
   const imageMap = new Map<string, { file: string; resize?: string }>();
@@ -93,8 +101,8 @@ export function lowerToSimulator(
     entityStore,
     onEntityInteraction,
     nodeCounter: 0,
-    themeData,
-    themeIndex: themeData?.defaultIndex ?? 0,
+    themeScopes,
+    themeIndices,
     imageMap,
     fontMap,
     currentPageIndex: 0,

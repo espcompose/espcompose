@@ -14,7 +14,7 @@ import {
   type ScriptTransformContext,
 } from './expr-compiler.js';
 import { hasRefBrand, hasBindingBrand } from './type-brands.js';
-import { ENTITY_DOMAINS } from '@espcompose/core/internals';
+import { ENTITY_DOMAINS, scopeHash } from '@espcompose/core/internals';
 import {
   type IRActionNode,
   type IRActionParam,
@@ -460,19 +460,26 @@ function compileThemeSelect(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
 ): IRActionNode[] | null {
-  if (call.arguments.length < 1) {
-    return emitError(call, ctx, 'theme.select() requires a theme name argument.');
+  if (call.arguments.length < 2) {
+    return emitError(call, ctx, 'theme.select() requires two arguments: scope and theme name.');
   }
 
-  const nameArg = call.arguments[0];
+  const scopeArg = call.arguments[0];
+  if (!ts.isStringLiteral(scopeArg)) {
+    return emitError(scopeArg, ctx,
+      'theme.select() scope argument must be a string literal.');
+  }
+
+  const nameArg = call.arguments[1];
   if (!ts.isStringLiteral(nameArg)) {
     return emitError(nameArg, ctx,
-      'theme.select() argument must be a string literal.');
+      'theme.select() theme name argument must be a string literal.');
   }
 
-  // Emit target-agnostic theme select — actual lowering to C++/JS happens in target packages
+  const scope = scopeArg.text;
+  const scopeId = scopeHash(scope);
   const themeName = nameArg.text;
-  return [irThemeSelect(themeName)];
+  return [irThemeSelect(scope, scopeId, themeName)];
 }
 
 function compileHAAction(

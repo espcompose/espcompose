@@ -29,15 +29,15 @@ function makeThemedIR(
     kind: 'expression',
     dependencies: [{
       kind: 'dependency',
-      sourceId: '__theme__',
+      sourceId: '__theme_abcd1234__',
       triggerType: 'colors_bg',
       sourceDomain: 'theme',
       sourceType: 'theme',
     }],
     exprType: 'color',
-    sourceId: '__theme__',
+    sourceId: '__theme_abcd1234__',
   });
-  reactiveNode.exprIR = { kind: 'theme_read', path: 'colors_bg', type: 'color' };
+  reactiveNode.exprIR = { kind: 'theme_read', scope: 'test', scopeId: 'abcd1234', path: 'colors_bg', type: 'color' };
 
   return {
     kind: 'semantic_ir',
@@ -80,12 +80,14 @@ function makeThemedIR(
     espcompose: {
       kind: 'espcompose_data',
       reactive: { kind: 'reactive_data', bindings: [], memos: [], effects: [] },
-      themes: {
-        kind: 'theme_data',
+      themeScopes: [{
+        kind: 'theme_scope_data',
+        scope: 'test',
+        scopeId: 'abcd1234',
         themeNames: ['dark', 'light'],
         defaultIndex: 0,
         leafData,
-      },
+      }],
     },
   };
 }
@@ -93,7 +95,7 @@ function makeThemedIR(
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe('ws-protocol IR serialization roundtrip', () => {
-  it('preserves IRThemeData.leafData as a Map after encode → parse', () => {
+  it('preserves IRThemeScopeData.leafData as a Map after encode → parse', () => {
     const leafData = new Map([
       ['colors_bg', { values: [0x1a1a2e, 0xffffff], valueType: 'color' }],
       ['spacing_md', { values: [8, 12], valueType: 'int' }],
@@ -111,17 +113,18 @@ describe('ws-protocol IR serialization roundtrip', () => {
 
     if (parsed.type !== 'ir_update') throw new Error('unexpected');
 
-    const themes = parsed.payload.ir.espcompose.themes;
-    expect(themes).toBeDefined();
+    const scopes = parsed.payload.ir.espcompose.themeScopes;
+    expect(scopes).toBeDefined();
+    expect(scopes!.length).toBe(1);
 
     // The critical assertion: leafData must be a Map, not a plain object
-    expect(themes!.leafData).toBeInstanceOf(Map);
-    expect(themes!.leafData.size).toBe(2);
-    expect(themes!.leafData.get('colors_bg')).toEqual({
+    expect(scopes![0].leafData).toBeInstanceOf(Map);
+    expect(scopes![0].leafData.size).toBe(2);
+    expect(scopes![0].leafData.get('colors_bg')).toEqual({
       values: [0x1a1a2e, 0xffffff],
       valueType: 'color',
     });
-    expect(themes!.leafData.get('spacing_md')).toEqual({
+    expect(scopes![0].leafData.get('spacing_md')).toEqual({
       values: [8, 12],
       valueType: 'int',
     });
@@ -139,11 +142,11 @@ describe('ws-protocol IR serialization roundtrip', () => {
     if (decoded.type !== 'ir_update') throw new Error('unexpected');
 
     expect(decoded.payload.ir.kind).toBe('semantic_ir');
-    expect(decoded.payload.ir.espcompose.themes!.themeNames).toEqual(['dark', 'light']);
-    expect(decoded.payload.ir.espcompose.themes!.defaultIndex).toBe(0);
+    expect(decoded.payload.ir.espcompose.themeScopes![0].themeNames).toEqual(['dark', 'light']);
+    expect(decoded.payload.ir.espcompose.themeScopes![0].defaultIndex).toBe(0);
   });
 
-  it('handles IR with no themes (themes undefined)', () => {
+  it('handles IR with no themes (themeScopes undefined)', () => {
     const ir: SemanticIR = {
       kind: 'semantic_ir',
       esphome: { kind: 'esphome_data', sections: [], haEntities: [], components: [], scripts: [] },
@@ -157,7 +160,7 @@ describe('ws-protocol IR serialization roundtrip', () => {
     const decoded = parseMessage(encodeServerMessage(msg)) as ServerMessage;
 
     if (decoded.type !== 'ir_update') throw new Error('unexpected');
-    expect(decoded.payload.ir.espcompose.themes).toBeUndefined();
+    expect(decoded.payload.ir.espcompose.themeScopes).toBeUndefined();
   });
 
   it('handles empty leafData Map', () => {
@@ -169,7 +172,7 @@ describe('ws-protocol IR serialization roundtrip', () => {
 
     if (decoded.type !== 'ir_update') throw new Error('unexpected');
 
-    expect(decoded.payload.ir.espcompose.themes!.leafData).toBeInstanceOf(Map);
-    expect(decoded.payload.ir.espcompose.themes!.leafData.size).toBe(0);
+    expect(decoded.payload.ir.espcompose.themeScopes![0].leafData).toBeInstanceOf(Map);
+    expect(decoded.payload.ir.espcompose.themeScopes![0].leafData.size).toBe(0);
   });
 });
