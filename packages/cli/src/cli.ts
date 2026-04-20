@@ -8,7 +8,6 @@ import {
   registerBuildCommand,
   registerRunCommand,
   registerLogsCommand,
-  registerSimulateCommand,
   registerUpgradeCommand,
 } from './commands';
 
@@ -26,7 +25,6 @@ registerConfigCommand(program);
 registerBuildCommand(program);
 registerRunCommand(program);
 registerLogsCommand(program);
-registerSimulateCommand(program);
 registerUpgradeCommand(program);
 
 program.parse();

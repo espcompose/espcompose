@@ -3,7 +3,7 @@
 //
 // These types represent the semantic intent of user-written trigger handlers
 // and callbacks. They describe WHAT actions to perform, not HOW to perform
-// them. The lowering to target-specific formats (ESPHome YAML, simulator JS)
+// them. The lowering to target-specific formats (ESPHome YAML)
 // happens in the respective target packages.
 // ────────────────────────────────────────────────────────────────────────────
 

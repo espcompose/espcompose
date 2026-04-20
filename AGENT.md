@@ -18,12 +18,9 @@ pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 | `packages/cli` | CLI binary & compiler pipeline — type-check, lint, AST transforms, bundle, render, target dispatch |
 | `packages/esphome-codegen` | Schema-driven code generation from ESPHome JSON schemas → TypeScript types |
 | `packages/esphome-target` | ESPHome backend — YAML generation, C++ reactive runtime headers, ExprNode → C++ lowering, asset pipeline |
-| `packages/simulator-target` | Browser preview backend — LVGL canvas simulator, JS reactive runtime, mock HA entities |
 | `packages/eslint` | ESLint plugin — JSX intent validation, trigger body validation |
 | `packages/ui` | Design system — reusable LVGL components, reactive theme system, pre-built themes |
 | `packages/ir-viewer` | Dev tool — visual inspector for Semantic IR trees |
-| `packages/simulator-app` | Dev tool — Vite app shell for the browser simulator |
-| `packages/simulator-bridge` | Python bridge between ESPHome native API and simulator |
 | `tests/e2e` | End-to-end snapshot tests — projects built by the full pipeline, YAML snapshot-tested |
 | `metadata/` | Generated metadata files (entity domains, triggers) consumed by codegen |
 
@@ -46,12 +43,11 @@ pnpm --filter espcompose-e2e test         # Run E2E snapshot tests
 | `espcompose config [dir] [-- args]` | Transpile + validate via `esphome config` |
 | `espcompose build [dir] [-- args]` | Transpile + compile firmware via `esphome compile` |
 | `espcompose build --library [dir]` | Build a component library (ESM + `.d.ts`) |
-| `espcompose run [dir] [-- args]` | Transpile + compile + upload via `esphome run` |
+| `espcompose run [dir] [-- args]` | Transpile + compile + upload via `esphome run` (`--host` for local SDL2 preview) |
 | `espcompose logs [dir] [-- args]` | Transpile + open serial monitor |
-| `espcompose simulate [dir]` | Transpile + open browser LVGL simulator |
 
 Output is written to `<projectDir>/.espcompose/esphome.yaml`. Commands
-except `transpile` and `simulate` require `esphome` on PATH. Extra flags
+except `transpile` require `esphome` on PATH. Extra flags
 after `--` are forwarded to ESPHome.
 
 ## Compiler Pipeline (Summary)
@@ -132,11 +128,7 @@ These are hard rules, not guidance.
 - If the user asks for stricter completion criteria, those criteria become mandatory for the remainder of the conversation.
 
 6. Cross-target parity for bug fixes
-- If a bug is fixed in one target backend (`packages/simulator-target`, `packages/simulator-app`, or `packages/esphome-target`), the agent must evaluate the equivalent behavior in the other target backend(s).
-- The agent must either:
-  - implement the capability in both targets, or
-  - explicitly document why parity is not applicable (with concrete scope limits).
-- Before claiming completion, run validation for both targets when applicable (targeted tests plus full build gate).
-- Do not close a target bug as complete if the same user-facing capability remains broken in another supported target.
+- If a bug is fixed in the target backend (`packages/esphome-target`), the agent must verify the fix does not break other functionality.
+- Before claiming completion, run validation (targeted tests plus full build gate).
 
 This ensures code changes don't introduce TypeScript errors, linting violations, or test failures that would block downstream work. A successful `pnpm build:full` run is the gate for job completion.

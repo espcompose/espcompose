@@ -1,15 +1,14 @@
 ---
-description: "Use when working on ESPHome YAML generation, C++ reactive runtime, simulator target, ComposeTarget interface, ExprNode lowering to C++ or JavaScript, or asset pipeline."
+description: "Use when working on ESPHome YAML generation, C++ reactive runtime, ComposeTarget interface, ExprNode lowering to C++, or asset pipeline."
 applyTo:
   - "packages/esphome-target/**"
-  - "packages/simulator-target/**"
 ---
 # Compile Targets
 
 ## ComposeTarget Interface
 
-Defined in `packages/core/src/target.ts`. Both targets share phases 0–3 via
-`runPipeline()` and diverge at phase 4 (emit).
+Defined in `packages/core/src/target.ts`. The target receives phases 0–3 output
+via `runPipeline()` and handles phase 4 (emit).
 
 ```typescript
 interface ComposeTarget {
@@ -27,14 +26,7 @@ interface ComposeTarget {
 - Resolves assets (images, fonts) with content-hash naming (`<stem>-<hash8><ext>`)
 - Writes `esphome.yaml` via `yaml.stringify()`
 
-## Simulator Target (`createSimulatorTarget(options?)`)
-
-- Walks IR to build a `RuntimeNode` tree of LVGL widgets
-- Lowers `ExprNode` → JavaScript via `exprToJs(node)`
-- Writes an HTML page with canvas rendering and mock HA entity state
-- Opens in default browser for one-shot preview
-
-## Theme System (Both Targets)
+## Theme System
 
 Themes are plain TypeScript objects (colors, spacing, typography, radius, sizes).
 

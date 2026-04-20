@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # ESPCompose Architecture Overview
 
-ESPCompose is a TypeScript-to-ESPHome compiler. You write UI and automation logic in JSX/TSX, and the compiler produces ESPHome YAML configuration plus C++ header files that run on ESP32 microcontrollers. There is also a browser-based simulator for previewing LVGL UIs without hardware.
+ESPCompose is a TypeScript-to-ESPHome compiler. You write UI and automation logic in JSX/TSX, and the compiler produces ESPHome YAML configuration plus C++ header files that run on ESP32 microcontrollers. Pass `--host` to the `run` command to preview LVGL UIs locally using SDL2 without hardware.
 
 ## Packages
 
@@ -66,8 +66,7 @@ The bundled file is loaded in Node.js. The SDK's render function walks the JSX t
 
 The compiler delegates to a target backend, passing the Semantic IR and project paths. The compiler has no knowledge of what the target does.
 
-- **ESPHome target** — Generates C++ headers for the reactive runtime, a full ESPHome YAML configuration, and copies asset files.
-- **Simulator target** — Starts an HTTP + WebSocket dev server hosting the React simulator app. Entity state can flow from a built-in mock bridge or from a real Home Assistant instance via the Python HA bridge (`--ha-bridge` flag). The server broadcasts IR updates over WebSocket so the browser hot-reloads on every source change.
+- **ESPHome target** — Generates C++ headers for the reactive runtime, a full ESPHome YAML configuration, and copies asset files. When `--host` is passed, the same target emits configuration for the ESPHome host platform with SDL2 display rendering, allowing local preview without hardware.
 
 ## Reactive System
 
@@ -79,7 +78,7 @@ Three hooks form the reactive API:
 - **`useMemo(fn)`** — Derives a value from one or more signals.
 - **`useEffect(fn)`** — Runs side effects when dependencies change.
 
-Each hook creates a reactive node that carries a target-agnostic expression tree, a return type, and its upstream dependencies. During Phase 1, the AST compiler builds these expression trees. During Phase 4, backends lower them to target code (C++ lambdas for ESPHome, JavaScript for the simulator).
+Each hook creates a reactive node that carries a target-agnostic expression tree, a return type, and its upstream dependencies. During Phase 1, the AST compiler builds these expression trees. During Phase 4, the ESPHome backend lowers them to target code (C++ lambdas).
 
 ## Theme System
 
@@ -120,6 +119,6 @@ At consumer build time, the compiler validates that imported libraries match the
 
 Images and fonts referenced in JSX are tracked during the render pass. At emit time, source files are resolved relative to the project root and copied to the output directory. Font metadata is captured and injected into the LVGL configuration section.
 
-## Simulator
+## Host Preview
 
-The simulator is an alternative backend that produces a browser-based LVGL preview from the same Semantic IR. It converts reactive expressions to JavaScript, generates an HTML page with canvas rendering and mock HA entity state, and opens it in the browser.
+The `--host` flag on the `run` command targets the ESPHome host platform with SDL2 display rendering. This compiles and runs the project locally on your development machine, opening an SDL2 window that renders the LVGL UI. It uses the same ESPHome target backend — no separate build pipeline is needed. Use `--width` and `--height` to override the display dimensions.

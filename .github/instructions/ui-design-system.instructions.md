@@ -1,8 +1,7 @@
 ---
-description: "Use when working on base-level UI design system components (Label, Button, Slider, Switch, Checkbox, etc.), simulator widget renderers, or theme styling for UI components."
+description: "Use when working on base-level UI design system components (Label, Button, Slider, Switch, Checkbox, etc.) or theme styling for UI components."
 applyTo:
   - "packages/ui/src/components/**"
-  - "packages/simulator-app/src/renderer/widgets/**"
   - "packages/ui/src/theme/**"
 ---
 
@@ -76,28 +75,9 @@ For example:
 
 However, these LVGL internals do not need to be surfaced directly as public component props unless there is a deliberate advanced escape hatch.
 
-## Simulator rules
-
-The React-based simulator renders the same semantic IR as the firmware target.
-
-The simulator must preserve the same behavioral semantics as the LVGL-backed component. It must not invent browser-native behavior just because the public design-system API is simplified.
-
-Important:
-- simplified public API does not permit inaccurate rendering
-- theme-driven styling does not permit browser-native layout assumptions
-- simulator convenience must not override LVGL behavioral truth
-
-The simulator should render the semantic component contract in a way that remains faithful to real LVGL behavior.
-
 ## Source of truth
 
-There are two different truths to respect:
-
-1. **Public API truth**
-   The component should present a clean, semantic, opinionated design-system interface.
-
-2. **Behavioral truth**
-   The component must still behave like the underlying LVGL widget in the ways that matter.
+The component should present a clean, semantic, opinionated design-system interface while behaving like the underlying LVGL widget in the ways that matter.
 
 ## Component creation factories
 
@@ -148,8 +128,7 @@ When building a base-level design-system component:
 3. Decide which concepts belong in the public design-system API.
 4. Keep low-level styling details theme-owned unless there is a strong reason to expose them.
 5. Internally map theme semantics to the correct LVGL parts/states.
-6. Ensure the simulator follows the same behavior model as the real widget.
-7. Avoid exposing raw LVGL complexity unless needed for a deliberate advanced API.
+6. Avoid exposing raw LVGL complexity unless needed for a deliberate advanced API.
 
 ## API design rule
 

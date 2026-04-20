@@ -6,7 +6,6 @@
  * This sub-path export provides typed access to SDK internals consumed by:
  *   - @espcompose/cli (compiler)
  *   - @espcompose/esphome-target (code-generation)
- *   - @espcompose/simulator-target (code-generation)
  *   - @espcompose/eslint (lint rules)
  *
  * Do NOT import from this path in user application code.

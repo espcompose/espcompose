@@ -7,7 +7,6 @@ import {
   registerBuildCommand,
   registerRunCommand,
   registerLogsCommand,
-  registerSimulateCommand,
   registerUpgradeCommand,
 } from './index';
 
@@ -62,12 +61,6 @@ describe('command registration', () => {
       register: registerLogsCommand,
       expectedName: 'logs',
       expectedOptions: ['--debug'],
-    },
-    {
-      name: 'simulate',
-      register: registerSimulateCommand,
-      expectedName: 'simulate',
-      expectedOptions: ['--port', '--debug', '--no-open'],
     },
     {
       name: 'upgrade',

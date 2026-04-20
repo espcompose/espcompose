@@ -151,7 +151,7 @@ function ValueProps(): React.ReactElement {
     },
     {
       title: "Live Home Assistant Data",
-      desc: "Run your UI in the simulator against a live HA instance — test with real entities, real state, real interactions.",
+      desc: "Preview your UI locally with `--host` and test with real Home Assistant entities, real state, real interactions.",
     },
     {
       title: "Targets ESPHome Directly",

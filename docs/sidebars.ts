@@ -4,7 +4,6 @@ const sidebars: SidebarsConfig = {
   defaultSidebar: [
     "intro",
     "getting-started",
-    "simulator",
     {
       type: "category",
       label: "Architecture",

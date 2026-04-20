@@ -1,5 +1,0 @@
-aioesphomeapi>=28.0
-protobuf>=4.21.0
-zeroconf>=0.131.0
-pytest>=8.0
-pytest-asyncio>=0.24

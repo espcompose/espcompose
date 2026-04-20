@@ -62,9 +62,7 @@ The `@espcompose/ui` package provides high-level components — `Screen`, `Card`
 
 ### Instant Preview
 
-A built-in browser simulator renders your LVGL UI from the same compiled output — no hardware required. Run `espcompose simulate` to start a live dev server on `localhost:5420`. The browser opens automatically and hot-reloads whenever you save a source file.
-
-By default, the simulator uses a mock Home Assistant bridge with simulated entity states. Pass `--ha-bridge` to connect a real Home Assistant instance over the ESPHome Native API, letting you interact with live entity state during development. See the [Simulator guide](./simulator) for details.
+Run `espcompose run --host` to preview your LVGL UI on your local machine using SDL2 — no hardware required. The `--host` flag targets the ESPHome host platform, compiling and running your project locally with an SDL2 display window. Use `--width` and `--height` to override display dimensions.
 
 ### Works With the Ecosystem
 
@@ -79,7 +77,7 @@ The compiler runs a multi-phase pipeline:
 3. **Transform** the AST — extracting reactive expressions and compiling action handlers into structured IR
 4. **Bundle** with esbuild into a single module
 5. **Execute** the bundle in Node.js to produce a target-agnostic **Semantic IR**
-6. **Emit** to a target backend — ESPHome YAML + C++ headers for devices, or an HTML preview for the simulator
+6. **Emit** to a target backend — ESPHome YAML + C++ headers for devices, or a local SDL2 preview with `--host`
 
 The Semantic IR is the key abstraction: a typed, target-agnostic tree that carries every detail — reactive bindings, refs, actions, secrets, assets — so backends can emit to any format without the compiler knowing or caring what comes next.
 
