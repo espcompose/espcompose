@@ -97,6 +97,14 @@ const KNOWN_DISPLAY_DIMENSIONS: Record<string, { width: number; height: number }
 
 const DEFAULT_DIMENSIONS = { width: 320, height: 240 };
 
+/**
+ * Fake MAC address for the host platform.
+ * ESPHome host builds have no real network interface, so we provide a
+ * deterministic locally-administered MAC so the API server and Home
+ * Assistant can identify the virtual device.
+ */
+const HOST_MAC_ADDRESS = 'AC:BC:32:89:0E:A1';
+
 // ── Helpers ─────────────────────────────────────────────────────────────
 
 function findEntry(obj: IRObject, key: string): IREntry | undefined {
@@ -140,15 +148,17 @@ function findLvglRotation(sections: readonly IRSection[]): number | undefined {
 
 /**
  * Infer display dimensions from the existing display config,
- * accounting for rotation (90°/270° swaps width↔height).
+ * accounting for LVGL rotation (90°/270° swaps width↔height).
  *
  * Resolution order:
- * 1. Explicit `dimensions` in the display config (SDL-style)
+ * 1. Explicit `dimensions` in the display config
  * 2. Model-based inference from KNOWN_DISPLAY_DIMENSIONS
  * 3. Default fallback (320×240)
  *
- * After resolving dimensions, if rotation is 90° or 270° the width and
- * height are swapped so the SDL window opens at the final orientation.
+ * After resolving raw panel dimensions, if LVGL rotation is 90° or 270°
+ * the width and height are swapped so the SDL window opens at the final
+ * visual orientation. ESPHome 2026.4+ handles rotation exclusively in the
+ * LVGL component — display-level rotation no longer exists.
  */
 function inferDisplayDimensions(
   displayValue: IRValue,
@@ -188,12 +198,12 @@ function inferDisplayDimensions(
     }
   }
 
-  // If rotation is 90° or 270°, swap to get final orientation.
-  // Check display first, then fall back to LVGL rotation (ESPHome 2026.4+
-  // requires rotation in the LVGL config when LVGL is active).
-  const rotationEntry = findEntry(obj, 'rotation');
-  const rot = rotationEntry ? getScalarValue(rotationEntry.value) : lvglRotation;
-  if (rot === 90 || rot === 270) {
+  // If LVGL rotation is 90° or 270°, swap to get final orientation.
+  // ESPHome 2026.4+ handles rotation exclusively in the LVGL component,
+  // so we only consult LVGL rotation here. The rotation is then stripped
+  // from the LVGL section since SDL dimensions already reflect the final
+  // orientation.
+  if (lvglRotation === 90 || lvglRotation === 270) {
     dims = { width: dims.height, height: dims.width };
   }
 
@@ -204,10 +214,10 @@ function inferDisplayDimensions(
 // These base display schema properties are valid on any display platform
 // (including SDL) and should be carried over from the original config.
 //
-// NOTE: `rotation` is intentionally excluded. On hardware, rotation tells
-// the driver to remap the framebuffer. For SDL, we bake rotation into the
-// window dimensions (swapping w↔h for 90°/270°) so the window opens at
-// the correct final orientation.
+// NOTE: `rotation` is intentionally excluded. ESPHome 2026.4+ moved
+// rotation from the display to the LVGL component. For SDL, we bake
+// rotation into the window dimensions (swapping w↔h for 90°/270°) and
+// strip the `rotation` entry from the LVGL section.
 
 const PORTABLE_DISPLAY_KEYS = new Set([
   'update_interval',
@@ -286,6 +296,40 @@ function stripLoggerHardwareEntries(value: IRValue): IRValue {
   return irObject(filtered);
 }
 
+/**
+ * Strip the `rotation` entry from the LVGL section.
+ * ESPHome 2026.4+ handles rotation in LVGL, but for SDL host mode we bake
+ * the rotation into the SDL window dimensions. Keeping `rotation` in the
+ * LVGL config would cause a double-rotation.
+ */
+function stripLvglRotation(value: IRValue): IRValue {
+  if (value.kind !== 'object') return value;
+  const filtered = value.entries.filter(e => e.key !== 'rotation');
+  if (filtered.length === value.entries.length) return value;
+  return irObject(filtered);
+}
+
+const SIMULATOR_SUFFIX = '-simulator';
+
+/**
+ * Append "(simulator)" to the device `name` in the esphome section so
+ * the host build is distinguishable from the real device in Home Assistant.
+ */
+function appendSimulatorSuffix(value: IRValue): IRValue {
+  if (value.kind !== 'object') return value;
+  const nameEntry = findEntry(value, 'name');
+  if (!nameEntry) return value;
+  const name = getScalarValue(nameEntry.value);
+  if (typeof name !== 'string') return value;
+  return irObject(
+    value.entries.map(e =>
+      e.key === 'name'
+        ? irEntry('name', irScalar(name + SIMULATOR_SUFFIX))
+        : e,
+    ),
+  );
+}
+
 // ── Main transform ──────────────────────────────────────────────────────
 
 /**
@@ -294,7 +338,9 @@ function stripLoggerHardwareEntries(value: IRValue): IRValue {
  * - Replaces device platform sections (esp32, esp8266, etc.) with `host:`
  * - Replaces display with SDL display (preserving id for LVGL refs)
  * - Replaces touchscreen with SDL touchscreen
+ * - Strips LVGL rotation (baked into SDL dimensions)
  * - Strips hardware-specific entries from logger
+ * - Appends "(simulator)" to the device name
  * - Only passes through whitelisted sections; unknown sections are dropped
  *
  * Returns a new SemanticIR — does not mutate the input.
@@ -311,7 +357,9 @@ export function transformIRForHost(
     // Replace device platform with host
     if (DEVICE_PLATFORM_KEYS.has(section.key)) {
       if (!hostSectionInjected) {
-        result.push(irSection('host', irObject([])));
+        result.push(irSection('host', irObject([
+          irEntry('mac_address', irScalar(HOST_MAC_ADDRESS)),
+        ])));
         hostSectionInjected = true;
       }
       continue;
@@ -344,13 +392,27 @@ export function transformIRForHost(
       continue;
     }
 
+    // Append "(simulator)" to device name in esphome section
+    if (section.key === 'esphome') {
+      result.push(irSection('esphome', appendSimulatorSuffix(section.value)));
+      continue;
+    }
+
+    // Strip rotation from LVGL — already baked into SDL dimensions
+    if (section.key === 'lvgl') {
+      result.push(irSection('lvgl', stripLvglRotation(section.value)));
+      continue;
+    }
+
     // Pass through all other sections unchanged
     result.push(section);
   }
 
   // If no device platform section was found, inject host anyway
   if (!hostSectionInjected) {
-    result.unshift(irSection('host', irObject([])));
+    result.unshift(irSection('host', irObject([
+      irEntry('mac_address', irScalar(HOST_MAC_ADDRESS)),
+    ])));
   }
 
   return {
