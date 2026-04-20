@@ -65,8 +65,8 @@ export const darkTheme: Theme = {
   },
 
   parts: {
-    slider: { bg: '#1E88E5', knob: '#E0E0E0', track: '#3A3A3A' },
-    switch: { bg: '#1E88E5', bgOff: '#3A3A3A', knob: '#E0E0E0' },
-    arc:    { bg: '#1E88E5', knob: '#E0E0E0' },
+    slider: { indicator: '#1E88E5', knob: '#E0E0E0', rail: '#3A3A3A' },
+    switch: { indicator: '#1E88E5', rail: '#3A3A3A', knob: '#E0E0E0' },
+    arc:    { indicator: '#1E88E5', knob: '#E0E0E0' },
   },
 };

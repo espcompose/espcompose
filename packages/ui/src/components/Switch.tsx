@@ -8,10 +8,9 @@
  */
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme } from '@espcompose/core';
+import { createLvglWidget, useTheme, WidgetHost } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import { Theme } from '../theme/types';
-import { WidgetHost } from './WidgetHost';
 
 export type SwitchProps = WidgetProps<{
   /** Bound value (sensor or entity reference). */
@@ -37,7 +36,12 @@ export const Switch = createLvglWidget<SwitchProps>(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <WidgetHost width={50} height={26} padding={2}>
+      <WidgetHost style={{
+          width: 50,
+          height: 26,
+          padding: 0
+        }}
+      >
         <lvgl-switch
           x:custom={{
             ...(props.value != null ? { state: { checked: props.value } } : {}),
@@ -53,9 +57,9 @@ export const Switch = createLvglWidget<SwitchProps>(
               borderRadius: 'circle',
               borderWidth: 0,
               backgroundOpacity: 'opaque',
-              backgroundColor: theme?.parts?.switch?.bgOff,
+              backgroundColor: theme?.parts?.switch?.rail,
               checked: {
-                backgroundColor: theme?.parts?.switch?.bg,
+                backgroundColor: theme?.parts?.switch?.indicator,
               },
             },
             knob: {

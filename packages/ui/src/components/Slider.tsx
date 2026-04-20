@@ -9,10 +9,9 @@
  */
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme } from '@espcompose/core';
+import { createLvglWidget, useTheme, WidgetHost } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import type { Theme } from '../theme/types';
-import { WidgetHost } from './WidgetHost';
 
 export type SliderProps = WidgetProps<{
   /** Bound value (sensor or entity reference). */
@@ -42,7 +41,14 @@ export const Slider = createLvglWidget<SliderProps>(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <WidgetHost width="100%" height={26} padding={4}>
+      <WidgetHost style={{
+        width: '100%',
+        height: 27,
+        paddingTop: 4,
+        paddingBottom: 4,
+        paddingLeft: 11,
+        paddingRight: 9,        
+      }}>
         <lvgl-slider
           minValue={props.min}
           maxValue={props.max}
@@ -51,21 +57,21 @@ export const Slider = createLvglWidget<SliderProps>(
           style={{
             width: '100%',
             height: '100%',
-            padding: -1,
+            paddingLeft: 0,
             borderRadius: 'circle',
             backgroundOpacity: 'opaque',
-            backgroundColor: theme?.parts?.slider?.track,
+            backgroundColor: theme?.parts?.slider?.rail,
             borderWidth: 0,
             indicator: {
               borderWidth: 0,
               borderRadius: 'circle',
               backgroundOpacity: 'opaque',
-              backgroundColor: theme?.parts?.slider?.bg,
+              backgroundColor: theme?.parts?.slider?.indicator,
             },
             knob: {
-              padding: 2,
+              padding: 4,
               borderWidth: 2,
-              borderColor: theme?.parts?.slider?.track,
+              borderColor: theme?.parts?.slider?.rail,
               borderRadius: 'circle',
               backgroundOpacity: 'opaque',
               backgroundColor: theme?.parts?.slider?.knob,

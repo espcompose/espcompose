@@ -10,7 +10,7 @@
  */
 
 import type { WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useReactiveMap } from '@espcompose/core';
+import { createLvglWidget, useReactiveMap, WidgetHost } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import type { SizeToken, StatusToken } from '../theme/types';
 
@@ -58,22 +58,31 @@ export const Spinner = createLvglWidget<SpinnerProps>(
     const arcLength = props.arcLength ?? 60;
     const spinTime = `${props.duration ?? 1000}ms`;
 
+    const width = props.style?.width ?? px;
+    const height = props.style?.height ?? px;
+
     return (
-      <lvgl-spinner
-        arcLength={arcLength}
-        // @ts-expect-error spinTime typed as number but ESPHome requires time unit string
-        spinTime={spinTime}
-        style={{
-          width: props.style?.width ?? px,
-          height: props.style?.height ?? px,
-          arcStrokeWidth: arcWidth,
-          arcOpacity: 'transparent',
-          indicator: {
-            arcColor: sc.bg,
+      <WidgetHost style={{
+        width: width,
+        height: height,
+        padding: 0,
+      }}>
+        <lvgl-spinner
+          arcLength={arcLength}
+          // @ts-expect-error spinTime typed as number but ESPHome requires time unit string
+          spinTime={spinTime}
+          style={{
+            width: '100%',
+            height: '100%',
             arcStrokeWidth: arcWidth,
-          },
-        }}
-      />
+            arcOpacity: 'transparent',
+            indicator: {
+              arcColor: sc.bg,
+              arcStrokeWidth: arcWidth,
+            },
+          }}
+        />
+      </WidgetHost>
     );
   },
 );

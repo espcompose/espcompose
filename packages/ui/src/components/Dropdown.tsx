@@ -8,7 +8,7 @@
  */
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget } from '@espcompose/core';
+import { createLvglWidget, WidgetHost } from '@espcompose/core';
 
 export type DropdownProps = WidgetProps<{
   /** Newline-separated option values (ESPHome LVGL format). */
@@ -34,14 +34,24 @@ export type DropdownProps = WidgetProps<{
 export const Dropdown = createLvglWidget<DropdownProps>(
   (props) => {
     return (
-      <lvgl-dropdown
-        options={props.options}
-        x:custom={{
-          ...(props.value != null ? { selected: props.value } : {}),
-          ...(props.onChange != null ? { on_change: props.onChange } : {}),
-        }}
-        style={props.style}
-      />
+      <WidgetHost style={{
+        width: props.style?.width ?? 'fit-content',
+        height: props.style?.height ?? 'fit-content',
+        padding: 0,
+      }}>
+        <lvgl-dropdown
+          options={props.options}
+          x:custom={{
+            ...(props.value != null ? { selected: props.value } : {}),
+            ...(props.onChange != null ? { on_change: props.onChange } : {}),
+          }}
+          style={{
+            ...props.style,
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </WidgetHost>
     );
   },
 );

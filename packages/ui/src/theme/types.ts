@@ -46,20 +46,20 @@ export interface StatusColors {
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface PartColors {
-  /** Primary fill / track color. */
-  bg: HexColor;
+  /** Active indicator fill color. */
+  indicator: HexColor;
   /** Knob / handle color. */
   knob: HexColor;
 }
 
 export interface SwitchPartColors extends PartColors {
-  /** Track color when unchecked (off). */
-  bgOff: HexColor;
+  /** Rail color when unchecked (off). */
+  rail: HexColor;
 }
 
 export interface SliderPartColors extends PartColors {
-  /** Track background color (unfilled area). */
-  track: HexColor;
+  /** Rail color (unfilled track area). */
+  rail: HexColor;
 }
 
 export interface ThemeParts {

@@ -38,6 +38,12 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearSecrets();
   cjsSDK.clearThemeRegistry();
   cjsSDK.clearReactiveThemeProxy();
+  cjsSDK.clearWireframe();
+
+  // Enable wireframe mode if requested by the CLI.
+  if (ctx.wireframe) {
+    cjsSDK.setWireframeEnabled(true);
+  }
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];

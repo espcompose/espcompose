@@ -21,6 +21,7 @@ import { clearRefRegistry } from './ref-registry';
 import { getSecrets, clearSecrets } from './secret';
 import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
 import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
+import { setWireframeEnabled, clearWireframe } from './wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -278,6 +279,9 @@ export const ESPCompose = {
   stopSerializationCapture,
   getSecrets,
   getThemeRegistry,
+  // Wireframe mode — set by CLI before executing user code.
+  setWireframeEnabled,
+  clearWireframe,
 };
 
 export { createElement, Fragment, render };

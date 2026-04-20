@@ -115,6 +115,19 @@ export { expandCssStyle } from './style-mapping';
 export { createStyles, mergeStyles } from './theme/create-styles';
 
 // ────────────────────────────────────────────────────────────────────────────
+// Public API — Wireframe
+// ────────────────────────────────────────────────────────────────────────────
+
+export { isWireframeEnabled, setWireframeEnabled, clearWireframe, WIREFRAME_COLORS } from './wireframe';
+export type { WidgetCategory } from './wireframe';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — WidgetHost
+// ────────────────────────────────────────────────────────────────────────────
+
+export { WidgetHost } from './widget-host';
+
+// ────────────────────────────────────────────────────────────────────────────
 // Public API — Used by theme resolvers
 // ────────────────────────────────────────────────────────────────────────────
 

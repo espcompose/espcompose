@@ -8,7 +8,7 @@
  */
 
 import type { EspComposeElement, WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglContainerWidget } from '@espcompose/core';
+import { createLvglContainerWidget, WidgetHost } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
@@ -49,27 +49,37 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const padding = props.padding != null ? useSpacing(props.padding) : props.style?.padding;
   const borderRadius = props.style?.borderRadius;
 
+  const hasExplicitHeight = props.style?.height != null;
+
   return (
-    <lvgl-obj
+    <WidgetHost
       style={{
         width: props.style?.width ?? '100%',
         height: props.style?.height ?? 'fit-content',
-        padding: padding,
-        backgroundColor: props.style?.backgroundColor,
-        backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
-        borderRadius: borderRadius,
-        borderWidth: props.style?.borderWidth ?? 0,
-        borderColor: props.style?.borderColor,
-        scrollbarMode: 'off',
-        display: 'flex',
-        flexDirection: flexDir,
-        ...(props.align ? { justifyContent: props.align } : {}),
-        ...(props.crossAlign ? { alignItems: props.crossAlign, flexTrackAlign: props.crossAlign } : {}),
-        ...(gap != null ? { [gapKey]: gap } : {}),
+        padding: 0,
       }}
     >
-      {props.children}
-    </lvgl-obj>
+      <lvgl-obj
+        style={{
+          width: '100%',
+          height: hasExplicitHeight ? '100%' : 'fit-content',
+          padding: padding,
+          backgroundColor: props.style?.backgroundColor,
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderRadius: borderRadius,
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          scrollbarMode: 'off',
+          display: 'flex',
+          flexDirection: flexDir,
+          ...(props.align ? { justifyContent: props.align } : {}),
+          ...(props.crossAlign ? { alignItems: props.crossAlign, flexTrackAlign: props.crossAlign } : {}),
+          ...(gap != null ? { [gapKey]: gap } : {}),
+        }}
+      >
+        {props.children}
+      </lvgl-obj>
+    </WidgetHost>
   );
 }
 

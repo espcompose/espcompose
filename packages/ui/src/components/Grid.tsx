@@ -11,7 +11,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglLayoutWidget } from '@espcompose/core';
+import { createLvglLayoutWidget, WidgetHost } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -88,26 +88,36 @@ export const [Grid, GridItem] = createLvglLayoutWidget(
       ? useSpacing(props.rowGap)
       : props.gap != null ? useSpacing(props.gap) : undefined;
 
+    const hasExplicitHeight = props.style?.height != null;
+
     return (
-      <lvgl-obj
+      <WidgetHost
         style={{
           width: props.style?.width,
           height: props.style?.height,
-          backgroundColor: props.style?.backgroundColor,
-          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
-          borderWidth: props.style?.borderWidth ?? 0,
-          borderColor: props.style?.borderColor,
-          display: 'grid',
-          gridTemplateColumns: props.columns,
-          gridTemplateRows: props.rows,
-          ...(colGap != null ? { columnGap: colGap } : {}),
-          ...(rowGap != null ? { rowGap: rowGap } : {}),
-          ...(props.alignColumns ? { justifyItems: props.alignColumns } : {}),
-          ...(props.alignRows ? { alignContent: props.alignRows } : {}),
+          padding: 0,
         }}
       >
-        {props.children}
-      </lvgl-obj>
+        <lvgl-obj
+          style={{
+            width: '100%',
+            height: hasExplicitHeight ? '100%' : 'fit-content',
+            backgroundColor: props.style?.backgroundColor,
+            backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+            borderWidth: props.style?.borderWidth ?? 0,
+            borderColor: props.style?.borderColor,
+            display: 'grid',
+            gridTemplateColumns: props.columns,
+            gridTemplateRows: props.rows,
+            ...(colGap != null ? { columnGap: colGap } : {}),
+            ...(rowGap != null ? { rowGap: rowGap } : {}),
+            ...(props.alignColumns ? { justifyItems: props.alignColumns } : {}),
+            ...(props.alignRows ? { alignContent: props.alignRows } : {}),
+          }}
+        >
+          {props.children}
+        </lvgl-obj>
+      </WidgetHost>
     );
   },
   (props: GridItemProps) => {

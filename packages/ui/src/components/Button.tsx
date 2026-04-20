@@ -10,8 +10,8 @@
  */
 
 import type { TriggerHandler, WidgetPropsWithChildren, Reactive } from '@espcompose/core';
-import { createLvglWidget, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
-import { useSize, useStatus } from '../hooks';
+import { createLvglWidget, useMemo, useReactive, isIRReactiveNode, WidgetHost } from '@espcompose/core';
+import { useRadius, useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
 
@@ -82,6 +82,7 @@ export const Button = createLvglWidget<ButtonProps>(
   (props) => {
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');
+    const rd = useRadius('md');
     const vs = useButtonVariant(props.variant ?? 'solid', sc);
 
     // Width: derived from reactive paddingX if no override.
@@ -104,23 +105,30 @@ export const Button = createLvglWidget<ButtonProps>(
       : undefined;
 
     return (
-      <lvgl-button
-        style={{
-          backgroundColor: vs.bgColor,
-          backgroundOpacity: vs.bgOpa,
-          borderColor: vs.borderColor,
-          borderWidth: vs.borderWidth,
-          width: width,
-          height: height,
-          pressed: {
-            backgroundColor: vs.pressedBg,
-            backgroundOpacity: 'opaque',
-          },
-        }}
-        {...(props.onPress != null ? { onPress: props.onPress } : {})}
-      >
-        {hasChildren ? props.children : labelChild}
-      </lvgl-button>
+      <WidgetHost style={{
+        width: width,
+        height: height,
+        padding: 0,
+      }}>
+        <lvgl-button
+          style={{
+            backgroundColor: vs.bgColor,
+            backgroundOpacity: vs.bgOpa,
+            borderColor: vs.borderColor,
+            borderWidth: vs.borderWidth,
+            borderRadius: rd,
+            width: '100%',
+            height: '100%',
+            pressed: {
+              backgroundColor: vs.pressedBg,
+              backgroundOpacity: 'opaque',
+            },
+          }}
+          {...(props.onPress != null ? { onPress: props.onPress } : {})}
+        >
+          {hasChildren ? props.children : labelChild}
+        </lvgl-button>
+      </WidgetHost>
     );
   },
 );

@@ -31,6 +31,7 @@ import {
 } from './serialize';
 import { expandCssStyle } from './style-mapping';
 import { lvglWidgetToPlain, isLvglElement } from './lvgl';
+import { isWireframeEnabled, WIREFRAME_COLORS } from './wireframe';
 
 // ── Type guards ────────────────────────────────────────────────────────────
 
@@ -198,6 +199,14 @@ export function ecCanvasToPlain(el: EspComposeElement): Record<string, unknown> 
       data[key] = value;
     }
     delete data.style;
+  }
+
+  // Wireframe mode: inject container outline onto the canvas host.
+  // ec-canvas is a container-level element (hosts child widgets + paint zones).
+  if (isWireframeEnabled()) {
+    data.outline_width = 1;
+    data.outline_color = WIREFRAME_COLORS.widget;
+    data.outline_pad = 0;
   }
 
   // Auto-assign ID (needed for reactive and draw function bindings)

@@ -5,7 +5,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglWidget, useTheme, useReactiveMap } from '@espcompose/core';
+import { createLvglWidget, useTheme, useReactiveMap, WidgetHost } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import { themeLeaf } from '../hooks/utils';
 import { UI_THEME_SCOPE } from '../theme/scope';
@@ -40,17 +40,28 @@ export const Text = createLvglWidget<TextProps>(
       ? useStatus(props.color).text
       : theme?.colors?.textPrimary;
 
+    const hasExplicitWidth = props.style?.width != null;
+    const hasExplicitHeight = props.style?.height != null;
+
     return (
-      <lvgl-label
-        text={props.text}
-        longMode={props.longMode}
-        style={{
-          ...props.style,
-          color: textColor,
-          font: font,
-          textAlign: props.align,
-        }}
-      />
+      <WidgetHost style={{
+        width: props.style?.width ?? 'fit-content',
+        height: props.style?.height ?? 'fit-content',
+        padding: 0,
+      }}>
+        <lvgl-label
+          text={props.text}
+          longMode={props.longMode}
+          style={{
+            ...props.style,
+            width: hasExplicitWidth ? '100%' : undefined,
+            height: hasExplicitHeight ? '100%' : undefined,
+            color: textColor,
+            font: font,
+            textAlign: props.align,
+          }}
+        />
+      </WidgetHost>
     );
   },
 );

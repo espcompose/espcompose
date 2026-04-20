@@ -9,6 +9,8 @@
  */
 
 import type { FunctionComponent, RefProp } from './types';
+import { wrapWithWireframe } from './wireframe';
+import type { WidgetCategory } from './wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Symbols — cross-module branding keys
@@ -187,6 +189,8 @@ export function createLvglWidget<
     additionalIntents?: Extra;
     allowedChildIntents?: A;
     contextTransparent?: CT;
+    /** @internal Wireframe category override. */
+    wireframeCategory?: WidgetCategory;
   },
 ): IntentComponent<P & { ref?: RefProp }, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT>;
 
@@ -201,6 +205,8 @@ export function createLvglWidget<
     additionalIntents?: Extra;
     allowedChildIntents?: A;
     contextTransparent?: CT;
+    /** @internal Wireframe category override. */
+    wireframeCategory?: WidgetCategory;
   },
 ): IntentComponent<P & { ref?: RefProp }, readonly [...Extra, typeof LVGL_INTENTS.WIDGET], A, undefined, CT> {
   const intents = [
@@ -208,7 +214,9 @@ export function createLvglWidget<
     LVGL_INTENTS.WIDGET,
   ] as const;
 
-  return createComponent(component, {
+  const wrapped = wrapWithWireframe(component, overrides?.wireframeCategory ?? 'widget');
+
+  return createComponent(wrapped, {
     intents: intents as unknown as readonly [...Extra, typeof LVGL_INTENTS.WIDGET],
     allowedChildIntents: (overrides?.allowedChildIntents ?? ([] as const)) as A,
     ...(overrides?.contextTransparent ? { contextTransparent: overrides.contextTransparent } : {}),
@@ -239,6 +247,7 @@ export function createLvglContainerWidget<P>(
   return createLvglWidget(component, {
     allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
     contextTransparent: true as const,
+    wireframeCategory: 'container',
   });
 }
 
@@ -268,9 +277,11 @@ export function createLvglLayoutWidget<S extends string, P, C>(
   const brandedParent = createLvglWidget(parent, {
     allowedChildIntents: [slotIntent] as readonly [S],
     contextTransparent: true as const,
+    wireframeCategory: 'layout',
   });
 
-  const brandedChild = createComponent(child, {
+  const wrappedChild = wrapWithWireframe(child, 'layout');
+  const brandedChild = createComponent(wrappedChild, {
     intents: [slotIntent] as readonly [S],
     allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
     contextTransparent: true as const,

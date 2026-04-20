@@ -12,7 +12,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglLayoutWidget } from '@espcompose/core';
+import { createLvglLayoutWidget, WidgetHost } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -70,24 +70,34 @@ export const [Row, Col] = createLvglLayoutWidget(
       padColumn = useSpacing(props.gutter);
     }
 
+    const hasExplicitHeight = props.style?.height != null;
+
     return (
-      <lvgl-obj
+      <WidgetHost
         style={{
           width: props.style?.width ?? '100%',
-          height: props.style?.height,
-          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
-          borderWidth: props.style?.borderWidth ?? 0,
-          borderColor: props.style?.borderColor,
-          display: 'flex',
-          flexDirection: flexDir,
-          ...(props.justify ? { justifyContent: props.justify } : {}),
-          ...(props.align ? { alignItems: props.align } : {}),
-          ...(padColumn != null ? { columnGap: padColumn } : {}),
-          ...(padRow != null ? { rowGap: padRow } : {}),
+          height: props.style?.height ?? 'fit-content',
+          padding: 0,
         }}
       >
-        {props.children}
-      </lvgl-obj>
+        <lvgl-obj
+          style={{
+            width: '100%',
+            height: hasExplicitHeight ? '100%' : 'fit-content',
+            backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+            borderWidth: props.style?.borderWidth ?? 0,
+            borderColor: props.style?.borderColor,
+            display: 'flex',
+            flexDirection: flexDir,
+            ...(props.justify ? { justifyContent: props.justify } : {}),
+            ...(props.align ? { alignItems: props.align } : {}),
+            ...(padColumn != null ? { columnGap: padColumn } : {}),
+            ...(padRow != null ? { rowGap: padRow } : {}),
+          }}
+        >
+          {props.children}
+        </lvgl-obj>
+      </WidgetHost>
     );
   },
   (props: ColProps) => {

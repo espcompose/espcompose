@@ -6,7 +6,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglContainerWidget, useTheme } from '@espcompose/core';
+import { createLvglContainerWidget, useTheme, WidgetHost } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
@@ -37,25 +37,33 @@ export const Card = createLvglContainerWidget(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;
 
+    const hasExplicitHeight = props.style?.height != null;
+
     return (
-      <lvgl-obj
-        style={{
-          backgroundColor: bgColor,
-          backgroundOpacity: 'opaque',
-          padding: padding,
-          borderRadius: radius,
-          borderColor: props.style?.borderColor,
-          borderWidth: props.style?.borderWidth ?? 0,
-          width: props.style?.width ?? '100%',
-          height: props.style?.height ?? 'fit-content',
-          scrollbarMode: 'off',
-          display: 'flex',
-          flexDirection: 'column',
-          ...(gap != null ? { rowGap: gap } : {}),
-        }}
-      >
-        {props.children}
-      </lvgl-obj>
+      <WidgetHost style={{
+        width: props.style?.width ?? '100%',
+        height: props.style?.height ?? 'fit-content',
+        padding: 0,
+      }}>
+        <lvgl-obj
+          style={{
+            backgroundColor: bgColor,
+            backgroundOpacity: 'opaque',
+            padding: padding,
+            borderRadius: radius,
+            borderColor: props.style?.borderColor,
+            borderWidth: props.style?.borderWidth ?? 0,
+            width: '100%',
+            height: hasExplicitHeight ? '100%' : 'fit-content',
+            scrollbarMode: 'off',
+            display: 'flex',
+            flexDirection: 'column',
+            ...(gap != null ? { rowGap: gap } : {}),
+          }}
+        >
+          {props.children}
+        </lvgl-obj>
+      </WidgetHost>
     );
   },
 );

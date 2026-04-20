@@ -17,6 +17,8 @@ export interface PhaseContext {
   bundlePath?: string;
   /** When true, keep the build directory after the pipeline completes. */
   debug: boolean;
+  /** When true, enable wireframe outline overlays on all widgets. */
+  wireframe?: boolean;
 
   // ── Emit options (set before the pipeline when emit phase is included) ──
 
