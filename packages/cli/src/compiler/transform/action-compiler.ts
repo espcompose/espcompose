@@ -60,6 +60,12 @@ export interface ActionCompileResult {
   diagnostics: ActionCompilerDiagnostic[];
   /** Names of trigger variables accessed (e.g. ['x', 'state']) */
   triggerVars: string[];
+  /**
+   * Set of ref binding keys that originated from property-access expressions.
+   * Uses the full expression text (e.g. 'props.mainPage') to avoid collisions
+   * with local ref identifiers of the same short name.
+   */
+  refExpressions: Set<string>;
 }
 
 export interface ActionCompilerContext {
@@ -78,6 +84,8 @@ export interface ActionCompilerContext {
   diagnostics: ActionCompilerDiagnostic[];
   /** Collected trigger variable names. */
   triggerVars: Set<string>;
+  /** Set of ref binding keys from property-access expressions. */
+  refExpressions: Set<string>;
 }
 
 /** Resolve a ts.Symbol-keyed map entry from an identifier node. */
@@ -110,6 +118,7 @@ export function compileActionBody(
     filePath,
     diagnostics: [],
     triggerVars: new Set(),
+    refExpressions: new Set(),
   };
 
   // Extract trigger parameter name
@@ -132,6 +141,7 @@ export function compileActionBody(
     actions,
     diagnostics: ctx.diagnostics,
     triggerVars: Array.from(ctx.triggerVars),
+    refExpressions: ctx.refExpressions,
   };
 }
 
@@ -395,6 +405,9 @@ function compileActionCall(
     // Component ref action (type-based)
     if (hasRefBrand(objType)) {
       const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
+      if (!ts.isIdentifier(objExpr)) {
+        ctx.refExpressions.add(objName);
+      }
       return compileRefAction(call, objName, methodName, ctx);
     }
   }
@@ -839,6 +852,16 @@ function compileActionConfigValue(
     const symbol = ctx.checker.getSymbolAtLocation(expr);
     if (symbol && ctx.refSymbols.has(symbol)) {
       return expr.text;
+    }
+  }
+
+  // Property access on ref-typed prop (e.g. props.mainScreen)
+  if (ts.isPropertyAccessExpression(expr)) {
+    const propType = ctx.checker.getTypeAtLocation(expr);
+    if (hasRefBrand(propType)) {
+      const bindingKey = expr.getText();
+      ctx.refExpressions.add(bindingKey);
+      return bindingKey;
     }
   }
 

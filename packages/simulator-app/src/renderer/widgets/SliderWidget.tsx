@@ -3,6 +3,20 @@ import type { WidgetProps } from './helpers';
 import { getNodeStyles, collectAllStateCss, getPropValue } from './helpers';
 import { StyleInjector } from './StyleInjector';
 
+/**
+ * Convert a React CSSProperties object to a CSS declaration string.
+ */
+function cssPropsToString(props: React.CSSProperties): string {
+  return Object.entries(props)
+    .map(([key, value]) => {
+      const kebab = key.startsWith('--')
+        ? key
+        : key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+      return `${kebab}: ${value}`;
+    })
+    .join('; ');
+}
+
 export function SliderWidget({ node, onAction }: WidgetProps) {
   const styles = getNodeStyles(node.props, node.id);
   const allCss = collectAllStateCss(styles);
@@ -53,25 +67,86 @@ export function SliderWidget({ node, onAction }: WidgetProps) {
     commit(valueFromPointer(e.clientX));
   };
 
-  // Part styles for indicator and knob
+  // Part styles — inject base via CSS so state rules can override,
+  // but keep dynamic positioning (width%, left%) as inline style.
   const indicatorPart = styles.parts.indicator;
   const knobPart = styles.parts.knob;
-  const indicatorStyle: React.CSSProperties = { width: `${pct}%`, ...indicatorPart?.base };
-  const knobStyle: React.CSSProperties = { left: `${pct}%`, ...knobPart?.base };
+
+  let partBaseCss = '';
+  if (indicatorPart?.base && Object.keys(indicatorPart.base).length > 0) {
+    partBaseCss += `[data-node-id="${node.id}"] .lvgl-part-indicator { ${cssPropsToString(indicatorPart.base)} }\n`;
+  }
+  if (knobPart?.base && Object.keys(knobPart.base).length > 0) {
+    partBaseCss += `[data-node-id="${node.id}"] .lvgl-part-knob { ${cssPropsToString(knobPart.base)} }\n`;
+  }
+  const combinedCss = [partBaseCss, allCss].filter(Boolean).join('\n');
+
+  // LVGL uses padding on the main slider part to inset the indicator within
+  // the widget bounds, and padding on the knob part to extend the knob
+  // beyond the track.  Strip the LVGL padding from the CSS inline style
+  // and compute track / knob dimensions manually.
+  //
+  // The widget bounding box is the widget height as authored — matching
+  // LVGL semantics where the slider main part fills the widget bounds and
+  // a knob with positive padding overflows those bounds (the surrounding
+  // layout will *not* reserve extra space for the overflow).  The
+  // simulator must reproduce that overflow rather than silently expand.
+  const widgetH = parseFloat(String(styles.base.height ?? 10)) || 10;
+  const padTop = parseFloat(String(styles.base.paddingTop ?? 0)) || 0;
+  const padBottom = parseFloat(String(styles.base.paddingBottom ?? 0)) || 0;
+  const padAll = parseFloat(String(styles.base.padding ?? 0)) || 0;
+  const effectivePadTop = padTop || padAll;
+  const effectivePadBottom = padBottom || padAll;
+  const trackH = Math.max(1, widgetH - effectivePadTop - effectivePadBottom);
+
+  const knobPad = parseFloat(String(knobPart?.base?.padding ?? 0)) || 0;
+  const knobSize = trackH + knobPad * 2;
+
+  // Strip LVGL padding and background from the outer container — the
+  // track element gets the background, and padding is handled via layout.
+  const {
+    paddingTop: _pt,
+    paddingBottom: _pb,
+    paddingLeft: _pl,
+    paddingRight: _pr,
+    padding: _p,
+    backgroundColor: trackBg,
+    ...outerStyle
+  } = styles.base as Record<string, unknown>;
+
+  // Use CSS calc: left ranges from 0 to (100% - knobSize), keeping
+  // the knob fully within the track's horizontal bounds.
+  const knobLeft = `calc(${pct}% - ${(pct / 100) * knobSize}px)`;
+
+  // LVGL draws the indicator from the left edge to the knob center.
+  // At pct=0 the formula would still yield knobSize/2 px, so clamp to 0.
+  const indicatorWidth = pct <= 0
+    ? '0px'
+    : `calc(${pct}% - ${(pct / 100) * knobSize}px + ${knobSize / 2}px)`;
 
   return (
     <div
       ref={trackRef}
       className="lvgl-slider"
-      style={styles.base}
+      style={{ ...(outerStyle as React.CSSProperties), height: widgetH }}
       data-node-id={node.id}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      <StyleInjector cssText={allCss} />
-      <div className="lvgl-slider-indicator lvgl-part-indicator" style={indicatorStyle} />
-      <div className="lvgl-slider-knob lvgl-part-knob" style={knobStyle} />
+      <StyleInjector cssText={combinedCss} />
+      <div
+        className="lvgl-slider-track"
+        style={{ height: trackH, backgroundColor: trackBg as string }}
+      />
+      <div
+        className="lvgl-slider-indicator lvgl-part-indicator"
+        style={{ width: indicatorWidth, height: trackH }}
+      />
+      <div
+        className="lvgl-slider-knob lvgl-part-knob"
+        style={{ left: knobLeft, width: knobSize, height: knobSize }}
+      />
     </div>
   );
 }

@@ -230,6 +230,15 @@ const STYLE_MAP: Record<string, StyleMapping> = {
   grid_cell_row_span:    { css: 'grid-row-end', convert: v => typeof v === 'number' ? `span ${v}` : undefined },
   grid_cell_x_align:     { css: 'justify-self', convert: v => mapGridCellAlign(v) },
   grid_cell_y_align:     { css: 'align-self', convert: v => mapGridCellAlign(v) },
+
+  // Arc / spinner props — exposed as CSS custom properties for widget-specific use
+  arc_color:       { css: '--arc-color', convert: lvglColorToCss },
+  arc_width:       { css: '--arc-width', convert: dimToCss },
+  arc_opa:         { css: '--arc-opa', convert: v => {
+    const f = opaToCssFloat(v);
+    return f != null ? String(f) : undefined;
+  }},
+  arc_rounded:     { css: '--arc-rounded', convert: v => v === true ? '1' : v === false ? '0' : undefined },
 };
 
 // ── Value mappers ────────────────────────────────────────────────────────────

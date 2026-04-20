@@ -81,25 +81,26 @@ body {
   /* LVGL label uses SIZE_CONTENT - auto-sizes to text */
 }
 
-/* Button – baseline matches LVGL lv_btn built-in defaults */
+/* Button – LVGL unthemed: no visual styling, only structural layout.
+ * lv_btn is just lv_obj with SIZE_CONTENT and no scroll.
+ * All visual appearance (bg, radius, shadow) must come from explicit style props. */
 .sim-viewport .lvgl-button {
   border: none;
-  background: #2196f3;
-  color: #ffffff;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 8px 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
   /* LVGL buttons use SIZE_CONTENT by default */
 }
 
-/* LVGL lv_btn darkens ~20% on press (LV_STATE_PRESSED) */
 .sim-viewport .lvgl-button:active {
-  background: #1565c0;
+  /* No press style without a theme — handled by state CSS injection */
 }
 
 /* ── LVGL Slider ─────────────────────────────────────────────────────────── */
@@ -107,76 +108,99 @@ body {
 .sim-viewport .lvgl-slider {
   position: relative;
   width: 150px;
-  height: 10px;
+  height: 20px;
   background: transparent;
+  border-radius: 9999px;
   cursor: pointer;
   touch-action: none;
   user-select: none;
+  overflow: visible;
 }
 
-/* Indicator - the filled portion showing current value */
-.sim-viewport .lvgl-slider-indicator {
+/* Track background — centered vertically, inset from widget bounds */
+.sim-viewport .lvgl-slider-track {
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
-  height: 100%;
+  right: 0;
+  transform: translateY(-50%);
+  border-radius: inherit;
   pointer-events: none;
 }
 
-/* Knob */
+/* Indicator — the filled portion showing current value.
+ * In LVGL the indicator extends from the left edge to the knob center.
+ * Only the left side gets the track's border-radius; the right side is
+ * clipped under the knob so it should not show a rounded cap. */
+.sim-viewport .lvgl-slider-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  pointer-events: none;
+}
+
+/* Knob — circular, vertically centered on the track */
 .sim-viewport .lvgl-slider-knob {
   position: absolute;
   top: 50%;
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
 /* ── LVGL Switch ─────────────────────────────────────────────────────────── */
 
+/* Mirrors the SliderWidget structure: outer container → track → indicator → knob.
+ * The indicator fills the full track (unlike slider where it's proportional).
+ * Knob position is set via inline left style (0% = off, 100% = on). */
+
 .sim-viewport .lvgl-switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 25px;
   cursor: pointer;
+  overflow: hidden;
 }
 
-.sim-viewport .lvgl-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+/* Track background — centered vertically, inset from widget bounds */
+.sim-viewport .lvgl-switch-track {
   position: absolute;
-}
-
-/* Switch track (indicator part) */
-.sim-viewport .lvgl-switch .lvgl-switch-track {
-  position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
   right: 0;
-  bottom: 0;
-  background-color: transparent;
+  transform: translateY(-50%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Indicator — fills the entire track area.
+ * In LVGL the switch indicator always covers the full track; its background
+ * color changes between base (off) and checked (on) states via CSS injection. */
+.sim-viewport .lvgl-switch-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  border-radius: inherit;
+  pointer-events: none;
   transition: background-color 0.2s;
 }
 
-/* Switch knob */
-.sim-viewport .lvgl-switch .lvgl-switch-track::before {
-  content: '';
+/* Knob — circular, vertically centered, positioned via inline left */
+.sim-viewport .lvgl-switch-knob {
   position: absolute;
-  height: 21px;
-  width: 21px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
+  top: 50%;
   border-radius: 50%;
-  transition: transform 0.2s;
-}
-
-.sim-viewport .lvgl-switch input:checked + .lvgl-switch-track::before {
-  transform: translateX(25px);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: left 0.2s;
 }
 
 /* ── LVGL Bar ────────────────────────────────────────────────────────────── */
@@ -235,12 +259,15 @@ body {
 
 /* ── LVGL Spinner ────────────────────────────────────────────────────────── */
 
+/* Spinner – LVGL unthemed: arc widget, default arc_color is black.
+ * Background arc (ring) is faint, foreground arc is solid black. */
 .sim-viewport .lvgl-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid transparent;
+  border: 4px solid rgba(0, 0, 0, 0.15);
+  border-top-color: #000;
   border-radius: 50%;
-  animation: lvgl-spin 2s linear infinite;
+  animation: lvgl-spin 2s ease-in-out infinite;
 }
 
 @keyframes lvgl-spin {

@@ -26,7 +26,7 @@ type CardProps = WidgetPropsWithChildren<{
  * @example
  * <Card>
  *   <Text variant="title">Living Room</Text>
- *   <Slider label="Brightness" />
+ *   <Slider min={0} max={255} />
  * </Card>
  */
 export const Card = createLvglContainerWidget(
@@ -41,6 +41,7 @@ export const Card = createLvglContainerWidget(
       <lvgl-obj
         style={{
           backgroundColor: bgColor,
+          backgroundOpacity: 'opaque',
           padding: padding,
           borderRadius: radius,
           borderColor: props.style?.borderColor,

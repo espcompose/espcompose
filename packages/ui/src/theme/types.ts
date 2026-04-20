@@ -52,9 +52,19 @@ export interface PartColors {
   knob: HexColor;
 }
 
+export interface SwitchPartColors extends PartColors {
+  /** Track color when unchecked (off). */
+  bgOff: HexColor;
+}
+
+export interface SliderPartColors extends PartColors {
+  /** Track background color (unfilled area). */
+  track: HexColor;
+}
+
 export interface ThemeParts {
-  slider: PartColors;
-  switch: PartColors;
+  slider: SliderPartColors;
+  switch: SwitchPartColors;
   arc: PartColors;
 }
 

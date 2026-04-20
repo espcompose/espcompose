@@ -41,6 +41,7 @@ export const Screen = createLvglWidget(
         skip={props.skip}
         style={{
           backgroundColor: bgColor,
+          backgroundOpacity: 'opaque',
           borderWidth: props.style?.borderWidth ?? 0,
           ...(props.style?.borderColor != null ? { borderColor: props.style.borderColor } : {}),
           ...(padding != null ? { padding: padding } : {}),

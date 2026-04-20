@@ -1,8 +1,11 @@
 /**
  * SensorText — a text display driven by a SensorBinding.
  *
- * Wraps <Text> and maps binding stateText or value → text.
+ * Wraps <Text> and binds the rendered text to the binding's `stateText`.
  * The caller provides the binding (e.g. from useHAEntity).
+ *
+ * Compose with HStack/Text to create labelled fields, e.g.
+ *   <HStack gap="xs"><Text>Temperature:</Text><SensorText binding={t}/></HStack>
  */
 
 import type { SensorBinding, BinarySensorBinding, LightBinding, WidgetProps } from '@espcompose/core';
@@ -13,9 +16,7 @@ import type { TextVariant, StatusToken } from '../theme/types';
 type SensorTextProps = WidgetProps<{
   /** Readable binding (from useHAEntity or similar). */
   binding: SensorBinding | BinarySensorBinding | LightBinding;
-  /** Display label prefix. Rendered as "Label: value". */
-  label: string;
-  /** Override text entirely. */
+  /** Override text entirely. If provided, the binding is ignored. */
   text?: string;
   /** Typography variant. Default: 'body'. */
   variant?: TextVariant;
@@ -28,11 +29,11 @@ type SensorTextProps = WidgetProps<{
  *
  * @example
  * const sensor = useHAEntity('sensor.temperature');
- * <SensorText binding={sensor} label="Temperature" />
+ * <SensorText binding={sensor} />
  */
 export const SensorText = createLvglWidget<SensorTextProps>(
   (props) => {
-    const text = props.text ?? useMemo(() => `${props.label}: ${props.binding.stateText}`);
+    const text = props.text ?? useMemo(() => props.binding.stateText);
 
     return (
       <Text

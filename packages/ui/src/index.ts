@@ -17,6 +17,8 @@ export type {
   ThemeTypography,
   ThemeParts,
   PartColors,
+  SwitchPartColors,
+  SliderPartColors,
   SizeDimensions,
   StatusColors,
   SpacingToken,
@@ -48,7 +50,4 @@ export type { DropdownProps } from './components/Dropdown';
 export type { StyleProps, ButtonVariant } from './components/shared-types';
 
 // Binding-driven components
-export { LightButton } from './components/LightButton';
-export { LightSwitch } from './components/LightSwitch';
-export { LightSlider } from './components/LightSlider';
 export { SensorText } from './components/SensorText';

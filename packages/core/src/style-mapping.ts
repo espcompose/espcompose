@@ -409,7 +409,8 @@ export function expandCssStyle(
   for (const state of LVGL_STATE_NAMES) {
     const sub = style[state];
     if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
-      expanded[state] = expandCssProps(sub as Record<string, unknown>);
+      const stateExpanded = expandCssProps(sub as Record<string, unknown>);
+      expanded[state] = stateExpanded;
     }
   }
 

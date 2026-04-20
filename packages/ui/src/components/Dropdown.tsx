@@ -1,70 +1,47 @@
 /**
- * Dropdown — a label + dropdown composite.
+ * Dropdown — a single LVGL dropdown widget.
  *
- * Compiles to a container with a label and a dropdown widget.
- * Label uses `ds-text-primary` style reference.
+ * Compiles to `<lvgl-dropdown>`. This component is intentionally a bare
+ * control: it renders only the dropdown itself. Compose it with layout
+ * primitives (HStack/VStack) and a Text label if you need a labelled
+ * field.
  */
 
-import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme } from '@espcompose/core';
-import { UI_THEME_SCOPE } from '../theme/scope';
-import { useSpacing } from '../hooks';
-import { themeLeaf } from '../hooks/utils';
-import type { SpacingToken, Theme } from '../theme/types';
+import type { TriggerHandler, WidgetProps } from '@espcompose/core';
+import { createLvglWidget } from '@espcompose/core';
 
 export type DropdownProps = WidgetProps<{
-  /** Label text displayed above the dropdown. */
-  label: string;
   /** Newline-separated option values (ESPHome LVGL format). */
   options: string;
   /** Bound selection index. */
   value?: unknown;
   /** Change handler (ESPHome action). */
   onChange?: TriggerHandler<{ x: number }>;
-  /** Gap between label and dropdown. Default: 'xs'. */
-  gap?: SpacingToken;
-  /** Width of the field container. */
-  width?: SizeValue;
 }>;
 
 /**
- * Dropdown — a label + dropdown composite.
+ * Dropdown — a themed LVGL dropdown.
  *
  * @example
- * <Dropdown label="Mode" options={"Auto\nCool\nHeat"} />
+ * <Dropdown options={"Auto\nCool\nHeat"} value={mode} onChange={({ x }) => …} />
+ *
+ * @example // labelled field
+ * <VStack gap="xs">
+ *   <Text>Mode</Text>
+ *   <Dropdown options={"Auto\nCool\nHeat"} />
+ * </VStack>
  */
 export const Dropdown = createLvglWidget<DropdownProps>(
   (props) => {
-    const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const font = themeLeaf('typography', 'body');
-    const theme = useTheme<Theme>(UI_THEME_SCOPE);
-
     return (
-      <lvgl-obj
-        style={{
-          backgroundOpacity: 'transparent',
-          width: props.width ?? '100%',
-          height: 'fit-content',
-          display: 'flex',
-          flexDirection: 'column',
-          ...(gap != null ? { rowGap: gap } : {}),
+      <lvgl-dropdown
+        options={props.options}
+        x:custom={{
+          ...(props.value != null ? { selected: props.value } : {}),
+          ...(props.onChange != null ? { on_change: props.onChange } : {}),
         }}
-      >
-        <lvgl-label
-          style={{
-            color: theme?.colors?.textPrimary,
-            font: font,
-          }}
-          text={props.label}
-        />
-        <lvgl-dropdown
-          options={props.options}
-          x:custom={{
-            ...(props.value != null ? { selected: props.value } : {}),
-            ...(props.onChange != null ? { on_change: props.onChange } : {}),
-          }}
-        />
-      </lvgl-obj>
+        style={props.style}
+      />
     );
   },
 );

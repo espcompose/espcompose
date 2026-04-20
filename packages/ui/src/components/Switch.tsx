@@ -1,66 +1,75 @@
 /**
- * Switch — a label + switch in a row layout.
+ * Switch — a single LVGL switch widget, theme-styled.
  *
- * Compiles to a container with a label and a switch widget.
- * Label uses `ds-text-primary` style reference; switch inherits part
- * styles from the LVGL `theme:` block.
+ * Compiles to `<lvgl-switch>`. Visual styling for the track, indicator,
+ * and knob parts is sourced from `theme.parts.switch`. This component
+ * is intentionally a bare control: it renders only the switch itself.
+ * Compose it with HStack + Text if you need a labelled row.
  */
 
-import type { TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
+import type { TriggerHandler, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useTheme } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
-import { themeLeaf } from '../hooks/utils';
 import { Theme } from '../theme/types';
 
 export type SwitchProps = WidgetProps<{
-  /** Label text displayed next to the switch. */
-  label: string;
   /** Bound value (sensor or entity reference). */
   value?: boolean;
   /** Change handler (ESPHome action). */
   onChange?: TriggerHandler<{ x: boolean }>;
-  /** Width of the field container. */
-  width?: SizeValue;
 }>;
 
 /**
- * Switch — a label + switch in a row layout.
+ * Switch — a themed LVGL switch.
  *
  * @example
- * <Switch label="Lamp" />
+ * <Switch value={light.isOn} onChange={() => light.toggle()} />
+ *
+ * @example // labelled row
+ * <HStack justify="spaceBetween" align="center">
+ *   <Text>Lamp</Text>
+ *   <Switch value={lamp.isOn} onChange={() => lamp.toggle()} />
+ * </HStack>
  */
 export const Switch = createLvglWidget<SwitchProps>(
   (props) => {
-    const font = themeLeaf('typography', 'body');
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <lvgl-obj
+      <lvgl-switch
+        x:custom={{
+          ...(props.value != null ? { state: { checked: props.value } } : {}),
+          ...(props.onChange != null ? { on_change: props.onChange } : {}),
+        }}
         style={{
+          width: 50,
+          height: 20,
+          borderRadius: 'circle',
           backgroundOpacity: 'transparent',
           borderWidth: 0,
-          width: props.width ?? '100%',
-          height: 'fit-content',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'spaceBetween',
-          alignItems: 'center',
+          padding: 2,
+          indicator: {
+            borderRadius: 'circle',
+            borderWidth: 0,
+            backgroundOpacity: 'opaque',
+            backgroundColor: theme?.parts?.switch?.bgOff,
+            checked: {
+              backgroundColor: theme?.parts?.switch?.bg,
+            },
+          },
+          knob: {
+            // In LVGL, knob base size = full widget height.  Negative padding
+            // shrinks the knob inward so it fits within the track padding area.
+            // The value -(padding) ensures the visual knob exactly fills the
+            // content area.
+            padding: 2,
+            borderRadius: 'circle',
+            backgroundOpacity: 'opaque',
+            backgroundColor: theme?.parts?.switch?.knob,
+          },
+          ...props.style,
         }}
-      >
-        <lvgl-label
-          style={{
-            color: theme?.colors?.textPrimary,
-            font: font,
-          }}
-          text={props.label}
-        />
-        <lvgl-switch
-          x:custom={{
-            ...(props.value != null ? { state: { checked: props.value } } : {}),
-            ...(props.onChange != null ? { on_change: props.onChange } : {}),
-          }}
-        />
-      </lvgl-obj>
+      />
     );
   },
 );

@@ -320,6 +320,10 @@ function compileAndInjectTriggerHandler(
 
   // Collect ref variable names used in the actions (needed for runtime resolution)
   const refNameSet = symbolSetToNameSet(refSymbols);
+  // Include property-access ref binding keys (e.g. 'props.mainPage')
+  for (const key of result.refExpressions) {
+    refNameSet.add(key);
+  }
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
@@ -329,7 +333,13 @@ function compileAndInjectTriggerHandler(
   const metaJson = serializeWithExpressions(result.actions);
 
   // Build __refBindings object literal: { switchRef: switchRef, lightRef: lightRef }
-  const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
+  // Property-access refs use quoted keys: { "props.mainPage": props.mainPage }
+  const refBindingsEntries = refNames.map(name => {
+    if (result.refExpressions.has(name)) {
+      return `${JSON.stringify(name)}: ${name}`;
+    }
+    return `${name}: ${name}`;
+  });
   const refBindingsLiteral = refNames.length > 0
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';
@@ -381,8 +391,17 @@ function compileAndInjectUseScript(
 
   // Store IRActionNode[] directly - lowering happens in target packages
   const refNameSet = symbolSetToNameSet(refSymbols);
+  // Include property-access ref binding keys (e.g. 'props.mainPage')
+  for (const key of result.refExpressions) {
+    refNameSet.add(key);
+  }
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
-  const refBindingsEntries = refNames.map(name => `${name}: ${name}`);
+  const refBindingsEntries = refNames.map(name => {
+    if (result.refExpressions.has(name)) {
+      return `${JSON.stringify(name)}: ${name}`;
+    }
+    return `${name}: ${name}`;
+  });
   const refBindingsLiteral = refNames.length > 0
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';

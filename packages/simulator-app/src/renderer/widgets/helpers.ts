@@ -71,15 +71,20 @@ export function cssStringToStyle(css: string): React.CSSProperties {
  * Build scoped CSS rules for state styles.
  * Returns a CSS text block like:
  *   [data-node-id="xxx"]:active { background-color: #123456 }
+ *
+ * When `partClass` is provided the state pseudo goes on the node element
+ * with the part as a descendant selector.  This matches LVGL semantics
+ * where states (checked, pressed, …) live on the widget and parts inherit:
+ *   [data-node-id="xxx"][data-checked] .lvgl-part-indicator { … }
  */
-export function buildStateCssRules(nodeId: string, states: Record<string, string>, selectorPrefix = ''): string {
+export function buildStateCssRules(nodeId: string, states: Record<string, string>, partClass = ''): string {
   const rules: string[] = [];
   for (const [state, cssString] of Object.entries(states)) {
     if (!cssString) continue;
     const pseudo = STATE_TO_CSS_SELECTOR[state];
     if (!pseudo) continue;
-    const selector = selectorPrefix
-      ? `${selectorPrefix}${pseudo}`
+    const selector = partClass
+      ? `[data-node-id="${nodeId}"]${pseudo} ${partClass}`
       : `[data-node-id="${nodeId}"]${pseudo}`;
     rules.push(`${selector} { ${cssString} }`);
   }
@@ -96,13 +101,10 @@ export function getNodeStyles(props: Record<string, RuntimeProp>, nodeId: string
   const parts: Record<string, { base: React.CSSProperties; statesCssText: string }> = {};
   for (const [part, partOutput] of Object.entries(output.parts)) {
     const partClass = PART_TO_CSS_CLASS[part];
-    const partSelector = partClass
-      ? `[data-node-id="${nodeId}"] ${partClass}`
-      : undefined;
     parts[part] = {
       base: cssStringToStyle(partOutput.base),
-      statesCssText: partSelector
-        ? buildStateCssRules(nodeId, partOutput.states, partSelector)
+      statesCssText: partClass
+        ? buildStateCssRules(nodeId, partOutput.states, partClass)
         : '',
     };
   }

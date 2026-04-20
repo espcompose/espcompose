@@ -53,8 +53,14 @@ function App() {
 
               <Card>
                 <Text variant="subtitle" text="Living Room" />
-                <Slider label="Brightness" min={0} max={255} />
-                <Switch label="Power" />
+                <VStack gap="xs">
+                  <Text text="Brightness" />
+                  <Slider min={0} max={255} />
+                </VStack>
+                <HStack align="spaceBetween" crossAlign="center">
+                  <Text text="Power" />
+                  <Switch />
+                </HStack>
               </Card>
 
               <HStack align="spaceBetween">

@@ -114,6 +114,12 @@ function PaintScene({ scene, zIndex }: { scene: PaintPropMap[]; zIndex: number }
   );
 }
 
+/** CSS properties that control child layout and should be forwarded to the content wrapper. */
+const LAYOUT_KEYS: (keyof React.CSSProperties)[] = [
+  'display', 'flexDirection', 'flexWrap', 'alignItems', 'justifyContent',
+  'gap', 'rowGap', 'columnGap',
+];
+
 export function EcCanvasWidget({ node, onAction }: WidgetProps) {
   const styles = getNodeStyles(node.props, node.id);
   const allCss = collectAllStateCss(styles);
@@ -122,6 +128,17 @@ export function EcCanvasWidget({ node, onAction }: WidgetProps) {
     position: 'relative',
   };
 
+  // Extract layout properties for the content wrapper so children are laid out
+  // correctly (e.g. flex-direction: column). Without this, the inner div would
+  // be a plain block and inline elements like <span> (labels) and <button>
+  // would flow horizontally instead of respecting the flex layout.
+  const contentStyle: React.CSSProperties = { position: 'relative', zIndex: 1 };
+  for (const key of LAYOUT_KEYS) {
+    if (key in canvasStyle) {
+      (contentStyle as Record<string, unknown>)[key] = canvasStyle[key];
+    }
+  }
+
   const bgScene = getPropValue(node.props.background_scene) as PaintPropMap[] | undefined;
   const ovScene = getPropValue(node.props.overlay_scene) as PaintPropMap[] | undefined;
 
@@ -129,7 +146,7 @@ export function EcCanvasWidget({ node, onAction }: WidgetProps) {
     <div className="ec-canvas" style={canvasStyle} data-node-id={node.id}>
       <StyleInjector cssText={allCss} />
       {bgScene && bgScene.length > 0 && <PaintScene scene={bgScene} zIndex={0} />}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={contentStyle}>
         {node.children.map((child) => (
           <LvglWidget key={child.id} node={child} onAction={onAction} />
         ))}

@@ -37,8 +37,7 @@ export function irValueToRuntimeProp(
       return { kind: 'static', value: value.items.map(item => irValueToPlain(item)) };
 
     case 'object':
-      // Nested objects (e.g. style sub-objects) — flatten to plain for now
-      return { kind: 'static', value: irObjectToPlain(value as IRObject) };
+      return irObjectToRuntimeProp(value as IRObject, ctx);
 
     default:
       return { kind: 'static', value: null };
@@ -65,6 +64,81 @@ function irObjectToPlain(obj: IRObject): Record<string, unknown> {
     result[entry.key] = irValueToPlain(entry.value);
   }
   return result;
+}
+
+/**
+ * Convert an IRObject to a RuntimeProp.  When any entry contains a reactive
+ * value the whole prop becomes reactive so that its evaluate() re-resolves
+ * every entry (including reactive ones like theme-derived colors).
+ */
+function irObjectToRuntimeProp(obj: IRObject, ctx: IRRenderContext): RuntimeProp {
+  // Check if any entry (recursively) contains a reactive value
+  const hasReactive = obj.entries.some(e => irValueContainsReactive(e.value));
+
+  if (!hasReactive) {
+    return { kind: 'static', value: irObjectToPlain(obj) };
+  }
+
+  // Build per-entry evaluators for reactive entries; static entries use a
+  // plain getter so that evaluate() always returns a fully-resolved object.
+  const entryEvaluators: Array<{ key: string; resolve: () => unknown }> = [];
+  const allDeps: RuntimeDependency[] = [];
+
+  for (const entry of obj.entries) {
+    if (entry.value.kind === 'reactive') {
+      const prop = irReactiveToRuntimeProp(entry.value, ctx);
+      if (prop.kind === 'reactive') {
+        entryEvaluators.push({ key: entry.key, resolve: prop.evaluate });
+        allDeps.push(...prop.dependencies);
+      } else {
+        const v = prop.kind === 'static' ? prop.value : null;
+        entryEvaluators.push({ key: entry.key, resolve: () => v });
+      }
+    } else if (entry.value.kind === 'object') {
+      // Recursively handle nested objects that may contain reactives
+      const nested = irObjectToRuntimeProp(entry.value as IRObject, ctx);
+      if (nested.kind === 'reactive') {
+        entryEvaluators.push({ key: entry.key, resolve: nested.evaluate });
+        allDeps.push(...nested.dependencies);
+      } else {
+        const v = nested.kind === 'static' ? nested.value : null;
+        entryEvaluators.push({ key: entry.key, resolve: () => v });
+      }
+    } else {
+      const v = irValueToPlain(entry.value);
+      entryEvaluators.push({ key: entry.key, resolve: () => v });
+    }
+  }
+
+  const evaluate = (): Record<string, unknown> => {
+    const result: Record<string, unknown> = {};
+    for (const { key, resolve } of entryEvaluators) {
+      result[key] = resolve();
+    }
+    return result;
+  };
+
+  let current: unknown;
+  try { current = evaluate(); } catch { current = irObjectToPlain(obj); }
+
+  return {
+    kind: 'reactive',
+    current,
+    evaluate,
+    dependencies: allDeps,
+  };
+}
+
+/** Check whether an IRValue tree contains any reactive nodes. */
+function irValueContainsReactive(value: IRValue): boolean {
+  if (value.kind === 'reactive') return true;
+  if (value.kind === 'object') {
+    return (value as IRObject).entries.some(e => irValueContainsReactive(e.value));
+  }
+  if (value.kind === 'array') {
+    return value.items.some(irValueContainsReactive);
+  }
+  return false;
 }
 
 // ── Reactive prop handling ───────────────────────────────────────────────────

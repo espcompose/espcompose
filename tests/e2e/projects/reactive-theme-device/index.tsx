@@ -56,7 +56,10 @@ function App() {
 
               <Card>
                 <Text variant="subtitle" text="Controls" />
-                <Slider label="Brightness" min={0} max={255} />
+                <VStack gap="xs">
+                  <Text text="Brightness" />
+                  <Slider min={0} max={255} />
+                </VStack>
               </Card>
 
               <HStack>

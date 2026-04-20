@@ -64,8 +64,8 @@ export const lightTheme: Theme = {
   },
 
   parts: {
-    slider: { bg: '#1565C0', knob: '#212121' },
-    switch: { bg: '#1565C0', knob: '#212121' },
+    slider: { bg: '#1565C0', knob: '#FFFFFF', track: '#BDBDBD' },
+    switch: { bg: '#1565C0', bgOff: '#BDBDBD', knob: '#FFFFFF' },
     arc:    { bg: '#1565C0', knob: '#212121' },
   },
 };

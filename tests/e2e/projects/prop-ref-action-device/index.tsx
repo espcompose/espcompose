@@ -43,6 +43,15 @@ const NavButton = createLvglWidget<PageProps>(
   },
 );
 
+/** Component using un-destructured props.ref access in pageShow({ id }). */
+const NavButtonViaProps = createLvglWidget<PageProps>(
+  (props) => {
+    return (
+      <Button text="GoProps" onPress={() => { props.lvgl.pageShow({ id: props.targetPage }); }} />
+    );
+  },
+);
+
 /** UI component that receives the lvgl ref through props. */
 const UI = createEspHomeComponent(
   (props: UIProps) => {
@@ -68,6 +77,7 @@ const UI = createEspHomeComponent(
             <VStack>
               <Text variant="title" text="Page 3" />
               <NavButton lvgl={props.lvgl} targetPage={screen1Ref} />
+              <NavButtonViaProps lvgl={props.lvgl} targetPage={screen1Ref} />
             </VStack>
           </Screen>
         </ThemeProvider>
