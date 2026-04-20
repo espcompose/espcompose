@@ -21,6 +21,7 @@ import {
   globalJsxAugmentation,
   reactivePropType,
   refPropType,
+  triggerType,
 } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -33,11 +34,23 @@ interface LvglPropDef {
   key?: 'Required' | 'Optional';
 }
 
+interface LvglWidgetTriggerArg {
+  name: string;
+  cpp_type: string;
+  ts_type: string;
+}
+
+interface LvglWidgetTriggers {
+  has_on_value: boolean;
+  args: LvglWidgetTriggerArg[];
+}
+
 interface LvglWidgetDef {
   parts: string[];
   schema: Record<string, LvglPropDef>;
   cpp_type?: string;
   is_compound?: boolean;
+  triggers?: LvglWidgetTriggers;
 }
 
 interface LvglSchema {
@@ -200,7 +213,7 @@ export function buildLvglFileContent(schemaPath: string): string {
   const statements: ts.Statement[] = [];
 
   // ── Import ────────────────────────────────────────────────────────────────
-  statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp'], '../../types'));
+  statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp', 'TriggerHandler'], '../../types'));
   statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
   statements.push(importTypeDecl(['HexColor'], '../../theme/hex-color'));
@@ -317,6 +330,27 @@ export function buildLvglFileContent(schemaPath: string): string {
           ? `Supports parts: ${widgetParts.map(p => `\`${toCamelCase(p)}\``).join(', ')}.`
           : 'This widget has no sub-parts.',
       ]));
+    }
+
+    // ── Event trigger props ───────────────────────────────────────────────
+    // In ESPHome, all event triggers on a widget receive the widget's typed
+    // callback args (e.g. slider's on_release provides float x, same as on_value).
+    // Widgets without typed args get plain TriggerHandler.
+    const widgetTriggerArgs = widget.triggers?.args ?? [];
+    const widgetTriggerVariables = widgetTriggerArgs.map(a => ({ name: a.name, tsType: a.ts_type }));
+    const widgetTriggerType = triggerType(widgetTriggerVariables);
+
+    const allEventTriggers = [...schema.event_triggers, ...schema.swipe_triggers];
+    for (const trigger of allEventTriggers) {
+      const camel = toCamelCase(trigger);
+      const sig = propSig(camel, widgetTriggerType, true);
+      members.push(addJsDoc(sig, [`@yamlKey ${trigger}`]));
+    }
+
+    // Widget-specific on_value trigger (only for widgets with has_on_value)
+    if (widget.triggers?.has_on_value) {
+      const sig = propSig('onValue', widgetTriggerType, true);
+      members.push(addJsDoc(sig, ['@yamlKey on_value']));
     }
 
     statements.push(

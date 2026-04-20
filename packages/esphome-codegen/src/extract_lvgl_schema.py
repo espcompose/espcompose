@@ -239,6 +239,67 @@ def extract_schema_keys(schema) -> dict:
 
 # ── Main extraction ─────────────────────────────────────────────────────────
 
+def _classify_lv_arg(cpp_type) -> str:
+    """Map an ESPHome C++ type to a TypeScript type string."""
+    import esphome.codegen as cg
+
+    type_map = {
+        id(cg.float_): "number",
+        id(cg.bool_): "boolean",
+        id(cg.std_string): "string",
+        id(cg.int_): "number",
+        id(cg.uint16): "number",
+        id(cg.uint32): "number",
+        id(cg.int32): "number",
+    }
+    result = type_map.get(id(cpp_type))
+    if result:
+        return result
+    # Fallback: check string repr for known patterns
+    type_str = str(cpp_type)
+    if "float" in type_str:
+        return "number"
+    if "bool" in type_str:
+        return "boolean"
+    if "string" in type_str:
+        return "string"
+    if "int" in type_str or "uint" in type_str:
+        return "number"
+    return "unknown"
+
+
+def _extract_widget_triggers(wtype) -> dict | None:
+    """Extract trigger variable metadata from a widget's LvType."""
+    from esphome.components.lvgl.types import LvType
+
+    if not hasattr(wtype, "w_type"):
+        return None
+    lv_type = wtype.w_type
+    if not isinstance(lv_type, LvType):
+        return None
+
+    has_on_value = getattr(lv_type, "has_on_value", False)
+    raw_args = getattr(lv_type, "args", [])
+
+    # Filter out lv_obj_t* / lv_event_t* — these are internal, not user-facing
+    args = []
+    for cpp_type, arg_name in raw_args:
+        type_str = str(cpp_type)
+        if "lv_obj_t" in type_str or "lv_event_t" in type_str:
+            continue
+        ts_type = _classify_lv_arg(cpp_type)
+        args.append({
+            "name": arg_name,
+            "cpp_type": type_str,
+            "ts_type": ts_type,
+        })
+
+    return {
+        "has_on_value": has_on_value,
+        "args": args,
+    }
+
+
 def extract_widgets() -> dict:
     """Extract all widget types from WIDGET_TYPES."""
     from esphome.components.lvgl.schemas import WIDGET_TYPES
@@ -255,6 +316,10 @@ def extract_widgets() -> dict:
         # Check for compound widget
         if hasattr(wtype, "is_compound") and wtype.is_compound():
             widget_info["is_compound"] = True
+        # Extract trigger variable metadata
+        triggers = _extract_widget_triggers(wtype)
+        if triggers is not None:
+            widget_info["triggers"] = triggers
         widgets[name] = widget_info
 
     return widgets

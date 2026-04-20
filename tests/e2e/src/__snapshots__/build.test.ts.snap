@@ -1406,7 +1406,10 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_17([]() {
-    lv_obj_set_style_radius(&id(rw_ref4), static_cast<lv_coord_t>(thm_333e4663_radii_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    auto _src = thm_333e4663_radii_md.get();
+    lv_obj_set_style_radius(&id(rw_ref4), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref11), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref14), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_18([]() {
@@ -1425,23 +1428,23 @@ void bootstrap_runtime() {
     lv_obj_set_style_border_color(&id(rw_ref11), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_22([]() {
+  static Effect binding_23([]() {
     lv_obj_set_style_bg_color(&id(rw_ref11), thm_333e4663_colors_success_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_23([]() {
+  static Effect binding_24([]() {
     auto _src = memo_0.get();
     lv_obj_set_width(&id(rw_ref10), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref13), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_24([]() {
+  static Effect binding_25([]() {
     auto _src = thm_333e4663_sizes_sm_height.get();
     lv_obj_set_height(&id(rw_ref10), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref13), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_25([]() {
+  static Effect binding_26([]() {
     auto _src = thm_333e4663_colors_danger_bg.get();
     lv_obj_set_style_text_color(&id(rw_ref15), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_bg_color(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
@@ -1449,11 +1452,11 @@ void bootstrap_runtime() {
     lv_obj_set_style_bg_color(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_32([]() {
+  static Effect binding_34([]() {
     lv_obj_set_style_bg_color(id(rw_ref2).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_33([]() {
+  static Effect binding_35([]() {
     { auto _v = static_cast<lv_coord_t>(thm_333e4663_spacing_lg.get()); lv_obj_set_style_pad_top(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
   });
 
@@ -1535,18 +1538,18 @@ void bootstrap_runtime() {
   binding_19.wire(binding_19_sources, 1);
   static NodeBase* binding_20_sources[] = {&thm_333e4663_colors_success_bg};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_22_sources[] = {&thm_333e4663_colors_success_bgPressed};
-  binding_22.wire(binding_22_sources, 1);
-  static NodeBase* binding_23_sources[] = {&memo_0};
+  static NodeBase* binding_23_sources[] = {&thm_333e4663_colors_success_bgPressed};
   binding_23.wire(binding_23_sources, 1);
-  static NodeBase* binding_24_sources[] = {&thm_333e4663_sizes_sm_height};
+  static NodeBase* binding_24_sources[] = {&memo_0};
   binding_24.wire(binding_24_sources, 1);
-  static NodeBase* binding_25_sources[] = {&thm_333e4663_colors_danger_bg};
+  static NodeBase* binding_25_sources[] = {&thm_333e4663_sizes_sm_height};
   binding_25.wire(binding_25_sources, 1);
-  static NodeBase* binding_32_sources[] = {&thm_333e4663_colors_background};
-  binding_32.wire(binding_32_sources, 1);
-  static NodeBase* binding_33_sources[] = {&thm_333e4663_spacing_lg};
-  binding_33.wire(binding_33_sources, 1);
+  static NodeBase* binding_26_sources[] = {&thm_333e4663_colors_danger_bg};
+  binding_26.wire(binding_26_sources, 1);
+  static NodeBase* binding_34_sources[] = {&thm_333e4663_colors_background};
+  binding_34.wire(binding_34_sources, 1);
+  static NodeBase* binding_35_sources[] = {&thm_333e4663_spacing_lg};
+  binding_35.wire(binding_35_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_danger_bg);
@@ -1587,12 +1590,12 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_18);
   Scheduler::instance().schedule(&binding_19);
   Scheduler::instance().schedule(&binding_20);
-  Scheduler::instance().schedule(&binding_22);
   Scheduler::instance().schedule(&binding_23);
   Scheduler::instance().schedule(&binding_24);
   Scheduler::instance().schedule(&binding_25);
-  Scheduler::instance().schedule(&binding_32);
-  Scheduler::instance().schedule(&binding_33);
+  Scheduler::instance().schedule(&binding_26);
+  Scheduler::instance().schedule(&binding_34);
+  Scheduler::instance().schedule(&binding_35);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -1841,7 +1844,7 @@ lvgl:
                                           bg_opa: COVER
                                           border_color: !lambda "return espcompose::thm_333e4663_colors_success_bg.get();"
                                           border_width: 0
-                                          radius: 5
+                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                                           width: 100%
                                           height: 100%
                                           pressed:
@@ -1868,7 +1871,7 @@ lvgl:
                                           bg_opa: TRANSP
                                           border_color: !lambda "return espcompose::thm_333e4663_colors_danger_bg.get();"
                                           border_width: 2
-                                          radius: 5
+                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                                           width: 100%
                                           height: 100%
                                           pressed:
@@ -2068,6 +2071,11 @@ Memo<lv_color_t> thm_333e4663_colors_success_text([]() -> lv_color_t {
   return thm_333e4663_colors_success_text_vals[theme_index_333e4663.get()];
 });
 
+static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
+Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
+  return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
+});
+
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
   static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref15).get_lv_font(), id(r_ref15).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
@@ -2125,8 +2133,8 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* theme_index_333e4663_subs[14];
-  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 14);
+  static NodeBase* theme_index_333e4663_subs[15];
+  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 15);
   static NodeBase* sig_ha_sensor_living_room_temperature_subs[1];
   sig_ha_sensor_living_room_temperature.set_subscriber_storage(sig_ha_sensor_living_room_temperature_subs, 1);
   static NodeBase* sig_ha_light_kitchen_floods_subs[1];
@@ -2145,6 +2153,8 @@ void bootstrap_runtime() {
   thm_333e4663_sizes_md_font.set_subscriber_storage(thm_333e4663_sizes_md_font_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bg_subs[1];
   thm_333e4663_colors_primary_bg.set_subscriber_storage(thm_333e4663_colors_primary_bg_subs, 1);
+  static NodeBase* thm_333e4663_radii_md_subs[1];
+  thm_333e4663_radii_md.set_subscriber_storage(thm_333e4663_radii_md_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bgPressed_subs[1];
   thm_333e4663_colors_primary_bgPressed.set_subscriber_storage(thm_333e4663_colors_primary_bgPressed_subs, 1);
   static NodeBase* memo_2_subs[1];
@@ -2197,60 +2207,67 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_6([]() {
-    lv_obj_set_style_bg_color(&id(rw_ref5), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+    auto _src = thm_333e4663_radii_md.get();
+    lv_obj_set_style_radius(&id(rw_ref5), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref8), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref11), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_7([]() {
+    lv_obj_set_style_bg_color(&id(rw_ref5), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+  });
+
+  static Effect binding_8([]() {
     auto _src = memo_2.get();
     lv_obj_set_width(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref7), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref10), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_8([]() {
+  static Effect binding_9([]() {
     auto _src = thm_333e4663_sizes_md_height.get();
     lv_obj_set_height(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref7), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref10), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_9([]() {
+  static Effect binding_10([]() {
     lv_label_set_text(&id(rw_ref9), memo_3.get().c_str());
   });
 
-  static Effect binding_10([]() {
+  static Effect binding_11([]() {
     lv_obj_set_style_text_color(&id(rw_ref9), thm_333e4663_colors_secondary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_12([]() {
+  static Effect binding_13([]() {
     auto _src = thm_333e4663_colors_secondary_bg.get();
     lv_obj_set_style_bg_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_border_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_14([]() {
+  static Effect binding_16([]() {
     lv_obj_set_style_bg_color(&id(rw_ref8), thm_333e4663_colors_secondary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_17([]() {
+  static Effect binding_19([]() {
     lv_obj_set_style_text_color(&id(rw_ref12), thm_333e4663_colors_success_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_19([]() {
+  static Effect binding_21([]() {
     auto _src = thm_333e4663_colors_success_bg.get();
     lv_obj_set_style_bg_color(&id(rw_ref11), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_border_color(&id(rw_ref11), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_21([]() {
+  static Effect binding_24([]() {
     lv_obj_set_style_bg_color(&id(rw_ref11), thm_333e4663_colors_success_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_24([]() {
+  static Effect binding_27([]() {
     lv_obj_set_style_bg_color(id(rw_ref2).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_25([]() {
+  static Effect binding_28([]() {
     { auto _v = static_cast<lv_coord_t>(thm_333e4663_spacing_lg.get()); lv_obj_set_style_pad_top(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
   });
 
@@ -2274,6 +2291,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_success_bgPressed.wire(thm_333e4663_colors_success_bgPressed_src, 1);
   static NodeBase* thm_333e4663_colors_success_text_src[] = {&theme_index_333e4663};
   thm_333e4663_colors_success_text.wire(thm_333e4663_colors_success_text_src, 1);
+  static NodeBase* thm_333e4663_radii_md_src[] = {&theme_index_333e4663};
+  thm_333e4663_radii_md.wire(thm_333e4663_radii_md_src, 1);
   static NodeBase* thm_333e4663_sizes_md_font_src[] = {&theme_index_333e4663};
   thm_333e4663_sizes_md_font.wire(thm_333e4663_sizes_md_font_src, 1);
   static NodeBase* thm_333e4663_sizes_md_height_src[] = {&theme_index_333e4663};
@@ -2300,30 +2319,32 @@ void bootstrap_runtime() {
   binding_3.wire(binding_3_sources, 1);
   static NodeBase* binding_4_sources[] = {&thm_333e4663_colors_primary_bg};
   binding_4.wire(binding_4_sources, 1);
-  static NodeBase* binding_6_sources[] = {&thm_333e4663_colors_primary_bgPressed};
+  static NodeBase* binding_6_sources[] = {&thm_333e4663_radii_md};
   binding_6.wire(binding_6_sources, 1);
-  static NodeBase* binding_7_sources[] = {&memo_2};
+  static NodeBase* binding_7_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_7.wire(binding_7_sources, 1);
-  static NodeBase* binding_8_sources[] = {&thm_333e4663_sizes_md_height};
+  static NodeBase* binding_8_sources[] = {&memo_2};
   binding_8.wire(binding_8_sources, 1);
-  static NodeBase* binding_9_sources[] = {&memo_3};
+  static NodeBase* binding_9_sources[] = {&thm_333e4663_sizes_md_height};
   binding_9.wire(binding_9_sources, 1);
-  static NodeBase* binding_10_sources[] = {&thm_333e4663_colors_secondary_text};
+  static NodeBase* binding_10_sources[] = {&memo_3};
   binding_10.wire(binding_10_sources, 1);
-  static NodeBase* binding_12_sources[] = {&thm_333e4663_colors_secondary_bg};
-  binding_12.wire(binding_12_sources, 1);
-  static NodeBase* binding_14_sources[] = {&thm_333e4663_colors_secondary_bgPressed};
-  binding_14.wire(binding_14_sources, 1);
-  static NodeBase* binding_17_sources[] = {&thm_333e4663_colors_success_text};
-  binding_17.wire(binding_17_sources, 1);
-  static NodeBase* binding_19_sources[] = {&thm_333e4663_colors_success_bg};
+  static NodeBase* binding_11_sources[] = {&thm_333e4663_colors_secondary_text};
+  binding_11.wire(binding_11_sources, 1);
+  static NodeBase* binding_13_sources[] = {&thm_333e4663_colors_secondary_bg};
+  binding_13.wire(binding_13_sources, 1);
+  static NodeBase* binding_16_sources[] = {&thm_333e4663_colors_secondary_bgPressed};
+  binding_16.wire(binding_16_sources, 1);
+  static NodeBase* binding_19_sources[] = {&thm_333e4663_colors_success_text};
   binding_19.wire(binding_19_sources, 1);
-  static NodeBase* binding_21_sources[] = {&thm_333e4663_colors_success_bgPressed};
+  static NodeBase* binding_21_sources[] = {&thm_333e4663_colors_success_bg};
   binding_21.wire(binding_21_sources, 1);
-  static NodeBase* binding_24_sources[] = {&thm_333e4663_colors_background};
+  static NodeBase* binding_24_sources[] = {&thm_333e4663_colors_success_bgPressed};
   binding_24.wire(binding_24_sources, 1);
-  static NodeBase* binding_25_sources[] = {&thm_333e4663_spacing_lg};
-  binding_25.wire(binding_25_sources, 1);
+  static NodeBase* binding_27_sources[] = {&thm_333e4663_colors_background};
+  binding_27.wire(binding_27_sources, 1);
+  static NodeBase* binding_28_sources[] = {&thm_333e4663_spacing_lg};
+  binding_28.wire(binding_28_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
@@ -2335,6 +2356,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&thm_333e4663_colors_success_bg);
   Scheduler::instance().schedule(&thm_333e4663_colors_success_bgPressed);
   Scheduler::instance().schedule(&thm_333e4663_colors_success_text);
+  Scheduler::instance().schedule(&thm_333e4663_radii_md);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_font);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_height);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_paddingX);
@@ -2353,13 +2375,14 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_8);
   Scheduler::instance().schedule(&binding_9);
   Scheduler::instance().schedule(&binding_10);
-  Scheduler::instance().schedule(&binding_12);
-  Scheduler::instance().schedule(&binding_14);
-  Scheduler::instance().schedule(&binding_17);
+  Scheduler::instance().schedule(&binding_11);
+  Scheduler::instance().schedule(&binding_13);
+  Scheduler::instance().schedule(&binding_16);
   Scheduler::instance().schedule(&binding_19);
   Scheduler::instance().schedule(&binding_21);
   Scheduler::instance().schedule(&binding_24);
-  Scheduler::instance().schedule(&binding_25);
+  Scheduler::instance().schedule(&binding_27);
+  Scheduler::instance().schedule(&binding_28);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -2385,7 +2408,7 @@ exports[`ESPHome Compose Build > fancy-light-cascade-device 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=60
+      - -DESPCOMPOSE_MAX_NODES=62
 esp32:
   board: esp32dev
   framework:
@@ -2454,7 +2477,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -2488,7 +2511,7 @@ lvgl:
                                 espcompose::thm_333e4663_colors_secondary_bg.get()\\
                                 ;"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -2519,7 +2542,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_success_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -3441,6 +3464,11 @@ Memo<lv_color_t> thm_333e4663_colors_textPrimary([]() -> lv_color_t {
   return thm_333e4663_colors_textPrimary_vals[theme_index_333e4663.get()];
 });
 
+static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
+Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
+  return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
+});
+
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
   static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref22).get_lv_font(), id(r_ref22).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
@@ -3487,8 +3515,8 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* theme_index_333e4663_subs[9];
-  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 9);
+  static NodeBase* theme_index_333e4663_subs[10];
+  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 10);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
@@ -3501,6 +3529,8 @@ void bootstrap_runtime() {
   thm_333e4663_sizes_md_font.set_subscriber_storage(thm_333e4663_sizes_md_font_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bg_subs[1];
   thm_333e4663_colors_primary_bg.set_subscriber_storage(thm_333e4663_colors_primary_bg_subs, 1);
+  static NodeBase* thm_333e4663_radii_md_subs[1];
+  thm_333e4663_radii_md.set_subscriber_storage(thm_333e4663_radii_md_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bgPressed_subs[1];
   thm_333e4663_colors_primary_bgPressed.set_subscriber_storage(thm_333e4663_colors_primary_bgPressed_subs, 1);
   static NodeBase* memo_0_subs[1];
@@ -3554,6 +3584,14 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_6([]() {
+    auto _src = thm_333e4663_radii_md.get();
+    lv_obj_set_style_radius(&id(rw_ref5), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref10), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref15), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref18), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+  });
+
+  static Effect binding_7([]() {
     auto _src = thm_333e4663_colors_primary_bgPressed.get();
     lv_obj_set_style_bg_color(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
     lv_obj_set_style_bg_color(&id(rw_ref10), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
@@ -3561,7 +3599,7 @@ void bootstrap_runtime() {
     lv_obj_set_style_bg_color(&id(rw_ref18), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_7([]() {
+  static Effect binding_8([]() {
     auto _src = memo_0.get();
     lv_obj_set_width(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref9), static_cast<lv_coord_t>(_src));
@@ -3569,7 +3607,7 @@ void bootstrap_runtime() {
     lv_obj_set_width(&id(rw_ref17), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_8([]() {
+  static Effect binding_9([]() {
     auto _src = thm_333e4663_sizes_md_height.get();
     lv_obj_set_height(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref9), static_cast<lv_coord_t>(_src));
@@ -3577,7 +3615,7 @@ void bootstrap_runtime() {
     lv_obj_set_height(&id(rw_ref17), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_9([]() {
+  static Effect binding_10([]() {
     auto _src = thm_333e4663_colors_background.get();
     lv_obj_set_style_bg_color(id(r_ref2).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_bg_color(id(rw_ref7).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
@@ -3594,6 +3632,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_primary_text.wire(thm_333e4663_colors_primary_text_src, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_src[] = {&theme_index_333e4663};
   thm_333e4663_colors_textPrimary.wire(thm_333e4663_colors_textPrimary_src, 1);
+  static NodeBase* thm_333e4663_radii_md_src[] = {&theme_index_333e4663};
+  thm_333e4663_radii_md.wire(thm_333e4663_radii_md_src, 1);
   static NodeBase* thm_333e4663_sizes_md_font_src[] = {&theme_index_333e4663};
   thm_333e4663_sizes_md_font.wire(thm_333e4663_sizes_md_font_src, 1);
   static NodeBase* thm_333e4663_sizes_md_height_src[] = {&theme_index_333e4663};
@@ -3614,20 +3654,23 @@ void bootstrap_runtime() {
   binding_3.wire(binding_3_sources, 1);
   static NodeBase* binding_4_sources[] = {&thm_333e4663_colors_primary_bg};
   binding_4.wire(binding_4_sources, 1);
-  static NodeBase* binding_6_sources[] = {&thm_333e4663_colors_primary_bgPressed};
+  static NodeBase* binding_6_sources[] = {&thm_333e4663_radii_md};
   binding_6.wire(binding_6_sources, 1);
-  static NodeBase* binding_7_sources[] = {&memo_0};
+  static NodeBase* binding_7_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_7.wire(binding_7_sources, 1);
-  static NodeBase* binding_8_sources[] = {&thm_333e4663_sizes_md_height};
+  static NodeBase* binding_8_sources[] = {&memo_0};
   binding_8.wire(binding_8_sources, 1);
-  static NodeBase* binding_9_sources[] = {&thm_333e4663_colors_background};
+  static NodeBase* binding_9_sources[] = {&thm_333e4663_sizes_md_height};
   binding_9.wire(binding_9_sources, 1);
+  static NodeBase* binding_10_sources[] = {&thm_333e4663_colors_background};
+  binding_10.wire(binding_10_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bgPressed);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_text);
   Scheduler::instance().schedule(&thm_333e4663_colors_textPrimary);
+  Scheduler::instance().schedule(&thm_333e4663_radii_md);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_font);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_height);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_paddingX);
@@ -3642,6 +3685,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_7);
   Scheduler::instance().schedule(&binding_8);
   Scheduler::instance().schedule(&binding_9);
+  Scheduler::instance().schedule(&binding_10);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -3667,7 +3711,7 @@ exports[`ESPHome Compose Build > prop-ref-action-device 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=36
+      - -DESPCOMPOSE_MAX_NODES=38
 esp32:
   board: esp32dev
   framework:
@@ -3737,7 +3781,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -3796,7 +3840,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -3856,7 +3900,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -3886,7 +3930,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -4359,7 +4403,10 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_12([]() {
-    lv_obj_set_style_radius(&id(rw_ref4), static_cast<lv_coord_t>(thm_333e4663_radii_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    auto _src = thm_333e4663_radii_md.get();
+    lv_obj_set_style_radius(&id(rw_ref4), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref9), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref12), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_13([]() {
@@ -4378,41 +4425,41 @@ void bootstrap_runtime() {
     lv_obj_set_style_border_color(&id(rw_ref9), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_17([]() {
+  static Effect binding_18([]() {
     lv_obj_set_style_bg_color(&id(rw_ref9), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_18([]() {
+  static Effect binding_19([]() {
     auto _src = memo_0.get();
     lv_obj_set_width(&id(rw_ref8), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref11), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_19([]() {
+  static Effect binding_20([]() {
     auto _src = thm_333e4663_sizes_md_height.get();
     lv_obj_set_height(&id(rw_ref8), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref11), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_20([]() {
+  static Effect binding_21([]() {
     lv_obj_set_style_text_color(&id(rw_ref13), thm_333e4663_colors_secondary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_22([]() {
+  static Effect binding_23([]() {
     auto _src = thm_333e4663_colors_secondary_bg.get();
     lv_obj_set_style_bg_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_border_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_24([]() {
+  static Effect binding_26([]() {
     lv_obj_set_style_bg_color(&id(rw_ref12), thm_333e4663_colors_secondary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_27([]() {
+  static Effect binding_29([]() {
     lv_obj_set_style_bg_color(id(rw_ref2).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_28([]() {
+  static Effect binding_30([]() {
     { auto _v = static_cast<lv_coord_t>(thm_333e4663_spacing_lg.get()); lv_obj_set_style_pad_top(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
   });
 
@@ -4486,22 +4533,22 @@ void bootstrap_runtime() {
   binding_14.wire(binding_14_sources, 1);
   static NodeBase* binding_15_sources[] = {&thm_333e4663_colors_primary_bg};
   binding_15.wire(binding_15_sources, 1);
-  static NodeBase* binding_17_sources[] = {&thm_333e4663_colors_primary_bgPressed};
-  binding_17.wire(binding_17_sources, 1);
-  static NodeBase* binding_18_sources[] = {&memo_0};
+  static NodeBase* binding_18_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_18.wire(binding_18_sources, 1);
-  static NodeBase* binding_19_sources[] = {&thm_333e4663_sizes_md_height};
+  static NodeBase* binding_19_sources[] = {&memo_0};
   binding_19.wire(binding_19_sources, 1);
-  static NodeBase* binding_20_sources[] = {&thm_333e4663_colors_secondary_text};
+  static NodeBase* binding_20_sources[] = {&thm_333e4663_sizes_md_height};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_22_sources[] = {&thm_333e4663_colors_secondary_bg};
-  binding_22.wire(binding_22_sources, 1);
-  static NodeBase* binding_24_sources[] = {&thm_333e4663_colors_secondary_bgPressed};
-  binding_24.wire(binding_24_sources, 1);
-  static NodeBase* binding_27_sources[] = {&thm_333e4663_colors_background};
-  binding_27.wire(binding_27_sources, 1);
-  static NodeBase* binding_28_sources[] = {&thm_333e4663_spacing_lg};
-  binding_28.wire(binding_28_sources, 1);
+  static NodeBase* binding_21_sources[] = {&thm_333e4663_colors_secondary_text};
+  binding_21.wire(binding_21_sources, 1);
+  static NodeBase* binding_23_sources[] = {&thm_333e4663_colors_secondary_bg};
+  binding_23.wire(binding_23_sources, 1);
+  static NodeBase* binding_26_sources[] = {&thm_333e4663_colors_secondary_bgPressed};
+  binding_26.wire(binding_26_sources, 1);
+  static NodeBase* binding_29_sources[] = {&thm_333e4663_colors_background};
+  binding_29.wire(binding_29_sources, 1);
+  static NodeBase* binding_30_sources[] = {&thm_333e4663_spacing_lg};
+  binding_30.wire(binding_30_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
@@ -4538,14 +4585,14 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_13);
   Scheduler::instance().schedule(&binding_14);
   Scheduler::instance().schedule(&binding_15);
-  Scheduler::instance().schedule(&binding_17);
   Scheduler::instance().schedule(&binding_18);
   Scheduler::instance().schedule(&binding_19);
   Scheduler::instance().schedule(&binding_20);
-  Scheduler::instance().schedule(&binding_22);
-  Scheduler::instance().schedule(&binding_24);
-  Scheduler::instance().schedule(&binding_27);
-  Scheduler::instance().schedule(&binding_28);
+  Scheduler::instance().schedule(&binding_21);
+  Scheduler::instance().schedule(&binding_23);
+  Scheduler::instance().schedule(&binding_26);
+  Scheduler::instance().schedule(&binding_29);
+  Scheduler::instance().schedule(&binding_30);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -4743,7 +4790,7 @@ lvgl:
                                           bg_opa: COVER
                                           border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                           border_width: 0
-                                          radius: 5
+                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                                           width: 100%
                                           height: 100%
                                           pressed:
@@ -4774,7 +4821,7 @@ lvgl:
                                             espcompose::thm_333e4663_colors_secondary_bg.get()\\
                                             ;"
                                           border_width: 0
-                                          radius: 5
+                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                                           width: 100%
                                           height: 100%
                                           pressed:
@@ -5300,6 +5347,11 @@ Memo<lv_color_t> thm_333e4663_colors_textPrimary([]() -> lv_color_t {
   return thm_333e4663_colors_textPrimary_vals[theme_index_333e4663.get()];
 });
 
+static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
+Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
+  return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
+});
+
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
   static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref19).get_lv_font(), id(r_ref19).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
@@ -5345,8 +5397,8 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* theme_index_333e4663_subs[9];
-  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 9);
+  static NodeBase* theme_index_333e4663_subs[10];
+  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 10);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
@@ -5359,6 +5411,8 @@ void bootstrap_runtime() {
   thm_333e4663_sizes_md_font.set_subscriber_storage(thm_333e4663_sizes_md_font_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bg_subs[1];
   thm_333e4663_colors_primary_bg.set_subscriber_storage(thm_333e4663_colors_primary_bg_subs, 1);
+  static NodeBase* thm_333e4663_radii_md_subs[1];
+  thm_333e4663_radii_md.set_subscriber_storage(thm_333e4663_radii_md_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bgPressed_subs[1];
   thm_333e4663_colors_primary_bgPressed.set_subscriber_storage(thm_333e4663_colors_primary_bgPressed_subs, 1);
   static NodeBase* memo_0_subs[1];
@@ -5408,27 +5462,34 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_6([]() {
+    auto _src = thm_333e4663_radii_md.get();
+    lv_obj_set_style_radius(&id(rw_ref5), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref10), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref15), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+  });
+
+  static Effect binding_7([]() {
     auto _src = thm_333e4663_colors_primary_bgPressed.get();
     lv_obj_set_style_bg_color(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
     lv_obj_set_style_bg_color(&id(rw_ref10), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
     lv_obj_set_style_bg_color(&id(rw_ref15), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
-  static Effect binding_7([]() {
+  static Effect binding_8([]() {
     auto _src = memo_0.get();
     lv_obj_set_width(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref9), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref14), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_8([]() {
+  static Effect binding_9([]() {
     auto _src = thm_333e4663_sizes_md_height.get();
     lv_obj_set_height(&id(rw_ref4), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref9), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref14), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_9([]() {
+  static Effect binding_10([]() {
     auto _src = thm_333e4663_colors_background.get();
     lv_obj_set_style_bg_color(id(r_ref2).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_bg_color(id(rw_ref7).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
@@ -5445,6 +5506,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_primary_text.wire(thm_333e4663_colors_primary_text_src, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_src[] = {&theme_index_333e4663};
   thm_333e4663_colors_textPrimary.wire(thm_333e4663_colors_textPrimary_src, 1);
+  static NodeBase* thm_333e4663_radii_md_src[] = {&theme_index_333e4663};
+  thm_333e4663_radii_md.wire(thm_333e4663_radii_md_src, 1);
   static NodeBase* thm_333e4663_sizes_md_font_src[] = {&theme_index_333e4663};
   thm_333e4663_sizes_md_font.wire(thm_333e4663_sizes_md_font_src, 1);
   static NodeBase* thm_333e4663_sizes_md_height_src[] = {&theme_index_333e4663};
@@ -5465,20 +5528,23 @@ void bootstrap_runtime() {
   binding_3.wire(binding_3_sources, 1);
   static NodeBase* binding_4_sources[] = {&thm_333e4663_colors_primary_bg};
   binding_4.wire(binding_4_sources, 1);
-  static NodeBase* binding_6_sources[] = {&thm_333e4663_colors_primary_bgPressed};
+  static NodeBase* binding_6_sources[] = {&thm_333e4663_radii_md};
   binding_6.wire(binding_6_sources, 1);
-  static NodeBase* binding_7_sources[] = {&memo_0};
+  static NodeBase* binding_7_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_7.wire(binding_7_sources, 1);
-  static NodeBase* binding_8_sources[] = {&thm_333e4663_sizes_md_height};
+  static NodeBase* binding_8_sources[] = {&memo_0};
   binding_8.wire(binding_8_sources, 1);
-  static NodeBase* binding_9_sources[] = {&thm_333e4663_colors_background};
+  static NodeBase* binding_9_sources[] = {&thm_333e4663_sizes_md_height};
   binding_9.wire(binding_9_sources, 1);
+  static NodeBase* binding_10_sources[] = {&thm_333e4663_colors_background};
+  binding_10.wire(binding_10_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bgPressed);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_text);
   Scheduler::instance().schedule(&thm_333e4663_colors_textPrimary);
+  Scheduler::instance().schedule(&thm_333e4663_radii_md);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_font);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_height);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_paddingX);
@@ -5493,6 +5559,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_7);
   Scheduler::instance().schedule(&binding_8);
   Scheduler::instance().schedule(&binding_9);
+  Scheduler::instance().schedule(&binding_10);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -5518,7 +5585,7 @@ exports[`ESPHome Compose Build > use-lvgl-hook-device 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=36
+      - -DESPCOMPOSE_MAX_NODES=38
 esp32:
   board: esp32dev
   framework:
@@ -5588,7 +5655,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -5647,7 +5714,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -5707,7 +5774,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:
@@ -5805,6 +5872,11 @@ Memo<lv_color_t> thm_333e4663_colors_textPrimary([]() -> lv_color_t {
   return thm_333e4663_colors_textPrimary_vals[theme_index_333e4663.get()];
 });
 
+static const int32_t thm_333e4663_radii_md_vals[] = {8};
+Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
+  return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
+});
+
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
   static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref9).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
@@ -5850,8 +5922,8 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* theme_index_333e4663_subs[10];
-  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 10);
+  static NodeBase* theme_index_333e4663_subs[11];
+  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 11);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
@@ -5864,6 +5936,8 @@ void bootstrap_runtime() {
   thm_333e4663_sizes_md_font.set_subscriber_storage(thm_333e4663_sizes_md_font_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bg_subs[1];
   thm_333e4663_colors_primary_bg.set_subscriber_storage(thm_333e4663_colors_primary_bg_subs, 1);
+  static NodeBase* thm_333e4663_radii_md_subs[1];
+  thm_333e4663_radii_md.set_subscriber_storage(thm_333e4663_radii_md_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bgPressed_subs[1];
   thm_333e4663_colors_primary_bgPressed.set_subscriber_storage(thm_333e4663_colors_primary_bgPressed_subs, 1);
   static NodeBase* memo_0_subs[1];
@@ -5899,22 +5973,26 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_6([]() {
-    lv_obj_set_style_bg_color(&id(rw_ref5), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+    lv_obj_set_style_radius(&id(rw_ref5), static_cast<lv_coord_t>(thm_333e4663_radii_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_7([]() {
-    lv_obj_set_width(&id(rw_ref4), static_cast<lv_coord_t>(memo_0.get()));
+    lv_obj_set_style_bg_color(&id(rw_ref5), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
   static Effect binding_8([]() {
-    lv_obj_set_height(&id(rw_ref4), static_cast<lv_coord_t>(thm_333e4663_sizes_md_height.get()));
+    lv_obj_set_width(&id(rw_ref4), static_cast<lv_coord_t>(memo_0.get()));
   });
 
   static Effect binding_9([]() {
-    lv_obj_set_style_bg_color(id(r_ref2).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_height(&id(rw_ref4), static_cast<lv_coord_t>(thm_333e4663_sizes_md_height.get()));
   });
 
   static Effect binding_10([]() {
+    lv_obj_set_style_bg_color(id(r_ref2).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+  });
+
+  static Effect binding_11([]() {
     { auto _v = static_cast<lv_coord_t>(thm_333e4663_spacing_md.get()); lv_obj_set_style_pad_top(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
   });
 
@@ -5928,6 +6006,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_primary_text.wire(thm_333e4663_colors_primary_text_src, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_src[] = {&theme_index_333e4663};
   thm_333e4663_colors_textPrimary.wire(thm_333e4663_colors_textPrimary_src, 1);
+  static NodeBase* thm_333e4663_radii_md_src[] = {&theme_index_333e4663};
+  thm_333e4663_radii_md.wire(thm_333e4663_radii_md_src, 1);
   static NodeBase* thm_333e4663_sizes_md_font_src[] = {&theme_index_333e4663};
   thm_333e4663_sizes_md_font.wire(thm_333e4663_sizes_md_font_src, 1);
   static NodeBase* thm_333e4663_sizes_md_height_src[] = {&theme_index_333e4663};
@@ -5950,22 +6030,25 @@ void bootstrap_runtime() {
   binding_3.wire(binding_3_sources, 1);
   static NodeBase* binding_4_sources[] = {&thm_333e4663_colors_primary_bg};
   binding_4.wire(binding_4_sources, 1);
-  static NodeBase* binding_6_sources[] = {&thm_333e4663_colors_primary_bgPressed};
+  static NodeBase* binding_6_sources[] = {&thm_333e4663_radii_md};
   binding_6.wire(binding_6_sources, 1);
-  static NodeBase* binding_7_sources[] = {&memo_0};
+  static NodeBase* binding_7_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_7.wire(binding_7_sources, 1);
-  static NodeBase* binding_8_sources[] = {&thm_333e4663_sizes_md_height};
+  static NodeBase* binding_8_sources[] = {&memo_0};
   binding_8.wire(binding_8_sources, 1);
-  static NodeBase* binding_9_sources[] = {&thm_333e4663_colors_background};
+  static NodeBase* binding_9_sources[] = {&thm_333e4663_sizes_md_height};
   binding_9.wire(binding_9_sources, 1);
-  static NodeBase* binding_10_sources[] = {&thm_333e4663_spacing_md};
+  static NodeBase* binding_10_sources[] = {&thm_333e4663_colors_background};
   binding_10.wire(binding_10_sources, 1);
+  static NodeBase* binding_11_sources[] = {&thm_333e4663_spacing_md};
+  binding_11.wire(binding_11_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bgPressed);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_text);
   Scheduler::instance().schedule(&thm_333e4663_colors_textPrimary);
+  Scheduler::instance().schedule(&thm_333e4663_radii_md);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_font);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_height);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_paddingX);
@@ -5982,6 +6065,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_8);
   Scheduler::instance().schedule(&binding_9);
   Scheduler::instance().schedule(&binding_10);
+  Scheduler::instance().schedule(&binding_11);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -6007,7 +6091,7 @@ exports[`ESPHome Compose Build > widget-ref-device 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=38
+      - -DESPCOMPOSE_MAX_NODES=40
 esp32:
   board: esp32dev
   framework:
@@ -6078,7 +6162,7 @@ lvgl:
                               bg_opa: COVER
                               border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               border_width: 0
-                              radius: 5
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               width: 100%
                               height: 100%
                               pressed:

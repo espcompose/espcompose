@@ -8,8 +8,8 @@
  * if you need a labelled field.
  */
 
-import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme, WidgetHost } from '@espcompose/core';
+import type { __marker_lvgl_LvglComponent, LvglComponentRef, TriggerHandler, WidgetProps } from '@espcompose/core';
+import { createLvglWidget, useRef, useTheme, WidgetHost } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import type { Theme } from '../theme/types';
 
@@ -53,7 +53,7 @@ export const Slider = createLvglWidget<SliderProps>(
           minValue={props.min}
           maxValue={props.max}
           value={props.value}
-          {...(props.onChange != null ? { onRelease: props.onChange } : {})}
+          onRelease={props.onChange}
           style={{
             width: '100%',
             height: '100%',
@@ -75,6 +75,10 @@ export const Slider = createLvglWidget<SliderProps>(
               borderRadius: 'circle',
               backgroundOpacity: 'opaque',
               backgroundColor: theme?.parts?.slider?.knob,
+
+              pressed: {
+                //padding: 7,
+              }
             },
             ...props.style,
           }}

@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import type { ComponentProps, Reactive, RefProp } from "../../types";
+import type { ComponentProps, Reactive, RefProp, TriggerHandler } from "../../types";
 import type { __marker_image_Image } from "../markers";
 import type { CssStyleProps } from "../../style-types";
 import type { HexColor } from "../../theme/hex-color";
@@ -371,6 +371,122 @@ export interface LvglAnimimgProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglArcProps {
@@ -437,6 +553,242 @@ export interface LvglArcProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+    }>;
 }
 //
 export interface LvglBarProps {
@@ -484,6 +836,242 @@ export interface LvglBarProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+    }>;
 }
 //
 export interface LvglBtnmatrixBtnProps {
@@ -507,6 +1095,242 @@ export interface LvglBtnmatrixBtnProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: boolean;
+    }>;
 }
 //
 export interface LvglButtonProps {
@@ -531,6 +1355,242 @@ export interface LvglButtonProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: boolean;
+    }>;
 }
 //
 export interface LvglButtonmatrixProps {
@@ -578,6 +1638,238 @@ export interface LvglButtonmatrixProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+    }>;
 }
 //
 export interface LvglCanvasProps {
@@ -606,6 +1898,122 @@ export interface LvglCanvasProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglCheckboxProps {
@@ -647,6 +2055,242 @@ export interface LvglCheckboxProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: boolean;
+    }>;
 }
 //
 export interface LvglContainerProps {
@@ -687,6 +2331,122 @@ export interface LvglContainerProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglDropdownProps {
@@ -734,6 +2494,301 @@ export interface LvglDropdownProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
 }
 //
 export interface LvglDropdownListProps {
@@ -786,6 +2841,122 @@ export interface LvglDropdownListProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglImageProps {
@@ -824,6 +2995,122 @@ export interface LvglImageProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglKeyboardProps {
@@ -864,6 +3151,242 @@ export interface LvglKeyboardProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        text: string;
+    }>;
 }
 //
 export interface LvglLabelProps {
@@ -920,6 +3443,242 @@ export interface LvglLabelProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        text: string;
+    }>;
 }
 //
 export interface LvglLedProps {
@@ -945,6 +3704,122 @@ export interface LvglLedProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglLineProps {
@@ -969,6 +3844,122 @@ export interface LvglLineProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglLvTileviewTileTProps {
@@ -992,6 +3983,122 @@ export interface LvglLvTileviewTileTProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglMeterProps {
@@ -1061,6 +4168,122 @@ export interface LvglMeterProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglObjProps {
@@ -1099,6 +4322,122 @@ export interface LvglObjProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglPageProps {
@@ -1127,6 +4466,122 @@ export interface LvglPageProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglQrcodeProps {
@@ -1156,6 +4611,122 @@ export interface LvglQrcodeProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglRollerProps {
@@ -1202,6 +4773,301 @@ export interface LvglRollerProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+        text: string;
+    }>;
 }
 //
 export interface LvglSliderProps {
@@ -1261,6 +5127,242 @@ export interface LvglSliderProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+    }>;
 }
 //
 export interface LvglSpinboxProps {
@@ -1353,6 +5455,242 @@ export interface LvglSpinboxProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: number;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: number;
+    }>;
 }
 //
 export interface LvglSpinnerProps {
@@ -1395,6 +5733,122 @@ export interface LvglSpinnerProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
 }
 //
 export interface LvglSwitchProps {
@@ -1447,6 +5901,242 @@ export interface LvglSwitchProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        x: boolean;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        x: boolean;
+    }>;
 }
 //
 export interface LvglTabviewProps {
@@ -1477,6 +6167,124 @@ export interface LvglTabviewProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler;
 }
 //
 export interface LvglTextareaProps {
@@ -1568,6 +6376,242 @@ export interface LvglTextareaProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler<{
+        text: string;
+    }>;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler<{
+        text: string;
+    }>;
 }
 //
 export interface LvglTileviewProps {
@@ -1607,6 +6651,124 @@ export interface LvglTileviewProps {
     } & {
         styles?: string | string[];
     };
+    /** @yamlKey on_all_events */
+    onAllEvents?: TriggerHandler;
+    /** @yamlKey on_cancel */
+    onCancel?: TriggerHandler;
+    /** @yamlKey on_change */
+    onChange?: TriggerHandler;
+    /** @yamlKey on_child_change */
+    onChildChange?: TriggerHandler;
+    /** @yamlKey on_child_create */
+    onChildCreate?: TriggerHandler;
+    /** @yamlKey on_child_delete */
+    onChildDelete?: TriggerHandler;
+    /** @yamlKey on_click */
+    onClick?: TriggerHandler;
+    /** @yamlKey on_color_format_change */
+    onColorFormatChange?: TriggerHandler;
+    /** @yamlKey on_cover_check */
+    onCoverCheck?: TriggerHandler;
+    /** @yamlKey on_create */
+    onCreate?: TriggerHandler;
+    /** @yamlKey on_defocus */
+    onDefocus?: TriggerHandler;
+    /** @yamlKey on_delete */
+    onDelete?: TriggerHandler;
+    /** @yamlKey on_double_click */
+    onDoubleClick?: TriggerHandler;
+    /** @yamlKey on_draw_main */
+    onDrawMain?: TriggerHandler;
+    /** @yamlKey on_draw_main_begin */
+    onDrawMainBegin?: TriggerHandler;
+    /** @yamlKey on_draw_main_end */
+    onDrawMainEnd?: TriggerHandler;
+    /** @yamlKey on_draw_post */
+    onDrawPost?: TriggerHandler;
+    /** @yamlKey on_draw_post_begin */
+    onDrawPostBegin?: TriggerHandler;
+    /** @yamlKey on_draw_post_end */
+    onDrawPostEnd?: TriggerHandler;
+    /** @yamlKey on_draw_task_add */
+    onDrawTaskAdd?: TriggerHandler;
+    /** @yamlKey on_focus */
+    onFocus?: TriggerHandler;
+    /** @yamlKey on_gesture */
+    onGesture?: TriggerHandler;
+    /** @yamlKey on_get_self_size */
+    onGetSelfSize?: TriggerHandler;
+    /** @yamlKey on_hit_test */
+    onHitTest?: TriggerHandler;
+    /** @yamlKey on_hover_leave */
+    onHoverLeave?: TriggerHandler;
+    /** @yamlKey on_hover_over */
+    onHoverOver?: TriggerHandler;
+    /** @yamlKey on_indev_reset */
+    onIndevReset?: TriggerHandler;
+    /** @yamlKey on_insert */
+    onInsert?: TriggerHandler;
+    /** @yamlKey on_invalidate_area */
+    onInvalidateArea?: TriggerHandler;
+    /** @yamlKey on_key */
+    onKey?: TriggerHandler;
+    /** @yamlKey on_layout_change */
+    onLayoutChange?: TriggerHandler;
+    /** @yamlKey on_leave */
+    onLeave?: TriggerHandler;
+    /** @yamlKey on_long_press */
+    onLongPress?: TriggerHandler;
+    /** @yamlKey on_long_press_repeat */
+    onLongPressRepeat?: TriggerHandler;
+    /** @yamlKey on_press */
+    onPress?: TriggerHandler;
+    /** @yamlKey on_press_lost */
+    onPressLost?: TriggerHandler;
+    /** @yamlKey on_pressing */
+    onPressing?: TriggerHandler;
+    /** @yamlKey on_ready */
+    onReady?: TriggerHandler;
+    /** @yamlKey on_refresh */
+    onRefresh?: TriggerHandler;
+    /** @yamlKey on_refr_ext_draw_size */
+    onRefrExtDrawSize?: TriggerHandler;
+    /** @yamlKey on_release */
+    onRelease?: TriggerHandler;
+    /** @yamlKey on_rotary */
+    onRotary?: TriggerHandler;
+    /** @yamlKey on_scroll */
+    onScroll?: TriggerHandler;
+    /** @yamlKey on_scroll_begin */
+    onScrollBegin?: TriggerHandler;
+    /** @yamlKey on_scroll_end */
+    onScrollEnd?: TriggerHandler;
+    /** @yamlKey on_scroll_throw_begin */
+    onScrollThrowBegin?: TriggerHandler;
+    /** @yamlKey on_short_click */
+    onShortClick?: TriggerHandler;
+    /** @yamlKey on_single_click */
+    onSingleClick?: TriggerHandler;
+    /** @yamlKey on_size_change */
+    onSizeChange?: TriggerHandler;
+    /** @yamlKey on_state_change */
+    onStateChange?: TriggerHandler;
+    /** @yamlKey on_style_change */
+    onStyleChange?: TriggerHandler;
+    /** @yamlKey on_triple_click */
+    onTripleClick?: TriggerHandler;
+    /** @yamlKey on_swipe_left */
+    onSwipeLeft?: TriggerHandler;
+    /** @yamlKey on_swipe_right */
+    onSwipeRight?: TriggerHandler;
+    /** @yamlKey on_swipe_bottom */
+    onSwipeBottom?: TriggerHandler;
+    /** @yamlKey on_swipe_top */
+    onSwipeTop?: TriggerHandler;
+    /** @yamlKey on_swipe_up */
+    onSwipeUp?: TriggerHandler;
+    /** @yamlKey on_swipe_down */
+    onSwipeDown?: TriggerHandler;
+    /** @yamlKey on_value */
+    onValue?: TriggerHandler;
 }
 /** Top-level <lvgl> component properties. */
 //

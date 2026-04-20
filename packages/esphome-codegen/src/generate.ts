@@ -373,11 +373,18 @@ async function run(): Promise<void> {
   const schemaRegistry = buildSchemaRegistry(root, platformFetched, componentFetched);
   console.log(`  Schema registry: ${schemaRegistry.size} named schemas`);
 
-  // Clean out the generated directory before writing new content
+  // Clean out the generated directory before writing new content.
+  // Preserve files owned by other codegen steps (e.g. entity-domains-*.ts
+  // from codegen:domains) to avoid a chicken-and-egg import failure.
+  const PRESERVED_PREFIXES = ['entity-domains'];
   if (fs.existsSync(GENERATED_DIR)) {
-    fs.rmSync(GENERATED_DIR, { recursive: true, force: true });
+    for (const entry of fs.readdirSync(GENERATED_DIR)) {
+      if (PRESERVED_PREFIXES.some(p => entry.startsWith(p))) continue;
+      fs.rmSync(path.join(GENERATED_DIR, entry), { recursive: true, force: true });
+    }
+  } else {
+    fs.mkdirSync(GENERATED_DIR, { recursive: true });
   }
-  fs.mkdirSync(GENERATED_DIR, { recursive: true });
   fs.mkdirSync(COMPONENTS_DIR, { recursive: true });
 
   // ── Markers pre-pass: collect all C++ classes across every schema ──────────
