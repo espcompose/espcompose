@@ -11,7 +11,7 @@
     "codegen:domains": "tsx metadata/generate.ts",
     "codegen": "npm run codegen:schemas && tsx packages/esphome-codegen/src/generate.ts && npm run codegen:domains",
     "lint": "turbo lint",
-    "test": "turbo test",
+    "test": "turbo test --concurrency 1",
     "version": "changeset version",
     "release": "changeset publish",
     "build:full": "pnpm clean && pnpm build && pnpm test"
