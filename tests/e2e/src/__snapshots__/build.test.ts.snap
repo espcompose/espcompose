@@ -574,7 +574,7 @@ exports[`ESPHome Compose Build > boot-screen-device > espcompose_bindings.h 1`] 
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -1016,7 +1016,6 @@ display:
   id: r_ref1
   platform: mipi_dsi
   model: WAVESHARE-P4-NANO-10.1
-  rotation: 270
 i2s_audio:
   id: r_ref3
   i2s_mclk_pin: 13
@@ -1117,6 +1116,7 @@ lvgl:
   id: r_ref8
   displays:
     - r_ref1
+  rotation: 270
 script:
   - id: play_click_sound
     then:
@@ -1131,7 +1131,7 @@ exports[`ESPHome Compose Build > design-system-device > espcompose_bindings.h 1`
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -1675,29 +1675,37 @@ lvgl:
                               text: Brightness
                               text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
                               id: rw_ref6
-                          - slider:
-                              min_value: 0
-                              max_value: 255
+                          - obj:
                               width: 100%
-                              pad_all: -2
-                              radius: CIRCLE
-                              bg_opa: COVER
-                              bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_track.get();"
-                              border_width: 0
-                              indicator:
-                                border_width: 0
-                                radius: CIRCLE
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_bg.get();"
-                              knob:
-                                pad_all: 6
-                                border_width: 2
-                                border_color: !lambda "return
-                                  espcompose::thm_333e4663_parts_slider_track.get();"
-                                radius: CIRCLE
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
-                              id: rw_ref7
+                              height: 26
+                              pad_all: 4
+                              border_width: 1
+                              border_opa: TRANSP
+                              widgets:
+                                - slider:
+                                    min_value: 0
+                                    max_value: 255
+                                    width: 100%
+                                    height: 100%
+                                    pad_all: -1
+                                    radius: CIRCLE
+                                    bg_opa: COVER
+                                    bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_track.get();"
+                                    border_width: 0
+                                    indicator:
+                                      border_width: 0
+                                      radius: CIRCLE
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_bg.get();"
+                                    knob:
+                                      pad_all: 2
+                                      border_width: 2
+                                      border_color: !lambda "return
+                                        espcompose::thm_333e4663_parts_slider_track.get();"
+                                      radius: CIRCLE
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
+                                    id: rw_ref7
                     - obj:
                         width: 100%
                         height: SIZE_CONTENT
@@ -1715,26 +1723,32 @@ lvgl:
                               text: Power
                               text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
                               id: rw_ref8
-                          - switch:
+                          - obj:
                               width: 50
-                              height: 20
-                              radius: CIRCLE
-                              bg_opa: TRANSP
-                              border_width: 0
+                              height: 26
                               pad_all: 2
-                              indicator:
-                                radius: CIRCLE
-                                border_width: 0
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_bgOff.get();"
-                                checked:
-                                  bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_bg.get();"
-                              knob:
-                                pad_all: 2
-                                radius: CIRCLE
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                              id: rw_ref9
+                              border_width: 1
+                              border_opa: TRANSP
+                              widgets:
+                                - switch:
+                                    width: 100%
+                                    height: 100%
+                                    radius: CIRCLE
+                                    bg_opa: TRANSP
+                                    border_width: 0
+                                    indicator:
+                                      radius: CIRCLE
+                                      border_width: 0
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_bgOff.get();"
+                                      checked:
+                                        bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_bg.get();"
+                                    knob:
+                                      pad_all: -2
+                                      radius: CIRCLE
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                                    id: rw_ref9
               - obj:
                   width: 100%
                   height: SIZE_CONTENT
@@ -1900,7 +1914,7 @@ exports[`ESPHome Compose Build > fancy-light-cascade-device > espcompose_binding
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -3277,7 +3291,7 @@ exports[`ESPHome Compose Build > prop-ref-action-device > espcompose_bindings.h 
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -3939,7 +3953,7 @@ exports[`ESPHome Compose Build > reactive-theme-device > espcompose_bindings.h 1
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -4462,29 +4476,37 @@ lvgl:
                               text: Brightness
                               text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
                               id: rw_ref6
-                          - slider:
-                              min_value: 0
-                              max_value: 255
+                          - obj:
                               width: 100%
-                              pad_all: -2
-                              radius: CIRCLE
-                              bg_opa: COVER
-                              bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_track.get();"
-                              border_width: 0
-                              indicator:
-                                border_width: 0
-                                radius: CIRCLE
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_bg.get();"
-                              knob:
-                                pad_all: 6
-                                border_width: 2
-                                border_color: !lambda "return
-                                  espcompose::thm_333e4663_parts_slider_track.get();"
-                                radius: CIRCLE
-                                bg_opa: COVER
-                                bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
-                              id: rw_ref7
+                              height: 26
+                              pad_all: 4
+                              border_width: 1
+                              border_opa: TRANSP
+                              widgets:
+                                - slider:
+                                    min_value: 0
+                                    max_value: 255
+                                    width: 100%
+                                    height: 100%
+                                    pad_all: -1
+                                    radius: CIRCLE
+                                    bg_opa: COVER
+                                    bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_track.get();"
+                                    border_width: 0
+                                    indicator:
+                                      border_width: 0
+                                      radius: CIRCLE
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_bg.get();"
+                                    knob:
+                                      pad_all: 2
+                                      border_width: 2
+                                      border_color: !lambda "return
+                                        espcompose::thm_333e4663_parts_slider_track.get();"
+                                      radius: CIRCLE
+                                      bg_opa: COVER
+                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
+                                    id: rw_ref7
               - obj:
                   width: 100%
                   height: SIZE_CONTENT
@@ -5015,7 +5037,7 @@ exports[`ESPHome Compose Build > use-lvgl-hook-device > espcompose_bindings.h 1`
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 
@@ -5466,7 +5488,7 @@ exports[`ESPHome Compose Build > widget-ref-device > espcompose_bindings.h 1`] =
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
 
-inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }
+inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
 namespace espcompose {
 

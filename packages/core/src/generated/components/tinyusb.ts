@@ -8,16 +8,6 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_tinyusb_TinyUSB } from "../markers";
 export interface TinyusbProps extends _CoreComponent {
     /**
-     * int: USB product identifier. Defaults to `0x4001`.
-     * @yamlKey usb_product_id
-     */
-    usbProductId?: number;
-    /**
-     * int: USB vendor identifier. Defaults to `0x303A` (Espressif Systems).
-     * @yamlKey usb_vendor_id
-     */
-    usbVendorId?: number;
-    /**
      * int: USB language identifier. Defaults to `0x0409` (English - United States).
      * @yamlKey usb_lang_id
      */
@@ -28,6 +18,11 @@ export interface TinyusbProps extends _CoreComponent {
      */
     usbManufacturerStr?: string;
     /**
+     * int: USB product identifier. Defaults to `0x4001`.
+     * @yamlKey usb_product_id
+     */
+    usbProductId?: number;
+    /**
      * string: Product name string descriptor. Defaults to `"ESPHome"`.
      * @yamlKey usb_product_str
      */
@@ -37,6 +32,11 @@ export interface TinyusbProps extends _CoreComponent {
      * @yamlKey usb_serial_str
      */
     usbSerialStr?: string;
+    /**
+     * int: USB vendor identifier. Defaults to `0x303A` (Espressif Systems).
+     * @yamlKey usb_vendor_id
+     */
+    usbVendorId?: number;
 }
 declare global {
     namespace JSX {

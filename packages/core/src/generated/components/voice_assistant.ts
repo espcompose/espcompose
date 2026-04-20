@@ -7,22 +7,157 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { _CoreComponent } from "../bases";
 import type { __marker_media_player_MediaPlayer, __marker_micro_wake_word_MicroWakeWord, __marker_microphone_Microphone, __marker_speaker_Speaker, __marker_voice_assistant_VoiceAssistant } from "../markers";
 export interface VoiceAssistantMicrophoneProps {
-    microphone?: RefProp<__marker_microphone_Microphone>;
     /** @yamlKey bits_per_sample */
     bitsPerSample?: number | "8bit" | "16bit" | "24bit" | "32bit";
     channels?: Array<number>;
     /** @yamlKey gain_factor */
     gainFactor?: number;
+    microphone?: RefProp<__marker_microphone_Microphone>;
 }
 export interface VoiceAssistantProps extends _CoreComponent {
-    /** [Microphone Source Configuration](/components/microphone#config-microphone-source): The [microphone](/components/micr... */
-    microphone?: VoiceAssistantMicrophoneProps;
     /**
-     * [ID](/guides/configuration-types#id): The [media_player](/components/media_player/) to use to output the response. Ca...
+     * dBFS: Auto gain level to apply to the assist pipeline. Between 0dBFS and 31dBFS inclusive. Defaults to 0 (disabled).
+     * @yamlKey auto_gain
+     */
+    autoGain?: number;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): How long to wait before resetting the `conversation_id` s...
+     * @yamlKey conversation_timeout
+     */
+    conversationTimeout?: TimePeriod;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The [media_player](https://esphome.io/components/media_player...
      * @yamlKey media_player
      */
     mediaPlayer?: RefProp<__marker_media_player_MediaPlayer>;
-    /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to use to output the response. Cannot be us... */
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The [micro_wake_word](https://esphome.io/components/micro_wak...
+     * @yamlKey micro_wake_word
+     */
+    microWakeWord?: RefProp<__marker_micro_wake_word_MicroWakeWord>;
+    /** [Microphone Source Configuration](https://esphome.io/components/microphone#config-microphone-source): The [microphone... */
+    microphone?: VoiceAssistantMicrophoneProps;
+    /**
+     * integer: The noise suppression level to apply to the assist pipeline. Between 0 and 4 inclusive. Defaults to 0 (disab...
+     * @yamlKey noise_suppression_level
+     */
+    noiseSuppressionLevel?: number;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when Home Assistant has connected and is waiti...
+     * @yamlKey on_client_connected
+     */
+    onClientConnected?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when Home Assistant disconnects from the Voice...
+     * @yamlKey on_client_disconnected
+     */
+    onClientDisconnected?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant is finished all tasks.
+     * @yamlKey on_end
+     */
+    onEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant has encountered an er...
+     * @yamlKey on_error
+     */
+    onError?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant is idle (no other act...
+     * @yamlKey on_idle
+     */
+    onIdle?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when intent processing ends.
+     * @yamlKey on_intent_end
+     */
+    onIntentEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when intent progress happens. The variable `x`...
+     * @yamlKey on_intent_progress
+     */
+    onIntentProgress?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when intent processing starts.
+     * @yamlKey on_intent_start
+     */
+    onIntentStart?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant microphone starts lis...
+     * @yamlKey on_listening
+     */
+    onListening?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the assist pipeline is started.
+     * @yamlKey on_start
+     */
+    onStart?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant has finished speech-t...
+     * @yamlKey on_stt_end
+     */
+    onSttEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when voice activity detection ends speech-to-t...
+     * @yamlKey on_stt_vad_end
+     */
+    onSttVadEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when voice activity detection starts speech-to...
+     * @yamlKey on_stt_vad_start
+     */
+    onSttVadStart?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a voice assistant timer has been cancelle...
+     * @yamlKey on_timer_cancelled
+     */
+    onTimerCancelled?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a voice assistant timer has finished. The...
+     * @yamlKey on_timer_finished
+     */
+    onTimerFinished?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a voice assistant timer has started. The ...
+     * @yamlKey on_timer_started
+     */
+    onTimerStarted?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant timers tick is trigge...
+     * @yamlKey on_timer_tick
+     */
+    onTimerTick?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a voice assistant timer has been updated ...
+     * @yamlKey on_timer_updated
+     */
+    onTimerUpdated?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant has finished text-to-...
+     * @yamlKey on_tts_end
+     */
+    onTtsEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the voice assistant has started text-to-s...
+     * @yamlKey on_tts_start
+     */
+    onTtsStart?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when audio stream (voice response) playback en...
+     * @yamlKey on_tts_stream_end
+     */
+    onTtsStreamEnd?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when audio stream (voice response) playback st...
+     * @yamlKey on_tts_stream_start
+     */
+    onTtsStreamStart?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the assist pipeline has detected a wake w...
+     * @yamlKey on_wake_word_detected
+     */
+    onWakeWordDetected?: TriggerHandler;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The [speaker](https://esphome.io/components/speaker/) to use ... */
     speaker?: RefProp<__marker_speaker_Speaker>;
     /**
      * boolean: Enable wake word on the assist pipeline. Defaults to `false`.
@@ -30,145 +165,10 @@ export interface VoiceAssistantProps extends _CoreComponent {
      */
     useWakeWord?: boolean;
     /**
-     * [ID](/guides/configuration-types#id): The [micro_wake_word](/components/micro_wake_word/) component used for wake wor...
-     * @yamlKey micro_wake_word
-     */
-    microWakeWord?: RefProp<__marker_micro_wake_word_MicroWakeWord>;
-    /**
-     * integer: The noise suppression level to apply to the assist pipeline. Between 0 and 4 inclusive. Defaults to 0 (disab...
-     * @yamlKey noise_suppression_level
-     */
-    noiseSuppressionLevel?: number;
-    /**
-     * dBFS: Auto gain level to apply to the assist pipeline. Between 0dBFS and 31dBFS inclusive. Defaults to 0 (disabled).
-     * @yamlKey auto_gain
-     */
-    autoGain?: number;
-    /**
-     * [Time](/guides/configuration-types#time): How long to wait before resetting the `conversation_id` sent to the voice a...
-     * @yamlKey conversation_timeout
-     */
-    conversationTimeout?: TimePeriod;
-    /**
      * float: Volume multiplier to apply to the assist pipeline. Must be larger than 0. Defaults to 1 (disabled).
      * @yamlKey volume_multiplier
      */
     volumeMultiplier?: number;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant microphone starts listening.
-     * @yamlKey on_listening
-     */
-    onListening?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the assist pipeline is started.
-     * @yamlKey on_start
-     */
-    onStart?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the assist pipeline has detected a wake word.
-     * @yamlKey on_wake_word_detected
-     */
-    onWakeWordDetected?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant has finished speech-to-text. The result...
-     * @yamlKey on_stt_end
-     */
-    onSttEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant has started text-to-speech. The text to...
-     * @yamlKey on_tts_start
-     */
-    onTtsStart?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant has finished text-to-speech. A URL cont...
-     * @yamlKey on_tts_end
-     */
-    onTtsEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant is finished all tasks.
-     * @yamlKey on_end
-     */
-    onEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant has encountered an error. The error cod...
-     * @yamlKey on_error
-     */
-    onError?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when Home Assistant has connected and is waiting for Voice Assis...
-     * @yamlKey on_client_connected
-     */
-    onClientConnected?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when Home Assistant disconnects from the Voice Assistant.
-     * @yamlKey on_client_disconnected
-     */
-    onClientDisconnected?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when intent processing starts.
-     * @yamlKey on_intent_start
-     */
-    onIntentStart?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when intent progress happens. The variable `x` is a non-empty st...
-     * @yamlKey on_intent_progress
-     */
-    onIntentProgress?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when intent processing ends.
-     * @yamlKey on_intent_end
-     */
-    onIntentEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when voice activity detection starts speech-to-text processing.
-     * @yamlKey on_stt_vad_start
-     */
-    onSttVadStart?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when voice activity detection ends speech-to-text processing.
-     * @yamlKey on_stt_vad_end
-     */
-    onSttVadEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when audio stream (voice response) playback starts. Requires `sp...
-     * @yamlKey on_tts_stream_start
-     */
-    onTtsStreamStart?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when audio stream (voice response) playback ends. Requires `spea...
-     * @yamlKey on_tts_stream_end
-     */
-    onTtsStreamEnd?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant is idle (no other actions/states are in...
-     * @yamlKey on_idle
-     */
-    onIdle?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when a voice assistant timer has started. The timer is available...
-     * @yamlKey on_timer_started
-     */
-    onTimerStarted?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when a voice assistant timer has been updated (paused/resumed/du...
-     * @yamlKey on_timer_updated
-     */
-    onTimerUpdated?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when a voice assistant timer has been cancelled. The timer is av...
-     * @yamlKey on_timer_cancelled
-     */
-    onTimerCancelled?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when a voice assistant timer has finished. The timer is availabl...
-     * @yamlKey on_timer_finished
-     */
-    onTimerFinished?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the voice assistant timers tick is triggered. This is calle...
-     * @yamlKey on_timer_tick
-     */
-    onTimerTick?: TriggerHandler;
 }
 declare global {
     namespace JSX {

@@ -6,37 +6,27 @@
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_api_APIServer } from "../markers";
-export interface ApiServicesProps {
-    service?: string;
-    action?: string;
-    variables?: Record<string, unknown>;
-    /** @yamlKey supports_response */
-    supportsResponse?: "none" | "optional" | "only" | "status";
-    then?: TriggerHandler;
-}
 export interface ApiActionsProps {
-    service?: string;
     action?: string;
-    variables?: Record<string, unknown>;
+    service?: string;
     /** @yamlKey supports_response */
-    supportsResponse?: "none" | "optional" | "only" | "status";
+    supportsResponse?: "none" | "only" | "optional" | "status";
     then?: TriggerHandler;
+    variables?: Record<string, unknown>;
+}
+export interface ApiServicesProps {
+    action?: string;
+    service?: string;
+    /** @yamlKey supports_response */
+    supportsResponse?: "none" | "only" | "optional" | "status";
+    then?: TriggerHandler;
+    variables?: Record<string, unknown>;
 }
 export interface ApiProps extends _CoreComponent {
-    /** int: The port to run the API server on. Defaults to `6053`. */
-    port?: number;
-    /**
-     * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting when no client connects to the ...
-     * @yamlKey reboot_timeout
-     */
-    rebootTimeout?: TimePeriod;
-    services?: ApiServicesProps;
     /** list: A list of user-defined actions. See [User-defined Actions](https://esphome.io/components/api#api-device-actions). */
     actions?: ApiActionsProps;
-    /** If present, encryption will be enabled for the API. Using encryption helps to secure the communication between the de... */
-    encryption?: unknown;
     /**
-     * [Time](/guides/configuration-types#time): The delay time for batching multiple state update messages together to redu...
+     * [Time](https://esphome.io/guides/configuration-types#time): The delay time for batching multiple state update message...
      * @yamlKey batch_delay
      */
     batchDelay?: TimePeriod;
@@ -45,6 +35,8 @@ export interface ApiProps extends _CoreComponent {
      * @yamlKey custom_services
      */
     customServices?: boolean;
+    /** If present, encryption will be enabled for the API. Using encryption helps to secure the communication between the de... */
+    encryption?: unknown;
     /**
      * boolean: Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAP...
      * @yamlKey homeassistant_services
@@ -55,16 +47,6 @@ export interface ApiProps extends _CoreComponent {
      * @yamlKey homeassistant_states
      */
     homeassistantStates?: boolean;
-    /**
-     * [Action](/automations/actions#all-actions): An automation to perform when a client connects to the API. See [`on_clie...
-     * @yamlKey on_client_connected
-     */
-    onClientConnected?: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): An automation to perform when a client disconnects from the API. See [`on...
-     * @yamlKey on_client_disconnected
-     */
-    onClientDisconnected?: TriggerHandler;
     /**
      * int: The maximum number of pending connections in the listen queue. Must be between 1 and 10. Defaults to `1` for ESP...
      * @yamlKey listen_backlog
@@ -80,6 +62,24 @@ export interface ApiProps extends _CoreComponent {
      * @yamlKey max_send_queue
      */
     maxSendQueue?: number;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): An automation to perform when a client connects to the ...
+     * @yamlKey on_client_connected
+     */
+    onClientConnected?: TriggerHandler;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): An automation to perform when a client disconnects from...
+     * @yamlKey on_client_disconnected
+     */
+    onClientDisconnected?: TriggerHandler;
+    /** int: The port to run the API server on. Defaults to `6053`. */
+    port?: number;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time to wait before rebooting when no clien...
+     * @yamlKey reboot_timeout
+     */
+    rebootTimeout?: TimePeriod;
+    services?: ApiServicesProps;
 }
 declare global {
     namespace JSX {

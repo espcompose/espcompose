@@ -7,23 +7,27 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent } from "../bases";
 import type { __marker_copy_CopyText, __marker_lvgl_LVGLText, __marker_template__TemplateText, __marker_text_Text, __marker_web_server_WebServer } from "../markers";
 interface TextWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface TextBaseProps extends _CoreEntityBase, _CoreMqttComponent {
+    /** string: Defines how the text should be displayed in the frontend. One of `text` or `password`. */
+    mode: "PASSWORD" | "TEXT";
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler;
     /** @yamlKey web_server */
     webServer?: TextWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler;
-    mode: "TEXT" | "PASSWORD";
 }
 interface CopyProps extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): The text that should be mirrored.
+     * [ID](https://esphome.io/guides/configuration-types#id): The text that should be mirrored.
      * @yamlKey source_id
      */
     sourceId: RefProp<__marker_text_Text>;
@@ -33,37 +37,37 @@ interface LvglProps {
 }
 interface TemplateProps extends _CoreComponent {
     /**
-     * int: The minimum length this text can be. Defaults to `0`.
-     * @yamlKey min_length
+     * String: The value to set the state to on setup if not restored with `restore_value`. Cannot be used with `lambda`. De...
+     * @yamlKey initial_value
      */
-    minLength?: number;
+    initialValue?: string;
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated every update interval to get... */
+    lambda?: unknown;
     /**
      * int: The maximum length this text can be. Defaults to `255`.
      * @yamlKey max_length
      */
     maxLength?: number;
-    pattern?: string;
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current value... */
-    lambda?: unknown;
+    /**
+     * int: The minimum length this text can be. Defaults to `0`.
+     * @yamlKey min_length
+     */
+    minLength?: number;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template text will immedi... */
     optimistic?: boolean;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
-     * @yamlKey set_action
-     */
-    setAction?: TriggerHandler;
-    /**
-     * String: The value to set the state to on setup if not restored with `restore_value`. Cannot be used with `lambda`. De...
-     * @yamlKey initial_value
-     */
-    initialValue?: string;
+    pattern?: string;
     /**
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
     restoreValue?: boolean;
     /**
-     * [Time](/guides/configuration-types#time): The interval on which to update the text by executing the `lambda`. Default...
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote (li...
+     * @yamlKey set_action
+     */
+    setAction?: TriggerHandler;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval on which to update the text by executing the...
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;

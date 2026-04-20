@@ -6,27 +6,27 @@
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { __marker_Color, __marker_display_Display, __marker_font_Font, __marker_graphical_display_menu_GraphicalDisplayMenu } from "../markers";
 export interface GraphicalDisplayMenuProps {
-    /** [ID](/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://esphome.io/componen... */
+    /**
+     * [Color](https://esphome.io/components/display#config-color): Specifies the background color to use. Defaults to COLOR...
+     * @yamlKey background_color
+     */
+    backgroundColor?: RefProp<__marker_Color>;
+    /** [ID](https://esphome.io/guides/configuration-types#id): ID of the display to render to. See [Drawing Modes](https://e... */
     display?: RefProp<__marker_display_Display>;
-    /** [Font](/components/font#display-fonts): Specifies the font to use */
+    /** [Font](https://esphome.io/components/font#display-fonts): Specifies the font to use */
     font: RefProp<__marker_font_Font>;
+    /**
+     * [Color](https://esphome.io/components/display#config-color): Specifies the foreground color to use. Defaults to COLOR_ON
+     * @yamlKey foreground_color
+     */
+    foregroundColor?: RefProp<__marker_Color>;
     /**
      * string: Specifies how to render values for menu items that have values (eg. Selects, numbers). Defaults to rendering ...
      * @yamlKey menu_item_value
      */
     menuItemValue?: string;
     /**
-     * [Color](/components/display#config-color): Specifies the foreground color to use. Defaults to COLOR_ON
-     * @yamlKey foreground_color
-     */
-    foregroundColor?: RefProp<__marker_Color>;
-    /**
-     * [Color](/components/display#config-color): Specifies the background color to use. Defaults to COLOR_OFF
-     * @yamlKey background_color
-     */
-    backgroundColor?: RefProp<__marker_Color>;
-    /**
-     * [Automation](/automations): An automation to perform when the menu needs to be redrawn. This can be useful if your di...
+     * [Automation](https://esphome.io/automations): An automation to perform when the menu needs to be redrawn. This can be...
      * @yamlKey on_redraw
      */
     onRedraw?: TriggerHandler;

@@ -8,39 +8,39 @@ import type { _CoreComponent, _Stepper } from "../bases";
 import type { __marker_a4988_A4988, __marker_uln2003_ULN2003 } from "../markers";
 interface A4988Props extends _Stepper, _CoreComponent {
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The `STEP` pin of the A4988 stepper driver.
-     * @yamlKey step_pin
-     */
-    stepPin: Pin;
-    /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The `DIRECTION` pin of the A4988 stepper driver.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The `DIRECTION` pin of the A4988 stepper driver.
      * @yamlKey dir_pin
      */
     dirPin: Pin;
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): Optionally also use the `SLEEP` pin of the A4988 stepper driver...
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): Optionally also use the `SLEEP` pin of the A4...
      * @yamlKey sleep_pin
      */
     sleepPin?: Pin;
+    /**
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The `STEP` pin of the A4988 stepper driver.
+     * @yamlKey step_pin
+     */
+    stepPin: Pin;
 }
 interface Uln2003Props extends _Stepper, _CoreComponent {
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin a of the stepper control board.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin a of the stepper control board.
      * @yamlKey pin_a
      */
     pinA: Pin;
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin b of the stepper control board.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin b of the stepper control board.
      * @yamlKey pin_b
      */
     pinB: Pin;
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin c of the stepper control board.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin c of the stepper control board.
      * @yamlKey pin_c
      */
     pinC: Pin;
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin d of the stepper control board.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin d of the stepper control board.
      * @yamlKey pin_d
      */
     pinD: Pin;

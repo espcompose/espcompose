@@ -189,7 +189,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   // Provide operator!= for LVGL color types (needed by Signal/Memo<lv_color_t>::update)
   const hasColorType = allThemeMemos.some(tm => tm.cppType === 'lv_color_t');
   if (hasColorType) {
-    lines.push('inline bool operator!=(lv_color_t a, lv_color_t b) { return a.full != b.full; }');
+    lines.push('inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }');
     lines.push('');
   }
 

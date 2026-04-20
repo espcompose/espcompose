@@ -20,9 +20,9 @@ export interface DemoProps {
     selects?: unknown;
     sensors?: unknown;
     switches?: unknown;
-    texts?: unknown;
     /** @yamlKey text_sensors */
     textSensors?: unknown;
+    texts?: unknown;
     valves?: unknown;
 }
 declare global {

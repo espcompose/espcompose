@@ -155,7 +155,7 @@ function buildProps(
     ? LVGL_UPDATABLE_WIDGETS[widgetName] ?? []
     : [];
 
-  return Object.entries(props).map(([name, def]) => {
+  return Object.entries(props).sort(([a], [b]) => a.localeCompare(b)).map(([name, def]) => {
     const camel = toCamelCase(name);
 
     // Apply type overrides for props with known types
@@ -229,7 +229,7 @@ export function buildLvglFileContent(schemaPath: string): string {
 
   // ── LVGL_STYLE_PROP_KEYS — generated set for runtime validation ───────────
   {
-    const keys = Object.keys(filteredStyleProps).map(k => toCamelCase(k));
+    const keys = Object.keys(filteredStyleProps).map(k => toCamelCase(k)).sort();
     const elements = keys.map(k => ts.factory.createStringLiteral(k));
     const arrayExpr = ts.factory.createArrayLiteralExpression(elements, true);
     const newSetExpr = ts.factory.createNewExpression(
@@ -254,7 +254,7 @@ export function buildLvglFileContent(schemaPath: string): string {
   // ── Per-widget interfaces ─────────────────────────────────────────────────
   const jsxElements: Array<{ tagName: string; type: ts.TypeNode }> = [];
 
-  for (const [widgetName, widget] of Object.entries(schema.widgets)) {
+  for (const [widgetName, widget] of Object.entries(schema.widgets).sort(([a], [b]) => a.localeCompare(b))) {
     const pascal = toPascalCase(`lvgl_${widgetName}`);
     const interfaceName = `${pascal}Props`;
 

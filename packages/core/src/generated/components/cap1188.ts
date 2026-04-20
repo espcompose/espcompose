@@ -7,8 +7,17 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_cap1188_CAP1188Component, __marker_i2c_I2CBus } from "../markers";
 export interface Cap1188Props extends _CoreComponent {
+    /** int: The I²C address of the sensor. Defaults to `0x29`. */
+    address?: number;
     /**
-     * [Pin](/guides/configuration-types#pin): Set the pin that is used to reset the CAP1188 board on boot.
+     * boolean: Whether to allow multitouch. Defaults to off.
+     * @yamlKey allow_multiple_touches
+     */
+    allowMultipleTouches?: boolean;
+    /** @yamlKey i2c_id */
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
+    /**
+     * [Pin](https://esphome.io/guides/configuration-types#pin): Set the pin that is used to reset the CAP1188 board on boot.
      * @yamlKey reset_pin
      */
     resetPin?: Pin;
@@ -17,15 +26,6 @@ export interface Cap1188Props extends _CoreComponent {
      * @yamlKey touch_threshold
      */
     touchThreshold?: number;
-    /**
-     * boolean: Whether to allow multitouch. Defaults to off.
-     * @yamlKey allow_multiple_touches
-     */
-    allowMultipleTouches?: boolean;
-    /** @yamlKey i2c_id */
-    i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the sensor. Defaults to `0x29`. */
-    address?: number;
 }
 declare global {
     namespace JSX {

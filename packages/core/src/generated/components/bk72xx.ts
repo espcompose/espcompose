@@ -6,17 +6,17 @@
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { __marker_libretiny_LTComponent } from "../markers";
 export interface Bk72xxFrameworkProps {
-    version?: string;
-    source?: string;
-    loglevel?: "VERBOSE" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "NONE";
-    debug?: Array<"NONE" | "WIFI" | "CLIENT" | "SERVER" | "SSL" | "OTA" | "FDB" | "MDNS" | "LWIP" | "LWIP_ASSERT">;
-    /** @yamlKey sdk_silent */
-    sdkSilent?: "all" | "auto" | "none";
-    /** @yamlKey uart_port */
-    uartPort?: "0" | "1" | "2";
+    debug?: Array<"CLIENT" | "FDB" | "LWIP" | "LWIP_ASSERT" | "MDNS" | "NONE" | "OTA" | "SERVER" | "SSL" | "WIFI">;
     /** @yamlKey gpio_recover */
     gpioRecover?: boolean;
+    loglevel?: "DEBUG" | "ERROR" | "FATAL" | "INFO" | "NONE" | "TRACE" | "VERBOSE" | "WARN";
     options?: Record<string, string>;
+    /** @yamlKey sdk_silent */
+    sdkSilent?: "all" | "auto" | "none";
+    source?: string;
+    /** @yamlKey uart_port */
+    uartPort?: "0" | "1" | "2";
+    version?: string;
 }
 export interface Bk72xxProps {
     board: string;

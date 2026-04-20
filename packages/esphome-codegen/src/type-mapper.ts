@@ -120,7 +120,7 @@ export function buildInterfaceBody(
 ): ts.TypeElement[] {
   const members: ts.TypeElement[] = [];
 
-  for (const [varName, varDef] of Object.entries(vars)) {
+  for (const [varName, varDef] of Object.entries(vars).sort(([a], [b]) => a.localeCompare(b))) {
     const isOwnId = (varDef.key === 'GeneratedID' || varDef.id_type != null)
       && varDef.type !== 'use_id';
     if (isOwnId) continue;
@@ -245,7 +245,7 @@ function resolveBaseType(
     case 'float':
       return keyword('number');
     case 'enum': {
-      const vals = Object.keys(varDef.values ?? {});
+      const vals = Object.keys(varDef.values ?? {}).sort();
       return vals.length > 0
         ? unionType(vals.map((v) => stringLiteralType(v)))
         : keyword('string');

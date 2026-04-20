@@ -6,12 +6,12 @@
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { __marker_mdns_MDNSComponent } from "../markers";
 export interface MdnsServicesProps {
-    /** string: Name of extra service. */
-    service: string;
-    /** string: Protocol of service (`_udp` or `_tcp`). */
-    protocol: string;
     /** int: Port number of extra service. */
     port?: number;
+    /** string: Protocol of service (`_udp` or `_tcp`). */
+    protocol: string;
+    /** string: Name of extra service. */
+    service: string;
     txt?: Record<string, string>;
 }
 export interface MdnsProps {

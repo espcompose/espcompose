@@ -102,7 +102,6 @@ export const Hardware = createEspHomeComponent(
         ref={displayRef}
         x:custom={{
           model: 'WAVESHARE-P4-NANO-10.1',
-          rotation: 270,
         }}
       />
 

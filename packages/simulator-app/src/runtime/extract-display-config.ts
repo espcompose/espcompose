@@ -34,13 +34,18 @@ export function extractDisplayConfig(ir: SemanticIR): DisplayConfig | undefined 
   const displayValue = displaySection.value;
   if (displayValue.kind !== 'object') return undefined;
 
-  return extractFromDisplayObject(displayValue);
+  // ESPHome 2026.4+ requires rotation in the LVGL config when LVGL is active,
+  // so check the lvgl section as a fallback.
+  const lvglRotation = findLvglRotation(ir);
+
+  return extractFromDisplayObject(displayValue, lvglRotation);
 }
 
-function extractFromDisplayObject(obj: IRObject): DisplayConfig | undefined {
+function extractFromDisplayObject(obj: IRObject, lvglRotation?: number): DisplayConfig | undefined {
   let width: number | undefined;
   let height: number | undefined;
   let rotation = 0;
+  let hasDisplayRotation = false;
 
   for (const entry of obj.entries) {
     if (entry.key === 'dimensions' && entry.value.kind === 'object') {
@@ -58,7 +63,13 @@ function extractFromDisplayObject(obj: IRObject): DisplayConfig | undefined {
       height = scalarNumber(entry.value);
     } else if (entry.key === 'rotation') {
       rotation = scalarNumber(entry.value) ?? 0;
+      hasDisplayRotation = true;
     }
+  }
+
+  // Fall back to LVGL rotation if display has none
+  if (!hasDisplayRotation && lvglRotation !== undefined) {
+    rotation = lvglRotation;
   }
 
   if (width === undefined || height === undefined) return undefined;
@@ -69,6 +80,17 @@ function extractFromDisplayObject(obj: IRObject): DisplayConfig | undefined {
   }
 
   return { width, height, rotation };
+}
+
+function findLvglRotation(ir: SemanticIR): number | undefined {
+  const lvglSection = ir.esphome.sections.find(s => s.key === 'lvgl');
+  if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
+  for (const entry of (lvglSection.value as IRObject).entries) {
+    if (entry.key === 'rotation') {
+      return scalarNumber(entry.value);
+    }
+  }
+  return undefined;
 }
 
 function scalarNumber(value: IRValue): number | undefined {

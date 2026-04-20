@@ -91,7 +91,7 @@ function App() {
       <ConnectivityConfig />
       <HomeAssistantSensors />
 
-      <lvgl displays={[displayRef]} />
+      <lvgl displays={[displayRef]} x:custom={{ rotation: 270 }} />
     </esphome>
   );
 }

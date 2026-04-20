@@ -7,91 +7,93 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
 import type { __marker_am43_Am43Component, __marker_binary_sensor_BinarySensor, __marker_ble_client_BLEClient, __marker_copy_CopyCover, __marker_cover_Cover, __marker_current_based_CurrentBasedCover, __marker_endstop_EndstopCover, __marker_feedback_FeedbackCover, __marker_he60r_HE60rCover, __marker_sensor_Sensor, __marker_template__TemplateCover, __marker_time_based_TimeBasedCover, __marker_tormatic_Tormatic, __marker_tuya_Tuya, __marker_tuya_TuyaCover, __marker_uart_UARTComponent, __marker_web_server_WebServer } from "../markers";
 interface CoverWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface CoverBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
-    /** @yamlKey web_server */
-    webServer?: CoverWebServerProps;
-    /** @yamlKey mqtt_json_state_payload */
+    /**
+     * string: The device class for the sensor. See [https://www.home-assistant.io/integrations/cover/#device-class](https:/...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "awning" | "blind" | "curtain" | "damper" | "door" | "garage" | "gate" | "shade" | "shutter" | "window";
+    /** string: Manually specify the ID for code generation. At least one of id and name must be specified. */
+    id?: string;
+    /**
+     * boolean: When set to `true`, state changes will be published only to the `state_topic` as a single JSON object per st...
+     * @yamlKey mqtt_json_state_payload
+     */
     mqttJsonStatePayload?: boolean;
-    /** @yamlKey device_class */
-    deviceClass?: "awning" | "blind" | "curtain" | "damper" | "door" | "" | "garage" | "gate" | "shade" | "shutter" | "window";
-    /** @yamlKey position_command_topic */
-    positionCommandTopic?: unknown;
-    /** @yamlKey position_state_topic */
-    positionStateTopic?: unknown;
-    /** @yamlKey tilt_command_topic */
-    tiltCommandTopic?: unknown;
-    /** @yamlKey tilt_state_topic */
-    tiltStateTopic?: unknown;
-    /** @yamlKey on_open */
-    onOpen?: TriggerHandler;
-    /** @yamlKey on_opened */
-    onOpened?: TriggerHandler;
     /** @yamlKey on_closed */
     onClosed?: TriggerHandler;
     /** @yamlKey on_closing */
     onClosing?: TriggerHandler;
-    /** @yamlKey on_opening */
-    onOpening?: TriggerHandler;
     /** @yamlKey on_idle */
     onIdle?: TriggerHandler;
+    /** @yamlKey on_open */
+    onOpen?: TriggerHandler;
+    /** @yamlKey on_opened */
+    onOpened?: TriggerHandler;
+    /** @yamlKey on_opening */
+    onOpening?: TriggerHandler;
+    /**
+     * string: The topic to receive cover position commands on.
+     * @yamlKey position_command_topic
+     */
+    positionCommandTopic?: string;
+    /**
+     * string: The topic to publish cover position changes to. Not valid if `mqtt_json_state_payload` is set to `true`.
+     * @yamlKey position_state_topic
+     */
+    positionStateTopic?: string;
+    /**
+     * string: The topic to receive cover tilt commands on.
+     * @yamlKey tilt_command_topic
+     */
+    tiltCommandTopic?: string;
+    /**
+     * string: The topic to publish cover cover tilt state changes to. Not valid if `mqtt_json_state_payload` is set to `true`.
+     * @yamlKey tilt_state_topic
+     */
+    tiltStateTopic?: string;
+    /** @yamlKey web_server */
+    webServer?: CoverWebServerProps;
 }
 interface Am43Props extends _CoreComponent {
-    /** int: The pin for the device, as set in the app. The default is usually printed on the device. Defaults to `8888`. */
-    pin?: number;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The id of the `ble_client` entry associated with the device.
+     * @yamlKey ble_client_id
+     */
+    bleClientId?: RefProp<__marker_ble_client_BLEClient>;
     /**
      * boolean: Inverts the position value to and from the device. Set if ESPHome is swapping around the open/close state of...
      * @yamlKey invert_position
      */
     invertPosition?: boolean;
+    /** int: The pin for the device, as set in the app. The default is usually printed on the device. Defaults to `8888`. */
+    pin?: number;
+}
+interface CopyProps extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): The id of the `ble_client` entry associated with the device.
-     * @yamlKey ble_client_id
+     * [ID](https://esphome.io/guides/configuration-types#id): The cover that should be mirrored.
+     * @yamlKey source_id
      */
-    bleClientId?: RefProp<__marker_ble_client_BLEClient>;
+    sourceId: RefProp<__marker_cover_Cover>;
 }
 interface CurrentBasedProps extends _CoreComponent {
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed to stop the cover.
-     * @yamlKey stop_action
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey close_action
      */
-    stopAction: TriggerHandler;
+    closeAction: TriggerHandler;
     /**
-     * [ID](/guides/configuration-types#id): The open current sensor.
-     * @yamlKey open_sensor
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to close from the f...
+     * @yamlKey close_duration
      */
-    openSensor: RefProp<__marker_sensor_Sensor>;
-    /**
-     * float: The amount of current in Amps the motor should drain to consider the cover is opening.
-     * @yamlKey open_moving_current_threshold
-     */
-    openMovingCurrentThreshold: number;
-    /**
-     * float: The amount of current in Amps the motor should drain to consider the cover is blocked during opening.
-     * @yamlKey open_obstacle_current_threshold
-     */
-    openObstacleCurrentThreshold?: number;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey open_action
-     */
-    openAction: TriggerHandler;
-    /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to open up from the fully-closed state.
-     * @yamlKey open_duration
-     */
-    openDuration: TimePeriod;
-    /**
-     * [ID](/guides/configuration-types#id): The close current sensor.
-     * @yamlKey close_sensor
-     */
-    closeSensor: RefProp<__marker_sensor_Sensor>;
+    closeDuration: TimePeriod;
     /**
      * float: The amount of current in Amps the motor should drain to consider the cover is closing.
      * @yamlKey close_moving_current_threshold
@@ -103,217 +105,285 @@ interface CurrentBasedProps extends _CoreComponent {
      */
     closeObstacleCurrentThreshold?: number;
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey close_action
+     * [ID](https://esphome.io/guides/configuration-types#id): The close current sensor.
+     * @yamlKey close_sensor
      */
-    closeAction: TriggerHandler;
+    closeSensor: RefProp<__marker_sensor_Sensor>;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to close from the fully-open state.
-     * @yamlKey close_duration
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when relay malfunct...
+     * @yamlKey malfunction_action
      */
-    closeDuration: TimePeriod;
-    /**
-     * percentage: The percentage of rollback the cover will perform in case of obstacle detection. Defaults to `10%`.
-     * @yamlKey obstacle_rollback
-     */
-    obstacleRollback?: number;
-    /**
-     * [Time](/guides/configuration-types#time): The maximum duration the cover should be opening or closing. Useful for pro...
-     * @yamlKey max_duration
-     */
-    maxDuration?: TimePeriod;
+    malfunctionAction?: TriggerHandler;
     /**
      * boolean: Enable to detect malfunction detection (Typically welded relays). Defaults to `True`.
      * @yamlKey malfunction_detection
      */
     malfunctionDetection?: boolean;
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when relay malfunction is detected. M...
-     * @yamlKey malfunction_action
+     * [Time](https://esphome.io/guides/configuration-types#time): The maximum duration the cover should be opening or closi...
+     * @yamlKey max_duration
      */
-    malfunctionAction?: TriggerHandler;
+    maxDuration?: TimePeriod;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time the current sensing will be disabled when the movement s...
-     * @yamlKey start_sensing_delay
+     * percentage: The percentage of rollback the cover will perform in case of obstacle detection. Defaults to `10%`.
+     * @yamlKey obstacle_rollback
      */
-    startSensingDelay?: TimePeriod;
-}
-interface EndstopProps extends _CoreComponent {
+    obstacleRollback?: number;
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey stop_action
-     */
-    stopAction: TriggerHandler;
-    /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey open_endstop
-     */
-    openEndstop: RefProp<__marker_binary_sensor_BinarySensor>;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
      * @yamlKey open_action
      */
     openAction: TriggerHandler;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to open up from the fully-closed state.
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to open up from the...
      * @yamlKey open_duration
      */
     openDuration: TimePeriod;
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
+     * float: The amount of current in Amps the motor should drain to consider the cover is opening.
+     * @yamlKey open_moving_current_threshold
+     */
+    openMovingCurrentThreshold: number;
+    /**
+     * float: The amount of current in Amps the motor should drain to consider the cover is blocked during opening.
+     * @yamlKey open_obstacle_current_threshold
+     */
+    openObstacleCurrentThreshold?: number;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The open current sensor.
+     * @yamlKey open_sensor
+     */
+    openSensor: RefProp<__marker_sensor_Sensor>;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time the current sensing will be disabled w...
+     * @yamlKey start_sensing_delay
+     */
+    startSensingDelay?: TimePeriod;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed to stop the cover.
+     * @yamlKey stop_action
+     */
+    stopAction: TriggerHandler;
+}
+interface EndstopProps extends _CoreComponent {
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
      * @yamlKey close_action
      */
     closeAction: TriggerHandler;
     /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to close from the f...
+     * @yamlKey close_duration
+     */
+    closeDuration: TimePeriod;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
      * @yamlKey close_endstop
      */
     closeEndstop: RefProp<__marker_binary_sensor_BinarySensor>;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to close from the fully-open state.
-     * @yamlKey close_duration
-     */
-    closeDuration: TimePeriod;
-    /**
-     * [Time](/guides/configuration-types#time): The maximum duration the cover should be opening or closing. Useful for pro...
+     * [Time](https://esphome.io/guides/configuration-types#time): The maximum duration the cover should be opening or closi...
      * @yamlKey max_duration
      */
     maxDuration?: TimePeriod;
-}
-interface FeedbackProps extends _CoreComponent {
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey stop_action
-     */
-    stopAction: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
      * @yamlKey open_action
      */
     openAction: TriggerHandler;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to open up from the fully-closed state.
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to open up from the...
      * @yamlKey open_duration
      */
     openDuration: TimePeriod;
     /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
      * @yamlKey open_endstop
      */
-    openEndstop?: RefProp<__marker_binary_sensor_BinarySensor>;
+    openEndstop: RefProp<__marker_binary_sensor_BinarySensor>;
     /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey open_sensor
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey stop_action
      */
-    openSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
+    stopAction: TriggerHandler;
+}
+interface FeedbackProps extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey open_obstacle_sensor
+     * [Time](https://esphome.io/guides/configuration-types#time): Considers a wait time needed by the cover to actually sta...
+     * @yamlKey acceleration_wait_time
      */
-    openObstacleSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey close_action
-     */
-    closeAction: TriggerHandler;
-    /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to close from the fully-open state.
-     * @yamlKey close_duration
-     */
-    closeDuration: TimePeriod;
-    /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey close_endstop
-     */
-    closeEndstop?: RefProp<__marker_binary_sensor_BinarySensor>;
-    /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey close_sensor
-     */
-    closeSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
-    /**
-     * [ID](/guides/configuration-types#id): The ID of the [Binary Sensor](/components/binary_sensor#config-binary_sensor) t...
-     * @yamlKey close_obstacle_sensor
-     */
-    closeObstacleSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
-    /**
-     * [Time](/guides/configuration-types#time): The maximum duration the cover should be opening or closing. Useful for pro...
-     * @yamlKey max_duration
-     */
-    maxDuration?: TimePeriod;
-    /**
-     * boolean: Indicates that the cover has built in end stop detectors. In this configuration the `stop_action` is not per...
-     * @yamlKey has_built_in_endstop
-     */
-    hasBuiltInEndstop?: boolean;
+    accelerationWaitTime?: TimePeriod;
     /**
      * boolean: Whether the true state of the cover is not known. This will make the Home Assistant frontend show buttons fo...
      * @yamlKey assumed_state
      */
     assumedState?: boolean;
     /**
-     * [Time](/guides/configuration-types#time): The interval to publish updated position information to the UI while the co...
-     * @yamlKey update_interval
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey close_action
      */
-    updateInterval?: TimePeriod;
+    closeAction: TriggerHandler;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to close from the f...
+     * @yamlKey close_duration
+     */
+    closeDuration: TimePeriod;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey close_endstop
+     */
+    closeEndstop?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey close_obstacle_sensor
+     */
+    closeObstacleSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey close_sensor
+     */
+    closeSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): Stops cover and forces a wait time between changes in dir...
+     * @yamlKey direction_change_wait_time
+     */
+    directionChangeWaitTime?: TimePeriod;
+    /**
+     * boolean: Indicates that the cover has built in end stop detectors. In this configuration the `stop_action` is not per...
+     * @yamlKey has_built_in_endstop
+     */
+    hasBuiltInEndstop?: boolean;
     /**
      * boolean: Whether to infer endstop state from the movement sensor. Requires movement sensors to be set, no endstop sen...
      * @yamlKey infer_endstop_from_movement
      */
     inferEndstopFromMovement?: boolean;
     /**
-     * [Time](/guides/configuration-types#time): Stops cover and forces a wait time between changes in direction, and takes ...
-     * @yamlKey direction_change_wait_time
+     * [Time](https://esphome.io/guides/configuration-types#time): The maximum duration the cover should be opening or closi...
+     * @yamlKey max_duration
      */
-    directionChangeWaitTime?: TimePeriod;
-    /**
-     * [Time](/guides/configuration-types#time): Considers a wait time needed by the cover to actually start moving after co...
-     * @yamlKey acceleration_wait_time
-     */
-    accelerationWaitTime?: TimePeriod;
+    maxDuration?: TimePeriod;
     /**
      * percentage: The percentage of rollback the cover will perform in case of obstacle detection while moving. Defaults to...
      * @yamlKey obstacle_rollback
      */
     obstacleRollback?: number;
-}
-interface He60rProps extends _CoreComponent {
-    /** @yamlKey uart_id */
-    uartId?: RefProp<__marker_uart_UARTComponent>;
     /**
-     * [Time](/guides/configuration-types#time): The time required for the door to fully open from the closed position. Defa...
-     * @yamlKey open_duration
-     */
-    openDuration?: TimePeriod;
-    /**
-     * [Time](/guides/configuration-types#time): The time required for the door to fully close from the open position. Defau...
-     * @yamlKey close_duration
-     */
-    closeDuration?: TimePeriod;
-}
-interface TimeBasedProps extends _CoreComponent {
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed to stop the cover when the remote req...
-     * @yamlKey stop_action
-     */
-    stopAction: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
      * @yamlKey open_action
      */
     openAction: TriggerHandler;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to open up from the fully-closed state.
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to open up from the...
      * @yamlKey open_duration
      */
     openDuration: TimePeriod;
     /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey open_endstop
+     */
+    openEndstop?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey open_obstacle_sensor
+     */
+    openObstacleSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [Binary Sensor](https://esphome.io/components/b...
+     * @yamlKey open_sensor
+     */
+    openSensor?: RefProp<__marker_binary_sensor_BinarySensor>;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey stop_action
+     */
+    stopAction: TriggerHandler;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval to publish updated position information to t...
+     * @yamlKey update_interval
+     */
+    updateInterval?: TimePeriod;
+}
+interface He60rProps extends _CoreComponent {
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The time required for the door to fully close from the op...
+     * @yamlKey close_duration
+     */
+    closeDuration?: TimePeriod;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The time required for the door to fully open from the clo...
+     * @yamlKey open_duration
+     */
+    openDuration?: TimePeriod;
+    /** @yamlKey uart_id */
+    uartId?: RefProp<__marker_uart_UARTComponent>;
+}
+interface TemplateProps extends _CoreComponent {
+    /**
+     * boolean: Whether the true state/position of the cover is not known. This will make the Home Assistant frontend show b...
+     * @yamlKey assumed_state
+     */
+    assumedState?: boolean;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey close_action
+     */
+    closeAction?: TriggerHandler;
+    /**
+     * boolean: Whether this cover will publish its position as a floating point number. By default (`false` ), the cover on...
+     * @yamlKey has_position
+     */
+    hasPosition?: boolean;
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren... */
+    lambda?: unknown;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote (li...
+     * @yamlKey open_action
+     */
+    openAction?: TriggerHandler;
+    /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template cover will immed... */
+    optimistic?: boolean;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote (li...
+     * @yamlKey position_action
+     */
+    positionAction?: TriggerHandler;
+    /** @yamlKey restore_mode */
+    restoreMode?: "NO_RESTORE" | "RESTORE" | "RESTORE_AND_CALL";
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey stop_action
+     */
+    stopAction?: TriggerHandler;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote (li...
+     * @yamlKey tilt_action
+     */
+    tiltAction?: TriggerHandler;
+    /**
+     * [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren...
+     * @yamlKey tilt_lambda
+     */
+    tiltLambda?: unknown;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey toggle_action
+     */
+    toggleAction?: TriggerHandler;
+}
+interface TimeBasedProps extends _CoreComponent {
+    /**
+     * boolean: Whether the true state of the cover is not known. This will make the Home Assistant frontend show buttons fo...
+     * @yamlKey assumed_state
+     */
+    assumedState?: boolean;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
      * @yamlKey close_action
      */
     closeAction: TriggerHandler;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time it takes the cover to close from the fully-open state.
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to close from the f...
      * @yamlKey close_duration
      */
     closeDuration: TimePeriod;
@@ -328,106 +398,58 @@ interface TimeBasedProps extends _CoreComponent {
      */
     manualControl?: boolean;
     /**
-     * boolean: Whether the true state of the cover is not known. This will make the Home Assistant frontend show buttons fo...
-     * @yamlKey assumed_state
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote req...
+     * @yamlKey open_action
      */
-    assumedState?: boolean;
+    openAction: TriggerHandler;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time it takes the cover to open up from the...
+     * @yamlKey open_duration
+     */
+    openDuration: TimePeriod;
+    /**
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed to stop the cover w...
+     * @yamlKey stop_action
+     */
+    stopAction: TriggerHandler;
 }
 interface TormaticProps extends _CoreComponent {
+    /** @yamlKey close_duration */
+    closeDuration?: TimePeriod;
+    /** @yamlKey open_duration */
+    openDuration?: TimePeriod;
     /** @yamlKey uart_id */
     uartId?: RefProp<__marker_uart_UARTComponent>;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
-    /** @yamlKey open_duration */
-    openDuration?: TimePeriod;
-    /** @yamlKey close_duration */
-    closeDuration?: TimePeriod;
-}
-interface CopyProps extends _CoreComponent {
-    /**
-     * [ID](/guides/configuration-types#id): The cover that should be mirrored.
-     * @yamlKey source_id
-     */
-    sourceId: RefProp<__marker_cover_Cover>;
-}
-interface TemplateProps extends _CoreComponent {
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current state/position o... */
-    lambda?: unknown;
-    /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template cover will immed... */
-    optimistic?: boolean;
-    /**
-     * boolean: Whether the true state/position of the cover is not known. This will make the Home Assistant frontend show b...
-     * @yamlKey assumed_state
-     */
-    assumedState?: boolean;
-    /**
-     * boolean: Whether this cover will publish its position as a floating point number. By default (`false` ), the cover on...
-     * @yamlKey has_position
-     */
-    hasPosition?: boolean;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
-     * @yamlKey open_action
-     */
-    openAction?: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey close_action
-     */
-    closeAction?: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests the cover to...
-     * @yamlKey stop_action
-     */
-    stopAction?: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
-     * @yamlKey tilt_action
-     */
-    tiltAction?: TriggerHandler;
-    /**
-     * [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current tilt position of...
-     * @yamlKey tilt_lambda
-     */
-    tiltLambda?: unknown;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote requests to toggle th...
-     * @yamlKey toggle_action
-     */
-    toggleAction?: TriggerHandler;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
-     * @yamlKey position_action
-     */
-    positionAction?: TriggerHandler;
-    /** @yamlKey restore_mode */
-    restoreMode?: "NO_RESTORE" | "RESTORE" | "RESTORE_AND_CALL";
 }
 interface TuyaProps extends _CoreComponent {
-    /** @yamlKey tuya_id */
-    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey control_datapoint */
     controlDatapoint?: number;
     /** @yamlKey direction_datapoint */
     directionDatapoint?: number;
-    /** @yamlKey position_datapoint */
-    positionDatapoint: number;
-    /** @yamlKey position_report_datapoint */
-    positionReportDatapoint?: number;
-    /** @yamlKey min_value */
-    minValue?: number;
-    /** @yamlKey max_value */
-    maxValue?: number;
     /** @yamlKey invert_position */
     invertPosition?: boolean;
     /** @yamlKey invert_position_report */
     invertPositionReport?: boolean;
+    /** @yamlKey max_value */
+    maxValue?: number;
+    /** @yamlKey min_value */
+    minValue?: number;
+    /** @yamlKey position_datapoint */
+    positionDatapoint: number;
+    /** @yamlKey position_report_datapoint */
+    positionReportDatapoint?: number;
     /** @yamlKey restore_mode */
     restoreMode?: "NO_RESTORE" | "RESTORE" | "RESTORE_AND_CALL";
+    /** @yamlKey tuya_id */
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
 }
 export type CoverProps = (CoverBaseProps & {
     platform: "am43";
 } & Am43Props & ComponentProps<__marker_am43_Am43Component>) | (CoverBaseProps & {
+    platform: "copy";
+} & CopyProps & ComponentProps<__marker_copy_CopyCover>) | (CoverBaseProps & {
     platform: "current_based";
 } & CurrentBasedProps & ComponentProps<__marker_current_based_CurrentBasedCover>) | (CoverBaseProps & {
     platform: "endstop";
@@ -436,14 +458,12 @@ export type CoverProps = (CoverBaseProps & {
 } & FeedbackProps & ComponentProps<__marker_feedback_FeedbackCover>) | (CoverBaseProps & {
     platform: "he60r";
 } & He60rProps & ComponentProps<__marker_he60r_HE60rCover>) | (CoverBaseProps & {
+    platform: "template";
+} & TemplateProps & ComponentProps<__marker_template__TemplateCover>) | (CoverBaseProps & {
     platform: "time_based";
 } & TimeBasedProps & ComponentProps<__marker_time_based_TimeBasedCover>) | (CoverBaseProps & {
     platform: "tormatic";
 } & TormaticProps & ComponentProps<__marker_tormatic_Tormatic>) | (CoverBaseProps & {
-    platform: "copy";
-} & CopyProps & ComponentProps<__marker_copy_CopyCover>) | (CoverBaseProps & {
-    platform: "template";
-} & TemplateProps & ComponentProps<__marker_template__TemplateCover>) | (CoverBaseProps & {
     platform: "tuya";
 } & TuyaProps & ComponentProps<__marker_tuya_TuyaCover>);
 declare global {

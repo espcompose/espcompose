@@ -12,18 +12,18 @@ interface Ds2484Props extends _CoreComponent {
      * @yamlKey active_pullup
      */
     activePullup?: boolean;
+    /** int: The I²C address of the device. Defaults to `0x18`. */
+    address?: number;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID of the [I2C](https://esphome.io/compo...
+     * @yamlKey i2c_id
+     */
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
     /**
      * defaults to `false`: enables DS2484 `strong_pullup`.
      * @yamlKey strong_pullup
      */
     strongPullup?: boolean;
-    /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID of the [I2C](/components/i2c/). Required if you have co...
-     * @yamlKey i2c_id
-     */
-    i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the device. Defaults to `0x18`. */
-    address?: number;
 }
 interface GpioProps extends _CoreComponent {
     /** number: The pin which will be use for bus communication. Note that 1-wire is a bi-directional bus so the selected GPI... */

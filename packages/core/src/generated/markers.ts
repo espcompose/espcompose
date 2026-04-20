@@ -540,8 +540,8 @@ export interface __marker_beken_spi_led_strip_BekenSPILEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  bh1750::BH1750Sensor
 export interface __marker_bh1750_BH1750Sensor {
@@ -555,6 +555,8 @@ export interface __marker_bh1750_BH1750Sensor {
 //  bh1900nux::BH1900NUXSensor
 export interface __marker_bh1900nux_BH1900NUXSensor {
     readonly __brand_bh1900nux_BH1900NUXSensor?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
@@ -570,8 +572,8 @@ export interface __marker_binary_BinaryFan {
 export interface __marker_binary_BinaryLightOutput {
     readonly __brand_binary_BinaryLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  binary_sensor::BinarySensor
 export interface __marker_binary_sensor_BinarySensor {
@@ -742,6 +744,20 @@ export interface __marker_bm8563_BM8563 {
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
 }
+//  bme280_i2c::BME280I2CComponent
+export interface __marker_bme280_i2c_BME280I2CComponent {
+    readonly __brand_bme280_i2c_BME280I2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  bme280_spi::BME280SPIComponent
+export interface __marker_bme280_spi_BME280SPIComponent {
+    readonly __brand_bme280_spi_BME280SPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
+}
 //  bme680::BME680Component
 export interface __marker_bme680_BME680Component {
     readonly __brand_bme680_BME680Component?: true;
@@ -758,6 +774,14 @@ export interface __marker_bme680_bsec_BME680BSECComponent {
 //  bme68x_bsec2::BME68xBSEC2Component
 export interface __marker_bme68x_bsec2_BME68xBSEC2Component {
     readonly __brand_bme68x_bsec2_BME68xBSEC2Component?: true;
+    readonly __brand_Component?: true;
+}
+//  bme68x_bsec2_i2c::BME68xBSEC2I2CComponent
+export interface __marker_bme68x_bsec2_i2c_BME68xBSEC2I2CComponent {
+    readonly __brand_bme68x_bsec2_i2c_BME68xBSEC2I2CComponent?: true;
+    readonly __brand_bme68x_bsec2_BME68xBSEC2Component?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
 }
 //  bmi160::BMI160Component
 export interface __marker_bmi160_BMI160Component {
@@ -772,6 +796,48 @@ export interface __marker_bmp085_BMP085Component {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
+}
+//  bmp280_i2c::BMP280I2CComponent
+export interface __marker_bmp280_i2c_BMP280I2CComponent {
+    readonly __brand_bmp280_i2c_BMP280I2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  bmp280_spi::BMP280SPIComponent
+export interface __marker_bmp280_spi_BMP280SPIComponent {
+    readonly __brand_bmp280_spi_BMP280SPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
+}
+//  bmp3xx_i2c::BMP3XXI2CComponent
+export interface __marker_bmp3xx_i2c_BMP3XXI2CComponent {
+    readonly __brand_bmp3xx_i2c_BMP3XXI2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  bmp3xx_spi::BMP3XXSPIComponent
+export interface __marker_bmp3xx_spi_BMP3XXSPIComponent {
+    readonly __brand_bmp3xx_spi_BMP3XXSPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
+}
+//  bmp581_i2c::BMP581I2CComponent
+export interface __marker_bmp581_i2c_BMP581I2CComponent {
+    readonly __brand_bmp581_i2c_BMP581I2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  bmp581_spi::BMP581SPIComponent
+export interface __marker_bmp581_spi_BMP581SPIComponent {
+    readonly __brand_bmp581_spi_BMP581SPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
 }
 //  bp1658cj::BP1658CJ
 export interface __marker_bp1658cj_BP1658CJ {
@@ -858,7 +924,6 @@ export interface __marker_ccs811_CCS811Component {
 export interface __marker_cd74hc4067_CD74HC4067Component {
     readonly __brand_cd74hc4067_CD74HC4067Component?: true;
     readonly __brand_Component?: true;
-    readonly __brand_PollingComponent?: true;
 }
 //  cd74hc4067::CD74HC4067Sensor
 export interface __marker_cd74hc4067_CD74HC4067Sensor {
@@ -918,8 +983,8 @@ export interface __marker_cm1106_CM1106Component {
 export interface __marker_color_temperature_CTLightOutput {
     readonly __brand_color_temperature_CTLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  combination::KalmanCombinationComponent
 export interface __marker_combination_KalmanCombinationComponent {
@@ -1144,8 +1209,8 @@ export interface __marker_current_based_CurrentBasedCover {
 export interface __marker_cwww_CWWWLightOutput {
     readonly __brand_cwww_CWWWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  dac7678::DAC7678Channel
 export interface __marker_dac7678_DAC7678Channel {
@@ -1427,12 +1492,40 @@ export interface __marker_emmeti_EmmetiClimate {
     readonly __brand_remote_base_RemoteReceiverListener?: true;
     readonly __brand_remote_base_RemoteTransmittable?: true;
 }
+//  emontx::EmonTx
+export interface __marker_emontx_EmonTx {
+    readonly __brand_emontx_EmonTx?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_uart_UARTDevice?: true;
+    readonly __brand_uart_UARTComponent?: true;
+}
+//  emontx::EmonTxSensor
+export interface __marker_emontx_EmonTxSensor {
+    readonly __brand_emontx_EmonTxSensor?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
+    readonly __brand_Component?: true;
+}
 //  endstop::EndstopCover
 export interface __marker_endstop_EndstopCover {
     readonly __brand_endstop_EndstopCover?: true;
     readonly __brand_cover_Cover?: true;
     readonly __brand_EntityBase?: true;
     readonly __brand_Component?: true;
+}
+//  ens160_i2c::ENS160I2CComponent
+export interface __marker_ens160_i2c_ENS160I2CComponent {
+    readonly __brand_ens160_i2c_ENS160I2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  ens160_spi::ENS160SPIComponent
+export interface __marker_ens160_spi_ENS160SPIComponent {
+    readonly __brand_ens160_spi_ENS160SPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
 }
 //  ens210::ENS210Component
 export interface __marker_ens210_ENS210Component {
@@ -1493,24 +1586,10 @@ export interface __marker_esp32_ble_ESP32BLE {
     readonly __brand_esp32_ble_ESP32BLE?: true;
     readonly __brand_Component?: true;
 }
-//  esp32_ble::GAPEventHandler
-export interface __marker_esp32_ble_GAPEventHandler {
-    readonly __brand_esp32_ble_GAPEventHandler?: true;
-}
-//  esp32_ble::GATTcEventHandler
-export interface __marker_esp32_ble_GATTcEventHandler {
-    readonly __brand_esp32_ble_GATTcEventHandler?: true;
-}
-//  esp32_ble::GATTsEventHandler
-export interface __marker_esp32_ble_GATTsEventHandler {
-    readonly __brand_esp32_ble_GATTsEventHandler?: true;
-}
 //  esp32_ble_beacon::ESP32BLEBeacon
 export interface __marker_esp32_ble_beacon_ESP32BLEBeacon {
     readonly __brand_esp32_ble_beacon_ESP32BLEBeacon?: true;
     readonly __brand_Component?: true;
-    readonly __brand_esp32_ble_GAPEventHandler?: true;
-    readonly __brand_Parented?: true;
 }
 //  esp32_ble_client::BLEClientBase
 export interface __marker_esp32_ble_client_BLEClientBase {
@@ -1523,29 +1602,30 @@ export interface __marker_esp32_ble_server_BLECharacteristic {
 //  esp32_ble_server::BLEDescriptor
 export interface __marker_esp32_ble_server_BLEDescriptor {
     readonly __brand_esp32_ble_server_BLEDescriptor?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
 }
 //  esp32_ble_server::BLEServer
 export interface __marker_esp32_ble_server_BLEServer {
     readonly __brand_esp32_ble_server_BLEServer?: true;
     readonly __brand_Component?: true;
-    readonly __brand_esp32_ble_GATTsEventHandler?: true;
     readonly __brand_Parented?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
 }
 //  esp32_ble_server::BLEService
 export interface __marker_esp32_ble_server_BLEService {
     readonly __brand_esp32_ble_server_BLEService?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
 }
 //  esp32_ble_server::esp32_ble_server_automations::BLECharacteristicSetValueAction
 export interface __marker_esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction {
     readonly __brand_esp32_ble_server_esp32_ble_server_automations_BLECharacteristicSetValueAction?: true;
     readonly __brand_Action?: true;
+    readonly __brand_esp32_ble_server_BLECharacteristic?: true;
 }
 //  esp32_ble_tracker::ESP32BLETracker
 export interface __marker_esp32_ble_tracker_ESP32BLETracker {
     readonly __brand_esp32_ble_tracker_ESP32BLETracker?: true;
     readonly __brand_Component?: true;
-    readonly __brand_esp32_ble_GAPEventHandler?: true;
-    readonly __brand_esp32_ble_GATTcEventHandler?: true;
     readonly __brand_Parented?: true;
 }
 //  esp32_ble_tracker::ESPBTClient
@@ -1602,8 +1682,8 @@ export interface __marker_esp32_rmt_led_strip_ESP32RMTLEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  esp32_touch::ESP32TouchBinarySensor
 export interface __marker_esp32_touch_ESP32TouchBinarySensor {
@@ -1784,7 +1864,6 @@ export interface __marker_fujitsu_general_FujitsuGeneralClimate {
 //  gcja5::GCJA5Component
 export interface __marker_gcja5_GCJA5Component {
     readonly __brand_gcja5_GCJA5Component?: true;
-    readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_uart_UARTComponent?: true;
@@ -1799,8 +1878,15 @@ export interface __marker_gdk101_GDK101Component {
 //  gl_r01_i2c::GLR01I2CComponent
 export interface __marker_gl_r01_i2c_GLR01I2CComponent {
     readonly __brand_gl_r01_i2c_GLR01I2CComponent?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_i2c_I2CDevice?: true;
     readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+}
+//  globals::GlobalsComponent
+export interface __marker_globals_GlobalsComponent {
+    readonly __brand_globals_GlobalsComponent?: true;
     readonly __brand_Component?: true;
 }
 //  gp2y1010au0f::GP2Y1010AU0FSensor
@@ -2023,12 +2109,11 @@ export interface __marker_hbridge_HBridgeFan {
 //  hbridge::HBridgeLightOutput
 export interface __marker_hbridge_HBridgeLightOutput {
     readonly __brand_hbridge_HBridgeLightOutput?: true;
-    readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_hbridge_HBridgeFan?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  hbridge::HBridgeSwitch
 export interface __marker_hbridge_HBridgeSwitch {
@@ -2054,6 +2139,13 @@ export interface __marker_hdc1080_HDC1080Component {
 //  hdc2010::HDC2010Component
 export interface __marker_hdc2010_HDC2010Component {
     readonly __brand_hdc2010_HDC2010Component?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  hdc2080::HDC2080Component
+export interface __marker_hdc2080_HDC2080Component {
+    readonly __brand_hdc2080_HDC2080Component?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
@@ -2317,15 +2409,6 @@ export interface __marker_i2s_audio_I2SAudioComponent {
 //  i2s_audio::I2SAudioIn
 export interface __marker_i2s_audio_I2SAudioIn {
     readonly __brand_i2s_audio_I2SAudioIn?: true;
-}
-//  i2s_audio::I2SAudioMediaPlayer
-export interface __marker_i2s_audio_I2SAudioMediaPlayer {
-    readonly __brand_i2s_audio_I2SAudioMediaPlayer?: true;
-    readonly __brand_Component?: true;
-    readonly __brand_media_player_MediaPlayer?: true;
-    readonly __brand_i2s_audio_I2SAudioOut?: true;
-    readonly __brand_i2s_audio_I2SAudioBase?: true;
-    readonly __brand_Parented?: true;
 }
 //  i2s_audio::I2SAudioMicrophone
 export interface __marker_i2s_audio_I2SAudioMicrophone {
@@ -2766,6 +2849,8 @@ export interface __marker_ld2420_LD2420RevertConfigButton {
 //  ld2420::LD2420Select
 export interface __marker_ld2420_LD2420Select {
     readonly __brand_ld2420_LD2420Select?: true;
+    readonly __brand_select_Select?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_Component?: true;
 }
 //  ld2420::LD2420Sensor
@@ -2884,8 +2969,8 @@ export interface __marker_libretiny_pwm_LibreTinyPWM {
 //  light::AddressableLight
 export interface __marker_light_AddressableLight {
     readonly __brand_light_AddressableLight?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  light::AddressableLightState
 export interface __marker_light_AddressableLightState {
@@ -2897,14 +2982,14 @@ export interface __marker_light_AddressableLightState {
 //  light::AddressableLightWrapper
 export interface __marker_light_AddressableLightWrapper {
     readonly __brand_light_AddressableLightWrapper?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  light::LightOutput
 export interface __marker_light_LightOutput {
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  light::LightState
 export interface __marker_light_LightState {
@@ -3015,13 +3100,13 @@ export interface __marker_lvgl_LVLight {
     readonly __brand_lvgl_LVLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_lvgl_LvglComponent?: true;
-    readonly __brand_light_LightState?: true;
+    readonly __brand_lvgl_LvPseudoButton?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  lvgl::LvPseudoButton
 export interface __marker_lvgl_LvPseudoButton {
     readonly __brand_lvgl_LvPseudoButton?: true;
-    readonly __brand_lvgl_LvglComponent?: true;
 }
 //  lvgl::LvglComponent
 export interface __marker_lvgl_LvglComponent {
@@ -3047,8 +3132,8 @@ export interface __marker_m5stack_8angle_M5Stack8AngleLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  m5stack_8angle::M5Stack8AngleSwitchBinarySensor
 export interface __marker_m5stack_8angle_M5Stack8AngleSwitchBinarySensor {
@@ -3057,6 +3142,10 @@ export interface __marker_m5stack_8angle_M5Stack8AngleSwitchBinarySensor {
     readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
+}
+//  mapping::Mapping
+export interface __marker_mapping_Mapping {
+    readonly __brand_mapping_Mapping?: true;
 }
 //  matrix_keypad::MatrixKeypad
 export interface __marker_matrix_keypad_MatrixKeypad {
@@ -3439,6 +3528,14 @@ export interface __marker_mitsubishi_MitsubishiClimate {
     readonly __brand_remote_base_RemoteReceiverListener?: true;
     readonly __brand_remote_base_RemoteTransmittable?: true;
 }
+//  mitsubishi_cn105::MitsubishiCN105Climate
+export interface __marker_mitsubishi_cn105_MitsubishiCN105Climate {
+    readonly __brand_mitsubishi_cn105_MitsubishiCN105Climate?: true;
+    readonly __brand_climate_Climate?: true;
+    readonly __brand_EntityBase?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_uart_UARTDevice?: true;
+}
 //  mixer_speaker::MixerSpeaker
 export interface __marker_mixer_speaker_MixerSpeaker {
     readonly __brand_mixer_speaker_MixerSpeaker?: true;
@@ -3571,8 +3668,8 @@ export interface __marker_modbus_controller_ServerRegister {
 export interface __marker_monochromatic_MonochromaticLightOutput {
     readonly __brand_monochromatic_MonochromaticLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  mopeka_ble::MopekaListener
 export interface __marker_mopeka_ble_MopekaListener {
@@ -3843,8 +3940,8 @@ export interface __marker_neopixelbus_NeoPixelBusLightOutputBase {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  nextion::Nextion
 export interface __marker_nextion_Nextion {
@@ -3934,6 +4031,13 @@ export interface __marker_ntc_NTC {
 //  number::Number
 export interface __marker_number_Number {
     readonly __brand_number_Number?: true;
+}
+//  number::NumberSensor
+export interface __marker_number_NumberSensor {
+    readonly __brand_number_NumberSensor?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
+    readonly __brand_Component?: true;
 }
 //  one_wire::OneWireBus
 export interface __marker_one_wire_OneWireBus {
@@ -4124,8 +4228,8 @@ export interface __marker_partition_PartitionLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  pca6416a::PCA6416AComponent
 export interface __marker_pca6416a_PCA6416AComponent {
@@ -4206,6 +4310,7 @@ export interface __marker_pid_PIDClimateSensor {
 export interface __marker_pipsolar_Pipsolar {
     readonly __brand_pipsolar_Pipsolar?: true;
     readonly __brand_Component?: true;
+    readonly __brand_pipsolar_PipsolarOutput?: true;
 }
 //  pipsolar::PipsolarOutput
 export interface __marker_pipsolar_PipsolarOutput {
@@ -4374,12 +4479,10 @@ export interface __marker_pylontech_PylontechComponent {
 //  pylontech::PylontechSensor
 export interface __marker_pylontech_PylontechSensor {
     readonly __brand_pylontech_PylontechSensor?: true;
-    readonly __brand_Component?: true;
 }
 //  pylontech::PylontechTextSensor
 export interface __marker_pylontech_PylontechTextSensor {
     readonly __brand_pylontech_PylontechTextSensor?: true;
-    readonly __brand_Component?: true;
 }
 //  pzem004t::PZEM004T
 export interface __marker_pzem004t_PZEM004T {
@@ -4568,29 +4671,29 @@ export interface __marker_rf_bridge_RFBridgeComponent {
 export interface __marker_rgb_RGBLightOutput {
     readonly __brand_rgb_RGBLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  rgbct::RGBCTLightOutput
 export interface __marker_rgbct_RGBCTLightOutput {
     readonly __brand_rgbct_RGBCTLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  rgbw::RGBWLightOutput
 export interface __marker_rgbw_RGBWLightOutput {
     readonly __brand_rgbw_RGBWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  rgbww::RGBWWLightOutput
 export interface __marker_rgbww_RGBWWLightOutput {
     readonly __brand_rgbww_RGBWWLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  rotary_encoder::RotaryEncoderSensor
 export interface __marker_rotary_encoder_RotaryEncoderSensor {
@@ -4610,8 +4713,8 @@ export interface __marker_rp2040_pio_led_strip_RP2040PIOLEDStripLightOutput {
     readonly __brand_light_AddressableLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  rp2040_pwm::RP2040PWM
 export interface __marker_rp2040_pwm_RP2040PWM {
@@ -4723,6 +4826,8 @@ export interface __marker_sdm_meter_SDMMeter {
 //  sdp3x::SDP3XComponent
 export interface __marker_sdp3x_SDP3XComponent {
     readonly __brand_sdp3x_SDP3XComponent?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_sensirion_common_SensirionI2CDevice?: true;
@@ -4885,6 +4990,8 @@ export interface __marker_select_Select {
 //  sen0321_sensor::Sen0321Sensor
 export interface __marker_sen0321_sensor_Sen0321Sensor {
     readonly __brand_sen0321_sensor_Sen0321Sensor?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
@@ -4892,6 +4999,8 @@ export interface __marker_sen0321_sensor_Sen0321Sensor {
 //  sen21231_sensor::Sen21231Sensor
 export interface __marker_sen21231_sensor_Sen21231Sensor {
     readonly __brand_sen21231_sensor_Sen21231Sensor?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
@@ -4973,8 +5082,8 @@ export interface __marker_shelly_dimmer_ShellyDimmer {
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_uart_UARTDevice?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
     readonly __brand_uart_UARTComponent?: true;
 }
 //  sht3xd::SHT3XDComponent
@@ -5158,13 +5267,27 @@ export interface __marker_sonoff_d1_SonoffD1Output {
     readonly __brand_uart_UARTDevice?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_uart_UARTComponent?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  sound_level::SoundLevelComponent
 export interface __marker_sound_level_SoundLevelComponent {
     readonly __brand_sound_level_SoundLevelComponent?: true;
     readonly __brand_Component?: true;
+}
+//  spa06_i2c::SPA06I2CComponent
+export interface __marker_spa06_i2c_SPA06I2CComponent {
+    readonly __brand_spa06_i2c_SPA06I2CComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_i2c_I2CDevice?: true;
+}
+//  spa06_spi::SPA06SPIComponent
+export interface __marker_spa06_spi_SPA06SPIComponent {
+    readonly __brand_spa06_spi_SPA06SPIComponent?: true;
+    readonly __brand_PollingComponent?: true;
+    readonly __brand_Component?: true;
+    readonly __brand_spi_SPIDevice?: true;
 }
 //  speaker::AudioPipeline
 export interface __marker_speaker_AudioPipeline {
@@ -5232,8 +5355,8 @@ export interface __marker_spi_led_strip_SpiLedStrip {
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
     readonly __brand_spi_SPIDevice?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  sprinkler::Sprinkler
 export interface __marker_sprinkler_Sprinkler {
@@ -5449,8 +5572,8 @@ export interface __marker_status_led_StatusLEDLightOutput {
     readonly __brand_status_led_StatusLEDLightOutput?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  stepper::Stepper
 export interface __marker_stepper_Stepper {
@@ -5662,6 +5785,8 @@ export interface __marker_t6615_T6615Component {
 //  tc74::TC74Component
 export interface __marker_tc74_TC74Component {
     readonly __brand_tc74_TC74Component?: true;
+    readonly __brand_sensor_Sensor?: true;
+    readonly __brand_EntityBase?: true;
     readonly __brand_PollingComponent?: true;
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
@@ -5895,6 +6020,13 @@ export interface __marker_template__TemplateWaterHeater {
 export interface __marker_text_Text {
     readonly __brand_text_Text?: true;
     readonly __brand_EntityBase?: true;
+}
+//  text::TextTextSensor
+export interface __marker_text_TextTextSensor {
+    readonly __brand_text_TextTextSensor?: true;
+    readonly __brand_text_sensor_TextSensor?: true;
+    readonly __brand_EntityBase?: true;
+    readonly __brand_Component?: true;
 }
 //  text_sensor::TextSensor
 export interface __marker_text_sensor_TextSensor {
@@ -6197,8 +6329,8 @@ export interface __marker_tuya_TuyaLight {
     readonly __brand_tuya_TuyaLight?: true;
     readonly __brand_light_LightOutput?: true;
     readonly __brand_Component?: true;
-    readonly __brand_light_LightState?: true;
     readonly __brand_light_AddressableLightState?: true;
+    readonly __brand_light_LightState?: true;
 }
 //  tuya::TuyaNumber
 export interface __marker_tuya_TuyaNumber {
@@ -6477,6 +6609,16 @@ export interface __marker_vbus_DeltaSolCS2BSensor {
 //  vbus::DeltaSolCS2Sensor
 export interface __marker_vbus_DeltaSolCS2Sensor {
     readonly __brand_vbus_DeltaSolCS2Sensor?: true;
+    readonly __brand_Component?: true;
+}
+//  vbus::DeltaSolCS4BSensor
+export interface __marker_vbus_DeltaSolCS4BSensor {
+    readonly __brand_vbus_DeltaSolCS4BSensor?: true;
+    readonly __brand_Component?: true;
+}
+//  vbus::DeltaSolCS4Sensor
+export interface __marker_vbus_DeltaSolCS4Sensor {
+    readonly __brand_vbus_DeltaSolCS4Sensor?: true;
     readonly __brand_Component?: true;
 }
 //  vbus::DeltaSolCSPlusBSensor
@@ -7239,6 +7381,12 @@ export namespace Components {
     export namespace Bm8563 {
         export type BM8563Ref = __marker_bm8563_BM8563;
     }
+    export namespace Bme280I2C {
+        export type BME280I2CComponentRef = __marker_bme280_i2c_BME280I2CComponent;
+    }
+    export namespace Bme280SPI {
+        export type BME280SPIComponentRef = __marker_bme280_spi_BME280SPIComponent;
+    }
     export namespace Bme680 {
         export type BME680ComponentRef = __marker_bme680_BME680Component;
     }
@@ -7248,11 +7396,32 @@ export namespace Components {
     export namespace Bme68xBsec2 {
         export type BME68xBSEC2ComponentRef = __marker_bme68x_bsec2_BME68xBSEC2Component;
     }
+    export namespace Bme68xBsec2I2C {
+        export type BME68xBSEC2I2CComponentRef = __marker_bme68x_bsec2_i2c_BME68xBSEC2I2CComponent;
+    }
     export namespace Bmi160 {
         export type BMI160ComponentRef = __marker_bmi160_BMI160Component;
     }
     export namespace Bmp085 {
         export type BMP085ComponentRef = __marker_bmp085_BMP085Component;
+    }
+    export namespace Bmp280I2C {
+        export type BMP280I2CComponentRef = __marker_bmp280_i2c_BMP280I2CComponent;
+    }
+    export namespace Bmp280SPI {
+        export type BMP280SPIComponentRef = __marker_bmp280_spi_BMP280SPIComponent;
+    }
+    export namespace Bmp3xxI2C {
+        export type BMP3XXI2CComponentRef = __marker_bmp3xx_i2c_BMP3XXI2CComponent;
+    }
+    export namespace Bmp3xxSPI {
+        export type BMP3XXSPIComponentRef = __marker_bmp3xx_spi_BMP3XXSPIComponent;
+    }
+    export namespace Bmp581I2C {
+        export type BMP581I2CComponentRef = __marker_bmp581_i2c_BMP581I2CComponent;
+    }
+    export namespace Bmp581SPI {
+        export type BMP581SPIComponentRef = __marker_bmp581_spi_BMP581SPIComponent;
     }
     export namespace Bp1658cj {
         export type BP1658CJRef = __marker_bp1658cj_BP1658CJ;
@@ -7476,8 +7645,18 @@ export namespace Components {
     export namespace Emmeti {
         export type EmmetiClimateRef = __marker_emmeti_EmmetiClimate;
     }
+    export namespace Emontx {
+        export type EmonTxRef = __marker_emontx_EmonTx;
+        export type EmonTxSensorRef = __marker_emontx_EmonTxSensor;
+    }
     export namespace Endstop {
         export type EndstopCoverRef = __marker_endstop_EndstopCover;
+    }
+    export namespace Ens160I2C {
+        export type ENS160I2CComponentRef = __marker_ens160_i2c_ENS160I2CComponent;
+    }
+    export namespace Ens160SPI {
+        export type ENS160SPIComponentRef = __marker_ens160_spi_ENS160SPIComponent;
     }
     export namespace Ens210 {
         export type ENS210ComponentRef = __marker_ens210_ENS210Component;
@@ -7504,9 +7683,6 @@ export namespace Components {
     }
     export namespace Esp32BLE {
         export type ESP32BLERef = __marker_esp32_ble_ESP32BLE;
-        export type GAPEventHandlerRef = __marker_esp32_ble_GAPEventHandler;
-        export type GATTcEventHandlerRef = __marker_esp32_ble_GATTcEventHandler;
-        export type GATTsEventHandlerRef = __marker_esp32_ble_GATTsEventHandler;
     }
     export namespace Esp32BLEBeacon {
         export type ESP32BLEBeaconRef = __marker_esp32_ble_beacon_ESP32BLEBeacon;
@@ -7625,6 +7801,9 @@ export namespace Components {
     export namespace GlR01I2C {
         export type GLR01I2CComponentRef = __marker_gl_r01_i2c_GLR01I2CComponent;
     }
+    export namespace Globals {
+        export type GlobalsComponentRef = __marker_globals_GlobalsComponent;
+    }
     export namespace Gp2y1010au0f {
         export type GP2Y1010AU0FSensorRef = __marker_gp2y1010au0f_GP2Y1010AU0FSensor;
     }
@@ -7696,6 +7875,9 @@ export namespace Components {
     }
     export namespace Hdc2010 {
         export type HDC2010ComponentRef = __marker_hdc2010_HDC2010Component;
+    }
+    export namespace Hdc2080 {
+        export type HDC2080ComponentRef = __marker_hdc2080_HDC2080Component;
     }
     export namespace Hdc302x {
         export type HDC302XComponentRef = __marker_hdc302x_HDC302XComponent;
@@ -7786,7 +7968,6 @@ export namespace Components {
         export type I2SAudioBaseRef = __marker_i2s_audio_I2SAudioBase;
         export type I2SAudioComponentRef = __marker_i2s_audio_I2SAudioComponent;
         export type I2SAudioInRef = __marker_i2s_audio_I2SAudioIn;
-        export type I2SAudioMediaPlayerRef = __marker_i2s_audio_I2SAudioMediaPlayer;
         export type I2SAudioMicrophoneRef = __marker_i2s_audio_I2SAudioMicrophone;
         export type I2SAudioOutRef = __marker_i2s_audio_I2SAudioOut;
         export type I2SAudioSpeakerRef = __marker_i2s_audio_I2SAudioSpeaker;
@@ -7997,6 +8178,9 @@ export namespace Components {
         export type M5Stack8AngleLightOutputRef = __marker_m5stack_8angle_M5Stack8AngleLightOutput;
         export type M5Stack8AngleSwitchBinarySensorRef = __marker_m5stack_8angle_M5Stack8AngleSwitchBinarySensor;
     }
+    export namespace Mapping {
+        export type MappingRef = __marker_mapping_Mapping;
+    }
     export namespace MatrixKeypad {
         export type MatrixKeypadRef = __marker_matrix_keypad_MatrixKeypad;
         export type MatrixKeypadBinarySensorRef = __marker_matrix_keypad_MatrixKeypadBinarySensor;
@@ -8130,6 +8314,9 @@ export namespace Components {
     }
     export namespace Mitsubishi {
         export type MitsubishiClimateRef = __marker_mitsubishi_MitsubishiClimate;
+    }
+    export namespace MitsubishiCn105 {
+        export type MitsubishiCN105ClimateRef = __marker_mitsubishi_cn105_MitsubishiCN105Climate;
     }
     export namespace MixerSpeaker {
         export type MixerSpeakerRef = __marker_mixer_speaker_MixerSpeaker;
@@ -8265,6 +8452,7 @@ export namespace Components {
     }
     export namespace Number {
         export type NumberRef = __marker_number_Number;
+        export type NumberSensorRef = __marker_number_NumberSensor;
     }
     export namespace OneWire {
         export type OneWireBusRef = __marker_one_wire_OneWireBus;
@@ -8707,6 +8895,12 @@ export namespace Components {
     export namespace SoundLevel {
         export type SoundLevelComponentRef = __marker_sound_level_SoundLevelComponent;
     }
+    export namespace Spa06I2C {
+        export type SPA06I2CComponentRef = __marker_spa06_i2c_SPA06I2CComponent;
+    }
+    export namespace Spa06SPI {
+        export type SPA06SPIComponentRef = __marker_spa06_spi_SPA06SPIComponent;
+    }
     export namespace Speaker {
         export type AudioPipelineRef = __marker_speaker_AudioPipeline;
         export type SpeakerRef = __marker_speaker_Speaker;
@@ -8919,6 +9113,7 @@ export namespace Components {
     }
     export namespace Text {
         export type TextRef = __marker_text_Text;
+        export type TextTextSensorRef = __marker_text_TextTextSensor;
     }
     export namespace TextSensor {
         export type TextSensorRef = __marker_text_sensor_TextSensor;
@@ -9094,6 +9289,8 @@ export namespace Components {
         export type DeltaSolCBSensorRef = __marker_vbus_DeltaSolCBSensor;
         export type DeltaSolCS2BSensorRef = __marker_vbus_DeltaSolCS2BSensor;
         export type DeltaSolCS2SensorRef = __marker_vbus_DeltaSolCS2Sensor;
+        export type DeltaSolCS4BSensorRef = __marker_vbus_DeltaSolCS4BSensor;
+        export type DeltaSolCS4SensorRef = __marker_vbus_DeltaSolCS4Sensor;
         export type DeltaSolCSPlusBSensorRef = __marker_vbus_DeltaSolCSPlusBSensor;
         export type DeltaSolCSPlusSensorRef = __marker_vbus_DeltaSolCSPlusSensor;
         export type DeltaSolCSensorRef = __marker_vbus_DeltaSolCSensor;

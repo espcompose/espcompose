@@ -7,27 +7,25 @@ import type { ComponentProps, IPv4Address, Pin, RefProp, TimePeriod, TriggerHand
 import type { _CoreComponent } from "../bases";
 import type { __marker_time_RealTimeClock, __marker_wireguard_Wireguard } from "../markers";
 export interface WireguardProps extends _CoreComponent {
-    /** @yamlKey time_id */
-    timeId?: RefProp<__marker_time_RealTimeClock>;
     /** IPv4 address: The local VPN address of the device. If you intend to upload firmwares through the VPN link you probabl... */
     address: IPv4Address;
     /** IPv4 address: The netmask for the configured address. Default to `255.255.255.255`. See section [Static routes and ou... */
     netmask?: IPv4Address;
     /**
-     * string: The private key of the device.
-     * @yamlKey private_key
+     * list of IPv4 networks: A list of networks in CIDR notation (*IP/mask*) to be allowed through the tunnel. Any host (`0...
+     * @yamlKey peer_allowed_ips
      */
-    privateKey: string;
+    peerAllowedIps?: Array<unknown>;
     /**
      * string: The hostname of the remote peer.
      * @yamlKey peer_endpoint
      */
     peerEndpoint: string;
     /**
-     * string: The public key of the remote peer.
-     * @yamlKey peer_public_key
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time after which a *keepalive* packet is se...
+     * @yamlKey peer_persistent_keepalive
      */
-    peerPublicKey: string;
+    peerPersistentKeepalive?: TimePeriod;
     /**
      * UDP port: The port where remote peer is listening on. The WireGuard® default is `51820`.
      * @yamlKey peer_port
@@ -39,17 +37,17 @@ export interface WireguardProps extends _CoreComponent {
      */
     peerPresharedKey?: string;
     /**
-     * list of IPv4 networks: A list of networks in CIDR notation (*IP/mask*) to be allowed through the tunnel. Any host (`0...
-     * @yamlKey peer_allowed_ips
+     * string: The public key of the remote peer.
+     * @yamlKey peer_public_key
      */
-    peerAllowedIps?: Array<unknown>;
+    peerPublicKey: string;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time after which a *keepalive* packet is sent through the tun...
-     * @yamlKey peer_persistent_keepalive
+     * string: The private key of the device.
+     * @yamlKey private_key
      */
-    peerPersistentKeepalive?: TimePeriod;
+    privateKey: string;
     /**
-     * [Time](/guides/configuration-types#time): The amount of time to wait before rebooting the device when the remote peer...
+     * [Time](https://esphome.io/guides/configuration-types#time): The amount of time to wait before rebooting the device wh...
      * @yamlKey reboot_timeout
      */
     rebootTimeout?: TimePeriod;
@@ -58,8 +56,10 @@ export interface WireguardProps extends _CoreComponent {
      * @yamlKey require_connection_to_proceed
      */
     requireConnectionToProceed?: boolean;
+    /** @yamlKey time_id */
+    timeId?: RefProp<__marker_time_RealTimeClock>;
     /**
-     * [Time](/guides/configuration-types#time): How often to check the connection status and the latest handshake value. De...
+     * [Time](https://esphome.io/guides/configuration-types#time): How often to check the connection status and the latest h...
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;

@@ -231,7 +231,7 @@ function extractLvglSchema(): void {
   console.log(`\n── Step 4: Extract LVGL schema ──`);
 
   const venvPython = path.join(VENV_DIR, 'bin', 'python');
-  const extractScript = path.join(REPO_ROOT, 'scripts', 'codegen', 'extract_lvgl_schema.py');
+  const extractScript = path.join(REPO_ROOT, 'packages', 'esphome-codegen', 'src', 'extract_lvgl_schema.py');
   const outputFile = path.join(SCHEMAS_DIR, 'lvgl-schema.json');
 
   if (!fs.existsSync(extractScript)) {

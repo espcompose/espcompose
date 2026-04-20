@@ -7,15 +7,15 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { _CoreComponent } from "../bases";
 import type { __marker_rd03d_RD03DComponent, __marker_uart_UARTComponent } from "../markers";
 export interface Rd03dProps extends _CoreComponent {
+    /** [Time](https://esphome.io/guides/configuration-types#time): Minimum time between sensor updates. The radar sends data... */
+    throttle?: TimePeriod;
     /**
      * string: The tracking mode to configure. If not specified, no command is sent and the radar uses its default mode (typ...
      * @yamlKey tracking_mode
      */
-    trackingMode?: "single" | "multi";
-    /** [Time](/guides/configuration-types#time): Minimum time between sensor updates. The radar sends data very frequently; ... */
-    throttle?: TimePeriod;
+    trackingMode?: "multi" | "single";
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) to use. Requi...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID of the [UART Component](https://espho...
      * @yamlKey uart_id
      */
     uartId?: RefProp<__marker_uart_UARTComponent>;

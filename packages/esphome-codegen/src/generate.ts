@@ -40,7 +40,7 @@ import {
 import { buildLvglFileContent } from './lvgl-codegen.js';
 import { generateActionsFile } from './action-codegen.js';
 import { extractSchemaActions } from './schema-action-extractor.js';
-import { ACTION_OVERRIDES } from './overrides.js';
+import { ACTION_OVERRIDES, PLATFORM_COMPONENT_OVERRIDES } from './overrides.js';
 import {
   collectMarkerClasses, collectRegistryClasses,
   buildMarkerClassMap, buildMarkersFileContent,
@@ -202,7 +202,7 @@ async function run(): Promise<void> {
   }
   const root = rootRaw as unknown as RootSchema;
 
-  const platformNames = new Set(Object.keys(root.core?.platforms ?? {}));
+  const platformNames = new Set(Object.keys(root.core?.platforms ?? {}).sort());
   const topLevelComponents = root.core?.components ?? {};
 
   console.log(`  Platforms: ${platformNames.size}`);
@@ -238,7 +238,7 @@ async function run(): Promise<void> {
     isPlatform: false,
   });
 
-  for (const [name] of Object.entries(topLevelComponents)) {
+  for (const [name] of Object.entries(topLevelComponents).sort(([a], [b]) => a.localeCompare(b))) {
     if (name === 'esphome') continue;
     // All core.components entries are top-level standalone elements.
     // `dependencies` expresses a "requires" constraint, NOT a platform ownership
@@ -259,13 +259,27 @@ async function run(): Promise<void> {
       | (ComponentEntry & { components?: Record<string, unknown> })
       | undefined;
     if (!platformEntry?.components) continue;
-    for (const compName of Object.keys(platformEntry.components)) {
+    for (const compName of Object.keys(platformEntry.components).sort()) {
       if (!componentTargets.has(compName)) {
         componentTargets.set(compName, {
           name: compName,
           url: `local://${compName}.json`,
           isPlatform: false,
           platform: platformTarget.name,
+        });
+      }
+    }
+  }
+
+  // Inject platform component overrides for components missing from the schema dumper
+  for (const [platformName, compNames] of PLATFORM_COMPONENT_OVERRIDES) {
+    for (const compName of compNames) {
+      if (!componentTargets.has(compName)) {
+        componentTargets.set(compName, {
+          name: compName,
+          url: `local://${compName}.json`,
+          isPlatform: false,
+          platform: platformName,
         });
       }
     }
@@ -337,7 +351,7 @@ async function run(): Promise<void> {
     const existing = platformComponentMap.get(platformTarget.name) ?? [];
     const existingNames = new Set(existing.map((c) => c.name));
 
-    for (const compName of Object.keys(outerEntry.components)) {
+    for (const compName of Object.keys(outerEntry.components).sort()) {
       if (existingNames.has(compName)) continue;
       // Try to reuse already-fetched data with platform context injected.
       const compTarget = componentTargets.get(compName);
@@ -385,7 +399,12 @@ async function run(): Promise<void> {
   // Merge manual action overrides (for actions not exported by the schema dumper)
   for (const [cls, overrideActions] of ACTION_OVERRIDES) {
     const existing = classActions.get(cls) ?? [];
-    existing.push(...overrideActions);
+    const existingMethods = new Set(existing.map(a => a.methodName));
+    for (const override of overrideActions) {
+      if (!existingMethods.has(override.methodName)) {
+        existing.push(override);
+      }
+    }
     classActions.set(cls, existing);
     // Ensure the override target class gets a marker even if no schema references it
     allCppClasses.add(cls);
@@ -452,7 +471,7 @@ async function run(): Promise<void> {
   const globalUsedNames = new Map<string, string>();
   const basesNested: InterfaceAccumulator = [];
   const basesMarkerRefs = new Set<string>();
-  for (const ref of allExtendsRefs) {
+  for (const ref of [...allExtendsRefs].sort()) {
     resolveStub(ref, schemaRegistry, basesNested, basesMarkerRefs, globalStubs, globalUsedNames);
   }
 

@@ -8,7 +8,7 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_ld2412_LD2412Component, __marker_uart_UARTComponent } from "../markers";
 export interface Ld2412Props extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart), which is nec...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID of the [UART Component](https://espho...
      * @yamlKey uart_id
      */
     uartId?: RefProp<__marker_uart_UARTComponent>;

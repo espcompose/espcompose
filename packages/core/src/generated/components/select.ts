@@ -5,1140 +5,1198 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttCommandComponent } from "../bases";
-import type { __marker_EntityBase, __marker_copy_CopySelect, __marker_es8388_ES8388, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2450_LD2450Component, __marker_logger_Logger, __marker_logger_LoggerLevelSelect, __marker_lvgl_LVGLSelect, __marker_modbus_controller_ModbusController, __marker_modbus_controller_ModbusSelect, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_seeed_mr60fda2_MR60FDA2Component, __marker_select_Select, __marker_template__TemplateSelect, __marker_tuya_Tuya, __marker_tuya_TuyaSelect, __marker_web_server_WebServer } from "../markers";
+import type { __marker_Device, __marker_EntityBase, __marker_copy_CopySelect, __marker_es8388_ES8388, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2450_LD2450Component, __marker_logger_Logger, __marker_logger_LoggerLevelSelect, __marker_lvgl_LVGLSelect, __marker_modbus_controller_ModbusController, __marker_modbus_controller_ModbusSelect, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_seeed_mr60fda2_MR60FDA2Component, __marker_select_Select, __marker_template__TemplateSelect, __marker_tuya_Tuya, __marker_tuya_TuyaSelect, __marker_web_server_WebServer } from "../markers";
 interface SelectWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
-}
-interface Es8388DacOutputPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface Es8388DacOutputPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
     /** @yamlKey sorting_weight */
     sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface Es8388DacOutputProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Es8388DacOutputPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: Es8388DacOutputPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Es8388AdcInputMicPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Es8388AdcInputMicPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Es8388AdcInputMicProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Es8388AdcInputMicPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Es8388AdcInputMicPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Es8388AdcInputMicPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface Ld2410DistanceResolutionPropsAvailabilityProps {
-    topic: unknown;
+interface Es8388DacOutputPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface Ld2410DistanceResolutionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface Es8388DacOutputPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface Ld2410DistanceResolutionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface Es8388DacOutputProps {
+    availability?: Es8388DacOutputPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2410DistanceResolutionPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: Ld2410DistanceResolutionPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface Ld2410LightFunctionPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface Ld2410LightFunctionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface Ld2410LightFunctionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
     internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2410LightFunctionPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: Ld2410LightFunctionPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface Ld2410OutPinLevelPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface Ld2410OutPinLevelPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface Ld2410OutPinLevelProps {
-    /** string: The name for the sensor. */
+    /** string: The name for the select. At least one of id and name must be specified. */
     name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2410OutPinLevelPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: Ld2410OutPinLevelPropsWebServerProps;
-    /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: string;
     }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Es8388DacOutputPropsWebServerProps;
 }
 interface Ld2410BaudRatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2410BaudRatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2410BaudRateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2410BaudRatePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2410BaudRatePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2410BaudRatePropsWebServerProps;
-    /** @yamlKey on_value */
+}
+interface Ld2410DistanceResolutionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface Ld2410DistanceResolutionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface Ld2410DistanceResolutionProps {
+    availability?: Ld2410DistanceResolutionPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
     onValue?: TriggerHandler<{
         x: string;
     }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2410DistanceResolutionPropsWebServerProps;
+}
+interface Ld2410LightFunctionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface Ld2410LightFunctionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface Ld2410LightFunctionProps {
+    availability?: Ld2410LightFunctionPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2410LightFunctionPropsWebServerProps;
+}
+interface Ld2410OutPinLevelPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface Ld2410OutPinLevelPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface Ld2410OutPinLevelProps {
+    availability?: Ld2410OutPinLevelPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2410OutPinLevelPropsWebServerProps;
 }
 interface Ld2412BaudRatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2412BaudRatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2412BaudRateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2412BaudRatePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2412BaudRatePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2412BaudRatePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2412DistanceResolutionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2412DistanceResolutionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2412DistanceResolutionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2412DistanceResolutionPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2412DistanceResolutionPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2412DistanceResolutionPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2412LightFunctionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2412LightFunctionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2412LightFunctionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2412LightFunctionPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2412LightFunctionPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2412LightFunctionPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2412OutPinLevelPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2412OutPinLevelPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2412OutPinLevelProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2412OutPinLevelPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2412OutPinLevelPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2412OutPinLevelPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2420OperatingModePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2420OperatingModePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2420OperatingModeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2420OperatingModePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2420OperatingModePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2420OperatingModePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2450BaudRatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450BaudRatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450BaudRateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450BaudRatePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2450BaudRatePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2450BaudRatePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2450ZoneTypePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450ZoneTypePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450ZoneTypeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450ZoneTypePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2450ZoneTypePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2450ZoneTypePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1SceneModePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1SceneModePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1SceneModeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1SceneModePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1SceneModePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1UnmanTimePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1UnmanTimePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1UnmanTimeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1UnmanTimePropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1UnmanTimePropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface SeeedMr24hpc1ExistenceBoundaryPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface SeeedMr24hpc1ExistenceBoundaryPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface SeeedMr24hpc1ExistenceBoundaryProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: SeeedMr24hpc1ExistenceBoundaryPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: SeeedMr24hpc1ExistenceBoundaryPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1ExistenceBoundaryPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface SeeedMr24hpc1MotionBoundaryPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface SeeedMr24hpc1MotionBoundaryPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface SeeedMr24hpc1MotionBoundaryProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: SeeedMr24hpc1MotionBoundaryPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: SeeedMr24hpc1MotionBoundaryPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1MotionBoundaryPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface SeeedMr60fda2InstallHeightPropsAvailabilityProps {
-    topic: unknown;
+interface SeeedMr24hpc1SceneModePropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface SeeedMr60fda2InstallHeightPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface SeeedMr24hpc1SceneModePropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface SeeedMr60fda2InstallHeightProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface SeeedMr24hpc1SceneModeProps {
+    availability?: SeeedMr24hpc1SceneModePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr60fda2InstallHeightPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr60fda2InstallHeightPropsWebServerProps;
-    /** @yamlKey on_value */
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
     onValue?: TriggerHandler<{
         x: string;
     }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1SceneModePropsWebServerProps;
+}
+interface SeeedMr24hpc1UnmanTimePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1UnmanTimePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1UnmanTimeProps {
+    availability?: SeeedMr24hpc1UnmanTimePropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1UnmanTimePropsWebServerProps;
 }
 interface SeeedMr60fda2HeightThresholdPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface SeeedMr60fda2HeightThresholdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface SeeedMr60fda2HeightThresholdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: SeeedMr60fda2HeightThresholdPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr60fda2HeightThresholdPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
-    /** @yamlKey command_retain */
-    commandRetain?: boolean;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr60fda2HeightThresholdPropsWebServerProps;
-    /** @yamlKey on_value */
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
     onValue?: TriggerHandler<{
         x: string;
     }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr60fda2HeightThresholdPropsWebServerProps;
 }
-interface SeeedMr60fda2SensitivityPropsAvailabilityProps {
-    topic: unknown;
+interface SeeedMr60fda2InstallHeightPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface SeeedMr60fda2SensitivityPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface SeeedMr60fda2InstallHeightPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface SeeedMr60fda2SensitivityProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface SeeedMr60fda2InstallHeightProps {
+    availability?: SeeedMr60fda2InstallHeightPropsAvailabilityProps;
+    /** @yamlKey command_retain */
+    commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr60fda2InstallHeightPropsWebServerProps;
+}
+interface SeeedMr60fda2SensitivityPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr60fda2SensitivityPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr60fda2SensitivityProps {
     availability?: SeeedMr60fda2SensitivityPropsAvailabilityProps;
-    /** @yamlKey command_topic */
-    commandTopic?: unknown;
     /** @yamlKey command_retain */
     commandRetain?: boolean;
+    /** @yamlKey command_topic */
+    commandTopic?: unknown;
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    /** icon: Manually set the icon to use for the select in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the select. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: SeeedMr60fda2SensitivityPropsWebServerProps;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface SelectBaseProps extends _CoreEntityBase, _CoreMqttCommandComponent {
-    /** @yamlKey web_server */
-    webServer?: SelectWebServerProps;
-    /** @yamlKey on_value */
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
     onValue?: TriggerHandler<{
         x: string;
     }>;
+    /** @yamlKey web_server */
+    webServer?: SelectWebServerProps;
 }
 interface CopyProps extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): The select that should be mirrored.
+     * [ID](https://esphome.io/guides/configuration-types#id): The select that should be mirrored.
      * @yamlKey source_id
      */
     sourceId: RefProp<__marker_select_Select>;
 }
 interface Es8388Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
-     * @yamlKey es8388_id
+     * Control the ADC Mic Input.
+     * @yamlKey adc_input_mic
      */
-    es8388Id?: RefProp<__marker_es8388_ES8388>;
+    adcInputMic?: Es8388AdcInputMicProps;
     /**
      * Control the DAC Audio output.
      * @yamlKey dac_output
      */
     dacOutput?: Es8388DacOutputProps;
     /**
-     * Control the ADC Mic Input.
-     * @yamlKey adc_input_mic
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the [Es8388](https://esphome.io/c...
+     * @yamlKey es8388_id
      */
-    adcInputMic?: Es8388AdcInputMicProps;
+    es8388Id?: RefProp<__marker_es8388_ES8388>;
 }
 interface Ld2410Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
-     * @yamlKey ld2410_id
+     * Control the serial port baud rate. Defaults to `256000`. Once changed, all sensors will stop working until you reinst...
+     * @yamlKey baud_rate
      */
-    ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
+    baudRate?: Ld2410BaudRateProps;
     /**
-     * Control the gates distance resolution. Can be `0.75m` or `0.2m`. Defaults to `0.75m`. All options from [Select](/comp...
+     * Control the gates distance resolution. Can be `0.75m` or `0.2m`. Defaults to `0.75m`. All options from [Select](https...
      * @yamlKey distance_resolution
      */
     distanceResolution?: Ld2410DistanceResolutionProps;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the [Ld2410](https://esphome.io/c...
+     * @yamlKey ld2410_id
+     */
+    ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
     /**
      * If set, will affect the OUT pin value, based on [light threshold](https://esphome.io/components/sensor/ld2410#ld2410-...
      * @yamlKey light_function
      */
     lightFunction?: Ld2410LightFunctionProps;
     /**
-     * Control OUT pin `away` value. Can be `low` or `high`. Defaults to `low`. All options from [Select](/components/select...
+     * Control OUT pin `away` value. Can be `low` or `high`. Defaults to `low`. All options from [Select](https://esphome.io...
      * @yamlKey out_pin_level
      */
     outPinLevel?: Ld2410OutPinLevelProps;
-    /**
-     * Control the serial port baud rate. Defaults to `256000`. Once changed, all sensors will stop working until you reinst...
-     * @yamlKey baud_rate
-     */
-    baudRate?: Ld2410BaudRateProps;
 }
 interface Ld2412Props {
-    /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
-     * @yamlKey ld2412_id
-     */
-    ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
     /**
      * Allows changing the baud rate of the LD2412's serial port. Defaults to `115200`. Once changed, sensors will stop work...
      * @yamlKey baud_rate
@@ -1149,6 +1207,11 @@ interface Ld2412Props {
      * @yamlKey distance_resolution
      */
     distanceResolution?: Ld2412DistanceResolutionProps;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the component. Required when usin...
+     * @yamlKey ld2412_id
+     */
+    ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
     /**
      * Allows selection of how the LD2412's OUT pin will react to the light level. Can be `off`, `below` or `above`. Note th...
      * @yamlKey light_function
@@ -1164,22 +1227,22 @@ interface Ld2420Props {
     /** @yamlKey ld2420_id */
     ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
     /**
-     * Provisions the operating mode select component. May contain any options from [Select](/components/select#config-select).
+     * Provisions the operating mode select component. May contain any options from [Select](https://esphome.io/components/s...
      * @yamlKey operating_mode
      */
     operatingMode: Ld2420OperatingModeProps;
 }
 interface Ld2450Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
-     * @yamlKey ld2450_id
-     */
-    ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
-    /**
      * Control the UART serial port baud rate. Defaults to `256000`. Once changed, all sensors will stop working until a fre...
      * @yamlKey baud_rate
      */
     baudRate?: Ld2450BaudRateProps;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the [Ld2450](https://esphome.io/c...
+     * @yamlKey ld2450_id
+     */
+    ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
     /**
      * Control the zone detection modes. It can be set to `Disabled`, `Detection` or `Filter`. Selecting the `Disabled` opti...
      * @yamlKey zone_type
@@ -1194,32 +1257,42 @@ interface LoggerProps {
     loggerId?: RefProp<__marker_logger_Logger>;
 }
 interface LvglProps {
-    widget: RefProp<unknown>;
     animated?: boolean;
     /** @yamlKey restore_value */
     restoreValue?: boolean;
+    widget: RefProp<unknown>;
 }
 interface ModbusControllerProps extends _CoreComponent {
+    address: number;
+    /** @yamlKey force_new_range */
+    forceNewRange?: boolean;
+    lambda?: unknown;
     /** @yamlKey modbus_controller_id */
     modbusControllerId?: RefProp<__marker_modbus_controller_ModbusController>;
-    address: number;
-    /** @yamlKey value_type */
-    valueType?: "RAW" | "U_WORD" | "S_WORD" | "U_DWORD" | "U_DWORD_R" | "S_DWORD" | "S_DWORD_R" | "U_QWORD" | "U_QWORD_R" | "S_QWORD" | "S_QWORD_R";
+    optimistic?: boolean;
+    optionsmap: unknown;
     /** @yamlKey register_count */
     registerCount?: number;
     /** @yamlKey skip_updates */
     skipUpdates?: number;
-    /** @yamlKey force_new_range */
-    forceNewRange?: boolean;
-    optionsmap: unknown;
     /** @yamlKey use_write_multiple */
     useWriteMultiple?: boolean;
-    optimistic?: boolean;
-    lambda?: unknown;
+    /** @yamlKey value_type */
+    valueType?: "RAW" | "S_DWORD" | "S_DWORD_R" | "S_QWORD" | "S_QWORD_R" | "S_WORD" | "U_DWORD" | "U_DWORD_R" | "U_QWORD" | "U_QWORD_R" | "U_WORD";
     /** @yamlKey write_lambda */
     writeLambda?: unknown;
 }
 interface SeeedMr24hpc1Props {
+    /**
+     * Valid only in [custom mode settings](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode). The di...
+     * @yamlKey existence_boundary
+     */
+    existenceBoundary?: SeeedMr24hpc1ExistenceBoundaryProps;
+    /**
+     * Valid only in [custom mode settings](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode). The di...
+     * @yamlKey motion_boundary
+     */
+    motionBoundary?: SeeedMr24hpc1MotionBoundaryProps;
     /** @yamlKey mr24hpc1_id */
     mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
     /**
@@ -1232,70 +1305,60 @@ interface SeeedMr24hpc1Props {
      * @yamlKey unman_time
      */
     unmanTime?: SeeedMr24hpc1UnmanTimeProps;
-    /**
-     * Valid only in [custom mode settings](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode). The di...
-     * @yamlKey existence_boundary
-     */
-    existenceBoundary?: SeeedMr24hpc1ExistenceBoundaryProps;
-    /**
-     * Valid only in [custom mode settings](https://esphome.io/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode). The di...
-     * @yamlKey motion_boundary
-     */
-    motionBoundary?: SeeedMr24hpc1MotionBoundaryProps;
 }
 interface SeeedMr60fda2Props {
-    /** @yamlKey mr60fda2_id */
-    mr60fda2Id?: RefProp<__marker_seeed_mr60fda2_MR60FDA2Component>;
-    /**
-     * Before using the MR60FDA2, please select the installation height of the radar according to the actual situation in or...
-     * @yamlKey install_height
-     */
-    installHeight?: SeeedMr60fda2InstallHeightProps;
     /**
      * To accurately distinguish between a person falling and sitting still in this area, you need to set the trigger height...
      * @yamlKey height_threshold
      */
     heightThreshold?: SeeedMr60fda2HeightThresholdProps;
-    /** Fall sensitivity factor. Defaults to 1 with a range of 1-3, 3 = high and 1 = low. All options from [Select](/componen... */
+    /**
+     * Before using the MR60FDA2, please select the installation height of the radar according to the actual situation in or...
+     * @yamlKey install_height
+     */
+    installHeight?: SeeedMr60fda2InstallHeightProps;
+    /** @yamlKey mr60fda2_id */
+    mr60fda2Id?: RefProp<__marker_seeed_mr60fda2_MR60FDA2Component>;
+    /** Fall sensitivity factor. Defaults to 1 with a range of 1-3, 3 = high and 1 = low. All options from [Select](https://e... */
     sensitivity?: SeeedMr60fda2SensitivityProps;
 }
 interface TemplateProps extends _CoreComponent {
-    /** list: The list of options this Select has. */
-    options: Array<string>;
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the current optio... */
-    lambda?: unknown;
-    /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the Template Select will imme... */
-    optimistic?: boolean;
-    /**
-     * [Action](/automations/actions#all-actions): The action that should be performed when the remote (like Home Assistant'...
-     * @yamlKey set_action
-     */
-    setAction?: TriggerHandler;
     /**
      * string: The option to set the option to on setup if not restored with `restore_value`. Cannot be used with `lambda`. ...
      * @yamlKey initial_option
      */
     initialOption?: string;
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated every update interval to get... */
+    lambda?: unknown;
+    /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the Template Select will imme... */
+    optimistic?: boolean;
+    /** list: The list of options this Select has. */
+    options: Array<string>;
     /**
      * boolean: Saves and loads the state to RTC/Flash. Cannot be used with `lambda`. Defaults to `false`.
      * @yamlKey restore_value
      */
     restoreValue?: boolean;
     /**
-     * [Time](/guides/configuration-types#time): The interval on which to update the select by executing the `lambda`. Defau...
+     * [Action](https://esphome.io/automations/actions#all-actions): The action that should be performed when the remote (li...
+     * @yamlKey set_action
+     */
+    setAction?: TriggerHandler;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval on which to update the select by executing t...
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;
 }
 interface TuyaProps extends _CoreComponent {
-    /** @yamlKey tuya_id */
-    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey enum_datapoint */
     enumDatapoint?: number;
     /** @yamlKey int_datapoint */
     intDatapoint?: number;
-    options: unknown;
     optimistic?: boolean;
+    options: unknown;
+    /** @yamlKey tuya_id */
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
 }
 export type SelectProps = (SelectBaseProps & {
     platform: "copy";

@@ -5,1922 +5,278 @@
 
 import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from "../../types";
 import type { _BleClient, _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _HomeassistantHomeAssistantImport, _ModbusControllerModbusitembaseschema, _Msa3xxMsaSensor, _PipsolarComponent, _PylontechComponent, _TeleinfoListener, _UartDevice } from "../bases";
-import type { __marker_Color, __marker_EntityBase, __marker_atm90e32_ATM90E32Component, __marker_ble_client_BLETextSensor, __marker_ble_scanner_BLEScanner, __marker_bme680_bsec_BME680BSECComponent, __marker_bme68x_bsec2_BME68xBSEC2Component, __marker_copy_CopyTextSensor, __marker_daly_bms_DalyBmsComponent, __marker_debug_DebugComponent, __marker_dlms_meter_DlmsMeterComponent, __marker_esp32_ble_tracker_ESP32BLETracker, __marker_esphome_dsmr_Dsmr, __marker_ezo_pmp_EzoPMP, __marker_gdk101_GDK101Component, __marker_haier_HonClimate, __marker_hlk_fm22x_HlkFm22xComponent, __marker_homeassistant_HomeassistantTextSensor, __marker_key_collector_KeyCollector, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2420_LD2420TextSensor, __marker_ld2450_LD2450Component, __marker_libretiny_LTComponent, __marker_micronova_MicroNova, __marker_modbus_controller_ModbusTextSensor, __marker_mqtt_MQTTClientComponent, __marker_mqtt_subscribe_MQTTSubscribeTextSensor, __marker_nextion_Nextion, __marker_nextion_NextionTextSensor, __marker_pylontech_PylontechTextSensor, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_sml_Sml, __marker_sml_SmlTextSensor, __marker_sun_Sun, __marker_sun_SunTextSensor, __marker_sun_gtil2_SunGTIL2, __marker_sy6970_SY6970Component, __marker_teleinfo_TeleInfoTextSensor, __marker_template__TemplateTextSensor, __marker_text_sensor_TextSensor, __marker_tuya_Tuya, __marker_tuya_TuyaTextSensor, __marker_uptime_UptimeTextSensor, __marker_version_VersionTextSensor, __marker_web_server_WebServer, __marker_wireguard_Wireguard, __marker_wl_134_Wl134Component } from "../markers";
+import type { __marker_Color, __marker_Device, __marker_EntityBase, __marker_atm90e32_ATM90E32Component, __marker_ble_client_BLETextSensor, __marker_ble_scanner_BLEScanner, __marker_bme680_bsec_BME680BSECComponent, __marker_bme68x_bsec2_BME68xBSEC2Component, __marker_copy_CopyTextSensor, __marker_daly_bms_DalyBmsComponent, __marker_debug_DebugComponent, __marker_dlms_meter_DlmsMeterComponent, __marker_esp32_ble_tracker_ESP32BLETracker, __marker_esphome_dsmr_Dsmr, __marker_ezo_pmp_EzoPMP, __marker_gdk101_GDK101Component, __marker_haier_HonClimate, __marker_hlk_fm22x_HlkFm22xComponent, __marker_homeassistant_HomeassistantTextSensor, __marker_key_collector_KeyCollector, __marker_ld2410_LD2410Component, __marker_ld2412_LD2412Component, __marker_ld2420_LD2420Component, __marker_ld2420_LD2420TextSensor, __marker_ld2450_LD2450Component, __marker_libretiny_LTComponent, __marker_micronova_MicroNova, __marker_modbus_controller_ModbusTextSensor, __marker_mqtt_MQTTClientComponent, __marker_mqtt_subscribe_MQTTSubscribeTextSensor, __marker_nextion_Nextion, __marker_nextion_NextionTextSensor, __marker_pylontech_PylontechTextSensor, __marker_seeed_mr24hpc1_MR24HPC1Component, __marker_sml_Sml, __marker_sml_SmlTextSensor, __marker_sun_Sun, __marker_sun_SunTextSensor, __marker_sun_gtil2_SunGTIL2, __marker_sy6970_SY6970Component, __marker_teleinfo_TeleInfoTextSensor, __marker_template__TemplateTextSensor, __marker_text_Text, __marker_text_TextTextSensor, __marker_text_sensor_TextSensor, __marker_tuya_Tuya, __marker_tuya_TuyaTextSensor, __marker_uptime_UptimeTextSensor, __marker_version_VersionTextSensor, __marker_web_server_WebServer, __marker_wireguard_Wireguard, __marker_wl_134_Wl134Component } from "../markers";
 interface TextSensorWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface EthernetInfoIpAddressPropsAvailabilityProps {
-    topic: unknown;
+interface Atm90e32FrequencyStatusPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
-}
-interface EthernetInfoIpAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoIpAddressPropsAddress0PropsAvailabilityProps {
     topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
 }
-interface EthernetInfoIpAddressPropsAddress0PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface Atm90e32FrequencyStatusPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface EthernetInfoIpAddressPropsAddress0Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface Atm90e32FrequencyStatusProps {
+    availability?: Atm90e32FrequencyStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAddress0PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsAddress0PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoIpAddressPropsAddress1PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoIpAddressPropsAddress1Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
     internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsAddress1PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoIpAddressPropsAddress2PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoIpAddressPropsAddress2Props {
-    /** string: The name for the sensor. */
+    /** string: The name for the sensor. At least one of id and name must be specified. */
     name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsAddress2PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
-}
-interface EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoIpAddressPropsAddress3PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoIpAddressPropsAddress3Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsAddress3PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: string;
     }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoIpAddressPropsAddress4PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoIpAddressPropsAddress4Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsAddress4PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface EthernetInfoIpAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoIpAddressPropsAvailabilityProps;
     /** @yamlKey web_server */
-    webServer?: EthernetInfoIpAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey address_0 */
-    address0?: EthernetInfoIpAddressPropsAddress0Props;
-    /** @yamlKey address_1 */
-    address1?: EthernetInfoIpAddressPropsAddress1Props;
-    /** @yamlKey address_2 */
-    address2?: EthernetInfoIpAddressPropsAddress2Props;
-    /** @yamlKey address_3 */
-    address3?: EthernetInfoIpAddressPropsAddress3Props;
-    /** @yamlKey address_4 */
-    address4?: EthernetInfoIpAddressPropsAddress4Props;
-}
-interface EthernetInfoDnsAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoDnsAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoDnsAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoDnsAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoDnsAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface EthernetInfoMacAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface EthernetInfoMacAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface EthernetInfoMacAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EthernetInfoMacAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EthernetInfoMacAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface OpenthreadInfoIpAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoIpAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoIpAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoIpAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoIpAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface OpenthreadInfoRolePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoRolePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoRoleProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoRolePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoRolePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoRloc16PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoRloc16PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoRloc16Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoRloc16PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoRloc16PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoExtAddrPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoExtAddrPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoExtAddrProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoExtAddrPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoExtAddrPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoEui64PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoEui64PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoEui64Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoEui64PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoEui64PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoChannelPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoChannelPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoChannelProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoChannelPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoChannelPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoNetworkNamePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoNetworkNamePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoNetworkNameProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoNetworkNamePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoNetworkNamePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoNetworkKeyPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoNetworkKeyPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoNetworkKeyProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoNetworkKeyPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoNetworkKeyPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoPanIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoPanIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoPanIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoPanIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoPanIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface OpenthreadInfoExtPanIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface OpenthreadInfoExtPanIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface OpenthreadInfoExtPanIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: OpenthreadInfoExtPanIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: OpenthreadInfoExtPanIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
-}
-interface WifiInfoIpAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress0PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsAddress0PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress0Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAddress0PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsAddress0PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoIpAddressPropsAddress1PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsAddress1PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress1Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAddress1PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsAddress1PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoIpAddressPropsAddress2PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsAddress2PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress2Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAddress2PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsAddress2PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoIpAddressPropsAddress3PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsAddress3PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress3Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAddress3PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsAddress3PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoIpAddressPropsAddress4PropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoIpAddressPropsAddress4PropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoIpAddressPropsAddress4Props {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAddress4PropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsAddress4PropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoIpAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoIpAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoIpAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey address_0 */
-    address0?: WifiInfoIpAddressPropsAddress0Props;
-    /** @yamlKey address_1 */
-    address1?: WifiInfoIpAddressPropsAddress1Props;
-    /** @yamlKey address_2 */
-    address2?: WifiInfoIpAddressPropsAddress2Props;
-    /** @yamlKey address_3 */
-    address3?: WifiInfoIpAddressPropsAddress3Props;
-    /** @yamlKey address_4 */
-    address4?: WifiInfoIpAddressPropsAddress4Props;
-}
-interface WifiInfoScanResultsPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoScanResultsPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoScanResultsProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoScanResultsPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoScanResultsPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoSsidPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoSsidPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoSsidProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoSsidPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoSsidPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoBssidPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoBssidPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoBssidProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoBssidPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoBssidPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoMacAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoMacAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoMacAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoMacAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoMacAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoDnsAddressPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoDnsAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoDnsAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoDnsAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoDnsAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface WifiInfoPowerSaveModePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface WifiInfoPowerSaveModePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface WifiInfoPowerSaveModeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: WifiInfoPowerSaveModePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: WifiInfoPowerSaveModePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
+    webServer?: Atm90e32FrequencyStatusPropsWebServerProps;
 }
 interface Atm90e32PhaseStatusPropsPhaseAPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Atm90e32PhaseStatusPropsPhaseAPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Atm90e32PhaseStatusPropsPhaseAProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Atm90e32PhaseStatusPropsPhaseAPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Atm90e32PhaseStatusPropsPhaseAPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Atm90e32PhaseStatusPropsPhaseAPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Atm90e32PhaseStatusPropsPhaseBPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Atm90e32PhaseStatusPropsPhaseBPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Atm90e32PhaseStatusPropsPhaseBProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Atm90e32PhaseStatusPropsPhaseBPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Atm90e32PhaseStatusPropsPhaseBPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Atm90e32PhaseStatusPropsPhaseBPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Atm90e32PhaseStatusPropsPhaseBPropsWebServerProps;
 }
 interface Atm90e32PhaseStatusPropsPhaseCPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Atm90e32PhaseStatusPropsPhaseCPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Atm90e32PhaseStatusPropsPhaseCProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Atm90e32PhaseStatusPropsPhaseCPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Atm90e32PhaseStatusPropsPhaseCPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Atm90e32PhaseStatusPropsPhaseCPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Atm90e32PhaseStatusPropsPhaseCPropsWebServerProps;
 }
 interface Atm90e32PhaseStatusProps {
     /**
-     * Phase A status field. All options from [Text Sensor](/components/text_sensor#config-text_sensor). Will Report:
+     * Phase A status field. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor). W...
      * @yamlKey phase_a
      */
     phaseA?: Atm90e32PhaseStatusPropsPhaseAProps;
@@ -1935,4228 +291,6060 @@ interface Atm90e32PhaseStatusProps {
      */
     phaseC?: Atm90e32PhaseStatusPropsPhaseCProps;
 }
-interface Atm90e32FrequencyStatusPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface Atm90e32FrequencyStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface Atm90e32FrequencyStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Atm90e32FrequencyStatusPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Atm90e32FrequencyStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
 interface Bme680BsecIaqAccuracyPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Bme680BsecIaqAccuracyPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Bme680BsecIaqAccuracyProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Bme680BsecIaqAccuracyPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Bme680BsecIaqAccuracyPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Bme680BsecIaqAccuracyPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Bme68xBsec2IaqAccuracyPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Bme68xBsec2IaqAccuracyPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Bme68xBsec2IaqAccuracyProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Bme68xBsec2IaqAccuracyPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Bme68xBsec2IaqAccuracyPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Bme68xBsec2IaqAccuracyPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DalyBmsStatusPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DalyBmsStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DalyBmsStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DalyBmsStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DalyBmsStatusPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DalyBmsStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DebugDevicePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DebugDevicePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DebugDeviceProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DebugDevicePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DebugDevicePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DebugDevicePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DebugResetReasonPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DebugResetReasonPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DebugResetReasonProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DebugResetReasonPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DebugResetReasonPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DebugResetReasonPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DlmsMeterTimestampPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DlmsMeterTimestampPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DlmsMeterTimestampProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DlmsMeterTimestampPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DlmsMeterTimestampPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DlmsMeterMeternumberPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DlmsMeterMeternumberPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DlmsMeterMeternumberProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DlmsMeterMeternumberPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DlmsMeterMeternumberPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DlmsMeterMeternumberPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface DsmrIdentificationPropsAvailabilityProps {
-    topic: unknown;
+interface DlmsMeterTimestampPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface DsmrIdentificationPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface DlmsMeterTimestampPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface DsmrIdentificationProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface DlmsMeterTimestampProps {
+    availability?: DlmsMeterTimestampPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrIdentificationPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrIdentificationPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrP1VersionPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrP1VersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrP1VersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
     internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrP1VersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrP1VersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrP1VersionBePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrP1VersionBePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrP1VersionBeProps {
-    /** string: The name for the sensor. */
+    /** string: The name for the sensor. At least one of id and name must be specified. */
     name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrP1VersionBePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrP1VersionBePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
-}
-interface DsmrTimestampPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrTimestampPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrTimestampProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrTimestampPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrTimestampPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: string;
     }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrElectricityTariffPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrElectricityTariffPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrElectricityTariffProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrElectricityTariffPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
-    webServer?: DsmrElectricityTariffPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
+    webServer?: DlmsMeterTimestampPropsWebServerProps;
 }
 interface DsmrElectricityFailureLogPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrElectricityFailureLogPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrElectricityFailureLogProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrElectricityFailureLogPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrElectricityFailureLogPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrElectricityFailureLogPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface DsmrMessageShortPropsAvailabilityProps {
-    topic: unknown;
+interface DsmrElectricityTariffPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface DsmrMessageShortPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface DsmrElectricityTariffPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface DsmrMessageShortProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface DsmrElectricityTariffProps {
+    availability?: DsmrElectricityTariffPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrMessageShortPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrMessageShortPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrMessageLongPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrMessageLongPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrMessageLongProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
     internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrMessageLongPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrMessageLongPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrElectricityTariffPropsWebServerProps;
 }
 interface DsmrEquipmentIdPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrEquipmentIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrEquipmentIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrEquipmentIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrEquipmentIdPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrEquipmentIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrGasEquipmentIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrGasEquipmentIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrGasEquipmentIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrGasEquipmentIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrGasEquipmentIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrGasEquipmentIdBePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrGasEquipmentIdBePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrGasEquipmentIdBeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrGasEquipmentIdBePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrGasEquipmentIdBePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrThermalEquipmentIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrThermalEquipmentIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrThermalEquipmentIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrThermalEquipmentIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrThermalEquipmentIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrWaterEquipmentIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrWaterEquipmentIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrWaterEquipmentIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrWaterEquipmentIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrWaterEquipmentIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrSubEquipmentIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrSubEquipmentIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrSubEquipmentIdProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrSubEquipmentIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrSubEquipmentIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface DsmrGasDeliveredTextPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface DsmrGasDeliveredTextPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface DsmrGasDeliveredTextProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: DsmrGasDeliveredTextPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: DsmrGasDeliveredTextPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DsmrFwCoreChecksumPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrFwCoreChecksumPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrFwCoreChecksumProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrFwCoreChecksumPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrFwCoreChecksumPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrFwCoreChecksumPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DsmrFwCoreVersionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrFwCoreVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrFwCoreVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrFwCoreVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrFwCoreVersionPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrFwCoreVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DsmrFwModuleChecksumPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrFwModuleChecksumPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrFwModuleChecksumProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrFwModuleChecksumPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrFwModuleChecksumPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrFwModuleChecksumPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface DsmrFwModuleVersionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrFwModuleVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrFwModuleVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrFwModuleVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrFwModuleVersionPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrFwModuleVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface DsmrGasDeliveredTextPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrGasDeliveredTextPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrGasDeliveredTextProps {
+    availability?: DsmrGasDeliveredTextPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrGasDeliveredTextPropsWebServerProps;
+}
+interface DsmrGasEquipmentIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrGasEquipmentIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrGasEquipmentIdProps {
+    availability?: DsmrGasEquipmentIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrGasEquipmentIdPropsWebServerProps;
+}
+interface DsmrGasEquipmentIdBePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrGasEquipmentIdBePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrGasEquipmentIdBeProps {
+    availability?: DsmrGasEquipmentIdBePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrGasEquipmentIdBePropsWebServerProps;
+}
+interface DsmrIdentificationPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrIdentificationPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrIdentificationProps {
+    availability?: DsmrIdentificationPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrIdentificationPropsWebServerProps;
+}
+interface DsmrMessageLongPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrMessageLongPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrMessageLongProps {
+    availability?: DsmrMessageLongPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrMessageLongPropsWebServerProps;
+}
+interface DsmrMessageShortPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrMessageShortPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrMessageShortProps {
+    availability?: DsmrMessageShortPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrMessageShortPropsWebServerProps;
+}
+interface DsmrP1VersionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrP1VersionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrP1VersionProps {
+    availability?: DsmrP1VersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrP1VersionPropsWebServerProps;
+}
+interface DsmrP1VersionBePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrP1VersionBePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrP1VersionBeProps {
+    availability?: DsmrP1VersionBePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrP1VersionBePropsWebServerProps;
+}
+interface DsmrSubEquipmentIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrSubEquipmentIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrSubEquipmentIdProps {
+    availability?: DsmrSubEquipmentIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrSubEquipmentIdPropsWebServerProps;
 }
 interface DsmrTelegramPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface DsmrTelegramPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface DsmrTelegramProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: DsmrTelegramPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: DsmrTelegramPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: DsmrTelegramPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface EzoPmpDosingModePropsAvailabilityProps {
-    topic: unknown;
+interface DsmrThermalEquipmentIdPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface EzoPmpDosingModePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface DsmrThermalEquipmentIdPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface EzoPmpDosingModeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface DsmrThermalEquipmentIdProps {
+    availability?: DsmrThermalEquipmentIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: EzoPmpDosingModePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: EzoPmpDosingModePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrThermalEquipmentIdPropsWebServerProps;
+}
+interface DsmrTimestampPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrTimestampPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrTimestampProps {
+    availability?: DsmrTimestampPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrTimestampPropsWebServerProps;
+}
+interface DsmrWaterEquipmentIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface DsmrWaterEquipmentIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface DsmrWaterEquipmentIdProps {
+    availability?: DsmrWaterEquipmentIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: DsmrWaterEquipmentIdPropsWebServerProps;
+}
+interface EthernetInfoDnsAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoDnsAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoDnsAddressProps {
+    availability?: EthernetInfoDnsAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoDnsAddressPropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAddress0PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsAddress0PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressPropsAddress0Props {
+    availability?: EthernetInfoIpAddressPropsAddress0PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsAddress0PropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsAddress1PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressPropsAddress1Props {
+    availability?: EthernetInfoIpAddressPropsAddress1PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsAddress1PropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsAddress2PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressPropsAddress2Props {
+    availability?: EthernetInfoIpAddressPropsAddress2PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsAddress2PropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsAddress3PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressPropsAddress3Props {
+    availability?: EthernetInfoIpAddressPropsAddress3PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsAddress3PropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsAddress4PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressPropsAddress4Props {
+    availability?: EthernetInfoIpAddressPropsAddress4PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsAddress4PropsWebServerProps;
+}
+interface EthernetInfoIpAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoIpAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoIpAddressProps {
+    /** @yamlKey address_0 */
+    address0?: EthernetInfoIpAddressPropsAddress0Props;
+    /** @yamlKey address_1 */
+    address1?: EthernetInfoIpAddressPropsAddress1Props;
+    /** @yamlKey address_2 */
+    address2?: EthernetInfoIpAddressPropsAddress2Props;
+    /** @yamlKey address_3 */
+    address3?: EthernetInfoIpAddressPropsAddress3Props;
+    /** @yamlKey address_4 */
+    address4?: EthernetInfoIpAddressPropsAddress4Props;
+    availability?: EthernetInfoIpAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoIpAddressPropsWebServerProps;
+}
+interface EthernetInfoMacAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EthernetInfoMacAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EthernetInfoMacAddressProps {
+    availability?: EthernetInfoMacAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EthernetInfoMacAddressPropsWebServerProps;
 }
 interface EzoPmpCalibrationStatusPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface EzoPmpCalibrationStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface EzoPmpCalibrationStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: EzoPmpCalibrationStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: EzoPmpCalibrationStatusPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: EzoPmpCalibrationStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface EzoPmpDosingModePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface EzoPmpDosingModePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface EzoPmpDosingModeProps {
+    availability?: EzoPmpDosingModePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: EzoPmpDosingModePropsWebServerProps;
 }
 interface Gdk101VersionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Gdk101VersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Gdk101VersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Gdk101VersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Gdk101VersionPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Gdk101VersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface HaierCleaningStatusPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface HaierCleaningStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface HaierCleaningStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: HaierCleaningStatusPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: HaierCleaningStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface HaierProtocolVersionPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface HaierProtocolVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface HaierProtocolVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: HaierProtocolVersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: HaierProtocolVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface HaierApplianceNamePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface HaierApplianceNamePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface HaierApplianceNameProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: HaierApplianceNamePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: HaierApplianceNamePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: HaierApplianceNamePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface HlkFm22xVersionPropsAvailabilityProps {
-    topic: unknown;
+interface HaierCleaningStatusPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface HlkFm22xVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface HaierCleaningStatusPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface HlkFm22xVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface HaierCleaningStatusProps {
+    availability?: HaierCleaningStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: HlkFm22xVersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: HlkFm22xVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: HaierCleaningStatusPropsWebServerProps;
+}
+interface HaierProtocolVersionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface HaierProtocolVersionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface HaierProtocolVersionProps {
+    availability?: HaierProtocolVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: HaierProtocolVersionPropsWebServerProps;
 }
 interface HlkFm22xLastFaceNamePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface HlkFm22xLastFaceNamePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface HlkFm22xLastFaceNameProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: HlkFm22xLastFaceNamePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: HlkFm22xLastFaceNamePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: HlkFm22xLastFaceNamePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface Ld2410VersionPropsAvailabilityProps {
-    topic: unknown;
+interface HlkFm22xVersionPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface Ld2410VersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface HlkFm22xVersionPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface Ld2410VersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface HlkFm22xVersionProps {
+    availability?: HlkFm22xVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2410VersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2410VersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: HlkFm22xVersionPropsWebServerProps;
 }
 interface Ld2410MacAddressPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2410MacAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2410MacAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2410MacAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2410MacAddressPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2410MacAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface Ld2412VersionPropsAvailabilityProps {
-    topic: unknown;
+interface Ld2410VersionPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface Ld2412VersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface Ld2410VersionPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface Ld2412VersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface Ld2410VersionProps {
+    availability?: Ld2410VersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2412VersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2412VersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2410VersionPropsWebServerProps;
 }
 interface Ld2412MacAddressPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2412MacAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2412MacAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2412MacAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2412MacAddressPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2412MacAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface Ld2412VersionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface Ld2412VersionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface Ld2412VersionProps {
+    availability?: Ld2412VersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2412VersionPropsWebServerProps;
 }
 interface Ld2420FwVersionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2420FwVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2420FwVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2420FwVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Ld2420FwVersionPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Ld2420FwVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface Ld2450VersionPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface Ld2450VersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface Ld2450VersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2450VersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2450VersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Ld2450MacAddressPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450MacAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450MacAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450MacAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2450MacAddressPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2450MacAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2450MacAddressPropsWebServerProps;
 }
 interface Ld2450Target1PropsDirectionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450Target1PropsDirectionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450Target1PropsDirectionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450Target1PropsDirectionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2450Target1PropsDirectionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2450Target1PropsDirectionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2450Target1PropsDirectionPropsWebServerProps;
 }
 interface Ld2450Target1Props {
     direction?: Ld2450Target1PropsDirectionProps;
 }
 interface Ld2450Target2PropsDirectionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450Target2PropsDirectionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450Target2PropsDirectionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450Target2PropsDirectionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2450Target2PropsDirectionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2450Target2PropsDirectionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2450Target2PropsDirectionPropsWebServerProps;
 }
 interface Ld2450Target2Props {
     direction?: Ld2450Target2PropsDirectionProps;
 }
 interface Ld2450Target3PropsDirectionPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Ld2450Target3PropsDirectionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Ld2450Target3PropsDirectionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Ld2450Target3PropsDirectionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Ld2450Target3PropsDirectionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Ld2450Target3PropsDirectionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2450Target3PropsDirectionPropsWebServerProps;
 }
 interface Ld2450Target3Props {
     direction?: Ld2450Target3PropsDirectionProps;
 }
-interface LibretinyVersionPropsAvailabilityProps {
-    topic: unknown;
+interface Ld2450VersionPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface Ld2450VersionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface Ld2450VersionProps {
+    availability?: Ld2450VersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Ld2450VersionPropsWebServerProps;
+}
+interface LibretinyVersionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface LibretinyVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface LibretinyVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: LibretinyVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: LibretinyVersionPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: LibretinyVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface MicronovaStoveStatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface MicronovaStoveStatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface MicronovaStoveStateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: MicronovaStoveStatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: MicronovaStoveStatePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: MicronovaStoveStatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey setup_priority */
-    setupPriority?: unknown;
-    /** @yamlKey micronova_id */
-    micronovaId?: RefProp<__marker_micronova_MicroNova>;
-    /** @yamlKey memory_location */
-    memoryLocation?: unknown;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
     /** @yamlKey memory_address */
     memoryAddress?: unknown;
+    /** @yamlKey memory_location */
+    memoryLocation?: unknown;
+    /** @yamlKey micronova_id */
+    micronovaId?: RefProp<__marker_micronova_MicroNova>;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: MicronovaStoveStatePropsWebServerProps;
 }
 interface Msa3xxOrientationXyPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Msa3xxOrientationXyPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Msa3xxOrientationXyProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Msa3xxOrientationXyPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Msa3xxOrientationXyPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Msa3xxOrientationXyPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Msa3xxOrientationZPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Msa3xxOrientationZPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Msa3xxOrientationZProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Msa3xxOrientationZPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Msa3xxOrientationZPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Msa3xxOrientationZPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface OpenthreadInfoChannelPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoChannelPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoChannelProps {
+    availability?: OpenthreadInfoChannelPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoChannelPropsWebServerProps;
+}
+interface OpenthreadInfoEui64PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoEui64PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoEui64Props {
+    availability?: OpenthreadInfoEui64PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoEui64PropsWebServerProps;
+}
+interface OpenthreadInfoExtAddrPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoExtAddrPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoExtAddrProps {
+    availability?: OpenthreadInfoExtAddrPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoExtAddrPropsWebServerProps;
+}
+interface OpenthreadInfoExtPanIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoExtPanIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoExtPanIdProps {
+    availability?: OpenthreadInfoExtPanIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoExtPanIdPropsWebServerProps;
+}
+interface OpenthreadInfoIpAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoIpAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoIpAddressProps {
+    availability?: OpenthreadInfoIpAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoIpAddressPropsWebServerProps;
+}
+interface OpenthreadInfoNetworkKeyPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoNetworkKeyPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoNetworkKeyProps {
+    availability?: OpenthreadInfoNetworkKeyPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoNetworkKeyPropsWebServerProps;
+}
+interface OpenthreadInfoNetworkNamePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoNetworkNamePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoNetworkNameProps {
+    availability?: OpenthreadInfoNetworkNamePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoNetworkNamePropsWebServerProps;
+}
+interface OpenthreadInfoPanIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoPanIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoPanIdProps {
+    availability?: OpenthreadInfoPanIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoPanIdPropsWebServerProps;
+}
+interface OpenthreadInfoRloc16PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoRloc16PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoRloc16Props {
+    availability?: OpenthreadInfoRloc16PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoRloc16PropsWebServerProps;
+}
+interface OpenthreadInfoRolePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface OpenthreadInfoRolePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface OpenthreadInfoRoleProps {
+    availability?: OpenthreadInfoRolePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey setup_priority */
+    setupPriority?: unknown;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
+    /** @yamlKey web_server */
+    webServer?: OpenthreadInfoRolePropsWebServerProps;
 }
 interface PipsolarDeviceModePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PipsolarDeviceModePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PipsolarDeviceModeProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PipsolarDeviceModePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PipsolarDeviceModePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PipsolarDeviceModePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PipsolarLastQpigsPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PipsolarLastQpigsPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PipsolarLastQpigsProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PipsolarLastQpigsPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PipsolarLastQpigsPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PipsolarLastQpiriPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PipsolarLastQpiriPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PipsolarLastQpiriProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PipsolarLastQpiriPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PipsolarLastQpiriPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PipsolarLastQmodPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PipsolarLastQmodPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PipsolarLastQmodProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PipsolarLastQmodPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PipsolarLastQmodPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface PipsolarLastQflagPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PipsolarLastQflagPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PipsolarLastQflagProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PipsolarLastQflagPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PipsolarLastQflagPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PipsolarLastQflagPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PipsolarLastQpiwsPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PipsolarLastQpiwsPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PipsolarLastQpiwsProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PipsolarLastQpiwsPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PipsolarLastQpiwsPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PipsolarLastQtPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PipsolarLastQtPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PipsolarLastQtProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PipsolarLastQtPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PipsolarLastQtPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface PipsolarLastQmnPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PipsolarLastQmnPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PipsolarLastQmnProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PipsolarLastQmnPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PipsolarLastQmnPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PipsolarLastQmnPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface PipsolarLastQmodPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface PipsolarLastQmodPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface PipsolarLastQmodProps {
+    availability?: PipsolarLastQmodPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: PipsolarLastQmodPropsWebServerProps;
+}
+interface PipsolarLastQpigsPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface PipsolarLastQpigsPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface PipsolarLastQpigsProps {
+    availability?: PipsolarLastQpigsPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: PipsolarLastQpigsPropsWebServerProps;
+}
+interface PipsolarLastQpiriPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface PipsolarLastQpiriPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface PipsolarLastQpiriProps {
+    availability?: PipsolarLastQpiriPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: PipsolarLastQpiriPropsWebServerProps;
+}
+interface PipsolarLastQpiwsPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface PipsolarLastQpiwsPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface PipsolarLastQpiwsProps {
+    availability?: PipsolarLastQpiwsPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: PipsolarLastQpiwsPropsWebServerProps;
+}
+interface PipsolarLastQtPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface PipsolarLastQtPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface PipsolarLastQtProps {
+    availability?: PipsolarLastQtPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: PipsolarLastQtPropsWebServerProps;
 }
 interface PylontechBaseStatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PylontechBaseStatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PylontechBaseStateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PylontechBaseStatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PylontechBaseStatePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PylontechBaseStatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface PylontechVoltageStatePropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface PylontechVoltageStatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface PylontechVoltageStateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: PylontechVoltageStatePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: PylontechVoltageStatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface PylontechCurrentStatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PylontechCurrentStatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PylontechCurrentStateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PylontechCurrentStatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PylontechCurrentStatePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PylontechCurrentStatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface PylontechTemperatureStatePropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface PylontechTemperatureStatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface PylontechTemperatureStateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: PylontechTemperatureStatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: PylontechTemperatureStatePropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: PylontechTemperatureStatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface SeeedMr24hpc1HeartBeatPropsAvailabilityProps {
-    topic: unknown;
+interface PylontechVoltageStatePropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface SeeedMr24hpc1HeartBeatPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface PylontechVoltageStatePropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface SeeedMr24hpc1HeartBeatProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface PylontechVoltageStateProps {
+    availability?: PylontechVoltageStatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1HeartBeatPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1HeartBeatPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1ProductModelPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1ProductModelPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1ProductModelProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
     internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1ProductModelPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1ProductModelPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1ProductIdPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1ProductIdPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1ProductIdProps {
-    /** string: The name for the sensor. */
+    /** string: The name for the sensor. At least one of id and name must be specified. */
     name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1ProductIdPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1ProductIdPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
-}
-interface SeeedMr24hpc1HardwareModelPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1HardwareModelPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1HardwareModelProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
     /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
      */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1HardwareModelPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1HardwareModelPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
     onValue?: TriggerHandler<{
         x: string;
     }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1HardwareVersionPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1HardwareVersionPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1HardwareVersionProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: SeeedMr24hpc1HardwareVersionPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1HardwareVersionPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1KeepAwayPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1KeepAwayPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1KeepAwayProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
     /** @yamlKey subscribe_qos */
     subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1KeepAwayPropsAvailabilityProps;
     /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1KeepAwayPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
-}
-interface SeeedMr24hpc1MotionStatusPropsAvailabilityProps {
-    topic: unknown;
-    /** @yamlKey payload_available */
-    payloadAvailable?: unknown;
-    /** @yamlKey payload_not_available */
-    payloadNotAvailable?: unknown;
-}
-interface SeeedMr24hpc1MotionStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
-    /** @yamlKey sorting_group_id */
-    sortingGroupId?: number;
-}
-interface SeeedMr24hpc1MotionStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
-    /**
-     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
-     * @yamlKey disabled_by_default
-     */
-    disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
-    /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
-     * @yamlKey entity_category
-     */
-    entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SeeedMr24hpc1MotionStatusPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SeeedMr24hpc1MotionStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
+    webServer?: PylontechVoltageStatePropsWebServerProps;
 }
 interface SeeedMr24hpc1CustomModeEndPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface SeeedMr24hpc1CustomModeEndPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface SeeedMr24hpc1CustomModeEndProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: SeeedMr24hpc1CustomModeEndPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: SeeedMr24hpc1CustomModeEndPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: SeeedMr24hpc1CustomModeEndPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
-interface SunGtil2StatePropsAvailabilityProps {
-    topic: unknown;
+interface SeeedMr24hpc1HardwareModelPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface SunGtil2StatePropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface SeeedMr24hpc1HardwareModelPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface SunGtil2StateProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface SeeedMr24hpc1HardwareModelProps {
+    availability?: SeeedMr24hpc1HardwareModelPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: SunGtil2StatePropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: SunGtil2StatePropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1HardwareModelPropsWebServerProps;
+}
+interface SeeedMr24hpc1HardwareVersionPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1HardwareVersionPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1HardwareVersionProps {
+    availability?: SeeedMr24hpc1HardwareVersionPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1HardwareVersionPropsWebServerProps;
+}
+interface SeeedMr24hpc1HeartBeatPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1HeartBeatPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1HeartBeatProps {
+    availability?: SeeedMr24hpc1HeartBeatPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1HeartBeatPropsWebServerProps;
+}
+interface SeeedMr24hpc1KeepAwayPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1KeepAwayPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1KeepAwayProps {
+    availability?: SeeedMr24hpc1KeepAwayPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1KeepAwayPropsWebServerProps;
+}
+interface SeeedMr24hpc1MotionStatusPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1MotionStatusPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1MotionStatusProps {
+    availability?: SeeedMr24hpc1MotionStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1MotionStatusPropsWebServerProps;
+}
+interface SeeedMr24hpc1ProductIdPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1ProductIdPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1ProductIdProps {
+    availability?: SeeedMr24hpc1ProductIdPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1ProductIdPropsWebServerProps;
+}
+interface SeeedMr24hpc1ProductModelPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SeeedMr24hpc1ProductModelPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SeeedMr24hpc1ProductModelProps {
+    availability?: SeeedMr24hpc1ProductModelPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SeeedMr24hpc1ProductModelPropsWebServerProps;
 }
 interface SunGtil2SerialNumberPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface SunGtil2SerialNumberPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface SunGtil2SerialNumberProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: SunGtil2SerialNumberPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: SunGtil2SerialNumberPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: SunGtil2SerialNumberPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+}
+interface SunGtil2StatePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface SunGtil2StatePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface SunGtil2StateProps {
+    availability?: SunGtil2StatePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: SunGtil2StatePropsWebServerProps;
 }
 interface Sy6970BusStatusPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Sy6970BusStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Sy6970BusStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Sy6970BusStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
-    availability?: Sy6970BusStatusPropsAvailabilityProps;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: Sy6970BusStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface Sy6970ChargeStatusPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Sy6970ChargeStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Sy6970ChargeStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Sy6970ChargeStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Sy6970ChargeStatusPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Sy6970ChargeStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Sy6970ChargeStatusPropsWebServerProps;
 }
 interface Sy6970NtcStatusPropsAvailabilityProps {
-    topic: unknown;
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
 interface Sy6970NtcStatusPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface Sy6970NtcStatusProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+    availability?: Sy6970NtcStatusPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
-    qos?: unknown;
-    retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
-    /** @yamlKey state_topic */
-    stateTopic?: unknown;
-    availability?: Sy6970NtcStatusPropsAvailabilityProps;
-    /** @yamlKey web_server */
-    webServer?: Sy6970NtcStatusPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: Sy6970NtcStatusPropsWebServerProps;
 }
 interface UptimeFormatProps {
     /** string: The string to use for the days element. Defaults to `d`. */
     days?: string;
+    /** boolean: If set, the text will always include all elements, even if they are zero. Defaults to `false`. */
+    expand?: boolean;
     /** string: The string to use for the hours element. Defaults to `h`. */
     hours?: string;
     /** string: The string to use for the minutes element. Defaults to `m`. */
@@ -6165,206 +6353,901 @@ interface UptimeFormatProps {
     seconds?: string;
     /** string: The separator to use between the uptime values. Defaults to the empty string. */
     separator?: string;
-    /** boolean: If set, the text will always include all elements, even if they are zero. Defaults to `false`. */
-    expand?: boolean;
 }
-interface WireguardAddressPropsAvailabilityProps {
-    topic: unknown;
+interface WifiInfoBssidPropsAvailabilityProps {
     /** @yamlKey payload_available */
     payloadAvailable?: unknown;
     /** @yamlKey payload_not_available */
     payloadNotAvailable?: unknown;
+    topic: unknown;
 }
-interface WireguardAddressPropsWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
+interface WifiInfoBssidPropsWebServerProps {
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
-interface WireguardAddressProps {
-    /** string: The name for the sensor. */
-    name?: string;
-    /** boolean: Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set... */
-    internal?: boolean;
+interface WifiInfoBssidProps {
+    availability?: WifiInfoBssidPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
     /**
      * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
      * @yamlKey disabled_by_default
      */
     disabledByDefault?: boolean;
-    /** icon: Manually set the icon to use for the light in the frontend. */
-    icon?: string;
+    discovery?: boolean;
     /**
-     * string: The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-pr...
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
      * @yamlKey entity_category
      */
     entityCategory?: string;
-    /** @yamlKey device_id */
-    deviceId?: unknown;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
     qos?: unknown;
     retain?: boolean;
-    discovery?: boolean;
-    /** @yamlKey subscribe_qos */
-    subscribeQos?: unknown;
     /** @yamlKey state_topic */
     stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoBssidPropsWebServerProps;
+}
+interface WifiInfoDnsAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoDnsAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoDnsAddressProps {
+    availability?: WifiInfoDnsAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoDnsAddressPropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAddress0PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsAddress0PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressPropsAddress0Props {
+    availability?: WifiInfoIpAddressPropsAddress0PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsAddress0PropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAddress1PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsAddress1PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressPropsAddress1Props {
+    availability?: WifiInfoIpAddressPropsAddress1PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsAddress1PropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAddress2PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsAddress2PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressPropsAddress2Props {
+    availability?: WifiInfoIpAddressPropsAddress2PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsAddress2PropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAddress3PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsAddress3PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressPropsAddress3Props {
+    availability?: WifiInfoIpAddressPropsAddress3PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsAddress3PropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAddress4PropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsAddress4PropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressPropsAddress4Props {
+    availability?: WifiInfoIpAddressPropsAddress4PropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsAddress4PropsWebServerProps;
+}
+interface WifiInfoIpAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoIpAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoIpAddressProps {
+    /** @yamlKey address_0 */
+    address0?: WifiInfoIpAddressPropsAddress0Props;
+    /** @yamlKey address_1 */
+    address1?: WifiInfoIpAddressPropsAddress1Props;
+    /** @yamlKey address_2 */
+    address2?: WifiInfoIpAddressPropsAddress2Props;
+    /** @yamlKey address_3 */
+    address3?: WifiInfoIpAddressPropsAddress3Props;
+    /** @yamlKey address_4 */
+    address4?: WifiInfoIpAddressPropsAddress4Props;
+    availability?: WifiInfoIpAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoIpAddressPropsWebServerProps;
+}
+interface WifiInfoMacAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoMacAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoMacAddressProps {
+    availability?: WifiInfoMacAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoMacAddressPropsWebServerProps;
+}
+interface WifiInfoPowerSaveModePropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoPowerSaveModePropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoPowerSaveModeProps {
+    availability?: WifiInfoPowerSaveModePropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoPowerSaveModePropsWebServerProps;
+}
+interface WifiInfoScanResultsPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoScanResultsPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoScanResultsProps {
+    availability?: WifiInfoScanResultsPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoScanResultsPropsWebServerProps;
+}
+interface WifiInfoSsidPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WifiInfoSsidPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WifiInfoSsidProps {
+    availability?: WifiInfoSsidPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
+    /** @yamlKey web_server */
+    webServer?: WifiInfoSsidPropsWebServerProps;
+}
+interface WireguardAddressPropsAvailabilityProps {
+    /** @yamlKey payload_available */
+    payloadAvailable?: unknown;
+    /** @yamlKey payload_not_available */
+    payloadNotAvailable?: unknown;
+    topic: unknown;
+}
+interface WireguardAddressPropsWebServerProps {
+    /** @yamlKey sorting_group_id */
+    sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
+}
+interface WireguardAddressProps {
     availability?: WireguardAddressPropsAvailabilityProps;
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
+    /** @yamlKey device_id */
+    deviceId?: RefProp<__marker_Device>;
+    /**
+     * boolean: If true, then this entity should not be added to any client's frontend, (usually Home Assistant) without the...
+     * @yamlKey disabled_by_default
+     */
+    disabledByDefault?: boolean;
+    discovery?: boolean;
+    /**
+     * string: The category of the entity. See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](h...
+     * @yamlKey entity_category
+     */
+    entityCategory?: string;
+    filters?: Array<unknown>;
+    /** icon: Manually set the icon to use for the sensor in the frontend. */
+    icon?: string;
+    /** boolean: Mark this component as internal. Internal components will not be exposed to the frontend (like Home Assistan... */
+    internal?: boolean;
+    /** string: The name for the sensor. At least one of id and name must be specified. */
+    name?: string;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
+    onRawValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
+     */
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    qos?: unknown;
+    retain?: boolean;
+    /** @yamlKey state_topic */
+    stateTopic?: unknown;
+    /** @yamlKey subscribe_qos */
+    subscribeQos?: unknown;
     /** @yamlKey web_server */
     webServer?: WireguardAddressPropsWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
-    filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
-    onRawValue?: TriggerHandler<{
-        x: string;
-    }>;
 }
 interface TextSensorBaseProps extends _CoreEntityBase, _CoreMqttComponent {
-    /** @yamlKey web_server */
-    webServer?: TextSensorWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "date" | "" | "timestamp";
+    /**
+     * string: The device class for the sensor. Only the `timestamp` and `date` device classes are supported. Set to `""` to...
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "date" | "timestamp";
     filters?: Array<unknown>;
-    /** @yamlKey on_value */
-    onValue?: TriggerHandler<{
-        x: string;
-    }>;
-    /** @yamlKey on_raw_value */
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is received that hasn't passe...
+     * @yamlKey on_raw_value
+     */
     onRawValue?: TriggerHandler<{
         x: string;
     }>;
-}
-interface BleScannerProps extends _CoreComponent {
-    /** @yamlKey esp32_ble_id */
-    esp32BleId?: RefProp<__marker_esp32_ble_tracker_ESP32BLETracker>;
-}
-interface EthernetInfoProps {
     /**
-     * Expose the IP Address of the ESP as a text sensor. All options from [Text Sensor](/components/text_sensor#config-text...
-     * @yamlKey ip_address
+     * [Automation](https://esphome.io/automations): An automation to perform when a new value is published. See [`on_value`...
+     * @yamlKey on_value
      */
-    ipAddress?: EthernetInfoIpAddressProps;
-    /**
-     * Expose the DNS Address of the ESP as text sensor. [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey dns_address
-     */
-    dnsAddress?: EthernetInfoDnsAddressProps;
-    /**
-     * Expose the MAC Address of the ESP as text sensor. [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey mac_address
-     */
-    macAddress?: EthernetInfoMacAddressProps;
-}
-interface OpenthreadInfoProps {
-    /**
-     * Expose the off-mesh routable IPv6 address of the Thread device as a text sensor. This is the address used for communi...
-     * @yamlKey ip_address
-     */
-    ipAddress?: OpenthreadInfoIpAddressProps;
-    /** Expose the current device role in the Thread network (Leader, Router, Child, Detached, etc.) as a text sensor. All op... */
-    role?: OpenthreadInfoRoleProps;
-    /** Expose the Router Locator (RLOC16) address as a text sensor. This is a 16-bit address used for routing within the Thr... */
-    rloc16?: OpenthreadInfoRloc16Props;
-    /**
-     * Expose the IEEE 802.15.4 Extended MAC address as a text sensor. All options from [Text Sensor](/components/text_senso...
-     * @yamlKey ext_addr
-     */
-    extAddr?: OpenthreadInfoExtAddrProps;
-    /** Expose the EUI-64 address as a text sensor. This is the unique 64-bit identifier for the device. All options from [Te... */
-    eui64?: OpenthreadInfoEui64Props;
-    /** Expose the Thread network channel (11-26) as a text sensor. All options from [Text Sensor](/components/text_sensor#co... */
-    channel?: OpenthreadInfoChannelProps;
-    /**
-     * Expose the Thread network name as a text sensor. All options from [Text Sensor](/components/text_sensor#config-text_s...
-     * @yamlKey network_name
-     */
-    networkName?: OpenthreadInfoNetworkNameProps;
-    /**
-     * Expose the Thread network key as a text sensor. All options from [Text Sensor](/components/text_sensor#config-text_se...
-     * @yamlKey network_key
-     */
-    networkKey?: OpenthreadInfoNetworkKeyProps;
-    /**
-     * Expose the Personal Area Network ID (PAN ID) as a text sensor. This is a 16-bit identifier for the Thread network. Al...
-     * @yamlKey pan_id
-     */
-    panId?: OpenthreadInfoPanIdProps;
-    /**
-     * Expose the Extended PAN ID as a text sensor. This is a 64-bit extended identifier for the Thread network. All options...
-     * @yamlKey ext_pan_id
-     */
-    extPanId?: OpenthreadInfoExtPanIdProps;
-}
-interface VersionProps extends _CoreComponent {
-    icon?: unknown;
-    /** @yamlKey entity_category */
-    entityCategory?: unknown;
-    /**
-     * boolean: Allows you to hide the config hash from the version string. Defaults to `false`.
-     * @yamlKey hide_hash
-     */
-    hideHash?: boolean;
-    /**
-     * boolean: Allows you to hide the compilation timestamp from the version string. Defaults to `false`.
-     * @yamlKey hide_timestamp
-     */
-    hideTimestamp?: boolean;
-}
-interface WifiInfoProps {
-    /**
-     * Expose the IP Address of the device as a text sensor. All options from [Text Sensor](/components/text_sensor#config-t...
-     * @yamlKey ip_address
-     */
-    ipAddress?: WifiInfoIpAddressProps;
-    /**
-     * Expose the latest networks found during the latest scan. All options from [Text Sensor](/components/text_sensor#confi...
-     * @yamlKey scan_results
-     */
-    scanResults?: WifiInfoScanResultsProps;
-    /** Expose the SSID of the currently connected WiFi network as a text sensor. All options from [Text Sensor](/components/... */
-    ssid?: WifiInfoSsidProps;
-    /** Expose the BSSID of the currently connected WiFi network as a text sensor. All options from [Text Sensor](/components... */
-    bssid?: WifiInfoBssidProps;
-    /**
-     * Expose the Mac Address of the WiFi card. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey mac_address
-     */
-    macAddress?: WifiInfoMacAddressProps;
-    /**
-     * Expose the DNS Address of the device as text sensor. [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey dns_address
-     */
-    dnsAddress?: WifiInfoDnsAddressProps;
-    /** @yamlKey power_save_mode */
-    powerSaveMode?: WifiInfoPowerSaveModeProps;
-}
-interface Wl134Props extends _UartDevice {
-    icon?: unknown;
-    /** boolean: Reset the text sensor state back to "" 1s after reading a tag. Defaults to `false`. */
-    reset?: boolean;
+    onValue?: TriggerHandler<{
+        x: string;
+    }>;
+    /** @yamlKey web_server */
+    webServer?: TextSensorWebServerProps;
 }
 interface Atm90e32Props {
-    /** [ID](/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if using more than one ... */
+    /**
+     * Reports status based on frequency thresholds.
+     * @yamlKey frequency_status
+     */
+    frequencyStatus?: Atm90e32FrequencyStatusProps;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The ID of the `atm90e32` sensor defined above. Required if us... */
     id?: RefProp<__marker_atm90e32_ATM90E32Component>;
     /**
      * Enables per-phase status conditions:
      * @yamlKey phase_status
      */
     phaseStatus?: Atm90e32PhaseStatusProps;
-    /**
-     * Reports status based on frequency thresholds.
-     * @yamlKey frequency_status
-     */
-    frequencyStatus?: Atm90e32FrequencyStatusProps;
 }
 interface BleClientProps extends _CoreComponent, _BleClient {
-    /** @yamlKey service_uuid */
-    serviceUuid: unknown;
     /** @yamlKey characteristic_uuid */
     characteristicUuid: unknown;
     /** @yamlKey descriptor_uuid */
@@ -6372,12 +7255,18 @@ interface BleClientProps extends _CoreComponent, _BleClient {
     notify?: boolean;
     /** @yamlKey on_notify */
     onNotify?: TriggerHandler;
+    /** @yamlKey service_uuid */
+    serviceUuid: unknown;
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }
+interface BleScannerProps extends _CoreComponent {
+    /** @yamlKey esp32_ble_id */
+    esp32BleId?: RefProp<__marker_esp32_ble_tracker_ESP32BLETracker>;
+}
 interface Bme680BsecProps {
     /**
-     * [ID](/guides/configuration-types#id): Sets the ID of the bme680_bsec component to refer to. Useful when working with ...
+     * [ID](https://esphome.io/guides/configuration-types#id): Sets the ID of the bme680_bsec component to refer to. Useful ...
      * @yamlKey bme680_bsec_id
      */
     bme680BsecId?: RefProp<__marker_bme680_bsec_BME680BSECComponent>;
@@ -6389,7 +7278,7 @@ interface Bme680BsecProps {
 }
 interface Bme68xBsec2Props {
     /**
-     * [ID](/guides/configuration-types#id): The ID of the `bme68x_bsec2_i2c` component the text sensor will refer to. Usefu...
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the `bme68x_bsec2_i2c` component the text sensor wi...
      * @yamlKey bme68x_bsec2_id
      */
     bme68xBsec2Id?: RefProp<__marker_bme68x_bsec2_BME68xBSEC2Component>;
@@ -6401,7 +7290,7 @@ interface Bme68xBsec2Props {
 }
 interface CopyProps extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): The text sensor that should be mirrored.
+     * [ID](https://esphome.io/guides/configuration-types#id): The text sensor that should be mirrored.
      * @yamlKey source_id
      */
     sourceId: RefProp<__marker_text_sensor_TextSensor>;
@@ -6409,7 +7298,7 @@ interface CopyProps extends _CoreComponent {
 interface DalyBmsProps extends _CoreComponent {
     /** @yamlKey bms_daly_id */
     bmsDalyId?: RefProp<__marker_daly_bms_DalyBmsComponent>;
-    /** The BMS Status (Charging, Discharging, Stationary). All options from [Text Sensor](/components/text_sensor#config-tex... */
+    /** The BMS Status (Charging, Discharging, Stationary). All options from [Text Sensor](https://esphome.io/components/text... */
     status?: DalyBmsStatusProps;
 }
 interface DebugProps {
@@ -6422,40 +7311,18 @@ interface DebugProps {
 interface DlmsMeterProps extends _CoreComponent {
     /** @yamlKey dlms_meter_id */
     dlmsMeterId?: RefProp<__marker_dlms_meter_DlmsMeterComponent>;
-    timestamp?: DlmsMeterTimestampProps;
     meternumber?: DlmsMeterMeternumberProps;
+    timestamp?: DlmsMeterTimestampProps;
 }
 interface DsmrProps extends _CoreComponent {
     /** @yamlKey dsmr_id */
     dsmrId?: RefProp<__marker_esphome_dsmr_Dsmr>;
-    identification?: DsmrIdentificationProps;
-    /** @yamlKey p1_version */
-    p1Version?: DsmrP1VersionProps;
-    /** @yamlKey p1_version_be */
-    p1VersionBe?: DsmrP1VersionBeProps;
-    timestamp?: DsmrTimestampProps;
-    /** @yamlKey electricity_tariff */
-    electricityTariff?: DsmrElectricityTariffProps;
     /** @yamlKey electricity_failure_log */
     electricityFailureLog?: DsmrElectricityFailureLogProps;
-    /** @yamlKey message_short */
-    messageShort?: DsmrMessageShortProps;
-    /** @yamlKey message_long */
-    messageLong?: DsmrMessageLongProps;
+    /** @yamlKey electricity_tariff */
+    electricityTariff?: DsmrElectricityTariffProps;
     /** @yamlKey equipment_id */
     equipmentId?: DsmrEquipmentIdProps;
-    /** @yamlKey gas_equipment_id */
-    gasEquipmentId?: DsmrGasEquipmentIdProps;
-    /** @yamlKey gas_equipment_id_be */
-    gasEquipmentIdBe?: DsmrGasEquipmentIdBeProps;
-    /** @yamlKey thermal_equipment_id */
-    thermalEquipmentId?: DsmrThermalEquipmentIdProps;
-    /** @yamlKey water_equipment_id */
-    waterEquipmentId?: DsmrWaterEquipmentIdProps;
-    /** @yamlKey sub_equipment_id */
-    subEquipmentId?: DsmrSubEquipmentIdProps;
-    /** @yamlKey gas_delivered_text */
-    gasDeliveredText?: DsmrGasDeliveredTextProps;
     /** @yamlKey fw_core_checksum */
     fwCoreChecksum?: DsmrFwCoreChecksumProps;
     /** @yamlKey fw_core_version */
@@ -6464,49 +7331,88 @@ interface DsmrProps extends _CoreComponent {
     fwModuleChecksum?: DsmrFwModuleChecksumProps;
     /** @yamlKey fw_module_version */
     fwModuleVersion?: DsmrFwModuleVersionProps;
+    /** @yamlKey gas_delivered_text */
+    gasDeliveredText?: DsmrGasDeliveredTextProps;
+    /** @yamlKey gas_equipment_id */
+    gasEquipmentId?: DsmrGasEquipmentIdProps;
+    /** @yamlKey gas_equipment_id_be */
+    gasEquipmentIdBe?: DsmrGasEquipmentIdBeProps;
+    identification?: DsmrIdentificationProps;
+    /** @yamlKey message_long */
+    messageLong?: DsmrMessageLongProps;
+    /** @yamlKey message_short */
+    messageShort?: DsmrMessageShortProps;
+    /** @yamlKey p1_version */
+    p1Version?: DsmrP1VersionProps;
+    /** @yamlKey p1_version_be */
+    p1VersionBe?: DsmrP1VersionBeProps;
+    /** @yamlKey sub_equipment_id */
+    subEquipmentId?: DsmrSubEquipmentIdProps;
     telegram?: DsmrTelegramProps;
+    /** @yamlKey thermal_equipment_id */
+    thermalEquipmentId?: DsmrThermalEquipmentIdProps;
+    timestamp?: DsmrTimestampProps;
+    /** @yamlKey water_equipment_id */
+    waterEquipmentId?: DsmrWaterEquipmentIdProps;
+}
+interface EthernetInfoProps {
+    /**
+     * Expose the DNS Address of the ESP as text sensor. [Text Sensor](https://esphome.io/components/text_sensor#config-text...
+     * @yamlKey dns_address
+     */
+    dnsAddress?: EthernetInfoDnsAddressProps;
+    /**
+     * Expose the IP Address of the ESP as a text sensor. All options from [Text Sensor](https://esphome.io/components/text_...
+     * @yamlKey ip_address
+     */
+    ipAddress?: EthernetInfoIpAddressProps;
+    /**
+     * Expose the MAC Address of the ESP as text sensor. [Text Sensor](https://esphome.io/components/text_sensor#config-text...
+     * @yamlKey mac_address
+     */
+    macAddress?: EthernetInfoMacAddressProps;
 }
 interface EzoPmpProps {
-    id?: RefProp<__marker_ezo_pmp_EzoPMP>;
-    /** @yamlKey dosing_mode */
-    dosingMode?: EzoPmpDosingModeProps;
     /** @yamlKey calibration_status */
     calibrationStatus?: EzoPmpCalibrationStatusProps;
+    /** @yamlKey dosing_mode */
+    dosingMode?: EzoPmpDosingModeProps;
+    id?: RefProp<__marker_ezo_pmp_EzoPMP>;
 }
 interface Gdk101Props {
     /** @yamlKey gdk101_id */
     gdk101Id?: RefProp<__marker_gdk101_GDK101Component>;
-    /** Firmware version of the module. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
+    /** Firmware version of the module. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_... */
     version: Gdk101VersionProps;
 }
 interface HaierProps {
     /**
-     * [ID](/guides/configuration-types#id): The id of haier climate component
-     * @yamlKey haier_id
+     * A text sensor that indicates Haier appliance name. All options from [Text Sensor](https://esphome.io/components/text_...
+     * @yamlKey appliance_name
      */
-    haierId?: RefProp<__marker_haier_HonClimate>;
+    applianceName?: HaierApplianceNameProps;
     /**
      * A text sensor that indicates cleaning status. Possible values "No cleaning", "Self clean", "56°C Steri-Clean". All op...
      * @yamlKey cleaning_status
      */
     cleaningStatus?: HaierCleaningStatusProps;
     /**
-     * A text sensor that indicates Haier protocol version. All options from [Text Sensor](/components/text_sensor#config-te...
+     * [ID](https://esphome.io/guides/configuration-types#id): The id of haier climate component
+     * @yamlKey haier_id
+     */
+    haierId?: RefProp<__marker_haier_HonClimate>;
+    /**
+     * A text sensor that indicates Haier protocol version. All options from [Text Sensor](https://esphome.io/components/tex...
      * @yamlKey protocol_version
      */
     protocolVersion?: HaierProtocolVersionProps;
-    /**
-     * A text sensor that indicates Haier appliance name. All options from [Text Sensor](/components/text_sensor#config-text...
-     * @yamlKey appliance_name
-     */
-    applianceName?: HaierApplianceNameProps;
 }
 interface HlkFm22xProps {
     /** @yamlKey hlk_fm22x_id */
     hlkFm22xId?: RefProp<__marker_hlk_fm22x_HlkFm22xComponent>;
-    version?: HlkFm22xVersionProps;
     /** @yamlKey last_face_name */
     lastFaceName?: HlkFm22xLastFaceNameProps;
+    version?: HlkFm22xVersionProps;
 }
 interface HomeassistantProps extends _HomeassistantHomeAssistantImport {
 }
@@ -6517,51 +7423,49 @@ interface KeyCollectorProps {
 }
 interface Ld2410Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component ...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the [Ld2410](https://esphome.io/c...
      * @yamlKey ld2410_id
      */
     ld2410Id?: RefProp<__marker_ld2410_LD2410Component>;
-    /** The firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
-    version?: Ld2410VersionProps;
     /**
-     * The bluetooth mac address. Will be set to `unknown` when bluetooth is off. All options from [Text Sensor](/components...
+     * The bluetooth mac address. Will be set to `unknown` when bluetooth is off. All options from [Text Sensor](https://esp...
      * @yamlKey mac_address
      */
     macAddress?: Ld2410MacAddressProps;
+    /** The firmware version. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor). */
+    version?: Ld2410VersionProps;
 }
 interface Ld2412Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the component. Required when using multiple compone...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the component. Required when usin...
      * @yamlKey ld2412_id
      */
     ld2412Id?: RefProp<__marker_ld2412_LD2412Component>;
-    /** The firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
-    version?: Ld2412VersionProps;
     /**
-     * The bluetooth mac address. Will be set to `unknown` when bluetooth is off. All options from [Text Sensor](/components...
+     * The bluetooth mac address. Will be set to `unknown` when bluetooth is off. All options from [Text Sensor](https://esp...
      * @yamlKey mac_address
      */
     macAddress?: Ld2412MacAddressProps;
+    /** The firmware version. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor). */
+    version?: Ld2412VersionProps;
 }
 interface Ld2420Props extends _CoreComponent {
-    /** @yamlKey ld2420_id */
-    ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
     /**
-     * Allows you to retrieve the [Ld2420](/components/sensor/ld2420/) firmware version. May contain any options from [Text ...
+     * Allows you to retrieve the [Ld2420](https://esphome.io/components/sensor/ld2420/) firmware version. May contain any o...
      * @yamlKey fw_version
      */
     fwVersion?: Ld2420FwVersionProps;
+    /** @yamlKey ld2420_id */
+    ld2420Id?: RefProp<__marker_ld2420_LD2420Component>;
 }
 interface Ld2450Props {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID for the [Ld2450](/components/sensor/ld2450/) component.
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID for the [Ld2450](https://esphome.io/c...
      * @yamlKey ld2450_id
      */
     ld2450Id?: RefProp<__marker_ld2450_LD2450Component>;
-    /** The `ld2450` firmware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
-    version?: Ld2450VersionProps;
     /**
-     * The `ld2450` Bluetooth MAC address. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+     * The `ld2450` Bluetooth MAC address. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-t...
      * @yamlKey mac_address
      */
     macAddress?: Ld2450MacAddressProps;
@@ -6571,6 +7475,8 @@ interface Ld2450Props {
     target2?: Ld2450Target2Props;
     /** @yamlKey target_3 */
     target3?: Ld2450Target3Props;
+    /** The `ld2450` firmware version. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_s... */
+    version?: Ld2450VersionProps;
 }
 interface LibretinyProps {
     libretiny?: RefProp<__marker_libretiny_LTComponent>;
@@ -6587,20 +7493,20 @@ interface MicronovaProps {
     stoveState?: MicronovaStoveStateProps;
 }
 interface ModbusControllerProps extends _CoreComponent, _ModbusControllerModbusitembaseschema {
-    /** @yamlKey register_type */
-    registerType?: "custom" | "coil" | "holding" | "discrete_input" | "read";
+    /** @yamlKey raw_encode */
+    rawEncode?: "ANSI" | "COMMA" | "HEXBYTES" | "NONE";
     /** @yamlKey register_count */
     registerCount?: number;
-    /** @yamlKey raw_encode */
-    rawEncode?: "NONE" | "HEXBYTES" | "COMMA" | "ANSI";
+    /** @yamlKey register_type */
+    registerType?: "coil" | "custom" | "discrete_input" | "holding" | "read";
 }
 interface MqttSubscribeProps extends _CoreComponent {
     /** @yamlKey mqtt_parent_id */
     mqttParentId?: RefProp<__marker_mqtt_MQTTClientComponent>;
-    /** string: The MQTT topic to listen for string data. */
-    topic: string;
     /** int: The MQTT QoS to subscribe with. Defaults to `0`. */
     qos?: number;
+    /** string: The MQTT topic to listen for string data. */
+    topic: string;
 }
 interface Msa3xxProps extends _Msa3xxMsaSensor {
     /**
@@ -6616,27 +7522,10 @@ interface Msa3xxProps extends _Msa3xxMsaSensor {
 }
 interface NextionProps {
     /**
-     * [Time](/guides/configuration-types#time): The duration to update the sensor. If using a [Nextion Custom Text Sensor P...
-     * @yamlKey update_interval
-     */
-    updateInterval?: TimePeriod;
-    /**
-     * [ID](/guides/configuration-types#id): The ID of the Nextion display.
-     * @yamlKey nextion_id
-     */
-    nextionId?: RefProp<__marker_nextion_Nextion>;
-    /**
-     * [Color](/components/display#config-color): The background color
+     * [Color](https://esphome.io/components/display#config-color): The background color
      * @yamlKey background_color
      */
     backgroundColor?: RefProp<__marker_Color>;
-    /**
-     * [Color](/components/display#config-color): The foreground color
-     * @yamlKey foreground_color
-     */
-    foregroundColor?: RefProp<__marker_Color>;
-    /** boolean: Visible or not */
-    visible?: boolean;
     /**
      * string: The name of the Nextion component.
      * @yamlKey component_name
@@ -6647,6 +7536,63 @@ interface NextionProps {
      * @yamlKey font_id
      */
     fontId?: number;
+    /**
+     * [Color](https://esphome.io/components/display#config-color): The foreground color
+     * @yamlKey foreground_color
+     */
+    foregroundColor?: RefProp<__marker_Color>;
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the Nextion display.
+     * @yamlKey nextion_id
+     */
+    nextionId?: RefProp<__marker_nextion_Nextion>;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The duration to update the sensor. If using a [Nextion Cu...
+     * @yamlKey update_interval
+     */
+    updateInterval?: TimePeriod;
+    /** boolean: Visible or not */
+    visible?: boolean;
+}
+interface OpenthreadInfoProps {
+    /** Expose the Thread network channel (11-26) as a text sensor. All options from [Text Sensor](https://esphome.io/compone... */
+    channel?: OpenthreadInfoChannelProps;
+    /** Expose the EUI-64 address as a text sensor. This is the unique 64-bit identifier for the device. All options from [Te... */
+    eui64?: OpenthreadInfoEui64Props;
+    /**
+     * Expose the IEEE 802.15.4 Extended MAC address as a text sensor. All options from [Text Sensor](https://esphome.io/com...
+     * @yamlKey ext_addr
+     */
+    extAddr?: OpenthreadInfoExtAddrProps;
+    /**
+     * Expose the Extended PAN ID as a text sensor. This is a 64-bit extended identifier for the Thread network. All options...
+     * @yamlKey ext_pan_id
+     */
+    extPanId?: OpenthreadInfoExtPanIdProps;
+    /**
+     * Expose the off-mesh routable IPv6 address of the Thread device as a text sensor. This is the address used for communi...
+     * @yamlKey ip_address
+     */
+    ipAddress?: OpenthreadInfoIpAddressProps;
+    /**
+     * Expose the Thread network key as a text sensor. All options from [Text Sensor](https://esphome.io/components/text_sen...
+     * @yamlKey network_key
+     */
+    networkKey?: OpenthreadInfoNetworkKeyProps;
+    /**
+     * Expose the Thread network name as a text sensor. All options from [Text Sensor](https://esphome.io/components/text_se...
+     * @yamlKey network_name
+     */
+    networkName?: OpenthreadInfoNetworkNameProps;
+    /**
+     * Expose the Personal Area Network ID (PAN ID) as a text sensor. This is a 16-bit identifier for the Thread network. Al...
+     * @yamlKey pan_id
+     */
+    panId?: OpenthreadInfoPanIdProps;
+    /** Expose the Router Locator (RLOC16) address as a text sensor. This is a 16-bit address used for routing within the Thr... */
+    rloc16?: OpenthreadInfoRloc16Props;
+    /** Expose the current device role in the Thread network (Leader, Router, Child, Detached, etc.) as a text sensor. All op... */
+    role?: OpenthreadInfoRoleProps;
 }
 interface PipsolarProps extends _PipsolarComponent {
     /**
@@ -6654,6 +7600,21 @@ interface PipsolarProps extends _PipsolarComponent {
      * @yamlKey device_mode
      */
     deviceMode?: PipsolarDeviceModeProps;
+    /**
+     * last qflag reponse
+     * @yamlKey last_qflag
+     */
+    lastQflag?: PipsolarLastQflagProps;
+    /**
+     * last qmn reponse
+     * @yamlKey last_qmn
+     */
+    lastQmn?: PipsolarLastQmnProps;
+    /**
+     * last qmod reponse
+     * @yamlKey last_qmod
+     */
+    lastQmod?: PipsolarLastQmodProps;
     /**
      * last qpigs reponse
      * @yamlKey last_qpigs
@@ -6665,16 +7626,6 @@ interface PipsolarProps extends _PipsolarComponent {
      */
     lastQpiri?: PipsolarLastQpiriProps;
     /**
-     * last qmod reponse
-     * @yamlKey last_qmod
-     */
-    lastQmod?: PipsolarLastQmodProps;
-    /**
-     * last qflag reponse
-     * @yamlKey last_qflag
-     */
-    lastQflag?: PipsolarLastQflagProps;
-    /**
      * last qpiws reponse
      * @yamlKey last_qpiws
      */
@@ -6684,84 +7635,76 @@ interface PipsolarProps extends _PipsolarComponent {
      * @yamlKey last_qt
      */
     lastQt?: PipsolarLastQtProps;
-    /**
-     * last qmn reponse
-     * @yamlKey last_qmn
-     */
-    lastQmn?: PipsolarLastQmnProps;
 }
 interface PylontechProps extends _PylontechComponent {
     /**
-     * Base state. Usually reads `Dischg`, `Charge` or `Idle`. All options from [Text Sensor](/components/text_sensor#config...
+     * Base state. Usually reads `Dischg`, `Charge` or `Idle`. All options from [Text Sensor](https://esphome.io/components/...
      * @yamlKey base_state
      */
     baseState?: PylontechBaseStateProps;
     /**
-     * Voltage state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey voltage_state
-     */
-    voltageState?: PylontechVoltageStateProps;
-    /**
-     * Current state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+     * Current state. Usually reads `Normal`. All options from [Text Sensor](https://esphome.io/components/text_sensor#confi...
      * @yamlKey current_state
      */
     currentState?: PylontechCurrentStateProps;
     /**
-     * Temperature state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+     * Temperature state. Usually reads `Normal`. All options from [Text Sensor](https://esphome.io/components/text_sensor#c...
      * @yamlKey temperature_state
      */
     temperatureState?: PylontechTemperatureStateProps;
+    /**
+     * Voltage state. Usually reads `Normal`. All options from [Text Sensor](https://esphome.io/components/text_sensor#confi...
+     * @yamlKey voltage_state
+     */
+    voltageState?: PylontechVoltageStateProps;
 }
 interface SeeedMr24hpc1Props {
-    /** @yamlKey mr24hpc1_id */
-    mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
-    /**
-     * Sensor operating status indicator. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey heart_beat
-     */
-    heartBeat?: SeeedMr24hpc1HeartBeatProps;
-    /**
-     * The product model. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey product_model
-     */
-    productModel?: SeeedMr24hpc1ProductModelProps;
-    /**
-     * The product ID. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey product_id
-     */
-    productId?: SeeedMr24hpc1ProductIdProps;
-    /**
-     * The hardware model. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey hardware_model
-     */
-    hardwareModel?: SeeedMr24hpc1HardwareModelProps;
-    /**
-     * The hardware version. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey hardware_version
-     */
-    hardwareVersion?: SeeedMr24hpc1HardwareVersionProps;
-    /**
-     * Indicator for detecting objects approaching or moving away. All options from [Text Sensor](/components/text_sensor#co...
-     * @yamlKey keep_away
-     */
-    keepAway?: SeeedMr24hpc1KeepAwayProps;
-    /**
-     * An indicator that detects the movement or stationarity of an object. All options from [Text Sensor](/components/text_...
-     * @yamlKey motion_status
-     */
-    motionStatus?: SeeedMr24hpc1MotionStatusProps;
     /**
      * Used to indicate whether or not the current radar is in a customised mode amongst the setup functions. There are thre...
      * @yamlKey custom_mode_end
      */
     customModeEnd?: SeeedMr24hpc1CustomModeEndProps;
-}
-interface SmlProps {
     /**
-     * [ID](/guides/configuration-types#id): The ID of the [SML platform](https://esphome.io/components/sml#sml-platform)
-     * @yamlKey sml_id
+     * The hardware model. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor).
+     * @yamlKey hardware_model
      */
-    smlId?: RefProp<__marker_sml_Sml>;
+    hardwareModel?: SeeedMr24hpc1HardwareModelProps;
+    /**
+     * The hardware version. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor).
+     * @yamlKey hardware_version
+     */
+    hardwareVersion?: SeeedMr24hpc1HardwareVersionProps;
+    /**
+     * Sensor operating status indicator. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-te...
+     * @yamlKey heart_beat
+     */
+    heartBeat?: SeeedMr24hpc1HeartBeatProps;
+    /**
+     * Indicator for detecting objects approaching or moving away. All options from [Text Sensor](https://esphome.io/compone...
+     * @yamlKey keep_away
+     */
+    keepAway?: SeeedMr24hpc1KeepAwayProps;
+    /**
+     * An indicator that detects the movement or stationarity of an object. All options from [Text Sensor](https://esphome.i...
+     * @yamlKey motion_status
+     */
+    motionStatus?: SeeedMr24hpc1MotionStatusProps;
+    /** @yamlKey mr24hpc1_id */
+    mr24hpc1Id?: RefProp<__marker_seeed_mr24hpc1_MR24HPC1Component>;
+    /**
+     * The product ID. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor).
+     * @yamlKey product_id
+     */
+    productId?: SeeedMr24hpc1ProductIdProps;
+    /**
+     * The product model. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor).
+     * @yamlKey product_model
+     */
+    productModel?: SeeedMr24hpc1ProductModelProps;
+}
+interface SmlProps extends _CoreComponent {
+    /** string: Override the automatic interpretation of the transmitted binary data value. Possible values (`int`, `uint`, `... */
+    format?: "" | "bool" | "hex" | "int" | "text" | "uint";
     /**
      * string: Specify the OBIS code you want to retrieve data for from the device. The format must be (A-B:C.D.E, e.g. 1-0:...
      * @yamlKey obis_code
@@ -6772,96 +7715,144 @@ interface SmlProps {
      * @yamlKey server_id
      */
     serverId?: string;
-    /** string: Override the automatic interpretation of the transmitted binary data value. Possible values (`int`, `uint`, `... */
-    format?: "text" | "bool" | "int" | "uint" | "hex" | "";
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The ID of the [SML platform](https://esphome.io/components/sm...
+     * @yamlKey sml_id
+     */
+    smlId?: RefProp<__marker_sml_Sml>;
 }
 interface SunProps extends _CoreComponent {
+    /** float: The elevation to calculate the next sunrise/sunset event for. Defaults to -0.833° (the horizon, slightly less ... */
+    elevation?: number;
+    /** string: The format to format the time value with, see [strftime](https://esphome.io/components/time#strftime) for mor... */
+    format?: string;
     /** @yamlKey sun_id */
     sunId?: RefProp<__marker_sun_Sun>;
     /** string: The type of value to track. One of `sunrise` and `sunset`. */
-    type: "sunset" | "sunrise";
-    /** float: The elevation to calculate the next sunrise/sunset event for. Defaults to -0.833° (the horizon, slightly less ... */
-    elevation?: number;
-    /** string: The format to format the time value with, see [strftime](/components/time#strftime) for more information. Def... */
-    format?: string;
+    type: "sunrise" | "sunset";
     /** @yamlKey update_interval */
     updateInterval?: unknown;
 }
 interface SunGtil2Props extends _CoreComponent {
     /**
+     * The inverter's serial number. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_se...
+     * @yamlKey serial_number
+     */
+    serialNumber?: SunGtil2SerialNumberProps;
+    /** The inverter's state. All options from [Text Sensor](https://esphome.io/components/text_sensor#config-text_sensor). */
+    state?: SunGtil2StateProps;
+    /**
      * Manually specify the ID of the sun_gtil2 instance if there are multiple.
      * @yamlKey sun_gtil2_id
      */
     sunGtil2Id?: RefProp<__marker_sun_gtil2_SunGTIL2>;
-    /** The inverter's state. All options from [Text Sensor](/components/text_sensor#config-text_sensor). */
-    state?: SunGtil2StateProps;
-    /**
-     * The inverter's serial number. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
-     * @yamlKey serial_number
-     */
-    serialNumber?: SunGtil2SerialNumberProps;
 }
 interface Sy6970Props {
-    /** @yamlKey sy6970_id */
-    sy6970Id?: RefProp<__marker_sy6970_SY6970Component>;
     /** @yamlKey bus_status */
     busStatus?: Sy6970BusStatusProps;
     /** @yamlKey charge_status */
     chargeStatus?: Sy6970ChargeStatusProps;
     /** @yamlKey ntc_status */
     ntcStatus?: Sy6970NtcStatusProps;
+    /** @yamlKey sy6970_id */
+    sy6970Id?: RefProp<__marker_sy6970_SY6970Component>;
 }
 interface TeleinfoProps extends _TeleinfoListener {
 }
 interface TemplateProps extends _CoreComponent {
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated every update interval to get the new value of ... */
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated every update interval to get... */
     lambda?: unknown;
     /**
-     * [Time](/guides/configuration-types#time): The interval to check the text sensor. Set to `never` to disable updates. D...
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval to check the text sensor. Set to `never` to ...
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;
 }
+interface TextProps extends _CoreComponent {
+    /**
+     * [ID](https://esphome.io/guides/configuration-types#id): The source text to observe.
+     * @yamlKey source_id
+     */
+    sourceId: RefProp<__marker_text_Text>;
+}
 interface TuyaProps extends _CoreComponent {
-    /** @yamlKey tuya_id */
-    tuyaId?: RefProp<__marker_tuya_Tuya>;
     /** @yamlKey sensor_datapoint */
     sensorDatapoint: number;
+    /** @yamlKey tuya_id */
+    tuyaId?: RefProp<__marker_tuya_Tuya>;
 }
 interface UptimeProps extends _CoreComponent {
-    icon?: unknown;
     /** @yamlKey entity_category */
     entityCategory?: unknown;
     /** list: Allows the customization of the output format. The following options are available: */
     format?: UptimeFormatProps;
+    icon?: unknown;
     /**
-     * [Time](/guides/configuration-types#time): The sensor reporting interval. Defaults to `30s`.
+     * [Time](https://esphome.io/guides/configuration-types#time): The sensor reporting interval. Defaults to `30s`.
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;
 }
+interface VersionProps extends _CoreComponent {
+    /** @yamlKey entity_category */
+    entityCategory?: unknown;
+    /**
+     * boolean: Allows you to hide the config hash from the version string. Defaults to `false`.
+     * @yamlKey hide_hash
+     */
+    hideHash?: boolean;
+    /**
+     * boolean: Allows you to hide the compilation timestamp from the version string. Defaults to `false`.
+     * @yamlKey hide_timestamp
+     */
+    hideTimestamp?: boolean;
+    icon?: unknown;
+}
+interface WifiInfoProps {
+    /** Expose the BSSID of the currently connected WiFi network as a text sensor. All options from [Text Sensor](https://esp... */
+    bssid?: WifiInfoBssidProps;
+    /**
+     * Expose the DNS Address of the device as text sensor. [Text Sensor](https://esphome.io/components/text_sensor#config-t...
+     * @yamlKey dns_address
+     */
+    dnsAddress?: WifiInfoDnsAddressProps;
+    /**
+     * Expose the IP Address of the device as a text sensor. All options from [Text Sensor](https://esphome.io/components/te...
+     * @yamlKey ip_address
+     */
+    ipAddress?: WifiInfoIpAddressProps;
+    /**
+     * Expose the Mac Address of the WiFi card. All options from [Text Sensor](https://esphome.io/components/text_sensor#con...
+     * @yamlKey mac_address
+     */
+    macAddress?: WifiInfoMacAddressProps;
+    /** @yamlKey power_save_mode */
+    powerSaveMode?: WifiInfoPowerSaveModeProps;
+    /**
+     * Expose the latest networks found during the latest scan. All options from [Text Sensor](https://esphome.io/components...
+     * @yamlKey scan_results
+     */
+    scanResults?: WifiInfoScanResultsProps;
+    /** Expose the SSID of the currently connected WiFi network as a text sensor. All options from [Text Sensor](https://esph... */
+    ssid?: WifiInfoSsidProps;
+}
 interface WireguardProps {
+    address?: WireguardAddressProps;
     /** @yamlKey wireguard_id */
     wireguardId?: RefProp<__marker_wireguard_Wireguard>;
-    address?: WireguardAddressProps;
+}
+interface Wl134Props extends _UartDevice {
+    icon?: unknown;
+    /** boolean: Reset the text sensor state back to "" 1s after reading a tag. Defaults to `false`. */
+    reset?: boolean;
 }
 export type TextSensorProps = (TextSensorBaseProps & {
-    platform: "ble_scanner";
-} & BleScannerProps & ComponentProps<__marker_ble_scanner_BLEScanner>) | (TextSensorBaseProps & {
-    platform: "ethernet_info";
-} & EthernetInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
-    platform: "openthread_info";
-} & OpenthreadInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
-    platform: "version";
-} & VersionProps & ComponentProps<__marker_version_VersionTextSensor>) | (TextSensorBaseProps & {
-    platform: "wifi_info";
-} & WifiInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
-    platform: "wl_134";
-} & Wl134Props & ComponentProps<__marker_wl_134_Wl134Component>) | (TextSensorBaseProps & {
     platform: "atm90e32";
 } & Atm90e32Props & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "ble_client";
 } & BleClientProps & ComponentProps<__marker_ble_client_BLETextSensor>) | (TextSensorBaseProps & {
+    platform: "ble_scanner";
+} & BleScannerProps & ComponentProps<__marker_ble_scanner_BLEScanner>) | (TextSensorBaseProps & {
     platform: "bme680_bsec";
 } & Bme680BsecProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "bme68x_bsec2";
@@ -6876,6 +7867,8 @@ export type TextSensorProps = (TextSensorBaseProps & {
 } & DlmsMeterProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "dsmr";
 } & DsmrProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
+    platform: "ethernet_info";
+} & EthernetInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "ezo_pmp";
 } & EzoPmpProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "gdk101";
@@ -6910,6 +7903,8 @@ export type TextSensorProps = (TextSensorBaseProps & {
 } & Msa3xxProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "nextion";
 } & NextionProps & ComponentProps<__marker_nextion_NextionTextSensor>) | (TextSensorBaseProps & {
+    platform: "openthread_info";
+} & OpenthreadInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "pipsolar";
 } & PipsolarProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "pylontech";
@@ -6928,12 +7923,20 @@ export type TextSensorProps = (TextSensorBaseProps & {
 } & TeleinfoProps & ComponentProps<__marker_teleinfo_TeleInfoTextSensor>) | (TextSensorBaseProps & {
     platform: "template";
 } & TemplateProps & ComponentProps<__marker_template__TemplateTextSensor>) | (TextSensorBaseProps & {
+    platform: "text";
+} & TextProps & ComponentProps<__marker_text_TextTextSensor>) | (TextSensorBaseProps & {
     platform: "tuya";
 } & TuyaProps & ComponentProps<__marker_tuya_TuyaTextSensor>) | (TextSensorBaseProps & {
     platform: "uptime";
 } & UptimeProps & ComponentProps<__marker_uptime_UptimeTextSensor>) | (TextSensorBaseProps & {
+    platform: "version";
+} & VersionProps & ComponentProps<__marker_version_VersionTextSensor>) | (TextSensorBaseProps & {
+    platform: "wifi_info";
+} & WifiInfoProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
     platform: "wireguard";
-} & WireguardProps & ComponentProps<__marker_text_sensor_TextSensor>);
+} & WireguardProps & ComponentProps<__marker_text_sensor_TextSensor>) | (TextSensorBaseProps & {
+    platform: "wl_134";
+} & Wl134Props & ComponentProps<__marker_wl_134_Wl134Component>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

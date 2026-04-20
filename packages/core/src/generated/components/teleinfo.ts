@@ -13,15 +13,15 @@ export interface TeleinfoProps extends _CoreComponent {
      */
     historicalMode?: boolean;
     /**
-     * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
-     * @yamlKey update_interval
-     */
-    updateInterval?: TimePeriod;
-    /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID of the [UART Component](https://espho...
      * @yamlKey uart_id
      */
     uartId?: RefProp<__marker_uart_UARTComponent>;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
+     * @yamlKey update_interval
+     */
+    updateInterval?: TimePeriod;
 }
 declare global {
     namespace JSX {

@@ -7,12 +7,14 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_usb_host_USBHost } from "../markers";
 export interface UsbHostDevicesProps {
+    pid: number;
     /** @yamlKey setup_priority */
     setupPriority?: unknown;
     vid: number;
-    pid: number;
 }
 export interface UsbHostProps extends _CoreComponent {
+    /** list: A list of devices to configure. */
+    devices?: Array<UsbHostDevicesProps>;
     /**
      * boolean: Whether to include support for hubs. Defaults to `false`.
      * @yamlKey enable_hubs
@@ -23,8 +25,6 @@ export interface UsbHostProps extends _CoreComponent {
      * @yamlKey max_transfer_requests
      */
     maxTransferRequests?: number;
-    /** list: A list of devices to configure. */
-    devices?: Array<UsbHostDevicesProps>;
 }
 declare global {
     namespace JSX {

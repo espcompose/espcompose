@@ -89,7 +89,7 @@ function resolveParamType(varDef: SchemaConfigVar): string {
       baseType = 'number';
       break;
     case 'enum': {
-      const vals = Object.keys(varDef.values ?? {});
+      const vals = Object.keys(varDef.values ?? {}).sort();
       baseType = vals.length > 0 ? vals.map(v => JSON.stringify(v)).join(' | ') : 'string';
       break;
     }
@@ -142,7 +142,7 @@ export function extractSchemaActions(
     }
 
     // Walk all top-level domain keys (e.g. "light", "switch", "switch.lvgl", "core")
-    for (const [domainKey, domainValue] of Object.entries(rawJson)) {
+    for (const [domainKey, domainValue] of Object.entries(rawJson).sort(([a], [b]) => a.localeCompare(b))) {
       if (!domainValue || typeof domainValue !== 'object') continue;
       const domainObj = domainValue as Record<string, unknown>;
 
@@ -153,7 +153,7 @@ export function extractSchemaActions(
       // Also register schemas from this domain into the registry for extends resolution
       registerDomainSchemas(domainKey, domainObj, schemaRegistry);
 
-      for (const [actionName, actionSchema] of Object.entries(actionBlock)) {
+      for (const [actionName, actionSchema] of Object.entries(actionBlock).sort(([a], [b]) => a.localeCompare(b))) {
         const yamlKey = `${domainKey}.${actionName}`;
 
         if (!actionSchema || typeof actionSchema !== 'object') {
@@ -193,7 +193,7 @@ export function extractSchemaActions(
 
         // Extract non-id parameters
         const params: ActionParamEntry[] = [];
-        for (const [varName, varDef] of Object.entries(allVars)) {
+        for (const [varName, varDef] of Object.entries(allVars).sort(([a], [b]) => a.localeCompare(b))) {
           if (varName === idFieldName) continue;
 
           // Skip internal/meta fields
@@ -220,7 +220,7 @@ export function extractSchemaActions(
           });
         }
 
-        const methodName = toCamelCase(actionName);
+        const methodName = toCamelCase(actionName.replace(/\./g, '_'));
 
         const entry: ActionEntry = {
           yamlKey,

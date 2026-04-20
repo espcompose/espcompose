@@ -9,21 +9,10 @@ import type { __marker_esp32_ble_ESP32BLE, __marker_esp32_ble_beacon_ESP32BLEBea
 export interface Esp32BleBeaconProps extends _CoreComponent {
     /** @yamlKey ble_id */
     bleId?: RefProp<__marker_esp32_ble_ESP32BLE>;
-    /** The type of beacon to create, currently only supports `iBeacon`. */
-    type: "IBEACON";
-    /** The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier) to identify the beacon. */
-    uuid: unknown;
     /** int: The iBeacon major identifier of this beacon. Usually used to group beacons, for example for grouping all beacons... */
     major?: number;
-    /** int: The iBeacon minor identifier of this beacon. Usually used to identify beacons within an iBeacon group. Defaults ... */
-    minor?: number;
     /**
-     * [Time](/guides/configuration-types#time): The iBeacon minimum transmit interval in milliseconds from 20 to 10240. Set...
-     * @yamlKey min_interval
-     */
-    minInterval?: TimePeriod;
-    /**
-     * [Time](/guides/configuration-types#time): The iBeacon maximum transmit interval in milliseconds from 20 to 10240. Set...
+     * [Time](https://esphome.io/guides/configuration-types#time): The iBeacon maximum transmit interval in milliseconds fro...
      * @yamlKey max_interval
      */
     maxInterval?: TimePeriod;
@@ -33,10 +22,21 @@ export interface Esp32BleBeaconProps extends _CoreComponent {
      */
     measuredPower?: number;
     /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The iBeacon minimum transmit interval in milliseconds fro...
+     * @yamlKey min_interval
+     */
+    minInterval?: TimePeriod;
+    /** int: The iBeacon minor identifier of this beacon. Usually used to identify beacons within an iBeacon group. Defaults ... */
+    minor?: number;
+    /**
      * int: The transmit power of the iBeacon in dBm. One of -12, -9, -6, -3, 0, 3, 6, 9. Defaults to `3dBm`. Not available ...
      * @yamlKey tx_power
      */
-    txPower?: "0" | "3" | "6" | "9" | "-12" | "-9" | "-6" | "-3";
+    txPower?: "-12" | "-3" | "-6" | "-9" | "0" | "3" | "6" | "9";
+    /** The type of beacon to create, currently only supports `iBeacon`. */
+    type: "IBEACON";
+    /** The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier) to identify the beacon. */
+    uuid: unknown;
 }
 declare global {
     namespace JSX {

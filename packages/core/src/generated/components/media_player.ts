@@ -5,100 +5,102 @@
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
-import type { __marker_i2s_audio_I2SAudioComponent, __marker_i2s_audio_I2SAudioMediaPlayer, __marker_media_source_MediaSource, __marker_speaker_Speaker, __marker_speaker_SpeakerMediaPlayer, __marker_speaker_source_SpeakerSourceMediaPlayer } from "../markers";
+import type { __marker_media_source_MediaSource, __marker_speaker_Speaker, __marker_speaker_SpeakerMediaPlayer, __marker_speaker_source_SpeakerSourceMediaPlayer } from "../markers";
 interface SpeakerAnnouncementPipelineProps {
-    /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<__marker_speaker_Speaker>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
-    format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
-    /**
-     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
-     * @yamlKey sample_rate
-     */
-    sampleRate?: number;
+    format?: "FLAC" | "MP3" | "NONE" | "OPUS" | "WAV";
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
     numChannels?: number;
-}
-interface SpeakerMediaPipelineProps {
-    /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<__marker_speaker_Speaker>;
-    /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
-    format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
     /**
      * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
      * @yamlKey sample_rate
      */
     sampleRate?: number;
-    /**
-     * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
-     * @yamlKey num_channels
-     */
-    numChannels?: number;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The [speaker](https://esphome.io/components/speaker/) to outp... */
+    speaker: RefProp<__marker_speaker_Speaker>;
 }
 interface SpeakerFilesProps {
     /** string: Path to audio file. Can be a local file path or a URL. */
     file: string;
 }
-interface SpeakerSourceAnnouncementPipelineProps {
-    /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<__marker_speaker_Speaker>;
-    /** list of [IDs](/guides/configuration-types#id): A list of [media source](/components/media_source/) component IDs to u... */
-    sources: Array<RefProp<__marker_media_source_MediaSource>>;
+interface SpeakerMediaPipelineProps {
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
-    format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
-    /**
-     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
-     * @yamlKey sample_rate
-     */
-    sampleRate?: number;
+    format?: "FLAC" | "MP3" | "NONE" | "OPUS" | "WAV";
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
     numChannels?: number;
+    /**
+     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
+     * @yamlKey sample_rate
+     */
+    sampleRate?: number;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The [speaker](https://esphome.io/components/speaker/) to outp... */
+    speaker: RefProp<__marker_speaker_Speaker>;
+}
+interface SpeakerSourceAnnouncementPipelineProps {
+    /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
+    format?: "FLAC" | "MP3" | "NONE" | "OPUS" | "WAV";
+    /**
+     * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
+     * @yamlKey num_channels
+     */
+    numChannels?: number;
+    /**
+     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
+     * @yamlKey sample_rate
+     */
+    sampleRate?: number;
+    /** list of [IDs](https://esphome.io/guides/configuration-types#id): A list of [media source](https://esphome.io/componen... */
+    sources: Array<RefProp<__marker_media_source_MediaSource>>;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The [speaker](https://esphome.io/components/speaker/) to outp... */
+    speaker: RefProp<__marker_speaker_Speaker>;
 }
 interface SpeakerSourceMediaPipelineProps {
-    /** [ID](/guides/configuration-types#id): The [speaker](/components/speaker/) to output the audio. */
-    speaker: RefProp<__marker_speaker_Speaker>;
-    /** list of [IDs](/guides/configuration-types#id): A list of [media source](/components/media_source/) component IDs to u... */
-    sources: Array<RefProp<__marker_media_source_MediaSource>>;
     /** enum: The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, ... */
-    format?: "NONE" | "WAV" | "MP3" | "FLAC" | "OPUS";
-    /**
-     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
-     * @yamlKey sample_rate
-     */
-    sampleRate?: number;
+    format?: "FLAC" | "MP3" | "NONE" | "OPUS" | "WAV";
     /**
      * positive integer: Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's n...
      * @yamlKey num_channels
      */
     numChannels?: number;
+    /**
+     * positive integer: Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. De...
+     * @yamlKey sample_rate
+     */
+    sampleRate?: number;
+    /** list of [IDs](https://esphome.io/guides/configuration-types#id): A list of [media source](https://esphome.io/componen... */
+    sources: Array<RefProp<__marker_media_source_MediaSource>>;
+    /** [ID](https://esphome.io/guides/configuration-types#id): The [speaker](https://esphome.io/components/speaker/) to outp... */
+    speaker: RefProp<__marker_speaker_Speaker>;
 }
 interface MediaPlayerBaseProps extends _CoreEntityBase {
-    /** @yamlKey on_state */
-    onState?: TriggerHandler;
-    /** @yamlKey on_idle */
-    onIdle?: TriggerHandler;
-    /** @yamlKey on_play */
-    onPlay?: TriggerHandler;
-    /** @yamlKey on_pause */
-    onPause?: TriggerHandler;
+    /** string: Manually specify the ID for code generation. At least one of id and name must be specified. */
+    id?: string;
     /** @yamlKey on_announcement */
     onAnnouncement?: TriggerHandler;
+    /** @yamlKey on_idle */
+    onIdle?: TriggerHandler;
+    /** @yamlKey on_pause */
+    onPause?: TriggerHandler;
+    /** @yamlKey on_play */
+    onPlay?: TriggerHandler;
+    /** @yamlKey on_state */
+    onState?: TriggerHandler;
     /**
-     * [Automation](/automations): An automation to perform when media_player is turned on, implements the `supports_turn_of...
-     * @yamlKey on_turn_on
-     */
-    onTurnOn?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when media_player is turned off, implements the `supports_turn_o...
+     * [Automation](https://esphome.io/automations): An automation to perform when media_player is turned off, implements th...
      * @yamlKey on_turn_off
      */
     onTurnOff?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when media_player is turned on, implements the...
+     * @yamlKey on_turn_on
+     */
+    onTurnOn?: TriggerHandler;
 }
 interface SpeakerProps {
     /**
@@ -106,11 +108,6 @@ interface SpeakerProps {
      * @yamlKey announcement_pipeline
      */
     announcementPipeline: SpeakerAnnouncementPipelineProps;
-    /**
-     * Pipeline Schema: Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
-     * @yamlKey media_pipeline
-     */
-    mediaPipeline?: SpeakerMediaPipelineProps;
     /**
      * positive integer: The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000...
      * @yamlKey buffer_size
@@ -123,6 +120,26 @@ interface SpeakerProps {
     codecSupportEnabled?: "all" | "needed" | "none";
     /** list: A list of media files to build into the firmware for on-device playback. */
     files?: Array<SpeakerFilesProps>;
+    /**
+     * Pipeline Schema: Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
+     * @yamlKey media_pipeline
+     */
+    mediaPipeline?: SpeakerMediaPipelineProps;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when muted.
+     * @yamlKey on_mute
+     */
+    onMute?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when unmuted.
+     * @yamlKey on_unmute
+     */
+    onUnmute?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when the volume is changed.
+     * @yamlKey on_volume
+     */
+    onVolume?: TriggerHandler;
     /**
      * boolean: Run the audio tasks in external memory. Defaults to `false`.
      * @yamlKey task_stack_in_psram
@@ -148,23 +165,33 @@ interface SpeakerProps {
      * @yamlKey volume_min
      */
     volumeMin?: number;
+}
+interface SpeakerSourceProps extends _CoreComponent {
     /**
-     * [Automation](/automations): An automation to perform when muted.
+     * Pipeline Schema: Configuration settings for the announcement pipeline. Same options as `media_pipeline`. Must use a d...
+     * @yamlKey announcement_pipeline
+     */
+    announcementPipeline?: SpeakerSourceAnnouncementPipelineProps;
+    /**
+     * Pipeline Schema: Configuration settings for the media pipeline. At least one of `media_pipeline` or `announcement_pip...
+     * @yamlKey media_pipeline
+     */
+    mediaPipeline?: SpeakerSourceMediaPipelineProps;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when muted.
      * @yamlKey on_mute
      */
     onMute?: TriggerHandler;
     /**
-     * [Automation](/automations): An automation to perform when unmuted.
+     * [Automation](https://esphome.io/automations): An automation to perform when unmuted.
      * @yamlKey on_unmute
      */
     onUnmute?: TriggerHandler;
     /**
-     * [Automation](/automations): An automation to perform when the volume is changed.
+     * [Automation](https://esphome.io/automations): An automation to perform when the volume is changed.
      * @yamlKey on_volume
      */
     onVolume?: TriggerHandler;
-}
-interface SpeakerSourceProps extends _CoreComponent {
     /**
      * percentage: Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase o...
      * @yamlKey volume_increment
@@ -185,59 +212,12 @@ interface SpeakerSourceProps extends _CoreComponent {
      * @yamlKey volume_min
      */
     volumeMin?: number;
-    /**
-     * Pipeline Schema: Configuration settings for the announcement pipeline. Same options as `media_pipeline`. Must use a d...
-     * @yamlKey announcement_pipeline
-     */
-    announcementPipeline?: SpeakerSourceAnnouncementPipelineProps;
-    /**
-     * Pipeline Schema: Configuration settings for the media pipeline. At least one of `media_pipeline` or `announcement_pip...
-     * @yamlKey media_pipeline
-     */
-    mediaPipeline?: SpeakerSourceMediaPipelineProps;
-    /**
-     * [Automation](/automations): An automation to perform when muted.
-     * @yamlKey on_mute
-     */
-    onMute?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when unmuted.
-     * @yamlKey on_unmute
-     */
-    onUnmute?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform when the volume is changed.
-     * @yamlKey on_volume
-     */
-    onVolume?: TriggerHandler;
-}
-interface I2sAudioInternalProps extends _CoreComponent {
-    /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
-    mode: "left" | "right" | "stereo";
-}
-interface I2sAudioExternalProps extends _CoreComponent {
-    /** @yamlKey i2s_audio_id */
-    i2sAudioId?: RefProp<__marker_i2s_audio_I2SAudioComponent>;
-    /** @yamlKey i2s_dout_pin */
-    i2sDoutPin: Pin;
-    /** @yamlKey mute_pin */
-    mutePin?: Pin;
-    mode?: "mono" | "stereo";
-    /** @yamlKey i2s_comm_fmt */
-    i2sCommFmt?: "lsb" | "msb";
 }
 export type MediaPlayerProps = (MediaPlayerBaseProps & {
     platform: "speaker";
 } & SpeakerProps & ComponentProps<__marker_speaker_SpeakerMediaPlayer>) | (MediaPlayerBaseProps & {
     platform: "speaker_source";
-} & SpeakerSourceProps & ComponentProps<__marker_speaker_source_SpeakerSourceMediaPlayer>) | (MediaPlayerBaseProps & {
-    platform: "i2s_audio";
-    dacType: "internal";
-} & I2sAudioInternalProps & ComponentProps<__marker_i2s_audio_I2SAudioMediaPlayer>) | (MediaPlayerBaseProps & {
-    platform: "i2s_audio";
-    dacType: "external";
-} & I2sAudioExternalProps & ComponentProps<__marker_i2s_audio_I2SAudioMediaPlayer>);
+} & SpeakerSourceProps & ComponentProps<__marker_speaker_source_SpeakerSourceMediaPlayer>);
 declare global {
     namespace JSX {
         interface IntrinsicElements {

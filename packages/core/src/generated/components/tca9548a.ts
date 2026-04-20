@@ -11,6 +11,8 @@ export interface Tca9548aChannelsProps {
     channel: number;
 }
 export interface Tca9548aProps extends _CoreComponent {
+    /** int: The I²C address of the Multiplexer. Defaults to `0x70`. */
+    address?: number;
     /** The I²C Bus Channels */
     channels?: Array<Tca9548aChannelsProps>;
     /**
@@ -18,8 +20,6 @@ export interface Tca9548aProps extends _CoreComponent {
      * @yamlKey i2c_id
      */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the Multiplexer. Defaults to `0x70`. */
-    address?: number;
 }
 declare global {
     namespace JSX {

@@ -71,10 +71,10 @@ function generateParamsInterface(
 ): string | null {
   if (action.params.length === 0) return null;
 
-  const actionPascal = toPascalCase(action.shortName);
+  const actionPascal = toPascalCase(action.shortName.replace(/\./g, '_'));
   const interfaceName = `${classPrefix}_${actionPascal}Params`;
 
-  const fields = action.params.map((param: ActionParamEntry) => {
+  const fields = [...action.params].sort((a, b) => a.tsName.localeCompare(b.tsName)).map((param: ActionParamEntry) => {
     const optional = param.required ? '' : '?';
     const doc = param.doc ? `/** ${param.doc} */\n` : '';
     const yamlDoc = param.yamlKey !== param.tsName ? `/** @yamlKey ${param.yamlKey} */\n` : '';
@@ -96,7 +96,7 @@ function generateClassActionsInterface(
   const methods: string[] = [];
 
   for (const action of actions) {
-    const actionPascal = toPascalCase(action.shortName);
+    const actionPascal = toPascalCase(action.shortName.replace(/\./g, '_'));
     const paramsInterfaceName = `${classPrefix}_${actionPascal}Params`;
     const hasParams = action.params.length > 0;
 
@@ -155,6 +155,8 @@ export function generateActionsFile(input: ActionCodegenInput): string {
   const sortedClasses = [...classActions.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
   for (const [cppClass, actions] of sortedClasses) {
+    // Sort actions within each class for deterministic output
+    actions.sort((a, b) => a.methodName.localeCompare(b.methodName));
     const rawPrefix = classToPrefix(cppClass);
     const prefix = uniquePrefix(rawPrefix);
 

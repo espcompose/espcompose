@@ -9,6 +9,8 @@ import type { __marker_usb_cdc_acm_USBCDCACMComponent } from "../markers";
 export interface UsbCdcAcmInterfacesProps {
 }
 export interface UsbCdcAcmProps extends _CoreComponent {
+    /** list: List of CDC-ACM interface instances. Up to two are supported; at least one is required. Defaults to a single-it... */
+    interfaces?: Array<UsbCdcAcmInterfacesProps>;
     /**
      * int: Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
      * @yamlKey rx_buffer_size
@@ -19,8 +21,6 @@ export interface UsbCdcAcmProps extends _CoreComponent {
      * @yamlKey tx_buffer_size
      */
     txBufferSize?: number;
-    /** list: List of CDC-ACM interface instances. Up to two are supported; at least one is required. Defaults to a single-it... */
-    interfaces?: Array<UsbCdcAcmInterfacesProps>;
 }
 declare global {
     namespace JSX {

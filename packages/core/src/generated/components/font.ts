@@ -12,6 +12,10 @@ export interface FontExtrasProps {
     glyphs: Array<string>;
 }
 export interface FontProps {
+    /** int: The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`, `2`, `4`, `8`. Default... */
+    bpp?: "1" | "2" | "4" | "8";
+    /** enum: A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files ... */
+    extras?: Array<FontExtrasProps>;
     /** string: The path (relative to where the .yaml file is) of the font file. You can also use the `gfonts://` short form ... */
     file: string;
     /** list: A list of characters you plan to use, in addition to the characters defined by the glyphsets option above. Adju... */
@@ -25,10 +29,6 @@ export interface FontProps {
     ignoreMissingGlyphs?: boolean;
     /** int: The desired size of the font. This will be the size (height) of the font in pixels when rendered. If you want to... */
     size?: number;
-    /** int: The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`, `2`, `4`, `8`. Default... */
-    bpp?: "1" | "2" | "4" | "8";
-    /** enum: A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files ... */
-    extras?: Array<FontExtrasProps>;
 }
 declare global {
     namespace JSX {

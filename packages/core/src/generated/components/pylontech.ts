@@ -8,15 +8,15 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_pylontech_PylontechComponent, __marker_uart_UARTComponent } from "../markers";
 export interface PylontechProps extends _CoreComponent {
     /**
-     * [Time](/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
-     * @yamlKey update_interval
-     */
-    updateInterval?: TimePeriod;
-    /**
      * The uart Bus ID
      * @yamlKey uart_id
      */
     uartId?: RefProp<__marker_uart_UARTComponent>;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): The interval to check the sensor. Defaults to `60s`.
+     * @yamlKey update_interval
+     */
+    updateInterval?: TimePeriod;
 }
 declare global {
     namespace JSX {

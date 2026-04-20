@@ -8,15 +8,20 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_my9231_MY9231OutputComponent } from "../markers";
 export interface My9231Props extends _CoreComponent {
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin which DI is connected
-     * @yamlKey data_pin
+     * int: The bit depth to use for all output
+     * @yamlKey bit_depth
      */
-    dataPin: Pin;
+    bitDepth?: "12" | "14" | "16" | "8";
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin which DCKI is
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin which DCKI is
      * @yamlKey clock_pin
      */
     clockPin: Pin;
+    /**
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin which DI is connected
+     * @yamlKey data_pin
+     */
+    dataPin: Pin;
     /**
      * int: Total number of channels of the whole
      * @yamlKey num_channels
@@ -27,11 +32,6 @@ export interface My9231Props extends _CoreComponent {
      * @yamlKey num_chips
      */
     numChips?: number;
-    /**
-     * int: The bit depth to use for all output
-     * @yamlKey bit_depth
-     */
-    bitDepth?: "8" | "12" | "14" | "16";
 }
 declare global {
     namespace JSX {

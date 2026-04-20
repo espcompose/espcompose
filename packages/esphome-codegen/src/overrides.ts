@@ -162,6 +162,20 @@ export const ACTION_OVERRIDES = new Map<string, ActionEntry[]>([
 ]);
 
 /**
+ * Platform component overrides for components that exist in the ESPHome
+ * source tree but are missing from the upstream JSON schema dumper output.
+ *
+ * This happens when a component uses a dynamic CONFIG_SCHEMA (e.g. model-
+ * conditional validation) that the schema dumper cannot serialize.
+ *
+ * Key: platform name (e.g. 'display')
+ * Value: array of component names to inject into that platform's component list
+ */
+export const PLATFORM_COMPONENT_OVERRIDES = new Map<string, string[]>([
+  ['display', ['mipi_dsi']],
+]);
+
+/**
  * Set of YAML key names whose values are filesystem paths.
  * Used by the compiler asset pipeline to resolve relative paths
  * from the source directory and copy files into the build output.

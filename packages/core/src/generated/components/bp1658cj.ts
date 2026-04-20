@@ -8,15 +8,15 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_bp1658cj_BP1658CJ } from "../markers";
 export interface Bp1658cjProps extends _CoreComponent {
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin used for DATA.
-     * @yamlKey data_pin
-     */
-    dataPin: Pin;
-    /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin which CLK is
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin which CLK is
      * @yamlKey clock_pin
      */
     clockPin: Pin;
+    /**
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin used for DATA.
+     * @yamlKey data_pin
+     */
+    dataPin: Pin;
     /**
      * int 0-15: Adjusts the current supplied to the
      * @yamlKey max_power_color_channels

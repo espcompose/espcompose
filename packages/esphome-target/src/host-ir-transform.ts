@@ -125,6 +125,20 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
 }
 
 /**
+ * Find `rotation` in the `lvgl` section.
+ * ESPHome 2026.4+ requires rotation in the LVGL config (not the display)
+ * when LVGL is active.
+ */
+function findLvglRotation(sections: readonly IRSection[]): number | undefined {
+  const lvglSection = sections.find(s => s.key === 'lvgl');
+  if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
+  const rotEntry = findEntry(lvglSection.value, 'rotation');
+  if (!rotEntry) return undefined;
+  const val = getScalarValue(rotEntry.value);
+  return typeof val === 'number' ? val : undefined;
+}
+
+/**
  * Infer display dimensions from the existing display config,
  * accounting for rotation (90°/270° swaps width↔height).
  *
@@ -136,7 +150,10 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
  * After resolving dimensions, if rotation is 90° or 270° the width and
  * height are swapped so the SDL window opens at the final orientation.
  */
-function inferDisplayDimensions(displayValue: IRValue): { width: number; height: number } {
+function inferDisplayDimensions(
+  displayValue: IRValue,
+  lvglRotation?: number,
+): { width: number; height: number } {
   const obj = displayValue.kind === 'object'
     ? displayValue
     : displayValue.kind === 'array' && displayValue.items[0]?.kind === 'object'
@@ -171,13 +188,13 @@ function inferDisplayDimensions(displayValue: IRValue): { width: number; height:
     }
   }
 
-  // If rotation is 90° or 270°, swap to get final orientation
+  // If rotation is 90° or 270°, swap to get final orientation.
+  // Check display first, then fall back to LVGL rotation (ESPHome 2026.4+
+  // requires rotation in the LVGL config when LVGL is active).
   const rotationEntry = findEntry(obj, 'rotation');
-  if (rotationEntry) {
-    const rot = getScalarValue(rotationEntry.value);
-    if (rot === 90 || rot === 270) {
-      dims = { width: dims.height, height: dims.width };
-    }
+  const rot = rotationEntry ? getScalarValue(rotationEntry.value) : lvglRotation;
+  if (rot === 90 || rot === 270) {
+    dims = { width: dims.height, height: dims.width };
   }
 
   return dims;
@@ -307,7 +324,8 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const inferred = inferDisplayDimensions(section.value);
+      const lvglRotation = findLvglRotation(sections);
+      const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
       result.push(irSection('display', buildSdlDisplay(section.value, width, height)));

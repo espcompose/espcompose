@@ -433,4 +433,64 @@ describe('transformIRForHost', () => {
     // Same reference since no entries were stripped
     expect(logger.value).toBe(loggerValue);
   });
+
+  it('reads rotation from lvgl section when display has none', () => {
+    const ir = makeIR([
+      {
+        key: 'display',
+        value: irObject([
+          irEntry('platform', irScalar('mipi_dsi')),
+          irEntry('dimensions', irObject([
+            irEntry('width', irScalar(800)),
+            irEntry('height', irScalar(1280)),
+          ])),
+        ]),
+      },
+      {
+        key: 'lvgl',
+        value: irObject([
+          irEntry('displays', irArray([irRef('r_disp')])),
+          irEntry('rotation', irScalar(270)),
+        ]),
+      },
+    ]);
+
+    const result = transformIRForHost(ir);
+    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
+    const dims = obj.entries.find(e => e.key === 'dimensions');
+    const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
+    // 270° swaps 800×1280 → 1280×800
+    expect(dimsObj.entries.find(e => e.key === 'width')?.value).toEqual(irScalar(1280));
+    expect(dimsObj.entries.find(e => e.key === 'height')?.value).toEqual(irScalar(800));
+  });
+
+  it('display rotation takes precedence over lvgl rotation', () => {
+    const ir = makeIR([
+      {
+        key: 'display',
+        value: irObject([
+          irEntry('platform', irScalar('ili9xxx')),
+          irEntry('model', irScalar('ILI9341')),
+          irEntry('rotation', irScalar(270)),
+        ]),
+      },
+      {
+        key: 'lvgl',
+        value: irObject([
+          irEntry('displays', irArray([irRef('r_disp')])),
+          irEntry('rotation', irScalar(0)),
+        ]),
+      },
+    ]);
+
+    const result = transformIRForHost(ir);
+    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
+    const dims = obj.entries.find(e => e.key === 'dimensions');
+    const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
+    // Display rotation (270°) wins — ILI9341 320×240 → 240×320
+    expect(dimsObj.entries.find(e => e.key === 'width')?.value).toEqual(irScalar(240));
+    expect(dimsObj.entries.find(e => e.key === 'height')?.value).toEqual(irScalar(320));
+  });
 });

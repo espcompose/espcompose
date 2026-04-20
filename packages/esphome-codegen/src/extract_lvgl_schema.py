@@ -88,12 +88,11 @@ def _classify_by_identity(validator) -> dict:
         id(lvalid.pixels_or_percent): "pixels_or_percent",
         id(lvalid.padding): "padding",
         id(lvalid.size): "size",
-        id(lvalid.zoom): "zoom",
+        id(lvalid.scale): "scale",
         id(lvalid.lv_angle): "angle",
         id(lvalid.lv_angle_degrees): "angle",
         id(lvalid.lv_milliseconds): "milliseconds",
         id(lvalid.lv_fraction): "fraction",
-        id(lvalid.lv_brightness): "brightness",
         id(lvalid.lv_gradient): "gradient",
     }
 
