@@ -154,6 +154,10 @@ export { isTriggerVar } from './trigger-args';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
 export { buildSemanticIR } from './ir/index';
+export {
+  irSection, irScalar, irObject, irEntry, irArray, irNull,
+  irReactive, irRef, irAction, irSecret, irTriggerVar,
+} from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
   BuildSemanticIRInput, IRThemeScopeData, IRScript,
