@@ -99,6 +99,37 @@ There are two different truths to respect:
 2. **Behavioral truth**
    The component must still behave like the underlying LVGL widget in the ways that matter.
 
+## Component creation factories
+
+All UI design system components — including internal helpers — **must** use the widget factory functions from `@espcompose/core`. Never use plain function components.
+
+- **Leaf widgets** (no children): use `createLvglWidget<P>(fn)` with `WidgetProps<T>`
+- **Container widgets** (accept children): use `createLvglContainerWidget(fn)` with `WidgetPropsWithChildren<T>`
+
+`createLvglContainerWidget` automatically sets `allowedChildIntents: [WIDGET]` and `contextTransparent: true`.
+
+### Props types
+
+- `WidgetProps<T>` auto-wraps each design-system prop in `Reactive<T>` and adds `style?: CssStyleProps`.
+- `WidgetPropsWithChildren<T>` extends `WidgetProps` with `children?: EspComposeElement | EspComposeElement[]`.
+- Use the 2nd type param `Skip` on either type to exclude passthrough props from `Reactive` wrapping (e.g. native LVGL attrs like `angle`, `zoom`).
+
+### Example
+
+```tsx
+// Leaf widget (no children)
+type SliderProps = WidgetProps<{ value?: number; min?: number; max?: number }>;
+export const Slider = createLvglWidget<SliderProps>((props) => {
+  return <lvgl-slider … />;
+});
+
+// Container widget (accepts children)
+type CardProps = WidgetPropsWithChildren<{ padding?: SpacingToken }>;
+export const Card = createLvglContainerWidget((props: CardProps) => {
+  return <lvgl-obj …>{props.children}</lvgl-obj>;
+});
+```
+
 Do not confuse these.
 
 It is acceptable for the public props to differ significantly from raw LVGL props.

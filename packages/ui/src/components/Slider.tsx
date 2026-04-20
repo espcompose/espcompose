@@ -12,6 +12,7 @@ import type { TriggerHandler, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useTheme } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import type { Theme } from '../theme/types';
+import { WidgetHost } from './WidgetHost';
 
 export type SliderProps = WidgetProps<{
   /** Bound value (sensor or entity reference). */
@@ -41,41 +42,38 @@ export const Slider = createLvglWidget<SliderProps>(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <lvgl-slider
-        minValue={props.min}
-        maxValue={props.max}
-        value={props.value}
-        {...(props.onChange != null ? { onRelease: props.onChange } : {})}
-        style={{
-          // Widget height matches knob diameter so the knob never overflows
-          // the widget's layout bounds.  In LVGL, `padding` on the knob part
-          // extends the knob *outward* from the track; the next row in a
-          // VStack does not reserve space for that overflow.  Keeping
-          // knob = widget height (no extra knob padding) avoids overlap.
-          width: '100%',
-          //height: 26,
-          padding: -2,
-          borderRadius: 'circle',
-          backgroundOpacity: 'opaque',
-          backgroundColor: theme?.parts?.slider?.track,
-          borderWidth: 0,
-          indicator: {
+      <WidgetHost width="100%" height={26} padding={4}>
+        <lvgl-slider
+          minValue={props.min}
+          maxValue={props.max}
+          value={props.value}
+          {...(props.onChange != null ? { onRelease: props.onChange } : {})}
+          style={{
+            width: '100%',
+            height: '100%',
+            padding: -1,
+            borderRadius: 'circle',
+            backgroundOpacity: 'opaque',
+            backgroundColor: theme?.parts?.slider?.track,
             borderWidth: 0,
-            borderRadius: 'circle',
-            backgroundOpacity: 'opaque',
-            backgroundColor: theme?.parts?.slider?.bg,
-          },
-          knob: {
-            padding: 6,
-            borderWidth: 2,
-            borderColor: theme?.parts?.slider?.track,
-            borderRadius: 'circle',
-            backgroundOpacity: 'opaque',
-            backgroundColor: theme?.parts?.slider?.knob,
-          },
-          ...props.style,
-        }}
-      />
+            indicator: {
+              borderWidth: 0,
+              borderRadius: 'circle',
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.slider?.bg,
+            },
+            knob: {
+              padding: 2,
+              borderWidth: 2,
+              borderColor: theme?.parts?.slider?.track,
+              borderRadius: 'circle',
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.slider?.knob,
+            },
+            ...props.style,
+          }}
+        />
+      </WidgetHost>
     );
   },
 );

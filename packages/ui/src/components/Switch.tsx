@@ -11,6 +11,7 @@ import type { TriggerHandler, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useTheme } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import { Theme } from '../theme/types';
+import { WidgetHost } from './WidgetHost';
 
 export type SwitchProps = WidgetProps<{
   /** Bound value (sensor or entity reference). */
@@ -36,40 +37,41 @@ export const Switch = createLvglWidget<SwitchProps>(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <lvgl-switch
-        x:custom={{
-          ...(props.value != null ? { state: { checked: props.value } } : {}),
-          ...(props.onChange != null ? { on_change: props.onChange } : {}),
-        }}
-        style={{
-          width: 50,
-          height: 20,
-          borderRadius: 'circle',
-          backgroundOpacity: 'transparent',
-          borderWidth: 0,
-          padding: 2,
-          indicator: {
+      <WidgetHost width={50} height={26} padding={2}>
+        <lvgl-switch
+          x:custom={{
+            ...(props.value != null ? { state: { checked: props.value } } : {}),
+            ...(props.onChange != null ? { on_change: props.onChange } : {}),
+          }}
+          style={{
+            width: '100%',
+            height: '100%',
             borderRadius: 'circle',
+            backgroundOpacity: 'transparent',
             borderWidth: 0,
-            backgroundOpacity: 'opaque',
-            backgroundColor: theme?.parts?.switch?.bgOff,
-            checked: {
-              backgroundColor: theme?.parts?.switch?.bg,
+            indicator: {
+              borderRadius: 'circle',
+              borderWidth: 0,
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.switch?.bgOff,
+              checked: {
+                backgroundColor: theme?.parts?.switch?.bg,
+              },
             },
-          },
-          knob: {
-            // In LVGL, knob base size = full widget height.  Negative padding
-            // shrinks the knob inward so it fits within the track padding area.
-            // The value -(padding) ensures the visual knob exactly fills the
-            // content area.
-            padding: 2,
-            borderRadius: 'circle',
-            backgroundOpacity: 'opaque',
-            backgroundColor: theme?.parts?.switch?.knob,
-          },
-          ...props.style,
-        }}
-      />
+            knob: {
+              // In LVGL, knob base size = full widget height.  Negative padding
+              // shrinks the knob inward so it fits within the track padding area.
+              // The value -(padding) ensures the visual knob exactly fills the
+              // content area.
+              padding: -2,
+              borderRadius: 'circle',
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.switch?.knob,
+            },
+            ...props.style,
+          }}
+        />
+      </WidgetHost>
     );
   },
 );
