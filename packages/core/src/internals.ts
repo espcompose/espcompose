@@ -182,7 +182,7 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
-  IRActionConfig,
+  IRActionConfig, IRActionConfigDict, IRActionConfigValue,
 } from './ir/index';
 export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,

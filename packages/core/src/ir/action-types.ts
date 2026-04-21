@@ -164,10 +164,28 @@ export type IRActionParam =
   | IRTriggerVarParam
   | IRExpressionParam;
 
+/**
+ * A nested object value inside an action config — used for actions like
+ * `lvgl.widget.update` whose params include sub-part dictionaries
+ * (e.g. `knob: { padding: 8 }`).  Recursive: nested dicts can themselves
+ * contain primitives, params, or further nested dicts.
+ */
+export interface IRActionConfigDict {
+  kind: 'config_dict';
+  entries: Record<string, IRActionConfigValue>;
+}
+
+export type IRActionConfigValue =
+  | IRActionParam
+  | IRActionConfigDict
+  | string
+  | number
+  | boolean;
+
 /** Config for native actions — either a simple ID or an object with params */
 export type IRActionConfig =
   | string
-  | Record<string, IRActionParam | string | number | boolean>;
+  | Record<string, IRActionConfigValue>;
 
 // ── Constructors ───────────────────────────────────────────────────────────
 

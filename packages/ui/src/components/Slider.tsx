@@ -75,10 +75,6 @@ export const Slider = createLvglWidget<SliderProps>(
               borderRadius: 'circle',
               backgroundOpacity: 'opaque',
               backgroundColor: theme?.parts?.slider?.knob,
-
-              pressed: {
-                //padding: 7,
-              }
             },
             ...props.style,
           }}

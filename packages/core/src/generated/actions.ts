@@ -2673,7 +2673,7 @@ export interface lv_style_t_AnimimgUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -2976,7 +2976,7 @@ export interface lv_style_t_ArcUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -3284,7 +3284,7 @@ export interface lv_style_t_BarUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -3589,7 +3589,7 @@ export interface lv_style_t_BtnmatrixBtnUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -3884,7 +3884,7 @@ export interface lv_style_t_ButtonUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -4181,7 +4181,7 @@ export interface lv_style_t_CanvasUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -4477,7 +4477,7 @@ export interface lv_style_t_CheckboxUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -4777,7 +4777,7 @@ export interface lv_style_t_ContainerUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -5074,7 +5074,7 @@ export interface lv_style_t_DropdownListUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -5375,7 +5375,7 @@ export interface lv_style_t_DropdownUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -5680,7 +5680,7 @@ export interface lv_style_t_ImageUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -5988,7 +5988,7 @@ export interface lv_style_t_KeyboardUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -6287,7 +6287,7 @@ export interface lv_style_t_LabelUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -6590,7 +6590,7 @@ export interface lv_style_t_LedUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -6886,7 +6886,7 @@ export interface lv_style_t_LineUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -7183,7 +7183,7 @@ export interface lv_style_t_LvTileviewTileTUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -7479,7 +7479,7 @@ export interface lv_style_t_MeterUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -7780,7 +7780,7 @@ export interface lv_style_t_ObjUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -8077,7 +8077,7 @@ export interface lv_style_t_PageUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -8374,7 +8374,7 @@ export interface lv_style_t_QrcodeUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -8675,7 +8675,7 @@ export interface lv_style_t_RollerUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -8981,7 +8981,7 @@ export interface lv_style_t_SliderUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -9281,7 +9281,7 @@ export interface lv_style_t_SpinboxUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -9584,7 +9584,7 @@ export interface lv_style_t_SpinnerUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -10122,7 +10122,7 @@ export interface lv_style_t_SwitchUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -10420,7 +10420,7 @@ export interface lv_style_t_TabviewUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -10719,7 +10719,7 @@ export interface lv_style_t_TextareaUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -11028,7 +11028,7 @@ export interface lv_style_t_TileviewUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -11326,7 +11326,7 @@ export interface lv_style_t_WidgetUpdateParams {
   height?: unknown;
   hidden?: unknown;
   hovered?: Record<string, unknown>;
-  id: Record<string, unknown>[];
+  id?: Record<string, unknown>[];
   /** @yamlKey ignore_layout */
   ignoreLayout?: unknown;
   /** @yamlKey image_opa */
@@ -11643,7 +11643,7 @@ export interface LvglComponent_PageShowParams {
   /** Page transition animation. Defaults to NONE. */
   animation?: "NONE" | "MOVE_LEFT" | "MOVE_RIGHT" | "FADE_IN" | "OUT_LEFT" | "OUT_RIGHT" | "OUT_TOP" | "OUT_BOTTOM";
   /** The page ref to navigate to. */
-  id: Ref;
+  id?: Ref;
   /** Animation duration (e.g. "300ms"). Defaults to 50ms. */
   time?: string;
 }

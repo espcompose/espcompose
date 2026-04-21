@@ -8,6 +8,7 @@
 import type {
   IRActionNode,
   IRActionConfig,
+  IRActionConfigValue,
   IRActionParam,
   IRCondition,
 } from '@espcompose/core/internals';
@@ -47,6 +48,22 @@ function lowerParam(param: IRActionParam | string | number | boolean): unknown {
 }
 
 /**
+ * Lower a single config value: literal/trigger/expression param, nested dict,
+ * or already-resolved primitive.
+ */
+function lowerConfigValue(value: IRActionConfigValue): unknown {
+  if (typeof value !== 'object' || value === null) return value;
+  if (value.kind === 'config_dict') {
+    const dict: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value.entries)) {
+      dict[k] = lowerConfigValue(v);
+    }
+    return dict;
+  }
+  return lowerParam(value);
+}
+
+/**
  * Lower an IRActionConfig to its YAML-ready value.
  */
 function lowerConfig(config: IRActionConfig): unknown {
@@ -55,11 +72,7 @@ function lowerConfig(config: IRActionConfig): unknown {
   }
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(config)) {
-    if (typeof value === 'object' && value !== null && 'kind' in value) {
-      result[key] = lowerParam(value as IRActionParam);
-    } else {
-      result[key] = value;
-    }
+    result[key] = lowerConfigValue(value);
   }
   return result;
 }

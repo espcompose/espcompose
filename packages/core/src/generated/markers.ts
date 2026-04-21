@@ -54,6 +54,42 @@ export interface __marker_GPIOPin {
 export interface __marker_InternalGPIOPin {
     readonly __brand_InternalGPIOPin?: true;
 }
+//  LvButtonMatrixType
+export interface __marker_LvButtonMatrixType {
+    readonly __brand_LvButtonMatrixType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  LvDropdownType
+export interface __marker_LvDropdownType {
+    readonly __brand_LvDropdownType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  LvKeyboardType
+export interface __marker_LvKeyboardType {
+    readonly __brand_LvKeyboardType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  LvLineType
+export interface __marker_LvLineType {
+    readonly __brand_LvLineType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  LvPageType
+export interface __marker_LvPageType {
+    readonly __brand_LvPageType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  LvRollerType
+export interface __marker_LvRollerType {
+    readonly __brand_LvRollerType?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
 //  Parented
 export interface __marker_Parented {
     readonly __brand_Parented?: true;
@@ -3064,9 +3100,128 @@ export interface __marker_ltr_als_ps_LTRAlsPsComponent {
     readonly __brand_Component?: true;
     readonly __brand_i2c_I2CDevice?: true;
 }
+//  lv_animimg_t
+export interface __marker_lv_animimg_t {
+    readonly __brand_lv_animimg_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_arc_t
+export interface __marker_lv_arc_t {
+    readonly __brand_lv_arc_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_bar_t
+export interface __marker_lv_bar_t {
+    readonly __brand_lv_bar_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_button_t
+export interface __marker_lv_button_t {
+    readonly __brand_lv_button_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_canvas_t
+export interface __marker_lv_canvas_t {
+    readonly __brand_lv_canvas_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_checkbox_t
+export interface __marker_lv_checkbox_t {
+    readonly __brand_lv_checkbox_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_dropdown_list_t
+export interface __marker_lv_dropdown_list_t {
+    readonly __brand_lv_dropdown_list_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_image_t
+export interface __marker_lv_image_t {
+    readonly __brand_lv_image_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_label_t
+export interface __marker_lv_label_t {
+    readonly __brand_lv_label_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
 //  lv_led_t
 export interface __marker_lv_led_t {
     readonly __brand_lv_led_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_meter_t
+export interface __marker_lv_meter_t {
+    readonly __brand_lv_meter_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_obj_t
+export interface __marker_lv_obj_t {
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_slider_t
+export interface __marker_lv_slider_t {
+    readonly __brand_lv_slider_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_spinbox_t
+export interface __marker_lv_spinbox_t {
+    readonly __brand_lv_spinbox_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_spinner_t
+export interface __marker_lv_spinner_t {
+    readonly __brand_lv_spinner_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_style_t
+export interface __marker_lv_style_t {
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_switch_t
+export interface __marker_lv_switch_t {
+    readonly __brand_lv_switch_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_tabview_t
+export interface __marker_lv_tabview_t {
+    readonly __brand_lv_tabview_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_textarea_t
+export interface __marker_lv_textarea_t {
+    readonly __brand_lv_textarea_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_tileview_t
+export interface __marker_lv_tileview_t {
+    readonly __brand_lv_tileview_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
+}
+//  lv_tileview_tile_t
+export interface __marker_lv_tileview_tile_t {
+    readonly __brand_lv_tileview_tile_t?: true;
+    readonly __brand_lv_obj_t?: true;
+    readonly __brand_lv_style_t?: true;
 }
 //  lvgl::LVGLNumber
 export interface __marker_lvgl_LVGLNumber {

@@ -21,6 +21,7 @@ import {
   globalJsxAugmentation,
   reactivePropType,
   refPropType,
+  componentPropsType,
   triggerType,
 } from './ast-helpers.js';
 
@@ -205,8 +206,18 @@ function buildProps(
 
 /**
  * Generate the full LVGL component TypeScript file content.
+ *
+ * @param schemaPath          Path to the extracted lvgl-schema.json.
+ * @param widgetCppTypeMap    Optional map of widgetName → C++ type (e.g.
+ *                            'slider' → 'lv_slider_t').  When provided, each
+ *                            `<lvgl-*>` JSX intrinsic is emitted as
+ *                            `ComponentProps<__marker_lv_<widget>_t>` so refs
+ *                            expose typed widget actions.
  */
-export function buildLvglFileContent(schemaPath: string): string {
+export function buildLvglFileContent(
+  schemaPath: string,
+  widgetCppTypeMap?: ReadonlyMap<string, string>,
+): string {
   const raw = fs.readFileSync(schemaPath, 'utf8');
   const schema: LvglSchema = JSON.parse(raw);
 
@@ -214,7 +225,16 @@ export function buildLvglFileContent(schemaPath: string): string {
 
   // ── Import ────────────────────────────────────────────────────────────────
   statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp', 'TriggerHandler'], '../../types'));
-  statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
+
+  // Collect every marker we need to import from ../markers (image + per-widget).
+  const markerImports = new Set<string>([internalMarkerName('image::Image')]);
+  if (widgetCppTypeMap) {
+    for (const cppType of widgetCppTypeMap.values()) {
+      markerImports.add(internalMarkerName(cppType));
+    }
+  }
+  statements.push(importTypeDecl([...markerImports].sort(), '../markers'));
+
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
   statements.push(importTypeDecl(['HexColor'], '../../theme/hex-color'));
 
@@ -363,9 +383,13 @@ export function buildLvglFileContent(schemaPath: string): string {
 
     // JSX element: <lvgl-widgetname>
     const tagName = `lvgl-${widgetName.replace(/_/g, '-')}`;
+    const widgetCppType = widgetCppTypeMap?.get(widgetName);
+    const widgetComponentProps = widgetCppType
+      ? componentPropsType(internalMarkerName(widgetCppType))
+      : typeRef('ComponentProps');
     jsxElements.push({
       tagName,
-      type: intersectionType([typeRef(interfaceName), typeRef('ComponentProps')]),
+      type: intersectionType([typeRef(interfaceName), widgetComponentProps]),
     });
   }
 

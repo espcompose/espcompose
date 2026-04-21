@@ -100,6 +100,12 @@ describe('ESPHome Compose Build', () => {
     await createProjectTest(projectsDir, 'widget-ref-device');
   });
 
+  // Typed LVGL widget refs — exercises lv_obj_t/lv_style_t brand inheritance
+  // and ref-resolved widgetUpdate / widgetRedraw / sliderUpdate actions.
+  it('lvgl-widget-ref-device', async () => {
+    await createProjectTest(projectsDir, 'lvgl-widget-ref-device');
+  });
+
   // Untransformed library detection — build should fail with a clear error
   it('uncompiled-lib-device (detects untransformed library)', async () => {
     const projectPath = path.resolve(projectsDir, 'uncompiled-lib-device');

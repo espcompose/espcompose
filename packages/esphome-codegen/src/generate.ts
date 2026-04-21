@@ -38,6 +38,7 @@ import {
   type PlatformComponent,
 } from './schema-registry.js';
 import { buildLvglFileContent } from './lvgl-codegen.js';
+import { collectLvglWidgetMarkers } from './lvgl-marker-collector.js';
 import { generateActionsFile } from './action-codegen.js';
 import { extractSchemaActions } from './schema-action-extractor.js';
 import { ACTION_OVERRIDES, PLATFORM_COMPONENT_OVERRIDES } from './overrides.js';
@@ -400,6 +401,13 @@ async function run(): Promise<void> {
   // Also include classes referenced in named schemas (for inherited fields).
   collectRegistryClasses(schemaRegistry, allCppClasses, markerParentMap);
 
+  // Inject LVGL widget C++ types (lv_slider_t, LvPageType, etc.) so refs to
+  // <lvgl-*> intrinsics expose typed widget actions.
+  const lvglSchemaPathForMarkers = path.join(SCHEMAS_DIR, 'lvgl-schema.json');
+  const lvglWidgetCppTypeMap = collectLvglWidgetMarkers(
+    lvglSchemaPathForMarkers, allCppClasses, markerParentMap,
+  );
+
   // ── Extract schema-defined actions ──────────────────────────────────────
   const { classActions, shortcomings } = extractSchemaActions(SCHEMAS_DIR, schemaRegistry);
 
@@ -504,7 +512,7 @@ async function run(): Promise<void> {
     if (target.name === 'lvgl') {
       const lvglSchemaPath = path.join(SCHEMAS_DIR, 'lvgl-schema.json');
       if (fs.existsSync(lvglSchemaPath)) {
-        const content = buildLvglFileContent(lvglSchemaPath);
+        const content = buildLvglFileContent(lvglSchemaPath, lvglWidgetCppTypeMap);
         const outPath = path.join(COMPONENTS_DIR, 'lvgl.ts');
         fs.writeFileSync(outPath, content, 'utf8');
         writtenPaths.push(outPath);

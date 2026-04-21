@@ -96,6 +96,8 @@ export type {
   IRTriggerVarParam,
   IRExpressionParam,
   IRActionConfig,
+  IRActionConfigDict,
+  IRActionConfigValue,
 } from './action-types';
 
 export {

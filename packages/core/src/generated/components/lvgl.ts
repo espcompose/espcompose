@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Reactive, RefProp, TriggerHandler } from "../../types";
-import type { __marker_image_Image } from "../markers";
+import type { __marker_LvButtonMatrixType, __marker_LvDropdownType, __marker_LvKeyboardType, __marker_LvLineType, __marker_LvPageType, __marker_LvRollerType, __marker_image_Image, __marker_lv_animimg_t, __marker_lv_arc_t, __marker_lv_bar_t, __marker_lv_button_t, __marker_lv_canvas_t, __marker_lv_checkbox_t, __marker_lv_dropdown_list_t, __marker_lv_image_t, __marker_lv_label_t, __marker_lv_led_t, __marker_lv_meter_t, __marker_lv_obj_t, __marker_lv_slider_t, __marker_lv_spinbox_t, __marker_lv_spinner_t, __marker_lv_switch_t, __marker_lv_tabview_t, __marker_lv_textarea_t, __marker_lv_tileview_t, __marker_lv_tileview_tile_t } from "../markers";
 import type { CssStyleProps } from "../../style-types";
 import type { HexColor } from "../../theme/hex-color";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
@@ -6818,35 +6818,35 @@ export interface LvglProps {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            "lvgl-animimg": LvglAnimimgProps & ComponentProps;
-            "lvgl-arc": LvglArcProps & ComponentProps;
-            "lvgl-bar": LvglBarProps & ComponentProps;
+            "lvgl-animimg": LvglAnimimgProps & ComponentProps<__marker_lv_animimg_t>;
+            "lvgl-arc": LvglArcProps & ComponentProps<__marker_lv_arc_t>;
+            "lvgl-bar": LvglBarProps & ComponentProps<__marker_lv_bar_t>;
             "lvgl-btnmatrix-btn": LvglBtnmatrixBtnProps & ComponentProps;
-            "lvgl-button": LvglButtonProps & ComponentProps;
-            "lvgl-buttonmatrix": LvglButtonmatrixProps & ComponentProps;
-            "lvgl-canvas": LvglCanvasProps & ComponentProps;
-            "lvgl-checkbox": LvglCheckboxProps & ComponentProps;
-            "lvgl-container": LvglContainerProps & ComponentProps;
-            "lvgl-dropdown": LvglDropdownProps & ComponentProps;
-            "lvgl-dropdown-list": LvglDropdownListProps & ComponentProps;
-            "lvgl-image": LvglImageProps & ComponentProps;
-            "lvgl-keyboard": LvglKeyboardProps & ComponentProps;
-            "lvgl-label": LvglLabelProps & ComponentProps;
-            "lvgl-led": LvglLedProps & ComponentProps;
-            "lvgl-line": LvglLineProps & ComponentProps;
-            "lvgl-lv-tileview-tile-t": LvglLvTileviewTileTProps & ComponentProps;
-            "lvgl-meter": LvglMeterProps & ComponentProps;
-            "lvgl-obj": LvglObjProps & ComponentProps;
-            "lvgl-page": LvglPageProps & ComponentProps;
-            "lvgl-qrcode": LvglQrcodeProps & ComponentProps;
-            "lvgl-roller": LvglRollerProps & ComponentProps;
-            "lvgl-slider": LvglSliderProps & ComponentProps;
-            "lvgl-spinbox": LvglSpinboxProps & ComponentProps;
-            "lvgl-spinner": LvglSpinnerProps & ComponentProps;
-            "lvgl-switch": LvglSwitchProps & ComponentProps;
-            "lvgl-tabview": LvglTabviewProps & ComponentProps;
-            "lvgl-textarea": LvglTextareaProps & ComponentProps;
-            "lvgl-tileview": LvglTileviewProps & ComponentProps;
+            "lvgl-button": LvglButtonProps & ComponentProps<__marker_lv_button_t>;
+            "lvgl-buttonmatrix": LvglButtonmatrixProps & ComponentProps<__marker_LvButtonMatrixType>;
+            "lvgl-canvas": LvglCanvasProps & ComponentProps<__marker_lv_canvas_t>;
+            "lvgl-checkbox": LvglCheckboxProps & ComponentProps<__marker_lv_checkbox_t>;
+            "lvgl-container": LvglContainerProps & ComponentProps<__marker_lv_obj_t>;
+            "lvgl-dropdown": LvglDropdownProps & ComponentProps<__marker_LvDropdownType>;
+            "lvgl-dropdown-list": LvglDropdownListProps & ComponentProps<__marker_lv_dropdown_list_t>;
+            "lvgl-image": LvglImageProps & ComponentProps<__marker_lv_image_t>;
+            "lvgl-keyboard": LvglKeyboardProps & ComponentProps<__marker_LvKeyboardType>;
+            "lvgl-label": LvglLabelProps & ComponentProps<__marker_lv_label_t>;
+            "lvgl-led": LvglLedProps & ComponentProps<__marker_lv_led_t>;
+            "lvgl-line": LvglLineProps & ComponentProps<__marker_LvLineType>;
+            "lvgl-lv-tileview-tile-t": LvglLvTileviewTileTProps & ComponentProps<__marker_lv_tileview_tile_t>;
+            "lvgl-meter": LvglMeterProps & ComponentProps<__marker_lv_meter_t>;
+            "lvgl-obj": LvglObjProps & ComponentProps<__marker_lv_obj_t>;
+            "lvgl-page": LvglPageProps & ComponentProps<__marker_LvPageType>;
+            "lvgl-qrcode": LvglQrcodeProps & ComponentProps<__marker_lv_obj_t>;
+            "lvgl-roller": LvglRollerProps & ComponentProps<__marker_LvRollerType>;
+            "lvgl-slider": LvglSliderProps & ComponentProps<__marker_lv_slider_t>;
+            "lvgl-spinbox": LvglSpinboxProps & ComponentProps<__marker_lv_spinbox_t>;
+            "lvgl-spinner": LvglSpinnerProps & ComponentProps<__marker_lv_spinner_t>;
+            "lvgl-switch": LvglSwitchProps & ComponentProps<__marker_lv_switch_t>;
+            "lvgl-tabview": LvglTabviewProps & ComponentProps<__marker_lv_tabview_t>;
+            "lvgl-textarea": LvglTextareaProps & ComponentProps<__marker_lv_textarea_t>;
+            "lvgl-tileview": LvglTileviewProps & ComponentProps<__marker_lv_tileview_t>;
             lvgl: LvglProps & ComponentProps;
         }
     }

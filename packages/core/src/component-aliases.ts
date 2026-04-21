@@ -9,6 +9,35 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { Components } from './generated/markers.js';
+import type {
+  __marker_lv_obj_t,
+  __marker_lv_style_t,
+  __marker_LvPageType,
+  __marker_lv_animimg_t,
+  __marker_lv_arc_t,
+  __marker_lv_bar_t,
+  __marker_lv_button_t,
+  __marker_lv_canvas_t,
+  __marker_lv_checkbox_t,
+  __marker_lv_dropdown_list_t,
+  __marker_lv_image_t,
+  __marker_lv_label_t,
+  __marker_lv_led_t,
+  __marker_lv_meter_t,
+  __marker_lv_slider_t,
+  __marker_lv_spinbox_t,
+  __marker_lv_spinner_t,
+  __marker_lv_switch_t,
+  __marker_lv_tabview_t,
+  __marker_lv_textarea_t,
+  __marker_lv_tileview_t,
+  __marker_lv_tileview_tile_t,
+  __marker_LvButtonMatrixType,
+  __marker_LvDropdownType,
+  __marker_LvKeyboardType,
+  __marker_LvLineType,
+  __marker_LvRollerType,
+} from './generated/markers.js';
 
 // ── Core entity types ────────────────────────────────────────────────────────
 
@@ -43,6 +72,50 @@ export type FontRef = Components.Font.FontRef;
 export type ImageRef = Components.Image.ImageRef;
 export type LvglComponentRef = Components.Lvgl.LvglComponentRef;
 export type TouchscreenRef = Components.Touchscreen.TouchscreenRef;
+
+// ── LVGL Widget Refs ─────────────────────────────────────────────────────────
+//
+// Each LVGL widget intrinsic (`<lvgl-slider>`, `<lvgl-button>`, etc.) accepts a
+// typed `ref` that exposes ESPHome actions specific to that widget plus the
+// common `widgetUpdate()`/`widgetRedraw()`/`widgetRefresh()` actions inherited
+// from `lv_obj_t`/`lv_style_t`.
+//
+// Use `LvglWidgetRef` when you need a generic reference to any LVGL widget
+// (only `widgetUpdate`/`widgetRedraw`/`widgetRefresh` are guaranteed).
+// Use the per-widget refs to also unlock widget-specific actions
+// (`sliderUpdate`, `canvasFill`, `spinboxIncrement`, etc.).
+
+/** Generic LVGL widget ref — exposes `widgetUpdate`, `widgetRedraw`, `widgetRefresh`. */
+export type LvglWidgetRef = __marker_lv_obj_t;
+/** LVGL style mixin — exposes per-widget update actions (`sliderUpdate`, etc.). */
+export type LvglStyleRef = __marker_lv_style_t;
+/** LVGL page ref — exposes `pageShow()`. */
+export type LvglPageRef = __marker_LvPageType;
+
+export type LvglAnimimgRef = __marker_lv_animimg_t;
+export type LvglArcRef = __marker_lv_arc_t;
+export type LvglBarRef = __marker_lv_bar_t;
+export type LvglButtonRef = __marker_lv_button_t;
+export type LvglButtonMatrixRef = __marker_LvButtonMatrixType;
+export type LvglCanvasRef = __marker_lv_canvas_t;
+export type LvglCheckboxRef = __marker_lv_checkbox_t;
+export type LvglDropdownRef = __marker_LvDropdownType;
+export type LvglDropdownListRef = __marker_lv_dropdown_list_t;
+export type LvglImageRef = __marker_lv_image_t;
+export type LvglKeyboardRef = __marker_LvKeyboardType;
+export type LvglLabelRef = __marker_lv_label_t;
+export type LvglLedRef = __marker_lv_led_t;
+export type LvglLineRef = __marker_LvLineType;
+export type LvglMeterRef = __marker_lv_meter_t;
+export type LvglRollerRef = __marker_LvRollerType;
+export type LvglSliderRef = __marker_lv_slider_t;
+export type LvglSpinboxRef = __marker_lv_spinbox_t;
+export type LvglSpinnerRef = __marker_lv_spinner_t;
+export type LvglSwitchRef = __marker_lv_switch_t;
+export type LvglTabviewRef = __marker_lv_tabview_t;
+export type LvglTextareaRef = __marker_lv_textarea_t;
+export type LvglTileviewRef = __marker_lv_tileview_t;
+export type LvglTileviewTileRef = __marker_lv_tileview_tile_t;
 
 // ── Output ───────────────────────────────────────────────────────────────────
 

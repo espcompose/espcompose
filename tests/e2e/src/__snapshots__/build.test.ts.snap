@@ -1612,6 +1612,275 @@ void bootstrap_runtime() {
 }  // namespace espcompose"
 `;
 
+exports[`ESPHome Compose Build > design-system-device > espcompose_reactive.h 1`] = `
+"// espcompose_reactive.h — SolidJS-style fine-grained reactive runtime
+#pragma once
+
+#include <functional>
+#include <cstdint>
+#include <cstring>
+#include <limits>
+#include <string>
+
+#include "esphome/core/component.h"
+#include "esphome/core/hal.h"
+
+#ifndef ESPCOMPOSE_MAX_NODES
+#define ESPCOMPOSE_MAX_NODES 64
+#endif
+
+// Define ESPCOMPOSE_LOG to enable debug logging (requires esphome/core/log.h).
+// Example: add -DESPCOMPOSE_LOG to build_flags in platformio_options.
+#ifdef ESPCOMPOSE_LOG
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_TAG = "espcompose";
+#define ESPCOMPOSE_LOGD(fmt, ...) ESP_LOGD(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#define ESPCOMPOSE_LOGW(fmt, ...) ESP_LOGW(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_LOGD(...)
+#define ESPCOMPOSE_LOGW(...)
+#endif
+
+namespace espcompose {
+
+class Scheduler;
+
+class NodeBase {
+public:
+  NodeBase(uint8_t order) : order_(order) {}
+  virtual ~NodeBase() = default;
+
+  void mark_dirty();
+  virtual void update() {}
+
+  bool is_dirty() const { return dirty_; }
+  void set_dirty(bool d) { dirty_ = d; }
+
+  NodeBase** subscribers() { return subscribers_; }
+  uint16_t subscriber_count() const { return subscriber_count_; }
+
+  void set_subscriber_storage(NodeBase** buf, uint16_t capacity) {
+    subscribers_ = buf;
+    subscriber_capacity_ = capacity;
+  }
+
+  void add_subscriber(NodeBase* sub) {
+    if (subscribers_ && subscriber_count_ < subscriber_capacity_) {
+      subscribers_[subscriber_count_++] = sub;
+    } else {
+      ESPCOMPOSE_LOGW("subscriber overflow! capacity=%u", (unsigned)subscriber_capacity_);
+    }
+  }
+
+  void set_sources(NodeBase** sources, uint8_t count) {
+    sources_ = sources;
+    source_count_ = count;
+  }
+
+  uint8_t order() const { return order_; }
+
+private:
+  bool dirty_{false};
+  uint8_t order_{0};
+
+  NodeBase** subscribers_{nullptr};
+  uint16_t subscriber_count_{0};
+  uint16_t subscriber_capacity_{0};
+
+  NodeBase** sources_{nullptr};
+  uint8_t source_count_{0};
+};
+
+class Scheduler {
+public:
+  using Hook = void(*)();
+
+  static Scheduler& instance() {
+    static Scheduler s;
+    return s;
+  }
+
+  void set_pre_flush(Hook h) { pre_flush_ = h; }
+  void set_post_flush(Hook h) { post_flush_ = h; }
+  bool has_pending() const { return count_[0] > 0 || count_[1] > 0; }
+
+  void schedule(NodeBase* node) {
+    // While flushing, newly dirtied nodes go to the incoming buffer.
+    // Otherwise they go to the active buffer for the next flush.
+    uint8_t target = flushing_ ? (1 - active_) : active_;
+    if (count_[target] >= ESPCOMPOSE_MAX_NODES) return;
+    for (uint16_t i = 0; i < count_[target]; ++i) {
+      if (buf_[target][i] == node) return;
+    }
+    buf_[target][count_[target]++] = node;
+  }
+
+  bool flush_for_budget_us(uint32_t budget_us) {
+    if (count_[active_] == 0) return true;
+    if (pre_flush_) pre_flush_();
+    flushing_ = true;
+
+    static constexpr int max_passes = 10;
+    const uint32_t start_us = esphome::micros();
+
+    for (int pass = 0; pass < max_passes && count_[active_] > 0; ++pass) {
+      ESPCOMPOSE_LOGD("flush pass %d, %u nodes queued", pass, count_[active_]);
+
+      // Insertion-sort the active buffer by topological order
+      for (uint16_t i = 1; i < count_[active_]; ++i) {
+        NodeBase* key = buf_[active_][i];
+        int j = static_cast<int>(i) - 1;
+        while (j >= 0 && buf_[active_][j]->order() > key->order()) {
+          buf_[active_][j + 1] = buf_[active_][j];
+          --j;
+        }
+        buf_[active_][j + 1] = key;
+      }
+
+      uint16_t count = count_[active_];
+      uint16_t i = 0;
+      for (; i < count; ++i) {
+        if (esphome::micros() - start_us >= budget_us) {
+          break;
+        }
+        NodeBase* node = buf_[active_][i];
+        if (node->is_dirty()) {
+          node->update();
+          node->set_dirty(false);
+        }
+      }
+
+      // Budget exhausted: move unprocessed nodes to the incoming buffer.
+      if (i < count) {
+        uint8_t incoming = 1 - active_;
+        for (; i < count; ++i) {
+          schedule(buf_[active_][i]);
+        }
+      }
+
+      // Swap: incoming becomes active, old active is cleared.
+      count_[active_] = 0;
+      active_ = 1 - active_;
+    }
+
+    flushing_ = false;
+    if (post_flush_) post_flush_();
+    return count_[0] == 0 && count_[1] == 0;
+  }
+
+  void flush() {
+    (void) flush_for_budget_us(std::numeric_limits<uint32_t>::max());
+  }
+
+private:
+  Scheduler() = default;
+  NodeBase* buf_[2][ESPCOMPOSE_MAX_NODES]{};
+  uint16_t count_[2]{0, 0};
+  uint8_t active_{0};
+  bool flushing_{false};
+  Hook pre_flush_{nullptr};
+  Hook post_flush_{nullptr};
+};
+
+inline void NodeBase::mark_dirty() {
+  if (dirty_) return;
+  dirty_ = true;
+  Scheduler::instance().schedule(this);
+  for (uint16_t i = 0; i < subscriber_count_; ++i) {
+    subscribers_[i]->mark_dirty();
+  }
+}
+
+template <typename T>
+class Signal : public NodeBase {
+public:
+  explicit Signal(T initial = T{})
+      : NodeBase(0), value_(std::move(initial)) {}
+
+  const T& get() const { return value_; }
+
+  void set(T val) {
+    if (value_ != val) {
+      ESPCOMPOSE_LOGD("Signal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());
+      value_ = std::move(val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+private:
+  T value_;
+};
+
+template <typename T>
+class Memo : public NodeBase {
+public:
+  Memo(std::function<T()> compute, T initial = T{})
+      : NodeBase(1),
+        compute_(std::move(compute)),
+        value_(std::move(initial)) {
+    set_dirty(true);
+  }
+
+  const T& get() {
+    if (is_dirty()) {
+      value_ = compute_();
+      set_dirty(false);
+    }
+    return value_;
+  }
+
+  void update() override {
+    T new_val = compute_();
+    if (new_val != value_) {
+      ESPCOMPOSE_LOGD("Memo value changed, propagating to %u subs", (unsigned)subscriber_count());
+      value_ = std::move(new_val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<T()> compute_;
+  T value_;
+};
+
+class Effect : public NodeBase {
+public:
+  explicit Effect(std::function<void()> callback)
+      : NodeBase(255), callback_(std::move(callback)) {
+    set_dirty(true);
+  }
+
+  void update() override {
+    ESPCOMPOSE_LOGD("Effect executing callback");
+    callback_();
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<void()> callback_;
+};
+
+}  // namespace espcompose
+"
+`;
+
 exports[`ESPHome Compose Build > design-system-device 1`] = `
 "esphome:
   name: design-system-device
@@ -3232,6 +3501,327 @@ lvgl:
               - label:
                   text: Click me
                   align: CENTER
+"
+`;
+
+exports[`ESPHome Compose Build > lvgl-widget-ref-device > espcompose_reactive.h 1`] = `
+"// espcompose_reactive.h — SolidJS-style fine-grained reactive runtime
+#pragma once
+
+#include <functional>
+#include <cstdint>
+#include <cstring>
+#include <limits>
+#include <string>
+
+#include "esphome/core/component.h"
+#include "esphome/core/hal.h"
+
+#ifndef ESPCOMPOSE_MAX_NODES
+#define ESPCOMPOSE_MAX_NODES 64
+#endif
+
+// Define ESPCOMPOSE_LOG to enable debug logging (requires esphome/core/log.h).
+// Example: add -DESPCOMPOSE_LOG to build_flags in platformio_options.
+#ifdef ESPCOMPOSE_LOG
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_TAG = "espcompose";
+#define ESPCOMPOSE_LOGD(fmt, ...) ESP_LOGD(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#define ESPCOMPOSE_LOGW(fmt, ...) ESP_LOGW(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_LOGD(...)
+#define ESPCOMPOSE_LOGW(...)
+#endif
+
+namespace espcompose {
+
+class Scheduler;
+
+class NodeBase {
+public:
+  NodeBase(uint8_t order) : order_(order) {}
+  virtual ~NodeBase() = default;
+
+  void mark_dirty();
+  virtual void update() {}
+
+  bool is_dirty() const { return dirty_; }
+  void set_dirty(bool d) { dirty_ = d; }
+
+  NodeBase** subscribers() { return subscribers_; }
+  uint16_t subscriber_count() const { return subscriber_count_; }
+
+  void set_subscriber_storage(NodeBase** buf, uint16_t capacity) {
+    subscribers_ = buf;
+    subscriber_capacity_ = capacity;
+  }
+
+  void add_subscriber(NodeBase* sub) {
+    if (subscribers_ && subscriber_count_ < subscriber_capacity_) {
+      subscribers_[subscriber_count_++] = sub;
+    } else {
+      ESPCOMPOSE_LOGW("subscriber overflow! capacity=%u", (unsigned)subscriber_capacity_);
+    }
+  }
+
+  void set_sources(NodeBase** sources, uint8_t count) {
+    sources_ = sources;
+    source_count_ = count;
+  }
+
+  uint8_t order() const { return order_; }
+
+private:
+  bool dirty_{false};
+  uint8_t order_{0};
+
+  NodeBase** subscribers_{nullptr};
+  uint16_t subscriber_count_{0};
+  uint16_t subscriber_capacity_{0};
+
+  NodeBase** sources_{nullptr};
+  uint8_t source_count_{0};
+};
+
+class Scheduler {
+public:
+  using Hook = void(*)();
+
+  static Scheduler& instance() {
+    static Scheduler s;
+    return s;
+  }
+
+  void set_pre_flush(Hook h) { pre_flush_ = h; }
+  void set_post_flush(Hook h) { post_flush_ = h; }
+  bool has_pending() const { return count_[0] > 0 || count_[1] > 0; }
+
+  void schedule(NodeBase* node) {
+    // While flushing, newly dirtied nodes go to the incoming buffer.
+    // Otherwise they go to the active buffer for the next flush.
+    uint8_t target = flushing_ ? (1 - active_) : active_;
+    if (count_[target] >= ESPCOMPOSE_MAX_NODES) return;
+    for (uint16_t i = 0; i < count_[target]; ++i) {
+      if (buf_[target][i] == node) return;
+    }
+    buf_[target][count_[target]++] = node;
+  }
+
+  bool flush_for_budget_us(uint32_t budget_us) {
+    if (count_[active_] == 0) return true;
+    if (pre_flush_) pre_flush_();
+    flushing_ = true;
+
+    static constexpr int max_passes = 10;
+    const uint32_t start_us = esphome::micros();
+
+    for (int pass = 0; pass < max_passes && count_[active_] > 0; ++pass) {
+      ESPCOMPOSE_LOGD("flush pass %d, %u nodes queued", pass, count_[active_]);
+
+      // Insertion-sort the active buffer by topological order
+      for (uint16_t i = 1; i < count_[active_]; ++i) {
+        NodeBase* key = buf_[active_][i];
+        int j = static_cast<int>(i) - 1;
+        while (j >= 0 && buf_[active_][j]->order() > key->order()) {
+          buf_[active_][j + 1] = buf_[active_][j];
+          --j;
+        }
+        buf_[active_][j + 1] = key;
+      }
+
+      uint16_t count = count_[active_];
+      uint16_t i = 0;
+      for (; i < count; ++i) {
+        if (esphome::micros() - start_us >= budget_us) {
+          break;
+        }
+        NodeBase* node = buf_[active_][i];
+        if (node->is_dirty()) {
+          node->update();
+          node->set_dirty(false);
+        }
+      }
+
+      // Budget exhausted: move unprocessed nodes to the incoming buffer.
+      if (i < count) {
+        uint8_t incoming = 1 - active_;
+        for (; i < count; ++i) {
+          schedule(buf_[active_][i]);
+        }
+      }
+
+      // Swap: incoming becomes active, old active is cleared.
+      count_[active_] = 0;
+      active_ = 1 - active_;
+    }
+
+    flushing_ = false;
+    if (post_flush_) post_flush_();
+    return count_[0] == 0 && count_[1] == 0;
+  }
+
+  void flush() {
+    (void) flush_for_budget_us(std::numeric_limits<uint32_t>::max());
+  }
+
+private:
+  Scheduler() = default;
+  NodeBase* buf_[2][ESPCOMPOSE_MAX_NODES]{};
+  uint16_t count_[2]{0, 0};
+  uint8_t active_{0};
+  bool flushing_{false};
+  Hook pre_flush_{nullptr};
+  Hook post_flush_{nullptr};
+};
+
+inline void NodeBase::mark_dirty() {
+  if (dirty_) return;
+  dirty_ = true;
+  Scheduler::instance().schedule(this);
+  for (uint16_t i = 0; i < subscriber_count_; ++i) {
+    subscribers_[i]->mark_dirty();
+  }
+}
+
+template <typename T>
+class Signal : public NodeBase {
+public:
+  explicit Signal(T initial = T{})
+      : NodeBase(0), value_(std::move(initial)) {}
+
+  const T& get() const { return value_; }
+
+  void set(T val) {
+    if (value_ != val) {
+      ESPCOMPOSE_LOGD("Signal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());
+      value_ = std::move(val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+private:
+  T value_;
+};
+
+template <typename T>
+class Memo : public NodeBase {
+public:
+  Memo(std::function<T()> compute, T initial = T{})
+      : NodeBase(1),
+        compute_(std::move(compute)),
+        value_(std::move(initial)) {
+    set_dirty(true);
+  }
+
+  const T& get() {
+    if (is_dirty()) {
+      value_ = compute_();
+      set_dirty(false);
+    }
+    return value_;
+  }
+
+  void update() override {
+    T new_val = compute_();
+    if (new_val != value_) {
+      ESPCOMPOSE_LOGD("Memo value changed, propagating to %u subs", (unsigned)subscriber_count());
+      value_ = std::move(new_val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<T()> compute_;
+  T value_;
+};
+
+class Effect : public NodeBase {
+public:
+  explicit Effect(std::function<void()> callback)
+      : NodeBase(255), callback_(std::move(callback)) {
+    set_dirty(true);
+  }
+
+  void update() override {
+    ESPCOMPOSE_LOGD("Effect executing callback");
+    callback_();
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<void()> callback_;
+};
+
+}  // namespace espcompose
+"
+`;
+
+exports[`ESPHome Compose Build > lvgl-widget-ref-device 1`] = `
+"esphome:
+  name: lvgl-widget-ref-device
+  comment: Typed LVGL widget refs
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+wifi:
+  ssid: TestWifi
+  password: testpass
+api:
+logger:
+  level: DEBUG
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+display:
+  id: r_ref0
+  platform: ili9xxx
+  model: ILI9341
+  invert_colors: false
+  cs_pin: 5
+  dc_pin: 27
+  reset_pin: 33
+lvgl:
+  id: r_ref1
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - slider:
+            id: r_ref2
+            min_value: 0
+            max_value: 255
+            on_press:
+              - lvgl.widget.update:
+                  id: r_ref2
+                  knob:
+                    pad_all: 8
+            on_release:
+              - lvgl.widget.update:
+                  id: r_ref2
+                  knob:
+                    pad_all: 4
+        - button:
+            id: r_ref3
+            on_click:
+              - lvgl.widget.redraw: r_ref3
 "
 `;
 

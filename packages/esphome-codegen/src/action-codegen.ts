@@ -75,7 +75,12 @@ function generateParamsInterface(
   const interfaceName = `${classPrefix}_${actionPascal}Params`;
 
   const fields = [...action.params].sort((a, b) => a.tsName.localeCompare(b.tsName)).map((param: ActionParamEntry) => {
-    const optional = param.required ? '' : '?';
+    // The `id` parameter is always supplied implicitly by the compiler when an
+    // action is invoked through a ref method (e.g. `slider.widgetUpdate(...)`),
+    // so it must be optional in the user-facing TypeScript signature even if
+    // the underlying ESPHome schema marks it required.
+    const isImplicitId = param.tsName === 'id';
+    const optional = (param.required && !isImplicitId) ? '' : '?';
     const doc = param.doc ? `/** ${param.doc} */\n` : '';
     const yamlDoc = param.yamlKey !== param.tsName ? `/** @yamlKey ${param.yamlKey} */\n` : '';
     return `${doc}${yamlDoc}${param.tsName}${optional}: ${param.tsType};`;

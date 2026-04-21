@@ -19,6 +19,8 @@ import {
   type IRActionNode,
   type IRActionParam,
   type IRActionConfig,
+  type IRActionConfigDict,
+  type IRActionConfigValue,
   type IRCondition,
   irNativeAction,
   irHAServiceAction,
@@ -532,7 +534,13 @@ function compileHAAction(
       for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
           const paramValue = compileActionConfigValue(prop.initializer, ctx);
-          if (!paramValue) return null;
+          if (paramValue === null) return null;
+          // HA service data is a flat key→param map; reject nested config dicts
+          // (those only apply to native ESPHome actions like lvgl.widget.update).
+          if (typeof paramValue === 'object' && paramValue !== null && paramValue.kind === 'config_dict') {
+            return emitError(prop.initializer, ctx,
+              'Nested object parameters are not supported for Home Assistant service calls.');
+          }
           data[camelToSnake(prop.name.text)] =
             typeof paramValue === 'object' && paramValue !== null
               ? paramValue as IRActionParam
@@ -625,11 +633,11 @@ function buildLvglPageActionConfig(
     return {};
   }
 
-  const config: Record<string, IRActionParam | string | number | boolean> = {};
+  const config: Record<string, IRActionConfigValue> = {};
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
       const paramValue = compileActionConfigValue(prop.initializer, ctx);
-      if (paramValue) {
+      if (paramValue !== null) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
     }
@@ -653,11 +661,11 @@ function buildRefActionConfig(
   }
 
   // Action with params
-  const config: Record<string, IRActionParam | string | number | boolean> = { id: refName };
+  const config: Record<string, IRActionConfigValue> = { id: refName };
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
       const paramValue = compileActionConfigValue(prop.initializer, ctx);
-      if (paramValue) {
+      if (paramValue !== null) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
     }
@@ -841,13 +849,15 @@ function compileActionParam(
 /**
  * Compile an object-literal action config value.
  *
- * In addition to normal action params, this accepts ref identifiers as raw
- * variable names so they can be resolved later via IRAction.refBindings.
+ * In addition to normal action params, this accepts:
+ *   - ref identifiers (resolved later via IRAction.refBindings)
+ *   - nested object literals (for actions whose params include sub-dicts,
+ *     e.g. `lvgl.widget.update`'s `knob: { padding: 8 }`)
  */
 function compileActionConfigValue(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
-): IRActionParam | string | number | boolean | null {
+): IRActionConfigValue | null {
   if (ts.isIdentifier(expr)) {
     const symbol = ctx.checker.getSymbolAtLocation(expr);
     if (symbol && ctx.refSymbols.has(symbol)) {
@@ -863,6 +873,21 @@ function compileActionConfigValue(
       ctx.refExpressions.add(bindingKey);
       return bindingKey;
     }
+  }
+
+  // Nested object literal — recursively compile each property.
+  if (ts.isObjectLiteralExpression(expr)) {
+    const entries: Record<string, IRActionConfigValue> = {};
+    for (const prop of expr.properties) {
+      if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+        const value = compileActionConfigValue(prop.initializer, ctx);
+        if (value !== null) {
+          entries[camelToSnake(prop.name.text)] = value;
+        }
+      }
+    }
+    const dict: IRActionConfigDict = { kind: 'config_dict', entries };
+    return dict;
   }
 
   return compileActionParam(expr, ctx);
