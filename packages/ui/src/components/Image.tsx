@@ -7,7 +7,7 @@
  */
 
 import type { Ref, ImageRef, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useReactiveMap, WidgetHost } from '@espcompose/core';
+import { createLvglWidget, useReactiveMap } from '@espcompose/core';
 import type { SizeToken, RadiusToken } from '../theme/types';
 import { themeLeaf } from '../hooks/utils';
 
@@ -56,11 +56,6 @@ export const Image = createLvglWidget<ImageProps>(
     const height = props.style?.height ?? px;
 
     return (
-      <WidgetHost style={{
-        width: width ?? 'fit-content',
-        height: height ?? 'fit-content',
-        padding: 0,
-      }}>
         <lvgl-image
           src={props.src}
           angle={props.angle}
@@ -68,12 +63,11 @@ export const Image = createLvglWidget<ImageProps>(
           antialias={props.antialias}
           style={{
             ...props.style,
-            width: width != null ? '100%' : undefined,
-            height: height != null ? '100%' : undefined,
+            width: width,
+            height: height,
             borderRadius: borderRadius,
           }}
         />
-      </WidgetHost>
     );
   },
 );

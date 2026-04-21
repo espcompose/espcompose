@@ -10,7 +10,7 @@
  */
 
 import type { TriggerHandler, WidgetPropsWithChildren, Reactive } from '@espcompose/core';
-import { createLvglWidget, useMemo, useReactive, isIRReactiveNode, WidgetHost } from '@espcompose/core';
+import { createLvglWidget, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
 import { useRadius, useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
@@ -105,11 +105,6 @@ export const Button = createLvglWidget<ButtonProps>(
       : undefined;
 
     return (
-      <WidgetHost style={{
-        width: width,
-        height: height,
-        padding: 0,
-      }}>
         <lvgl-button
           style={{
             backgroundColor: vs.bgColor,
@@ -117,8 +112,8 @@ export const Button = createLvglWidget<ButtonProps>(
             borderColor: vs.borderColor,
             borderWidth: vs.borderWidth,
             borderRadius: rd,
-            width: '100%',
-            height: '100%',
+            width: width,
+            height: height,
             pressed: {
               backgroundColor: vs.pressedBg,
               backgroundOpacity: 'opaque',
@@ -128,7 +123,6 @@ export const Button = createLvglWidget<ButtonProps>(
         >
           {hasChildren ? props.children : labelChild}
         </lvgl-button>
-      </WidgetHost>
     );
   },
 );

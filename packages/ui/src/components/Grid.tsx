@@ -11,7 +11,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglLayoutWidget, WidgetHost } from '@espcompose/core';
+import { createLvglLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -88,20 +88,11 @@ export const [Grid, GridItem] = createLvglLayoutWidget(
       ? useSpacing(props.rowGap)
       : props.gap != null ? useSpacing(props.gap) : undefined;
 
-    const hasExplicitHeight = props.style?.height != null;
-
     return (
-      <WidgetHost
-        style={{
-          width: props.style?.width,
-          height: props.style?.height,
-          padding: 0,
-        }}
-      >
         <lvgl-obj
           style={{
-            width: '100%',
-            height: hasExplicitHeight ? '100%' : 'fit-content',
+            width: props.style?.width,
+            height: props.style?.height ?? 'fit-content',
             backgroundColor: props.style?.backgroundColor,
             backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
             borderWidth: props.style?.borderWidth ?? 0,
@@ -117,7 +108,6 @@ export const [Grid, GridItem] = createLvglLayoutWidget(
         >
           {props.children}
         </lvgl-obj>
-      </WidgetHost>
     );
   },
   (props: GridItemProps) => {

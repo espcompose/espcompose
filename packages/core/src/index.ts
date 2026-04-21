@@ -122,12 +122,6 @@ export { isWireframeEnabled, setWireframeEnabled, clearWireframe, WIREFRAME_COLO
 export type { WidgetCategory } from './wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
-// Public API — WidgetHost
-// ────────────────────────────────────────────────────────────────────────────
-
-export { WidgetHost } from './widget-host';
-
-// ────────────────────────────────────────────────────────────────────────────
 // Public API — Used by theme resolvers
 // ────────────────────────────────────────────────────────────────────────────
 

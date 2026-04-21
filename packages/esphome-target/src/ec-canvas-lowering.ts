@@ -178,6 +178,12 @@ function transformWidgetsArray(widgets: unknown[]): void {
         canvasProps.bg_opa = 0;
       }
 
+      // Allocate the canvas buffer as ARGB8888 so unpainted pixels carry
+      // an alpha channel and composite transparently over the parent.
+      if (canvasProps.transparent == null) {
+        canvasProps.transparent = true;
+      }
+
       // Transform ec_canvas → canvas (native ESPHome LVGL canvas widget)
       widgetObj.canvas = canvasProps;
       delete widgetObj.ec_canvas;
