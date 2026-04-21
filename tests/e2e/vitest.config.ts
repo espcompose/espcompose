@@ -7,5 +7,12 @@ export default defineConfig({
     testTimeout: 30_000,
     hookTimeout: 30_000,
     include: ['src/**/*.test.ts'],
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        maxThreads: 3,
+        minThreads: 1,
+      },
+    },
   },
 });

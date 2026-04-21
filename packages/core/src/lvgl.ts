@@ -232,7 +232,33 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
     }
   }
 
+  // Extract reactive values from layout.padRow / layout.padColumn.
+  // ESPHome's LVGL Python code calls lv_obj_set_style_pad_row/pad_column
+  // with the value directly — it does not accept !lambda scalars.  Promote
+  // reactive nodes to top-level reactive bindings (which the C++ runtime
+  // updates via lv_obj_set_style_pad_*) and replace them with 0 so the YAML
+  // serialiser emits a plain integer.
   const yamlKey = toYamlKey(el.type as string);
+  if (data.layout && typeof data.layout === 'object') {
+    const layout = data.layout as Record<string, unknown>;
+    for (const key of ['padRow', 'padColumn'] as const) {
+      if (isIRReactiveNode(layout[key])) {
+        let widgetId = typeof data.id === 'string' ? data.id : undefined;
+        if (!widgetId) {
+          widgetId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+          data.id = widgetId;
+        }
+        registerReactiveBinding({
+          kind: 'binding',
+          targetId: widgetId,
+          targetType: yamlKey,
+          targetProp: camelToSnake(key),
+          expression: layout[key] as IRReactiveNode,
+        });
+        layout[key] = 0;
+      }
+    }
+  }
 
   detectAndRegisterReactiveProps(data, yamlKey);
 
@@ -282,6 +308,27 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
           .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
         const pageData: Record<string, unknown> = { ...pageProps };
         hoistStyleProp(pageData);
+        // Extract reactive layout spacing — same treatment as widgets (see above).
+        if (pageData.layout && typeof pageData.layout === 'object') {
+          const layout = pageData.layout as Record<string, unknown>;
+          for (const key of ['padRow', 'padColumn'] as const) {
+            if (isIRReactiveNode(layout[key])) {
+              let pageId = typeof pageData.id === 'string' ? pageData.id : undefined;
+              if (!pageId) {
+                pageId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+                pageData.id = pageId;
+              }
+              registerReactiveBinding({
+                kind: 'binding',
+                targetId: pageId,
+                targetType: 'page',
+                targetProp: camelToSnake(key),
+                expression: layout[key] as IRReactiveNode,
+              });
+              layout[key] = 0;
+            }
+          }
+        }
         detectAndRegisterReactiveProps(pageData, 'page');
         // Serialize own props first, then attach already-serialized child widgets.
         const serializedPage = stripUndefined(keysToSnakeCase(pageData));

@@ -31,6 +31,7 @@ import {
   type GlobalExprInfo,
   type DependencyInfo,
 } from './expr-compiler.js';
+import { injectGlobalKeys } from './global-key-injector.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -62,6 +63,9 @@ export function transformReactiveExpressions(
 
   const globals = new Map<ts.Symbol, GlobalExprInfo>();
   scanForGlobalHandles(sourceFile, globals, checker);
+
+  // Pass 0.5: Inject __key into non-retained useGlobal() calls
+  injectGlobalKeys(sourceFile, checker, edits, diagnostics);
 
   const onTransform = () => { transformCount++; };
 

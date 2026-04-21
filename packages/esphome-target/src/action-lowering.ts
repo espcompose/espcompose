@@ -103,6 +103,7 @@ function createConditionLoweringContext(): CppLoweringContext {
     slotExprs: new Map(),
     entityComponentIds: new Map(),
     themeVarNames: new Map(),
+    actionContext: true,
   };
 }
 
@@ -114,7 +115,9 @@ function lowerCondition(condition: IRCondition): unknown {
     case 'lambda': {
       const ctx = createConditionLoweringContext();
       const cppExpr = exprToCpp(condition.exprIR, ctx);
-      return lambdaMarker(`return ${cppExpr};`);
+      // ESPHome expects conditions as a list of condition type mappings.
+      // A lambda condition is: [{ lambda: !lambda "return expr;" }]
+      return [{ lambda: lambdaMarker(`return ${cppExpr};`) }];
     }
     case 'native':
       return { [condition.conditionKey]: lowerConfig(condition.config) };
@@ -258,6 +261,45 @@ function lowerAction(action: IRActionNode): unknown {
       }
       // Non-reactive global — plain globals.set YAML action
       return { 'globals.set': { id: action.globalId, value: lambdaMarker(`return ${valueStr};`) } };
+    }
+
+    case 'array_set': {
+      const idxStr = lowerGlobalSetValue(action.index, 'int');
+      const valStr = lowerGlobalSetValue(action.value, action.cppType);
+      if (reactiveGlobalIds.has(action.globalId)) {
+        const sigName = `sig_global_${action.globalId}`;
+        return { lambda: lambdaMarker(
+          `espcompose::${sigName}.get_mut()[${idxStr}] = ${valStr}; ` +
+          `espcompose::${sigName}.notify(); ` +
+          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+        )};
+      }
+      return { lambda: lambdaMarker(`id(${action.globalId})[${idxStr}] = ${valStr};`) };
+    }
+
+    case 'array_push': {
+      const valStr = lowerGlobalSetValue(action.value, action.cppType);
+      if (reactiveGlobalIds.has(action.globalId)) {
+        const sigName = `sig_global_${action.globalId}`;
+        return { lambda: lambdaMarker(
+          `espcompose::${sigName}.get_mut().push_back(${valStr}); ` +
+          `espcompose::${sigName}.notify(); ` +
+          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+        )};
+      }
+      return { lambda: lambdaMarker(`id(${action.globalId}).push_back(${valStr});`) };
+    }
+
+    case 'array_clear': {
+      if (reactiveGlobalIds.has(action.globalId)) {
+        const sigName = `sig_global_${action.globalId}`;
+        return { lambda: lambdaMarker(
+          `espcompose::${sigName}.get_mut().clear(); ` +
+          `espcompose::${sigName}.notify(); ` +
+          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+        )};
+      }
+      return { lambda: lambdaMarker(`id(${action.globalId}).clear();`) };
     }
   }
 }

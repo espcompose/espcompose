@@ -38,6 +38,9 @@ import {
   irScriptStop,
   irThemeSelect,
   irGlobalSet,
+  irArraySet,
+  irArrayPush,
+  irArrayClear,
   irLambdaCondition,
   camelToSnake,
 } from '@espcompose/core/internals';
@@ -382,12 +385,21 @@ function compileActionCall(
           `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
       }
 
-      // globalHandle.set(value)
+      // globalHandle.set(value) / array methods
       const globalDef = lookupBySymbol(ctx.globalHandles, objNode, ctx.checker);
       if (globalDef) {
-        if (methodName === 'set') return compileGlobalSet(call, globalDef, ctx);
+        if (methodName === 'set') {
+          // Overloaded: 1 arg = scalar set, 2 args = array index set
+          if (call.arguments.length === 2) {
+            return compileArraySet(call, globalDef, ctx);
+          }
+          return compileGlobalSet(call, globalDef, ctx);
+        }
+        if (methodName === 'push') return compileArrayPush(call, globalDef, ctx);
+        if (methodName === 'clear') return [irArrayClear(globalDef.id, globalDef.cppType)];
         return emitError(call, ctx,
-          `Global handle only supports .set(). '${methodName}' is not a valid global operation.`);
+          `Global handle does not support .${methodName}(). ` +
+          'Supported: .set(), .push(), .clear() (arrays) or .set() (scalars).');
       }
 
       // HA entity action (symbol-based)
@@ -548,16 +560,7 @@ function compileGlobalSet(
   }
 
   // Try compiling as a reactive expression (e.g. counter.value + 1)
-  const globalHandlesByName = new Map<string, GlobalExprInfo>();
-  for (const [sym, gDef] of ctx.globalHandles) {
-    const name = sym.getName();
-    globalHandlesByName.set(name, { globalId: gDef.id, cppType: gDef.cppType, exprType: cppTypeToExprType(gDef.cppType) });
-  }
-  const scriptCtx: ScriptTransformContext = {
-    triggerParamName: ctx.triggerParamName,
-    localVars: new Set(),
-    globalHandlesByName,
-  };
+  const scriptCtx = buildScriptCtxWithGlobals(ctx);
   const exprIR = translateScriptExprIR(valueArg, scriptCtx);
   if (exprIR !== null) {
     return [irGlobalSet(globalDef.id, globalDef.cppType, exprIR)];
@@ -565,6 +568,73 @@ function compileGlobalSet(
 
   return emitError(valueArg, ctx,
     'globalHandle.set() value must be a literal, trigger variable (args.x), or a supported expression.');
+}
+
+function compileArraySet(
+  call: ts.CallExpression,
+  globalDef: GlobalDefinition,
+  ctx: ActionCompilerContext,
+): IRActionNode[] | null {
+  if (call.arguments.length < 2) {
+    return emitError(call, ctx, 'arrayHandle.set(index, value) requires two arguments.');
+  }
+
+  const indexArg = call.arguments[0];
+  const valueArg = call.arguments[1];
+
+  const scriptCtx = buildScriptCtxWithGlobals(ctx);
+  const indexIR = compileActionValueArg(indexArg, ctx, scriptCtx);
+  const valueIR = compileActionValueArg(valueArg, ctx, scriptCtx);
+
+  if (!indexIR) return emitError(indexArg, ctx, 'arrayHandle.set() index must be a literal, trigger variable, or supported expression.');
+  if (!valueIR) return emitError(valueArg, ctx, 'arrayHandle.set() value must be a literal, trigger variable, or supported expression.');
+
+  return [irArraySet(globalDef.id, globalDef.cppType, indexIR, valueIR)];
+}
+
+function compileArrayPush(
+  call: ts.CallExpression,
+  globalDef: GlobalDefinition,
+  ctx: ActionCompilerContext,
+): IRActionNode[] | null {
+  if (call.arguments.length < 1) {
+    return emitError(call, ctx, 'arrayHandle.push(value) requires a value argument.');
+  }
+
+  const valueArg = call.arguments[0];
+  const scriptCtx = buildScriptCtxWithGlobals(ctx);
+  const valueIR = compileActionValueArg(valueArg, ctx, scriptCtx);
+
+  if (!valueIR) return emitError(valueArg, ctx, 'arrayHandle.push() value must be a literal, trigger variable, or supported expression.');
+
+  return [irArrayPush(globalDef.id, globalDef.cppType, valueIR)];
+}
+
+/** Compile a value argument to either an IRActionParam or IRExprNode. */
+function compileActionValueArg(
+  arg: ts.Expression,
+  ctx: ActionCompilerContext,
+  scriptCtx: ScriptTransformContext,
+): IRActionParam | IRExprNode | null {
+  if (ts.isNumericLiteral(arg)) {
+    return { kind: 'literal', value: Number(arg.text) };
+  }
+  if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
+    return { kind: 'literal', value: arg.text };
+  }
+  if (arg.kind === ts.SyntaxKind.TrueKeyword) {
+    return { kind: 'literal', value: true };
+  }
+  if (arg.kind === ts.SyntaxKind.FalseKeyword) {
+    return { kind: 'literal', value: false };
+  }
+  if (ts.isPropertyAccessExpression(arg) && ts.isIdentifier(arg.expression) &&
+      arg.expression.text === ctx.triggerParamName) {
+    const varName = arg.name.text;
+    ctx.triggerVars.add(varName);
+    return { kind: 'trigger_var', varName };
+  }
+  return translateScriptExprIR(arg, scriptCtx);
 }
 
 function compileHAAction(
@@ -843,6 +913,24 @@ function matchCountedForLoop(stmt: ts.ForStatement): CountedForResult | null {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Build a ScriptTransformContext from an ActionCompilerContext,
+ * including the globalHandlesByName map so that global reads
+ * (e.g. `counter.value`) are recognised in conditions and expressions.
+ */
+function buildScriptCtxWithGlobals(ctx: ActionCompilerContext): ScriptTransformContext {
+  const globalHandlesByName = new Map<string, GlobalExprInfo>();
+  for (const [sym, gDef] of ctx.globalHandles) {
+    const name = sym.getName();
+    globalHandlesByName.set(name, { globalId: gDef.id, cppType: gDef.cppType, exprType: cppTypeToExprType(gDef.cppType) });
+  }
+  return {
+    triggerParamName: ctx.triggerParamName,
+    localVars: new Set(),
+    globalHandlesByName,
+  };
+}
+
+/**
  * Compile a TS boolean expression to an IRCondition.
  *
  * Uses the shared expr-compiler to produce a target-agnostic IRExprNode tree.
@@ -851,10 +939,7 @@ function compileConditionExpr(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
 ): IRCondition | null {
-  const scriptCtx: ScriptTransformContext = {
-    triggerParamName: ctx.triggerParamName,
-    localVars: new Set(),
-  };
+  const scriptCtx = buildScriptCtxWithGlobals(ctx);
 
   const exprIR = translateScriptExprIR(expr, scriptCtx);
   if (exprIR === null) {

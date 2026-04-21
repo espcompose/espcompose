@@ -60,7 +60,10 @@ export { useScript } from './hooks/useScript';
 export { useMemo } from './hooks/useMemo';
 export { useLvgl } from './hooks/useLvgl';
 export { useGlobal } from './hooks/useGlobal';
-export type { GlobalHandle, GlobalOptions } from './hooks/useGlobal';
+export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, VolatileGlobalOptions, GlobalArrayHandle } from './hooks/useGlobal';
+export { useRetainedGlobal } from './hooks/useRetainedGlobal';
+export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
+export type { GlobalHandle } from './hooks/global-shared';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

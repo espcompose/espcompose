@@ -12,6 +12,7 @@ import type {
   ExprType,
   BuiltinFn,
   StringMethod,
+  ArrayMethod,
 } from '@espcompose/core/internals';
 
 // ── Lowering context ─────────────────────────────────────────────────────────
@@ -27,6 +28,12 @@ export interface CppLoweringContext {
   entityComponentIds: Map<string, string>;
   /** Map theme signal path → C++ variable name (e.g. `thm_colors_primary_bg`) */
   themeVarNames: Map<string, string>;
+  /**
+   * When true, expressions are lowered for action lambdas (trigger handlers)
+   * rather than the reactive runtime. Globals are accessed via `id(x).value()`
+   * instead of BoundSignal `.get()`.
+   */
+  actionContext?: boolean;
 }
 
 // ── Entity component ID map builder ──────────────────────────────────────────
@@ -134,6 +141,10 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     }
 
     case 'global_read':
+      if (ctx.actionContext) {
+        // In action lambdas, ESPHome's id() macro for globals returns the value directly
+        return `id(${node.globalId})`;
+      }
       return `sig_global_${node.globalId}.get()`;
 
     case 'component_read':
@@ -153,6 +164,15 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
 
     case 'string_method':
       return stringMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
+
+    case 'array_index': {
+      const arr = exprToCpp(node.array, ctx);
+      const idx = exprToCpp(node.index, ctx);
+      return `${arr}[${idx}]`;
+    }
+
+    case 'array_method':
+      return arrayMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
 
     default:
       throw new Error(`Unknown IRExprNode kind: ${(node as IRExprNode).kind}`);
@@ -267,6 +287,21 @@ function stringMethodToCpp(method: StringMethod, obj: string, args: string[]): s
   }
 }
 
+function arrayMethodToCpp(method: ArrayMethod, obj: string, args: string[]): string {
+  switch (method) {
+    case 'size':
+      return `static_cast<int>(${obj}.size())`;
+    case 'get':
+      return `${obj}[${args[0]}]`;
+    case 'push_back':
+      return `${obj}.push_back(${args[0]})`;
+    case 'clear':
+      return `${obj}.clear()`;
+    default:
+      throw new Error(`Unknown array method: ${method}`);
+  }
+}
+
 // ── ExprType → C++ type mapping ──────────────────────────────────────────────
 
 export function exprTypeToCpp(type: ExprType): string {
@@ -277,6 +312,10 @@ export function exprTypeToCpp(type: ExprType): string {
     case 'bool': return 'bool';
     case 'color': return 'lv_color_t';
     case 'font_ptr': return 'const lv_font_t*';
+    case 'int_array': return 'std::vector<int>';
+    case 'float_array': return 'std::vector<float>';
+    case 'bool_array': return 'std::vector<bool>';
+    case 'string_array': return 'std::vector<std::string>';
     default: return 'float';
   }
 }

@@ -70,6 +70,9 @@ export type {
   IRExprFormatString,
   IRExprNullCoalesce,
   IRExprStringMethod,
+  IRExprArrayIndex,
+  IRExprArrayMethod,
+  ArrayMethod,
   IRExprNode,
 } from './expr-types';
 
@@ -89,6 +92,9 @@ export type {
   IRScriptStop,
   IRThemeSelect,
   IRGlobalSet,
+  IRArraySet,
+  IRArrayPush,
+  IRArrayClear,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -115,5 +121,8 @@ export {
   irScriptStop,
   irThemeSelect,
   irGlobalSet,
+  irArraySet,
+  irArrayPush,
+  irArrayClear,
   irLambdaCondition,
 } from './action-types';

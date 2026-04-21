@@ -95,6 +95,11 @@ describe('ESPHome Compose Build', () => {
     await runTimed('globals-device');
   });
 
+  // useGlobal array hook — vector-backed global arrays with push/set/clear
+  it('globals-array-device', async () => {
+    await runTimed('globals-array-device');
+  });
+
   it('project-device', async () => {
     await runTimed('project-device');
   });

@@ -18,7 +18,7 @@ import {
   compileActionBody,
 } from './action-compiler.js';
 import { isRefType, isCoreHookCall } from './type-brands.js';
-import { type IRActionNode, type GlobalDefinition, hashGlobalFingerprint } from '@espcompose/core/internals';
+import { type IRActionNode, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, globalTypeToCpp } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -169,27 +169,48 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
 }
 
 /**
- * Scan for `const handle = useGlobal(cppType, fingerprint, ...)` patterns
- * and build a map of declaration symbol → GlobalDefinition { id, cppType }.
+ * Scan for `useGlobal()` and `useRetainedGlobal()` patterns and build a
+ * map of declaration symbol → GlobalDefinition { id, cppType }.
  *
- * The global ID is derived by hashing the fingerprint (2nd argument),
- * and the C++ type is extracted from the 1st argument (string literal).
+ * Runs on the reactive-transformed AST, so useGlobal() calls already
+ * have `__key` injected by the global-key-injector.
+ *
+ * Patterns:
+ *   useGlobal('integer', { __key: '...' })          — volatile
+ *   useRetainedGlobal('integer', 'key', { ... })    — retained, key is arg 2
  */
 function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, GlobalDefinition> {
   const globalHandles = new Map<ts.Symbol, GlobalDefinition>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
-      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 2) {
-        const typeArg = node.initializer.arguments[0];
-        const fingerprintArg = node.initializer.arguments[1];
+      if (ts.isCallExpression(node.initializer)) {
+        // ── useGlobal('type', { __key: '...' }) — volatile ────────
+        if (isCoreHookCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
+          const typeArg = node.initializer.arguments[0];
+          if (ts.isStringLiteral(typeArg)) {
+            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
+            if (fingerprint) {
+              const globalId = hashGlobalFingerprint(fingerprint);
+              const sym = checker.getSymbolAtLocation(node.name);
+              if (sym) {
+                globalHandles.set(sym, { id: globalId, cppType });
+              }
+            }
+          }
+        }
 
-        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(fingerprintArg)) {
-          const cppType = typeArg.text;
-          const globalId = hashGlobalFingerprint(fingerprintArg.text);
-
-          const sym = checker.getSymbolAtLocation(node.name);
-          if (sym) {
-            globalHandles.set(sym, { id: globalId, cppType });
+        // ── useRetainedGlobal('type', 'key', opts?) — retained ───
+        if (isCoreHookCall(node.initializer, 'useRetainedGlobal', checker) && node.initializer.arguments.length >= 2) {
+          const typeArg = node.initializer.arguments[0];
+          const keyArg = node.initializer.arguments[1];
+          if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
+            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const globalId = hashGlobalFingerprint(keyArg.text);
+            const sym = checker.getSymbolAtLocation(node.name);
+            if (sym) {
+              globalHandles.set(sym, { id: globalId, cppType });
+            }
           }
         }
       }
@@ -198,6 +219,25 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
   };
   walk(sourceFile);
   return globalHandles;
+}
+
+/**
+ * Extract `__key` string literal from a useGlobal options object.
+ * Only used for volatile globals (useRetainedGlobal uses positional key).
+ */
+function extractKeyFromOpts(optsNode: ts.Expression | undefined): string | null {
+  if (!optsNode || !ts.isObjectLiteralExpression(optsNode)) return null;
+  for (const prop of optsNode.properties) {
+    if (
+      ts.isPropertyAssignment(prop)
+      && ts.isIdentifier(prop.name)
+      && prop.name.text === '__key'
+      && ts.isStringLiteral(prop.initializer)
+    ) {
+      return prop.initializer.text;
+    }
+  }
+  return null;
 }
 
 /**
