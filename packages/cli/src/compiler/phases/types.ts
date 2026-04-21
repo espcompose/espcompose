@@ -8,6 +8,8 @@ export interface PhaseTiming {
   phase: string;
   /** Wall-clock duration in milliseconds. */
   durationMs: number;
+  /** When true, this phase ran concurrently with other parallel phases. */
+  parallel?: boolean;
 }
 
 /**

@@ -107,15 +107,39 @@ async function runPipeline(ctx: PhaseContext, steps: PipelineStep[]): Promise<vo
   try {
     for (const step of coreSteps) {
       if (Array.isArray(step)) {
-        // Parallel group — run all phases concurrently and record individual timings
-        const results = await Promise.all(
+        // Parallel group — run all phases concurrently on separate threads and
+        // collect results from every phase before deciding whether to throw.
+        const settled = await Promise.allSettled(
           step.map(async (phase) => {
             const start = performance.now();
             await phase(ctx);
             return { phase: phase.name, durationMs: performance.now() - start };
           }),
         );
-        ctx.phaseTiming.push(...results);
+
+        const timings: PhaseTiming[] = [];
+        const errors: Error[] = [];
+
+        for (const result of settled) {
+          if (result.status === 'fulfilled') {
+            timings.push({ ...result.value, parallel: true });
+          } else {
+            errors.push(
+              result.reason instanceof Error
+                ? result.reason
+                : new Error(String(result.reason)),
+            );
+          }
+        }
+
+        ctx.phaseTiming.push(...timings);
+
+        if (errors.length > 0) {
+          throw new AggregateError(
+            errors,
+            errors.map((e) => e.message).join('\n'),
+          );
+        }
       } else {
         const start = performance.now();
         await step(ctx);
