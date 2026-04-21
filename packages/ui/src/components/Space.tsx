@@ -8,7 +8,7 @@
  */
 
 import type { EspComposeElement, WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglContainerWidget, WidgetHost } from '@espcompose/core';
+import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
@@ -49,20 +49,11 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const padding = props.padding != null ? useSpacing(props.padding) : props.style?.padding;
   const borderRadius = props.style?.borderRadius;
 
-  const hasExplicitHeight = props.style?.height != null;
-
   return (
-    <WidgetHost
-      style={{
-        width: props.style?.width ?? '100%',
-        height: props.style?.height ?? 'fit-content',
-        padding: 0,
-      }}
-    >
       <lvgl-obj
         style={{
-          width: '100%',
-          height: hasExplicitHeight ? '100%' : 'fit-content',
+          width: props.style?.width ?? '100%',
+          height: props.style?.height ?? 'fit-content',
           padding: padding,
           backgroundColor: props.style?.backgroundColor,
           backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
@@ -79,7 +70,6 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
       >
         {props.children}
       </lvgl-obj>
-    </WidgetHost>
   );
 }
 

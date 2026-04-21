@@ -10,7 +10,7 @@
 // the registry after render to generate per-scope C++ theme value arrays.
 //
 // theme.select(scope, name) — called inside trigger handler bodies /
-// createScript() to push a theme-switch action that sets the scoped
+// useScript() to push a theme-switch action that sets the scoped
 // theme_index signal.
 // ────────────────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-export type { PhaseContext, Phase } from './types';
+export type { PhaseContext, Phase, PipelineStep, PhaseTiming } from './types';
 export { setupPhase } from './setup';
 export { typeCheckPhase } from './type-check';
 export { lintPhase } from './lint';

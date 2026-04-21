@@ -8,13 +8,14 @@
  *
  * Used by:
  *   - reactive-transformer.ts (reactive JSX attribute compilation)
- *   - script-transformer.ts (trigger handler / createScript body compilation)
+ *   - script-transformer.ts (trigger handler / useScript body compilation)
  */
 
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod } from '@espcompose/core/internals';
-import { getDomainSensorType, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
+import { getDomainSensorType, hashGlobalFingerprint, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
+import { isCoreHookCall } from './type-brands.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -53,10 +54,19 @@ export interface DependencyInfo {
   sourceType?: string;
 }
 
+export interface GlobalExprInfo {
+  globalId: string;
+  cppType: string;
+  /** ExprType for the IR node, e.g. 'int', 'float', 'bool', 'string'. */
+  exprType: ExprType;
+}
+
 export interface ExprCompilerContext {
   checker: ts.TypeChecker;
   /** Map of declaration symbol → HA entity info (scope-aware lookup). */
   haEntities: Map<ts.Symbol, HAEntityInfo>;
+  /** Map of declaration symbol → global variable info (for useGlobal handles). */
+  globals: Map<ts.Symbol, GlobalExprInfo>;
   /** Collected dependencies during expression compilation. */
   dependencies: Map<string, DependencyInfo>;
   /**
@@ -76,6 +86,8 @@ export interface ScriptTransformContext {
   triggerParamName: string;
   /** Set of local variable names declared in the current callback body. */
   localVars: Set<string>;
+  /** Map of variable name → global definition for resolving globalHandle.value reads. */
+  globalHandlesByName?: Map<string, GlobalExprInfo>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -208,6 +220,13 @@ export function translateScriptExprIR(
   if (ts.isPropertyAccessExpression(node)) {
     if (ts.isIdentifier(node.expression) && node.expression.text === ctx.triggerParamName) {
       return { kind: 'trigger_var', name: node.name.text };
+    }
+    // globalHandle.value → global_read
+    if (ts.isIdentifier(node.expression) && node.name.text === 'value' && ctx.globalHandlesByName) {
+      const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
+      if (globalInfo) {
+        return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      }
     }
     return null;
   }
@@ -393,16 +412,13 @@ export interface ScanDiagnostic {
 export function scanForHAEntities(
   node: ts.Node,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
-  checker?: ts.TypeChecker,
+  checker: ts.TypeChecker,
   diagnostics?: ScanDiagnostic[],
 ): void {
   if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
     const init = node.initializer;
-    if (ts.isCallExpression(init)) {
-      const callee = init.expression;
-      const isUseHAEntity = ts.isIdentifier(callee) && callee.text === 'useHAEntity';
-
-      if (isUseHAEntity && init.arguments.length >= 1) {
+    if (ts.isCallExpression(init) && isCoreHookCall(init, 'useHAEntity', checker)) {
+      if (init.arguments.length >= 1) {
         const firstArg = init.arguments[0];
 
         if (ts.isStringLiteral(firstArg)) {
@@ -411,7 +427,7 @@ export function scanForHAEntities(
           const dotIdx = entityId.indexOf('.');
           const domain = dotIdx >= 0 ? entityId.slice(0, dotIdx) : entityId;
 
-          const sym = checker?.getSymbolAtLocation(node.name);
+          const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
             haEntities.set(sym, { entityId, domain });
           }
@@ -438,12 +454,12 @@ export function scanForHAEntities(
           }
 
           // Fallback: try to infer domain from the TypeScript type of the first argument
-          if (!domain && checker) {
+          if (!domain) {
             domain = inferDomainFromType(firstArg, checker);
           }
 
           if (domain) {
-            const sym = checker?.getSymbolAtLocation(node.name);
+            const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
               haEntities.set(sym, {
                 entityId: `__dynamic__`,
@@ -507,6 +523,55 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
     if (domains.size === 1) return domains.values().next().value;
   }
   return undefined;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Global handle scanning
+// ────────────────────────────────────────────────────────────────────────────
+
+export function cppTypeToExprType(cppType: string): ExprType {
+  switch (cppType) {
+    case 'int': case 'int32_t': case 'int16_t': case 'int8_t':
+    case 'uint8_t': case 'uint16_t': case 'uint32_t':
+      return 'int';
+    case 'float': case 'double':
+      return 'float';
+    case 'bool':
+      return 'bool';
+    case 'std::string':
+      return 'string';
+    default:
+      return 'int';
+  }
+}
+
+/**
+ * Scan a TS AST node for useGlobal() calls, populating a symbol → GlobalExprInfo map.
+ * Pattern: `const x = useGlobal('int', 'fingerprint', ...)`
+ */
+export function scanForGlobalHandles(
+  node: ts.Node,
+  globals: Map<ts.Symbol, GlobalExprInfo>,
+  checker: ts.TypeChecker,
+): void {
+  if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
+    const init = node.initializer;
+    if (ts.isCallExpression(init)) {
+      if (isCoreHookCall(init, 'useGlobal', checker) && init.arguments.length >= 2) {
+        const typeArg = init.arguments[0];
+        const fingerprintArg = init.arguments[1];
+        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(fingerprintArg)) {
+          const cppType = typeArg.text;
+          const globalId = hashGlobalFingerprint(fingerprintArg.text);
+          const sym = checker.getSymbolAtLocation(node.name);
+          if (sym) {
+            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+          }
+        }
+      }
+    }
+  }
+  ts.forEachChild(node, child => scanForGlobalHandles(child, globals, checker));
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -699,6 +764,21 @@ function compilePropertyAccessIR(
 
   if (ts.isIdentifier(node.expression)) {
     const sym = ctx.checker.getSymbolAtLocation(node.expression);
+
+    // Global handle .value access → global_read
+    const globalInfo = sym ? ctx.globals.get(sym) : undefined;
+    if (globalInfo && propName === 'value') {
+      ctx.dependencies.set(`global_${globalInfo.globalId}`, {
+        signalName: `sig_global_${globalInfo.globalId}`,
+        sourceId: globalInfo.globalId,
+        triggerType: 'on_value',
+        sourceDomain: 'globals',
+        valueType: globalInfo.cppType,
+        sourceType: 'global',
+      });
+      return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+    }
+
     const entity = sym ? ctx.haEntities.get(sym) : undefined;
     if (entity && !entity.isDynamic) {
       const varName = node.expression.text;

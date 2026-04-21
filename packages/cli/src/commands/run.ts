@@ -1,6 +1,6 @@
 import * as path from 'path';
 import type { Command } from 'commander';
-import { resolvePaths, transpileProject, extractPassthroughArgs, withErrorHandler } from '../utils';
+import { resolvePaths, transpileProject, extractPassthroughArgs, printMetrics, withErrorHandler } from '../utils';
 
 export function registerRunCommand(program: Command) {
   program
@@ -12,12 +12,14 @@ export function registerRunCommand(program: Command) {
     )
     .allowUnknownOption()
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+    .option('--metrics', 'Print compiler phase timing breakdown after transpile')
     .option('--host', 'Target the ESPHome host platform with SDL2 display instead of physical hardware')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
     .option('--width <px>', 'Override SDL display width (only with --host)', parseInt)
     .option('--height <px>', 'Override SDL display height (only with --host)', parseInt)
     .action(withErrorHandler('Run', async (projectDir?: string, opts?: {
       debug?: boolean;
+      metrics?: boolean;
       host?: boolean;
       wireframe?: boolean;
       width?: number;
@@ -62,7 +64,8 @@ export function registerRunCommand(program: Command) {
       } else {
         // Standard mode: transpile → run on device
         const { build } = await import('../compiler');
-        await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        if (opts?.metrics) printMetrics(result);
         console.log('Running esphome run…');
         await esphomeRun(yamlPath, extraArgs);
       }

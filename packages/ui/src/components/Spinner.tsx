@@ -10,7 +10,7 @@
  */
 
 import type { WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useReactiveMap, WidgetHost } from '@espcompose/core';
+import { createLvglWidget, useReactiveMap } from '@espcompose/core';
 import { useStatus } from '../hooks';
 import type { SizeToken, StatusToken } from '../theme/types';
 
@@ -62,18 +62,13 @@ export const Spinner = createLvglWidget<SpinnerProps>(
     const height = props.style?.height ?? px;
 
     return (
-      <WidgetHost style={{
-        width: width,
-        height: height,
-        padding: 0,
-      }}>
         <lvgl-spinner
           arcLength={arcLength}
           // @ts-expect-error spinTime typed as number but ESPHome requires time unit string
           spinTime={spinTime}
           style={{
-            width: '100%',
-            height: '100%',
+            width: width,
+            height: height,
             arcStrokeWidth: arcWidth,
             arcOpacity: 'transparent',
             indicator: {
@@ -82,7 +77,6 @@ export const Spinner = createLvglWidget<SpinnerProps>(
             },
           }}
         />
-      </WidgetHost>
     );
   },
 );

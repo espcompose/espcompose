@@ -2,7 +2,7 @@
  * Sample project: trigger-device
  *
  * Demonstrates the automation API: useRef with marker types for typed component
- * actions, createScript() triggers, and bare arrow functions for anonymous triggers.
+ * actions, useScript() triggers, and bare arrow functions for anonymous triggers.
  * Ref actions are resolved at compile time via the action tree compiler.
  */
 import { delay, logger, useRef, useScript } from '@espcompose/core';

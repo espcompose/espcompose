@@ -40,24 +40,59 @@ function parseExpr(code: string): { node: ts.Expression; sourceFile: ts.SourceFi
 }
 
 /**
+ * Stub declarations for `@espcompose/core` hooks so that the test compiler
+ * host can resolve symbols back to the core package.
+ */
+const CORE_STUB_FILENAME = '/node_modules/@espcompose/core/index.d.ts';
+const CORE_STUB_SOURCE = `
+  export declare function useHAEntity(entityId: string, opts?: { domain?: string }): any;
+  export declare function useRef<T = any>(): any;
+  export declare function useScript(fn: () => any): any;
+  export declare function useGlobal(cppType: string, fingerprint: string, init?: any): any;
+  export declare function useMemo<T>(fn: () => T): T;
+  export declare function useEffect(fn: () => void, deps?: any[]): void;
+  export declare function useReactive<T>(fn: () => T): T;
+`;
+
+/**
  * Create a TS program from a source string and return the source file + checker.
  * Useful for tests that need symbol resolution (e.g. scanForHAEntities).
+ *
+ * Provides a stub `@espcompose/core` module so that `isCoreHookCall` can
+ * resolve hook symbols back to declarations originating from the package.
  */
 function parseSource(source: string): { sourceFile: ts.SourceFile; checker: ts.TypeChecker } {
-  const fileName = 'scan-test.tsx';
+  const fileName = '/src/scan-test.tsx';
   const sf = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  const host = ts.createCompilerHost({});
+  const stubSf = ts.createSourceFile(CORE_STUB_FILENAME, CORE_STUB_SOURCE, ts.ScriptTarget.Latest, true);
+
+  const options: ts.CompilerOptions = {
+    target: ts.ScriptTarget.Latest,
+    jsx: ts.JsxEmit.ReactJSX,
+    moduleResolution: ts.ModuleResolutionKind.Node10,
+    strict: false,
+    noEmit: true,
+  };
+  const host = ts.createCompilerHost(options);
   const originalGetSourceFile = host.getSourceFile;
   host.getSourceFile = (name, ...args) => {
     if (name === fileName) return sf;
+    if (name === CORE_STUB_FILENAME) return stubSf;
     return originalGetSourceFile.call(host, name, ...args);
   };
-  const program = ts.createProgram([fileName], {
-    target: ts.ScriptTarget.Latest,
-    jsx: ts.JsxEmit.ReactJSX,
-    strict: false,
-    noEmit: true,
-  }, host);
+  const originalResolveModuleNames = host.resolveModuleNames;
+  host.resolveModuleNames = (moduleNames, containingFile, ...rest) => {
+    return moduleNames.map(name => {
+      if (name === '@espcompose/core') {
+        return { resolvedFileName: CORE_STUB_FILENAME, isExternalLibraryImport: true } as ts.ResolvedModule;
+      }
+      if (originalResolveModuleNames) {
+        return originalResolveModuleNames.call(host, [name], containingFile, ...rest)[0];
+      }
+      return undefined as unknown as ts.ResolvedModule;
+    });
+  };
+  const program = ts.createProgram([fileName], options, host);
   return { sourceFile: sf, checker: program.getTypeChecker() };
 }
 
@@ -205,7 +240,8 @@ describe('expr-compiler', () => {
     }
 
     it('scans useHAEntity calls', () => {
-      const source = `const lamp = useHAEntity('light.desk');`;
+      const source = `import { useHAEntity } from '@espcompose/core';
+        const lamp = useHAEntity('light.desk');`;
       const { sourceFile, checker } = parseSource(source);
       const haEntities = new Map<ts.Symbol, HAEntityInfo>();
       scanForHAEntities(sourceFile, haEntities, checker);
@@ -214,6 +250,7 @@ describe('expr-compiler', () => {
 
     it('scans multiple declarations', () => {
       const source = `
+        import { useHAEntity } from '@espcompose/core';
         const a = useHAEntity('light.kitchen');
         const b = useHAEntity('sensor.temp');
       `;
@@ -225,6 +262,7 @@ describe('expr-compiler', () => {
 
     it('scans dynamic entity with domain hint', () => {
       const source = `
+        import { useHAEntity } from '@espcompose/core';
         declare const entityId: string;
         const lamp = useHAEntity(entityId, { domain: 'light' });
       `;
@@ -241,6 +279,7 @@ describe('expr-compiler', () => {
 
     it('ignores dynamic entity without domain hint or type constraint', () => {
       const source = `
+        import { useHAEntity } from '@espcompose/core';
         declare const entityId: string;
         const lamp = useHAEntity(entityId);
       `;
@@ -253,6 +292,7 @@ describe('expr-compiler', () => {
 
     it('emits a diagnostic when domain cannot be determined', () => {
       const source = `
+        import { useHAEntity } from '@espcompose/core';
         declare const entityId: string;
         const lamp = useHAEntity(entityId);
       `;
@@ -267,6 +307,7 @@ describe('expr-compiler', () => {
 
     it('does not emit a diagnostic when domain hint is provided', () => {
       const source = `
+        import { useHAEntity } from '@espcompose/core';
         declare const entityId: string;
         const lamp = useHAEntity(entityId, { domain: 'light' });
       `;

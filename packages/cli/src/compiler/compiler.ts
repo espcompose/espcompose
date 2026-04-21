@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
-import type { Phase, PhaseContext } from './phases/types';
+import type { PipelineStep, PhaseContext, PhaseTiming } from './phases/types';
 import { setupPhase } from './phases/setup';
 import { typeCheckPhase } from './phases/type-check';
 import { lintPhase } from './phases/lint';
@@ -29,15 +29,20 @@ export interface CompileOptions {
   wireframe?: boolean;
 }
 
+/** Result returned from compile/build with per-phase timing data. */
+export interface CompileResult {
+  /** Wall-clock duration of each compiler phase. */
+  phaseTiming: PhaseTiming[];
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Pipelines
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Full compile pipeline: setup → type-check → lint → transform → bundle → execute → emit → teardown. */
-const compilePipeline: Phase[] = [
+/** Full compile pipeline: setup → [type-check + lint] → transform → bundle → execute → emit → teardown. */
+const compilePipeline: PipelineStep[] = [
   setupPhase,
-  typeCheckPhase,
-  lintPhase,
+  [typeCheckPhase, lintPhase],
   transformPhase,
   bundlePhase,
   executePhase,
@@ -46,11 +51,10 @@ const compilePipeline: Phase[] = [
   teardownPhase,
 ];
 
-/** IR-only pipeline: setup → type-check → lint → transform → bundle → execute → teardown. */
-const irPipeline: Phase[] = [
+/** IR-only pipeline: setup → [type-check + lint] → transform → bundle → execute → teardown. */
+const irPipeline: PipelineStep[] = [
   setupPhase,
-  typeCheckPhase,
-  lintPhase,
+  [typeCheckPhase, lintPhase],
   transformPhase,
   bundlePhase,
   executePhase,
@@ -58,22 +62,20 @@ const irPipeline: Phase[] = [
   teardownPhase,
 ];
 
-/** Library pipeline: setup → type-check → lint → transform → bundle(library) → emitDTS → teardown. */
-const libraryPipeline: Phase[] = [
+/** Library pipeline: setup → [type-check + lint] → transform → bundle(library) → emitDTS → teardown. */
+const libraryPipeline: PipelineStep[] = [
   setupPhase,
-  typeCheckPhase,
-  lintPhase,
+  [typeCheckPhase, lintPhase],
   transformPhase,
   bundleLibraryPhase,
   emitDTSPhase,
   teardownPhase,
 ];
 
-/** Library transpile pipeline: setup → type-check → lint → transform → teardown (no bundle/emit). */
-const transpileLibraryPipeline: Phase[] = [
+/** Library transpile pipeline: setup → [type-check + lint] → transform → teardown (no bundle/emit). */
+const transpileLibraryPipeline: PipelineStep[] = [
   setupPhase,
-  typeCheckPhase,
-  lintPhase,
+  [typeCheckPhase, lintPhase],
   transformPhase,
   teardownPhase,
 ];
@@ -85,22 +87,70 @@ const transpileLibraryPipeline: Phase[] = [
 /**
  * Run a sequence of compiler phases, threading a shared PhaseContext through each.
  *
+ * A step is either a single `Phase` or a `Phase[]` (parallel group). Phases
+ * within a parallel group run concurrently via `Promise.all`; groups themselves
+ * execute in order.
+ *
  * Teardown always runs via try/finally — even if a phase throws, the build
  * directory is cleaned up (unless debug mode is enabled).
  */
-async function runPipeline(ctx: PhaseContext, phases: Phase[]): Promise<void> {
+async function runPipeline(ctx: PhaseContext, steps: PipelineStep[]): Promise<void> {
+  ctx.phaseTiming = [];
+
   // Find teardown in the pipeline so we can guarantee it runs in finally
-  const teardownIndex = phases.indexOf(teardownPhase);
-  const corePhases = teardownIndex >= 0 ? phases.slice(0, teardownIndex) : phases;
+  const teardownIndex = steps.findIndex(
+    (s) => s === teardownPhase || (Array.isArray(s) && s.includes(teardownPhase)),
+  );
+  const coreSteps = teardownIndex >= 0 ? steps.slice(0, teardownIndex) : steps;
   const hasTeardown = teardownIndex >= 0;
 
   try {
-    for (const phase of corePhases) {
-      await phase(ctx);
+    for (const step of coreSteps) {
+      if (Array.isArray(step)) {
+        // Parallel group — run all phases concurrently on separate threads and
+        // collect results from every phase before deciding whether to throw.
+        const settled = await Promise.allSettled(
+          step.map(async (phase) => {
+            const start = performance.now();
+            await phase(ctx);
+            return { phase: phase.name, durationMs: performance.now() - start };
+          }),
+        );
+
+        const timings: PhaseTiming[] = [];
+        const errors: Error[] = [];
+
+        for (const result of settled) {
+          if (result.status === 'fulfilled') {
+            timings.push({ ...result.value, parallel: true });
+          } else {
+            errors.push(
+              result.reason instanceof Error
+                ? result.reason
+                : new Error(String(result.reason)),
+            );
+          }
+        }
+
+        ctx.phaseTiming.push(...timings);
+
+        if (errors.length > 0) {
+          throw new AggregateError(
+            errors,
+            errors.map((e) => e.message).join('\n'),
+          );
+        }
+      } else {
+        const start = performance.now();
+        await step(ctx);
+        ctx.phaseTiming.push({ phase: step.name, durationMs: performance.now() - start });
+      }
     }
   } finally {
     if (hasTeardown) {
+      const start = performance.now();
       teardownPhase(ctx);
+      ctx.phaseTiming.push({ phase: teardownPhase.name, durationMs: performance.now() - start });
     }
   }
 }
@@ -115,7 +165,7 @@ async function runPipeline(ctx: PhaseContext, phases: Phase[]): Promise<void> {
  * Pipeline:
  *   [setup] → [type-check] → [lint] → [transform] → [bundle] → [execute] → [emit] → [teardown]
  */
-export async function compile(options: CompileOptions): Promise<void> {
+export async function compile(options: CompileOptions): Promise<CompileResult> {
   const { entryFile, projectDir, outDir, target, debug = false, wireframe } = options;
 
   const sourceDir = path.dirname(entryFile);
@@ -124,6 +174,8 @@ export async function compile(options: CompileOptions): Promise<void> {
   const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, wireframe, projectDir, outDir, target };
 
   await runPipeline(ctx, compilePipeline);
+
+  return { phaseTiming: ctx.phaseTiming ?? [] };
 }
 
 /**
@@ -134,7 +186,7 @@ export async function compile(options: CompileOptions): Promise<void> {
  *
  * @param projectDir  Absolute path to the project directory.
  */
-export async function build(projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean }): Promise<void> {
+export async function build(projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean }): Promise<CompileResult> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -148,7 +200,7 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
   const entryFile = path.resolve(projectDir, pkg.main);
   const outDir = path.join(projectDir, '.espcompose');
 
-  await compile({ entryFile, projectDir, outDir, target, debug: options?.debug, wireframe: options?.wireframe });
+  return compile({ entryFile, projectDir, outDir, target, debug: options?.debug, wireframe: options?.wireframe });
 }
 
 /**

@@ -23,7 +23,7 @@ export function executePhase(ctx: PhaseContext): void {
   delete _require.cache[_require.resolve(bundlePath)];
 
   // Load the SDK via the same CommonJS require that the bundle will use.
-  // This ensures withScriptScope and createScript share the same module-level
+  // This ensures withScriptScope and useScript share the same module-level
   // state, avoiding the ESM / CJS dual-instance problem where the compiler's
   // statically-imported ESM copy and the user bundle's CJS copy would have
   // separate state and never communicate.

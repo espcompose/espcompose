@@ -203,6 +203,7 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
     case 'memo_read':
     case 'theme_read':
     case 'entity_prop':
+    case 'global_read':
     case 'component_read':
     case 'trigger_var':
       return expr;

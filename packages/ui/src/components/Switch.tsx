@@ -8,7 +8,7 @@
  */
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme, WidgetHost } from '@espcompose/core';
+import { createLvglWidget, useTheme } from '@espcompose/core';
 import { UI_THEME_SCOPE } from '../theme/scope';
 import { Theme } from '../theme/types';
 
@@ -36,20 +36,14 @@ export const Switch = createLvglWidget<SwitchProps>(
     const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <WidgetHost style={{
-          width: 50,
-          height: 26,
-          padding: 0
-        }}
-      >
         <lvgl-switch
           x:custom={{
             ...(props.value != null ? { state: { checked: props.value } } : {}),
             ...(props.onChange != null ? { on_change: props.onChange } : {}),
           }}
           style={{
-            width: '100%',
-            height: '100%',
+            width: 50,
+            height: 26,
             borderRadius: 'circle',
             backgroundOpacity: 'transparent',
             borderWidth: 0,
@@ -75,7 +69,6 @@ export const Switch = createLvglWidget<SwitchProps>(
             ...props.style,
           }}
         />
-      </WidgetHost>
     );
   },
 );

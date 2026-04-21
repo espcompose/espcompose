@@ -1,6 +1,6 @@
 import * as path from 'path';
 import type { Command } from 'commander';
-import { resolvePaths, transpileProject, extractPassthroughArgs, withErrorHandler } from '../utils';
+import { resolvePaths, transpileProject, extractPassthroughArgs, printMetrics, withErrorHandler } from '../utils';
 
 export function registerBuildCommand(program: Command) {
   program
@@ -12,12 +12,16 @@ export function registerBuildCommand(program: Command) {
     )
     .allowUnknownOption()
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
+    .option('--metrics', 'Print compiler phase timing breakdown after build')
+    .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
     .option('--library', 'Build as a distributable component library (ESM + .d.ts)')
     .option('--entry <file>', 'Entry file relative to projectDir (library only)', 'src/index.ts')
     .option('--outDir <dir>', 'Output directory relative to projectDir (library only)', 'dist')
     .option('--tsconfig <file>', 'Path to tsconfig.json (library only, default: auto-detect)')
     .action(withErrorHandler('Build', async (projectDir?: string, opts?: {
       debug?: boolean;
+      metrics?: boolean;
+      wireframe?: boolean;
       library?: boolean;
       entry?: string;
       outDir?: string;
@@ -41,7 +45,8 @@ export function registerBuildCommand(program: Command) {
         const { createEsphomeTarget, esphomeCompile } = await import('@espcompose/esphome-target');
         const { resolvedDir, yamlPath } = resolvePaths(projectDir);
         const extraArgs = extractPassthroughArgs();
-        await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        if (opts?.metrics) printMetrics(result);
         console.log('Compiling firmware…');
         await esphomeCompile(yamlPath, extraArgs);
       }

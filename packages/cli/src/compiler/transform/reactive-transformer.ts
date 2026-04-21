@@ -20,12 +20,15 @@
 
 import ts from 'typescript';
 import type { TransformOutput, TransformDiagnostic } from './script-transformer.js';
+import { isCoreHookCall } from './type-brands.js';
 import {
   hasSignalBrand,
   translateReactiveExprIR,
   scanForHAEntities,
+  scanForGlobalHandles,
   type ExprCompilerContext,
   type HAEntityInfo,
+  type GlobalExprInfo,
   type DependencyInfo,
 } from './expr-compiler.js';
 
@@ -53,13 +56,16 @@ export function transformReactiveExpressions(
   const diagnostics: TransformDiagnostic[] = [];
   let transformCount = 0;
 
-  // Pass 0: Scan for useHAEntity() calls
+  // Pass 0: Scan for useHAEntity() and useGlobal() calls
   const haEntities = new Map<ts.Symbol, HAEntityInfo>();
   scanForHAEntities(sourceFile, haEntities, checker, diagnostics);
 
+  const globals = new Map<ts.Symbol, GlobalExprInfo>();
+  scanForGlobalHandles(sourceFile, globals, checker);
+
   const onTransform = () => { transformCount++; };
 
-  walkNode(sourceFile, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
+  walkNode(sourceFile, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
 
   // If transforms were applied, ensure '__espcompose' is importable
   if (transformCount > 0) {
@@ -122,25 +128,20 @@ function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
 /**
  * Check if an expression is a useMemo() call — these get AST-compiled.
  */
-function isMemoCall(expr: ts.Expression): expr is ts.CallExpression {
+function isMemoCall(expr: ts.Expression, checker: ts.TypeChecker): expr is ts.CallExpression {
   if (!ts.isCallExpression(expr)) return false;
-  const callee = expr.expression;
-  // useMemo(() => ...)
-  if (ts.isIdentifier(callee) && callee.text === 'useMemo') return true;
-  return false;
+  return isCoreHookCall(expr, 'useMemo', checker);
 }
 
 /**
  * Check if an expression is a __espcompose.* or useEffect() call that should be skipped entirely.
  * useMemo is NOT in this list — it gets AST-compiled.
  */
-function isReactiveSkipCall(expr: ts.Expression): boolean {
+function isReactiveSkipCall(expr: ts.Expression, checker: ts.TypeChecker): boolean {
   if (!ts.isCallExpression(expr)) return false;
   const callee = expr.expression;
-  // useEffect(...)
-  if (ts.isIdentifier(callee) && callee.text === 'useEffect') return true;
-  // useReactive(...), reactiveIsNaN(...)
-  if (ts.isIdentifier(callee) && (callee.text === 'useReactive' || callee.text === 'reactiveIsNaN')) return true;
+  // useEffect(...), useReactive(...), reactiveIsNaN(...)
+  if (isCoreHookCall(expr, ['useEffect', 'useReactive', 'reactiveIsNaN'], checker)) return true;
   if (ts.isPropertyAccessExpression(callee)) {
     const obj = callee.expression;
     if (ts.isIdentifier(obj) && obj.text === '__espcompose') {
@@ -194,6 +195,7 @@ function walkNode(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
+  globals: Map<ts.Symbol, GlobalExprInfo>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
@@ -203,18 +205,18 @@ function walkNode(
     const jsxExpr = node.initializer;
     const expr = jsxExpr.expression;
     if (expr) {
-      processJsxAttributeExpression(expr, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
+      processJsxAttributeExpression(expr, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     }
   }
 
   // Process explicit useMemo() calls anywhere in the file (not just JSX)
-  if (ts.isCallExpression(node) && isMemoCall(node)) {
-    processExplicitMemo(node, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
+  if (ts.isCallExpression(node) && isMemoCall(node, checker)) {
+    processExplicitMemo(node, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     return; // Don't recurse into children — we've handled this node
   }
 
   ts.forEachChild(node, child => {
-    walkNode(child, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
+    walkNode(child, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
   });
 }
 
@@ -223,16 +225,17 @@ function processJsxAttributeExpression(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
+  globals: Map<ts.Symbol, GlobalExprInfo>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
 ): void {
   // Skip __espcompose.* calls and useEffect() that shouldn't be transformed
-  if (isReactiveSkipCall(expr)) return;
+  if (isReactiveSkipCall(expr, checker)) return;
 
   // useMemo() in JSX — AST-compile it
-  if (isMemoCall(expr)) {
-    processExplicitMemo(expr, sourceFile, checker, haEntities, edits, diagnostics, onTransform);
+  if (isMemoCall(expr, checker)) {
+    processExplicitMemo(expr, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     return;
   }
 
@@ -245,7 +248,7 @@ function processJsxAttributeExpression(
     for (const prop of expr.properties) {
       if (ts.isPropertyAssignment(prop) && prop.initializer) {
         processJsxAttributeExpression(
-          prop.initializer, sourceFile, checker, haEntities, edits, diagnostics, onTransform,
+          prop.initializer, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform,
         );
       }
     }
@@ -259,6 +262,7 @@ function processJsxAttributeExpression(
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
+    globals,
     dependencies: new Map(),
     slots: [],
   };
@@ -310,6 +314,7 @@ function processExplicitMemo(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
+  globals: Map<ts.Symbol, GlobalExprInfo>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
@@ -349,6 +354,7 @@ function processExplicitMemo(
   const ctx: ExprCompilerContext = {
     checker,
     haEntities,
+    globals,
     dependencies: new Map(),
     slots: [],
   };

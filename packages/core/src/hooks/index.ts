@@ -8,3 +8,5 @@ export { useHAEntity, clearHAEntityCache } from './useHAEntity';
 export { useImage, clearImageCache } from './useImage';
 export { useFont, clearFontCache } from './useFont';
 export { useLvgl } from './useLvgl';
+export { useGlobal, withGlobalScope, hashGlobalFingerprint } from './useGlobal';
+export type { GlobalDefinition, GlobalHandle, GlobalOptions } from './useGlobal';

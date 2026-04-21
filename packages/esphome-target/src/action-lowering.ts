@@ -11,8 +11,22 @@ import type {
   IRActionConfigValue,
   IRActionParam,
   IRCondition,
+  IRExprNode,
 } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp.js';
+
+// ── Reactive global context ─────────────────────────────────────────────
+// Set of global IDs that have BoundSignal declarations in the reactive runtime.
+// Populated by the target before lowering actions.
+let reactiveGlobalIds: Set<string> = new Set();
+
+/**
+ * Set the set of global IDs that have reactive BoundSignal wiring.
+ * Must be called before lowerActionTree() when globals are present.
+ */
+export function setReactiveGlobalIds(ids: Set<string>): void {
+  reactiveGlobalIds = ids;
+}
 
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
 // Lowered actions are embedded in source via JSON.stringify (in the script
@@ -105,6 +119,35 @@ function lowerCondition(condition: IRCondition): unknown {
     case 'native':
       return { [condition.conditionKey]: lowerConfig(condition.config) };
   }
+}
+
+/**
+ * Lower the value of a global_set action to a C++ expression string.
+ * Handles IRActionParam (literal, trigger_var) and IRExprNode (compiled expression).
+ */
+function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string): string {
+  if (typeof value === 'object' && value !== null && 'kind' in value) {
+    switch (value.kind) {
+      case 'literal': {
+        const v = value.value;
+        if (typeof v === 'boolean') return v ? 'true' : 'false';
+        if (typeof v === 'string') {
+          if (cppType === 'std::string') return `std::string("${escapeStringForCpp(v)}")`;
+          return `"${escapeStringForCpp(v)}"`;
+        }
+        return String(v);
+      }
+      case 'trigger_var':
+        // IRTriggerVarParam uses 'varName', IRExprTriggerVar uses 'name'
+        return 'varName' in value ? value.varName : value.name;
+      default: {
+        // IRExprNode — lower to C++ via exprToCpp
+        const ctx = createConditionLoweringContext();
+        return exprToCpp(value as IRExprNode, ctx);
+      }
+    }
+  }
+  return String(value);
 }
 
 /**
@@ -202,6 +245,20 @@ function lowerAction(action: IRActionNode): unknown {
 
     case 'theme_select':
       return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
+
+    case 'global_set': {
+      const valueStr = lowerGlobalSetValue(action.value, action.cppType);
+      if (reactiveGlobalIds.has(action.globalId)) {
+        // Reactive global — write through BoundSignal (also writes native storage) + flush
+        const sigName = `sig_global_${action.globalId}`;
+        return { lambda: lambdaMarker(
+          `espcompose::${sigName}.set(${valueStr}); ` +
+          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+        )};
+      }
+      // Non-reactive global — plain globals.set YAML action
+      return { 'globals.set': { id: action.globalId, value: lambdaMarker(`return ${valueStr};`) } };
+    }
   }
 }
 

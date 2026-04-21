@@ -17,6 +17,7 @@ describe('runtime component codegen', () => {
       memos: [],
       effects: [],
       widgetBindings: [],
+      globalSignals: [],
     };
 
     const header = generateBindingsHeader(runtimeConfig);
@@ -43,6 +44,7 @@ describe('runtime component yaml wiring', () => {
       memos: [],
       effects: [],
       widgetBindings: [],
+      globalSignals: [],
     };
 
     const inputConfig = {

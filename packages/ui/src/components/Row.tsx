@@ -12,7 +12,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglLayoutWidget, WidgetHost } from '@espcompose/core';
+import { createLvglLayoutWidget } from '@espcompose/core';
 import { COMPOSE_UI_INTENTS } from '../intents';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
@@ -70,20 +70,11 @@ export const [Row, Col] = createLvglLayoutWidget(
       padColumn = useSpacing(props.gutter);
     }
 
-    const hasExplicitHeight = props.style?.height != null;
-
     return (
-      <WidgetHost
-        style={{
-          width: props.style?.width ?? '100%',
-          height: props.style?.height ?? 'fit-content',
-          padding: 0,
-        }}
-      >
-        <lvgl-obj
+      <lvgl-obj
           style={{
-            width: '100%',
-            height: hasExplicitHeight ? '100%' : 'fit-content',
+            width: props.style?.width ?? '100%',
+            height: props.style?.height ?? 'fit-content',
             backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
             borderWidth: props.style?.borderWidth ?? 0,
             borderColor: props.style?.borderColor,
@@ -97,7 +88,6 @@ export const [Row, Col] = createLvglLayoutWidget(
         >
           {props.children}
         </lvgl-obj>
-      </WidgetHost>
     );
   },
   (props: ColProps) => {

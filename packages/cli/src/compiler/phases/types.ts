@@ -1,6 +1,15 @@
 import type ts from 'typescript';
 import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
-import type { SemanticRegistry } from '../transform/semantic-registry.js';
+
+/** Timing measurement for a single compiler phase. */
+export interface PhaseTiming {
+  /** Phase function name (e.g. "setupPhase", "transformPhase"). */
+  phase: string;
+  /** Wall-clock duration in milliseconds. */
+  durationMs: number;
+  /** When true, this phase ran concurrently with other parallel phases. */
+  parallel?: boolean;
+}
 
 /**
  * Mutable context threaded through the compiler pipeline.
@@ -41,8 +50,9 @@ export interface PhaseContext {
   secrets?: ReadonlyMap<string, string>;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
-  /** Per-file semantic analysis registries (set by transform phase, analysis-only). */
-  semanticAnalysis?: Map<string, SemanticRegistry>;
+
+  /** Per-phase timing measurements (populated by runPipeline). */
+  phaseTiming?: PhaseTiming[];
 }
 
 /**
@@ -50,3 +60,8 @@ export interface PhaseContext {
  * Receives the shared context and mutates it with its outputs.
  */
 export type Phase = (ctx: PhaseContext) => Promise<void> | void;
+
+/**
+ * A step in a pipeline: either a single phase or an array of phases to run in parallel.
+ */
+export type PipelineStep = Phase | Phase[];

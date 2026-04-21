@@ -2,7 +2,7 @@
  * TypeScript AST transformer for trigger handler compilation.
  *
  * Scans source files for arrow functions in JSX trigger props and
- * createScript() calls, compiles their bodies to action trees,
+ * useScript() calls, compiles their bodies to action trees,
  * and injects the compiled metadata back into the source.
  *
  * Also scans for importHAEntity() calls to build HA entity context
@@ -17,8 +17,8 @@ import {
 import {
   compileActionBody,
 } from './action-compiler.js';
-import { isRefType } from './type-brands.js';
-import { type IRActionNode } from '@espcompose/core/internals';
+import { isRefType, isCoreHookCall } from './type-brands.js';
+import { type IRActionNode, type GlobalDefinition, hashGlobalFingerprint } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -63,7 +63,9 @@ export function transformScriptFile(
   const edits: SourceEdit[] = [];
   const refSymbols = scanForRefSymbols(sourceFile, checker);
   const scriptHandles = scanForScriptHandles(sourceFile, checker);
-  findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, edits);
+  const globalHandles = scanForGlobalHandles(sourceFile, checker);
+
+  findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, globalHandles, edits);
 
   // Apply edits in reverse position order so indices stay valid
   let text = sourceFile.getFullText();
@@ -118,13 +120,10 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
   const refSymbols = new Set<ts.Symbol>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
-      if (ts.isCallExpression(node.initializer)) {
-        const callee = node.initializer.expression;
-        if (ts.isIdentifier(callee) && callee.text === 'useRef') {
-          const sym = checker.getSymbolAtLocation(node.name);
-          if (sym) {
-            refSymbols.add(sym);
-          }
+      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useRef', checker)) {
+        const sym = checker.getSymbolAtLocation(node.name);
+        if (sym) {
+          refSymbols.add(sym);
         }
       }
     }
@@ -146,23 +145,20 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
 
 
 /**
- * Scan for `const handle = useScript(...)` or `const handle = createScript(...)` patterns
+ * Scan for `const handle = useScript(...)` patterns
  * and build a map of declaration symbol → script ID.
  */
 function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, string> {
   const scriptHandles = new Map<ts.Symbol, string>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
-      if (ts.isCallExpression(node.initializer)) {
-        const callee = node.initializer.expression;
-        if (ts.isIdentifier(callee) && (callee.text === 'useScript' || callee.text === 'createScript')) {
-          const varName = node.name.text;
-          // Use the variable name as the script ID (snake_case)
-          const scriptId = varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
-          const sym = checker.getSymbolAtLocation(node.name);
-          if (sym) {
-            scriptHandles.set(sym, scriptId);
-          }
+      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useScript', checker)) {
+        const varName = node.name.text;
+        // Use the variable name as the script ID (snake_case)
+        const scriptId = varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+        const sym = checker.getSymbolAtLocation(node.name);
+        if (sym) {
+          scriptHandles.set(sym, scriptId);
         }
       }
     }
@@ -173,34 +169,66 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
 }
 
 /**
- * Find arrow functions in JSX attributes and createScript() calls.
+ * Scan for `const handle = useGlobal(cppType, fingerprint, ...)` patterns
+ * and build a map of declaration symbol → GlobalDefinition { id, cppType }.
+ *
+ * The global ID is derived by hashing the fingerprint (2nd argument),
+ * and the C++ type is extracted from the 1st argument (string literal).
+ */
+function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, GlobalDefinition> {
+  const globalHandles = new Map<ts.Symbol, GlobalDefinition>();
+  const walk = (node: ts.Node): void => {
+    if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
+      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 2) {
+        const typeArg = node.initializer.arguments[0];
+        const fingerprintArg = node.initializer.arguments[1];
+
+        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(fingerprintArg)) {
+          const cppType = typeArg.text;
+          const globalId = hashGlobalFingerprint(fingerprintArg.text);
+
+          const sym = checker.getSymbolAtLocation(node.name);
+          if (sym) {
+            globalHandles.set(sym, { id: globalId, cppType });
+          }
+        }
+      }
+    }
+    ts.forEachChild(node, walk);
+  };
+  walk(sourceFile);
+  return globalHandles;
+}
+
+/**
+ * Find arrow functions in JSX attributes and useScript() calls.
  * Compile them via the action tree compiler and inject metadata.
  *
  * For JSX attributes: wraps the arrow with Object.assign to attach __compiledActions.
- * For createScript calls: injects compiled metadata as a second argument.
+ * For useScript calls: injects compiled metadata as a second argument.
  */
 function findAndCompileTriggerHandlers(
   node: ts.Node,
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
+  globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
   // JSX attribute: <button onPress={() => { ... }} />
   if (ts.isJsxAttribute(node) && node.initializer && ts.isJsxExpression(node.initializer)) {
     const expr = node.initializer.expression;
     if (expr && (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr))) {
-      compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, edits);
+      compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, globalHandles, edits);
     }
   }
 
-  // useScript(async () => { ... }) or createScript(async () => { ... })
-  if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) &&
-      (node.expression.text === 'useScript' || node.expression.text === 'createScript') &&
+  // useScript(async () => { ... })
+  if (ts.isCallExpression(node) && isCoreHookCall(node, 'useScript', ctx.checker) &&
       node.arguments.length >= 1) {
     const arg = node.arguments[0];
     if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
-      compileAndInjectUseScript(node, arg, ctx, refSymbols, scriptHandles, edits);
+      compileAndInjectUseScript(node, arg, ctx, refSymbols, scriptHandles, globalHandles, edits);
     }
   }
 
@@ -210,12 +238,12 @@ function findAndCompileTriggerHandlers(
   if (ts.isVariableDeclaration(node) && node.initializer) {
     const varType = ctx.checker.getTypeAtLocation(node.name);
     if (isTriggerHandlerType(varType, ctx.checker)) {
-      compileArrowsInExpression(node.initializer, ctx, refSymbols, scriptHandles, edits);
+      compileArrowsInExpression(node.initializer, ctx, refSymbols, scriptHandles, globalHandles, edits);
     }
   }
 
   ts.forEachChild(node, child =>
-    findAndCompileTriggerHandlers(child, ctx, refSymbols, scriptHandles, edits));
+    findAndCompileTriggerHandlers(child, ctx, refSymbols, scriptHandles, globalHandles, edits));
 }
 
 /**
@@ -260,15 +288,16 @@ function compileArrowsInExpression(
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
+  globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
   if (ts.isArrowFunction(expr) || ts.isFunctionExpression(expr)) {
-    compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, edits);
+    compileAndInjectTriggerHandler(expr, ctx, refSymbols, scriptHandles, globalHandles, edits);
     return;
   }
 
   if (ts.isParenthesizedExpression(expr)) {
-    compileArrowsInExpression(expr.expression, ctx, refSymbols, scriptHandles, edits);
+    compileArrowsInExpression(expr.expression, ctx, refSymbols, scriptHandles, globalHandles, edits);
     return;
   }
 
@@ -276,16 +305,16 @@ function compileArrowsInExpression(
     // ?? or || — the right-hand side may contain an arrow fallback
     if (expr.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken ||
         expr.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
-      compileArrowsInExpression(expr.right, ctx, refSymbols, scriptHandles, edits);
+      compileArrowsInExpression(expr.right, ctx, refSymbols, scriptHandles, globalHandles, edits);
       // Left side could also be an arrow (unusual but possible)
-      compileArrowsInExpression(expr.left, ctx, refSymbols, scriptHandles, edits);
+      compileArrowsInExpression(expr.left, ctx, refSymbols, scriptHandles, globalHandles, edits);
       return;
     }
   }
 
   if (ts.isConditionalExpression(expr)) {
-    compileArrowsInExpression(expr.whenTrue, ctx, refSymbols, scriptHandles, edits);
-    compileArrowsInExpression(expr.whenFalse, ctx, refSymbols, scriptHandles, edits);
+    compileArrowsInExpression(expr.whenTrue, ctx, refSymbols, scriptHandles, globalHandles, edits);
+    compileArrowsInExpression(expr.whenFalse, ctx, refSymbols, scriptHandles, globalHandles, edits);
     return;
   }
 }
@@ -295,6 +324,7 @@ function compileAndInjectTriggerHandler(
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
+  globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
   const result = compileActionBody(
@@ -302,6 +332,7 @@ function compileAndInjectTriggerHandler(
     ctx.checker,
     ctx.haEntities,
     scriptHandles,
+    globalHandles,
     refSymbols,
     ctx.sourceFile.fileName,
   );
@@ -360,6 +391,7 @@ function compileAndInjectUseScript(
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
   scriptHandles: Map<ts.Symbol, string>,
+  globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
   const result = compileActionBody(
@@ -367,6 +399,7 @@ function compileAndInjectUseScript(
     ctx.checker,
     ctx.haEntities,
     scriptHandles,
+    globalHandles,
     refSymbols,
     ctx.sourceFile.fileName,
   );

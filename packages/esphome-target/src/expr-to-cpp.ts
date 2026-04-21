@@ -133,6 +133,9 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       return `sig_${compId}.get()`;
     }
 
+    case 'global_read':
+      return `sig_global_${node.globalId}.get()`;
+
     case 'component_read':
       return `id(${node.componentId}).state`;
 

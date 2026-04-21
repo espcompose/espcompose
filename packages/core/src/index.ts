@@ -59,6 +59,8 @@ export { useFont } from './hooks/useFont';
 export { useScript } from './hooks/useScript';
 export { useMemo } from './hooks/useMemo';
 export { useLvgl } from './hooks/useLvgl';
+export { useGlobal } from './hooks/useGlobal';
+export type { GlobalHandle, GlobalOptions } from './hooks/useGlobal';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions
@@ -120,12 +122,6 @@ export { createStyles, mergeStyles } from './theme/create-styles';
 
 export { isWireframeEnabled, setWireframeEnabled, clearWireframe, WIREFRAME_COLORS } from './wireframe';
 export type { WidgetCategory } from './wireframe';
-
-// ────────────────────────────────────────────────────────────────────────────
-// Public API — WidgetHost
-// ────────────────────────────────────────────────────────────────────────────
-
-export { WidgetHost } from './widget-host';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Used by theme resolvers

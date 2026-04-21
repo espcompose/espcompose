@@ -1,8 +1,20 @@
 import path from 'path';
 import fs from 'fs';
 import { build } from '@espcompose/cli';
+import type { CompileResult, PhaseTiming } from '@espcompose/cli';
 import { createEsphomeTarget, esphomeConfig } from '@espcompose/esphome-target';
 import { expect } from 'vitest';
+
+/** Timing breakdown for a single e2e test project. */
+export interface TestTiming {
+  project: string;
+  /** Per-phase compiler timings (from espcompose pipeline). */
+  phases: PhaseTiming[];
+  /** Total espcompose build time (sum of all phases) in ms. */
+  espcomposeMs: number;
+  /** ESPHome config validation time in ms. */
+  esphomeValidationMs: number;
+}
 
 // Track whether the shared espcompose_reactive.h has already been snapshotted.
 // The runtime header is identical across all projects so we only need one copy.
@@ -22,11 +34,11 @@ let runtimeHeaderSnapshotted = false;
 export async function createProjectTest(
   projectsDir: string,
   projectName: string,
-): Promise<string> {
+): Promise<TestTiming> {
   const projectPath = path.resolve(projectsDir, projectName);
 
   // Run the full compiler pipeline — output lands at .espcompose/esphome.yaml
-  await build(projectPath, createEsphomeTarget());
+  const result: CompileResult = await build(projectPath, createEsphomeTarget());
 
   const yamlPath = path.join(projectPath, '.espcompose', 'esphome.yaml');
   if (!fs.existsSync(yamlPath)) {
@@ -91,7 +103,16 @@ export async function createProjectTest(
   }
 
   // Validate the generated YAML with the real ESPHome config validator.
+  const esphomeStart = performance.now();
   await esphomeConfig(yamlPath);
+  const esphomeValidationMs = performance.now() - esphomeStart;
 
-  return yamlContent;
+  const espcomposeMs = result.phaseTiming.reduce((sum, t) => sum + t.durationMs, 0);
+
+  return {
+    project: projectName,
+    phases: result.phaseTiming,
+    espcomposeMs,
+    esphomeValidationMs,
+  };
 }

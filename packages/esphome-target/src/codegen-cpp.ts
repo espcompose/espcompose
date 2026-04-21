@@ -28,6 +28,10 @@ export interface CppBackendResult {
  */
 export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
   const { reactive, themeScopes } = ir.espcompose;
+
+  // Extract globals from components (section === 'globals')
+  const globalComponents = ir.esphome.components.filter(c => c.section === 'globals');
+
   const hasReactiveContent = reactive.bindings.length > 0
     || reactive.memos.length > 0
     || reactive.effects.length > 0
@@ -41,6 +45,7 @@ export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
     ir.esphome.haEntities,
     themeScopes,
     [],
+    globalComponents,
   );
 
   return {

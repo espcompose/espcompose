@@ -52,7 +52,7 @@ export const CompiledActionsMetaSchema = z.object({
   __refBindings: z.record(z.unknown()).optional(),
 });
 
-/** Metadata attached to createScript() functions via Object.assign. */
+/** Metadata attached to useScript() functions via Object.assign. */
 export const CompiledScriptMetaSchema = z.object({
   __compiledScript: z.object({
     id: z.string(),

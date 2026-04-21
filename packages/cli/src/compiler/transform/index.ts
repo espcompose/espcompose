@@ -16,8 +16,6 @@ import * as path from 'path';
 import ts from 'typescript';
 import { transformScriptFile, type TransformDiagnostic } from './script-transformer.js';
 import { transformReactiveExpressions } from './reactive-transformer.js';
-import { runSemanticAnalysis, dumpSemanticRegistries } from './semantic-analysis.js';
-import type { SemanticRegistry } from './semantic-registry.js';
 
 export type { TransformDiagnostic };
 
@@ -30,8 +28,6 @@ export interface TransformResult {
   filesWritten: number;
   /** Number of files that had AST transforms applied. */
   filesTransformed: number;
-  /** Per-file semantic analysis registries (analysis-only, does not affect output). */
-  semanticRegistries: Map<string, SemanticRegistry>;
 }
 
 /**
@@ -53,13 +49,11 @@ export function writeTransformedFiles(
   entryFile: string,
   sourceDir: string,
   buildDir: string,
-  options?: { debug?: boolean },
 ): TransformResult {
   const diagnostics: TransformDiagnostic[] = [];
   let transformedEntryFile = '';
   let filesWritten = 0;
   let filesTransformed = 0;
-  const semanticRegistries = new Map<string, SemanticRegistry>();
 
   for (const sourceFile of program.getSourceFiles()) {
     const filePath = sourceFile.fileName;
@@ -73,16 +67,11 @@ export function writeTransformedFiles(
 
     const originalText = sourceFile.getFullText();
 
-    // Pass 0 (analysis-only): Semantic expression classification.
-    // Records findings in a sidecar registry — does NOT modify source.
-    const semanticRegistry = runSemanticAnalysis(sourceFile, program);
-    semanticRegistries.set(filePath, semanticRegistry);
-
     // Pass 1: Auto-wrap reactive JSX attribute expressions in useMemo()
     const reactiveResult = transformReactiveExpressions(sourceFile, program);
     diagnostics.push(...reactiveResult.diagnostics);
 
-    // Pass 2: Compile trigger handler / createScript() bodies to action trees.
+    // Pass 2: Compile trigger handler / useScript() bodies to action trees.
     // If the reactive pass modified the source, re-parse so positions are valid.
     // We also need a fresh TypeScript program so the checker can resolve symbols
     // (the original program's checker can't resolve nodes from a re-parsed file).
@@ -159,10 +148,5 @@ export function writeTransformedFiles(
     transformedEntryFile = path.join(buildDir, rel);
   }
 
-  // Dump semantic analysis results in debug mode
-  if (options?.debug && semanticRegistries.size > 0) {
-    dumpSemanticRegistries(semanticRegistries, buildDir, sourceDir);
-  }
-
-  return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed, semanticRegistries };
+  return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed };
 }

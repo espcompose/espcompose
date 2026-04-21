@@ -20,12 +20,12 @@ Run with: `pnpm --filter espcompose-e2e test`
 
 ## Key Test Projects by Feature Area
 
-- **Basic**: `basic-device`, `sensor-device`, `function-component-device`
-- **Scripts & Actions**: `script-device`, `action-tree-device`, `trigger-device`, `trigger-variable-device`
+- **Basic**: `sensor-device` (consolidated: covers infrastructure, DHT/GPIO/ADC sensors, variable embedding, API encryption)
+- **Scripts & Actions**: `device-script-device`, `action-tree-device`, `trigger-device`, `trigger-variable-device`
 - **Reactive**: `reactive-device`, `auto-reactive-device`, `multi-source-reactive-device`
 - **HA Integration**: `ha-binding-device`, `ha-dynamic-device`
 - **Theme & UI**: `design-system-device`, `reactive-theme-device`, `style-device`, `boot-screen-device`
-- **Assets**: `image-font-device`, `embed-device`
+- **Assets**: `image-font-device`
 - **Libraries**: `library-contract-device`, `uncompiled-lib-device`
 - **Complex**: `dashboard-device`, `fancy-light-cascade-device`
 - **Other**: `project-device`, `device-script-device`, `secret-device`
