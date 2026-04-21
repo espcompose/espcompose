@@ -3,7 +3,7 @@
 //
 // These types represent the semantic intent of user-written trigger handlers
 // and callbacks. They describe WHAT actions to perform, not HOW to perform
-// them. The lowering to target-specific formats (ESPHome YAML, simulator JS)
+// them. The lowering to target-specific formats (ESPHome YAML)
 // happens in the respective target packages.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -94,6 +94,10 @@ export interface IRScriptStop {
 /** Theme selection action */
 export interface IRThemeSelect {
   kind: 'theme_select';
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash of the scope — C++ identifier fragment. */
+  scopeId: string;
   themeName: string;
 }
 
@@ -160,10 +164,28 @@ export type IRActionParam =
   | IRTriggerVarParam
   | IRExpressionParam;
 
+/**
+ * A nested object value inside an action config — used for actions like
+ * `lvgl.widget.update` whose params include sub-part dictionaries
+ * (e.g. `knob: { padding: 8 }`).  Recursive: nested dicts can themselves
+ * contain primitives, params, or further nested dicts.
+ */
+export interface IRActionConfigDict {
+  kind: 'config_dict';
+  entries: Record<string, IRActionConfigValue>;
+}
+
+export type IRActionConfigValue =
+  | IRActionParam
+  | IRActionConfigDict
+  | string
+  | number
+  | boolean;
+
 /** Config for native actions — either a simple ID or an object with params */
 export type IRActionConfig =
   | string
-  | Record<string, IRActionParam | string | number | boolean>;
+  | Record<string, IRActionConfigValue>;
 
 // ── Constructors ───────────────────────────────────────────────────────────
 
@@ -211,8 +233,8 @@ export function irScriptStop(scriptId: string): IRScriptStop {
   return { kind: 'script_stop', scriptId };
 }
 
-export function irThemeSelect(themeName: string): IRThemeSelect {
-  return { kind: 'theme_select', themeName };
+export function irThemeSelect(scope: string, scopeId: string, themeName: string): IRThemeSelect {
+  return { kind: 'theme_select', scope, scopeId, themeName };
 }
 
 export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {

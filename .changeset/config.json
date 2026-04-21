@@ -21,9 +21,6 @@
     "@espcompose/esphome-codegen",
     "@espcompose/esphome-target",
     "@espcompose/metadata",
-    "@espcompose/simulator-app",
-    "@espcompose/simulator-bridge",
-    "@espcompose/simulator-target",
     "espcompose-docs",
     "espcompose-e2e",
     "espcompose-ir-viewer"

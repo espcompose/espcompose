@@ -7,20 +7,26 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase, _CoreMqttComponent, _UartDevice } from "../bases";
 import type { __marker_template__TemplateEvent, __marker_uart_UARTEvent, __marker_web_server_WebServer } from "../markers";
 interface EventWebServerProps {
-    /** @yamlKey web_server_id */
-    webServerId?: RefProp<__marker_web_server_WebServer>;
-    /** @yamlKey sorting_weight */
-    sortingWeight?: unknown;
     /** @yamlKey sorting_group_id */
     sortingGroupId?: number;
+    /** @yamlKey sorting_weight */
+    sortingWeight?: unknown;
+    /** @yamlKey web_server_id */
+    webServerId?: RefProp<__marker_web_server_WebServer>;
 }
 interface EventBaseProps extends _CoreEntityBase, _CoreMqttComponent {
+    /**
+     * string: The device class for the event. The following device classes are supported by event entities:
+     * @yamlKey device_class
+     */
+    deviceClass?: "" | "button" | "doorbell" | "motion";
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform when an event is triggered.
+     * @yamlKey on_event
+     */
+    onEvent?: TriggerHandler;
     /** @yamlKey web_server */
     webServer?: EventWebServerProps;
-    /** @yamlKey device_class */
-    deviceClass?: "button" | "doorbell" | "" | "motion";
-    /** @yamlKey on_event */
-    onEvent?: TriggerHandler;
 }
 interface TemplateProps {
     /**

@@ -436,23 +436,33 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
     });
   }
 
-  if (espcompose.themes) {
-    const { themes } = espcompose;
-    const leafTokens = Object.entries(themes.leafData);
+  if (espcompose.themeScopes && espcompose.themeScopes.length > 0) {
+    const scopeChildren = espcompose.themeScopes.map((scope) => {
+      const leafTokens = Object.entries(scope.leafData);
+      return {
+        id: uid(`scope_${scope.scopeId}`),
+        label: `${scope.scope}`,
+        chip: `${scope.themeNames.length} theme${scope.themeNames.length !== 1 ? 's' : ''}`,
+        chipColor: 'secondary' as const,
+        nodeKind: 'theme-group' as NodeKind,
+        data: scope,
+        children: leafTokens.map(([token, val]) => ({
+          id: uid(`leaf_${scope.scopeId}_${token}`),
+          label: token,
+          chip: val.valueType,
+          nodeKind: 'theme-leaf' as NodeKind,
+          data: { token, ...val },
+        })),
+      };
+    });
     children.push({
       id: uid('themes'),
       label: 'themes',
-      chip: `${themes.themeNames.length} theme${themes.themeNames.length !== 1 ? 's' : ''}`,
+      chip: `${espcompose.themeScopes.length} scope${espcompose.themeScopes.length !== 1 ? 's' : ''}`,
       chipColor: 'secondary',
-      nodeKind: 'theme-group',
-      data: themes,
-      children: leafTokens.map(([token, val]) => ({
-        id: uid(`leaf_${token}`),
-        label: token,
-        chip: val.valueType,
-        nodeKind: 'theme-leaf' as NodeKind,
-        data: { token, ...val },
-      })),
+      nodeKind: 'group',
+      data: espcompose.themeScopes,
+      children: scopeChildren,
     });
   }
 

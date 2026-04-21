@@ -5,10 +5,10 @@
 
 import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface ExternalComponentsProps {
+    components?: Array<string>;
+    refresh?: string;
     /** Repository type. One of `local`, `git`. */
     source: unknown;
-    refresh?: string;
-    components?: Array<string>;
 }
 declare global {
     namespace JSX {

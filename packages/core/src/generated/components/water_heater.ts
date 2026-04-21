@@ -7,53 +7,77 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent, _CoreEntityBase } from "../bases";
 import type { __marker_template__TemplateWaterHeater } from "../markers";
 interface WaterHeaterVisualProps {
-    /** @yamlKey min_temperature */
-    minTemperature?: unknown;
-    /** @yamlKey max_temperature */
-    maxTemperature?: unknown;
-    /** @yamlKey target_temperature_step */
-    targetTemperatureStep?: unknown;
+    /**
+     * float: Override the maximum temperature shown in the frontend.
+     * @yamlKey max_temperature
+     */
+    maxTemperature?: number;
+    /**
+     * float: Override the minimum temperature shown in the frontend.
+     * @yamlKey min_temperature
+     */
+    minTemperature?: number;
+    /**
+     * float: Override the temperature steps shown in the frontend.
+     * @yamlKey target_temperature_step
+     */
+    targetTemperatureStep?: number;
 }
 interface WaterHeaterBaseProps extends _CoreEntityBase {
+    /** [ID](https://esphome.io/guides/configuration-types#id): The water heater to control. */
+    id?: unknown;
+    /** string: The operation mode to set. See [Modes](https://esphome.io/components/water_heater#water-heater-modes) for ava... */
+    mode?: string;
+    /**
+     * list: Static list of operation modes that will be exposed to the frontend (for example Home Assistant). When not spec...
+     * @yamlKey supported_modes
+     */
+    supportedModes?: unknown;
+    /**
+     * float: The target temperature to set (e.g., `60.0`).
+     * @yamlKey target_temperature
+     */
+    targetTemperature?: number;
+    /** Configuration for the frontend representation. */
     visual?: WaterHeaterVisualProps;
 }
 interface TemplateProps extends _CoreComponent {
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren... */
+    away?: unknown;
+    /**
+     * [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren...
+     * @yamlKey current_temperature
+     */
+    currentTemperature?: unknown;
+    /**
+     * [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren...
+     * @yamlKey is_on
+     */
+    isOn?: unknown;
+    /** [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the curren... */
+    mode?: unknown;
     /** boolean: Whether to operate in optimistic mode - when in this mode, any command sent to the template water heater wil... */
     optimistic?: boolean;
-    /**
-     * [Action](/automations/actions#all-actions): The action to perform when the water heater receives a command (mode chan...
-     * @yamlKey set_action
-     */
-    setAction?: TriggerHandler;
     /**
      * enum: Control how the water heater attempts to restore state on bootup.
      * @yamlKey restore_mode
      */
     restoreMode?: "NO_RESTORE" | "RESTORE" | "RESTORE_AND_CALL";
     /**
-     * [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current temperature of t...
-     * @yamlKey current_temperature
+     * [Action](https://esphome.io/automations/actions#all-actions): The action to perform when the water heater receives a ...
+     * @yamlKey set_action
      */
-    currentTemperature?: unknown;
-    /**
-     * [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the target temperature of th...
-     * @yamlKey target_temperature
-     */
-    targetTemperature?: unknown;
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current operation mode. ... */
-    mode?: unknown;
+    setAction?: TriggerHandler;
     /**
      * list: Static list of operation modes that will be exposed to the frontend (for example Home Assistant). This controls...
      * @yamlKey supported_modes
      */
-    supportedModes?: Array<"OFF" | "ECO" | "ELECTRIC" | "PERFORMANCE" | "HIGH_DEMAND" | "HEAT_PUMP" | "GAS">;
-    /** [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current away mode state.... */
-    away?: unknown;
+    supportedModes?: Array<"ECO" | "ELECTRIC" | "GAS" | "HEAT_PUMP" | "HIGH_DEMAND" | "OFF" | "PERFORMANCE">;
     /**
-     * [lambda](/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the current On/Off state. Ex...
-     * @yamlKey is_on
+     * [lambda](https://esphome.io/automations/templates#config-lambda): Lambda to be evaluated repeatedly to get the target...
+     * @yamlKey target_temperature
      */
-    isOn?: unknown;
+    targetTemperature?: unknown;
 }
 export type WaterHeaterProps = WaterHeaterBaseProps & {
     platform: "template";

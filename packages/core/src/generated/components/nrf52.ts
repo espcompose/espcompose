@@ -9,29 +9,29 @@ export interface Nrf52DfuProps {
     /** @yamlKey reset_pin */
     resetPin: Pin;
 }
-export interface Nrf52Reg0Props {
-    voltage: "1.8" | "2.1" | "2.4" | "2.7" | "3.0" | "3.3";
-    /** @yamlKey uicr_erase */
-    uicrErase?: boolean;
-}
 export interface Nrf52FrameworkPropsAdvancedProps {
     /** @yamlKey enable_ota_rollback */
     enableOtaRollback?: boolean;
 }
 export interface Nrf52FrameworkProps {
-    version?: string;
     advanced?: Nrf52FrameworkPropsAdvancedProps;
+    version?: string;
+}
+export interface Nrf52Reg0Props {
+    /** @yamlKey uicr_erase */
+    uicrErase?: boolean;
+    voltage: "1.8" | "2.1" | "2.4" | "2.7" | "3.0" | "3.3";
 }
 export interface Nrf52Props {
     /** string: The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Oth... */
     board: string;
     /** string: Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, ... */
     bootloader?: "adafruit" | "adafruit_nrf52_sd132" | "adafruit_nrf52_sd140_v6" | "adafruit_nrf52_sd140_v7" | "mcuboot";
-    dfu?: Nrf52DfuProps;
     /** boolean: Enable DC/DC converter for REG1 stage. Defaults to `true`. */
     dcdc?: boolean;
-    reg0?: Nrf52Reg0Props;
+    dfu?: Nrf52DfuProps;
     framework?: Nrf52FrameworkProps;
+    reg0?: Nrf52Reg0Props;
 }
 declare global {
     namespace JSX {

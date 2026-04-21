@@ -7,17 +7,17 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { __marker_spi_SPIComponent, __marker_spi_device_SPIDeviceComponent } from "../markers";
 export interface SpiDeviceProps {
     /** @yamlKey bit_order */
-    bitOrder?: "msb_first" | "lsb_first";
-    /** @yamlKey spi_id */
-    spiId?: RefProp<__marker_spi_SPIComponent>;
-    /** @yamlKey data_rate */
-    dataRate?: unknown;
-    /** @yamlKey spi_mode */
-    spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
-    /** @yamlKey release_device */
-    releaseDevice?: boolean;
+    bitOrder?: "lsb_first" | "msb_first";
     /** @yamlKey cs_pin */
     csPin?: Pin;
+    /** @yamlKey data_rate */
+    dataRate?: unknown;
+    /** @yamlKey release_device */
+    releaseDevice?: boolean;
+    /** @yamlKey spi_id */
+    spiId?: RefProp<__marker_spi_SPIComponent>;
+    /** @yamlKey spi_mode */
+    spiMode?: "0" | "1" | "2" | "3" | "MODE0" | "MODE1" | "MODE2" | "MODE3";
 }
 declare global {
     namespace JSX {

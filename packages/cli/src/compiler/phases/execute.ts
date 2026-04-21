@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
-import { buildSemanticIR } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeScopeData } from '@espcompose/core/internals';
+import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -38,6 +38,12 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearSecrets();
   cjsSDK.clearThemeRegistry();
   cjsSDK.clearReactiveThemeProxy();
+  cjsSDK.clearWireframe();
+
+  // Enable wireframe mode if requested by the CLI.
+  if (ctx.wireframe) {
+    cjsSDK.setWireframeEnabled(true);
+  }
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
@@ -67,7 +73,7 @@ export function executePhase(ctx: PhaseContext): void {
 
   const serializationCaptures = cjsSDK.stopSerializationCapture();
 
-  const themeData = extractThemeData(cjsSDK);
+  const themeScopes = extractThemeScopeData(cjsSDK);
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
   ctx.ir = serializationCaptures
@@ -79,7 +85,7 @@ export function executePhase(ctx: PhaseContext): void {
         components: components ?? [],
         scripts: collectedScripts as BuildSemanticIRInput['scripts'],
         reactiveNodes: reactiveNodes ?? [],
-        themes: themeData,
+        themeScopes,
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 
@@ -91,46 +97,57 @@ export function executePhase(ctx: PhaseContext): void {
 }
 
 /**
- * Extract theme data from the SDK's theme registry.
+ * Extract per-scope theme data from the SDK's theme registry.
  *
- * Reads all registered theme names and their signal path values,
- * assembling the IRThemeData structure consumed by the IR builder.
+ * Iterates all registered scopes, reads their theme names and signal path
+ * values, and assembles an IRThemeScopeData array consumed by the IR builder.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractThemeData(cjsSDK: any): IRThemeData | undefined {
+function extractThemeScopeData(cjsSDK: any): IRThemeScopeData[] | undefined {
   const getThemeRegistry = cjsSDK.getThemeRegistry;
   if (typeof getThemeRegistry !== 'function') return undefined;
 
   const registry = getThemeRegistry();
-  const themeNames: string[] = registry.getThemeNames();
-  if (themeNames.length === 0) return undefined;
+  const scopes: string[] = registry.getScopes();
+  if (scopes.length === 0) return undefined;
 
-  const signalPaths: string[] = registry.getSignalPaths();
-  const leafData = new Map<string, { values: unknown[]; valueType: string }>();
+  const result: IRThemeScopeData[] = [];
 
-  for (const signalPath of signalPaths) {
-    const values: unknown[] = [];
-    let valueType = 'int';
-    for (const name of themeNames) {
-      const themes = registry.getThemes();
-      const theme = themes.get(name);
-      if (theme) {
-        const val = theme.values[signalPath];
-        if (val) {
-          values.push(val.value);
-          valueType = val.valueType;
-        } else {
-          values.push(0);
+  for (const scope of scopes) {
+    const themeNames: string[] = registry.getThemeNames(scope);
+    if (themeNames.length === 0) continue;
+
+    const signalPaths: string[] = registry.getSignalPaths(scope);
+    const leafData = new Map<string, { values: unknown[]; valueType: string }>();
+
+    for (const signalPath of signalPaths) {
+      const values: unknown[] = [];
+      let valueType = 'int';
+      for (const name of themeNames) {
+        const themes = registry.getThemes(scope);
+        const thm = themes.get(name);
+        if (thm) {
+          const val = thm.values[signalPath];
+          if (val) {
+            values.push(val.value);
+            valueType = val.valueType;
+          } else {
+            values.push(0);
+          }
         }
       }
+      leafData.set(signalPath, { values, valueType });
     }
-    leafData.set(signalPath, { values, valueType });
+
+    result.push({
+      kind: 'theme_scope_data',
+      scope,
+      scopeId: scopeHash(scope),
+      themeNames,
+      defaultIndex: registry.getDefaultIndex(scope),
+      leafData,
+    });
   }
 
-  return {
-    kind: 'theme_data',
-    themeNames,
-    defaultIndex: registry.getDefaultIndex(),
-    leafData,
-  };
+  return result.length > 0 ? result : undefined;
 }

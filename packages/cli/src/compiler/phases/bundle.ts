@@ -29,6 +29,7 @@ export async function bundlePhase(ctx: PhaseContext): Promise<void> {
     format: 'cjs',
     target: 'node18',
     jsx: 'automatic',
+    jsxDev: true,
     jsxImportSource: '@espcompose/core',
     // Keep the SDK external — it will be require()'d from the host process
     external: ['@espcompose/core'],

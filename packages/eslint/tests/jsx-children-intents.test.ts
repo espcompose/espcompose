@@ -58,7 +58,7 @@ ruleTester.run('jsx-children-intents', rule, {
       code: `<esphome><touchscreen /></esphome>`,
     },
 
-    // ─── ESPHome root accepts lvgl:root ──────────────────────────────────
+    // ─── ESPHome root accepts lvgl (esphome:component) ─────────────────
     {
       name: 'lvgl inside esphome',
       code: `<esphome><lvgl /></esphome>`,
@@ -146,22 +146,6 @@ ruleTester.run('jsx-children-intents', rule, {
           <sensor />
           <binary_sensor />
         </esphome>
-      `,
-    },
-
-    // ─── Custom components (PascalCase) are pass-through ─────────────────
-    {
-      name: 'unbranded component inside esphome is pass-through',
-      code: `<esphome><MyComponent /></esphome>`,
-    },
-    {
-      name: 'unbranded component inside lvgl-page is pass-through',
-      code: `
-        <lvgl>
-          <lvgl-page>
-            <MyWidget />
-          </lvgl-page>
-        </lvgl>
       `,
     },
 
@@ -323,6 +307,24 @@ ruleTester.run('jsx-children-intents', rule, {
         </lvgl>
       `,
       errors: [{ messageId: 'invalidChildIntent' }],
+    },
+
+    // ─── Unbranded components in constrained parent ────────────────────────
+    {
+      name: 'unbranded component inside esphome (no intents)',
+      code: `<esphome><MyComponent /></esphome>`,
+      errors: [{ messageId: 'noIntentsOnChild' }],
+    },
+    {
+      name: 'unbranded component inside lvgl-page (no intents)',
+      code: `
+        <lvgl>
+          <lvgl-page>
+            <MyWidget />
+          </lvgl-page>
+        </lvgl>
+      `,
+      errors: [{ messageId: 'noIntentsOnChild' }],
     },
 
     // ─── Display component in LVGL context ───────────────────────────────

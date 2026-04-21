@@ -6,6 +6,11 @@
 import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface NetworkProps {
     /**
+     * boolean: Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. W...
+     * @yamlKey enable_high_performance
+     */
+    enableHighPerformance?: boolean;
+    /**
      * boolean: Enables IPv6 support. Defaults to `false`.
      * @yamlKey enable_ipv6
      */
@@ -15,11 +20,6 @@ export interface NetworkProps {
      * @yamlKey min_ipv6_addr_count
      */
     minIpv6AddrCount?: number;
-    /**
-     * boolean: Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. W...
-     * @yamlKey enable_high_performance
-     */
-    enableHighPerformance?: boolean;
 }
 declare global {
     namespace JSX {

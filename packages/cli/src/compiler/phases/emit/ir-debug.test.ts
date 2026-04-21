@@ -33,12 +33,12 @@ describe('serializeIR', () => {
     const ir = makeMinimalIR();
     const result = serializeIR(ir);
     const esphome = result.esphome as Record<string, unknown>;
-    const espcompose = result.espcompose as { reactive: Record<string, unknown[]>; themes?: unknown };
+    const espcompose = result.espcompose as { reactive: Record<string, unknown[]>; themeScopes?: unknown };
     expect(esphome.sections).toEqual([]);
     expect(espcompose.reactive.bindings).toEqual([]);
     expect(espcompose.reactive.memos).toEqual([]);
     expect(espcompose.reactive.effects).toEqual([]);
-    expect(espcompose.themes).toBeUndefined();
+    expect(espcompose.themeScopes).toBeUndefined();
 
     // Should be JSON-stringifiable without error
     expect(() => JSON.stringify(result)).not.toThrow();
@@ -127,22 +127,27 @@ describe('serializeIR', () => {
 
     const ir = makeMinimalIR({
       espcompose: {
-        themes: {
-          kind: 'theme_data',
+        themeScopes: [{
+          kind: 'theme_scope_data',
+          scope: 'test',
+          scopeId: 'abcd1234',
           themeNames: ['default', 'dark'],
           defaultIndex: 0,
           leafData,
-        },
+        }],
       },
     });
     const result = serializeIR(ir);
-    const espcompose = result.espcompose as { themes?: Record<string, unknown> };
-    expect(espcompose.themes).toBeDefined();
-    const themes = espcompose.themes as Record<string, unknown>;
-    expect(themes.themeNames).toEqual(['default', 'dark']);
-    expect(themes.defaultIndex).toBe(0);
+    const espcompose = result.espcompose as { themeScopes?: Array<Record<string, unknown>> };
+    expect(espcompose.themeScopes).toBeDefined();
+    expect(espcompose.themeScopes!.length).toBe(1);
+    const scope = espcompose.themeScopes![0];
+    expect(scope.themeNames).toEqual(['default', 'dark']);
+    expect(scope.defaultIndex).toBe(0);
+    expect(scope.scope).toBe('test');
+    expect(scope.scopeId).toBe('abcd1234');
 
-    const ld = themes.leafData as Record<string, unknown>;
+    const ld = scope.leafData as Record<string, unknown>;
     expect(ld['colors_primary_bg']).toEqual({ values: ['#1E88E5', '#FF5722'], valueType: 'color' });
     expect(ld['spacing_md']).toEqual({ values: [8, 12], valueType: 'int' });
 

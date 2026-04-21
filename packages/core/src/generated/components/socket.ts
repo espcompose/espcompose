@@ -5,7 +5,7 @@
 
 import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface SocketProps {
-    implementation?: "lwip_tcp" | "lwip_sockets" | "bsd_sockets";
+    implementation?: "bsd_sockets" | "lwip_sockets" | "lwip_tcp";
 }
 declare global {
     namespace JSX {

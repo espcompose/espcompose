@@ -14,11 +14,13 @@ import {
   type ScriptTransformContext,
 } from './expr-compiler.js';
 import { hasRefBrand, hasBindingBrand } from './type-brands.js';
-import { ENTITY_DOMAINS } from '@espcompose/core/internals';
+import { ENTITY_DOMAINS, scopeHash } from '@espcompose/core/internals';
 import {
   type IRActionNode,
   type IRActionParam,
   type IRActionConfig,
+  type IRActionConfigDict,
+  type IRActionConfigValue,
   type IRCondition,
   irNativeAction,
   irHAServiceAction,
@@ -60,6 +62,12 @@ export interface ActionCompileResult {
   diagnostics: ActionCompilerDiagnostic[];
   /** Names of trigger variables accessed (e.g. ['x', 'state']) */
   triggerVars: string[];
+  /**
+   * Set of ref binding keys that originated from property-access expressions.
+   * Uses the full expression text (e.g. 'props.mainPage') to avoid collisions
+   * with local ref identifiers of the same short name.
+   */
+  refExpressions: Set<string>;
 }
 
 export interface ActionCompilerContext {
@@ -78,6 +86,8 @@ export interface ActionCompilerContext {
   diagnostics: ActionCompilerDiagnostic[];
   /** Collected trigger variable names. */
   triggerVars: Set<string>;
+  /** Set of ref binding keys from property-access expressions. */
+  refExpressions: Set<string>;
 }
 
 /** Resolve a ts.Symbol-keyed map entry from an identifier node. */
@@ -110,6 +120,7 @@ export function compileActionBody(
     filePath,
     diagnostics: [],
     triggerVars: new Set(),
+    refExpressions: new Set(),
   };
 
   // Extract trigger parameter name
@@ -132,6 +143,7 @@ export function compileActionBody(
     actions,
     diagnostics: ctx.diagnostics,
     triggerVars: Array.from(ctx.triggerVars),
+    refExpressions: ctx.refExpressions,
   };
 }
 
@@ -395,6 +407,9 @@ function compileActionCall(
     // Component ref action (type-based)
     if (hasRefBrand(objType)) {
       const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
+      if (!ts.isIdentifier(objExpr)) {
+        ctx.refExpressions.add(objName);
+      }
       return compileRefAction(call, objName, methodName, ctx);
     }
   }
@@ -460,19 +475,26 @@ function compileThemeSelect(
   call: ts.CallExpression,
   ctx: ActionCompilerContext,
 ): IRActionNode[] | null {
-  if (call.arguments.length < 1) {
-    return emitError(call, ctx, 'theme.select() requires a theme name argument.');
+  if (call.arguments.length < 2) {
+    return emitError(call, ctx, 'theme.select() requires two arguments: scope and theme name.');
   }
 
-  const nameArg = call.arguments[0];
+  const scopeArg = call.arguments[0];
+  if (!ts.isStringLiteral(scopeArg)) {
+    return emitError(scopeArg, ctx,
+      'theme.select() scope argument must be a string literal.');
+  }
+
+  const nameArg = call.arguments[1];
   if (!ts.isStringLiteral(nameArg)) {
     return emitError(nameArg, ctx,
-      'theme.select() argument must be a string literal.');
+      'theme.select() theme name argument must be a string literal.');
   }
 
-  // Emit target-agnostic theme select — actual lowering to C++/JS happens in target packages
+  const scope = scopeArg.text;
+  const scopeId = scopeHash(scope);
   const themeName = nameArg.text;
-  return [irThemeSelect(themeName)];
+  return [irThemeSelect(scope, scopeId, themeName)];
 }
 
 function compileHAAction(
@@ -512,7 +534,13 @@ function compileHAAction(
       for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
           const paramValue = compileActionConfigValue(prop.initializer, ctx);
-          if (!paramValue) return null;
+          if (paramValue === null) return null;
+          // HA service data is a flat key→param map; reject nested config dicts
+          // (those only apply to native ESPHome actions like lvgl.widget.update).
+          if (typeof paramValue === 'object' && paramValue !== null && paramValue.kind === 'config_dict') {
+            return emitError(prop.initializer, ctx,
+              'Nested object parameters are not supported for Home Assistant service calls.');
+          }
           data[camelToSnake(prop.name.text)] =
             typeof paramValue === 'object' && paramValue !== null
               ? paramValue as IRActionParam
@@ -605,11 +633,11 @@ function buildLvglPageActionConfig(
     return {};
   }
 
-  const config: Record<string, IRActionParam | string | number | boolean> = {};
+  const config: Record<string, IRActionConfigValue> = {};
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
       const paramValue = compileActionConfigValue(prop.initializer, ctx);
-      if (paramValue) {
+      if (paramValue !== null) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
     }
@@ -633,11 +661,11 @@ function buildRefActionConfig(
   }
 
   // Action with params
-  const config: Record<string, IRActionParam | string | number | boolean> = { id: refName };
+  const config: Record<string, IRActionConfigValue> = { id: refName };
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
       const paramValue = compileActionConfigValue(prop.initializer, ctx);
-      if (paramValue) {
+      if (paramValue !== null) {
         config[camelToSnake(prop.name.text)] = paramValue;
       }
     }
@@ -821,18 +849,45 @@ function compileActionParam(
 /**
  * Compile an object-literal action config value.
  *
- * In addition to normal action params, this accepts ref identifiers as raw
- * variable names so they can be resolved later via IRAction.refBindings.
+ * In addition to normal action params, this accepts:
+ *   - ref identifiers (resolved later via IRAction.refBindings)
+ *   - nested object literals (for actions whose params include sub-dicts,
+ *     e.g. `lvgl.widget.update`'s `knob: { padding: 8 }`)
  */
 function compileActionConfigValue(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
-): IRActionParam | string | number | boolean | null {
+): IRActionConfigValue | null {
   if (ts.isIdentifier(expr)) {
     const symbol = ctx.checker.getSymbolAtLocation(expr);
     if (symbol && ctx.refSymbols.has(symbol)) {
       return expr.text;
     }
+  }
+
+  // Property access on ref-typed prop (e.g. props.mainScreen)
+  if (ts.isPropertyAccessExpression(expr)) {
+    const propType = ctx.checker.getTypeAtLocation(expr);
+    if (hasRefBrand(propType)) {
+      const bindingKey = expr.getText();
+      ctx.refExpressions.add(bindingKey);
+      return bindingKey;
+    }
+  }
+
+  // Nested object literal — recursively compile each property.
+  if (ts.isObjectLiteralExpression(expr)) {
+    const entries: Record<string, IRActionConfigValue> = {};
+    for (const prop of expr.properties) {
+      if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+        const value = compileActionConfigValue(prop.initializer, ctx);
+        if (value !== null) {
+          entries[camelToSnake(prop.name.text)] = value;
+        }
+      }
+    }
+    const dict: IRActionConfigDict = { kind: 'config_dict', entries };
+    return dict;
   }
 
   return compileActionParam(expr, ctx);

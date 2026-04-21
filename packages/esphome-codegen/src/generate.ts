@@ -38,9 +38,10 @@ import {
   type PlatformComponent,
 } from './schema-registry.js';
 import { buildLvglFileContent } from './lvgl-codegen.js';
+import { collectLvglWidgetMarkers } from './lvgl-marker-collector.js';
 import { generateActionsFile } from './action-codegen.js';
 import { extractSchemaActions } from './schema-action-extractor.js';
-import { ACTION_OVERRIDES } from './overrides.js';
+import { ACTION_OVERRIDES, PLATFORM_COMPONENT_OVERRIDES } from './overrides.js';
 import {
   collectMarkerClasses, collectRegistryClasses,
   buildMarkerClassMap, buildMarkersFileContent,
@@ -202,7 +203,7 @@ async function run(): Promise<void> {
   }
   const root = rootRaw as unknown as RootSchema;
 
-  const platformNames = new Set(Object.keys(root.core?.platforms ?? {}));
+  const platformNames = new Set(Object.keys(root.core?.platforms ?? {}).sort());
   const topLevelComponents = root.core?.components ?? {};
 
   console.log(`  Platforms: ${platformNames.size}`);
@@ -238,7 +239,7 @@ async function run(): Promise<void> {
     isPlatform: false,
   });
 
-  for (const [name] of Object.entries(topLevelComponents)) {
+  for (const [name] of Object.entries(topLevelComponents).sort(([a], [b]) => a.localeCompare(b))) {
     if (name === 'esphome') continue;
     // All core.components entries are top-level standalone elements.
     // `dependencies` expresses a "requires" constraint, NOT a platform ownership
@@ -259,13 +260,27 @@ async function run(): Promise<void> {
       | (ComponentEntry & { components?: Record<string, unknown> })
       | undefined;
     if (!platformEntry?.components) continue;
-    for (const compName of Object.keys(platformEntry.components)) {
+    for (const compName of Object.keys(platformEntry.components).sort()) {
       if (!componentTargets.has(compName)) {
         componentTargets.set(compName, {
           name: compName,
           url: `local://${compName}.json`,
           isPlatform: false,
           platform: platformTarget.name,
+        });
+      }
+    }
+  }
+
+  // Inject platform component overrides for components missing from the schema dumper
+  for (const [platformName, compNames] of PLATFORM_COMPONENT_OVERRIDES) {
+    for (const compName of compNames) {
+      if (!componentTargets.has(compName)) {
+        componentTargets.set(compName, {
+          name: compName,
+          url: `local://${compName}.json`,
+          isPlatform: false,
+          platform: platformName,
         });
       }
     }
@@ -337,7 +352,7 @@ async function run(): Promise<void> {
     const existing = platformComponentMap.get(platformTarget.name) ?? [];
     const existingNames = new Set(existing.map((c) => c.name));
 
-    for (const compName of Object.keys(outerEntry.components)) {
+    for (const compName of Object.keys(outerEntry.components).sort()) {
       if (existingNames.has(compName)) continue;
       // Try to reuse already-fetched data with platform context injected.
       const compTarget = componentTargets.get(compName);
@@ -359,11 +374,18 @@ async function run(): Promise<void> {
   const schemaRegistry = buildSchemaRegistry(root, platformFetched, componentFetched);
   console.log(`  Schema registry: ${schemaRegistry.size} named schemas`);
 
-  // Clean out the generated directory before writing new content
+  // Clean out the generated directory before writing new content.
+  // Preserve files owned by other codegen steps (e.g. entity-domains-*.ts
+  // from codegen:domains) to avoid a chicken-and-egg import failure.
+  const PRESERVED_PREFIXES = ['entity-domains'];
   if (fs.existsSync(GENERATED_DIR)) {
-    fs.rmSync(GENERATED_DIR, { recursive: true, force: true });
+    for (const entry of fs.readdirSync(GENERATED_DIR)) {
+      if (PRESERVED_PREFIXES.some(p => entry.startsWith(p))) continue;
+      fs.rmSync(path.join(GENERATED_DIR, entry), { recursive: true, force: true });
+    }
+  } else {
+    fs.mkdirSync(GENERATED_DIR, { recursive: true });
   }
-  fs.mkdirSync(GENERATED_DIR, { recursive: true });
   fs.mkdirSync(COMPONENTS_DIR, { recursive: true });
 
   // ── Markers pre-pass: collect all C++ classes across every schema ──────────
@@ -379,13 +401,25 @@ async function run(): Promise<void> {
   // Also include classes referenced in named schemas (for inherited fields).
   collectRegistryClasses(schemaRegistry, allCppClasses, markerParentMap);
 
+  // Inject LVGL widget C++ types (lv_slider_t, LvPageType, etc.) so refs to
+  // <lvgl-*> intrinsics expose typed widget actions.
+  const lvglSchemaPathForMarkers = path.join(SCHEMAS_DIR, 'lvgl-schema.json');
+  const lvglWidgetCppTypeMap = collectLvglWidgetMarkers(
+    lvglSchemaPathForMarkers, allCppClasses, markerParentMap,
+  );
+
   // ── Extract schema-defined actions ──────────────────────────────────────
   const { classActions, shortcomings } = extractSchemaActions(SCHEMAS_DIR, schemaRegistry);
 
   // Merge manual action overrides (for actions not exported by the schema dumper)
   for (const [cls, overrideActions] of ACTION_OVERRIDES) {
     const existing = classActions.get(cls) ?? [];
-    existing.push(...overrideActions);
+    const existingMethods = new Set(existing.map(a => a.methodName));
+    for (const override of overrideActions) {
+      if (!existingMethods.has(override.methodName)) {
+        existing.push(override);
+      }
+    }
     classActions.set(cls, existing);
     // Ensure the override target class gets a marker even if no schema references it
     allCppClasses.add(cls);
@@ -452,7 +486,7 @@ async function run(): Promise<void> {
   const globalUsedNames = new Map<string, string>();
   const basesNested: InterfaceAccumulator = [];
   const basesMarkerRefs = new Set<string>();
-  for (const ref of allExtendsRefs) {
+  for (const ref of [...allExtendsRefs].sort()) {
     resolveStub(ref, schemaRegistry, basesNested, basesMarkerRefs, globalStubs, globalUsedNames);
   }
 
@@ -478,7 +512,7 @@ async function run(): Promise<void> {
     if (target.name === 'lvgl') {
       const lvglSchemaPath = path.join(SCHEMAS_DIR, 'lvgl-schema.json');
       if (fs.existsSync(lvglSchemaPath)) {
-        const content = buildLvglFileContent(lvglSchemaPath);
+        const content = buildLvglFileContent(lvglSchemaPath, lvglWidgetCppTypeMap);
         const outPath = path.join(COMPONENTS_DIR, 'lvgl.ts');
         fs.writeFileSync(outPath, content, 'utf8');
         writtenPaths.push(outPath);

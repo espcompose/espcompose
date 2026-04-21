@@ -25,7 +25,4 @@ export type { DropdownProps } from './Dropdown';
 export type { StyleProps, ButtonVariant } from './shared-types';
 
 // Binding-driven components
-export { LightButton } from './LightButton';
-export { LightSwitch } from './LightSwitch';
-export { LightSlider } from './LightSlider';
 export { SensorText } from './SensorText';

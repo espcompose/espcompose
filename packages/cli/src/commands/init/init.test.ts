@@ -112,7 +112,7 @@ describe('initProject', () => {
 
       const component = fs.readFileSync(path.join(root, 'src', 'MyComponent.tsx'), 'utf8');
       expect(component).toContain("Hello from my-lib!");
-      expect(component).toContain('createIntentComponent');
+      expect(component).toContain('createLvglWidget');
 
       // tsconfig includes src patterns
       const tsconfig = JSON.parse(fs.readFileSync(path.join(root, 'tsconfig.json'), 'utf8'));

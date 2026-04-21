@@ -14,6 +14,7 @@ export default (
     <wifi ssid="HomeWifi" password="s3cr3t!!" />
     <api />
     <logger level="DEBUG" />
+    {/* eslint-disable-next-line @espcompose/eslint/jsx-children-intents -- unresolvable test library type */}
     <StatusSensor />
   </esphome>
 );

@@ -7,10 +7,10 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_rf_bridge_RFBridgeComponent, __marker_uart_UARTComponent } from "../markers";
 export interface RfBridgeProps extends _CoreComponent {
-    /** @yamlKey on_code_received */
-    onCodeReceived?: TriggerHandler;
     /** @yamlKey on_advanced_code_received */
     onAdvancedCodeReceived?: TriggerHandler;
+    /** @yamlKey on_code_received */
+    onCodeReceived?: TriggerHandler;
     /** @yamlKey uart_id */
     uartId?: RefProp<__marker_uart_UARTComponent>;
 }

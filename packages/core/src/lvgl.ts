@@ -27,6 +27,7 @@ import {
   extractElementProps,
   flattenFragments,
   keysToSnakeCase,
+  setCurrentSource,
   stripUndefined,
   toYamlKey,
 } from './serialize';
@@ -209,6 +210,7 @@ function hoistStyleProp(data: Record<string, unknown>): void {
  *    can emit on_state/on_value trigger wiring later.
  */
 export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown> {
+  setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
   const widgetChildren = resolveLvglChildren(children);
@@ -218,6 +220,17 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
 
   const data: Record<string, unknown> = { ...allProps };
   hoistStyleProp(data);
+
+  // ESPHome requires layout to have a type (flex/grid) and only on widgets
+  // with children. If gap/rowGap/columnGap was set without an explicit
+  // display type, the layout bag has padRow/padColumn but no type — these
+  // properties are only meaningful inside a layout block, so drop them.
+  if (data.layout && typeof data.layout === 'object') {
+    const layout = data.layout as Record<string, unknown>;
+    if (!layout.type || nestedWidgets.length === 0) {
+      delete data.layout;
+    }
+  }
 
   const yamlKey = toYamlKey(el.type as string);
 
@@ -240,6 +253,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
  * and merges them with the element's own props.
  */
 export function buildLvglSection(el: EspComposeElement): Record<string, unknown> {
+  setCurrentSource(el.__source);
   // Capture the raw ref before extractElementProps converts it to an id string.
   let lvglRef = (el.props as Record<string, unknown>).ref as Ref<LvglComponentRef> | undefined;
 
@@ -260,6 +274,7 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
 
     for (const child of resolved) {
       if (child.type === 'lvgl-page') {
+        setCurrentSource(child.__source);
         const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
         const pageResolved = resolveLvglChildren(pageChildren);
         const pageWidgets = pageResolved

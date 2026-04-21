@@ -7,8 +7,8 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_status_led_StatusLED } from "../markers";
 export interface StatusLedProps extends _CoreComponent {
-    /** [Pin Schema](/guides/configuration-types#pin-schema): The GPIO pin to control the LED on. */
-    pin: Pin;
+    /** [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The GPIO pin to control the LED on. */
+    pin?: Pin;
 }
 declare global {
     namespace JSX {

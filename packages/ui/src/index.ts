@@ -6,9 +6,9 @@
  */
 
 // Theme system
-export { ThemeProvider } from './theme/ThemeProvider';
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
+export { UI_THEME_SCOPE } from './theme/scope';
 
 // Theme types
 export type {
@@ -17,10 +17,8 @@ export type {
   ThemeTypography,
   ThemeParts,
   PartColors,
-  FontToken,
-  FontBpp,
-  createFontToken,
-  FONT_TOKEN_BRAND,
+  SwitchPartColors,
+  SliderPartColors,
   SizeDimensions,
   StatusColors,
   SpacingToken,
@@ -52,7 +50,4 @@ export type { DropdownProps } from './components/Dropdown';
 export type { StyleProps, ButtonVariant } from './components/shared-types';
 
 // Binding-driven components
-export { LightButton } from './components/LightButton';
-export { LightSwitch } from './components/LightSwitch';
-export { LightSlider } from './components/LightSlider';
 export { SensorText } from './components/SensorText';

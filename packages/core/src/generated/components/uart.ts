@@ -13,20 +13,24 @@ export interface UartProps extends _CoreComponent {
      */
     baudRate: number;
     /**
-     * [Pin](/guides/configuration-types#pin): The pin to send data to from the ESP's perspective. Use the full pin schema a...
-     * @yamlKey tx_pin
+     * int: The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
+     * @yamlKey data_bits
      */
-    txPin?: Pin;
+    dataBits?: number;
+    /** mapping: Options for debugging communication on the UART hub, see [Debugging](https://esphome.io/components/uart#uart... */
+    debug?: unknown;
     /**
-     * [Pin](/guides/configuration-types#pin): The pin to receive data on from the ESP's perspective. Use the full pin schem...
-     * @yamlKey rx_pin
-     */
-    rxPin?: unknown;
-    /**
-     * [Pin](/guides/configuration-types#pin): ESP32 only. The pin used to for hardware RS485 flow control. Use of this sett...
+     * [Pin](https://esphome.io/guides/configuration-types#pin): ESP32 only. The pin used to for hardware RS485 flow control...
      * @yamlKey flow_control_pin
      */
     flowControlPin?: Pin;
+    /**
+     * [Time](https://esphome.io/guides/configuration-types#time): ESP32 only. The maximum time to wait for the TX FIFO to d...
+     * @yamlKey flush_timeout
+     */
+    flushTimeout?: TimePeriod;
+    /** The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`. */
+    parity?: "EVEN" | "NONE" | "ODD";
     /** string: Host platform only. Unix style name of the port to use. */
     port?: string;
     /**
@@ -40,29 +44,25 @@ export interface UartProps extends _CoreComponent {
      */
     rxFullThreshold?: number;
     /**
+     * [Pin](https://esphome.io/guides/configuration-types#pin): The pin to receive data on from the ESP's perspective. Use ...
+     * @yamlKey rx_pin
+     */
+    rxPin?: unknown;
+    /**
      * int: ESP32 only. This value specifies a number of bytes used to determine the duration of the timeout. The duration o...
      * @yamlKey rx_timeout
      */
     rxTimeout?: number;
-    /**
-     * [Time](/guides/configuration-types#time): ESP32 only. The maximum time to wait for the TX FIFO to drain when `flush()...
-     * @yamlKey flush_timeout
-     */
-    flushTimeout?: TimePeriod;
     /**
      * int: The number of stop bits to send. Options: 1, 2. Defaults to 1.
      * @yamlKey stop_bits
      */
     stopBits?: "1" | "2";
     /**
-     * int: The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
-     * @yamlKey data_bits
+     * [Pin](https://esphome.io/guides/configuration-types#pin): The pin to send data to from the ESP's perspective. Use the...
+     * @yamlKey tx_pin
      */
-    dataBits?: number;
-    /** The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`. */
-    parity?: "NONE" | "EVEN" | "ODD";
-    /** mapping: Options for debugging communication on the UART hub, see [Debugging](https://esphome.io/components/uart#uart... */
-    debug?: unknown;
+    txPin?: Pin;
 }
 declare global {
     namespace JSX {

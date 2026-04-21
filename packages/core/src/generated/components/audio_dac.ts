@@ -7,34 +7,41 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_aic3204_AIC3204, __marker_es8156_ES8156, __marker_es8311_ES8311, __marker_es8388_ES8388, __marker_i2c_I2CBus } from "../markers";
 interface Aic3204Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x18`. */
+    address?: number;
     /**
-     * The ID of the [I²C bus](/components/i2c) the AIC3204 is connected to.
+     * The ID of the [I²C bus](https://esphome.io/components/i2c) the AIC3204 is connected to.
      * @yamlKey i2c_id
      */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x18`. */
-    address?: number;
 }
 interface Es8156Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x18`. */
+    address?: number;
     /**
-     * The ID of the [I²C bus](/components/i2c) the ES8156 is connected to.
+     * The ID of the [I²C bus](https://esphome.io/components/i2c) the ES8156 is connected to.
      * @yamlKey i2c_id
      */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x18`. */
-    address?: number;
 }
 interface Es8311Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x18`. */
+    address?: number;
     /**
      * enum: The bit depth of the audio samples. One of `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
      * @yamlKey bits_per_sample
      */
     bitsPerSample?: ("16" | "24" | "32") | "8bit" | "16bit" | "24bit" | "32bit";
     /**
+     * The ID of the [I²C bus](https://esphome.io/components/i2c) the ES8311 is connected to.
+     * @yamlKey i2c_id
+     */
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
+    /**
      * enum: The gain applied to the ADC microphones. One of `0DB`, `6DB`, `12DB`, `18DB`, `24DB`, `30DB`, `36DB`, `42DB`. D...
      * @yamlKey mic_gain
      */
-    micGain?: "0DB" | "6DB" | "12DB" | "18DB" | "24DB" | "30DB" | "36DB" | "42DB";
+    micGain?: "0DB" | "12DB" | "18DB" | "24DB" | "30DB" | "36DB" | "42DB" | "6DB";
     /**
      * positive integer: I2S sample rate. Defaults to `16000`.
      * @yamlKey sample_rate
@@ -50,22 +57,15 @@ interface Es8311Props extends _CoreComponent {
      * @yamlKey use_microphone
      */
     useMicrophone?: boolean;
-    /**
-     * The ID of the [I²C bus](/components/i2c) the ES8311 is connected to.
-     * @yamlKey i2c_id
-     */
-    i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x18`. */
-    address?: number;
 }
 interface Es8388Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x10`. */
+    address?: number;
     /**
-     * The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
+     * The ID of the [I²C bus](https://esphome.io/components/i2c) the ES8388 is connected to.
      * @yamlKey i2c_id
      */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x10`. */
-    address?: number;
 }
 export type AudioDacProps = ({
     platform: "aic3204";

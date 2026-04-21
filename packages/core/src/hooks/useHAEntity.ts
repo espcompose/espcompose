@@ -263,7 +263,7 @@ function createActionProxy<T extends object>(binding: T, _entityId: string, _dom
       const val = Reflect.get(target, prop, receiver);
       if (typeof val === 'function' && typeof prop === 'string') {
         // No-op at runtime — the AST compiler handles HA entity actions.
-        return function actionMethod() {};
+        return function actionMethod() { throw Error("Calling binding properties or actions during the render pahse is not supported.") };
       }
       return val;
     },

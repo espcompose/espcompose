@@ -13,13 +13,15 @@ import {
   toYamlKey,
   startSerializationCapture,
   stopSerializationCapture,
+  setCurrentSource,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
 import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
 import { clearRefRegistry } from './ref-registry';
 import { getSecrets, clearSecrets } from './secret';
-import { clearThemeRegistry, getThemeRegistry } from './theme-registry';
-import { clearReactiveThemeProxy, clearThemeNodeCache } from './reactive-theme';
+import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
+import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
+import { setWireframeEnabled, clearWireframe } from './wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -77,6 +79,9 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   if (el.type === Fragment) {
     return toPlainObject(el.props.children as EspComposeElement | EspComposeElement[] | undefined);
   }
+
+  // Track JSX source location so serialization errors can report it.
+  setCurrentSource(el.__source);
 
   const { allProps, children } = extractElementProps(el);
 
@@ -274,6 +279,9 @@ export const ESPCompose = {
   stopSerializationCapture,
   getSecrets,
   getThemeRegistry,
+  // Wireframe mode — set by CLI before executing user code.
+  setWireframeEnabled,
+  clearWireframe,
 };
 
 export { createElement, Fragment, render };

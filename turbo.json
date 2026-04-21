@@ -13,18 +13,12 @@
       "dependsOn": ["typecheck", "lint"],
       "outputs": ["dist/**"]
     },
-    "@espcompose/simulator-app#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
-    },
     "@espcompose/cli#build": {
       "dependsOn": ["^build", "typecheck", "lint"],
       "inputs": [
         "src/**", 
         "scripts/**", 
         "templates/**", 
-        "../../packages/simulator-bridge/src/**", 
-        "../../packages/simulator-app/dist/**", 
         "../../packages/ir-viewer/dist/**",
         "../../packages/esphome-target/assets/external-component/**"
       ],
@@ -49,28 +43,11 @@
       "dependsOn": [],
       "cache": false
     },
-    "@espcompose/simulator-bridge#build": {
-      "dependsOn": [],
-      "outputs": []
-    },
-    "@espcompose/simulator-bridge#typecheck": {
-      "dependsOn": [],
-      "outputs": []
-    },
-    "@espcompose/simulator-bridge#lint": {
-      "dependsOn": [],
-      "outputs": []
-    },
-    "@espcompose/simulator-bridge#test": {
-      "dependsOn": [],
-      "cache": false
-    },
     "codegen:domains": {
       "inputs": ["metadata/entity-domains.json", "metadata/entity-domains.schema.json", "metadata/generate.ts", "metadata/generators/**"],
       "outputs": [
         "packages/core/src/generated/entity-domains.ts",
-        "packages/core/src/generated/entity-domains-triggers.ts",
-        "packages/simulator-bridge/src/generated/entity_domains.py"
+        "packages/core/src/generated/entity-domains-triggers.ts"
       ],
       "cache": true
     }

@@ -7,6 +7,7 @@
 import {
   DisplayRef,
   useRef,
+  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
@@ -17,8 +18,8 @@ import {
   Card,
   Slider,
   Switch,
-  ThemeProvider,
   darkTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -45,15 +46,21 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme }}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme }}>
           <Screen padding="lg">
             <VStack>
               <Text variant="title" text="Smart Home" />
 
               <Card>
                 <Text variant="subtitle" text="Living Room" />
-                <Slider label="Brightness" min={0} max={255} />
-                <Switch label="Power" />
+                <VStack gap="xs">
+                  <Text text="Brightness" />
+                  <Slider min={0} max={255} />
+                </VStack>
+                <HStack align="spaceBetween" crossAlign="center">
+                  <Text text="Power" />
+                  <Switch />
+                </HStack>
               </Card>
 
               <HStack align="spaceBetween">

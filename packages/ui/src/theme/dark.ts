@@ -6,8 +6,8 @@
  * in varying ambient light.
  */
 
+import { createFontToken } from '@espcompose/core';
 import type { Theme } from './types';
-import { createFontToken } from './types';
 
 // ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
 const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
@@ -65,8 +65,8 @@ export const darkTheme: Theme = {
   },
 
   parts: {
-    slider: { bg: '#1E88E5', knob: '#E0E0E0' },
-    switch: { bg: '#1E88E5', knob: '#E0E0E0' },
-    arc:    { bg: '#1E88E5', knob: '#E0E0E0' },
+    slider: { indicator: '#1E88E5', knob: '#E0E0E0', rail: '#3A3A3A' },
+    switch: { indicator: '#1E88E5', rail: '#3A3A3A', knob: '#E0E0E0' },
+    arc:    { indicator: '#1E88E5', knob: '#E0E0E0' },
   },
 };

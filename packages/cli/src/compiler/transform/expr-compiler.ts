@@ -580,7 +580,15 @@ export function translateReactiveExprIR(
   if (expr === null) return null;
 
   const deps = Array.from(ctx.dependencies.values());
-  const exprType = inferExprType(node, ctx);
+  let exprType = inferExprType(node, ctx);
+
+  // The IR node may carry a more specific type than TypeScript can infer.
+  // For example, theme_read nodes know the value is 'color' even though
+  // TypeScript sees it as 'string'. Prefer the IR type when available.
+  const irType = getIRNodeType(expr);
+  if (irType && irType !== exprType) {
+    exprType = irType;
+  }
 
   const result: ExprIRResult = { expr, exprType, deps };
   if (ctx.slots.length > 0) {
@@ -868,6 +876,25 @@ function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType 
   }
 
   return 'float';
+}
+
+/**
+ * Extract the ExprType from an IR node if it carries one.
+ * Handles theme_read, entity_prop, type_cast, ternary, and group nodes.
+ */
+function getIRNodeType(node: IRExprNode): ExprType | null {
+  if ('type' in node && typeof (node as { type?: unknown }).type === 'string') {
+    return (node as { type: string }).type as ExprType;
+  }
+  // Unwrap grouping parentheses
+  if (node.kind === 'group') {
+    return getIRNodeType((node as { expr: IRExprNode }).expr);
+  }
+  // Ternary: use the consequent branch type
+  if (node.kind === 'ternary') {
+    return getIRNodeType((node as { consequent: IRExprNode }).consequent);
+  }
+  return null;
 }
 
 /**

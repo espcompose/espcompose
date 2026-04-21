@@ -4,9 +4,10 @@
 /* eslint-disable */
 
 import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
+import type { _CoreComponent } from "../bases";
 import type { __marker_e131_E131Component } from "../markers";
-export interface E131Props {
-    method?: "UNICAST" | "MULTICAST";
+export interface E131Props extends _CoreComponent {
+    method?: "MULTICAST" | "UNICAST";
 }
 declare global {
     namespace JSX {

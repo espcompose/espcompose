@@ -6,7 +6,7 @@
 import type { ComponentProps, Pin, TriggerHandler } from "../../types";
 export interface ExposureNotificationsProps {
     /**
-     * [Automation](/automations): An automation to run when an exposure notification bluetooth message is received. A varia...
+     * [Automation](https://esphome.io/automations): An automation to run when an exposure notification bluetooth message is...
      * @yamlKey on_exposure_notification
      */
     onExposureNotification: TriggerHandler;

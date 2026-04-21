@@ -42,14 +42,14 @@
         },
         "defaultState": {
           "type": "string",
-          "description": "Default state string for simulator mock (e.g. 'off', '0', 'closed')."
+          "description": "Default state string for entity mock (e.g. 'off', '0', 'closed')."
         },
         "activeState": {
           "type": ["string", "null"],
           "description": "State string that means 'active' (e.g. 'on', 'open'). Null for sensors/read-only entities."
         },
         "uiCategory": {
-          "description": "UI category for the simulator entity panel.",
+          "description": "UI category for the entity panel.",
           "enum": ["toggleable", "sensor", "binary", "cover", "button"]
         },
         "properties": {

@@ -7,6 +7,8 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_i2c_I2CBus, __marker_max6956_MAX6956 } from "../markers";
 export interface Max6956Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x40`. */
+    address?: number;
     /**
      * Set the value of the current to be sink by all pins configured as led driver. Defaults to `0`
      * @yamlKey brightness_global
@@ -22,8 +24,6 @@ export interface Max6956Props extends _CoreComponent {
      * @yamlKey i2c_id
      */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x40`. */
-    address?: number;
 }
 declare global {
     namespace JSX {

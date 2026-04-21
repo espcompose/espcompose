@@ -10,21 +10,21 @@ export interface PackagesStringPropsFilesProps {
     vars?: Record<string, unknown>;
 }
 export interface PackagesStringProps {
-    /** string: The URL for the repository. */
-    url: string;
-    /** string: Base common path of included files. */
-    path?: string;
-    /** string: Username to be used for authentication, if required. */
-    username?: string;
-    /** string: Password to be used for authentication, if required. */
-    password?: string;
     file?: unknown;
     /** List of files to include. Can be one of: */
     files?: Array<PackagesStringPropsFilesProps>;
+    /** string: Password to be used for authentication, if required. */
+    password?: string;
+    /** string: Base common path of included files. */
+    path?: string;
     /** string: The Git ref(erence) to be used when pulling content from the repository. */
     ref?: string;
-    /** [Time](/guides/configuration-types#time): The interval at which the content from the repository should be refreshed. */
+    /** [Time](https://esphome.io/guides/configuration-types#time): The interval at which the content from the repository sho... */
     refresh?: string;
+    /** string: The URL for the repository. */
+    url: string;
+    /** string: Username to be used for authentication, if required. */
+    username?: string;
 }
 export interface PackagesProps extends _PackagesPackage {
     string?: PackagesStringProps;

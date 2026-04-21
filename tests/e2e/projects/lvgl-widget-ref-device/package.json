@@ -1,0 +1,9 @@
+{
+  "name": "lvgl-widget-ref-device",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.tsx",
+  "dependencies": {
+    "@espcompose/core": "workspace:*"
+  }
+}

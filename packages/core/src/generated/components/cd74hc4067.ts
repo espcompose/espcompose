@@ -7,6 +7,8 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { _CoreComponent } from "../bases";
 import type { __marker_cd74hc4067_CD74HC4067Component } from "../markers";
 export interface Cd74hc4067Props extends _CoreComponent {
+    /** [Time](https://esphome.io/guides/configuration-types#time): A small delay duration needed for the chip to switch inpu... */
+    delay?: TimePeriod;
     /** @yamlKey pin_s0 */
     pinS0: Pin;
     /** @yamlKey pin_s1 */
@@ -15,8 +17,6 @@ export interface Cd74hc4067Props extends _CoreComponent {
     pinS2: Pin;
     /** @yamlKey pin_s3 */
     pinS3: Pin;
-    /** [Time](/guides/configuration-types#time): A small delay duration needed for the chip to switch inputs, defaults to 2ms. */
-    delay?: TimePeriod;
 }
 declare global {
     namespace JSX {

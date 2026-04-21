@@ -7,15 +7,20 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_i2c_I2CBus, __marker_pca9554_PCA9554Component } from "../markers";
 export interface Pca9554Props extends _CoreComponent {
+    /** int: The I²C address of the driver. Defaults to `0x20`. */
+    address?: number;
+    /** @yamlKey i2c_id */
+    i2cId?: RefProp<__marker_i2c_I2CBus>;
+    /**
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin connected to the INT output of the PC...
+     * @yamlKey interrupt_pin
+     */
+    interruptPin?: Pin;
     /**
      * int: The number of bits implemented in the expander. Defaults to 8. This should be set to 16 when using a PCA9535 and...
      * @yamlKey pin_count
      */
-    pinCount?: "4" | "8" | "16";
-    /** @yamlKey i2c_id */
-    i2cId?: RefProp<__marker_i2c_I2CBus>;
-    /** int: The I²C address of the driver. Defaults to `0x20`. */
-    address?: number;
+    pinCount?: "16" | "4" | "8";
 }
 declare global {
     namespace JSX {

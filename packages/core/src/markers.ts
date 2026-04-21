@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * A lambda code body (e.g. C++ lambda for ESPHome, JS for simulator).
+ * A lambda code body (e.g. C++ lambda for ESPHome).
  *
  * Duck-type shape: `{ value: string; tag: '!lambda'; type: 'QUOTE_DOUBLE' }`
  */

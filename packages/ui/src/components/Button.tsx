@@ -1,19 +1,22 @@
 /**
- * Button component — interactive button with label.
+ * Button component — interactive button with optional label or children.
  *
- * Compiles to <lvgl-button> with an inner <lvgl-label>.
+ * Compiles to <lvgl-button>. If `children` are provided, they are rendered
+ * inside the button. Otherwise, if `text` is provided, an internal
+ * <lvgl-label> is rendered as a convenience. Otherwise the button is empty.
+ *
  * Uses reactive theme tokens for colors, sizing and typography.
  * All visual props are reactive — they update when the theme changes.
  */
 
-import type { EspComposeElement, TriggerHandler, WidgetProps, Reactive } from '@espcompose/core';
-import { createWidgetComponent, useMemo, useReactive, isIRReactiveNode } from '@espcompose/core';
-import { useSize, useStatus } from '../hooks';
+import type { TriggerHandler, WidgetPropsWithChildren, Reactive } from '@espcompose/core';
+import { createLvglWidget, useMemo, useReactive, isIRReactiveNode, WidgetHost } from '@espcompose/core';
+import { useRadius, useSize, useStatus } from '../hooks';
 import type { StatusToken, SizeToken } from '../theme/types';
 import type { ButtonVariant } from './shared-types';
 
-export type ButtonProps = WidgetProps<{
-  /** Button label text. */
+export type ButtonProps = WidgetPropsWithChildren<{
+  /** Convenience label text. Ignored when `children` are provided. */
   text?: string;
   /** Color scheme. Default: 'primary'. */
   status?: StatusToken;
@@ -65,40 +68,33 @@ function useButtonVariant(
 }
 
 /**
- * Button — a styled, clickable button with a label.
+ * Button — a styled, clickable button.
  *
- * @example
+ * @example // convenience text prop
  * <Button text="Toggle Light" status="primary" size="lg" />
- * <Button text="Delete" status="danger" variant="outline" />
+ *
+ * @example // composed with children
+ * <Button status="danger" variant="outline">
+ *   <Text color="danger">Delete</Text>
+ * </Button>
  */
-export const Button = createWidgetComponent(
-  (props: ButtonProps): EspComposeElement => {
+export const Button = createLvglWidget<ButtonProps>(
+  (props) => {
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');
+    const rd = useRadius('md');
     const vs = useButtonVariant(props.variant ?? 'solid', sc);
 
     // Width: derived from reactive paddingX if no override.
     const width = props.style?.width ?? useMemo(() => dims.paddingX * 2 + 80);
     const height = props.style?.height ?? dims.height;
 
-    return (
-      <lvgl-button
-        style={{
-          backgroundColor: vs.bgColor,
-          backgroundOpacity: vs.bgOpa,
-          borderColor: vs.borderColor,
-          borderWidth: vs.borderWidth,
-          width: width,
-          height: height,
-          pressed: {
-            backgroundColor: vs.pressedBg,
-            backgroundOpacity: 'opaque',
-          },
-        }}
-        {...(props.onPress != null ? { onPress: props.onPress } : {})}
-      >
-        <lvgl-label
-          text={props.text ?? ''}
+    const hasChildren = props.children != null
+      && (!Array.isArray(props.children) || props.children.length > 0);
+
+    const labelChild = props.text != null
+      ? <lvgl-label
+          text={props.text}
           style={{
             color: vs.textColor,
             font: dims.font,
@@ -106,7 +102,33 @@ export const Button = createWidgetComponent(
             placeSelf: 'center',
           }}
         />
-      </lvgl-button>
+      : undefined;
+
+    return (
+      <WidgetHost style={{
+        width: width,
+        height: height,
+        padding: 0,
+      }}>
+        <lvgl-button
+          style={{
+            backgroundColor: vs.bgColor,
+            backgroundOpacity: vs.bgOpa,
+            borderColor: vs.borderColor,
+            borderWidth: vs.borderWidth,
+            borderRadius: rd,
+            width: '100%',
+            height: '100%',
+            pressed: {
+              backgroundColor: vs.pressedBg,
+              backgroundOpacity: 'opaque',
+            },
+          }}
+          {...(props.onPress != null ? { onPress: props.onPress } : {})}
+        >
+          {hasChildren ? props.children : labelChild}
+        </lvgl-button>
+      </WidgetHost>
     );
   },
 );

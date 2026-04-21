@@ -211,7 +211,8 @@ The `style` prop on any component accepts CSS-like layout properties (`display`,
 Themes are registered at compile time and switchable at runtime:
 
 ```tsx
-import { ThemeProvider, darkTheme, lightTheme } from '@espcompose/ui';
+import { ThemeProvider } from '@espcompose/core';
+import { darkTheme, lightTheme } from '@espcompose/ui';
 
 <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
   <Screen>
@@ -308,32 +309,26 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 
 | Component | Description | Key Props |
 |-----------|-------------|-----------|
-| `Button` | Status-aware button | `text`, `status`, `size`, `variant`, `onPress`, `style` |
-| `Slider` | Slider with label | `label`, `value`, `min`, `max`, `onChange` |
-| `Switch` | Toggle with label | `label`, `value`, `onChange` |
-| `Dropdown` | Dropdown selector | `label`, `options`, `value`, `onChange` |
+| `Button` | Status-aware button | `text`, `children`, `status`, `size`, `variant`, `onPress`, `style` |
+| `Slider` | Themed slider | `value`, `min`, `max`, `onChange`, `style` |
+| `Switch` | Themed toggle | `value`, `onChange`, `style` |
+| `Dropdown` | Dropdown selector | `options`, `value`, `onChange`, `style` |
 
 ### Binding-Driven
 
-These components connect directly to Home Assistant entity bindings:
-
 | Component | Description | Key Props |
 |-----------|-------------|-----------|
-| `LightButton` | Button driven by a light binding | `binding`, `label`, `status`, `size`, `variant` |
-| `LightSwitch` | Toggle driven by a light/switch binding | `binding`, `label` |
-| `LightSlider` | Brightness slider for a light binding | `binding`, `label`, `min`, `max` |
-| `SensorText` | Text display from a sensor binding | `binding`, `label`, `variant`, `color` |
+| `SensorText` | Text display from a sensor binding | `binding`, `text`, `variant`, `color` |
 
 ---
 
 ## Full Example
 
 ```tsx
-import { useHAEntity, useMemo, useRef, secret } from '@espcompose/core';
-import type { Light } from '@espcompose/core';
+import { useHAEntity, useMemo, secret } from '@espcompose/core';
 import {
-  ThemeProvider, darkTheme, Screen, VStack, Card,
-  Text, LightSlider, LightSwitch, SensorText,
+  ThemeProvider, darkTheme, Screen, VStack, HStack, Card,
+  Text, Slider, Switch, SensorText,
 } from '@espcompose/ui';
 
 function App() {
@@ -351,9 +346,26 @@ function App() {
             <VStack gap="lg" padding="lg">
               <Card>
                 <Text variant="title" text="Living Room" />
-                <SensorText binding={sensor} label="Temperature" />
-                <LightSlider binding={light} label="Brightness" />
-                <LightSwitch binding={light} label="Lamp" />
+                <HStack gap="xs">
+                  <Text text="Temperature:" />
+                  <SensorText binding={sensor} />
+                </HStack>
+                <VStack gap="xs">
+                  <Text text="Brightness" />
+                  <Slider
+                    value={isNaN(light.brightness) ? 0 : light.brightness}
+                    onChange={(args) => { light.turnOn({ brightness: args.x }); }}
+                    min={0}
+                    max={255}
+                  />
+                </VStack>
+                <HStack align="spaceBetween" crossAlign="center">
+                  <Text text="Lamp" />
+                  <Switch
+                    value={light.isOn}
+                    onChange={() => { light.toggle(); }}
+                  />
+                </HStack>
               </Card>
             </VStack>
           </Screen>

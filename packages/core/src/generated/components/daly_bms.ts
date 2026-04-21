@@ -12,7 +12,7 @@ export interface DalyBmsProps extends _CoreComponent {
     /** @yamlKey uart_id */
     uartId?: RefProp<__marker_uart_UARTComponent>;
     /**
-     * [Time](/guides/configuration-types#time): Delay between data requests.
+     * [Time](https://esphome.io/guides/configuration-types#time): Delay between data requests.
      * @yamlKey update_interval
      */
     updateInterval?: TimePeriod;

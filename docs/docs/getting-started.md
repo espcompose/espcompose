@@ -267,9 +267,8 @@ export default <App />;
 | `espcompose transpile [dir]` | Transpile TSX to YAML | |
 | `espcompose config [dir]` | Transpile + validate via `esphome config` | Yes |
 | `espcompose build [dir]` | Transpile + compile firmware | Yes |
-| `espcompose run [dir]` | Transpile + compile + upload to device | Yes |
+| `espcompose run [dir]` | Transpile + compile + upload to device (`--host` for local SDL2 preview) | Yes |
 | `espcompose logs [dir]` | Stream serial logs | Yes |
-| `espcompose simulate [dir]` | Open LVGL UI simulator in browser | |
 
 Pass extra flags to ESPHome after `--`:
 

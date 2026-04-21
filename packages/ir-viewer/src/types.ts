@@ -102,8 +102,10 @@ export interface IRESPHomeData {
   scripts: IRScript[];
 }
 
-export interface IRThemeData {
-  kind: 'theme_data';
+export interface IRThemeScopeData {
+  kind: 'theme_scope_data';
+  scope: string;
+  scopeId: string;
   themeNames: string[];
   defaultIndex: number;
   leafData: Record<string, { values: unknown[]; valueType: string }>;
@@ -117,7 +119,7 @@ export interface IRESPComposeData {
     memos: unknown[];
     effects: unknown[];
   };
-  themes?: IRThemeData;
+  themeScopes?: IRThemeScopeData[];
 }
 
 export interface IRData {

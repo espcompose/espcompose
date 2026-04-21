@@ -8,6 +8,7 @@ import {
   DisplayRef,
   createElement,
   useRef,
+  createEspHomeComponent,
   type Ref,
   type I2CBusRef,
   type I2SAudioComponentRef,
@@ -15,7 +16,8 @@ import {
   type SpeakerRef,
 } from '@espcompose/core';
 
-export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
+export const Hardware = createEspHomeComponent(
+  ({ displayRef }: { displayRef: Ref<DisplayRef> }) => {
   // ── Cross-component refs ──────────────────────────────────────────────
   const i2cBus = useRef<I2CBusRef>();
   const audioBus = useRef<I2SAudioComponentRef>();
@@ -100,7 +102,6 @@ export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
         ref={displayRef}
         x:custom={{
           model: 'WAVESHARE-P4-NANO-10.1',
-          rotation: 270,
         }}
       />
 
@@ -188,4 +189,5 @@ export function Hardware({ displayRef }: { displayRef: Ref<DisplayRef> }) {
       />
     </>
   );
-}
+  },
+);

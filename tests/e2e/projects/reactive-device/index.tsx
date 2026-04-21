@@ -5,24 +5,29 @@
  * component's `.value` is bound to an LVGL label widget via Expression<T>,
  * plus using an LVGL button event to control an HA entity.
  */
-import { DisplayRef, useRef, useHAEntity } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import type { InternalTemperatureSensorRef, EspComposeElement, TriggerHandler } from '@espcompose/core';
 
-/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-function ActionButton(props: {
+interface ActionButtonProps {
   x?: number; y?: number; width?: number; height?: number;
   onRelease?: TriggerHandler; children?: EspComposeElement | EspComposeElement[];
-}) {
-  const { onRelease, children, x, y, width, height } = props;
-  return (
-    <lvgl-button
-      style={{ left: x, top: y, width, height }}
-      x:custom={onRelease != null ? { on_release: onRelease } : undefined}
-    >
-      {children}
-    </lvgl-button>
-  );
 }
+
+/** Thin wrapper that adds typed trigger props to <lvgl-button>. */
+const ActionButton = createLvglWidget(
+  (props: ActionButtonProps) => {
+    const { onRelease, children, x, y, width, height } = props;
+    return (
+      <lvgl-button
+        style={{ left: x, top: y, width, height }}
+        x:custom={onRelease != null ? { on_release: onRelease } : undefined}
+      >
+        {children}
+      </lvgl-button>
+    );
+  },
+  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();

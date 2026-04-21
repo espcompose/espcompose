@@ -1,20 +1,19 @@
 /**
- * Slider — a label + slider composite.
+ * Slider — a single LVGL slider widget, theme-styled.
  *
- * Compiles to a container with a label and a slider widget.
- * Label uses `ds-text-primary` style reference; slider inherits part
- * styles from the LVGL `theme:` block.
+ * Compiles to `<lvgl-slider>`. Visual styling for the track, indicator,
+ * and knob parts is sourced from `theme.parts.slider`. This component
+ * is intentionally a bare control: it renders only the slider itself.
+ * Compose it with layout primitives (HStack/VStack) and a Text label
+ * if you need a labelled field.
  */
 
-import type { EspComposeElement, TriggerHandler, SizeValue, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, useTheme } from '@espcompose/core';
-import { useSpacing } from '../hooks';
-import { themeLeaf } from '../hooks/utils';
-import type { SpacingToken, Theme } from '../theme/types';
+import type { __marker_lvgl_LvglComponent, LvglComponentRef, TriggerHandler, WidgetProps } from '@espcompose/core';
+import { createLvglWidget, useRef, useTheme, WidgetHost } from '@espcompose/core';
+import { UI_THEME_SCOPE } from '../theme/scope';
+import type { Theme } from '../theme/types';
 
 export type SliderProps = WidgetProps<{
-  /** Label text displayed above the slider. */
-  label: string;
   /** Bound value (sensor or entity reference). */
   value?: number;
   /** Change handler (ESPHome action). */
@@ -23,54 +22,64 @@ export type SliderProps = WidgetProps<{
   min?: number;
   /** Maximum value. Default: 100. */
   max?: number;
-  /** Gap between label and slider. Default: 'xs'. */
-  gap?: SpacingToken;
-  /** Width of the field container. */
-  width?: SizeValue;
 }>;
 
 /**
- * Slider — a label + slider composite.
+ * Slider — a themed LVGL slider.
  *
  * @example
- * <Slider label="Brightness" min={0} max={255} />
+ * <Slider min={0} max={255} value={brightness} onChange={({ x }) => …} />
+ *
+ * @example // labelled field
+ * <VStack gap="xs">
+ *   <Text>Brightness</Text>
+ *   <Slider min={0} max={255} />
+ * </VStack>
  */
-export const Slider = createWidgetComponent(
-  (props: SliderProps): EspComposeElement => {
-    const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const font = themeLeaf('typography', 'body');
-    const theme = useTheme<Theme>();
+export const Slider = createLvglWidget<SliderProps>(
+  (props) => {
+    const theme = useTheme<Theme>(UI_THEME_SCOPE);
 
     return (
-      <lvgl-obj
-        style={{
-          backgroundOpacity: 'transparent',
-          borderWidth: 0,
-          width: props.width ?? '100%',
-          height: 'fit-content',
-          display: 'flex',
-          flexDirection: 'column',
-          ...(gap != null ? { rowGap: gap } : {}),
-        }}
-      >
-        <lvgl-label
-          style={{
-            color: theme?.colors?.textPrimary,
-            font: font,
-            width: '100%'
-          }}
-          text={props.label}
-        />
+      <WidgetHost style={{
+        width: '100%',
+        height: 27,
+        paddingTop: 4,
+        paddingBottom: 4,
+        paddingLeft: 11,
+        paddingRight: 9,        
+      }}>
         <lvgl-slider
           minValue={props.min}
           maxValue={props.max}
           value={props.value}
-          {...(props.onChange != null ? { onRelease: props.onChange } : {})}
+          onRelease={props.onChange}
           style={{
-            width: '100%'
+            width: '100%',
+            height: '100%',
+            paddingLeft: 0,
+            borderRadius: 'circle',
+            backgroundOpacity: 'opaque',
+            backgroundColor: theme?.parts?.slider?.rail,
+            borderWidth: 0,
+            indicator: {
+              borderWidth: 0,
+              borderRadius: 'circle',
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.slider?.indicator,
+            },
+            knob: {
+              padding: 4,
+              borderWidth: 2,
+              borderColor: theme?.parts?.slider?.rail,
+              borderRadius: 'circle',
+              backgroundOpacity: 'opaque',
+              backgroundColor: theme?.parts?.slider?.knob,
+            },
+            ...props.style,
           }}
         />
-      </lvgl-obj>
+      </WidgetHost>
     );
   },
 );

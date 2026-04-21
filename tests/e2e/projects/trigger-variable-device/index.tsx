@@ -12,71 +12,89 @@
  *    - Template literals with props: `useMemo(() => \`${props.label}: ${signal}\`)`
  *    - Ternary with string concat: `useMemo(() => signal ? \`${label} On\` : \`${label} Off\`)`
  */
-import { DisplayRef, useRef, useHAEntity, useMemo } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, createLvglWidget } from '@espcompose/core';
 import type { TriggerHandler, LightBinding } from '@espcompose/core';
 
 // ── Component 1: TriggerHandler in ?? fallback ─────────────────────────
 
-function ToggleButton(props: {
+interface ToggleButtonProps {
   binding: LightBinding;
   label: string;
   onPress?: TriggerHandler;
-}) {
-  // Compiler must detect the arrow in the ?? right-hand side
-  const onPress = props.onPress ?? (() => { props.binding.toggle(); });
-
-  // Primitive slot: props.label (a plain string) inside useMemo
-  const text = useMemo(() => (props.binding.isOn ? `${props.label} On` : `${props.label} Off`));
-
-  return (
-    <lvgl-button x:custom={{ on_press: onPress }}>
-      <lvgl-label text={text} />
-    </lvgl-button>
-  );
 }
+
+const ToggleButton = createLvglWidget<ToggleButtonProps>(
+  (props) => {
+    // Compiler must detect the arrow in the ?? right-hand side
+    const onPress = props.onPress ?? (() => { props.binding.toggle(); });
+
+    // Primitive slot: props.label (a plain string) inside useMemo
+    const text = useMemo(() => (props.binding.isOn ? `${props.label} On` : `${props.label} Off`));
+
+    return (
+      <lvgl-button x:custom={{ on_press: onPress }}>
+        <lvgl-label text={text} />
+      </lvgl-button>
+    );
+  },
+);
 
 // ── Component 2: Direct TriggerHandler variable ────────────────────────
 
-function DirectToggle(props: { binding: LightBinding }) {
-  // Direct arrow in variable initializer (no ??)
-  const handler: TriggerHandler = () => { props.binding.toggle(); };
-
-  return (
-    <lvgl-button x:custom={{ on_press: handler }}>
-      <lvgl-label text="Direct" />
-    </lvgl-button>
-  );
+interface DirectToggleProps {
+  binding: LightBinding;
 }
+
+const DirectToggle = createLvglWidget<DirectToggleProps>(
+  (props) => {
+    // Direct arrow in variable initializer (no ??)
+    const handler: TriggerHandler = () => { props.binding.toggle(); };
+
+    return (
+      <lvgl-button x:custom={{ on_press: handler }}>
+        <lvgl-label text="Direct" />
+      </lvgl-button>
+    );
+  },
+);
 
 // ── Component 3: Ternary TriggerHandler variable ───────────────────────
 
-function ConditionalToggle(props: {
+interface ConditionalToggleProps {
   binding: LightBinding;
   useTurnOff: boolean;
-}) {
-  // Ternary: both branches are arrows that need compilation
-  const handler: TriggerHandler = props.useTurnOff
-    ? () => { props.binding.turnOff(); }
-    : () => { props.binding.toggle(); };
-
-  return (
-    <lvgl-button x:custom={{ on_press: handler }}>
-      <lvgl-label text="Conditional" />
-    </lvgl-button>
-  );
 }
+
+const ConditionalToggle = createLvglWidget<ConditionalToggleProps>(
+  (props) => {
+    // Ternary: both branches are arrows that need compilation
+    const handler: TriggerHandler = props.useTurnOff
+      ? () => { props.binding.turnOff(); }
+      : () => { props.binding.toggle(); };
+
+    return (
+      <lvgl-button x:custom={{ on_press: handler }}>
+        <lvgl-label text="Conditional" />
+      </lvgl-button>
+    );
+  },
+);
 
 // ── Component 4: Primitive slot in useMemo (string interpolation) ──────
 
-function SensorLabel(props: {
+interface SensorLabelProps {
   binding: LightBinding;
   label: string;
-}) {
-  // props.label is a plain string, binding.stateText is a Signal
-  const text = useMemo(() => `${props.label}: ${props.binding.stateText}`);
-
-  return <lvgl-label text={text} />;
 }
+
+const SensorLabel = createLvglWidget<SensorLabelProps>(
+  (props) => {
+    // props.label is a plain string, binding.stateText is a Signal
+    const text = useMemo(() => `${props.label}: ${props.binding.stateText}`);
+
+    return <lvgl-label text={text} />;
+  },
+);
 
 // ── Root ────────────────────────────────────────────────────────────────
 

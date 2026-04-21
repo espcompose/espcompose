@@ -7,11 +7,11 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_gdk101_GDK101Component, __marker_i2c_I2CBus } from "../markers";
 export interface Gdk101Props extends _CoreComponent {
-    /** @yamlKey update_interval */
-    updateInterval?: unknown;
+    address?: number;
     /** @yamlKey i2c_id */
     i2cId?: RefProp<__marker_i2c_I2CBus>;
-    address?: number;
+    /** @yamlKey update_interval */
+    updateInterval?: unknown;
 }
 declare global {
     namespace JSX {

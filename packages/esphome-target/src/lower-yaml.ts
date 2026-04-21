@@ -101,7 +101,8 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
     if (node.dependencies?.[0]?.sourceType === 'theme') {
       const exprIR = node.exprIR;
       if (exprIR?.kind === 'theme_read') {
-        const varName = ctx?.themeVarNames.get(exprIR.path) ?? `thm_${exprIR.path}`;
+        const scopedKey = `${exprIR.scopeId}_${exprIR.path}`;
+        const varName = ctx?.themeVarNames.get(scopedKey) ?? `thm_${scopedKey}`;
         return `return espcompose::${varName}.get();`;
       }
       return `return 0;`;
@@ -250,9 +251,11 @@ export function lowerToYamlConfig(
   if (cppResult) {
     const entityComponentIds = buildEntityComponentIds(ir.esphome.haEntities);
     const themeVarNames = new Map<string, string>();
-    if (ir.espcompose.themes) {
-      for (const signalPath of ir.espcompose.themes.leafData.keys()) {
-        themeVarNames.set(signalPath, `thm_${signalPath}`);
+    if (ir.espcompose.themeScopes) {
+      for (const scopeData of ir.espcompose.themeScopes) {
+        for (const signalPath of scopeData.leafData.keys()) {
+          themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
+        }
       }
     }
     // Populate memoNames from reactive nodes

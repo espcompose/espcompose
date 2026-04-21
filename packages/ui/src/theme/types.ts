@@ -5,12 +5,13 @@
  * token resolution in design system components.  Third parties can create
  * custom themes by implementing this interface.
  *
- * Fonts are first-class theme tokens.  Each `FontToken` describes an
- * ESPHome font asset (file + size).  `ThemeProvider` calls core's
- * `useFont()` during render to register the font components and the
- * theme flattener stores the resulting `Ref<FontRef>` string tokens as
- * `font_ptr` leaves — no runtime `resolve_font()` string lookup needed.
+ * FontToken, createFontToken, and FONT_TOKEN_BRAND are re-exported from
+ * @espcompose/core so that any design system can define font-bearing themes
+ * without depending on @espcompose/ui.
  */
+
+
+import type { FontToken, HexColor } from '@espcompose/core';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Token types
@@ -26,35 +27,6 @@ export type TextVariant = 'title' | 'subtitle' | 'body' | 'caption';
 // Sub-types
 // ────────────────────────────────────────────────────────────────────────────
 
-/**
- * A font asset descriptor stored in the theme.
- *
- * `ThemeProvider` calls core's `useFont()` for each unique token during
- * render, registering the ESPHome font component and replacing the token
- * with a `Ref<FontRef>` before the theme is flattened.
- *
- * Use the `createFontToken()` constructor to create branded instances.
- */
-export const FONT_TOKEN_BRAND: unique symbol = Symbol('FontToken');
-
-/** Anti-aliasing bit depth for font rendering. */
-export type FontBpp = '1' | '2' | '4' | '8';
-
-export interface FontToken {
-  readonly [FONT_TOKEN_BRAND]: true;
-  /** Font file path or gfonts:// URI (e.g. `'gfonts://Montserrat'`). */
-  file: string;
-  /** Font size in pixels. */
-  size: number;
-  /** Anti-aliasing bit depth (1 = none, 2 = basic, 4 = good, 8 = best). Defaults to '4'. */
-  bpp: FontBpp;
-}
-
-/** Create a branded FontToken. */
-export function createFontToken(file: string, size: number, bpp: FontBpp = '4'): FontToken {
-  return { [FONT_TOKEN_BRAND]: true as const, file, size, bpp };
-}
-
 export interface SizeDimensions {
   height: number;
   /** Font for this size (registered by ThemeProvider during render). */
@@ -64,9 +36,9 @@ export interface SizeDimensions {
 }
 
 export interface StatusColors {
-  bg: string;
-  text: string;
-  bgPressed: string;
+  bg: HexColor;
+  text: HexColor;
+  bgPressed: HexColor;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -74,15 +46,25 @@ export interface StatusColors {
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface PartColors {
-  /** Primary fill / track color. */
-  bg: string;
+  /** Active indicator fill color. */
+  indicator: HexColor;
   /** Knob / handle color. */
-  knob: string;
+  knob: HexColor;
+}
+
+export interface SwitchPartColors extends PartColors {
+  /** Rail color when unchecked (off). */
+  rail: HexColor;
+}
+
+export interface SliderPartColors extends PartColors {
+  /** Rail color (unfilled track area). */
+  rail: HexColor;
 }
 
 export interface ThemeParts {
-  slider: PartColors;
-  switch: PartColors;
+  slider: SliderPartColors;
+  switch: SwitchPartColors;
   arc: PartColors;
 }
 
@@ -99,15 +81,15 @@ export interface ThemeColors {
   danger: StatusColors;
 
   // Surface colors
-  background: string;
-  surface: string;
-  surfaceAlt: string;
-  border: string;
+  background: HexColor;
+  surface: HexColor;
+  surfaceAlt: HexColor;
+  border: HexColor;
 
   // Text colors
-  textPrimary: string;
-  textSecondary: string;
-  textDisabled: string;
+  textPrimary: HexColor;
+  textSecondary: HexColor;
+  textDisabled: HexColor;
 }
 
 export interface ThemeTypography {

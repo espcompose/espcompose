@@ -8,7 +8,7 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_preferences_IntervalSyncer } from "../markers";
 export interface PreferencesProps extends _CoreComponent {
     /**
-     * [Time](/guides/configuration-types#time): Customize the frequency in which data is flushed to the flash. This setting...
+     * [Time](https://esphome.io/guides/configuration-types#time): Customize the frequency in which data is flushed to the f...
      * @yamlKey flash_write_interval
      */
     flashWriteInterval?: TimePeriod;

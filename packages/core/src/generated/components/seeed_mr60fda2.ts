@@ -8,7 +8,7 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_seeed_mr60fda2_MR60FDA2Component, __marker_uart_UARTComponent } from "../markers";
 export interface SeeedMr60fda2Props extends _CoreComponent {
     /**
-     * [ID](/guides/configuration-types#id): Manually specify the ID of the [UART Component](/components/uart) if you want t...
+     * [ID](https://esphome.io/guides/configuration-types#id): Manually specify the ID of the [UART Component](https://espho...
      * @yamlKey uart_id
      */
     uartId?: RefProp<__marker_uart_UARTComponent>;

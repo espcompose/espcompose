@@ -7,7 +7,7 @@ import type { ComponentProps, Pin, RefProp, TimePeriod, TriggerHandler } from ".
 import type { __marker_runtime_stats_RuntimeStatsCollector } from "../markers";
 export interface RuntimeStatsProps {
     /**
-     * [Time](/guides/configuration-types#time): How often to log the statistics. Defaults to `60s`.
+     * [Time](https://esphome.io/guides/configuration-types#time): How often to log the statistics. Defaults to `60s`.
      * @yamlKey log_interval
      */
     logInterval?: TimePeriod;

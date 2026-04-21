@@ -5,13 +5,13 @@
  * Background color comes from the `ds-surface-alt` style definition.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createLvglContainerWidget, useTheme, WidgetHost } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
+import { UI_THEME_SCOPE } from '../theme/scope';
 import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
 
-type CardProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type CardProps = WidgetPropsWithChildren<{
   /** Padding inside the card. Default: 'md'. */
   padding?: SpacingToken;
   /** Corner radius. Default: 'md'. */
@@ -26,36 +26,44 @@ type CardProps = WidgetProps<{
  * @example
  * <Card>
  *   <Text variant="title">Living Room</Text>
- *   <Slider label="Brightness" />
+ *   <Slider min={0} max={255} />
  * </Card>
  */
-export const Card = createWidgetComponent(
-  (props: CardProps): EspComposeElement => {
-    const padding = useSpacing(props.padding ?? 'md');
-    const radius = useRadius(props.radius ?? 'md');
+export const Card = createLvglContainerWidget(
+  (props: CardProps) => {
+    const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
+    const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const theme = useTheme<Theme>();
+    const theme = useTheme<Theme>(UI_THEME_SCOPE);
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;
 
+    const hasExplicitHeight = props.style?.height != null;
+
     return (
-      <lvgl-obj
-        style={{
-          backgroundColor: bgColor,
-          padding: padding,
-          borderRadius: radius,
-          borderColor: props.style?.borderColor,
-          borderWidth: props.style?.borderWidth ?? 0,
-          width: props.style?.width ?? '100%',
-          height: props.style?.height ?? 'fit-content',
-          scrollbarMode: 'off',
-          display: 'flex',
-          flexDirection: 'column',
-          ...(gap != null ? { rowGap: gap } : {}),
-        }}
-      >
-        {props.children}
-      </lvgl-obj>
+      <WidgetHost style={{
+        width: props.style?.width ?? '100%',
+        height: props.style?.height ?? 'fit-content',
+        padding: 0,
+      }}>
+        <lvgl-obj
+          style={{
+            backgroundColor: bgColor,
+            backgroundOpacity: 'opaque',
+            padding: padding,
+            borderRadius: radius,
+            borderColor: props.style?.borderColor,
+            borderWidth: props.style?.borderWidth ?? 0,
+            width: '100%',
+            height: hasExplicitHeight ? '100%' : 'fit-content',
+            scrollbarMode: 'off',
+            display: 'flex',
+            flexDirection: 'column',
+            ...(gap != null ? { rowGap: gap } : {}),
+          }}
+        >
+          {props.children}
+        </lvgl-obj>
+      </WidgetHost>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const, contextTransparent: true as const },
 );

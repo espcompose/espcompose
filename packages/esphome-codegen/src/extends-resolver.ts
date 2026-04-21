@@ -40,9 +40,9 @@ export function flattenTypedSchema(
   const allExtends = new Set<string>();
   const merged: Record<string, SchemaConfigVar> = {};
 
-  for (const [, variantDef] of Object.entries(types)) {
+  for (const [, variantDef] of Object.entries(types).sort(([a], [b]) => a.localeCompare(b))) {
     for (const ref of variantDef.extends ?? []) allExtends.add(ref);
-    for (const [varName, varDef] of Object.entries(variantDef.config_vars ?? {})) {
+    for (const [varName, varDef] of Object.entries(variantDef.config_vars ?? {}).sort(([a], [b]) => a.localeCompare(b))) {
       if (varName in merged) continue; // first-seen wins
       // Make variant-specific props optional so the merged interface is valid
       // regardless of which variant the user picks.
@@ -54,7 +54,7 @@ export function flattenTypedSchema(
   merged[typedKey] = {
     key: 'Optional',
     type: 'enum',
-    values: Object.fromEntries(Object.keys(types).map((k) => [k, null])),
+    values: Object.fromEntries(Object.keys(types).sort().map((k) => [k, null])),
   };
 
   return {

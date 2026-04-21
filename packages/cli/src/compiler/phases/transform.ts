@@ -13,11 +13,12 @@ export function transformPhase(ctx: PhaseContext): void {
     throw new Error('Transform phase requires a ts.Program — run type-check first.');
   }
 
-  const { entryFile: transformedEntry, diagnostics, filesWritten, filesTransformed } = writeTransformedFiles(
+  const { entryFile: transformedEntry, diagnostics, filesWritten, filesTransformed, semanticRegistries } = writeTransformedFiles(
     ctx.program,
     ctx.entryFile,
     ctx.sourceDir,
     ctx.buildDir,
+    { debug: ctx.debug },
   );
 
   if (diagnostics.length > 0) {
@@ -32,4 +33,5 @@ export function transformPhase(ctx: PhaseContext): void {
 
   ctx.transformedEntry = transformedEntry;
   ctx.transformStats = { filesWritten, filesTransformed };
+  ctx.semanticAnalysis = semanticRegistries;
 }

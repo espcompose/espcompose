@@ -8,15 +8,15 @@ import type { _CoreComponent } from "../bases";
 import type { __marker_tlc5971_TLC5971 } from "../markers";
 export interface Tlc5971Props extends _CoreComponent {
     /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to DIN.
-     * @yamlKey data_pin
-     */
-    dataPin: Pin;
-    /**
-     * [Pin Schema](/guides/configuration-types#pin-schema): The pin connected to CLK.
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin connected to CLK.
      * @yamlKey clock_pin
      */
     clockPin: Pin;
+    /**
+     * [Pin Schema](https://esphome.io/guides/configuration-types#pin-schema): The pin connected to DIN.
+     * @yamlKey data_pin
+     */
+    dataPin: Pin;
     /**
      * int: Number of chips in the chain. Must be
      * @yamlKey num_chips

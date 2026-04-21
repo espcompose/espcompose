@@ -7,7 +7,6 @@
 //
 // This IR is consumed by backends:
 //   - YAML+C++ backend: produces ESPHome YAML + espcompose_bindings.h
-//   - Simulator backend: produces HTML+JS for browser preview
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRReactiveNode } from '../reactive-node';
@@ -25,11 +24,15 @@ export interface IRScript {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Theme data
+// Theme data (per-scope)
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface IRThemeData {
-  readonly kind: 'theme_data';
+export interface IRThemeScopeData {
+  readonly kind: 'theme_scope_data';
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash of the scope — used as C++ identifier fragment. */
+  scopeId: string;
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
@@ -89,16 +92,15 @@ export interface IRESPComposeData {
   reactive: IRReactiveData;
 
   /** Theme data from the theme registry (undefined if no themes) */
-  themes?: IRThemeData;
+  themeScopes?: IRThemeScopeData[];
 }
 
 /**
  * The complete semantic IR for a device project.
  *
  * This is the central contract between the compiler frontend (TSX → IR) and
- * target backends (esphome-target, simulator-target). Backends consume a
- * SemanticIR and produce target-specific output (YAML + C++ headers, or
- * RuntimeNode[] + HTML for the browser simulator).
+ * target backends (esphome-target). Backends consume a
+ * SemanticIR and produce target-specific output (YAML + C++ headers).
  *
  * The config tree contains semantic value nodes (IRReactive, IRRef, etc.)
  * that preserve pre-serialization data.
@@ -182,7 +184,6 @@ export interface IRNull {
  * kind) that backends need. No target-specific encoding.
  *
  * The ESPHome backend lowers ExprIR to C++ via exprToCpp().
- * The simulator backend lowers ExprIR to JS via exprToJs().
  */
 export interface IRReactive {
   kind: 'reactive';

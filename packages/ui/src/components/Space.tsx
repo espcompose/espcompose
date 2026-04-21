@@ -7,8 +7,8 @@
  * Compiles to <lvgl-obj> with flex layout via CSS-like style props.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS } from '@espcompose/core';
+import type { EspComposeElement, WidgetPropsWithChildren } from '@espcompose/core';
+import { createLvglContainerWidget, WidgetHost } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 
@@ -19,8 +19,7 @@ import type { SpacingToken } from '../theme/types';
 type FlexAlign = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
 type CrossAlign = 'start' | 'center' | 'end' | 'stretch';
 
-type SpaceProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type SpaceProps = WidgetPropsWithChildren<{
   /** Layout direction. Default: 'vertical'. */
   direction?: 'horizontal' | 'vertical';
   /** Gap between children. Token name. */
@@ -47,37 +46,42 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const flexDir: FlexDirection = props.wrap ? `${baseDir}-wrap` : baseDir;
   const gapKey = isRow ? 'columnGap' : 'rowGap';
   const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-  const padding = props.padding != null ? useSpacing(props.padding) : undefined;
+  const padding = props.padding != null ? useSpacing(props.padding) : props.style?.padding;
   const borderRadius = props.style?.borderRadius;
 
+  const hasExplicitHeight = props.style?.height != null;
+
   return (
-    <lvgl-obj
+    <WidgetHost
       style={{
         width: props.style?.width ?? '100%',
         height: props.style?.height ?? 'fit-content',
-        padding: padding,
-        backgroundColor: props.style?.backgroundColor,
-        backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
-        borderRadius: borderRadius,
-        borderWidth: props.style?.borderWidth ?? 0,
-        borderColor: props.style?.borderColor,
-        scrollbarMode: 'off',
-        display: 'flex',
-        flexDirection: flexDir,
-        ...(props.align ? { justifyContent: props.align } : {}),
-        ...(props.crossAlign ? { alignItems: props.crossAlign, flexTrackAlign: props.crossAlign } : {}),
-        ...(gap != null ? { [gapKey]: gap } : {}),
+        padding: 0,
       }}
     >
-      {props.children}
-    </lvgl-obj>
+      <lvgl-obj
+        style={{
+          width: '100%',
+          height: hasExplicitHeight ? '100%' : 'fit-content',
+          padding: padding,
+          backgroundColor: props.style?.backgroundColor,
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
+          borderRadius: borderRadius,
+          borderWidth: props.style?.borderWidth ?? 0,
+          borderColor: props.style?.borderColor,
+          scrollbarMode: 'off',
+          display: 'flex',
+          flexDirection: flexDir,
+          ...(props.align ? { justifyContent: props.align } : {}),
+          ...(props.crossAlign ? { alignItems: props.crossAlign, flexTrackAlign: props.crossAlign } : {}),
+          ...(gap != null ? { [gapKey]: gap } : {}),
+        }}
+      >
+        {props.children}
+      </lvgl-obj>
+    </WidgetHost>
   );
 }
-
-const LAYOUT_OVERRIDES = {
-  allowedChildIntents: [LVGL_INTENTS.WIDGET] as const,
-  contextTransparent: true as const,
-};
 
 // ────────────────────────────────────────────────────────────────────────────
 // Space
@@ -101,9 +105,8 @@ const LAYOUT_OVERRIDES = {
  *   <Button text="C" />
  * </Space>
  */
-export const Space = createWidgetComponent(
-  (props: SpaceProps): EspComposeElement => buildSpaceElement(props),
-  LAYOUT_OVERRIDES,
+export const Space = createLvglContainerWidget(
+  (props: SpaceProps) => buildSpaceElement(props),
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -119,10 +122,9 @@ export const Space = createWidgetComponent(
  *   <Button text="Click me" />
  * </VStack>
  */
-export const VStack = createWidgetComponent(
-  (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
+export const VStack = createLvglContainerWidget(
+  (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'vertical' }),
-  LAYOUT_OVERRIDES,
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -138,8 +140,7 @@ export const VStack = createWidgetComponent(
  *   <Text>Right</Text>
  * </HStack>
  */
-export const HStack = createWidgetComponent(
-  (props: Omit<SpaceProps, 'direction'>): EspComposeElement =>
+export const HStack = createLvglContainerWidget(
+  (props: Omit<SpaceProps, 'direction'>) =>
     buildSpaceElement({ ...props, direction: 'horizontal' }),
-  LAYOUT_OVERRIDES,
 );

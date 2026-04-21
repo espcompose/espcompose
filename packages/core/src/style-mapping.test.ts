@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { expandCssProps, expandCssStyle } from './style-mapping';
-import { mergeStyles } from './create-styles';
+import { mergeStyles } from './theme/create-styles';
 import type { CssStyle } from './style-types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -62,9 +62,9 @@ describe('expandCssProps', () => {
     });
   });
 
-  it('expands gap shorthand to padRow + padColumn', () => {
+  it('expands gap shorthand to padRow + padColumn in layout block', () => {
     const result = expandCssProps({ gap: 12 });
-    expect(result).toEqual({
+    expect(result.layout).toEqual({
       padRow: 12,
       padColumn: 12,
     });
@@ -591,17 +591,15 @@ describe('expandCssProps — layout', () => {
       backgroundColor: '#FFF',
       gap: 12,
     });
-    expect(result.layout).toEqual({ type: 'flex', flexFlow: 'ROW' });
+    expect(result.layout).toEqual({ type: 'flex', flexFlow: 'ROW', padRow: 12, padColumn: 12 });
     expect(result.bgColor).toBe('#FFF');
-    expect(result.padRow).toBe(12);
-    expect(result.padColumn).toBe(12);
   });
 
   it('maps all flex direction values', () => {
-    expect(expandCssProps({ flexDirection: 'row' }).layout).toEqual({ flexFlow: 'ROW' });
-    expect(expandCssProps({ flexDirection: 'column' }).layout).toEqual({ flexFlow: 'COLUMN' });
-    expect(expandCssProps({ flexDirection: 'row-wrap' }).layout).toEqual({ flexFlow: 'ROW_WRAP' });
-    expect(expandCssProps({ flexDirection: 'column-wrap' }).layout).toEqual({ flexFlow: 'COLUMN_WRAP' });
+    expect(expandCssProps({ flexDirection: 'row' }).layout).toEqual({ type: 'flex', flexFlow: 'ROW' });
+    expect(expandCssProps({ flexDirection: 'column' }).layout).toEqual({ type: 'flex', flexFlow: 'COLUMN' });
+    expect(expandCssProps({ flexDirection: 'row-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'ROW_WRAP' });
+    expect(expandCssProps({ flexDirection: 'column-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'COLUMN_WRAP' });
   });
 
   it('maps all justifyContent values', () => {
@@ -610,14 +608,14 @@ describe('expandCssProps — layout', () => {
       ['spaceBetween', 'SPACE_BETWEEN'], ['spaceAround', 'SPACE_AROUND'], ['spaceEvenly', 'SPACE_EVENLY'],
     ] as const;
     for (const [css, lvgl] of cases) {
-      expect(expandCssProps({ justifyContent: css }).layout).toEqual({ flexAlignMain: lvgl });
+      expect(expandCssProps({ justifyContent: css }).layout).toEqual({ type: 'flex', flexAlignMain: lvgl });
     }
   });
 
   it('maps all alignItems values', () => {
     const cases = [['start', 'START'], ['center', 'CENTER'], ['end', 'END'], ['stretch', 'STRETCH']] as const;
     for (const [css, lvgl] of cases) {
-      expect(expandCssProps({ alignItems: css }).layout).toEqual({ flexAlignCross: lvgl });
+      expect(expandCssProps({ alignItems: css }).layout).toEqual({ type: 'flex', flexAlignCross: lvgl });
     }
   });
 
@@ -650,7 +648,7 @@ describe('expandCssProps — layout', () => {
     const result = expandCssProps({
       gridTemplateColumns: ['FR(1)', 'SIZE_CONTENT'],
     });
-    expect((result.layout as Record<string, unknown>).gridColumns).toEqual(['FR(1)', 'SIZE_CONTENT']);
+    expect((result.layout as Record<string, unknown>)).toEqual({ type: 'grid', gridColumns: ['FR(1)', 'SIZE_CONTENT'] });
   });
 
   it('grid child props are flat (not in layout block)', () => {

@@ -5,8 +5,8 @@
  * Shares spacing, radii and typography scale with the dark theme.
  */
 
+import { createFontToken } from '@espcompose/core';
 import type { Theme } from './types';
-import { createFontToken } from './types';
 
 // ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
 const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
@@ -64,8 +64,8 @@ export const lightTheme: Theme = {
   },
 
   parts: {
-    slider: { bg: '#1565C0', knob: '#212121' },
-    switch: { bg: '#1565C0', knob: '#212121' },
-    arc:    { bg: '#1565C0', knob: '#212121' },
+    slider: { indicator: '#1565C0', knob: '#FFFFFF', rail: '#BDBDBD' },
+    switch: { indicator: '#1565C0', rail: '#BDBDBD', knob: '#FFFFFF' },
+    arc:    { indicator: '#1565C0', knob: '#212121' },
   },
 };

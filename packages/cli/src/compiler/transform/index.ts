@@ -16,6 +16,8 @@ import * as path from 'path';
 import ts from 'typescript';
 import { transformScriptFile, type TransformDiagnostic } from './script-transformer.js';
 import { transformReactiveExpressions } from './reactive-transformer.js';
+import { runSemanticAnalysis, dumpSemanticRegistries } from './semantic-analysis.js';
+import type { SemanticRegistry } from './semantic-registry.js';
 
 export type { TransformDiagnostic };
 
@@ -28,6 +30,8 @@ export interface TransformResult {
   filesWritten: number;
   /** Number of files that had AST transforms applied. */
   filesTransformed: number;
+  /** Per-file semantic analysis registries (analysis-only, does not affect output). */
+  semanticRegistries: Map<string, SemanticRegistry>;
 }
 
 /**
@@ -49,11 +53,13 @@ export function writeTransformedFiles(
   entryFile: string,
   sourceDir: string,
   buildDir: string,
+  options?: { debug?: boolean },
 ): TransformResult {
   const diagnostics: TransformDiagnostic[] = [];
   let transformedEntryFile = '';
   let filesWritten = 0;
   let filesTransformed = 0;
+  const semanticRegistries = new Map<string, SemanticRegistry>();
 
   for (const sourceFile of program.getSourceFiles()) {
     const filePath = sourceFile.fileName;
@@ -66,6 +72,11 @@ export function writeTransformedFiles(
     if (rel.startsWith('..') || path.isAbsolute(rel)) continue;
 
     const originalText = sourceFile.getFullText();
+
+    // Pass 0 (analysis-only): Semantic expression classification.
+    // Records findings in a sidecar registry — does NOT modify source.
+    const semanticRegistry = runSemanticAnalysis(sourceFile, program);
+    semanticRegistries.set(filePath, semanticRegistry);
 
     // Pass 1: Auto-wrap reactive JSX attribute expressions in useMemo()
     const reactiveResult = transformReactiveExpressions(sourceFile, program);
@@ -148,5 +159,10 @@ export function writeTransformedFiles(
     transformedEntryFile = path.join(buildDir, rel);
   }
 
-  return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed };
+  // Dump semantic analysis results in debug mode
+  if (options?.debug && semanticRegistries.size > 0) {
+    dumpSemanticRegistries(semanticRegistries, buildDir, sourceDir);
+  }
+
+  return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed, semanticRegistries };
 }

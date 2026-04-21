@@ -11,7 +11,7 @@
  *   - Widget bindings for bg_color, text_color, text_font, padding
  *   - theme.select() → theme_index.set(N) + flush() in action lambdas
  */
-import { DisplayRef, useRef, theme } from '@espcompose/core';
+import { DisplayRef, useRef, theme, ThemeProvider } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -20,9 +20,9 @@ import {
   Button,
   Card,
   Slider,
-  ThemeProvider,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 function App() {
@@ -49,26 +49,29 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }} default="dark">
           <Screen padding="lg">
             <VStack>
               <Text variant="title" text="Theme Test" />
 
               <Card>
                 <Text variant="subtitle" text="Controls" />
-                <Slider label="Brightness" min={0} max={255} />
+                <VStack gap="xs">
+                  <Text text="Brightness" />
+                  <Slider min={0} max={255} />
+                </VStack>
               </Card>
 
               <HStack>
                 <Button
                   text="Dark"
                   status="primary"
-                  onPress={() => { theme.select('dark'); }}
+                  onPress={() => { theme.select('espcompose:ui', 'dark'); }}
                 />
                 <Button
                   text="Light"
                   status="secondary"
-                  onPress={() => { theme.select('light'); }}
+                  onPress={() => { theme.select('espcompose:ui', 'light'); }}
                 />
               </HStack>
             </VStack>

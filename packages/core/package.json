@@ -20,6 +20,11 @@
       "import": "./dist/jsx-runtime.js",
       "default": "./dist/jsx-runtime.js"
     },
+    "./jsx-dev-runtime": {
+      "types": "./dist/jsx-dev-runtime.d.ts",
+      "import": "./dist/jsx-dev-runtime.js",
+      "default": "./dist/jsx-dev-runtime.js"
+    },
     "./skills/espcompose.md": "./skills/espcompose.md",
     "./tsconfig.sdk.json": "./tsconfig.sdk.json"
   },
@@ -29,7 +34,7 @@
     "skills"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/internals.ts src/jsx-runtime.ts --format esm --dts --clean --tsconfig tsconfig.json",
+    "build": "tsup src/index.ts src/internals.ts src/jsx-runtime.ts src/jsx-dev-runtime.ts --format esm --dts --clean --tsconfig tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",

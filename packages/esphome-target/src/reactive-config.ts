@@ -64,11 +64,11 @@ function deriveSourceSignals(
 }
 
 /**
- * Collect all theme_read paths from an IRExprNode tree.
+ * Collect all theme_read scoped keys (`scopeId_path`) from an IRExprNode tree.
  */
 function collectThemePaths(node: IRExprNode | undefined): string[] {
   if (!node) return [];
-  if (node.kind === 'theme_read') return [node.path];
+  if (node.kind === 'theme_read') return [`${node.scopeId}_${node.path}`];
   const paths: string[] = [];
   switch (node.kind) {
     case 'binary':
@@ -110,10 +110,14 @@ function collectThemePaths(node: IRExprNode | undefined): string[] {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Theme data interface (passed from the compiler after render)
+// Theme scope data interface (passed from the compiler after render)
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface ThemeData {
+export interface ThemeScopeData {
+  /** Human-readable scope name (e.g. 'espcompose:ui'). */
+  scope: string;
+  /** 8-char hex hash of the scope — C++ identifier fragment. */
+  scopeId: string;
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
@@ -134,7 +138,7 @@ export function buildRuntimeConfig(
   bindings: any[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   entities: any[],
-  themeData?: ThemeData,
+  themeScopes?: ThemeScopeData[],
   compiledTriggers?: TriggerFunctionDecl[],
 ): ReactiveRuntimeConfig {
   // Collect unique signals from HA entities
@@ -150,9 +154,11 @@ export function buildRuntimeConfig(
   const entityComponentIds = buildEntityComponentIds(entities);
 
   const themeVarNames = new Map<string, string>();
-  if (themeData) {
-    for (const signalPath of themeData.leafData.keys()) {
-      themeVarNames.set(signalPath, `thm_${signalPath}`);
+  if (themeScopes) {
+    for (const scopeData of themeScopes) {
+      for (const signalPath of scopeData.leafData.keys()) {
+        themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
+      }
     }
   }
 
@@ -202,7 +208,8 @@ export function buildRuntimeConfig(
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
       const exprIR: IRExprNode | undefined = node.exprIR;
-      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : 'std::string';
+      const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
 
       const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames);
@@ -263,15 +270,23 @@ export function buildRuntimeConfig(
       const canonNodeId = memoCanonical.get(expr.nodeId) ?? expr.nodeId;
       const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId) ?? 'memo_0';
       valueExpr = `${memoName}.get()`;
-      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : 'std::string';
+      const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       sourceNames = [memoName];
     } else if (expr.dependencies?.[0]?.sourceType === 'theme') {
       // Theme-sourced binding: read from the generated theme memo
-      const themeIR = expr.exprIR as { kind: string; path?: string; type?: string } | undefined;
+      const themeIR = expr.exprIR as { kind: string; scope?: string; scopeId?: string; path?: string; type?: string } | undefined;
+      const themeScopeId = themeIR?.kind === 'theme_read' ? themeIR.scopeId : undefined;
       const themePath = themeIR?.kind === 'theme_read' ? themeIR.path : undefined;
-      const sigName = themePath ? `thm_${themePath}` : `thm_unknown`;
+      const scopedKey = themeScopeId && themePath ? `${themeScopeId}_${themePath}` : undefined;
+      const sigName = scopedKey ? themeVarNames.get(scopedKey) ?? `thm_${scopedKey}` : `thm_unknown`;
       valueExpr = `${sigName}.get()`;
-      const leafData = themePath ? themeData?.leafData.get(themePath) : undefined;
+      // Look up leaf data from the matching scope
+      let leafData: { values: unknown[]; valueType: string } | undefined;
+      if (themeIR?.scope && themePath && themeScopes) {
+        const scopeData = themeScopes.find(s => s.scope === themeIR.scope);
+        leafData = scopeData?.leafData.get(themePath);
+      }
       // Convert valueType (ExprType) to C++ type; fallback to exprType if available
       const leafValueType = leafData?.valueType as ExprType | undefined;
       cppType = leafValueType ? exprTypeToCpp(leafValueType) : (expr.exprType ? exprTypeToCpp(expr.exprType) : 'int32_t');
@@ -298,17 +313,30 @@ export function buildRuntimeConfig(
     });
   }
 
-  // Build theme memos from theme data
+  // Build theme memos from per-scope theme data
   const allThemeMemos: ThemeMemoDecl[] = [];
+  const themeScopeConfigs: import('./bindings-codegen.js').ThemeScopeConfig[] = [];
 
-  if (themeData && themeData.themeNames.length > 0) {
-    for (const [signalPath, leaf] of themeData.leafData) {
-      // Convert valueType (ExprType) to C++ type for code generation
-      const leafValueType = leaf.valueType as ExprType;
-      allThemeMemos.push({
-        name: `thm_${signalPath}`,
-        cppType: exprTypeToCpp(leafValueType),
-        values: leaf.values,
+  if (themeScopes) {
+    for (const scopeData of themeScopes) {
+      if (scopeData.themeNames.length === 0) continue;
+      const scopeMemos: ThemeMemoDecl[] = [];
+      for (const [signalPath, leaf] of scopeData.leafData) {
+        const leafValueType = leaf.valueType as ExprType;
+        const memo: ThemeMemoDecl = {
+          name: `thm_${scopeData.scopeId}_${signalPath}`,
+          cppType: exprTypeToCpp(leafValueType),
+          values: leaf.values,
+        };
+        allThemeMemos.push(memo);
+        scopeMemos.push(memo);
+      }
+      themeScopeConfigs.push({
+        scope: scopeData.scope,
+        scopeId: scopeData.scopeId,
+        themeMemos: scopeMemos,
+        defaultIndex: scopeData.defaultIndex,
+        themeNames: scopeData.themeNames,
       });
     }
   }
@@ -332,19 +360,20 @@ export function buildRuntimeConfig(
     }
   }
 
-  // Filter theme memos to only those referenced.
-  const themeMemos = referencedThemeMemos.size > 0
-    ? allThemeMemos.filter(tm => referencedThemeMemos.has(tm.name))
-    : allThemeMemos;
+  // Filter theme scope configs to only include referenced memos.
+  const filteredScopeConfigs = themeScopeConfigs.map(sc => ({
+    ...sc,
+    themeMemos: referencedThemeMemos.size > 0
+      ? sc.themeMemos.filter(tm => referencedThemeMemos.has(tm.name))
+      : sc.themeMemos,
+  })).filter(sc => sc.themeMemos.length > 0);
 
   return {
     signals: Array.from(signalMap.values()),
     memos,
     effects,
     widgetBindings,
-    themeMemos: themeMemos.length > 0 ? themeMemos : undefined,
-    themeDefaultIndex: themeData?.defaultIndex,
-    themeNames: themeData && themeData.themeNames.length > 0 ? themeData.themeNames : undefined,
+    themeScopes: filteredScopeConfigs.length > 0 ? filteredScopeConfigs : undefined,
     triggerFunctions: compiledTriggers && compiledTriggers.length > 0 ? compiledTriggers : undefined,
   };
 }
@@ -400,7 +429,7 @@ export function injectReactiveBindingsRuntime(
   }
 
   // Step 5: Inject USE_LVGL_FONT when theme memos contain font_ptr values
-  if (runtimeConfig.themeMemos?.some(tm => tm.cppType === 'const lv_font_t*')) {
+  if (runtimeConfig.themeScopes?.some(sc => sc.themeMemos.some(tm => tm.cppType === 'const lv_font_t*'))) {
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 

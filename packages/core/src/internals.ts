@@ -6,7 +6,6 @@
  * This sub-path export provides typed access to SDK internals consumed by:
  *   - @espcompose/cli (compiler)
  *   - @espcompose/esphome-target (code-generation)
- *   - @espcompose/simulator-target (code-generation)
  *   - @espcompose/eslint (lint rules)
  *
  * Do NOT import from this path in user application code.
@@ -41,15 +40,15 @@ export { getSecrets, clearSecrets } from './secret';
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
-} from './theme-registry';
+} from './theme/registry';
 export {
   clearReactiveThemeProxy,
   clearThemeNodeCache,
-} from './reactive-theme';
+} from './theme/reactive-proxy';
 export {
   inferValueType,
-} from './theme-signals';
-export type { ThemeLeaf } from './theme-signals';
+} from './theme/signals';
+export type { ThemeLeaf } from './theme/signals';
 
 // ── Reactive property map (compiler dispatch tables) ───────────────────────
 export { REACTIVE_PROPERTY_MAP } from './reactive-properties';
@@ -116,10 +115,10 @@ export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose
 export { secret, SecretValue, isSecretValue } from './secret';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
-export type { FlattenedTheme } from './theme-registry';
-export { createReactiveThemeProxy } from './reactive-theme';
-export { flattenTheme } from './theme-signals';
-
+export type { FlattenedTheme } from './theme/registry';
+export { createReactiveThemeProxy } from './theme/reactive-proxy';
+export { flattenTheme } from './theme/signals';
+export { scopeHash } from './theme/scope-hash';
 // ── HA binding types ───────────────────────────────────────────────────────
 export type {
   SensorBinding,
@@ -154,9 +153,13 @@ export { isTriggerVar } from './trigger-args';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
 export { buildSemanticIR } from './ir/index';
+export {
+  irSection, irScalar, irObject, irEntry, irArray, irNull,
+  irReactive, irRef, irAction, irSecret, irTriggerVar,
+} from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeData, IRScript,
+  BuildSemanticIRInput, IRThemeScopeData, IRScript,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
 } from './ir/index';
@@ -179,7 +182,7 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
-  IRActionConfig,
+  IRActionConfig, IRActionConfigDict, IRActionConfigValue,
 } from './ir/index';
 export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,

@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 // ComposeTarget — Generic compiler ↔ target interface contract
 //
-// Defines the interface that any backend (esphome, simulator, future targets)
+// Defines the interface that any backend (esphome, future targets)
 // must implement. The compiler produces a SemanticIR and passes it to
 // whichever target is selected; the target handles its own output I/O.
 // ────────────────────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ export interface EmitResult {
  * - Asset handling (copying, hashing, rewriting paths)
  */
 export interface ComposeTarget {
-  /** Human-readable target identifier (e.g. 'esphome', 'simulator'). */
+  /** Human-readable target identifier (e.g. 'esphome'). */
   readonly name: string;
 
   /**

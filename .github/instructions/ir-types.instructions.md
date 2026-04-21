@@ -19,7 +19,7 @@ After rendering, the config is a typed Semantic IR tree. Every value is wrapped:
 | `IRAction` | Compiled action tree (see action kinds below) |
 | `IRSecret` | Secret reference (`!secret` in YAML) |
 | `IRTriggerVar` | Trigger variable for lambda injection |
-| `IRThemeData` | Theme names, default index, leaf data (values + C++ types) |
+| `IRThemeScopeData` | Per-scope theme names, default index, scope/scopeId, leaf data (values + C++ types) |
 
 ## Action Kinds (IRAction)
 

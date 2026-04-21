@@ -7,8 +7,6 @@ import type { ComponentProps, Pin, RefProp, TriggerHandler } from "../../types";
 import type { _CoreComponent } from "../bases";
 import type { __marker_remote_transmitter_RemoteTransmitterComponent } from "../markers";
 export interface RemoteTransmitterProps extends _CoreComponent {
-    /** [Pin](/guides/configuration-types#pin): The pin to transmit the remote signal on. */
-    pin: Pin;
     /**
      * int: How much of the time the remote is on. For example, infrared protocols modulate the signal using a carrier signa...
      * @yamlKey carrier_duty_percent
@@ -25,30 +23,32 @@ export interface RemoteTransmitterProps extends _CoreComponent {
      */
     eotLevel?: boolean;
     /**
-     * boolean: Enable DMA on variants that support it. If enabled `rmt_symbols` controls the DMA buffer size and can be set...
-     * @yamlKey use_dma
+     * boolean: If enabled, any transmit will return immediately and the RMT will run in the background. The `on_complete` a...
+     * @yamlKey non_blocking
      */
-    useDma?: boolean;
+    nonBlocking?: boolean;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform after data has been sent. Useful if the radio ...
+     * @yamlKey on_complete
+     */
+    onComplete?: TriggerHandler;
+    /**
+     * [Automation](https://esphome.io/automations): An automation to perform before data is sent. Useful if the radio / IR ...
+     * @yamlKey on_transmit
+     */
+    onTransmit?: TriggerHandler;
+    /** [Pin](https://esphome.io/guides/configuration-types#pin): The pin to transmit the remote signal on. */
+    pin: Pin;
     /**
      * int: When `use_dma` is enabled, this sets the size of the driver's internal DMA buffer. When DMA is disabled, it spec...
      * @yamlKey rmt_symbols
      */
     rmtSymbols?: number;
     /**
-     * boolean: If enabled, any transmit will return immediately and the RMT will run in the background. The `on_complete` a...
-     * @yamlKey non_blocking
+     * boolean: Enable DMA on variants that support it. If enabled `rmt_symbols` controls the DMA buffer size and can be set...
+     * @yamlKey use_dma
      */
-    nonBlocking?: boolean;
-    /**
-     * [Automation](/automations): An automation to perform before data is sent. Useful if the radio / IR hardware needs to ...
-     * @yamlKey on_transmit
-     */
-    onTransmit?: TriggerHandler;
-    /**
-     * [Automation](/automations): An automation to perform after data has been sent. Useful if the radio / IR hardware need...
-     * @yamlKey on_complete
-     */
-    onComplete?: TriggerHandler;
+    useDma?: boolean;
 }
 declare global {
     namespace JSX {

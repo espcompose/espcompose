@@ -11,70 +11,85 @@ import {
   Ref,
   useRef,
   useLvgl,
+  ThemeProvider,
+  createLvglWidget,
+  createEspHomeComponent,
 } from '@espcompose/core';
 import {
   Screen,
   Button,
   Text,
   VStack,
-  ThemeProvider,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 
 /** Component using useLvgl() with pageNext — no lvgl prop needed. */
-function NextButton() {
-  const lvgl = useLvgl();
-  return (
-    <Button text="Next" onPress={() => { lvgl.pageNext(); }} />
-  );
-}
+const NextButton = createLvglWidget(
+  () => {
+    const lvgl = useLvgl();
+    return (
+      <Button text="Next" onPress={() => { lvgl.pageNext(); }} />
+    );
+  },
+);
 
 /** Component using useLvgl() with pagePrevious. */
-function BackButton() {
-  const lvgl = useLvgl();
-  return (
-    <Button text="Back" onPress={() => { lvgl.pagePrevious(); }} />
-  );
+const BackButton = createLvglWidget(
+  () => {
+    const lvgl = useLvgl();
+    return (
+      <Button text="Back" onPress={() => { lvgl.pagePrevious(); }} />
+    );
+  },
+);
+
+interface GoToButtonProps {
+  targetPage: Ref;
 }
 
 /** Component using useLvgl() with pageShow({ id }). */
-function GoToButton({ targetPage }: { targetPage: Ref }) {
-  const lvgl = useLvgl();
-  return (
-    <Button text="Go" onPress={() => { lvgl.pageShow({ id: targetPage }); }} />
-  );
-}
+const GoToButton = createLvglWidget<GoToButtonProps>(
+  ({ targetPage }) => {
+    const lvgl = useLvgl();
+    return (
+      <Button text="Go" onPress={() => { lvgl.pageShow({ id: targetPage }); }} />
+    );
+  },
+);
 
-function UI({ display }: { display: Ref<DisplayRef> }) {
-  const screen1Ref = useRef();
-  return (
-    <lvgl displays={[display]}>
-      <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }}>
-        <Screen ref={screen1Ref}>
-          <VStack>
-            <Text variant="title" text="Page 1" />
-            <NextButton />
-          </VStack>
-        </Screen>
+const UI = createEspHomeComponent(
+  ({ display }: { display: Ref<DisplayRef> }) => {
+    const screen1Ref = useRef();
+    return (
+      <lvgl displays={[display]}>
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }}>
+          <Screen ref={screen1Ref}>
+            <VStack>
+              <Text variant="title" text="Page 1" />
+              <NextButton />
+            </VStack>
+          </Screen>
 
-        <Screen>
-          <VStack>
-            <Text variant="title" text="Page 2" />
-            <BackButton />
-          </VStack>
-        </Screen>
+          <Screen>
+            <VStack>
+              <Text variant="title" text="Page 2" />
+              <BackButton />
+            </VStack>
+          </Screen>
 
-        <Screen>
-          <VStack>
-            <Text variant="title" text="Page 3" />
-            <GoToButton targetPage={screen1Ref} />
-          </VStack>
-        </Screen>
-      </ThemeProvider>
-    </lvgl>
-  );
-}
+          <Screen>
+            <VStack>
+              <Text variant="title" text="Page 3" />
+              <GoToButton targetPage={screen1Ref} />
+            </VStack>
+          </Screen>
+        </ThemeProvider>
+      </lvgl>
+    );
+  },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();

@@ -1,5 +1,6 @@
 import type ts from 'typescript';
 import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { SemanticRegistry } from '../transform/semantic-registry.js';
 
 /**
  * Mutable context threaded through the compiler pipeline.
@@ -16,6 +17,8 @@ export interface PhaseContext {
   bundlePath?: string;
   /** When true, keep the build directory after the pipeline completes. */
   debug: boolean;
+  /** When true, enable wireframe outline overlays on all widgets. */
+  wireframe?: boolean;
 
   // ── Emit options (set before the pipeline when emit phase is included) ──
 
@@ -38,6 +41,8 @@ export interface PhaseContext {
   secrets?: ReadonlyMap<string, string>;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
+  /** Per-file semantic analysis registries (set by transform phase, analysis-only). */
+  semanticAnalysis?: Map<string, SemanticRegistry>;
 }
 
 /**

@@ -4,13 +4,13 @@
  * Compiles to <lvgl-page> with background from the `ds-bg` style definition.
  */
 
-import type { EspComposeElement, WidgetProps } from '@espcompose/core';
-import { createWidgetComponent, LVGL_INTENTS, useTheme } from '@espcompose/core';
+import type { WidgetPropsWithChildren } from '@espcompose/core';
+import { createLvglWidget, LVGL_INTENTS, useTheme } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken, Theme } from '../theme/types';
+import { UI_THEME_SCOPE } from '../theme/scope';
 
-type ScreenProps = WidgetProps<{
-  children?: EspComposeElement | EspComposeElement[];
+type ScreenProps = WidgetPropsWithChildren<{
   /** Padding around the page content. Token name. */
   padding?: SpacingToken;
   /** Skip this page in the page list. */
@@ -30,10 +30,10 @@ type ScreenProps = WidgetProps<{
  *   </VStack>
  * </Screen>
  */
-export const Screen = createWidgetComponent(
-  (props: ScreenProps): EspComposeElement => {
+export const Screen = createLvglWidget(
+  (props: ScreenProps) => {
     const padding = props.padding != null ? useSpacing(props.padding) : undefined;
-    const theme = useTheme<Theme>();
+    const theme = useTheme<Theme>(UI_THEME_SCOPE);
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.background;
 
     return (
@@ -41,6 +41,7 @@ export const Screen = createWidgetComponent(
         skip={props.skip}
         style={{
           backgroundColor: bgColor,
+          backgroundOpacity: 'opaque',
           borderWidth: props.style?.borderWidth ?? 0,
           ...(props.style?.borderColor != null ? { borderColor: props.style.borderColor } : {}),
           ...(padding != null ? { padding: padding } : {}),

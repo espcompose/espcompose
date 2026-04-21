@@ -308,7 +308,10 @@ export function buildPlatformFileContent(
 
   const componentInterfaces: PlatComponentInterface[] = [];
 
-  for (const comp of components) {
+  // Sort components by name for deterministic output
+  const sortedComponents = [...components].sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const comp of sortedComponents) {
     const configSchema = comp.entry?.schemas?.CONFIG_SCHEMA;
     const compPascal = toPascalCase(comp.name);
 
@@ -319,7 +322,7 @@ export function buildPlatformFileContent(
       };
       const camelKey = toCamelCase(typed.typed_key);
 
-      for (const [variantName, variantDef] of Object.entries(typed.types)) {
+      for (const [variantName, variantDef] of Object.entries(typed.types).sort(([a], [b]) => a.localeCompare(b))) {
         const variantPascal = `${compPascal}${toPascalCase(variantName)}`;
 
         const variantExtendsNames: string[] = [];

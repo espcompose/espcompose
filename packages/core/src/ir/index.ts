@@ -19,7 +19,7 @@ export type {
   IRAction,
   IRSecret,
   IRTriggerVar,
-  IRThemeData,
+  IRThemeScopeData,
   IRScript,
 } from './types';
 
@@ -96,6 +96,8 @@ export type {
   IRTriggerVarParam,
   IRExpressionParam,
   IRActionConfig,
+  IRActionConfigDict,
+  IRActionConfigValue,
 } from './action-types';
 
 export {

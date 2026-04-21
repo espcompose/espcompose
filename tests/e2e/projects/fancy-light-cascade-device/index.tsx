@@ -16,15 +16,15 @@
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, theme } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider, createLvglWidget } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
   VStack,
   Button,
-  ThemeProvider,
   darkTheme,
   lightTheme,
+  UI_THEME_SCOPE,
 } from '@espcompose/ui';
 import type { StatusToken } from '@espcompose/ui';
 
@@ -37,15 +37,17 @@ interface LightButtonProps {
   onPress?: TriggerHandler;
 }
 
-function LightButton(props: LightButtonProps): EspComposeElement {
-  return (
-    <Button
-      text={props.label}
-      status={props.status}
-      onPress={props.onPress}
-    />
-  );
-}
+const LightButton = createLvglWidget<LightButtonProps>(
+  (props) => {
+    return (
+      <Button
+        text={props.label}
+        status={props.status}
+        onPress={props.onPress}
+      />
+    );
+  },
+);
 
 // ── Layer 2: FancyLightButton ─────────────────────────────────────────────
 // Receives a LightBinding entity and derives reactive label + action locally.
@@ -58,21 +60,23 @@ interface FancyLightButtonProps {
   status: StatusToken;
 }
 
-function FancyLightButton(props: FancyLightButtonProps): EspComposeElement {
-  // useMemo with props.entity.isOn → goes through slot path in expr-compiler
-  const lightLabel = useMemo(
-    () => props.entity.isOn ? 'On' : 'Off',
-  );
+const FancyLightButton = createLvglWidget<FancyLightButtonProps>(
+  (props) => {
+    // useMemo with props.entity.isOn → goes through slot path in expr-compiler
+    const lightLabel = useMemo(
+      () => props.entity.isOn ? 'On' : 'Off',
+    );
 
-  return (
-    <LightButton
-      label={lightLabel}
-      status={props.status}
-      // onPress with props.entity.toggle() → goes through type-based action resolution
-      onPress={() => { props.entity.toggle(); }}
-    />
-  );
-}
+    return (
+      <LightButton
+        label={lightLabel}
+        status={props.status}
+        // onPress with props.entity.toggle() → goes through type-based action resolution
+        onPress={() => { props.entity.toggle(); }}
+      />
+    );
+  },
+);
 
 // ── Layer 1 (top-level): App ──────────────────────────────────────────────
 // Entity bindings created here, then passed as props to inner layers.
@@ -110,7 +114,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }} default="dark">
           <Screen padding="lg">
             <VStack>
               {/* Temperature status — reactive text from sensor */}
@@ -133,7 +137,7 @@ function App() {
               <Button
                 text="Toggle Theme"
                 status="success"
-                onPress={() => { theme.select('light'); }}
+                onPress={() => { theme.select('espcompose:ui', 'light'); }}
               />
             </VStack>
           </Screen>

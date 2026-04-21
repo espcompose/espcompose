@@ -21,6 +21,8 @@ import {
   globalJsxAugmentation,
   reactivePropType,
   refPropType,
+  componentPropsType,
+  triggerType,
 } from './ast-helpers.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -33,11 +35,23 @@ interface LvglPropDef {
   key?: 'Required' | 'Optional';
 }
 
+interface LvglWidgetTriggerArg {
+  name: string;
+  cpp_type: string;
+  ts_type: string;
+}
+
+interface LvglWidgetTriggers {
+  has_on_value: boolean;
+  args: LvglWidgetTriggerArg[];
+}
+
 interface LvglWidgetDef {
   parts: string[];
   schema: Record<string, LvglPropDef>;
   cpp_type?: string;
   is_compound?: boolean;
+  triggers?: LvglWidgetTriggers;
 }
 
 interface LvglSchema {
@@ -65,10 +79,12 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
       return keyword('boolean');
 
     case 'string':
-    case 'color':
     case 'font':
     case 'icon':
       return keyword('string');
+
+    case 'color':
+      return typeRef('HexColor');
 
     case 'image':
       return unionType([keyword('string'), refPropType(internalMarkerName('image::Image'))]);
@@ -94,9 +110,9 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
 
     case 'enum':
       if (prop.values && prop.values.length > 0) {
-        // Color-like enums with placeholder values → string
+        // Color-like enums with placeholder values → HexColor
         if (prop.values.includes('hex color value') || prop.values.includes('color ID')) {
-          return keyword('string');
+          return typeRef('HexColor');
         }
         // Size-like enums with descriptive placeholders → number | string
         // e.g. ['SIZE_CONTENT', 'number of pixels', 'percentage']
@@ -153,7 +169,7 @@ function buildProps(
     ? LVGL_UPDATABLE_WIDGETS[widgetName] ?? []
     : [];
 
-  return Object.entries(props).map(([name, def]) => {
+  return Object.entries(props).sort(([a], [b]) => a.localeCompare(b)).map(([name, def]) => {
     const camel = toCamelCase(name);
 
     // Apply type overrides for props with known types
@@ -168,8 +184,12 @@ function buildProps(
     if (shouldBind) {
       // For enum props (e.g. text_font with literal font names), widen to
       // include `string` so computed values from the reactive theme are accepted.
+      // Skip widening for color-like enums — HexColor is already sufficient.
       if (def.type === 'enum' && def.values && def.values.length > 0) {
-        tsType = unionType([keyword('string'), tsType]);
+        const isColorEnum = def.values.includes('hex color value') || def.values.includes('color ID');
+        if (!isColorEnum) {
+          tsType = unionType([keyword('string'), tsType]);
+        }
       }
       tsType = reactivePropType(tsType);
     }
@@ -186,17 +206,37 @@ function buildProps(
 
 /**
  * Generate the full LVGL component TypeScript file content.
+ *
+ * @param schemaPath          Path to the extracted lvgl-schema.json.
+ * @param widgetCppTypeMap    Optional map of widgetName → C++ type (e.g.
+ *                            'slider' → 'lv_slider_t').  When provided, each
+ *                            `<lvgl-*>` JSX intrinsic is emitted as
+ *                            `ComponentProps<__marker_lv_<widget>_t>` so refs
+ *                            expose typed widget actions.
  */
-export function buildLvglFileContent(schemaPath: string): string {
+export function buildLvglFileContent(
+  schemaPath: string,
+  widgetCppTypeMap?: ReadonlyMap<string, string>,
+): string {
   const raw = fs.readFileSync(schemaPath, 'utf8');
   const schema: LvglSchema = JSON.parse(raw);
 
   const statements: ts.Statement[] = [];
 
   // ── Import ────────────────────────────────────────────────────────────────
-  statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp'], '../../types'));
-  statements.push(importTypeDecl([internalMarkerName('image::Image')], '../markers'));
+  statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp', 'TriggerHandler'], '../../types'));
+
+  // Collect every marker we need to import from ../markers (image + per-widget).
+  const markerImports = new Set<string>([internalMarkerName('image::Image')]);
+  if (widgetCppTypeMap) {
+    for (const cppType of widgetCppTypeMap.values()) {
+      markerImports.add(internalMarkerName(cppType));
+    }
+  }
+  statements.push(importTypeDecl([...markerImports].sort(), '../markers'));
+
   statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
+  statements.push(importTypeDecl(['HexColor'], '../../theme/hex-color'));
 
   // ── Layout props to exclude from LvglStyleProps ───────────────────────────
   // These are layout concerns, not visual style — handled by layout components
@@ -222,7 +262,7 @@ export function buildLvglFileContent(schemaPath: string): string {
 
   // ── LVGL_STYLE_PROP_KEYS — generated set for runtime validation ───────────
   {
-    const keys = Object.keys(filteredStyleProps).map(k => toCamelCase(k));
+    const keys = Object.keys(filteredStyleProps).map(k => toCamelCase(k)).sort();
     const elements = keys.map(k => ts.factory.createStringLiteral(k));
     const arrayExpr = ts.factory.createArrayLiteralExpression(elements, true);
     const newSetExpr = ts.factory.createNewExpression(
@@ -247,7 +287,7 @@ export function buildLvglFileContent(schemaPath: string): string {
   // ── Per-widget interfaces ─────────────────────────────────────────────────
   const jsxElements: Array<{ tagName: string; type: ts.TypeNode }> = [];
 
-  for (const [widgetName, widget] of Object.entries(schema.widgets)) {
+  for (const [widgetName, widget] of Object.entries(schema.widgets).sort(([a], [b]) => a.localeCompare(b))) {
     const pascal = toPascalCase(`lvgl_${widgetName}`);
     const interfaceName = `${pascal}Props`;
 
@@ -312,6 +352,27 @@ export function buildLvglFileContent(schemaPath: string): string {
       ]));
     }
 
+    // ── Event trigger props ───────────────────────────────────────────────
+    // In ESPHome, all event triggers on a widget receive the widget's typed
+    // callback args (e.g. slider's on_release provides float x, same as on_value).
+    // Widgets without typed args get plain TriggerHandler.
+    const widgetTriggerArgs = widget.triggers?.args ?? [];
+    const widgetTriggerVariables = widgetTriggerArgs.map(a => ({ name: a.name, tsType: a.ts_type }));
+    const widgetTriggerType = triggerType(widgetTriggerVariables);
+
+    const allEventTriggers = [...schema.event_triggers, ...schema.swipe_triggers];
+    for (const trigger of allEventTriggers) {
+      const camel = toCamelCase(trigger);
+      const sig = propSig(camel, widgetTriggerType, true);
+      members.push(addJsDoc(sig, [`@yamlKey ${trigger}`]));
+    }
+
+    // Widget-specific on_value trigger (only for widgets with has_on_value)
+    if (widget.triggers?.has_on_value) {
+      const sig = propSig('onValue', widgetTriggerType, true);
+      members.push(addJsDoc(sig, ['@yamlKey on_value']));
+    }
+
     statements.push(
       addBlankLineBefore(
         interfaceDecl(interfaceName, members, {
@@ -322,9 +383,13 @@ export function buildLvglFileContent(schemaPath: string): string {
 
     // JSX element: <lvgl-widgetname>
     const tagName = `lvgl-${widgetName.replace(/_/g, '-')}`;
+    const widgetCppType = widgetCppTypeMap?.get(widgetName);
+    const widgetComponentProps = widgetCppType
+      ? componentPropsType(internalMarkerName(widgetCppType))
+      : typeRef('ComponentProps');
     jsxElements.push({
       tagName,
-      type: intersectionType([typeRef(interfaceName), typeRef('ComponentProps')]),
+      type: intersectionType([typeRef(interfaceName), widgetComponentProps]),
     });
   }
 
