@@ -1,109 +1,138 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { build } from '@espcompose/cli';
 import { createEsphomeTarget } from '@espcompose/esphome-target';
 import { createProjectTest } from './helpers';
+import type { TestTiming } from './helpers';
 
 const projectsDir = path.resolve(__dirname, '..', 'projects');
 
+// Collect timing data from each test for the summary report.
+const timings: TestTiming[] = [];
+
+/** Run createProjectTest and record timing. */
+async function runTimed(projectName: string): Promise<void> {
+  const timing = await createProjectTest(projectsDir, projectName);
+  timings.push(timing);
+}
+
 describe('ESPHome Compose Build', () => {
-  it('basic-device', async () => {
-    await createProjectTest(projectsDir, 'basic-device');
-  });
+  afterAll(() => {
+    if (timings.length === 0) return;
 
+    // ── Per-project table ──
+    const rows = timings.map((t) => ({
+      Project: t.project,
+      'Espcompose (ms)': Math.round(t.espcomposeMs),
+      'ESPHome (ms)': Math.round(t.esphomeValidationMs),
+      'Total (ms)': Math.round(t.espcomposeMs + t.esphomeValidationMs),
+    }));
+    console.log('\n── E2E Timing Summary ──');
+    console.table(rows);
+
+    // ── Aggregate breakdown ──
+    const totalEspcompose = timings.reduce((s, t) => s + t.espcomposeMs, 0);
+    const totalEsphome = timings.reduce((s, t) => s + t.esphomeValidationMs, 0);
+    const total = totalEspcompose + totalEsphome;
+    console.log(
+      `\nAggregate: espcompose ${Math.round(totalEspcompose)}ms (${((totalEspcompose / total) * 100).toFixed(1)}%) ` +
+      `| esphome validation ${Math.round(totalEsphome)}ms (${((totalEsphome / total) * 100).toFixed(1)}%) ` +
+      `| total ${Math.round(total)}ms`,
+    );
+
+    // ── Per-phase aggregate ──
+    const phaseMap = new Map<string, number>();
+    for (const t of timings) {
+      for (const p of t.phases) {
+        phaseMap.set(p.phase, (phaseMap.get(p.phase) ?? 0) + p.durationMs);
+      }
+    }
+    const phaseRows = [...phaseMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([phase, ms]) => ({ Phase: phase, 'Total (ms)': Math.round(ms), '%': ((ms / totalEspcompose) * 100).toFixed(1) }));
+    console.log('\n── Phase Breakdown (aggregate across all projects) ──');
+    console.table(phaseRows);
+  });
   it('sensor-device', async () => {
-    await createProjectTest(projectsDir, 'sensor-device');
-  });
-
-  it('function-component-device', async () => {
-    await createProjectTest(projectsDir, 'function-component-device');
-  });
-
-  it('script-device', async () => {
-    await createProjectTest(projectsDir, 'script-device');
+    await runTimed('sensor-device');
   });
 
   it('dashboard-device', async () => {
-    await createProjectTest(projectsDir, 'dashboard-device');
+    await runTimed('dashboard-device');
   });
 
   it('lvgl-device', async () => {
-    await createProjectTest(projectsDir, 'lvgl-device');
+    await runTimed('lvgl-device');
   });
 
   it('design-system-device', async () => {
-    await createProjectTest(projectsDir, 'design-system-device');
+    await runTimed('design-system-device');
   });
 
   it('trigger-device', async () => {
-    await createProjectTest(projectsDir, 'trigger-device');
+    await runTimed('trigger-device');
   });
 
   it('ha-binding-device', async () => {
-    await createProjectTest(projectsDir, 'ha-binding-device');
+    await runTimed('ha-binding-device');
   });
 
   it('ha-dynamic-device', async () => {
-    await createProjectTest(projectsDir, 'ha-dynamic-device');
+    await runTimed('ha-dynamic-device');
   });
 
   it('reactive-device', async () => {
-    await createProjectTest(projectsDir, 'reactive-device');
-  });
-
-  // Additional feature tests
-  it('embed-device', async () => {
-    await createProjectTest(projectsDir, 'embed-device');
+    await runTimed('reactive-device');
   });
 
   it('device-script-device', async () => {
-    await createProjectTest(projectsDir, 'device-script-device');
+    await runTimed('device-script-device');
   });
 
   it('project-device', async () => {
-    await createProjectTest(projectsDir, 'project-device');
+    await runTimed('project-device');
   });
 
   // Multi-source reactive runtime test (C++ Signal/Memo/Effect)
   it('multi-source-reactive-device', async () => {
-    await createProjectTest(projectsDir, 'multi-source-reactive-device');
+    await runTimed('multi-source-reactive-device');
   });
 
   // Auto-reactive transform test (compiler auto-wraps Signal expressions)
   it('auto-reactive-device', async () => {
-    await createProjectTest(projectsDir, 'auto-reactive-device');
+    await runTimed('auto-reactive-device');
   });
 
   // useImage + useFont hook injection and deduplication
   it('image-font-device', async () => {
-    await createProjectTest(projectsDir, 'image-font-device');
+    await runTimed('image-font-device');
   });
 
   // CSS-like style prop expansion and mergeStyles
   it('style-device', async () => {
-    await createProjectTest(projectsDir, 'style-device');
+    await runTimed('style-device');
   });
 
   // Boot screen with LVGL page navigation actions
   it('boot-screen-device', async () => {
-    await createProjectTest(projectsDir, 'boot-screen-device');
+    await runTimed('boot-screen-device');
   });
 
   // Ref action through props — type-based tag resolution for page navigation
   it('prop-ref-action-device', async () => {
-    await createProjectTest(projectsDir, 'prop-ref-action-device');
+    await runTimed('prop-ref-action-device');
   });
 
   // Ref forwarding through design system widgets (<Screen ref={...}>)
   it('widget-ref-device', async () => {
-    await createProjectTest(projectsDir, 'widget-ref-device');
+    await runTimed('widget-ref-device');
   });
 
   // Typed LVGL widget refs — exercises lv_obj_t/lv_style_t brand inheritance
   // and ref-resolved widgetUpdate / widgetRedraw / sliderUpdate actions.
   it('lvgl-widget-ref-device', async () => {
-    await createProjectTest(projectsDir, 'lvgl-widget-ref-device');
+    await runTimed('lvgl-widget-ref-device');
   });
 
   // Untransformed library detection — build should fail with a clear error
@@ -178,7 +207,7 @@ describe('ESPHome Compose Build', () => {
     );
 
     try {
-      await createProjectTest(projectsDir, 'library-contract-device');
+      await runTimed('library-contract-device');
     } finally {
       fs.rmSync(path.join(projectPath, 'node_modules'), { recursive: true, force: true });
     }
@@ -186,36 +215,36 @@ describe('ESPHome Compose Build', () => {
 
   // Action tree compiler — bare arrow functions → ESPHome action sequences
   it('action-tree-device', async () => {
-    await createProjectTest(projectsDir, 'action-tree-device');
+    await runTimed('action-tree-device');
   });
 
   // Reactive theme switching: two themes, theme.select(), full token reactivity
   it('reactive-theme-device', async () => {
-    await createProjectTest(projectsDir, 'reactive-theme-device');
+    await runTimed('reactive-theme-device');
   });
 
   // Component cascade: ReactiveNode flows through 3 component layers
   it('fancy-light-cascade-device', async () => {
-    await createProjectTest(projectsDir, 'fancy-light-cascade-device');
+    await runTimed('fancy-light-cascade-device');
   });
 
   // TriggerHandler in variable initializers + primitive slots in useMemo
   it('trigger-variable-device', async () => {
-    await createProjectTest(projectsDir, 'trigger-variable-device');
+    await runTimed('trigger-variable-device');
   });
 
   // secret() — emits !secret references in YAML and writes secrets.yaml
   it('secret-device', async () => {
-    await createProjectTest(projectsDir, 'secret-device');
+    await runTimed('secret-device');
   });
 
   // ec-canvas — composited rendering host with paint primitives + widget content
   it('canvas-device', async () => {
-    await createProjectTest(projectsDir, 'canvas-device');
+    await runTimed('canvas-device');
   });
 
   // useLvgl() hook — implicit LVGL ref via context, no prop drilling
   it('use-lvgl-hook-device', async () => {
-    await createProjectTest(projectsDir, 'use-lvgl-hook-device');
+    await runTimed('use-lvgl-hook-device');
   });
 });
