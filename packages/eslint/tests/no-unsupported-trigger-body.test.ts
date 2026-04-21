@@ -26,8 +26,8 @@ ruleTester.run('no-unsupported-trigger-body', rule, {
       code: `<button onPress={async () => { await delay(500); }} />`,
     },
     {
-      name: 'createScript body with calls',
-      code: `createScript(async () => { await delay(1000); lightRef.toggle(); });`,
+      name: 'useScript body with calls',
+      code: `useScript(async () => { await delay(1000); lightRef.toggle(); });`,
     },
 
     // ─── Control flow ────────────────────────────────────────────────────
@@ -122,10 +122,10 @@ ruleTester.run('no-unsupported-trigger-body', rule, {
       errors: [{ messageId: 'unsupportedConstruct' }],
     },
 
-    // ─── Nested in createScript ──────────────────────────────────────────
+    // ─── Nested in useScript ─────────────────────────────────────────────
     {
-      name: 'variable in createScript body',
-      code: `createScript(async () => { const temp = 42; });`,
+      name: 'variable in useScript body',
+      code: `useScript(async () => { const temp = 42; });`,
       errors: [{ messageId: 'unsupportedConstruct' }],
     },
 

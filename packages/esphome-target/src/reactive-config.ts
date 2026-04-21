@@ -9,7 +9,7 @@
 
 import { injectHASensorImports } from './reactive-injector.js';
 import { generateSignalSetLambda, computeMaxNodes } from './bindings-codegen.js';
-import type { SignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
+import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
@@ -36,6 +36,7 @@ function deriveSourceSignals(
   node: any,
   signalMap: Map<string, SignalDecl>,
   themeVarNames: Map<string, string>,
+  globalSignalNames?: Map<string, string>,
 ): string[] {
   const names: string[] = [];
   for (const dep of node.dependencies ?? []) {
@@ -51,6 +52,12 @@ function deriveSourceSignals(
         // Fallback: use sourceId if we can't extract path from IR
         const name = `thm_${dep.sourceId === '__theme__' ? dep.triggerType : dep.sourceId}`;
         if (!names.includes(name)) names.push(name);
+      }
+    } else if (dep.sourceType === 'global') {
+      // Global dependency — BoundSignal name is sig_global_${sourceId}
+      const sigName = globalSignalNames?.get(dep.sourceId);
+      if (sigName && !names.includes(sigName)) {
+        names.push(sigName);
       }
     } else {
       // HA entity dependency — signal name is sig_${sourceId}
@@ -140,6 +147,8 @@ export function buildRuntimeConfig(
   entities: any[],
   themeScopes?: ThemeScopeData[],
   compiledTriggers?: TriggerFunctionDecl[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  globalComponents?: any[],
 ): ReactiveRuntimeConfig {
   // Collect unique signals from HA entities
   const signalMap = new Map<string, SignalDecl>();
@@ -147,6 +156,44 @@ export function buildRuntimeConfig(
     const sigName = `sig_${entity.generatedId}`;
     if (!signalMap.has(sigName)) {
       signalMap.set(sigName, { name: sigName, cppType: mapSensorTypeToCppType(entity.sensorType) });
+    }
+  }
+
+  // Collect BoundSignal declarations for globals that have reactive dependents.
+  // A global is reactive if any IRReactiveNode has a dependency with sourceType='global'
+  // and sourceId matching the global's component ID.
+  const reactiveGlobalIds = new Set<string>();
+  for (const node of reactiveNodes) {
+    if (node.dependencies) {
+      for (const dep of node.dependencies) {
+        if (dep.sourceType === 'global') {
+          reactiveGlobalIds.add(dep.sourceId);
+        }
+      }
+    }
+  }
+  // Also check bindings for direct global signal references
+  for (const binding of bindings) {
+    const expr = binding.expression;
+    if (expr?.dependencies) {
+      for (const dep of expr.dependencies) {
+        if (dep.sourceType === 'global') {
+          reactiveGlobalIds.add(dep.sourceId);
+        }
+      }
+    }
+  }
+
+  const globalSignals: BoundSignalDecl[] = [];
+  if (globalComponents) {
+    for (const comp of globalComponents) {
+      if (reactiveGlobalIds.has(comp.id)) {
+        globalSignals.push({
+          name: `sig_global_${comp.id}`,
+          cppType: comp.config.type ?? 'int',
+          globalId: comp.id,
+        });
+      }
     }
   }
 
@@ -169,6 +216,12 @@ export function buildRuntimeConfig(
     entityComponentIds,
     themeVarNames,
   };
+
+  // Build a lookup map from global ID → BoundSignal C++ name
+  const globalSignalNames = new Map<string, string>();
+  for (const gs of globalSignals) {
+    globalSignalNames.set(gs.globalId, gs.name);
+  }
 
   // ── Validate: detect untransformed reactive nodes ─────────────────────
   const uncompiledNodes = reactiveNodes.filter(
@@ -212,7 +265,7 @@ export function buildRuntimeConfig(
       const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
 
-      const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames);
+      const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
 
       const signature = `${cppReturnType}:${cppExpression}:${[...sourceSignals].sort().join(',')}`;
       const canonical = memoSignatureMap.get(signature);
@@ -244,7 +297,7 @@ export function buildRuntimeConfig(
       // Populate memoNames for downstream memo_read references
       cppCtx.memoNames.set(node.nodeId, `memo_${memoIdx - 1}`);
     } else if (node.kind === 'effect') {
-      const sourceNames = deriveSourceSignals(node, signalMap, themeVarNames);
+      const sourceNames = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
       const cppBody = node.exprIR ? exprToCpp(node.exprIR, cppCtx) : '0 /* no ExprIR */';
       effects.push({
         index: effectIdx++,
@@ -370,6 +423,7 @@ export function buildRuntimeConfig(
 
   return {
     signals: Array.from(signalMap.values()),
+    globalSignals,
     memos,
     effects,
     widgetBindings,

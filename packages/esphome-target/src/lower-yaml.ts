@@ -17,7 +17,7 @@ import { injectReactiveBindingsRuntime } from './reactive-config.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
-import { lowerActionTree } from './action-lowering.js';
+import { lowerActionTree, setReactiveGlobalIds } from './action-lowering.js';
 import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
@@ -274,6 +274,14 @@ export function lowerToYamlConfig(
       entityComponentIds,
       themeVarNames,
     };
+  }
+
+  // Set reactive global IDs for action lowering so global_set knows whether
+  // to emit BoundSignal C++ lambda or plain globals.set YAML.
+  if (cppResult?.runtimeConfig?.globalSignals) {
+    setReactiveGlobalIds(new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId)));
+  } else {
+    setReactiveGlobalIds(new Set());
   }
 
   const loweredConfig = lowerIRConfig(ir, cppCtx);

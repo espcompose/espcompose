@@ -198,6 +198,37 @@ private:
   T value_;
 };
 
+/**
+ * BoundSignal<T> — a reactive node that wraps a pointer to external storage.
+ *
+ * Used for ESPHome globals: the GlobalsComponent<T> owns the value, and
+ * BoundSignal points at it. Reads and writes go through the pointer,
+ * avoiding value duplication. The pointer is set via bind() during
+ * bootstrap_runtime(), after ESPHome's setup has restored preferences.
+ */
+template <typename T>
+class BoundSignal : public NodeBase {
+public:
+  BoundSignal() : NodeBase(0) {}
+
+  void bind(T* p) { ptr_ = p; }
+
+  const T& get() const { return *ptr_; }
+
+  void set(T val) {
+    if (*ptr_ != val) {
+      ESPCOMPOSE_LOGD("BoundSignal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());
+      *ptr_ = std::move(val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+private:
+  T* ptr_{nullptr};
+};
+
 template <typename T>
 class Memo : public NodeBase {
 public:

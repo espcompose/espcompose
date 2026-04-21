@@ -143,6 +143,13 @@ export interface IRExprEntityProp {
   readonly type: ExprType;
 }
 
+/** Read a reactive global variable's BoundSignal. */
+export interface IRExprGlobalRead {
+  readonly kind: 'global_read';
+  readonly globalId: string;
+  readonly type: ExprType;
+}
+
 export interface IRExprComponentRead {
   readonly kind: 'component_read';
   readonly componentId: string;
@@ -206,6 +213,7 @@ export type IRExprNode =
   | IRExprResolveFont
   | IRExprThemeRead
   | IRExprEntityProp
+  | IRExprGlobalRead
   | IRExprComponentRead
   | IRExprTriggerVar
   | IRExprTypeCast

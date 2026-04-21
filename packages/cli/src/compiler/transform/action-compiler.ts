@@ -2,7 +2,7 @@
  * Action Body Compiler — TypeScript AST → IRActionNode[] compiler.
  *
  * Compiles arrow function bodies from TriggerHandler-typed JSX props and
- * createScript arguments into action tree IR. Every user-visible TS
+ * useScript arguments into action tree IR. Every user-visible TS
  * statement maps to one or more IRActionNode nodes. Unsupported constructs
  * produce hard compile errors.
  */
@@ -10,9 +10,12 @@
 import ts from 'typescript';
 import {
   translateScriptExprIR,
+  cppTypeToExprType,
   type HAEntityInfo,
+  type GlobalExprInfo,
   type ScriptTransformContext,
 } from './expr-compiler.js';
+import type { GlobalDefinition } from '@espcompose/core/internals';
 import { hasRefBrand, hasBindingBrand } from './type-brands.js';
 import { ENTITY_DOMAINS, scopeHash } from '@espcompose/core/internals';
 import {
@@ -34,6 +37,7 @@ import {
   irScriptWait,
   irScriptStop,
   irThemeSelect,
+  irGlobalSet,
   irLambdaCondition,
   camelToSnake,
 } from '@espcompose/core/internals';
@@ -76,6 +80,8 @@ export interface ActionCompilerContext {
   haEntities: Map<ts.Symbol, HAEntityInfo>;
   /** Map of declaration symbol → script ID (scope-aware). */
   scriptHandles: Map<ts.Symbol, string>;
+  /** Map of declaration symbol → global variable info (scope-aware). */
+  globalHandles: Map<ts.Symbol, GlobalDefinition>;
   /** Set of declaration symbols that are component refs. */
   refSymbols: Set<ts.Symbol>;
   /** Name of the trigger args parameter (e.g. 'args'), empty if no parameter. */
@@ -108,6 +114,7 @@ export function compileActionBody(
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   scriptHandles: Map<ts.Symbol, string>,
+  globalHandles: Map<ts.Symbol, GlobalDefinition>,
   refSymbols: Set<ts.Symbol>,
   filePath: string,
 ): ActionCompileResult {
@@ -115,6 +122,7 @@ export function compileActionBody(
     checker,
     haEntities,
     scriptHandles,
+    globalHandles,
     refSymbols,
     triggerParamName: '',
     filePath,
@@ -294,7 +302,7 @@ function compileAwait(
   }
 
   return emitError(expr, ctx,
-    'Can only await delay(), waitUntil(), or a createScript handle. ' +
+    'Can only await delay(), waitUntil(), or a useScript handle. ' +
     'Other await expressions have no ESPHome equivalent.');
 }
 
@@ -372,6 +380,14 @@ function compileActionCall(
         if (methodName === 'stop') return [irScriptStop(scriptId)];
         return emitError(call, ctx,
           `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
+      }
+
+      // globalHandle.set(value)
+      const globalDef = lookupBySymbol(ctx.globalHandles, objNode, ctx.checker);
+      if (globalDef) {
+        if (methodName === 'set') return compileGlobalSet(call, globalDef, ctx);
+        return emitError(call, ctx,
+          `Global handle only supports .set(). '${methodName}' is not a valid global operation.`);
       }
 
       // HA entity action (symbol-based)
@@ -495,6 +511,60 @@ function compileThemeSelect(
   const scopeId = scopeHash(scope);
   const themeName = nameArg.text;
   return [irThemeSelect(scope, scopeId, themeName)];
+}
+
+function compileGlobalSet(
+  call: ts.CallExpression,
+  globalDef: GlobalDefinition,
+  ctx: ActionCompilerContext,
+): IRActionNode[] | null {
+  if (call.arguments.length < 1) {
+    return emitError(call, ctx, 'globalHandle.set() requires a value argument.');
+  }
+
+  const valueArg = call.arguments[0];
+
+  // Try literal first
+  if (ts.isNumericLiteral(valueArg)) {
+    const num = Number(valueArg.text);
+    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: num })];
+  }
+  if (ts.isStringLiteral(valueArg) || ts.isNoSubstitutionTemplateLiteral(valueArg)) {
+    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: valueArg.text })];
+  }
+  if (valueArg.kind === ts.SyntaxKind.TrueKeyword) {
+    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: true })];
+  }
+  if (valueArg.kind === ts.SyntaxKind.FalseKeyword) {
+    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: false })];
+  }
+
+  // Try trigger variable: args.x
+  if (ts.isPropertyAccessExpression(valueArg) && ts.isIdentifier(valueArg.expression) &&
+      valueArg.expression.text === ctx.triggerParamName) {
+    const varName = valueArg.name.text;
+    ctx.triggerVars.add(varName);
+    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'trigger_var', varName })];
+  }
+
+  // Try compiling as a reactive expression (e.g. counter.value + 1)
+  const globalHandlesByName = new Map<string, GlobalExprInfo>();
+  for (const [sym, gDef] of ctx.globalHandles) {
+    const name = sym.getName();
+    globalHandlesByName.set(name, { globalId: gDef.id, cppType: gDef.cppType, exprType: cppTypeToExprType(gDef.cppType) });
+  }
+  const scriptCtx: ScriptTransformContext = {
+    triggerParamName: ctx.triggerParamName,
+    localVars: new Set(),
+    globalHandlesByName,
+  };
+  const exprIR = translateScriptExprIR(valueArg, scriptCtx);
+  if (exprIR !== null) {
+    return [irGlobalSet(globalDef.id, globalDef.cppType, exprIR)];
+  }
+
+  return emitError(valueArg, ctx,
+    'globalHandle.set() value must be a literal, trigger variable (args.x), or a supported expression.');
 }
 
 function compileHAAction(

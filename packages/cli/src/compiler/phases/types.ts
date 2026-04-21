@@ -1,6 +1,5 @@
 import type ts from 'typescript';
 import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
-import type { SemanticRegistry } from '../transform/semantic-registry.js';
 
 /** Timing measurement for a single compiler phase. */
 export interface PhaseTiming {
@@ -51,8 +50,6 @@ export interface PhaseContext {
   secrets?: ReadonlyMap<string, string>;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
-  /** Per-file semantic analysis registries (set by transform phase, analysis-only). */
-  semanticAnalysis?: Map<string, SemanticRegistry>;
 
   /** Per-phase timing measurements (populated by runPipeline). */
   phaseTiming?: PhaseTiming[];

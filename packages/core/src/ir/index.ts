@@ -88,6 +88,7 @@ export type {
   IRScriptWait,
   IRScriptStop,
   IRThemeSelect,
+  IRGlobalSet,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -113,5 +114,6 @@ export {
   irScriptWait,
   irScriptStop,
   irThemeSelect,
+  irGlobalSet,
   irLambdaCondition,
 } from './action-types';

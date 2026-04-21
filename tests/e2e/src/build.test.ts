@@ -90,6 +90,11 @@ describe('ESPHome Compose Build', () => {
     await runTimed('device-script-device');
   });
 
+  // useGlobal hook — global variable registration and set actions
+  it('globals-device', async () => {
+    await runTimed('globals-device');
+  });
+
   it('project-device', async () => {
     await runTimed('project-device');
   });

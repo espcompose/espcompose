@@ -102,8 +102,20 @@ export interface ThemeScopeConfig {
   themeNames: string[];
 }
 
+/** Declaration for a BoundSignal — wraps a pointer to an ESPHome global. */
+export interface BoundSignalDecl {
+  /** C++ variable name (e.g. `sig_global_my_counter`). */
+  name: string;
+  /** C++ type (e.g. `int`, `bool`, `float`, `std::string`). */
+  cppType: string;
+  /** ESPHome global component ID (used for bind() call). */
+  globalId: string;
+}
+
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
+  /** BoundSignal declarations for globals with reactive dependents. */
+  globalSignals: BoundSignalDecl[];
   memos: MemoDecl[];
   effects: EffectDecl[];
   widgetBindings: WidgetBindingDecl[];
@@ -132,6 +144,7 @@ export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
 
   const totalNodes =
     config.signals.length +
+    config.globalSignals.length +
     themeSignalCount +
     totalThemeMemos +
     canonicalMemoCount +
@@ -165,6 +178,11 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   for (const sc of themeScopes) {
     const indexName = `theme_index_${sc.scopeId}`;
     for (const _tm of sc.themeMemos) incSub(indexName);
+  }
+  // Account for global signal subscribers
+  for (const _gs of config.globalSignals) {
+    // Global signals get subscribers from memos and bindings that reference them,
+    // which are already counted in the memo/effect/binding loops below.
   }
   for (const memo of config.memos) {
     if (memo.canonicalIndex != null) continue; // alias — no wiring
@@ -230,6 +248,15 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('// ── Signals (one per HA entity source) ──');
     for (const sig of config.signals) {
       lines.push(`Signal<${sig.cppType}> ${sig.name};`);
+    }
+    lines.push('');
+  }
+
+  // ── BoundSignal declarations (one per reactive global) ─────────────────
+  if (config.globalSignals.length > 0) {
+    lines.push('// ── BoundSignals (one per reactive global variable) ──');
+    for (const gs of config.globalSignals) {
+      lines.push(`BoundSignal<${gs.cppType}> ${gs.name};`);
     }
     lines.push('');
   }
@@ -332,6 +359,15 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push(`  theme_index_${sc.scopeId}.set(${sc.defaultIndex});`);
   }
   if (themeScopes.length > 0) lines.push('');
+
+  // Bind global BoundSignals to ESPHome global storage
+  if (config.globalSignals.length > 0) {
+    lines.push('  // ── Bind global BoundSignals to ESPHome global storage ──');
+    for (const gs of config.globalSignals) {
+      lines.push(`  ${gs.name}.bind(&id(${gs.globalId}));`);
+    }
+    lines.push('');
+  }
 
   // ── Allocate exact-sized subscriber storage for each node ──────────
   // The codegen knows the full dependency graph, so we emit perfectly-

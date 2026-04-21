@@ -32,11 +32,12 @@ export interface IRDependency {
   /** The component domain for trigger registry lookup (e.g. `binary_sensor`, `sensor`). */
   sourceDomain: string;
   /**
-   * Distinguishes HA entity signals from theme signals.
+   * Distinguishes HA entity signals from theme signals and global signals.
    * - 'ha_entity' (default): signal is fed by a Home Assistant sensor trigger
    * - 'theme': signal is a theme memo reading from a theme value array
+   * - 'global': signal is backed by an ESPHome globals component (BoundSignal<T>)
    */
-  sourceType?: 'ha_entity' | 'theme';
+  sourceType?: 'ha_entity' | 'theme' | 'global';
 }
 
 declare const REACTIVE_NODE_BRAND: unique symbol;

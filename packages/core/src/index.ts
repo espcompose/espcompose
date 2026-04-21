@@ -59,6 +59,8 @@ export { useFont } from './hooks/useFont';
 export { useScript } from './hooks/useScript';
 export { useMemo } from './hooks/useMemo';
 export { useLvgl } from './hooks/useLvgl';
+export { useGlobal } from './hooks/useGlobal';
+export type { GlobalHandle, GlobalOptions } from './hooks/useGlobal';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

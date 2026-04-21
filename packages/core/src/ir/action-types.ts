@@ -101,6 +101,24 @@ export interface IRThemeSelect {
   themeName: string;
 }
 
+/**
+ * Global variable set action.
+ *
+ * The compiler always emits this kind for globalHandle.set() calls.
+ * The ESPHome target lowerer decides at emit time whether to generate
+ * a BoundSignal write (if the global has reactive dependents) or a
+ * plain globals.set: YAML action (if non-reactive).
+ */
+export interface IRGlobalSet {
+  kind: 'global_set';
+  /** Auto-generated ESPHome global ID. */
+  globalId: string;
+  /** C++ type of the global (e.g. 'int', 'bool', 'float', 'std::string'). */
+  cppType: string;
+  /** Value to set — literal, trigger var, or compiled expression. */
+  value: IRActionParam | IRExprNode;
+}
+
 // ── Discriminated Union ────────────────────────────────────────────────────
 
 export type IRActionNode =
@@ -115,7 +133,8 @@ export type IRActionNode =
   | IRScriptExecute
   | IRScriptWait
   | IRScriptStop
-  | IRThemeSelect;
+  | IRThemeSelect
+  | IRGlobalSet;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -235,6 +254,10 @@ export function irScriptStop(scriptId: string): IRScriptStop {
 
 export function irThemeSelect(scope: string, scopeId: string, themeName: string): IRThemeSelect {
   return { kind: 'theme_select', scope, scopeId, themeName };
+}
+
+export function irGlobalSet(globalId: string, cppType: string, value: IRActionParam | IRExprNode): IRGlobalSet {
+  return { kind: 'global_set', globalId, cppType, value };
 }
 
 export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {

@@ -24,7 +24,7 @@ const BINDING_BRAND_RE = /^__@BINDING_BRAND@\d+$/;
  *   - Monorepo source paths (`packages/core/src/…`)
  *   - Resolved node_modules paths (`@espcompose/core/…`)
  */
-function isFromEspcomposeCore(symbol: ts.Symbol): boolean {
+export function isFromEspcomposeCore(symbol: ts.Symbol): boolean {
   const declarations = symbol.getDeclarations();
   if (!declarations) return false;
   return declarations.some(d => {
@@ -32,6 +32,35 @@ function isFromEspcomposeCore(symbol: ts.Symbol): boolean {
     return fileName.includes('@espcompose/core') ||
            fileName.includes('packages/core/');
   });
+}
+
+/**
+ * Check whether a call expression's callee resolves to a specific named export
+ * from `@espcompose/core`.
+ *
+ * Resolves through import aliases so that `import { useRef as ref }` still
+ * matches `isCoreHookCall(callExpr, 'useRef', checker)`.
+ */
+export function isCoreHookCall(
+  callExpr: ts.CallExpression,
+  hookName: string | string[],
+  checker: ts.TypeChecker,
+): boolean {
+  const callee = callExpr.expression;
+  if (!ts.isIdentifier(callee)) return false;
+
+  const names = Array.isArray(hookName) ? hookName : [hookName];
+
+  const sym = checker.getSymbolAtLocation(callee);
+  if (!sym) return false;
+
+  // Resolve through import aliases (e.g. `import { useRef as ref }`)
+  const resolved = sym.flags & ts.SymbolFlags.Alias
+    ? checker.getAliasedSymbol(sym)
+    : sym;
+
+  if (!names.includes(resolved.name)) return false;
+  return isFromEspcomposeCore(resolved);
 }
 
 // ────────────────────────────────────────────────────────────────────────────

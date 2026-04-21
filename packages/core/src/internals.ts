@@ -97,6 +97,10 @@ export type { ComposeTarget, EmitRequest, EmitResult } from './target';
 export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
 
+// ── Global hook internals (used by compiler) ───────────────────────────────
+export { withGlobalScope, hashGlobalFingerprint } from './hooks/useGlobal';
+export type { GlobalDefinition } from './hooks/useGlobal';
+
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
 
@@ -179,7 +183,7 @@ export type {
   IRActionNode,
   IRNativeAction, IRHAServiceAction, IRLoggerAction, IRDelayAction,
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
-  IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect,
+  IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -188,5 +192,6 @@ export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,
   irWaitUntilAction, irIfAction, irWhileAction, irRepeatAction,
   irScriptExecute, irScriptWait, irScriptStop, irThemeSelect,
+  irGlobalSet,
   irLambdaCondition,
 } from './ir/index';
