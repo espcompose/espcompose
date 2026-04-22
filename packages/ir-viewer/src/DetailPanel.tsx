@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Box, Chip, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import Tree from 'react-d3-tree';
 import type { RawNodeDatum, RenderCustomNodeElementFn } from 'react-d3-tree';
-import type { IREntry, IRValue, IRReactiveNode, IRExprNode, IRThemeScopeData, TreeNode } from './types';
+import type { IREntry, IRValue, IRReactiveNode, IRExprNode, IRThemeData, TreeNode } from './types';
 
 // ── Shared primitives ──────────────────────────────────────────────────────
 
@@ -541,7 +541,7 @@ function IRReactiveNodeCard({ node }: { node: TreeNode }) {
 }
 
 function ThemeGroupCard({ node }: { node: TreeNode }) {
-  const d = node.data as IRThemeScopeData;
+  const d = node.data as IRThemeData;
   return (
     <>
       <SectionHeader label={node.label} chip={node.chip} chipColor="secondary" />

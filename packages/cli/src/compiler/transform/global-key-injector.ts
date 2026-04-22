@@ -11,7 +11,7 @@
  */
 
 import ts from 'typescript';
-import { isCoreHookCall } from './type-brands.js';
+import { isCoreExportCall } from './type-brands.js';
 import type { TransformDiagnostic } from './script-transformer.js';
 
 interface SourceEdit {
@@ -46,7 +46,7 @@ export function injectGlobalKeys(
       const varName = node.name.text;
 
       // ── useGlobal() — always volatile, inject __key ──────────────
-      if (isCoreHookCall(call, 'useGlobal', checker)) {
+      if (isCoreExportCall(call, 'useGlobal', checker)) {
         const autoKey = `${varName}_${globalCounter++}`;
         const optsArg = call.arguments[1];
 
@@ -66,7 +66,7 @@ export function injectGlobalKeys(
       }
 
       // ── useRetainedGlobal() — validate key is string literal ─────
-      if (isCoreHookCall(call, 'useRetainedGlobal', checker)) {
+      if (isCoreExportCall(call, 'useRetainedGlobal', checker)) {
         // Validate no array types used with retained globals
         const typeArg = call.arguments[0];
         if (typeArg && ts.isStringLiteral(typeArg) && typeArg.text.endsWith('[]')) {

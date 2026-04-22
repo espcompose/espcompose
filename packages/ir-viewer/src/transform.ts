@@ -436,8 +436,8 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
     });
   }
 
-  if (espcompose.themeScopes && espcompose.themeScopes.length > 0) {
-    const scopeChildren = espcompose.themeScopes.map((scope) => {
+  if (espcompose.themes && espcompose.themes.length > 0) {
+    const scopeChildren = espcompose.themes.map((scope) => {
       const leafTokens = Object.entries(scope.leafData);
       return {
         id: uid(`scope_${scope.scopeId}`),
@@ -458,10 +458,10 @@ function buildEspcompose(espcompose: IRData['espcompose']): TreeNode {
     children.push({
       id: uid('themes'),
       label: 'themes',
-      chip: `${espcompose.themeScopes.length} scope${espcompose.themeScopes.length !== 1 ? 's' : ''}`,
+      chip: `${espcompose.themes.length} scope${espcompose.themes.length !== 1 ? 's' : ''}`,
       chipColor: 'secondary',
       nodeKind: 'group',
-      data: espcompose.themeScopes,
+      data: espcompose.themes,
       children: scopeChildren,
     });
   }

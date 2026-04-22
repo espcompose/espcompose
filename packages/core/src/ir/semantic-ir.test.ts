@@ -327,8 +327,8 @@ describe('buildSemanticIR', () => {
       components: [component],
       scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
       reactiveNodes: [],
-      themeScopes: [{
-        kind: 'theme_scope_data',
+      themes: [{
+        kind: 'theme_data',
         scope: 'test',
         scopeId: 'abcd1234',
         themeNames: ['light', 'dark'],
@@ -340,7 +340,7 @@ describe('buildSemanticIR', () => {
     expect(ir.esphome.haEntities).toEqual([entity]);
     expect(ir.esphome.components).toEqual([component]);
     expect(ir.esphome.scripts).toHaveLength(1);
-    expect(ir.espcompose.themeScopes?.[0].themeNames).toEqual(['light', 'dark']);
+    expect(ir.espcompose.themes?.[0].themeNames).toEqual(['light', 'dark']);
   });
 });
 

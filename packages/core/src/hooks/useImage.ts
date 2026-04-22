@@ -37,7 +37,7 @@ function imageCacheKey(props: ImageProps): string {
     props.type,
     props.resize ?? '',
     props.transparency ?? '',
-    props.invertAlpha ?? '',
+    props.invertAlpha ?? false,
     props.dither ?? '',
     props.byteOrder ?? '',
   ]);

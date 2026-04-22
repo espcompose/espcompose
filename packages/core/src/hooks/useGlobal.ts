@@ -27,6 +27,7 @@ import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
 import type { IRDependency, Signal } from '../reactive-node';
 import type { ExprType } from '../ir/expr-types';
 import type { BINDING_BRAND } from '../types';
+import { throwCompileTimeOnly } from '../errors';
 import {
   type GlobalDefinition,
   type GlobalHandle,
@@ -226,10 +227,18 @@ function createGlobalArrayHandle<T>(
 
   const handle = {
     id,
-    get(_index: number): T { return undefined as T; },
-    set(_index: number, _value: T): void { /* action compiler handles this */ },
-    push(_value: T): void { /* action compiler handles this */ },
-    clear(): void { /* action compiler handles this */ },
+    get(_index: number): T {
+      throwCompileTimeOnly('globalArray.get()', 'Array accessors');
+    },
+    set(_index: number, _value: T): void {
+      throwCompileTimeOnly('globalArray.set()', 'Array mutations');
+    },
+    push(_value: T): void {
+      throwCompileTimeOnly('globalArray.push()', 'Array mutations');
+    },
+    clear(): void {
+      throwCompileTimeOnly('globalArray.clear()', 'Array mutations');
+    },
   };
 
   return new Proxy(handle, {

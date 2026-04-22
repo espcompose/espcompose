@@ -15,7 +15,7 @@ import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType } from '@espcompose/core/internals';
 import { getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
-import { isCoreHookCall } from './type-brands.js';
+import { isCoreExportCall } from './type-brands.js';
 
 // ── Array type helpers ───────────────────────────────────────────────────────
 
@@ -453,7 +453,7 @@ export function scanForHAEntities(
 ): void {
   if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
     const init = node.initializer;
-    if (ts.isCallExpression(init) && isCoreHookCall(init, 'useHAEntity', checker)) {
+    if (ts.isCallExpression(init) && isCoreExportCall(init, 'useHAEntity', checker)) {
       if (init.arguments.length >= 1) {
         const firstArg = init.arguments[0];
 
@@ -613,7 +613,7 @@ export function scanForGlobalHandles(
     const init = node.initializer;
     if (ts.isCallExpression(init)) {
       // ── useGlobal('type', opts?) — volatile ────────────────────
-      if (isCoreHookCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
+      if (isCoreExportCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
         const typeArg = init.arguments[0];
         if (ts.isStringLiteral(typeArg)) {
           const cppType = globalTypeToCpp(typeArg.text as GlobalType);
@@ -628,7 +628,7 @@ export function scanForGlobalHandles(
       }
 
       // ── useRetainedGlobal('type', 'key', opts?) — retained ────
-      if (isCoreHookCall(init, 'useRetainedGlobal', checker) && init.arguments.length >= 2) {
+      if (isCoreExportCall(init, 'useRetainedGlobal', checker) && init.arguments.length >= 2) {
         const typeArg = init.arguments[0];
         const keyArg = init.arguments[1];
         if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {

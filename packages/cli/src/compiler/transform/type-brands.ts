@@ -16,6 +16,7 @@ import ts from 'typescript';
 
 const REF_BRAND_RE = /^__@REF_BRAND@\d+$/;
 const BINDING_BRAND_RE = /^__@BINDING_BRAND@\d+$/;
+const THEME_BRAND_RE = /^__@THEME_BRAND@\d+$/;
 
 /**
  * Check whether an alias symbol was declared inside `@espcompose/core`.
@@ -41,15 +42,15 @@ export function isFromEspcomposeCore(symbol: ts.Symbol): boolean {
  * Resolves through import aliases so that `import { useRef as ref }` still
  * matches `isCoreHookCall(callExpr, 'useRef', checker)`.
  */
-export function isCoreHookCall(
+export function isCoreExportCall(
   callExpr: ts.CallExpression,
-  hookName: string | string[],
+  memberName: string | string[],
   checker: ts.TypeChecker,
 ): boolean {
   const callee = callExpr.expression;
   if (!ts.isIdentifier(callee)) return false;
 
-  const names = Array.isArray(hookName) ? hookName : [hookName];
+  const names = Array.isArray(memberName) ? memberName : [memberName];
 
   const sym = checker.getSymbolAtLocation(callee);
   if (!sym) return false;
@@ -60,6 +61,36 @@ export function isCoreHookCall(
     : sym;
 
   if (!names.includes(resolved.name)) return false;
+  return isFromEspcomposeCore(resolved);
+}
+
+/**
+ * Check whether a call expression is `obj.method()` where `obj` resolves to
+ * a specific named export from `@espcompose/core`.
+ *
+ * Resolves through import aliases so that `import { logger as log }` still
+ * matches `isCorePropertyCall(callExpr, 'logger', 'log', checker)`.
+ */
+export function isCorePropertyCall(
+  callExpr: ts.CallExpression,
+  objectName: string,
+  methodName: string,
+  checker: ts.TypeChecker,
+): boolean {
+  if (!ts.isPropertyAccessExpression(callExpr.expression)) return false;
+  if (callExpr.expression.name.text !== methodName) return false;
+
+  const objExpr = callExpr.expression.expression;
+  if (!ts.isIdentifier(objExpr)) return false;
+
+  const sym = checker.getSymbolAtLocation(objExpr);
+  if (!sym) return false;
+
+  const resolved = sym.flags & ts.SymbolFlags.Alias
+    ? checker.getAliasedSymbol(sym)
+    : sym;
+
+  if (resolved.name !== objectName) return false;
   return isFromEspcomposeCore(resolved);
 }
 
@@ -89,6 +120,38 @@ export function hasBindingBrand(type: ts.Type): boolean {
     }
   }
   return false;
+}
+
+/**
+ * Check whether a type carries the THEME_BRAND unique-symbol property.
+ */
+export function hasThemeBrand(type: ts.Type): boolean {
+  for (const prop of type.getProperties()) {
+    if (THEME_BRAND_RE.test(prop.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Extract the literal scope string from a ThemeHandle's `scope` property type.
+ *
+ * The `scope` property is typed as a string literal via the `Scope` generic
+ * (e.g. `readonly scope: 'espcompose:ui'`).  This function reads that literal
+ * value from the type system.
+ *
+ * @returns The scope string, or `undefined` if the type is not a string literal.
+ */
+export function extractThemeScopeFromType(type: ts.Type, checker: ts.TypeChecker): string | undefined {
+  const scopeProp = type.getProperty('scope');
+  if (!scopeProp) return undefined;
+
+  const scopeType = checker.getTypeOfSymbol(scopeProp);
+  if (scopeType.isStringLiteral()) {
+    return scopeType.value;
+  }
+  return undefined;
 }
 
 /**

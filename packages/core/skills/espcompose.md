@@ -4,7 +4,7 @@ Use when generating ESPCompose device code with `@espcompose/core`.
 Covers JSX device configs, hooks, refs, reactive expressions, scripts,
 triggers, action primitives, HA entity bindings, and secrets.
 
-For theme/style system (`createStyles`, `mergeStyles`, `useTheme`, LVGL widget styling),
+For theme/style system (`createTheme`, `handle.use()`, LVGL widget styling),
 see the **espcompose-styling** skill instead.
 
 ---
@@ -178,7 +178,7 @@ Trigger handlers are arrow functions on `on*` props. Use `async` for `await`.
 | Ref action | `lightRef.toggle()`, `switchRef.turnOn()` | Component action YAML |
 | HA action | `entity.toggle()`, `entity.turnOn()` | `homeassistant.action:` |
 | Script call | `await myScript()`, `myScript.execute()`, `myScript.stop()` | `script.execute` / `script.wait` / `script.stop` |
-| Theme switch | `theme.select('dark')` | Internal lambda |
+| Theme switch | `MyTheme.select('dark')` | Internal lambda |
 | Control flow | `if`/`else`, `while`, `for` | Native ESPHome action blocks |
 
 Action primitives and ref actions are **compile-time AST markers** — the functions

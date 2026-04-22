@@ -17,123 +17,124 @@ using esphome::to_string;
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
 
-static const lv_color_t thm_333e4663_colors_background_vals[] = {lv_color_hex(0x121212)};
+static const lv_color_t thm_333e4663_colors_background_vals[] = {lv_color_hex(0x121212), lv_color_hex(0xFAFAFA)};
 Memo<lv_color_t> thm_333e4663_colors_background([]() -> lv_color_t {
   return thm_333e4663_colors_background_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_danger_bg_vals[] = {lv_color_hex(0xE53935)};
+static const lv_color_t thm_333e4663_colors_danger_bg_vals[] = {lv_color_hex(0xE53935), lv_color_hex(0xC62828)};
 Memo<lv_color_t> thm_333e4663_colors_danger_bg([]() -> lv_color_t {
   return thm_333e4663_colors_danger_bg_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_success_bg_vals[] = {lv_color_hex(0x43A047)};
+static const lv_color_t thm_333e4663_colors_success_bg_vals[] = {lv_color_hex(0x43A047), lv_color_hex(0x2E7D32)};
 Memo<lv_color_t> thm_333e4663_colors_success_bg([]() -> lv_color_t {
   return thm_333e4663_colors_success_bg_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_success_bgPressed_vals[] = {lv_color_hex(0x2E7D32)};
+static const lv_color_t thm_333e4663_colors_success_bgPressed_vals[] = {lv_color_hex(0x2E7D32), lv_color_hex(0x1B5E20)};
 Memo<lv_color_t> thm_333e4663_colors_success_bgPressed([]() -> lv_color_t {
   return thm_333e4663_colors_success_bgPressed_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_success_text_vals[] = {lv_color_hex(0xFFFFFF)};
+static const lv_color_t thm_333e4663_colors_success_text_vals[] = {lv_color_hex(0xFFFFFF), lv_color_hex(0xFFFFFF)};
 Memo<lv_color_t> thm_333e4663_colors_success_text([]() -> lv_color_t {
   return thm_333e4663_colors_success_text_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_surfaceAlt_vals[] = {lv_color_hex(0x2C2C2C)};
+static const lv_color_t thm_333e4663_colors_surfaceAlt_vals[] = {lv_color_hex(0x2C2C2C), lv_color_hex(0xF5F5F5)};
 Memo<lv_color_t> thm_333e4663_colors_surfaceAlt([]() -> lv_color_t {
   return thm_333e4663_colors_surfaceAlt_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_textPrimary_vals[] = {lv_color_hex(0xE0E0E0)};
+static const lv_color_t thm_333e4663_colors_textPrimary_vals[] = {lv_color_hex(0xE0E0E0), lv_color_hex(0x212121)};
 Memo<lv_color_t> thm_333e4663_colors_textPrimary([]() -> lv_color_t {
   return thm_333e4663_colors_textPrimary_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_slider_indicator_vals[] = {lv_color_hex(0x1E88E5)};
+static const lv_color_t thm_333e4663_parts_slider_indicator_vals[] = {lv_color_hex(0x1E88E5), lv_color_hex(0x1565C0)};
 Memo<lv_color_t> thm_333e4663_parts_slider_indicator([]() -> lv_color_t {
   return thm_333e4663_parts_slider_indicator_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_slider_knob_vals[] = {lv_color_hex(0xE0E0E0)};
+static const lv_color_t thm_333e4663_parts_slider_knob_vals[] = {lv_color_hex(0xE0E0E0), lv_color_hex(0xFFFFFF)};
 Memo<lv_color_t> thm_333e4663_parts_slider_knob([]() -> lv_color_t {
   return thm_333e4663_parts_slider_knob_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_slider_rail_vals[] = {lv_color_hex(0x3A3A3A)};
+static const lv_color_t thm_333e4663_parts_slider_rail_vals[] = {lv_color_hex(0x3A3A3A), lv_color_hex(0xBDBDBD)};
 Memo<lv_color_t> thm_333e4663_parts_slider_rail([]() -> lv_color_t {
   return thm_333e4663_parts_slider_rail_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_switch_indicator_vals[] = {lv_color_hex(0x1E88E5)};
+static const lv_color_t thm_333e4663_parts_switch_indicator_vals[] = {lv_color_hex(0x1E88E5), lv_color_hex(0x1565C0)};
 Memo<lv_color_t> thm_333e4663_parts_switch_indicator([]() -> lv_color_t {
   return thm_333e4663_parts_switch_indicator_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_switch_knob_vals[] = {lv_color_hex(0xE0E0E0)};
+static const lv_color_t thm_333e4663_parts_switch_knob_vals[] = {lv_color_hex(0xE0E0E0), lv_color_hex(0xFFFFFF)};
 Memo<lv_color_t> thm_333e4663_parts_switch_knob([]() -> lv_color_t {
   return thm_333e4663_parts_switch_knob_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_parts_switch_rail_vals[] = {lv_color_hex(0x3A3A3A)};
+static const lv_color_t thm_333e4663_parts_switch_rail_vals[] = {lv_color_hex(0x3A3A3A), lv_color_hex(0xBDBDBD)};
 Memo<lv_color_t> thm_333e4663_parts_switch_rail([]() -> lv_color_t {
   return thm_333e4663_parts_switch_rail_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_radii_md_vals[] = {8};
+static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
 Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
   return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_sm_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_sm_font_vals[] = {id(r_ref19).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_sm_font_vals[] = {id(r_ref19).get_lv_font(), id(r_ref19).get_lv_font()};
   return thm_333e4663_sizes_sm_font_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_sizes_sm_height_vals[] = {36};
+static const int32_t thm_333e4663_sizes_sm_height_vals[] = {36, 36};
 Memo<int32_t> thm_333e4663_sizes_sm_height([]() -> int32_t {
   return thm_333e4663_sizes_sm_height_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_sizes_sm_paddingX_vals[] = {12};
+static const int32_t thm_333e4663_sizes_sm_paddingX_vals[] = {12, 12};
 Memo<int32_t> thm_333e4663_sizes_sm_paddingX([]() -> int32_t {
   return thm_333e4663_sizes_sm_paddingX_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_lg_vals[] = {24};
+static const int32_t thm_333e4663_spacing_lg_vals[] = {24, 24};
 Memo<int32_t> thm_333e4663_spacing_lg([]() -> int32_t {
   return thm_333e4663_spacing_lg_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_xs_vals[] = {4};
+static const int32_t thm_333e4663_spacing_xs_vals[] = {4, 4};
 Memo<int32_t> thm_333e4663_spacing_xs([]() -> int32_t {
   return thm_333e4663_spacing_xs_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref17).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref17).get_lv_font(), id(r_ref17).get_lv_font()};
   return thm_333e4663_typography_body_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_subtitle([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_subtitle_vals[] = {id(r_ref16).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_subtitle_vals[] = {id(r_ref16).get_lv_font(), id(r_ref16).get_lv_font()};
   return thm_333e4663_typography_subtitle_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref15).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref15).get_lv_font(), id(r_ref15).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
 void select_theme_333e4663(const char* name) {
   if (strcmp(name, "dark") == 0) { theme_index_333e4663.set(0); }
+  else if (strcmp(name, "light") == 0) { theme_index_333e4663.set(1); }
   if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
 }
 

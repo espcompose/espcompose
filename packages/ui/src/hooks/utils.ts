@@ -2,16 +2,20 @@
  * Internal utilities shared by theme-aware hooks.
  * @internal — not part of the public API.
  *
- * Wraps themeLeaf from @espcompose/core, pre-binding the UI scope.
+ * Wraps the UITheme handle, pre-binding the UI scope for themeLeaf access.
  */
 
-import { themeLeaf as coreThemeLeaf } from '@espcompose/core';
-import { UI_THEME_SCOPE } from '../theme/scope';
+import { UITheme } from '../theme/theme';
 
 /**
- * Scoped themeLeaf — automatically uses the UI theme scope.
+ * Scoped themeLeaf — traverses the reactive theme proxy by key path.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function themeLeaf(...path: string[]): any {
-  return coreThemeLeaf(UI_THEME_SCOPE, ...path);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let cursor: any = UITheme.use();
+  for (const key of path) {
+    cursor = cursor?.[key];
+  }
+  return cursor;
 }

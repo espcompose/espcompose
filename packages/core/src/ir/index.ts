@@ -19,7 +19,7 @@ export type {
   IRAction,
   IRSecret,
   IRTriggerVar,
-  IRThemeScopeData,
+  IRThemeData,
   IRScript,
 } from './types';
 

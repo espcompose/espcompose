@@ -7,7 +7,6 @@
 import {
   DisplayRef,
   useRef,
-  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
@@ -18,8 +17,7 @@ import {
   Card,
   Slider,
   Switch,
-  darkTheme,
-  UI_THEME_SCOPE,
+  UITheme,
 } from '@espcompose/ui';
 
 function App() {
@@ -46,7 +44,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme }}>
+        <UITheme.Provider>
           <Screen padding="lg">
             <VStack>
               <Text variant="title" text="Smart Home" />
@@ -69,7 +67,7 @@ function App() {
               </HStack>
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     </esphome>
   );

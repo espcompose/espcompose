@@ -16,8 +16,8 @@ import {
 } from './expr-compiler.js';
 import {
   compileActionBody,
-} from './action-compiler.js';
-import { isRefType, isCoreHookCall } from './type-brands.js';
+} from './action/index.js';
+import { isRefType, isCoreExportCall } from './type-brands.js';
 import { type IRActionNode, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, globalTypeToCpp } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
   const refSymbols = new Set<ts.Symbol>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
-      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useRef', checker)) {
+      if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useRef', checker)) {
         const sym = checker.getSymbolAtLocation(node.name);
         if (sym) {
           refSymbols.add(sym);
@@ -152,7 +152,7 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
   const scriptHandles = new Map<ts.Symbol, string>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
-      if (ts.isCallExpression(node.initializer) && isCoreHookCall(node.initializer, 'useScript', checker)) {
+      if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useScript', checker)) {
         const varName = node.name.text;
         // Use the variable name as the script ID (snake_case)
         const scriptId = varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
@@ -185,7 +185,7 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer)) {
         // ── useGlobal('type', { __key: '...' }) — volatile ────────
-        if (isCoreHookCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
+        if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
           const typeArg = node.initializer.arguments[0];
           if (ts.isStringLiteral(typeArg)) {
             const cppType = globalTypeToCpp(typeArg.text as GlobalType);
@@ -201,7 +201,7 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
         }
 
         // ── useRetainedGlobal('type', 'key', opts?) — retained ───
-        if (isCoreHookCall(node.initializer, 'useRetainedGlobal', checker) && node.initializer.arguments.length >= 2) {
+        if (isCoreExportCall(node.initializer, 'useRetainedGlobal', checker) && node.initializer.arguments.length >= 2) {
           const typeArg = node.initializer.arguments[0];
           const keyArg = node.initializer.arguments[1];
           if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
@@ -264,7 +264,7 @@ function findAndCompileTriggerHandlers(
   }
 
   // useScript(async () => { ... })
-  if (ts.isCallExpression(node) && isCoreHookCall(node, 'useScript', ctx.checker) &&
+  if (ts.isCallExpression(node) && isCoreExportCall(node, 'useScript', ctx.checker) &&
       node.arguments.length >= 1) {
     const arg = node.arguments[0];
     if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {

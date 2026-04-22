@@ -14,15 +14,12 @@ import {
   LvglComponentRef,
   useRef,
   useImage,
-  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
   Text,
   VStack,
-  darkTheme,
-  lightTheme,
-  UI_THEME_SCOPE,
+  UITheme,
 } from '@espcompose/ui';
 
 function App() {
@@ -54,7 +51,7 @@ function App() {
       />
 
       <lvgl ref={lvgl} displays={[displayRef]}>
-        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }}>
+        <UITheme.Provider>
           {/* Boot screen — shown on startup, skipped in page cycling */}
           <Screen skip>
             <VStack align="center">
@@ -74,7 +71,7 @@ function App() {
               <Text variant="title" text="Connected!" />
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     </esphome>
   );

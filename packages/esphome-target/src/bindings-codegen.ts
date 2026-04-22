@@ -120,7 +120,7 @@ export interface ReactiveRuntimeConfig {
   effects: EffectDecl[];
   widgetBindings: WidgetBindingDecl[];
   /** Per-scope theme configurations. */
-  themeScopes?: ThemeScopeConfig[];
+  themes?: ThemeScopeConfig[];
   /** Compiled trigger functions (from device.inline/device.script AST compilation). */
   triggerFunctions?: TriggerFunctionDecl[];
 }
@@ -131,7 +131,7 @@ export interface ReactiveRuntimeConfig {
  * Compute the ESPCOMPOSE_MAX_NODES capacity for the reactive runtime.
  */
 export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
-  const themeScopes = config.themeScopes ?? [];
+  const themeScopes = config.themes ?? [];
   const totalThemeMemos = themeScopes.reduce((sum, sc) => sum + sc.themeMemos.length, 0);
   const themeSignalCount = themeScopes.length; // one theme_index per scope
   const canonicalMemoCount = config.memos.filter(m => m.canonicalIndex == null).length;
@@ -161,7 +161,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   const lines: string[] = [];
 
   // ── Compute subscriber counts for the reactive runtime ──────────────
-  const themeScopes = config.themeScopes ?? [];
+  const themeScopes = config.themes ?? [];
   const allThemeMemos = themeScopes.flatMap(sc => sc.themeMemos);
 
   // Count batched binding Effects (one per unique source group)

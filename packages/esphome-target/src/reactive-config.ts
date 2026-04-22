@@ -145,7 +145,7 @@ export function buildRuntimeConfig(
   bindings: any[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   entities: any[],
-  themeScopes?: ThemeScopeData[],
+  themes?: ThemeScopeData[],
   compiledTriggers?: TriggerFunctionDecl[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   globalComponents?: any[],
@@ -201,8 +201,8 @@ export function buildRuntimeConfig(
   const entityComponentIds = buildEntityComponentIds(entities);
 
   const themeVarNames = new Map<string, string>();
-  if (themeScopes) {
-    for (const scopeData of themeScopes) {
+  if (themes) {
+    for (const scopeData of themes) {
       for (const signalPath of scopeData.leafData.keys()) {
         themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
       }
@@ -336,8 +336,8 @@ export function buildRuntimeConfig(
       valueExpr = `${sigName}.get()`;
       // Look up leaf data from the matching scope
       let leafData: { values: unknown[]; valueType: string } | undefined;
-      if (themeIR?.scope && themePath && themeScopes) {
-        const scopeData = themeScopes.find(s => s.scope === themeIR.scope);
+      if (themeIR?.scope && themePath && themes) {
+        const scopeData = themes.find(s => s.scope === themeIR.scope);
         leafData = scopeData?.leafData.get(themePath);
       }
       // Convert valueType (ExprType) to C++ type; fallback to exprType if available
@@ -370,8 +370,8 @@ export function buildRuntimeConfig(
   const allThemeMemos: ThemeMemoDecl[] = [];
   const themeScopeConfigs: import('./bindings-codegen.js').ThemeScopeConfig[] = [];
 
-  if (themeScopes) {
-    for (const scopeData of themeScopes) {
+  if (themes) {
+    for (const scopeData of themes) {
       if (scopeData.themeNames.length === 0) continue;
       const scopeMemos: ThemeMemoDecl[] = [];
       for (const [signalPath, leaf] of scopeData.leafData) {
@@ -427,7 +427,7 @@ export function buildRuntimeConfig(
     memos,
     effects,
     widgetBindings,
-    themeScopes: filteredScopeConfigs.length > 0 ? filteredScopeConfigs : undefined,
+    themes: filteredScopeConfigs.length > 0 ? filteredScopeConfigs : undefined,
     triggerFunctions: compiledTriggers && compiledTriggers.length > 0 ? compiledTriggers : undefined,
   };
 }
@@ -483,7 +483,7 @@ export function injectReactiveBindingsRuntime(
   }
 
   // Step 5: Inject USE_LVGL_FONT when theme memos contain font_ptr values
-  if (runtimeConfig.themeScopes?.some(sc => sc.themeMemos.some(tm => tm.cppType === 'const lv_font_t*'))) {
+  if (runtimeConfig.themes?.some(sc => sc.themeMemos.some(tm => tm.cppType === 'const lv_font_t*'))) {
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 

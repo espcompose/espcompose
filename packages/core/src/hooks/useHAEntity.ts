@@ -20,6 +20,7 @@ import type { ExprType } from '../ir/expr-types';
 import { registerHAEntity } from './useReactiveScope';
 import { isTracking, trackDependency } from '../reactive-node';
 import { assertHookContext } from './useState';
+import { throwCompileTimeOnly } from '../errors';
 import type {
   LightBinding,
   SensorBinding,
@@ -263,7 +264,7 @@ function createActionProxy<T extends object>(binding: T, _entityId: string, _dom
       const val = Reflect.get(target, prop, receiver);
       if (typeof val === 'function' && typeof prop === 'string') {
         // No-op at runtime — the AST compiler handles HA entity actions.
-        return function actionMethod() { throw Error("Calling binding properties or actions during the render pahse is not supported.") };
+        return function actionMethod() { throwCompileTimeOnly(`entity.${String(prop)}()`, 'HA entity actions'); };
       }
       return val;
     },

@@ -16,15 +16,13 @@
  *   - Theme signals wired through Button internals
  *   - Widget bindings receiving reactive values that traversed 3 component layers
  */
-import { DisplayRef, useRef, useHAEntity, useMemo, theme, ThemeProvider, createLvglWidget } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, useMemo, createLvglWidget } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler, Reactive, LightBinding } from '@espcompose/core';
 import {
   Screen,
   VStack,
   Button,
-  darkTheme,
-  lightTheme,
-  UI_THEME_SCOPE,
+  UITheme,
 } from '@espcompose/ui';
 import type { StatusToken } from '@espcompose/ui';
 
@@ -114,7 +112,7 @@ function App() {
       />
 
       <lvgl displays={[displayRef]}>
-        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+        <UITheme.Provider default="dark">
           <Screen padding="lg">
             <VStack>
               {/* Temperature status — reactive text from sensor */}
@@ -137,11 +135,11 @@ function App() {
               <Button
                 text="Toggle Theme"
                 status="success"
-                onPress={() => { theme.select('espcompose:ui', 'light'); }}
+                onPress={() => { UITheme.select('light'); }}
               />
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     </esphome>
   );

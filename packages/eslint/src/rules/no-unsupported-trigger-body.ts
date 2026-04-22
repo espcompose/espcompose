@@ -157,7 +157,7 @@ export default createRule<[], MessageIds>({
         return branded;
       }
 
-      // Property call: ref.toggle(), logger.log(), theme.select(), props.entity.toggle(), etc.
+      // Property call: ref.toggle(), logger.log(), handle.select(), props.entity.toggle(), etc.
       if (callee.type === 'MemberExpression' && callee.property.type === 'Identifier') {
         const branded = nodeHasBindingBrand(callee.object);
         // If no type info, allow the call

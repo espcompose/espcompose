@@ -8,15 +8,13 @@ import {
   DisplayRef,
   LvglComponentRef,
   useRef,
-  ThemeProvider,
 } from '@espcompose/core';
 import {
   Screen,
   Button,
   Text,
   VStack,
-  darkTheme,
-  UI_THEME_SCOPE,
+  UITheme,
 } from '@espcompose/ui';
 
 function App() {
@@ -43,14 +41,14 @@ function App() {
       />
 
       <lvgl ref={lvgl} displays={[displayRef]}>
-        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme }}>
+        <UITheme.Provider>
           <Screen ref={screenRef} padding="md">
             <VStack>
               <Text variant="title" text="Ref Forwarding" />
               <Button text="Next" onPress={() => { lvgl.pageNext(); }} />
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     </esphome>
   );

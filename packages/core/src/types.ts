@@ -6,6 +6,7 @@ import type { InferReactiveProperties } from './reactive-properties';
 import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
 import { IRReactiveNode } from './reactive-node';
 import { assertHookContext } from './hooks/useState';
+import { throwCompileTimeOnly } from './errors';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -94,6 +95,16 @@ export type IPv4Address = `${number}.${number}.${number}.${number}`;
 // ────────────────────────────────────────────────────────────────────────────
 
 declare const REF_BRAND: unique symbol;
+
+/**
+ * Phantom brand for theme handles.
+ *
+ * Types branded with THEME_BRAND represent compile-time theme
+ * handles created by `createTheme()`. The compiler uses this brand to
+ * detect `handle.select()` calls and extract the scope string from the
+ * handle's literal `scope` property type.
+ */
+export declare const THEME_BRAND: unique symbol;
 
 /**
  * Phantom brand for compile-time binding types.
@@ -197,9 +208,11 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
           }
         }
 
-        // Action method — no-op at runtime; the AST compiler handles
-        // ref action calls (ref.toggle(), ref.turnOn(), etc.) at build time.
-        return function actionMethod() {};
+        // Action method — the AST compiler handles ref action calls
+        // (ref.toggle(), ref.turnOn(), etc.) at build time.
+        return function actionMethod() {
+          throwCompileTimeOnly(`ref.${String(prop)}()`, 'Ref actions');
+        };
       },
     });
   }
