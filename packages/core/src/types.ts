@@ -6,6 +6,7 @@ import type { InferReactiveProperties } from './reactive-properties';
 import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
 import { IRReactiveNode } from './reactive-node';
 import { assertHookContext } from './hooks/useState';
+import { throwCompileTimeOnly } from './errors';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -197,9 +198,11 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
           }
         }
 
-        // Action method — no-op at runtime; the AST compiler handles
-        // ref action calls (ref.toggle(), ref.turnOn(), etc.) at build time.
-        return function actionMethod() {};
+        // Action method — the AST compiler handles ref action calls
+        // (ref.toggle(), ref.turnOn(), etc.) at build time.
+        return function actionMethod() {
+          throwCompileTimeOnly(`ref.${String(prop)}()`, 'Ref actions');
+        };
       },
     });
   }

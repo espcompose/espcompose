@@ -18,6 +18,7 @@ import { flattenTheme } from './signals';
 import type { ThemeLeaf } from './signals';
 import { scopeHash } from './scope-hash';
 import type { BINDING_BRAND } from '../types';
+import { throwCompileTimeOnly } from '../errors';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -183,8 +184,10 @@ export const theme: { readonly [BINDING_BRAND]?: true; select(scope: string, nam
    * @param scope — theme scope identifier
    * @param name  — name of a previously registered theme within that scope
    */
-  // No-op at runtime — the AST compiler handles theme.select() calls
-  // at build time, emitting the appropriate C++ lambda action.
-  select(_scope: string, _name: string): void {},
+  // The AST compiler handles theme.select() calls at build time,
+  // emitting the appropriate C++ lambda action.
+  select(_scope: string, _name: string): void {
+    throwCompileTimeOnly('theme.select()', 'Theme actions');
+  },
 
 };

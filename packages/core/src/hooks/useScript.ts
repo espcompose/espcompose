@@ -25,6 +25,7 @@ import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
 import type { BINDING_BRAND } from '../types';
+import { throwCompileTimeOnly } from '../errors';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
@@ -122,24 +123,30 @@ export function useScript(
 function createScriptHandle(id: string): ScriptHandle {
   const handle = {
     id,
-    execute() { /* compile-time marker — not called at runtime */ },
-    stop() { /* compile-time marker — not called at runtime */ },
-    get isRunning() { return false; },
+    execute() {
+      throwCompileTimeOnly('script.execute()', 'Script actions');
+    },
+    stop() {
+      throwCompileTimeOnly('script.stop()', 'Script actions');
+    },
+    get isRunning(): never {
+      return throwCompileTimeOnly('script.isRunning', 'Script state accessors');
+    },
   };
 
   // Make the handle callable for `await myScript()` syntax.
   // At the AST level, the compiler sees `myScript()` and emits
   // script.execute (+ script.wait if awaited). This function is
   // never actually invoked.
-  const callable = function scriptCall() {
-    return Promise.resolve();
+  const callable = function scriptCall(): never {
+    throwCompileTimeOnly('script()', 'Script calls');
   } as unknown as ScriptHandle & (() => Promise<void>);
 
   Object.defineProperties(callable, {
     id: { value: id, enumerable: true },
     execute: { value: handle.execute, enumerable: true },
     stop: { value: handle.stop, enumerable: true },
-    isRunning: { get: () => false, enumerable: true },
+    isRunning: { get: (): never => throwCompileTimeOnly('script.isRunning', 'Script state accessors'), enumerable: true },
   });
 
   return callable as ScriptHandle;

@@ -8,6 +8,7 @@ import { createContext, withContext } from './useContext';
 import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
 import type { IRDependency, Signal } from '../reactive-node';
 import type { ExprType } from '../ir/expr-types';
+import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
 
 // ── GlobalDefinition ───────────────────────────────────────────────────────
@@ -142,7 +143,7 @@ export function createGlobalHandle<T>(
   const handle = {
     id,
     set(_value: T): void {
-      // No-op at runtime — the action compiler handles this at build time.
+      throwCompileTimeOnly('global.set()', 'Global mutations');
     },
   };
 
