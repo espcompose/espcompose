@@ -124,7 +124,7 @@ export function createComponent<
  *
  * Fixed behaviour (not overridable):
  * - `intents: ['esphome:component']`
- * - `allowedChildIntents: undefined` (pass-through — no child validation)
+ * - `allowedChildIntents: ['esphome:component']`
  *
  * For LVGL widget components, use {@link createLvglWidget} instead.
  *
@@ -140,10 +140,10 @@ export function createComponent<
  */
 export function createEspHomeComponent<P>(
   component: FunctionComponent<P>,
-): IntentComponent<P, readonly ['esphome:component'], undefined, undefined, undefined> {
+): IntentComponent<P, readonly ['esphome:component'], readonly ['esphome:component'], undefined, undefined> {
   return createComponent(component, {
     intents: ['esphome:component'] as const,
-    allowedChildIntents: undefined,
+    allowedChildIntents: ['esphome:component'] as const,
   });
 }
 

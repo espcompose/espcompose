@@ -9,8 +9,7 @@
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
 import { createLvglWidget } from '@espcompose/core';
-import { UITheme } from '../theme/scope';
-import { Theme } from '../theme/types';
+import { UITheme } from '../theme/theme';
 
 export type SwitchProps = WidgetProps<{
   /** Bound value (sensor or entity reference). */
@@ -33,7 +32,7 @@ export type SwitchProps = WidgetProps<{
  */
 export const Switch = createLvglWidget<SwitchProps>(
   (props) => {
-    const theme = UITheme.use() as Theme;
+    const theme = UITheme.use();
 
     return (
         <lvgl-switch

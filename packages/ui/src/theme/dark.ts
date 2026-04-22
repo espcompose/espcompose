@@ -7,12 +7,12 @@
  */
 
 import { createFontToken } from '@espcompose/core';
-import type { Theme } from './types';
+import type { ThemeDefinition } from './types';
 
 // ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
 const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
 
-export const darkTheme: Theme = {
+export const darkTheme: ThemeDefinition = {
   name: 'Dark',
 
   colors: {

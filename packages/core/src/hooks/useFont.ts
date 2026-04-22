@@ -38,7 +38,7 @@ function fontCacheKey(props: FontProps): string {
     props.bpp ?? '',
     props.glyphsets ?? [],
     props.glyphs ?? [],
-    props.ignoreMissingGlyphs ?? '',
+    props.ignoreMissingGlyphs ?? false,
     props.extras ?? [],
   ]);
 }

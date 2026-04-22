@@ -5,7 +5,7 @@
  * Wraps the UITheme handle, pre-binding the UI scope for themeLeaf access.
  */
 
-import { UITheme } from '../theme/scope';
+import { UITheme } from '../theme/theme';
 
 /**
  * Scoped themeLeaf — traverses the reactive theme proxy by key path.

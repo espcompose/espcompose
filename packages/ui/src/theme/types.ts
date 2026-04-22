@@ -1,9 +1,9 @@
 /**
  * Theme type definitions for the LVGL design system.
  *
- * A Theme is a compile-time configuration object that drives all visual
- * token resolution in design system components.  Third parties can create
- * custom themes by implementing this interface.
+ * A ThemeDefinition is the shape/contract that defines the structure of a
+ * theme (tokens, colors, typography, etc.).  Concrete themes such as
+ * `darkTheme` and `lightTheme` are instances that implement it.
  *
  * FontToken, createFontToken, and FONT_TOKEN_BRAND are re-exported from
  * @espcompose/core so that any design system can define font-bearing themes
@@ -69,7 +69,7 @@ export interface ThemeParts {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Theme interface
+// Theme definition
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface ThemeColors {
@@ -99,7 +99,7 @@ export interface ThemeTypography {
   caption: FontToken;
 }
 
-export interface Theme {
+export interface ThemeDefinition {
   /** Human-readable theme name. */
   name: string;
 

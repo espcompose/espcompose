@@ -9,11 +9,11 @@
  */
 
 import { createTheme } from '@espcompose/core';
-import type { Theme } from './types';
+import type { ThemeDefinition } from './types';
 import { darkTheme } from './dark';
 import { lightTheme } from './light';
 
 export const UITheme = createTheme('espcompose:ui', {
   dark: darkTheme,
   light: lightTheme,
-} satisfies Record<string, Theme>);
+} satisfies Record<string, ThemeDefinition>);

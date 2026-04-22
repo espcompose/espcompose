@@ -7,8 +7,8 @@
 import type { WidgetPropsWithChildren } from '@espcompose/core';
 import { createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import { useSpacing } from '../hooks';
-import type { SpacingToken, Theme } from '../theme/types';
-import { UITheme } from '../theme/scope';
+import type { SpacingToken } from '../theme/types';
+import { UITheme } from '../theme/theme';
 
 type ScreenProps = WidgetPropsWithChildren<{
   /** Padding around the page content. Token name. */
@@ -33,7 +33,7 @@ type ScreenProps = WidgetPropsWithChildren<{
 export const Screen = createLvglWidget(
   (props: ScreenProps) => {
     const padding = props.padding != null ? useSpacing(props.padding) : undefined;
-    const theme = UITheme.use() as Theme;
+    const theme = UITheme.use();
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.background;
 
     return (
