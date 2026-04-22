@@ -13,7 +13,11 @@ export type ExprType =
   | 'string'
   | 'bool'
   | 'color'
-  | 'font_ptr';
+  | 'font_ptr'
+  | 'int_array'
+  | 'float_array'
+  | 'string_array'
+  | 'bool_array';
 
 // ── Operator enums ───────────────────────────────────────────────────────────
 
@@ -47,6 +51,14 @@ export type StringMethod =
   | 'toUpperCase' | 'toLowerCase'
   | 'substring' | 'charAt' | 'indexOf'
   | 'trim';
+
+// ── Array method names ───────────────────────────────────────────────────────
+
+export type ArrayMethod =
+  | 'size'
+  | 'get'
+  | 'push_back'
+  | 'clear';
 
 // ── Expression node types ────────────────────────────────────────────────────
 
@@ -195,6 +207,23 @@ export interface IRExprStringMethod {
   readonly args: IRExprNode[];
 }
 
+/** Array element access — handle.get(i) → vec[i] */
+export interface IRExprArrayIndex {
+  readonly kind: 'array_index';
+  readonly array: IRExprNode;
+  readonly index: IRExprNode;
+  readonly elementType: ExprType;
+}
+
+/** Array method call — handle.length → vec.size(), etc. */
+export interface IRExprArrayMethod {
+  readonly kind: 'array_method';
+  readonly method: ArrayMethod;
+  readonly object: IRExprNode;
+  readonly args: IRExprNode[];
+  readonly elementType: ExprType;
+}
+
 // ── Union type ───────────────────────────────────────────────────────────────
 
 export type IRExprNode =
@@ -219,4 +248,6 @@ export type IRExprNode =
   | IRExprTypeCast
   | IRExprFormatString
   | IRExprNullCoalesce
-  | IRExprStringMethod;
+  | IRExprStringMethod
+  | IRExprArrayIndex
+  | IRExprArrayMethod;

@@ -1,0 +1,484 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard-device > dashboard-device > espcompose_reactive.h 1`] = `
+"// espcompose_reactive.h — SolidJS-style fine-grained reactive runtime
+#pragma once
+
+#include <functional>
+#include <cstdint>
+#include <cstring>
+#include <limits>
+#include <string>
+
+#include "esphome/core/component.h"
+#include "esphome/core/hal.h"
+
+#ifndef ESPCOMPOSE_MAX_NODES
+#define ESPCOMPOSE_MAX_NODES 64
+#endif
+
+// Define ESPCOMPOSE_LOG to enable debug logging (requires esphome/core/log.h).
+// Example: add -DESPCOMPOSE_LOG to build_flags in platformio_options.
+#ifdef ESPCOMPOSE_LOG
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_TAG = "espcompose";
+#define ESPCOMPOSE_LOGD(fmt, ...) ESP_LOGD(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#define ESPCOMPOSE_LOGW(fmt, ...) ESP_LOGW(ESPCOMPOSE_TAG, fmt, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_LOGD(...)
+#define ESPCOMPOSE_LOGW(...)
+#endif
+
+namespace espcompose {
+
+class Scheduler;
+
+class NodeBase {
+public:
+  NodeBase(uint8_t order) : order_(order) {}
+  virtual ~NodeBase() = default;
+
+  void mark_dirty();
+  virtual void update() {}
+
+  bool is_dirty() const { return dirty_; }
+  void set_dirty(bool d) { dirty_ = d; }
+
+  NodeBase** subscribers() { return subscribers_; }
+  uint16_t subscriber_count() const { return subscriber_count_; }
+
+  void set_subscriber_storage(NodeBase** buf, uint16_t capacity) {
+    subscribers_ = buf;
+    subscriber_capacity_ = capacity;
+  }
+
+  void add_subscriber(NodeBase* sub) {
+    if (subscribers_ && subscriber_count_ < subscriber_capacity_) {
+      subscribers_[subscriber_count_++] = sub;
+    } else {
+      ESPCOMPOSE_LOGW("subscriber overflow! capacity=%u", (unsigned)subscriber_capacity_);
+    }
+  }
+
+  void set_sources(NodeBase** sources, uint8_t count) {
+    sources_ = sources;
+    source_count_ = count;
+  }
+
+  uint8_t order() const { return order_; }
+
+private:
+  bool dirty_{false};
+  uint8_t order_{0};
+
+  NodeBase** subscribers_{nullptr};
+  uint16_t subscriber_count_{0};
+  uint16_t subscriber_capacity_{0};
+
+  NodeBase** sources_{nullptr};
+  uint8_t source_count_{0};
+};
+
+class Scheduler {
+public:
+  using Hook = void(*)();
+
+  static Scheduler& instance() {
+    static Scheduler s;
+    return s;
+  }
+
+  void set_pre_flush(Hook h) { pre_flush_ = h; }
+  void set_post_flush(Hook h) { post_flush_ = h; }
+  bool has_pending() const { return count_[0] > 0 || count_[1] > 0; }
+
+  void schedule(NodeBase* node) {
+    // While flushing, newly dirtied nodes go to the incoming buffer.
+    // Otherwise they go to the active buffer for the next flush.
+    uint8_t target = flushing_ ? (1 - active_) : active_;
+    if (count_[target] >= ESPCOMPOSE_MAX_NODES) return;
+    for (uint16_t i = 0; i < count_[target]; ++i) {
+      if (buf_[target][i] == node) return;
+    }
+    buf_[target][count_[target]++] = node;
+  }
+
+  bool flush_for_budget_us(uint32_t budget_us) {
+    if (count_[active_] == 0) return true;
+    if (pre_flush_) pre_flush_();
+    flushing_ = true;
+
+    static constexpr int max_passes = 10;
+    const uint32_t start_us = esphome::micros();
+
+    for (int pass = 0; pass < max_passes && count_[active_] > 0; ++pass) {
+      ESPCOMPOSE_LOGD("flush pass %d, %u nodes queued", pass, count_[active_]);
+
+      // Insertion-sort the active buffer by topological order
+      for (uint16_t i = 1; i < count_[active_]; ++i) {
+        NodeBase* key = buf_[active_][i];
+        int j = static_cast<int>(i) - 1;
+        while (j >= 0 && buf_[active_][j]->order() > key->order()) {
+          buf_[active_][j + 1] = buf_[active_][j];
+          --j;
+        }
+        buf_[active_][j + 1] = key;
+      }
+
+      uint16_t count = count_[active_];
+      uint16_t i = 0;
+      for (; i < count; ++i) {
+        if (esphome::micros() - start_us >= budget_us) {
+          break;
+        }
+        NodeBase* node = buf_[active_][i];
+        if (node->is_dirty()) {
+          node->update();
+          node->set_dirty(false);
+        }
+      }
+
+      // Budget exhausted: move unprocessed nodes to the incoming buffer.
+      if (i < count) {
+        uint8_t incoming = 1 - active_;
+        for (; i < count; ++i) {
+          schedule(buf_[active_][i]);
+        }
+      }
+
+      // Swap: incoming becomes active, old active is cleared.
+      count_[active_] = 0;
+      active_ = 1 - active_;
+    }
+
+    flushing_ = false;
+    if (post_flush_) post_flush_();
+    return count_[0] == 0 && count_[1] == 0;
+  }
+
+  void flush() {
+    (void) flush_for_budget_us(std::numeric_limits<uint32_t>::max());
+  }
+
+private:
+  Scheduler() = default;
+  NodeBase* buf_[2][ESPCOMPOSE_MAX_NODES]{};
+  uint16_t count_[2]{0, 0};
+  uint8_t active_{0};
+  bool flushing_{false};
+  Hook pre_flush_{nullptr};
+  Hook post_flush_{nullptr};
+};
+
+inline void NodeBase::mark_dirty() {
+  if (dirty_) return;
+  dirty_ = true;
+  Scheduler::instance().schedule(this);
+  for (uint16_t i = 0; i < subscriber_count_; ++i) {
+    subscribers_[i]->mark_dirty();
+  }
+}
+
+template <typename T>
+class Signal : public NodeBase {
+public:
+  explicit Signal(T initial = T{})
+      : NodeBase(0), value_(std::move(initial)) {}
+
+  const T& get() const { return value_; }
+
+  void set(T val) {
+    if (value_ != val) {
+      ESPCOMPOSE_LOGD("Signal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());
+      value_ = std::move(val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+private:
+  T value_;
+};
+
+/**
+ * BoundSignal<T> — a reactive node that wraps a pointer to external storage.
+ *
+ * Used for ESPHome globals: the GlobalsComponent<T> owns the value, and
+ * BoundSignal points at it. Reads and writes go through the pointer,
+ * avoiding value duplication. The pointer is set via bind() during
+ * bootstrap_runtime(), after ESPHome's setup has restored preferences.
+ */
+template <typename T>
+class BoundSignal : public NodeBase {
+public:
+  BoundSignal() : NodeBase(0) {}
+
+  void bind(T* p) { ptr_ = p; }
+
+  const T& get() const { return *ptr_; }
+
+  /** Mutable reference — for in-place mutation (e.g. vector element assignment). */
+  T& get_mut() { return *ptr_; }
+
+  /** Manually notify subscribers after in-place mutation via get_mut(). */
+  void notify() {
+    for (uint16_t i = 0; i < subscriber_count(); ++i) {
+      subscribers()[i]->mark_dirty();
+    }
+  }
+
+  void set(T val) {
+    if (*ptr_ != val) {
+      ESPCOMPOSE_LOGD("BoundSignal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());
+      *ptr_ = std::move(val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+private:
+  T* ptr_{nullptr};
+};
+
+template <typename T>
+class Memo : public NodeBase {
+public:
+  Memo(std::function<T()> compute, T initial = T{})
+      : NodeBase(1),
+        compute_(std::move(compute)),
+        value_(std::move(initial)) {
+    set_dirty(true);
+  }
+
+  const T& get() {
+    if (is_dirty()) {
+      value_ = compute_();
+      set_dirty(false);
+    }
+    return value_;
+  }
+
+  void update() override {
+    T new_val = compute_();
+    if (new_val != value_) {
+      ESPCOMPOSE_LOGD("Memo value changed, propagating to %u subs", (unsigned)subscriber_count());
+      value_ = std::move(new_val);
+      for (uint16_t i = 0; i < subscriber_count(); ++i) {
+        subscribers()[i]->mark_dirty();
+      }
+    }
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<T()> compute_;
+  T value_;
+};
+
+class Effect : public NodeBase {
+public:
+  explicit Effect(std::function<void()> callback)
+      : NodeBase(255), callback_(std::move(callback)) {
+    set_dirty(true);
+  }
+
+  void update() override {
+    ESPCOMPOSE_LOGD("Effect executing callback");
+    callback_();
+  }
+
+  void wire(NodeBase** sources, uint8_t count) {
+    set_sources(sources, count);
+    for (uint8_t i = 0; i < count; ++i) {
+      sources[i]->add_subscriber(this);
+    }
+  }
+
+private:
+  std::function<void()> callback_;
+};
+
+}  // namespace espcompose
+"
+`;
+
+exports[`dashboard-device > dashboard-device 1`] = `
+"esphome:
+  name: living-room-dashboard
+  friendly_name: Living Room Dashboard
+  comment: A custom Home Assistant dashboard.
+  min_version: 2026.1.0
+esp32:
+  variant: ESP32P4
+  flash_size: 32MB
+  cpu_frequency: 360MHZ
+  framework:
+    type: esp-idf
+    version: latest
+    advanced:
+      enable_idf_experimental_features: true
+esp32_hosted:
+  variant: ESP32C6
+  reset_pin: 54
+  cmd_pin: 19
+  clk_pin: 18
+  d0_pin: 14
+  d1_pin: 15
+  d2_pin: 16
+  d3_pin: 17
+  active_high: true
+psram:
+  mode: hex
+  speed: 200MHz
+preferences:
+  flash_write_interval: 5min
+esp_ldo:
+  voltage: 2.5V
+  channel: "3"
+i2c:
+  id: r_ref0
+  sda: 7
+  scl: 8
+  frequency: 400kHz
+  scan: true
+touchscreen:
+  platform: gt911
+  i2c_id: r_ref0
+  display: r_ref1
+  update_interval: 50ms
+  transform:
+    swap_xy: true
+    mirror_x: true
+    mirror_y: false
+output:
+  id: r_ref2
+  platform: ledc
+  pin: 26
+  frequency: 1000Hz
+light:
+  platform: monochromatic
+  output: r_ref2
+  name: Display Backlight
+  icon: mdi:lightbulb-on
+  restore_mode: ALWAYS_ON
+  default_transition_length:
+    milliseconds: 250
+display:
+  id: r_ref1
+  platform: mipi_dsi
+  model: WAVESHARE-P4-NANO-10.1
+i2s_audio:
+  id: r_ref3
+  i2s_mclk_pin: 13
+  i2s_lrclk_pin: 10
+  i2s_bclk_pin: 12
+audio_dac:
+  platform: es8311
+  i2c_id: r_ref0
+  address: 24
+audio_adc:
+  platform: es7210
+  i2c_id: r_ref0
+  address: 64
+microphone:
+  platform: i2s_audio
+  i2s_audio_id: r_ref3
+  i2s_din_pin: 11
+  sample_rate: 16000
+  bits_per_sample: 16bit
+  adc_type: external
+speaker:
+  - id: r_ref4
+    platform: i2s_audio
+    i2s_audio_id: r_ref3
+    i2s_dout_pin: 9
+    dac_type: external
+    channel: mono
+    buffer_duration: 100ms
+    bits_per_sample: 16bit
+    sample_rate: 48000
+  - platform: mixer
+    output_speaker: r_ref4
+    source_speakers:
+      - id: r_ref5
+        timeout: never
+      - id: r_ref6
+        timeout: never
+  - id: r_ref7
+    platform: resampler
+    output_speaker: r_ref5
+    sample_rate: 48000
+    bits_per_sample: 16
+  - platform: resampler
+    output_speaker: r_ref6
+    sample_rate: 48000
+    bits_per_sample: 16
+rtttl:
+  speaker: r_ref7
+switch:
+  platform: gpio
+  pin: 53
+  name: Speaker Enable
+  icon: mdi:speaker
+  entity_category: config
+  restore_mode: RESTORE_DEFAULT_ON
+wifi:
+  networks:
+    - ssid: HomeWifi
+      password: s3cr3t!!
+  power_save_mode: NONE
+  fast_connect: true
+  ap:
+    password: password1234
+api:
+captive_portal:
+web_server:
+  port: 80
+  version: "3"
+ota:
+  platform: esphome
+logger:
+  level: DEBUG
+  hardware_uart: UART0
+  logs:
+    lvgl: INFO
+binary_sensor:
+  - platform: homeassistant
+    name: Kitchen Floods
+    entity_id: light.kitchen_floods
+    trigger_on_initial_state: true
+  - platform: homeassistant
+    name: Living Room Light
+    entity_id: light.living_room
+    trigger_on_initial_state: true
+  - platform: homeassistant
+    name: Front Door
+    entity_id: binary_sensor.front_door_sensor_window_door_is_open
+    trigger_on_initial_state: true
+  - platform: homeassistant
+    name: Back Door
+    entity_id: binary_sensor.back_door_sensor_window_door_is_open_2
+    trigger_on_initial_state: true
+  - platform: homeassistant
+    name: Living Room Motion
+    entity_id: binary_sensor.living_room_motion_sensor_motion_detection
+    trigger_on_initial_state: true
+lvgl:
+  id: r_ref8
+  displays:
+    - r_ref1
+  rotation: 270
+script:
+  - id: play_click_sound
+    then:
+      - logger.log: Click sound disabled for testing
+"
+`;

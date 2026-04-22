@@ -13,9 +13,25 @@
 
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod } from '@espcompose/core/internals';
-import { getDomainSensorType, hashGlobalFingerprint, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType } from '@espcompose/core/internals';
+import { getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
 import { isCoreHookCall } from './type-brands.js';
+
+// ── Array type helpers ───────────────────────────────────────────────────────
+
+function isArrayExprType(t: ExprType): boolean {
+  return t === 'int_array' || t === 'float_array' || t === 'bool_array' || t === 'string_array';
+}
+
+function arrayElementType(t: ExprType): ExprType {
+  switch (t) {
+    case 'int_array': return 'int';
+    case 'float_array': return 'float';
+    case 'bool_array': return 'bool';
+    case 'string_array': return 'string';
+    default: return 'int';
+  }
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -228,6 +244,14 @@ export function translateScriptExprIR(
         return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
       }
     }
+    // arrayHandle.length → array_method 'size'
+    if (ts.isIdentifier(node.expression) && node.name.text === 'length' && ctx.globalHandlesByName) {
+      const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
+      if (globalInfo && isArrayExprType(globalInfo.exprType)) {
+        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        return { kind: 'array_method', method: 'size', object: globalRead, args: [], elementType: arrayElementType(globalInfo.exprType) };
+      }
+    }
     return null;
   }
 
@@ -303,6 +327,18 @@ export function translateScriptExprIR(
         if (!arg) return null;
         // Default fromType to 'float' in script context
         return { kind: 'type_cast', expr: arg, fromType: 'float', toType: castTarget };
+      }
+    }
+
+    // arrayHandle.get(i) → array_index
+    if (ts.isPropertyAccessExpression(node.expression) && ts.isIdentifier(node.expression.expression) &&
+        node.expression.name.text === 'get' && node.arguments.length === 1 && ctx.globalHandlesByName) {
+      const globalInfo = ctx.globalHandlesByName.get(node.expression.expression.text);
+      if (globalInfo && isArrayExprType(globalInfo.exprType)) {
+        const indexArg = translateScriptExprIR(node.arguments[0], ctx);
+        if (!indexArg) return null;
+        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        return { kind: 'array_index', array: globalRead, index: indexArg, elementType: arrayElementType(globalInfo.exprType) };
       }
     }
 
@@ -540,29 +576,64 @@ export function cppTypeToExprType(cppType: string): ExprType {
       return 'bool';
     case 'std::string':
       return 'string';
+    case 'std::vector<int>':
+      return 'int_array';
+    case 'std::vector<float>':
+      return 'float_array';
+    case 'std::vector<bool>':
+      return 'bool_array';
+    case 'std::vector<std::string>':
+      return 'string_array';
     default:
       return 'int';
   }
 }
 
 /**
- * Scan a TS AST node for useGlobal() calls, populating a symbol → GlobalExprInfo map.
- * Pattern: `const x = useGlobal('int', 'fingerprint', ...)`
+ * Scan a TS AST node for useGlobal() and useRetainedGlobal() calls,
+ * populating a symbol → GlobalExprInfo map.
+ *
+ * Patterns:
+ *   useGlobal('integer', { ... })              — volatile, key from varName + counter
+ *   useRetainedGlobal('integer', 'key', { ... })  — retained, key is positional arg 2
+ *
+ * This scanner runs on the ORIGINAL AST before SourceEdits are applied,
+ * so volatile globals derive their key from the variable name + counter
+ * (same logic as global-key-injector.ts).
  */
 export function scanForGlobalHandles(
   node: ts.Node,
   globals: Map<ts.Symbol, GlobalExprInfo>,
   checker: ts.TypeChecker,
+  _counter?: { value: number },
 ): void {
+  const counter = _counter ?? { value: 0 };
+
   if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
     const init = node.initializer;
     if (ts.isCallExpression(init)) {
-      if (isCoreHookCall(init, 'useGlobal', checker) && init.arguments.length >= 2) {
+      // ── useGlobal('type', opts?) — volatile ────────────────────
+      if (isCoreHookCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
         const typeArg = init.arguments[0];
-        const fingerprintArg = init.arguments[1];
-        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(fingerprintArg)) {
-          const cppType = typeArg.text;
-          const globalId = hashGlobalFingerprint(fingerprintArg.text);
+        if (ts.isStringLiteral(typeArg)) {
+          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const varName = node.name.text;
+          const fingerprint = `${varName}_${counter.value++}`;
+          const globalId = hashGlobalFingerprint(fingerprint);
+          const sym = checker.getSymbolAtLocation(node.name);
+          if (sym) {
+            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+          }
+        }
+      }
+
+      // ── useRetainedGlobal('type', 'key', opts?) — retained ────
+      if (isCoreHookCall(init, 'useRetainedGlobal', checker) && init.arguments.length >= 2) {
+        const typeArg = init.arguments[0];
+        const keyArg = init.arguments[1];
+        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
+          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const globalId = hashGlobalFingerprint(keyArg.text);
           const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
             globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
@@ -571,7 +642,7 @@ export function scanForGlobalHandles(
       }
     }
   }
-  ts.forEachChild(node, child => scanForGlobalHandles(child, globals, checker));
+  ts.forEachChild(node, child => scanForGlobalHandles(child, globals, checker, counter));
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -779,6 +850,20 @@ function compilePropertyAccessIR(
       return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
     }
 
+    // Array global handle .length → array_method 'size'
+    if (globalInfo && propName === 'length' && isArrayExprType(globalInfo.exprType)) {
+      ctx.dependencies.set(`global_${globalInfo.globalId}`, {
+        signalName: `sig_global_${globalInfo.globalId}`,
+        sourceId: globalInfo.globalId,
+        triggerType: 'on_value',
+        sourceDomain: 'globals',
+        valueType: globalInfo.cppType,
+        sourceType: 'global',
+      });
+      const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      return { kind: 'array_method', method: 'size', object: globalRead, args: [], elementType: arrayElementType(globalInfo.exprType) };
+    }
+
     const entity = sym ? ctx.haEntities.get(sym) : undefined;
     if (entity && !entity.isDynamic) {
       const varName = node.expression.text;
@@ -894,6 +979,26 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
       return { kind: 'string_method', method: methodName as StringMethod, object: obj, args };
     }
 
+    // Array handle .get(index) → array_index
+    if (methodName === 'get' && node.arguments.length === 1 && ts.isIdentifier(objectExpr)) {
+      const sym = ctx.checker.getSymbolAtLocation(objectExpr);
+      const globalInfo = sym ? ctx.globals.get(sym) : undefined;
+      if (globalInfo && isArrayExprType(globalInfo.exprType)) {
+        ctx.dependencies.set(`global_${globalInfo.globalId}`, {
+          signalName: `sig_global_${globalInfo.globalId}`,
+          sourceId: globalInfo.globalId,
+          triggerType: 'on_value',
+          sourceDomain: 'globals',
+          valueType: globalInfo.cppType,
+          sourceType: 'global',
+        });
+        const indexArg = compileExprIR(node.arguments[0], ctx);
+        if (indexArg === null) return null;
+        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        return { kind: 'array_index', array: globalRead, index: indexArg, elementType: arrayElementType(globalInfo.exprType) };
+      }
+    }
+
     // .get() on IRReactiveNode<T> → slot (resolved at runtime)
     if (methodName === 'get' && node.arguments.length === 0) {
       const objType = ctx.checker.getTypeAtLocation(objectExpr);
@@ -982,6 +1087,6 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
  * values, this is essentially an identity function with type validation.
  */
 function valueTypeToExprType(valueType: string): ExprType {
-  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown'] as const;
+  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
   return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
 }

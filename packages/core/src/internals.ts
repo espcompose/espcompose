@@ -98,8 +98,11 @@ export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
-export { withGlobalScope, hashGlobalFingerprint } from './hooks/useGlobal';
-export type { GlobalDefinition } from './hooks/useGlobal';
+export { withGlobalScope, hashGlobalFingerprint, cppTypeToExprType } from './hooks/global-shared';
+export type { GlobalDefinition, GlobalHandle } from './hooks/global-shared';
+export { globalTypeToCpp, isArrayGlobalType } from './hooks/useGlobal';
+export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useGlobal';
+export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
@@ -168,13 +171,14 @@ export type {
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
 } from './ir/index';
 export type {
-  ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod,
+  ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
   IRExprBinary, IRExprUnary, IRExprPostfix, IRExprTernary,
   IRExprCall, IRExprConcat, IRExprToString, IRExprGroup,
   IRExprSlot, IRExprResolveFont, IRExprThemeRead,
   IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar,
   IRExprTypeCast, IRExprFormatString, IRExprNullCoalesce, IRExprStringMethod,
+  IRExprArrayIndex, IRExprArrayMethod,
   IRExprNode,
 } from './ir/index';
 
@@ -184,6 +188,7 @@ export type {
   IRNativeAction, IRHAServiceAction, IRLoggerAction, IRDelayAction,
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
+  IRArraySet, IRArrayPush, IRArrayClear,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -193,5 +198,6 @@ export {
   irWaitUntilAction, irIfAction, irWhileAction, irRepeatAction,
   irScriptExecute, irScriptWait, irScriptStop, irThemeSelect,
   irGlobalSet,
+  irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition,
 } from './ir/index';

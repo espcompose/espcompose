@@ -215,6 +215,16 @@ public:
 
   const T& get() const { return *ptr_; }
 
+  /** Mutable reference — for in-place mutation (e.g. vector element assignment). */
+  T& get_mut() { return *ptr_; }
+
+  /** Manually notify subscribers after in-place mutation via get_mut(). */
+  void notify() {
+    for (uint16_t i = 0; i < subscriber_count(); ++i) {
+      subscribers()[i]->mark_dirty();
+    }
+  }
+
   void set(T val) {
     if (*ptr_ != val) {
       ESPCOMPOSE_LOGD("BoundSignal.set() changed, notifying %u subscribers", (unsigned)subscriber_count());

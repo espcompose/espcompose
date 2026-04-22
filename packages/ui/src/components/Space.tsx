@@ -47,19 +47,16 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
   const gapKey = isRow ? 'columnGap' : 'rowGap';
   const gap = props.gap != null ? useSpacing(props.gap) : undefined;
   const padding = props.padding != null ? useSpacing(props.padding) : props.style?.padding;
-  const borderRadius = props.style?.borderRadius;
 
   return (
       <lvgl-obj
         style={{
+          ...props.style,
           width: props.style?.width ?? '100%',
           height: props.style?.height ?? 'fit-content',
           padding: padding,
-          backgroundColor: props.style?.backgroundColor,
           backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
-          borderRadius: borderRadius,
           borderWidth: props.style?.borderWidth ?? 0,
-          borderColor: props.style?.borderColor,
           scrollbarMode: 'off',
           display: 'flex',
           flexDirection: flexDir,

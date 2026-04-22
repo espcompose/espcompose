@@ -1,9 +1,9 @@
-import { useGlobal, useRef, useMemo, logger } from '@espcompose/core';
+import { useRetainedGlobal, useRef, useMemo, logger } from '@espcompose/core';
 import type { DisplayRef } from '@espcompose/core';
 
 function App() {
   const displayRef = useRef<DisplayRef>();
-  const counter = useGlobal<number>('int', 'my-counter', { initialValue: 0, restoreValue: true });
+  const counter = useRetainedGlobal('integer', 'my-counter', { initialValue: 0 });
 
   // Reactive expression that reads the global — exercises BoundSignal + global_read
   const counterText = useMemo(() => `Count: ${counter.value}`);

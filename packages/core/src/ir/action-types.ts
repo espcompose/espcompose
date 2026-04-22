@@ -119,6 +119,30 @@ export interface IRGlobalSet {
   value: IRActionParam | IRExprNode;
 }
 
+/** Array element set: handle.set(index, value) → vec[i] = val */
+export interface IRArraySet {
+  kind: 'array_set';
+  globalId: string;
+  cppType: string;
+  index: IRActionParam | IRExprNode;
+  value: IRActionParam | IRExprNode;
+}
+
+/** Array push: handle.push(value) → vec.push_back(val) */
+export interface IRArrayPush {
+  kind: 'array_push';
+  globalId: string;
+  cppType: string;
+  value: IRActionParam | IRExprNode;
+}
+
+/** Array clear: handle.clear() → vec.clear() */
+export interface IRArrayClear {
+  kind: 'array_clear';
+  globalId: string;
+  cppType: string;
+}
+
 // ── Discriminated Union ────────────────────────────────────────────────────
 
 export type IRActionNode =
@@ -134,7 +158,10 @@ export type IRActionNode =
   | IRScriptWait
   | IRScriptStop
   | IRThemeSelect
-  | IRGlobalSet;
+  | IRGlobalSet
+  | IRArraySet
+  | IRArrayPush
+  | IRArrayClear;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -258,6 +285,18 @@ export function irThemeSelect(scope: string, scopeId: string, themeName: string)
 
 export function irGlobalSet(globalId: string, cppType: string, value: IRActionParam | IRExprNode): IRGlobalSet {
   return { kind: 'global_set', globalId, cppType, value };
+}
+
+export function irArraySet(globalId: string, cppType: string, index: IRActionParam | IRExprNode, value: IRActionParam | IRExprNode): IRArraySet {
+  return { kind: 'array_set', globalId, cppType, index, value };
+}
+
+export function irArrayPush(globalId: string, cppType: string, value: IRActionParam | IRExprNode): IRArrayPush {
+  return { kind: 'array_push', globalId, cppType, value };
+}
+
+export function irArrayClear(globalId: string, cppType: string): IRArrayClear {
+  return { kind: 'array_clear', globalId, cppType };
 }
 
 export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
