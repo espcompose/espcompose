@@ -1,5 +1,32 @@
 # @espcompose/eslint
 
+## 0.5.0
+
+### Patch Changes
+
+- [#36](https://github.com/espcompose/espcompose/pull/36) [`9248ec8`](https://github.com/espcompose/espcompose/commit/9248ec832b017c2d1d56911540fbb750757ddd15) Thanks [@xmlguy74](https://github.com/xmlguy74)! - ## `useGlobal` hook support
+
+  Added support for the `useGlobal` hook, which binds a reactive signal to an ESPHome `globals` component. A new `'global'` source type is recognised in `IRDependency`, and the compiler emits the corresponding `IRGlobalSet` action. The C++ reactive runtime (`espcompose_reactive.h`), bindings codegen, action lowering, and reactive config have all been updated to support global variables. An E2E test project (`globals-device`) is included.
+
+  ## Lint worker thread
+
+  The lint compiler phase now runs in a dedicated worker thread (`lint-worker.ts`), reducing blocking time on the main thread and improving overall CLI build performance.
+
+  ## CLI metrics
+
+  A lightweight `metrics` utility has been added to the CLI, recording per-phase timing information that can be used for performance analysis and reporting.
+
+  ## Removed `WidgetHost`
+
+  The internal `WidgetHost` component has been removed from `@espcompose/core`. All UI components (Button, Card, Dropdown, Grid, Image, Row, Slider, Space, Spinner, Switch, Text) have been updated accordingly. A missing `transparent` style on the EC canvas target has also been fixed.
+
+  ## Dead code removal and hook detection improvements
+
+  Removed unused semantic-analysis code. Improved hook detection logic in the compiler to more accurately identify reactive hooks in component trees.
+
+- Updated dependencies [[`7cf28c5`](https://github.com/espcompose/espcompose/commit/7cf28c582f219f6c493bd14886ed0fdcbe187781), [`9248ec8`](https://github.com/espcompose/espcompose/commit/9248ec832b017c2d1d56911540fbb750757ddd15)]:
+  - @espcompose/core@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
