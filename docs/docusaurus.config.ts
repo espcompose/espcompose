@@ -1,7 +1,12 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
-import type { ThemeConfig as MermaidThemeConfig } from "@docusaurus/theme-mermaid";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const corePackageJson = JSON.parse(
+  readFileSync(resolve(__dirname, "../packages/core/package.json"), "utf-8"),
+);
 
 const config: Config = {
   title: "ESPCompose",
@@ -16,6 +21,10 @@ const config: Config = {
   trailingSlash: false,
 
   onBrokenLinks: "throw",
+
+  customFields: {
+    coreVersion: corePackageJson.version,
+  },
 
   markdown: {
     mermaid: true,
