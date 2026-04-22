@@ -27,7 +27,7 @@ export interface CppBackendResult {
  * no themes).
  */
 export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
-  const { reactive, themeScopes } = ir.espcompose;
+  const { reactive, themes } = ir.espcompose;
 
   // Extract globals from components (section === 'globals')
   const globalComponents = ir.esphome.components.filter(c => c.section === 'globals');
@@ -35,7 +35,7 @@ export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
   const hasReactiveContent = reactive.bindings.length > 0
     || reactive.memos.length > 0
     || reactive.effects.length > 0
-    || (themeScopes != null && themeScopes.length > 0);
+    || (themes != null && themes.length > 0);
 
   if (!hasReactiveContent) return null;
 
@@ -43,7 +43,7 @@ export function generateCppFromIR(ir: SemanticIR): CppBackendResult | null {
     [...reactive.memos, ...reactive.effects],
     reactive.bindings,
     ir.esphome.haEntities,
-    themeScopes,
+    themes,
     [],
     globalComponents,
   );

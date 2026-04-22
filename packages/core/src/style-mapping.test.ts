@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { expandCssProps, expandCssStyle } from './style-mapping';
-import { mergeStyles } from './theme/create-styles';
-import type { CssStyle } from './style-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // expandCssProps — single-level CSS → LVGL mapping
@@ -472,93 +470,6 @@ describe('expandCssStyle', () => {
       focused: { borderColor: '#00F' },
       disabled: { opa: 'TRANSP' },
     });
-  });
-});
-
-// ────────────────────────────────────────────────────────────────────────────
-// mergeStyles — multi-style merging with last-wins
-// ────────────────────────────────────────────────────────────────────────────
-
-describe('mergeStyles', () => {
-  it('merges direct properties with last-wins', () => {
-    const result = mergeStyles(
-      { backgroundColor: '#AAA' } as CssStyle,
-      { backgroundColor: '#BBB' } as CssStyle,
-    );
-    expect(result.backgroundColor).toBe('#BBB');
-  });
-
-  it('combines non-overlapping properties', () => {
-    const result = mergeStyles(
-      { backgroundColor: '#AAA' } as CssStyle,
-      { padding: 10 } as CssStyle,
-    );
-    expect(result).toEqual({
-      backgroundColor: '#AAA',
-      padding: 10,
-    });
-  });
-
-  it('deep-merges state sub-objects', () => {
-    const result = mergeStyles(
-      {
-        pressed: { backgroundColor: '#AAA', padding: 4 },
-      } as CssStyle,
-      {
-        pressed: { backgroundColor: '#BBB', opacity: 'opaque' },
-      } as CssStyle,
-    );
-    expect(result.pressed).toEqual({
-      backgroundColor: '#BBB',
-      padding: 4,
-      opacity: 'opaque',
-    });
-  });
-
-  it('deep-merges part sub-objects with states', () => {
-    const result = mergeStyles(
-      {
-        indicator: {
-          backgroundColor: '#AAA',
-          pressed: { opacity: 'opaque' },
-        },
-      } as CssStyle,
-      {
-        indicator: {
-          backgroundColor: '#BBB',
-          pressed: { backgroundColor: '#CCC' },
-        },
-      } as CssStyle,
-    );
-    expect(result.indicator).toEqual({
-      backgroundColor: '#BBB',
-      pressed: { opacity: 'opaque', backgroundColor: '#CCC' },
-    });
-  });
-
-  it('skips undefined and falsy entries', () => {
-    const result = mergeStyles(
-      { backgroundColor: '#AAA' } as CssStyle,
-      undefined,
-      null,
-      false,
-      { padding: 10 } as CssStyle,
-    );
-    expect(result).toEqual({
-      backgroundColor: '#AAA',
-      padding: 10,
-    });
-  });
-
-  it('returns empty object for no inputs', () => {
-    const result = mergeStyles();
-    expect(result).toEqual({});
-  });
-
-  it('handles single style', () => {
-    const s: CssStyle = { backgroundColor: '#AAA', padding: 10 };
-    const result = mergeStyles(s);
-    expect(result).toEqual({ backgroundColor: '#AAA', padding: 10 });
   });
 });
 

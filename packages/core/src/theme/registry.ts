@@ -1,24 +1,18 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Theme registry — compile-time theme registration + theme.select() API
+// Theme registry — compile-time theme registration
 //
-// Themes are registered during the render pass (via <ThemeProvider>).
+// Themes are registered during the render pass (via ThemeHandle.Provider).
 // Each design-system library registers themes under its own scope string
 // (e.g. 'espcompose:ui', 'lcars').  Each scope is fully isolated: its own
 // theme names, default, and leaf signal paths.
 //
 // The registry stores flattened leaf maps per scope.  The compiler reads
 // the registry after render to generate per-scope C++ theme value arrays.
-//
-// theme.select(scope, name) — called inside trigger handler bodies /
-// useScript() to push a theme-switch action that sets the scoped
-// theme_index signal.
 // ────────────────────────────────────────────────────────────────────────────
 
 import { flattenTheme } from './signals';
 import type { ThemeLeaf } from './signals';
 import { scopeHash } from './scope-hash';
-import type { BINDING_BRAND } from '../types';
-import { throwCompileTimeOnly } from '../errors';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -164,30 +158,3 @@ export function clearThemeRegistry(): void {
 export function registerTheme(scope: string, name: string, themeObj: Record<string, unknown>): void {
   registry.register(scope, name, themeObj);
 }
-
-// ── theme.select() API ─────────────────────────────────────────────────────
-
-/**
- * Theme action namespace.
- *
- * @example
- * <Button onPress={() => { theme.select('espcompose:ui', 'light'); }} />
- */
-export const theme: { readonly [BINDING_BRAND]?: true; select(scope: string, name: string): void } = {
-  /**
-   * Switch the active theme at runtime within a scope.
-   *
-   * Must be called inside a trigger handler body — it pushes a C++ lambda
-   * action that sets the scoped theme_index signal and flushes the reactive
-   * graph.
-   *
-   * @param scope — theme scope identifier
-   * @param name  — name of a previously registered theme within that scope
-   */
-  // The AST compiler handles theme.select() calls at build time,
-  // emitting the appropriate C++ lambda action.
-  select(_scope: string, _name: string): void {
-    throwCompileTimeOnly('theme.select()', 'Theme actions');
-  },
-
-};

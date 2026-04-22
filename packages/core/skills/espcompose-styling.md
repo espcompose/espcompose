@@ -2,8 +2,8 @@
 
 Use when styling LVGL widgets, creating reusable style sheets, or
 implementing theme switching with `@espcompose/core` and `@espcompose/ui`.
-Covers `CssStyle` props, state/part nesting, `createStyles`, `mergeStyles`,
-`registerTheme`, `useTheme`, and `theme.select()`.
+Covers `CssStyle` props, state/part nesting,
+`createTheme`, `handle.use()`, and `handle.select()`.
 
 For device config, hooks, refs, scripts, triggers, and action primitives,
 see the **espcompose** skill instead.
@@ -151,110 +151,72 @@ Available parts: `indicator`, `knob`, `scrollbar`, `selected`, `items`,
 
 ---
 
-## `createStyles(factory)`
-
-Create reusable style sheets from a factory that receives the reactive theme proxy.
-Theme property access inside the factory produces `IRReactiveNode` values for
-reactive theme binding.
-
-```tsx
-import { createStyles } from '@espcompose/core';
-
-const s = createStyles(theme => ({
-  card: {
-    backgroundColor: theme.colors.surface,
-    padding: theme.spacing.md,
-    borderRadius: theme.radii.md,
-  },
-  title: {
-    color: theme.colors.textPrimary,
-  },
-}));
-
-// Usage
-<lvgl-obj style={s.card}>
-  <lvgl-label style={s.title} text="Hello" />
-</lvgl-obj>
-```
-
----
-
-## `mergeStyles(...styles)`
-
-Combine multiple `CssStyle` objects. Last-wins for direct properties.
-State and part sub-objects are deep-merged. `undefined`/`false`/`null`
-entries are skipped (safe for conditionals).
-
-```tsx
-import { mergeStyles } from '@espcompose/core';
-
-<lvgl-button style={mergeStyles(
-  s.button,
-  isActive && s.buttonActive,
-  { padding: 12 },
-)} />
-```
-
----
-
 ## Theme System
 
-### Register Themes
+### Define a Theme Scope
 
-Register named themes via `registerTheme()` or `<ThemeProvider>` from `@espcompose/core`.
-The first registered theme is the default.
+Use `createTheme()` to define a theme scope with named theme variants.
+Returns a `ThemeHandle` with `.Provider`, `.select()`, `.use()`, `.extend()`.
 
 ```tsx
-import { registerTheme } from '@espcompose/core';
+import { createTheme } from '@espcompose/core';
 
-registerTheme('dark', {
-  colors: { surface: '#1E1E1E', textPrimary: '#FFFFFF' },
-  spacing: { sm: 4, md: 8, lg: 16 },
-});
-registerTheme('light', {
-  colors: { surface: '#FFFFFF', textPrimary: '#1E1E1E' },
-  spacing: { sm: 4, md: 8, lg: 16 },
+const MyTheme = createTheme('my:scope', {
+  dark: {
+    colors: { surface: '#1E1E1E', textPrimary: '#FFFFFF' },
+    spacing: { sm: 4, md: 8, lg: 16 },
+  },
+  light: {
+    colors: { surface: '#FFFFFF', textPrimary: '#1E1E1E' },
+    spacing: { sm: 4, md: 8, lg: 16 },
+  },
 });
 ```
 
-Or with `@espcompose/ui`:
+Or use the built-in `@espcompose/ui` theme:
 
 ```tsx
-import { ThemeProvider } from '@espcompose/core';
-import { darkTheme, lightTheme } from '@espcompose/ui';
+import { UITheme } from '@espcompose/ui';
 
-<ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+<UITheme.Provider default="dark">
   {/* children */}
-</ThemeProvider>
+</UITheme.Provider>
 ```
 
 ### Access Theme Reactively
 
-`useTheme()` returns a deep proxy. Leaf property access produces `IRReactiveNode`
-values with auto-dependency tracking for `useMemo()` and `createStyles()`.
+`handle.use()` returns a deep proxy. Leaf property access produces `IRReactiveNode`
+values with auto-dependency tracking for `useMemo()`.
 
 ```tsx
-import { useTheme } from '@espcompose/core';
-
-const theme = useTheme();
+const theme = MyTheme.use();
 // theme.colors.surface → IRReactiveNode (reactive, auto-tracked)
 ```
 
 ### Switch Themes at Runtime
 
-Call `theme.select(name)` inside trigger handlers or scripts.
+Call `handle.select(name)` inside trigger handlers or scripts.
 
 ```tsx
-import { theme } from '@espcompose/core';
-
-<lvgl-button onPress={() => { theme.select('light'); }}>
+<lvgl-button onPress={() => { MyTheme.select('light'); }}>
   <lvgl-label text="Light Mode" />
 </lvgl-button>
 ```
 
 The compiler emits C++ theme value arrays and a `theme_index` signal.
-`theme.select()` compiles to setting `theme_index` → all theme-bound
+`handle.select()` compiles to setting `theme_index` → all theme-bound
 memos re-evaluate reactively.
+
+### Extend a Theme Scope
+
+Use `handle.extend()` to add or override themes in a library's scope
+without knowing scope strings.
+
+```tsx
+const MyExtended = UITheme.extend({
+  ocean: { colors: { ... }, spacing: { ... } },
+});
+```
 
 ---
 
@@ -268,7 +230,5 @@ memos re-evaluate reactively.
   reactive nodes. Intermediate paths (e.g. `theme.colors`) return nested proxies.
 - **`createStyles` must be called in render pass.** It calls `useTheme()` internally,
   so it follows the same hook rules.
-- **`mergeStyles` deep-merges parts/states.** Direct props are last-wins, but nested
-  state and part objects are merged recursively.
 - **All style properties accept `Reactive<T>`.** You can bind any style prop to a
   reactive value (ref property, memo, theme leaf).

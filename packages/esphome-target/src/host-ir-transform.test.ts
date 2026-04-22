@@ -437,8 +437,8 @@ describe('transformIRForHost', () => {
         memos: [],
         effects: [],
       },
-      themeScopes: [{
-        kind: 'theme_scope_data',
+      themes: [{
+        kind: 'theme_data',
         scope: 'test',
         scopeId: 'abc12345',
         themeNames: ['dark'],

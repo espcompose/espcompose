@@ -33,7 +33,7 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
 } from './types';
-export { BINDING_BRAND, useRef, isRef } from './types';
+export { BINDING_BRAND, THEME_BRAND, useRef, isRef } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
@@ -89,8 +89,14 @@ export { useReactive, useReactiveMap } from './reactive-utils';
 // Public API — Theme
 // ────────────────────────────────────────────────────────────────────────────
 
-export { registerTheme, getThemeRegistry, theme } from './theme/registry';
-export { useTheme } from './theme/reactive-proxy';
+// createTheme — typed theme handle factory
+export { createTheme } from './theme/create-theme';
+export type { ThemeHandle, ThemeProviderProps } from './theme/create-theme';
+
+// Theme — registry (internal, re-exported for compiler phases)
+export { getThemeRegistry } from './theme/registry';
+
+// Theme — scope hashing (internal, re-exported for compiler phases)
 export { scopeHash } from './theme/scope-hash';
 
 // Theme — font tokens
@@ -101,23 +107,12 @@ export type { FontToken, FontBpp } from './theme/font-token';
 export { isHexColor } from './theme/hex-color';
 export type { HexColor } from './theme/hex-color';
 
-// Theme — font resolver
-export { collectThemeFonts, substituteThemeFonts } from './theme/font-resolver';
-
-// Theme — leaf accessor
-export { themeLeaf } from './theme/theme-leaf';
-
-// Theme — ThemeProvider component
-export { ThemeProvider } from './theme/ThemeProvider';
-export type { ThemeProviderProps } from './theme/ThemeProvider';
-
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
 export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage } from './style-types';
 export { expandCssStyle } from './style-mapping';
-export { createStyles, mergeStyles } from './theme/create-styles';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Wireframe

@@ -97,6 +97,16 @@ export type IPv4Address = `${number}.${number}.${number}.${number}`;
 declare const REF_BRAND: unique symbol;
 
 /**
+ * Phantom brand for theme handles.
+ *
+ * Types branded with THEME_BRAND represent compile-time theme
+ * handles created by `createTheme()`. The compiler uses this brand to
+ * detect `handle.select()` calls and extract the scope string from the
+ * handle's literal `scope` property type.
+ */
+export declare const THEME_BRAND: unique symbol;
+
+/**
  * Phantom brand for compile-time binding types.
  *
  * Types branded with BINDING_BRAND represent compiler-understood constructs

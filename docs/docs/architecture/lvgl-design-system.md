@@ -117,7 +117,7 @@ This compiles to:
 | Source | Hook | Description |
 |--------|------|-------------|
 | Home Assistant entities | `useHAEntity()` | Typed signal properties for sensors, lights, switches, etc. |
-| Theme tokens | `useTheme()` | Reactive access to the current theme values |
+| Theme tokens | `handle.use()` | Reactive access to the current theme values |
 | Derived values | `useMemo()` | Computed values that track their dependencies |
 
 ### Event → Action Model
@@ -211,22 +211,21 @@ The `style` prop on any component accepts CSS-like layout properties (`display`,
 Themes are registered at compile time and switchable at runtime:
 
 ```tsx
-import { ThemeProvider } from '@espcompose/core';
-import { darkTheme, lightTheme } from '@espcompose/ui';
+import { UITheme } from '@espcompose/ui';
 
-<ThemeProvider themes={{ dark: darkTheme, light: lightTheme }} default="dark">
+<UITheme.Provider default="dark">
   <Screen>
     <Button
       text="Switch to Light"
-      onPress={async () => { theme.select('light'); }}
+      onPress={async () => { UITheme.select('light'); }}
     />
   </Screen>
-</ThemeProvider>
+</UITheme.Provider>
 ```
 
 Inside components, theme values are reactive:
 ```tsx
-const thm = useTheme();
+const thm = UITheme.use();
 const bgColor = thm.colors.primary.bg;  // Reactive — updates when theme changes
 ```
 
@@ -276,7 +275,7 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 |------|-------------|
 | `useHAEntity(entityId)` | Bind to a Home Assistant entity; returns typed signal properties |
 | `useMemo(fn)` | Derive a value from reactive sources |
-| `useTheme()` | Access reactive theme token values |
+| `handle.use()` | Access reactive theme token values |
 | `useRef<T>()` | Create a typed cross-component reference |
 | `useScript(fn)` | Define a named ESPHome script from an async arrow function |
 | `useImage(path)` | Register an image asset |
@@ -327,7 +326,7 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 ```tsx
 import { useHAEntity, useMemo, secret } from '@espcompose/core';
 import {
-  ThemeProvider, darkTheme, Screen, VStack, HStack, Card,
+  UITheme, Screen, VStack, HStack, Card,
   Text, Slider, Switch, SensorText,
 } from '@espcompose/ui';
 
@@ -341,7 +340,7 @@ function App() {
       <wifi ssid={secret('wifi_ssid')} password={secret('wifi_password')} />
       <api />
       <lvgl>
-        <ThemeProvider themes={{ dark: darkTheme }} default="dark">
+        <UITheme.Provider default="dark">
           <Screen>
             <VStack gap="lg" padding="lg">
               <Card>
@@ -369,7 +368,7 @@ function App() {
               </Card>
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     </esphome>
   );

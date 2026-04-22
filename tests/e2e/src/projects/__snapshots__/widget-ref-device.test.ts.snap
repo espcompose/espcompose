@@ -17,63 +17,64 @@ using esphome::to_string;
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
 
-static const lv_color_t thm_333e4663_colors_background_vals[] = {lv_color_hex(0x121212)};
+static const lv_color_t thm_333e4663_colors_background_vals[] = {lv_color_hex(0x121212), lv_color_hex(0xFAFAFA)};
 Memo<lv_color_t> thm_333e4663_colors_background([]() -> lv_color_t {
   return thm_333e4663_colors_background_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_primary_bg_vals[] = {lv_color_hex(0x1E88E5)};
+static const lv_color_t thm_333e4663_colors_primary_bg_vals[] = {lv_color_hex(0x1E88E5), lv_color_hex(0x1565C0)};
 Memo<lv_color_t> thm_333e4663_colors_primary_bg([]() -> lv_color_t {
   return thm_333e4663_colors_primary_bg_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_primary_bgPressed_vals[] = {lv_color_hex(0x1565C0)};
+static const lv_color_t thm_333e4663_colors_primary_bgPressed_vals[] = {lv_color_hex(0x1565C0), lv_color_hex(0x0D47A1)};
 Memo<lv_color_t> thm_333e4663_colors_primary_bgPressed([]() -> lv_color_t {
   return thm_333e4663_colors_primary_bgPressed_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_primary_text_vals[] = {lv_color_hex(0xFFFFFF)};
+static const lv_color_t thm_333e4663_colors_primary_text_vals[] = {lv_color_hex(0xFFFFFF), lv_color_hex(0xFFFFFF)};
 Memo<lv_color_t> thm_333e4663_colors_primary_text([]() -> lv_color_t {
   return thm_333e4663_colors_primary_text_vals[theme_index_333e4663.get()];
 });
 
-static const lv_color_t thm_333e4663_colors_textPrimary_vals[] = {lv_color_hex(0xE0E0E0)};
+static const lv_color_t thm_333e4663_colors_textPrimary_vals[] = {lv_color_hex(0xE0E0E0), lv_color_hex(0x212121)};
 Memo<lv_color_t> thm_333e4663_colors_textPrimary([]() -> lv_color_t {
   return thm_333e4663_colors_textPrimary_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_radii_md_vals[] = {8};
+static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
 Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
   return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref8).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref8).get_lv_font(), id(r_ref8).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_sizes_md_height_vals[] = {44};
+static const int32_t thm_333e4663_sizes_md_height_vals[] = {44, 44};
 Memo<int32_t> thm_333e4663_sizes_md_height([]() -> int32_t {
   return thm_333e4663_sizes_md_height_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_sizes_md_paddingX_vals[] = {16};
+static const int32_t thm_333e4663_sizes_md_paddingX_vals[] = {16, 16};
 Memo<int32_t> thm_333e4663_sizes_md_paddingX([]() -> int32_t {
   return thm_333e4663_sizes_md_paddingX_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref6).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref6).get_lv_font(), id(r_ref6).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
 void select_theme_333e4663(const char* name) {
   if (strcmp(name, "dark") == 0) { theme_index_333e4663.set(0); }
+  else if (strcmp(name, "light") == 0) { theme_index_333e4663.set(1); }
   if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
 }
 

@@ -10,7 +10,6 @@ import {
   LvglComponentRef,
   Ref,
   useRef,
-  ThemeProvider,
   createLvglWidget,
   createEspHomeComponent,
 } from '@espcompose/core';
@@ -19,9 +18,7 @@ import {
   Button,
   Text,
   VStack,
-  darkTheme,
-  lightTheme,
-  UI_THEME_SCOPE,
+  UITheme,
 } from '@espcompose/ui';
 
 interface UIProps {
@@ -58,7 +55,7 @@ const UI = createEspHomeComponent(
     const screen1Ref = useRef();
     return (
       <lvgl ref={props.lvgl} displays={[props.display]}>
-        <ThemeProvider scope={UI_THEME_SCOPE} themes={{ dark: darkTheme, light: lightTheme }}>
+        <UITheme.Provider>
           <Screen ref={screen1Ref}>
             <VStack>
               <Text variant="title" text="Page 1" />
@@ -80,7 +77,7 @@ const UI = createEspHomeComponent(
               <NavButtonViaProps lvgl={props.lvgl} targetPage={screen1Ref} />
             </VStack>
           </Screen>
-        </ThemeProvider>
+        </UITheme.Provider>
       </lvgl>
     );
   },

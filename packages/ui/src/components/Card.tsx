@@ -6,9 +6,9 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglContainerWidget, useTheme } from '@espcompose/core';
+import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
-import { UI_THEME_SCOPE } from '../theme/scope';
+import { UITheme } from '../theme/scope';
 import type { SpacingToken, RadiusToken, Theme } from '../theme/types';
 
 type CardProps = WidgetPropsWithChildren<{
@@ -34,7 +34,7 @@ export const Card = createLvglContainerWidget(
     const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
     const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const theme = useTheme<Theme>(UI_THEME_SCOPE);
+    const theme = UITheme.use() as Theme;
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;
 
     return (

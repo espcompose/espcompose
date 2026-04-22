@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeScopeData } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
 import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
@@ -73,7 +73,7 @@ export function executePhase(ctx: PhaseContext): void {
 
   const serializationCaptures = cjsSDK.stopSerializationCapture();
 
-  const themeScopes = extractThemeScopeData(cjsSDK);
+  const themes = extractThemeData(cjsSDK);
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
   ctx.ir = serializationCaptures
@@ -85,7 +85,7 @@ export function executePhase(ctx: PhaseContext): void {
         components: components ?? [],
         scripts: collectedScripts as BuildSemanticIRInput['scripts'],
         reactiveNodes: reactiveNodes ?? [],
-        themeScopes,
+        themes,
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 
@@ -97,13 +97,13 @@ export function executePhase(ctx: PhaseContext): void {
 }
 
 /**
- * Extract per-scope theme data from the SDK's theme registry.
+ * Extract theme data from the SDK's theme registry.
  *
  * Iterates all registered scopes, reads their theme names and signal path
- * values, and assembles an IRThemeScopeData array consumed by the IR builder.
+ * values, and assembles an IRThemeData array consumed by the IR builder.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractThemeScopeData(cjsSDK: any): IRThemeScopeData[] | undefined {
+function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
   const getThemeRegistry = cjsSDK.getThemeRegistry;
   if (typeof getThemeRegistry !== 'function') return undefined;
 
@@ -111,7 +111,7 @@ function extractThemeScopeData(cjsSDK: any): IRThemeScopeData[] | undefined {
   const scopes: string[] = registry.getScopes();
   if (scopes.length === 0) return undefined;
 
-  const result: IRThemeScopeData[] = [];
+  const result: IRThemeData[] = [];
 
   for (const scope of scopes) {
     const themeNames: string[] = registry.getThemeNames(scope);
@@ -140,7 +140,7 @@ function extractThemeScopeData(cjsSDK: any): IRThemeScopeData[] | undefined {
     }
 
     result.push({
-      kind: 'theme_scope_data',
+      kind: 'theme_data',
       scope,
       scopeId: scopeHash(scope),
       themeNames,

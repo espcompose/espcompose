@@ -166,7 +166,7 @@ export {
 } from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeScopeData, IRScript,
+  BuildSemanticIRInput, IRThemeData, IRScript,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
 } from './ir/index';

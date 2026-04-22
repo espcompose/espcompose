@@ -251,8 +251,8 @@ export function lowerToYamlConfig(
   if (cppResult) {
     const entityComponentIds = buildEntityComponentIds(ir.esphome.haEntities);
     const themeVarNames = new Map<string, string>();
-    if (ir.espcompose.themeScopes) {
-      for (const scopeData of ir.espcompose.themeScopes) {
+    if (ir.espcompose.themes) {
+      for (const scopeData of ir.espcompose.themes) {
         for (const signalPath of scopeData.leafData.keys()) {
           themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
         }

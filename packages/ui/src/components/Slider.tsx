@@ -9,8 +9,8 @@
  */
 
 import type { TriggerHandler, WidgetProps } from '@espcompose/core';
-import { createLvglWidget, useTheme } from '@espcompose/core';
-import { UI_THEME_SCOPE } from '../theme/scope';
+import { createLvglWidget } from '@espcompose/core';
+import { UITheme } from '../theme/scope';
 import type { Theme } from '../theme/types';
 
 export type SliderProps = WidgetProps<{
@@ -38,7 +38,7 @@ export type SliderProps = WidgetProps<{
  */
 export const Slider = createLvglWidget<SliderProps>(
   (props) => {
-    const theme = useTheme<Theme>(UI_THEME_SCOPE);
+    const theme = UITheme.use() as Theme;
 
     return (
       <lvgl-obj style={{

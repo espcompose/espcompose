@@ -20,7 +20,7 @@
 
 import ts from 'typescript';
 import type { TransformOutput, TransformDiagnostic } from './script-transformer.js';
-import { isCoreHookCall } from './type-brands.js';
+import { isCoreExportCall } from './type-brands.js';
 import {
   hasSignalBrand,
   translateReactiveExprIR,
@@ -134,7 +134,7 @@ function containsSignalNode(node: ts.Node, checker: ts.TypeChecker): boolean {
  */
 function isMemoCall(expr: ts.Expression, checker: ts.TypeChecker): expr is ts.CallExpression {
   if (!ts.isCallExpression(expr)) return false;
-  return isCoreHookCall(expr, 'useMemo', checker);
+  return isCoreExportCall(expr, 'useMemo', checker);
 }
 
 /**
@@ -145,7 +145,7 @@ function isReactiveSkipCall(expr: ts.Expression, checker: ts.TypeChecker): boole
   if (!ts.isCallExpression(expr)) return false;
   const callee = expr.expression;
   // useEffect(...), useReactive(...), reactiveIsNaN(...)
-  if (isCoreHookCall(expr, ['useEffect', 'useReactive', 'reactiveIsNaN'], checker)) return true;
+  if (isCoreExportCall(expr, ['useEffect', 'useReactive', 'reactiveIsNaN'], checker)) return true;
   if (ts.isPropertyAccessExpression(callee)) {
     const obj = callee.expression;
     if (ts.isIdentifier(obj) && obj.text === '__espcompose') {

@@ -33,12 +33,12 @@ describe('serializeIR', () => {
     const ir = makeMinimalIR();
     const result = serializeIR(ir);
     const esphome = result.esphome as Record<string, unknown>;
-    const espcompose = result.espcompose as { reactive: Record<string, unknown[]>; themeScopes?: unknown };
+    const espcompose = result.espcompose as { reactive: Record<string, unknown[]>; themes?: unknown };
     expect(esphome.sections).toEqual([]);
     expect(espcompose.reactive.bindings).toEqual([]);
     expect(espcompose.reactive.memos).toEqual([]);
     expect(espcompose.reactive.effects).toEqual([]);
-    expect(espcompose.themeScopes).toBeUndefined();
+    expect(espcompose.themes).toBeUndefined();
 
     // Should be JSON-stringifiable without error
     expect(() => JSON.stringify(result)).not.toThrow();
@@ -127,8 +127,8 @@ describe('serializeIR', () => {
 
     const ir = makeMinimalIR({
       espcompose: {
-        themeScopes: [{
-          kind: 'theme_scope_data',
+        themes: [{
+          kind: 'theme_data',
           scope: 'test',
           scopeId: 'abcd1234',
           themeNames: ['default', 'dark'],
@@ -138,10 +138,10 @@ describe('serializeIR', () => {
       },
     });
     const result = serializeIR(ir);
-    const espcompose = result.espcompose as { themeScopes?: Array<Record<string, unknown>> };
-    expect(espcompose.themeScopes).toBeDefined();
-    expect(espcompose.themeScopes!.length).toBe(1);
-    const scope = espcompose.themeScopes![0];
+    const espcompose = result.espcompose as { themes?: Array<Record<string, unknown>> };
+    expect(espcompose.themes).toBeDefined();
+    expect(espcompose.themes!.length).toBe(1);
+    const scope = espcompose.themes![0];
     expect(scope.themeNames).toEqual(['default', 'dark']);
     expect(scope.defaultIndex).toBe(0);
     expect(scope.scope).toBe('test');

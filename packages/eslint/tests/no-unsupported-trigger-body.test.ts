@@ -173,11 +173,12 @@ typedTester.run('no-unsupported-trigger-body (type-aware)', rule, {
       `,
     },
     {
-      name: 'theme.select() — branded',
+      name: 'ThemeHandle.select() — branded',
       filename: 'test.tsx',
       code: `
-        import { theme } from '@espcompose/core';
-        <button onPress={() => { theme.select("dark"); }} />;
+        import { createTheme } from '@espcompose/core';
+        const MyTheme = createTheme('my:scope', { dark: {} });
+        <button onPress={() => { MyTheme.select("dark"); }} />;
       `,
     },
     {

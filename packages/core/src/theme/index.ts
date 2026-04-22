@@ -2,15 +2,16 @@
 // Theme barrel — re-exports all theme-related public API from the theme folder
 // ────────────────────────────────────────────────────────────────────────────
 
-// Registry
-export { registerTheme, getThemeRegistry, theme } from './registry';
+// createTheme — typed theme handle factory
+export { createTheme } from './create-theme';
+export type { ThemeHandle, ThemeProviderProps } from './create-theme';
+
+// Registry (internal — used by compiler phases, not user code)
+export { getThemeRegistry } from './registry';
 export type { FlattenedTheme } from './registry';
 
-// Scope hashing
+// Scope hashing (internal — used by compiler)
 export { scopeHash } from './scope-hash';
-
-// Reactive proxy
-export { useTheme } from './reactive-proxy';
 
 // Font tokens
 export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './font-token';
@@ -20,15 +21,5 @@ export type { FontToken, FontBpp } from './font-token';
 export { isHexColor } from './hex-color';
 export type { HexColor } from './hex-color';
 
-// Font resolver
+// Font resolver (internal — used by createTheme Provider)
 export { collectThemeFonts, substituteThemeFonts } from './font-resolver';
-
-// Theme leaf accessor
-export { themeLeaf } from './theme-leaf';
-
-// Style utilities
-export { createStyles, mergeStyles } from './create-styles';
-
-// ThemeProvider component
-export { ThemeProvider } from './ThemeProvider';
-export type { ThemeProviderProps } from './ThemeProvider';

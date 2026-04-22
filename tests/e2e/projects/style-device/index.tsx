@@ -6,9 +6,9 @@
  * - Shorthand expansion (paddingHorizontal → pad_left + pad_right)
  * - State nesting (pressed state in style object)
  * - Part nesting (indicator part with style)
- * - mergeStyles() combining multiple style objects
+ * - Spread syntax combining multiple style objects
  */
-import { DisplayRef, useRef, mergeStyles } from '@espcompose/core';
+import { DisplayRef, useRef } from '@espcompose/core';
 import type { CssStyle } from '@espcompose/core';
 
 const baseStyle: CssStyle = {
@@ -79,13 +79,13 @@ function App() {
             <lvgl-label text="Styled Red" style={{ placeSelf: 'center' }} />
           </lvgl-button>
 
-          {/* Test 3: mergeStyles combining base + specific */}
+          {/* Test 3: Spread combining base + specific */}
           <lvgl-obj
-            style={mergeStyles(
-              { left: 10, top: 130, width: 200, height: 80 },
-              baseStyle,
-              { backgroundColor: '#424242', borderRadius: 12 },
-            )}
+            style={{
+              left: 10, top: 130, width: 200, height: 80,
+              ...baseStyle,
+              backgroundColor: '#424242', borderRadius: 12,
+            }}
           >
             <lvgl-label text="Merged" style={{ placeSelf: 'center' }} />
           </lvgl-obj>
