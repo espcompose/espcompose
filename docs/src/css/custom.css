@@ -23,6 +23,32 @@
 
 /* Navbar Icons */
 
+/* Navbar Version Badge */
+
+.navbar__brand-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__version-badge {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ifm-color-primary);
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 4px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.navbar__version-badge:hover {
+  color: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+  text-decoration: none;
+}
+
 .navbar-icon {
   display: flex;
   align-items: center;
