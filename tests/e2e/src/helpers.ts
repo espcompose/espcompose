@@ -16,17 +16,9 @@ export interface TestTiming {
   esphomeValidationMs: number;
 }
 
-// Track whether the shared espcompose_reactive.h has already been snapshotted.
-// The runtime header is identical across all projects so we only need one copy.
-let runtimeHeaderSnapshotted = false;
-
 /**
  * Runs the full build pipeline against a project directory and asserts
  * the generated YAML matches the stored snapshot.
- *
- * The build writes output to `<projectDir>/.espcompose/esphome.yaml`.
- * The snapshot stores the raw YAML string so that any structural change
- * to the generated configuration is immediately visible in diffs.
  *
  * @param projectsDir  Absolute path to the projects directory.
  * @param projectName  Name of the subdirectory within projectsDir to build.
@@ -87,12 +79,8 @@ export async function createProjectTest(
   }
 
   if (fs.existsSync(runtimePath)) {
-    if (!runtimeHeaderSnapshotted) {
-      // Snapshot the shared runtime header once — it's identical for all projects.
-      const runtimeContent = fs.readFileSync(runtimePath, 'utf8');
-      expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
-      runtimeHeaderSnapshotted = true;
-    }
+    const runtimeContent = fs.readFileSync(runtimePath, 'utf8');
+    expect(runtimeContent).toMatchSnapshot('espcompose_reactive.h');
   }
 
   // Snapshot secrets.yaml when the build produces one (secret() was used).

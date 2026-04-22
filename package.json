@@ -14,7 +14,7 @@
     "test": "turbo test --concurrency 1",
     "version": "changeset version",
     "release": "changeset publish",
-    "build:full": "pnpm clean && pnpm build && pnpm test"
+    "build:full": "pnpm clean && pnpm build && turbo test --only"
   },
   "keywords": [
     "esphome",
