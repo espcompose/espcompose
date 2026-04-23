@@ -1,5 +1,12 @@
 # @espcompose/eslint
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`e3ac80c`](https://github.com/espcompose/espcompose/commit/e3ac80c3360cd4ff0d3877933cb2864a813c1501)]:
+  - @espcompose/core@0.6.1
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@espcompose/core",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "ESPCompose SDK - TypeScript framework for generating ESPHome YAML",
   "type": "module",
   "types": "dist/index.d.ts",
