@@ -87,6 +87,42 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CHANGESET_BOT_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
+  publish-vscode-extension:
+    name: Publish VS Code Extension
+    needs: release
+    if: ${{ needs.release.outputs.published == 'true' }}
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: extensions/vscode
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      - name: Build extension
+        run: pnpm --filter espcompose-vscode build
+        working-directory: .
+
+      - name: Publish to VS Code Marketplace
+        run: pnpm vsce publish --packagePath *.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+
   deploy-docs:
     name: Deploy Docs to GitHub Pages
     needs: release

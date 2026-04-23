@@ -189,6 +189,7 @@ export type {
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRArraySet, IRArrayPush, IRArrayClear,
+  IRLambdaAction, IRLambdaSlot,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -199,5 +200,5 @@ export {
   irScriptExecute, irScriptWait, irScriptStop, irThemeSelect,
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
-  irLambdaCondition,
+  irLambdaCondition, irLambdaAction,
 } from './ir/index';

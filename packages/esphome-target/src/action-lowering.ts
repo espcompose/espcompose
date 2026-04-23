@@ -112,7 +112,7 @@ function createConditionLoweringContext(): CppLoweringContext {
  */
 function lowerCondition(condition: IRCondition): unknown {
   switch (condition.kind) {
-    case 'lambda': {
+    case 'lambda_condition': {
       const ctx = createConditionLoweringContext();
       const cppExpr = exprToCpp(condition.exprIR, ctx);
       // ESPHome expects conditions as a list of condition type mappings.
@@ -300,6 +300,37 @@ function lowerAction(action: IRActionNode): unknown {
         )};
       }
       return { lambda: lambdaMarker(`id(${action.globalId}).clear();`) };
+    }
+
+    case 'lambda_action': {
+      // Reconstruct C++ code from fragments + slots
+      let code = action.fragments[0];
+      for (let i = 0; i < action.slots.length; i++) {
+        const slot = action.slots[i];
+        switch (slot.kind) {
+          case 'ref':
+            // Ref names are already resolved to ESPHome ID tokens by the
+            // serialize layer. The user's template literal controls the
+            // surrounding C++ (e.g. `id(${ref})`), so we emit just the name.
+            code += slot.name;
+            break;
+          case 'global':
+            code += `id(${slot.id})`;
+            break;
+          case 'trigger_var':
+            code += slot.varName;
+            break;
+          case 'literal':
+            if (typeof slot.value === 'string') {
+              code += `"${escapeStringForCpp(slot.value)}"`;
+            } else {
+              code += String(slot.value);
+            }
+            break;
+        }
+        code += action.fragments[i + 1];
+      }
+      return { lambda: lambdaMarker(code) };
     }
   }
 }

@@ -65,6 +65,32 @@ export function isCoreExportCall(
 }
 
 /**
+ * Check whether a tagged template expression's tag resolves to a specific
+ * named export from `@espcompose/core`.
+ *
+ * Resolves through import aliases so that `import { lambda as cpp }` still
+ * matches `isCoreExportTaggedTemplate(expr, 'lambda', checker)`.
+ */
+export function isCoreExportTaggedTemplate(
+  expr: ts.TaggedTemplateExpression,
+  memberName: string,
+  checker: ts.TypeChecker,
+): boolean {
+  const tag = expr.tag;
+  if (!ts.isIdentifier(tag)) return false;
+
+  const sym = checker.getSymbolAtLocation(tag);
+  if (!sym) return false;
+
+  const resolved = sym.flags & ts.SymbolFlags.Alias
+    ? checker.getAliasedSymbol(sym)
+    : sym;
+
+  if (resolved.name !== memberName) return false;
+  return isFromEspcomposeCore(resolved);
+}
+
+/**
  * Check whether a call expression is `obj.method()` where `obj` resolves to
  * a specific named export from `@espcompose/core`.
  *

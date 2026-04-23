@@ -14,6 +14,9 @@ export default tseslint.config(
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       }],
+      '@typescript-eslint/no-unused-expressions': ['error', {
+        allowTaggedTemplates: true,
+      }],
     },
   },
   {

@@ -82,7 +82,20 @@ function resolveRefBindingsInValue(
   if (typeof value === 'object') {
     const obj: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      obj[k] = resolveRefBindingsInValue(v, refBindings);
+      if (k === '__lambda__' && typeof v === 'string') {
+        // Resolve ref names embedded in lambda code: refName → resolvedToken
+        // The user controls the surrounding C++ (e.g. `id(${ref})`), so we
+        // replace just the bare ref name, not wrapping in id().
+        let code = v;
+        for (const [refName, bound] of Object.entries(refBindings)) {
+          if (typeof bound === 'object' && bound !== null && 'toString' in bound) {
+            code = code.replaceAll(refName, bound.toString());
+          }
+        }
+        obj[k] = code;
+      } else {
+        obj[k] = resolveRefBindingsInValue(v, refBindings);
+      }
     }
     return obj;
   }

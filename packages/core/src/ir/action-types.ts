@@ -143,6 +143,22 @@ export interface IRArrayClear {
   cppType: string;
 }
 
+/** A single interpolation slot inside a lambda tagged template. */
+export type IRLambdaSlot =
+  | { kind: 'ref'; name: string }                         // → id(<resolved_ref_token>)
+  | { kind: 'global'; id: string }                        // → id(<global_id>)
+  | { kind: 'trigger_var'; varName: string }               // → raw C++ variable name
+  | { kind: 'literal'; value: string | number | boolean }; // → literal C++ value
+
+/** Inline C++ lambda action — emitted as a !lambda block in YAML. */
+export interface IRLambdaAction {
+  kind: 'lambda_action';
+  /** Static string fragments from the tagged template (N+1 entries for N slots). */
+  fragments: string[];
+  /** Typed interpolation slots — interleaved with fragments to reconstruct C++ code. */
+  slots: IRLambdaSlot[];
+}
+
 // ── Discriminated Union ────────────────────────────────────────────────────
 
 export type IRActionNode =
@@ -161,13 +177,14 @@ export type IRActionNode =
   | IRGlobalSet
   | IRArraySet
   | IRArrayPush
-  | IRArrayClear;
+  | IRArrayClear
+  | IRLambdaAction;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
 /** A lambda condition — compiled from a boolean expression to IRExprNode IR */
 export interface IRLambdaCondition {
-  kind: 'lambda';
+  kind: 'lambda_condition';
   /** Target-agnostic expression IR for the condition */
   exprIR: IRExprNode;
 }
@@ -300,6 +317,10 @@ export function irArrayClear(globalId: string, cppType: string): IRArrayClear {
 }
 
 export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
-  return { kind: 'lambda', exprIR };
+  return { kind: 'lambda_condition', exprIR };
+}
+
+export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLambdaAction {
+  return { kind: 'lambda_action', fragments, slots };
 }
 

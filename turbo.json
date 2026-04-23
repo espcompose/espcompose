@@ -13,6 +13,11 @@
       "dependsOn": ["typecheck", "lint"],
       "outputs": ["dist/**"]
     },
+    "espcompose-vscode#build": {
+      "dependsOn": [],
+      "inputs": ["package.json", "syntaxes/**", "../../assets/logo.png", "../../LICENSE"],
+      "outputs": ["assets/logo.png", "LICENSE", "*.vsix"]
+    },
     "@espcompose/cli#build": {
       "dependsOn": ["^build", "typecheck", "lint"],
       "inputs": [

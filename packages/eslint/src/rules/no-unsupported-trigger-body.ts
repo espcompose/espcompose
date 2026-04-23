@@ -213,6 +213,23 @@ export default createRule<[], MessageIds>({
             }
             return;
           }
+          // Tagged template expressions: lambda`...`
+          if (expr.type === 'TaggedTemplateExpression') {
+            if (expr.tag.type === 'Identifier') {
+              const branded = nodeHasBindingBrand(expr.tag);
+              // If no type info or branded, allow
+              if (branded === undefined || branded) return;
+            }
+            context.report({
+              node: stmt,
+              messageId: 'unsupportedConstruct',
+              data: {
+                construct: 'Expression statement',
+                suggestion: 'Use only action calls (ref.method(), delay(), etc.) in trigger handlers.',
+              },
+            });
+            return;
+          }
           // Any other expression statement (assignment, etc.)
           context.report({
             node: stmt,

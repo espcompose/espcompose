@@ -78,3 +78,25 @@ export const logger: ActionLogger = {
     // No-op — the compiler handles this at the AST level.
   },
 };
+
+/**
+ * Inline C++ lambda action.
+ *
+ * Use as a tagged template literal inside trigger handlers to emit raw C++.
+ * Interpolate refs, globals, trigger variables, or literals:
+ *
+ *   lambda`lv_obj_set_pos(${myRef}, 100, 200);`
+ *   lambda`id(${counter}) = id(${counter}) + 1;`
+ *
+ * Standard LVGL trigger variables (`event`, `obj`, `x`, etc.) are available
+ * by name in the C++ scope — they don't need interpolation.
+ *
+ * This function is a no-op at runtime. The action compiler recognizes
+ * it at the AST level.
+ */
+export const lambda: ActionFunction<(strings: TemplateStringsArray, ...values: unknown[]) => void> = function lambda(
+  _strings: TemplateStringsArray,
+  ..._values: unknown[]
+): void {
+  // No-op — the compiler handles this at the AST level.
+} as ActionFunction<(strings: TemplateStringsArray, ...values: unknown[]) => void>;
