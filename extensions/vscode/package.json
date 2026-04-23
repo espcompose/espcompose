@@ -23,7 +23,8 @@
   "keywords": ["esphome", "espcompose", "lambda", "c++", "iot"],
   "scripts": {
     "build": "mkdir -p assets && cp ../../assets/logo.png assets/logo.png && cp ../../LICENSE LICENSE && vsce package --no-dependencies",
-    "publish": "vsce publish --no-dependencies"
+    "publish": "vsce publish --no-dependencies",
+    "clean": "rm -f *.vsix assets/logo.png LICENSE"
   },
   "devDependencies": {
     "@vscode/vsce": "^3.3.2"
