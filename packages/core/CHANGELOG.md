@@ -1,5 +1,11 @@
 # @espcompose/core
 
+## 0.6.1
+
+### Patch Changes
+
+- [#42](https://github.com/espcompose/espcompose/pull/42) [`e3ac80c`](https://github.com/espcompose/espcompose/commit/e3ac80c3360cd4ff0d3877933cb2864a813c1501) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Implemented support for more drawing primatives: arc, polygon, text and image.
+
 ## 0.6.0
 
 ### Minor Changes

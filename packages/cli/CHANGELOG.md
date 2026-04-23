@@ -1,5 +1,12 @@
 # @espcompose/cli
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @espcompose/eslint@0.6.1
+
 ## 0.6.0
 
 ### Minor Changes
