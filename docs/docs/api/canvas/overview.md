@@ -114,7 +114,7 @@ This renders a rounded dark card with a horizontal separator line, containing an
 
 At build time, `<ec-canvas>` is lowered to a native ESPHome LVGL `canvas` widget:
 
-- Paint primitives become `lvgl.canvas.draw_rectangle` and `lvgl.canvas.draw_line` actions
+- Paint primitives become native canvas draw actions (`lvgl.canvas.draw_rectangle`, `draw_line`, `draw_arc`, `draw_polygon`, `draw_text`, `draw_image`)
 - The canvas buffer is allocated as ARGB8888 with transparent background
 - Widget children are emitted as standard LVGL widget entries
 - Reactive paint props generate C++ bindings that redraw on state changes
