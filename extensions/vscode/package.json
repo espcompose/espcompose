@@ -22,7 +22,7 @@
   "categories": ["Programming Languages"],
   "keywords": ["esphome", "espcompose", "lambda", "c++", "iot"],
   "scripts": {
-    "build": "cp ../../assets/logo.png assets/logo.png && cp ../../LICENSE LICENSE && vsce package --no-dependencies",
+    "build": "mkdir -p assets && cp ../../assets/logo.png assets/logo.png && cp ../../LICENSE LICENSE && vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies"
   },
   "devDependencies": {
