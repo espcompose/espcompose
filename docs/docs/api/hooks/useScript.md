@@ -79,6 +79,7 @@ Scripts support the same action primitives as inline trigger handlers:
 | `ref.turnOff(opts?)` | Turn off a light/switch ref |
 | `global.set(value)` | Set a global variable |
 | `await otherScript()` | Call another script |
+| `` lambda`...` `` | Emit raw C++ inline ([see lambda](../helpers/lambda.md)) |
 
 ## Calling scripts
 

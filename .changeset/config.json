@@ -10,7 +10,8 @@
       "@espcompose/cli",
       "@espcompose/core",
       "@espcompose/eslint",
-      "@espcompose/ui"
+      "@espcompose/ui",
+      "espcompose-vscode"
     ]
   ],
   "linked": [],

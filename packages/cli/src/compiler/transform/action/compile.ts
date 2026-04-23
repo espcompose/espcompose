@@ -20,9 +20,10 @@ import type { HAEntityInfo } from '../expr-compiler.js';
 import type { ActionCompileResult, ActionCompilerContext } from './context.js';
 import { emitError } from './context.js';
 import { resolveScriptCall, extractDurationArg, extractReturnExpr } from './util.js';
-import { isCoreExportCall } from '../type-brands.js';
+import { isCoreExportCall, isCoreExportTaggedTemplate } from '../type-brands.js';
 import { compileConditionExpr, compileIf, compileWhile, compileFor } from './control-flow.js';
 import { compileActionCall } from './calls/router.js';
+import { compileLambdaTaggedTemplate } from './calls/lambda.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -180,10 +181,16 @@ function compileExpressionAsAction(
     return compileActionCall(expr, ctx);
   }
 
+  // Tagged template: lambda`...`
+  if (ts.isTaggedTemplateExpression(expr) &&
+      isCoreExportTaggedTemplate(expr, 'lambda', ctx.checker)) {
+    return compileLambdaTaggedTemplate(expr, ctx);
+  }
+
   return emitError(expr, ctx,
     'Expression is not a recognized ESPHome action. ' +
     'Only component actions (ref.method()), HA entity actions, logger.log(), ' +
-    'delay(), and script operations are supported.');
+    'delay(), lambda`...`, and script operations are supported.');
 }
 
 // ────────────────────────────────────────────────────────────────────────────

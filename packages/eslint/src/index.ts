@@ -85,6 +85,9 @@ const recommended: Linter.Config[] = [
       // Validate trigger handler bodies contain only ESPHome-compatible constructs.
       '@espcompose/eslint/no-unsupported-trigger-body': 'error',
 
+      // Allow tagged template expressions (e.g. lambda`...`) as statements.
+      '@typescript-eslint/no-unused-expressions': ['error', { allowTaggedTemplates: true }],
+
       // Prevent useHAEntity() with variable args that can't resolve to a domain.
       '@espcompose/eslint/no-unresolvable-ha-entity': 'error',
 

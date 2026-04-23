@@ -539,6 +539,13 @@ function collectRefNamesFromActions(
         case 'repeat':
           walk(action.then);
           break;
+        case 'lambda_action':
+          for (const slot of action.slots) {
+            if (slot.kind === 'ref' && refNames.has(slot.name)) {
+              names.add(slot.name);
+            }
+          }
+          break;
       }
     }
   };

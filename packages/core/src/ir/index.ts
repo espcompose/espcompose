@@ -95,6 +95,8 @@ export type {
   IRArraySet,
   IRArrayPush,
   IRArrayClear,
+  IRLambdaAction,
+  IRLambdaSlot,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -125,4 +127,5 @@ export {
   irArrayPush,
   irArrayClear,
   irLambdaCondition,
+  irLambdaAction,
 } from './action-types';

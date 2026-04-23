@@ -71,7 +71,7 @@ export type { GlobalHandle } from './hooks/global-shared';
 // Public API — Actions
 // ────────────────────────────────────────────────────────────────────────────
 
-export { delay, logger } from './actions';
+export { delay, logger, lambda } from './actions';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Secrets
