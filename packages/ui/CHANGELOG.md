@@ -1,5 +1,12 @@
 # @espcompose/ui
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`9b0f27d`](https://github.com/espcompose/espcompose/commit/9b0f27d9367c0478b1bd3e507a150deb9888aef0)]:
+  - @espcompose/core@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes
