@@ -387,6 +387,66 @@ lvgl:
                   height: 48
                   bg_color: "0x4caf50"
                   radius: 24
+        - canvas:
+            width: 120
+            height: 120
+            id: ec_ref4
+            bg_opa: 0
+            transparent: true
+            on_boot:
+              - lvgl.canvas.draw_arc:
+                  id: ec_ref4
+                  x: 60
+                  y: 60
+                  radius: 50
+                  start_angle: 135
+                  end_angle: 315
+                  color: "0x555577"
+                  width: 6
+              - lvgl.canvas.draw_arc:
+                  id: ec_ref4
+                  x: 60
+                  y: 60
+                  radius: 50
+                  start_angle: 135
+                  end_angle: 270
+                  color: "0x00e676"
+                  width: 6
+                  rounded: true
+        - canvas:
+            width: 80
+            height: 80
+            id: ec_ref5
+            bg_opa: 0
+            transparent: true
+            on_boot:
+              - lvgl.canvas.draw_polygon:
+                  id: ec_ref5
+                  points:
+                    - x: 40
+                      y: 5
+                    - x: 75
+                      y: 70
+                    - x: 5
+                      y: 70
+                  bg_color: "0xff9800"
+                  border_color: "0xffffff"
+                  border_width: 2
+        - canvas:
+            width: 200
+            height: 40
+            id: ec_ref6
+            bg_opa: 0
+            transparent: true
+            on_boot:
+              - lvgl.canvas.draw_text:
+                  id: ec_ref6
+                  x: 4
+                  y: 4
+                  max_width: 192
+                  text: Pixel text
+                  color: "0xe0e0e0"
+                  align: center
         - obj:
             layout:
               type: flex
@@ -395,7 +455,7 @@ lvgl:
               - canvas:
                   width: 100
                   height: 60
-                  id: ec_ref4
+                  id: ec_ref7
                   widgets:
                     - label:
                         text: Red
@@ -403,7 +463,7 @@ lvgl:
                   transparent: true
                   on_boot:
                     - lvgl.canvas.draw_rectangle:
-                        id: ec_ref4
+                        id: ec_ref7
                         x: 0
                         y: 0
                         width: 100
@@ -413,7 +473,7 @@ lvgl:
               - canvas:
                   width: 100
                   height: 60
-                  id: ec_ref5
+                  id: ec_ref8
                   widgets:
                     - label:
                         text: Blue
@@ -421,7 +481,7 @@ lvgl:
                   transparent: true
                   on_boot:
                     - lvgl.canvas.draw_rectangle:
-                        id: ec_ref5
+                        id: ec_ref8
                         x: 0
                         y: 0
                         width: 100

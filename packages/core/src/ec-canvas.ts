@@ -12,8 +12,12 @@
 //   <ec-canvas-overlay>    — paint primitives drawn above widget content
 //
 // Paint primitives:
-//   <ec-rect />  — rectangle / rounded rectangle
-//   <ec-line />  — line segment
+//   <ec-rect />    — rectangle / rounded rectangle
+//   <ec-line />    — line segment
+//   <ec-arc />     — circular arc / ring segment
+//   <ec-polygon /> — multi-point filled polygon
+//   <ec-text />    — pixel-positioned text
+//   <ec-image />   — image with transforms
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { EspComposeElement, TriggerHandler, Reactive, ComponentProps } from './types';
@@ -55,6 +59,92 @@ export interface EcLineProps {
   stroke?: Reactive<string>;
   /** Stroke width (px). */
   strokeWidth?: Reactive<number>;
+  /** Opacity (0–255 or 0.0–1.0). */
+  opacity?: Reactive<number>;
+}
+
+export interface EcArcProps {
+  /** Center X (px). */
+  cx?: Reactive<number>;
+  /** Center Y (px). */
+  cy?: Reactive<number>;
+  /** Arc radius (px). */
+  radius?: Reactive<number>;
+  /** Start angle (degrees, 0 = 3 o'clock, clockwise). */
+  startAngle?: Reactive<number>;
+  /** End angle (degrees, 0 = 3 o'clock, clockwise). */
+  endAngle?: Reactive<number>;
+  /** Stroke color (hex string). */
+  stroke?: Reactive<string>;
+  /** Stroke width (px). */
+  strokeWidth?: Reactive<number>;
+  /** Round the arc endpoints. */
+  rounded?: Reactive<boolean>;
+  /** Opacity (0–255 or 0.0–1.0). */
+  opacity?: Reactive<number>;
+}
+
+export interface EcPolygonProps {
+  /** Ordered list of polygon vertices. */
+  points?: Array<{ x: number; y: number }>;
+  /** Fill color (hex string). */
+  fill?: Reactive<string>;
+  /** Border color (hex string). */
+  stroke?: Reactive<string>;
+  /** Border width (px). */
+  strokeWidth?: Reactive<number>;
+  /** Corner radius (px). */
+  radius?: Reactive<number>;
+  /** Opacity (0–255 or 0.0–1.0). */
+  opacity?: Reactive<number>;
+}
+
+export interface EcTextProps {
+  /** Horizontal position (px). */
+  x?: Reactive<number>;
+  /** Vertical position (px). */
+  y?: Reactive<number>;
+  /** Text content. */
+  text?: Reactive<string>;
+  /** Font reference (e.g. from useFont()). */
+  font?: Reactive<string>;
+  /** Text color (hex string). */
+  fill?: Reactive<string>;
+  /** Maximum text width before wrapping (px). */
+  maxWidth?: Reactive<number>;
+  /** Text alignment ('left' | 'center' | 'right'). */
+  textAlign?: Reactive<string>;
+  /** Letter spacing (px). */
+  letterSpacing?: Reactive<number>;
+  /** Line spacing (px). */
+  lineSpacing?: Reactive<number>;
+  /** Opacity (0–255 or 0.0–1.0). */
+  opacity?: Reactive<number>;
+}
+
+export interface EcImageProps {
+  /** Horizontal position (px). */
+  x?: Reactive<number>;
+  /** Vertical position (px). */
+  y?: Reactive<number>;
+  /** Image source (e.g. from useImage()). */
+  src?: Reactive<string>;
+  /** Rotation angle (degrees × 10, e.g. 900 = 90°). */
+  rotation?: Reactive<number>;
+  /** Uniform scale factor (256 = 1×). */
+  scale?: Reactive<number>;
+  /** Horizontal scale factor (256 = 1×). */
+  scaleX?: Reactive<number>;
+  /** Vertical scale factor (256 = 1×). */
+  scaleY?: Reactive<number>;
+  /** Horizontal skew (degrees × 10). */
+  skewX?: Reactive<number>;
+  /** Vertical skew (degrees × 10). */
+  skewY?: Reactive<number>;
+  /** Transform origin X (px). */
+  pivotX?: Reactive<number>;
+  /** Transform origin Y (px). */
+  pivotY?: Reactive<number>;
   /** Opacity (0–255 or 0.0–1.0). */
   opacity?: Reactive<number>;
 }
@@ -101,6 +191,10 @@ declare global {
       'ec-canvas-overlay': EcCanvasOverlayProps;
       'ec-rect': EcRectProps;
       'ec-line': EcLineProps;
+      'ec-arc': EcArcProps;
+      'ec-polygon': EcPolygonProps;
+      'ec-text': EcTextProps;
+      'ec-image': EcImageProps;
     }
   }
 }
