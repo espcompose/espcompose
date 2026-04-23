@@ -48,6 +48,33 @@ function App() {
             </ec-canvas-background>
           </ec-canvas>
 
+          {/* Arc gauge ring */}
+          <ec-canvas style={{ width: 120, height: 120 }}>
+            <ec-canvas-background>
+              <ec-arc cx={60} cy={60} radius={50} startAngle={135} endAngle={315} stroke="#555577" strokeWidth={6} />
+              <ec-arc cx={60} cy={60} radius={50} startAngle={135} endAngle={270} stroke="#00e676" strokeWidth={6} rounded />
+            </ec-canvas-background>
+          </ec-canvas>
+
+          {/* Polygon triangle indicator */}
+          <ec-canvas style={{ width: 80, height: 80 }}>
+            <ec-canvas-background>
+              <ec-polygon
+                points={[{ x: 40, y: 5 }, { x: 75, y: 70 }, { x: 5, y: 70 }]}
+                fill="#ff9800"
+                stroke="#ffffff"
+                strokeWidth={2}
+              />
+            </ec-canvas-background>
+          </ec-canvas>
+
+          {/* Canvas text */}
+          <ec-canvas style={{ width: 200, height: 40 }}>
+            <ec-canvas-overlay>
+              <ec-text x={4} y={4} text="Pixel text" fill="#e0e0e0" maxWidth={192} textAlign="center" />
+            </ec-canvas-overlay>
+          </ec-canvas>
+
           {/* Canvas nested inside an lvgl-obj container */}
           <lvgl-obj style={{ display: 'flex', flexDirection: 'row' }}>
             <ec-canvas style={{ width: 100, height: 60 }}>

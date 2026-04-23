@@ -15,7 +15,7 @@
  *   lvgl:widget            — any LVGL visual element (leaf or container)
  *   ec:canvas              — <ec-canvas> composited rendering host
  *   ec:canvas-zone         — <ec-canvas-background>, <ec-canvas-content>, <ec-canvas-overlay>
- *   ec:paint-primitive     — <ec-rect>, <ec-line>, and future paint primitives
+ *   ec:paint-primitive     — <ec-rect>, <ec-line>, <ec-arc>, <ec-polygon>, <ec-text>, <ec-image>
  */
 
 import type { IntrinsicIntentMeta } from './intents';
@@ -241,4 +241,8 @@ export const INTRINSIC_INTENT_REGISTRY: Readonly<Record<string, IntrinsicIntentM
   // Paint primitives — leaf elements, no children
   'ec-rect': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
   'ec-line': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
+  'ec-arc': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
+  'ec-polygon': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
+  'ec-text': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
+  'ec-image': { intents: ['ec:paint-primitive'], allowedChildIntents: [] },
 };

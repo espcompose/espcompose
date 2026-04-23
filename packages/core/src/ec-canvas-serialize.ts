@@ -43,6 +43,10 @@ export function isEcCanvasElement(type: string | symbol | FunctionComponent): ty
 const EC_PAINT_PRIMITIVES = new Set([
   'ec-rect',
   'ec-line',
+  'ec-arc',
+  'ec-polygon',
+  'ec-text',
+  'ec-image',
 ]);
 
 /** Maps element tag name → paint primitive type discriminator. */

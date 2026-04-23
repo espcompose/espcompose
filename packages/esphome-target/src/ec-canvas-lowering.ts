@@ -10,7 +10,7 @@
 // emitted as lvgl.canvas.* draw actions under each canvas widget's on_boot.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, IRValue, IRObject, IRArray } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRObject, IRArray, IRScalar } from '@espcompose/core/internals';
 
 /**
  * A collected paint scene from an ec_canvas widget.
@@ -116,15 +116,32 @@ function extractPaintPrimitivesFromIR(items: IRValue[]): PaintPrimitive[] {
     const props: Record<string, unknown> = {};
     for (const entry of obj.entries) {
       if (entry.key === 'type') continue;
-      if (entry.value.kind === 'scalar') {
-        props[entry.key] = entry.value.value;
-      }
-      // Note: reactive paint props are IRReactive nodes and are not lowered
-      // into runtime canvas actions yet; we currently emit static draw calls.
+      props[entry.key] = irValueToPlain(entry.value);
     }
     prims.push({ type, props });
   }
   return prims;
+}
+
+/** Recursively convert an IRValue to a plain JS value. */
+function irValueToPlain(v: IRValue): unknown {
+  switch (v.kind) {
+    case 'scalar':
+      return (v as IRScalar).value;
+    case 'array':
+      return (v as IRArray).items.map(irValueToPlain);
+    case 'object': {
+      const result: Record<string, unknown> = {};
+      for (const entry of (v as IRObject).entries) {
+        result[entry.key] = irValueToPlain(entry.value);
+      }
+      return result;
+    }
+    case 'null':
+      return null;
+    default:
+      return undefined;
+  }
 }
 
 // ── YAML post-processing (post-lowering) ─────────────────────────────────
@@ -330,6 +347,79 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
       if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
 
       return { 'lvgl.canvas.draw_line': cfg };
+    }
+
+    case 'arc': {
+      const cfg: Record<string, unknown> = {
+        id: canvasId,
+        x: numVal(p.cx, 0),
+        y: numVal(p.cy, 0),
+        radius: numVal(p.radius, 0),
+        start_angle: numVal(p.start_angle, 0),
+        end_angle: numVal(p.end_angle, 360),
+      };
+
+      if (p.stroke != null) cfg.color = colorVal(p.stroke);
+      if (p.stroke_width != null) cfg.width = numVal(p.stroke_width, 1);
+      if (p.rounded != null) cfg.rounded = p.rounded;
+      if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
+
+      return { 'lvgl.canvas.draw_arc': cfg };
+    }
+
+    case 'polygon': {
+      const cfg: Record<string, unknown> = {
+        id: canvasId,
+        points: Array.isArray(p.points) ? p.points : [],
+      };
+
+      if (p.fill != null) cfg.bg_color = colorVal(p.fill);
+      if (p.stroke != null) cfg.border_color = colorVal(p.stroke);
+      if (p.stroke_width != null) cfg.border_width = numVal(p.stroke_width, 1);
+      if (p.radius != null) cfg.radius = numVal(p.radius, 0);
+      if (p.opacity != null) cfg.bg_opa = opacityVal(p.opacity);
+
+      return { 'lvgl.canvas.draw_polygon': cfg };
+    }
+
+    case 'text': {
+      const cfg: Record<string, unknown> = {
+        id: canvasId,
+        x: numVal(p.x, 0),
+        y: numVal(p.y, 0),
+        max_width: numVal(p.max_width, 0),
+      };
+
+      if (p.text != null) cfg.text = p.text;
+      if (p.font != null) cfg.font = p.font;
+      if (p.fill != null) cfg.color = colorVal(p.fill);
+      if (p.text_align != null) cfg.align = p.text_align;
+      if (p.letter_spacing != null) cfg.letter_space = numVal(p.letter_spacing, 0);
+      if (p.line_spacing != null) cfg.line_space = numVal(p.line_spacing, 0);
+      if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
+
+      return { 'lvgl.canvas.draw_text': cfg };
+    }
+
+    case 'image': {
+      const cfg: Record<string, unknown> = {
+        id: canvasId,
+        x: numVal(p.x, 0),
+        y: numVal(p.y, 0),
+      };
+
+      if (p.src != null) cfg.src = p.src;
+      if (p.rotation != null) cfg.rotation = numVal(p.rotation, 0);
+      if (p.scale != null) cfg.scale = numVal(p.scale, 256);
+      if (p.scale_x != null) cfg.scale_x = numVal(p.scale_x, 256);
+      if (p.scale_y != null) cfg.scale_y = numVal(p.scale_y, 256);
+      if (p.skew_x != null) cfg.skew_x = numVal(p.skew_x, 0);
+      if (p.skew_y != null) cfg.skew_y = numVal(p.skew_y, 0);
+      if (p.pivot_x != null) cfg.pivot_x = numVal(p.pivot_x, 0);
+      if (p.pivot_y != null) cfg.pivot_y = numVal(p.pivot_y, 0);
+      if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
+
+      return { 'lvgl.canvas.draw_image': cfg };
     }
 
     default:
