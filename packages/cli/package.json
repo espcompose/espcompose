@@ -1,6 +1,6 @@
 {
   "name": "@espcompose/cli",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "ESPCompose CLI - Command-line tools for building ESPCompose projects",
   "type": "module",
   "bin": {

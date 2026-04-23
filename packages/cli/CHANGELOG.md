@@ -1,5 +1,20 @@
 # @espcompose/cli
 
+## 0.6.2
+
+### Patch Changes
+
+- [#44](https://github.com/espcompose/espcompose/pull/44) [`9b0f27d`](https://github.com/espcompose/espcompose/commit/9b0f27d9367c0478b1bd3e507a150deb9888aef0) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Added support for `lambda` tagged template actions inside trigger handlers.
+
+  Use `lambda\`...\`` to emit raw C++ inline within any trigger callback. Interpolations are classified at compile time — component refs (`${myRef}`), globals (`${myGlobal}`), trigger variables (`${args.x}`), and literals are all supported and lowered to the appropriate `id(...)`or value expressions in the generated ESPHome YAML`!lambda` block.
+
+  The ESLint preset now allows tagged template expressions as statements so that `lambda\`...\``lines don't trigger`no-unused-expressions` errors.
+
+  Added documentation for the `lambda` action to the docsite (`docs/docs/api/helpers/lambda.md`).
+
+- Updated dependencies [[`9b0f27d`](https://github.com/espcompose/espcompose/commit/9b0f27d9367c0478b1bd3e507a150deb9888aef0)]:
+  - @espcompose/eslint@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

@@ -2,7 +2,7 @@
   "name": "espcompose-vscode",
   "displayName": "ESPCompose Language Support",
   "description": "Syntax highlighting for inline C++ in ESPCompose lambda tagged templates",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "publisher": "ESPCompose",
   "license": "MIT",
@@ -19,8 +19,16 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "categories": ["Programming Languages"],
-  "keywords": ["esphome", "espcompose", "lambda", "c++", "iot"],
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "esphome",
+    "espcompose",
+    "lambda",
+    "c++",
+    "iot"
+  ],
   "scripts": {
     "build": "mkdir -p assets && cp ../../assets/logo.png assets/logo.png && cp ../../LICENSE LICENSE && vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies",
