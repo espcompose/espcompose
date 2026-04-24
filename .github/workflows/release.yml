@@ -13,6 +13,10 @@ on:
         description: Force docs deploy when running manually
         type: boolean
         default: false
+      force_vscode_publish:
+        description: Force VS Code extension publish when running manually
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -90,7 +94,7 @@ jobs:
   publish-vscode-extension:
     name: Publish VS Code Extension
     needs: release
-    if: ${{ needs.release.outputs.published == 'true' }}
+    if: ${{ always() && (needs.release.result == 'success' && needs.release.outputs.published == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force_vscode_publish)) }}
     runs-on: ubuntu-latest
 
     defaults:
@@ -126,7 +130,7 @@ jobs:
   deploy-docs:
     name: Deploy Docs to GitHub Pages
     needs: release
-    if: ${{ needs.release.result == 'success' && (needs.release.outputs.published == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force_docs_deploy)) }}
+    if: ${{ always() && (needs.release.result == 'success' && needs.release.outputs.published == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force_docs_deploy)) }}
     runs-on: ubuntu-latest
 
     permissions:
