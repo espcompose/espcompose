@@ -19,7 +19,7 @@ Signal<std::string> sig_ha_light_office_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return (sig_ha_light_office.get() ? std::string("Office") + std::string(" On") : std::string("Office") + std::string(" Off"));
+  return ((sig_ha_light_office.get() ? std::string("Office") + std::string(" On") : std::string("Office") + std::string(" Off")));
 });
 
 Memo<std::string> memo_1([]() -> std::string {

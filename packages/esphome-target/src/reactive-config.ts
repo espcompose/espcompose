@@ -129,6 +129,114 @@ function collectThemePaths(node: IRExprNode | undefined): string[] {
   return paths;
 }
 
+/**
+ * Walk an IRExprNode tree and collect all reactive source names (signals,
+ * memos, theme vars) that the expression depends on. Used to derive the
+ * correct wiring for muxed popup bindings whose expressions reference
+ * multiple entity signals across mux cases.
+ */
+function collectExprSourceNames(
+  node: IRExprNode,
+  ctx: CppLoweringContext,
+  signalMap: Map<string, SignalDecl>,
+): string[] {
+  const names = new Set<string>();
+  walkExprForSources(node, ctx, signalMap, names);
+  return Array.from(names);
+}
+
+function walkExprForSources(
+  node: IRExprNode,
+  ctx: CppLoweringContext,
+  signalMap: Map<string, SignalDecl>,
+  out: Set<string>,
+): void {
+  switch (node.kind) {
+    case 'signal_read': {
+      const name = ctx.signalNames.get(node.signalIndex);
+      if (name) out.add(name);
+      break;
+    }
+    case 'memo_read': {
+      const name = ctx.memoNames.get(node.memoId);
+      if (name) out.add(name);
+      break;
+    }
+    case 'entity_prop': {
+      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.property}`) ?? ctx.entityComponentIds.get(node.entityId);
+      if (compId) {
+        const sigName = `sig_${compId}`;
+        if (signalMap.has(sigName)) out.add(sigName);
+      }
+      break;
+    }
+    case 'theme_read': {
+      const scopedKey = `${node.scopeId}_${node.path}`;
+      const name = ctx.themeVarNames.get(scopedKey) ?? `thm_${scopedKey}`;
+      out.add(name);
+      break;
+    }
+    case 'global_read':
+      out.add(`sig_global_${node.globalId}`);
+      break;
+    case 'binary':
+      walkExprForSources(node.left, ctx, signalMap, out);
+      walkExprForSources(node.right, ctx, signalMap, out);
+      break;
+    case 'unary':
+    case 'postfix':
+      walkExprForSources(node.operand, ctx, signalMap, out);
+      break;
+    case 'ternary':
+      walkExprForSources(node.test, ctx, signalMap, out);
+      walkExprForSources(node.consequent, ctx, signalMap, out);
+      walkExprForSources(node.alternate, ctx, signalMap, out);
+      break;
+    case 'call':
+      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
+      break;
+    case 'concat':
+      for (const part of node.parts) walkExprForSources(part, ctx, signalMap, out);
+      break;
+    case 'to_string':
+    case 'group':
+      walkExprForSources(node.expr, ctx, signalMap, out);
+      break;
+    case 'type_cast':
+    case 'format_string':
+      walkExprForSources(node.expr, ctx, signalMap, out);
+      break;
+    case 'mux':
+      walkExprForSources(node.index, ctx, signalMap, out);
+      for (const c of node.cases) walkExprForSources(c, ctx, signalMap, out);
+      break;
+    case 'table_lookup':
+      walkExprForSources(node.index, ctx, signalMap, out);
+      break;
+    case 'null_coalesce':
+      walkExprForSources(node.left, ctx, signalMap, out);
+      walkExprForSources(node.right, ctx, signalMap, out);
+      break;
+    case 'resolve_font':
+      walkExprForSources(node.family, ctx, signalMap, out);
+      walkExprForSources(node.size, ctx, signalMap, out);
+      break;
+    case 'string_method':
+      walkExprForSources(node.object, ctx, signalMap, out);
+      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
+      break;
+    case 'array_index':
+      walkExprForSources(node.array, ctx, signalMap, out);
+      walkExprForSources(node.index, ctx, signalMap, out);
+      break;
+    case 'array_method':
+      walkExprForSources(node.object, ctx, signalMap, out);
+      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
+      break;
+    // Leaf nodes: literal, component_read, trigger_var — no reactive sources
+  }
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Theme scope data interface (passed from the compiler after render)
 // ────────────────────────────────────────────────────────────────────────────
@@ -337,7 +445,19 @@ export function buildRuntimeConfig(
     let cppType: string;
     let sourceNames: string[];
 
-    if (expr.kind === 'memo') {
+    // Muxed popup binding: the exprIR has been replaced with a mux node by
+    // processPopupMux. Lower it inline instead of reading from a single memo.
+    const hasMuxDep = expr.dependencies?.some(
+      (d: { sourceType?: string }) => d.sourceType === 'popup_mux',
+    );
+    if (hasMuxDep && expr.exprIR?.kind === 'mux') {
+      valueExpr = exprToCpp(expr.exprIR, cppCtx);
+      const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
+      // Collect all reactive source names referenced in the mux expression
+      // tree: the mux signal itself + all per-instance entity signals/memos.
+      sourceNames = collectExprSourceNames(expr.exprIR, cppCtx, signalMap);
+    } else if (expr.kind === 'memo') {
       // Memo-backed binding: read from the runtime memo variable.
       const canonNodeId = memoCanonical.get(expr.nodeId) ?? expr.nodeId;
       const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId);

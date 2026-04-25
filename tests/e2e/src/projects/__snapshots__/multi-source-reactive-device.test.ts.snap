@@ -21,7 +21,7 @@ Signal<std::string> sig_ha_sensor_temp_inside_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return sig_ha_light_kitchen_floods.get() && sig_ha_sensor_temp_inside.get() > 72 ? std::string("Comfortable") : std::string("Adjust");
+  return (sig_ha_light_kitchen_floods.get() && sig_ha_sensor_temp_inside.get() > 72 ? std::string("Comfortable") : std::string("Adjust"));
 });
 
 // ── Bootstrap: wire dependency graph ──

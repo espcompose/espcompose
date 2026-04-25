@@ -174,6 +174,10 @@ void bootstrap_runtime() {
   thm_333e4663_spacing_lg.set_subscriber_storage(thm_333e4663_spacing_lg_subs, 1);
   static NodeBase* sig_ha_light_bedroom_state_text_subs[1];
   sig_ha_light_bedroom_state_text.set_subscriber_storage(sig_ha_light_bedroom_state_text_subs, 1);
+  static NodeBase* sig_ha_light_kitchen_state_text_subs[1];
+  sig_ha_light_kitchen_state_text.set_subscriber_storage(sig_ha_light_kitchen_state_text_subs, 1);
+  static NodeBase* sig_popup_espcompose_script_render_wireframe_anon_18__0_mux_subs[1];
+  sig_popup_espcompose_script_render_wireframe_anon_18__0_mux.set_subscriber_storage(sig_popup_espcompose_script_render_wireframe_anon_18__0_mux_subs, 1);
   static NodeBase* thm_333e4663_typography_body_subs[1];
   thm_333e4663_typography_body.set_subscriber_storage(thm_333e4663_typography_body_subs, 1);
   static NodeBase* thm_333e4663_colors_secondary_text_subs[1];
@@ -274,7 +278,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_23([]() {
-    lv_label_set_text(&id(rw_ref11), sig_ha_light_bedroom_state_text.get().c_str());
+    lv_label_set_text(&id(rw_ref11), ([&]() -> std::string { switch (sig_popup_espcompose_script_render_wireframe_anon_18__0_mux.get()) { case 0: return sig_ha_light_bedroom_state_text.get(); case 1: return sig_ha_light_kitchen_state_text.get(); default: return std::string{}; } })().c_str());
   });
 
   static Effect binding_25([]() {
@@ -365,8 +369,8 @@ void bootstrap_runtime() {
   binding_19.wire(binding_19_sources, 1);
   static NodeBase* binding_20_sources[] = {&thm_333e4663_spacing_lg};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_23_sources[] = {&sig_ha_light_bedroom_state_text};
-  binding_23.wire(binding_23_sources, 1);
+  static NodeBase* binding_23_sources[] = {&sig_popup_espcompose_script_render_wireframe_anon_18__0_mux, &sig_ha_light_bedroom_state_text, &sig_ha_light_kitchen_state_text};
+  binding_23.wire(binding_23_sources, 3);
   static NodeBase* binding_25_sources[] = {&thm_333e4663_typography_body};
   binding_25.wire(binding_25_sources, 1);
   static NodeBase* binding_34_sources[] = {&thm_333e4663_colors_secondary_text};

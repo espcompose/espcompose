@@ -103,7 +103,7 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       return `${exprToCpp(node.operand, ctx)}${node.op}`;
 
     case 'ternary':
-      return `${exprToCpp(node.test, ctx)} ? ${exprToCpp(node.consequent, ctx)} : ${exprToCpp(node.alternate, ctx)}`;
+      return `(${exprToCpp(node.test, ctx)} ? ${exprToCpp(node.consequent, ctx)} : ${exprToCpp(node.alternate, ctx)})`;
 
     case 'call':
       return `${builtinToCpp(node.fn)}(${node.args.map(a => exprToCpp(a, ctx)).join(', ')})`;
