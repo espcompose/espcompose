@@ -79,6 +79,15 @@ export type {
 } from './expr-types';
 
 export { getExprChildren, mapExprChildren } from './expr-walk';
+export { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
+export type {
+  ExprStructuralAnalysis,
+  ExprHole,
+  ExprLiteralHole,
+  ExprSignalReadHole,
+  ActionStructuralAnalysis,
+  ActionParamHole,
+} from './structural-analysis';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {
@@ -110,6 +119,7 @@ export type {
   IRLiteralParam,
   IRTriggerVarParam,
   IRExpressionParam,
+  IRReactiveExprParam,
   IRActionConfig,
   IRActionConfigDict,
   IRActionConfigValue,

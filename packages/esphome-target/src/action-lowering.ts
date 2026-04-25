@@ -58,6 +58,8 @@ function lowerParam(param: IRActionParam | string | number | boolean): unknown {
       return lambdaMarker(`return ${param.varName};`);
     case 'expression':
       return expressionMarker(param.jsExpression);
+    case 'reactive_expr':
+      throw new Error('reactive_expr params must be handled in the ha_service case, not lowerParam');
   }
 }
 
@@ -173,6 +175,13 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
             // Dynamic value: use variables + data_template
             variables[param.varName] = lambdaMarker(`return ${param.varName};`);
             templateData[key] = `{{ ${param.varName} }}`;
+          } else if (typeof param === 'object' && param !== null && param.kind === 'reactive_expr') {
+            // Reactive expression: lower exprIR to C++ and route through variables + data_template
+            const varName = `${key}_expr`;
+            const cppCtx = createConditionLoweringContext(ctx);
+            const cppExpr = exprToCpp(param.exprIR, cppCtx);
+            variables[varName] = lambdaMarker(`return ${cppExpr};`);
+            templateData[key] = `{{ ${varName} }}`;
           } else {
             staticData[key] = lowerParam(param as IRActionParam);
           }

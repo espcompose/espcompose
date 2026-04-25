@@ -155,6 +155,18 @@ void select_theme_333e4663(const char* name) {
   if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
 }
 
+// ── Static data tables (table-driven mux) ──
+static const char* tbl_popup_espcompose_script_render_wireframe_anon_18__0_act_0[] = {
+  "light.kitchen_floods",
+  "light.kitchen_island",
+  "light.living_room",
+  "light.dining_room",
+  "light.bedroom",
+  "light.office",
+  "light.deck",
+  "light.garage"
+};
+
 // ── Memos (derived values) ──
 Memo<float> memo_0([]() -> float {
   return thm_333e4663_sizes_xs_paddingX.get() * 2 + 80;
@@ -1669,86 +1681,16 @@ lvgl:
                             id: rw_ref38
                         - button:
                             on_press:
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 0;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.kitchen_floods
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 1;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.kitchen_island
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 2;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.living_room
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 3;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.dining_room
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 4;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.bedroom
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 5;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.office
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 6;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.deck
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 7;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.garage
+                              - homeassistant.action:
+                                  action: homeassistant.toggle
+                                  data_template:
+                                    entity_id: "{{ entity_id_expr }}"
+                                  variables:
+                                    entity_id_expr: !lambda "return
+                                      espcompose::tbl_popup_espcompose_script_render_w\\
+                                      ireframe_anon_18__0_act_0[espcompose::sig\\
+                                      _popup_espcompose_script_render_wireframe\\
+                                      _anon_18__0_mux.get()];"
                             bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                             bg_opa: COVER
                             border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"

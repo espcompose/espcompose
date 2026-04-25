@@ -78,6 +78,12 @@ export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): C
     runtimeConfig.signals.push(...popupMux.muxSignals);
   }
 
+  // Inject static data tables from table-driven mux optimisation
+  if (popupMux && popupMux.tables.length > 0) {
+    if (!runtimeConfig.tables) runtimeConfig.tables = [];
+    runtimeConfig.tables.push(...popupMux.tables);
+  }
+
   // Ensure mux signals exist for all popup_show actions in the IR tree.
   // If popup definitions didn't flow through processPopupMux(), the action
   // lambdas still reference espcompose::sig_popup_<key>_mux — we must

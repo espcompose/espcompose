@@ -112,6 +112,16 @@ export interface BoundSignalDecl {
   globalId: string;
 }
 
+/** A compile-time static data table emitted in the bindings header. */
+export interface TableDecl {
+  /** C++ identifier for the array (e.g. `tbl_popup_abc_entity_ids`). */
+  name: string;
+  /** Element C++ type (e.g. `const char*`, `int32_t`, `bool`). */
+  elementCppType: string;
+  /** Pre-formatted C++ literal strings for each element. */
+  values: string[];
+}
+
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
   /** BoundSignal declarations for globals with reactive dependents. */
@@ -126,6 +136,8 @@ export interface ReactiveRuntimeConfig {
   /** Map from IRReactiveNode nodeId → sequential C++ memo name (e.g. `memo_0`).
    *  Used by the YAML backend to reference the correct memo variables. */
   memoNames?: Map<string, string>;
+  /** Static data tables for table-driven mux optimisation. */
+  tables?: TableDecl[];
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -308,6 +320,21 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       }
       lines.push('  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }');
       lines.push('}');
+      lines.push('');
+    }
+  }
+
+  // ── Static data tables ─────────────────────────────────────────────────
+  if (config.tables && config.tables.length > 0) {
+    lines.push('// ── Static data tables (table-driven mux) ──');
+    for (const tbl of config.tables) {
+      const prefix = tbl.elementCppType.startsWith('const ') ? 'static' : 'static const';
+      lines.push(`${prefix} ${tbl.elementCppType} ${tbl.name}[] = {`);
+      for (let i = 0; i < tbl.values.length; i++) {
+        const comma = i < tbl.values.length - 1 ? ',' : '';
+        lines.push(`  ${tbl.values[i]}${comma}`);
+      }
+      lines.push('};');
       lines.push('');
     }
   }

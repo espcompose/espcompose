@@ -266,7 +266,7 @@ describe('new builtins', () => {
 // ─── mux ──────────────────────────────────────────────────────────────────────
 
 describe('mux', () => {
-  it('lowers a 2-case bool mux to an IIFE switch', () => {
+  it('lowers an all-signal-read mux to a pointer table IIFE', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'sig_kitchen');
     ctx.signalNames.set(1, 'sig_bedroom');
@@ -281,11 +281,11 @@ describe('mux', () => {
       ],
     };
     expect(exprToCpp(node, ctx)).toBe(
-      '([&]() -> bool { switch (popup_mux.get()) { case 0: return sig_kitchen.get(); case 1: return sig_bedroom.get(); default: return bool{}; } })()',
+      '([&]() -> bool { static NodeBase* _tbl[] = {&sig_kitchen, &sig_bedroom}; return static_cast<Signal<bool>*>(_tbl[popup_mux.get()])->get(); })()',
     );
   });
 
-  it('lowers a string-typed mux with default fallback', () => {
+  it('lowers a mixed mux (not all signal_read) to an IIFE switch', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(7, 'popup_mux');
     const node: IRExprNode = {
@@ -301,12 +301,28 @@ describe('mux', () => {
       '([&]() -> std::string { switch (popup_mux.get()) { case 0: return std::string("on"); case 1: return std::string("off"); default: return std::string{}; } })()',
     );
   });
+
+  it('falls back to switch for mixed signal_read + literal cases', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(0, 'sig_kitchen');
+    ctx.signalNames.set(99, 'popup_mux');
+    const node: IRExprNode = {
+      kind: 'mux',
+      type: 'int',
+      index: { kind: 'signal_read', signalIndex: 99 },
+      cases: [
+        { kind: 'signal_read', signalIndex: 0 },
+        { kind: 'literal', value: 42, type: 'int' },
+      ],
+    };
+    expect(exprToCpp(node, ctx)).toContain('switch (popup_mux.get())');
+  });
 });
 
 // ─── table_lookup ─────────────────────────────────────────────────────────────
 
 describe('table_lookup', () => {
-  it('lowers to tableName[index]', () => {
+  it('lowers to tableName[index] in reactive context', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'popup_mux');
     const node: IRExprNode = {
@@ -317,6 +333,21 @@ describe('table_lookup', () => {
     };
     expect(exprToCpp(node, ctx)).toBe(
       'popup_LightButton_entity_ids[popup_mux.get()]',
+    );
+  });
+
+  it('qualifies with espcompose:: in action context', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(0, 'popup_mux');
+    ctx.actionContext = true;
+    const node: IRExprNode = {
+      kind: 'table_lookup',
+      table: 'popup_LightButton_entity_ids',
+      elementType: 'string',
+      index: { kind: 'signal_read', signalIndex: 0 },
+    };
+    expect(exprToCpp(node, ctx)).toBe(
+      'espcompose::popup_LightButton_entity_ids[espcompose::popup_mux.get()]',
     );
   });
 

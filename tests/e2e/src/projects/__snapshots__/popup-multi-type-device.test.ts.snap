@@ -144,6 +144,17 @@ void select_theme_333e4663(const char* name) {
   if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
 }
 
+// ── Static data tables (table-driven mux) ──
+static const char* tbl_popup_espcompose_script_render_wireframe_anon_18__0_act_0[] = {
+  "light.bedroom",
+  "light.kitchen"
+};
+
+static const char* tbl_popup_espcompose_script_render_wireframe_anon_19__0_act_1[] = {
+  "light.ceiling_fan",
+  "light.desk_fan"
+};
+
 // ── Memos (derived values) ──
 Memo<float> memo_0([]() -> float {
   return thm_333e4663_sizes_xs_paddingX.get() * 2 + 80;
@@ -1295,26 +1306,16 @@ lvgl:
                             id: rw_ref22
                         - button:
                             on_press:
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 0;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.bedroom
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_18__0_mux.get() == 1;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.kitchen
+                              - homeassistant.action:
+                                  action: homeassistant.toggle
+                                  data_template:
+                                    entity_id: "{{ entity_id_expr }}"
+                                  variables:
+                                    entity_id_expr: !lambda "return
+                                      espcompose::tbl_popup_espcompose_script_render_w\\
+                                      ireframe_anon_18__0_act_0[espcompose::sig\\
+                                      _popup_espcompose_script_render_wireframe\\
+                                      _anon_18__0_mux.get()];"
                             bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                             bg_opa: COVER
                             border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1401,26 +1402,16 @@ lvgl:
                             id: rw_ref28
                         - button:
                             on_press:
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_19__0_mux.get() == 0;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.ceiling_fan
-                              - if:
-                                  condition:
-                                    - lambda: !lambda "return
-                                        espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                        _anon_19__0_mux.get() == 1;"
-                                  then:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data:
-                                          entity_id: light.desk_fan
+                              - homeassistant.action:
+                                  action: homeassistant.toggle
+                                  data_template:
+                                    entity_id: "{{ entity_id_expr }}"
+                                  variables:
+                                    entity_id_expr: !lambda "return
+                                      espcompose::tbl_popup_espcompose_script_render_w\\
+                                      ireframe_anon_19__0_act_1[espcompose::sig\\
+                                      _popup_espcompose_script_render_wireframe\\
+                                      _anon_19__0_mux.get()];"
                             bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                             bg_opa: COVER
                             border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"

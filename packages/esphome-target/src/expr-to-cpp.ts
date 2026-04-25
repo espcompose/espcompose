@@ -185,6 +185,18 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     case 'mux': {
       const idx = exprToCpp(node.index, ctx);
       const retType = exprTypeToCpp(node.type);
+
+      // Optimisation: if every case is a signal_read, emit a static
+      // NodeBase* pointer table instead of a switch with N branches.
+      // This is O(1) code + O(N) static data.
+      if (node.cases.length > 0 && node.cases.every(c => c.kind === 'signal_read')) {
+        const ptrs = node.cases.map(c => {
+          const name = ctx.signalNames.get((c as { kind: 'signal_read'; signalIndex: number }).signalIndex);
+          return `&${name}`;
+        }).join(', ');
+        return `([&]() -> ${retType} { static NodeBase* _tbl[] = {${ptrs}}; return static_cast<Signal<${retType}>*>(_tbl[${idx}])->get(); })()`;
+      }
+
       const cases = node.cases.map((c, i) =>
         `case ${i}: return ${exprToCpp(c, ctx)};`
       ).join(' ');
@@ -198,7 +210,8 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       // Compile-time data table read: tableName[index]
       // Tables are emitted as `const T tableName[]` in espcompose_bindings.h.
       const idx = exprToCpp(node.index, ctx);
-      return `${node.table}[${idx}]`;
+      const prefix = ctx.actionContext ? 'espcompose::' : '';
+      return `${prefix}${node.table}[${idx}]`;
     }
 
     default:

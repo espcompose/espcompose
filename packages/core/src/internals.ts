@@ -186,6 +186,15 @@ export type {
   IRExprNode,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
+export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
+export type {
+  ExprStructuralAnalysis,
+  ExprHole,
+  ExprLiteralHole,
+  ExprSignalReadHole,
+  ActionStructuralAnalysis,
+  ActionParamHole,
+} from './ir/index';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {
@@ -197,7 +206,7 @@ export type {
   IRLambdaAction, IRLambdaSlot,
   IRPopupShow, IRPopupDismiss,
   IRCondition, IRLambdaCondition, IRNativeCondition,
-  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
+  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
 } from './ir/index';
 export {

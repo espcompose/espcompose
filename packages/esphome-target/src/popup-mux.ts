@@ -22,7 +22,10 @@ import type { IRExprNode, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
-import type { SignalDecl } from './bindings-codegen.js';
+import { analyzeExprStructure, analyzeActionStructure } from '@espcompose/core/internals';
+import { mapExprChildren } from '@espcompose/core/internals';
+import type { SignalDecl, TableDecl } from './bindings-codegen.js';
+import { exprTypeToCpp } from './expr-to-cpp.js';
 
 /** Result of popup mux processing, to be merged into the main runtime config. */
 export interface PopupMuxResult {
@@ -41,6 +44,8 @@ export interface PopupMuxResult {
    * `templateKey:position`.
    */
   muxedActions: Map<string, IRActionNode[]>;
+  /** Static data tables created by table-driven optimisations. */
+  tables: TableDecl[];
 }
 
 /**
@@ -120,6 +125,8 @@ function actionParamFingerprint(param: IRActionParam | string | number | boolean
       return `PT:${param.varName}`;
     case 'expression':
       return `PE:${param.jsExpression}`;
+    case 'reactive_expr':
+      return `PR:${exprFingerprint(param.exprIR)}`;
   }
 }
 
@@ -204,6 +211,7 @@ export function processPopupMux(
   const additionalReactiveNodes: IRReactiveNode[] = [];
   const muxSignalIndices = new Map<number, string>();
   const muxedActions = new Map<string, IRActionNode[]>();
+  const tables: TableDecl[] = [];
 
   let nextSignalIndex = signalOffset;
 
@@ -261,16 +269,59 @@ export function processPopupMux(
         // All instances produce the same expression — no mux needed
         muxedBindings.push(binding0);
       } else {
-        // Divergent expressions — wrap in mux
+        // Divergent expressions — try structural analysis before falling
+        // back to full mux wrapping
         const exprType: ExprType = binding0.expression.exprType ?? 'int';
-        const muxExpr: IRExprNode = {
+        const muxIndexExpr: IRExprNode = { kind: 'signal_read', signalIndex: muxSignalIndex };
+
+        const structural = analyzeExprStructure(perInstanceExprs);
+        let optimisedExpr: IRExprNode | null = null;
+
+        if (structural.kind === 'optimizable') {
+          // Build replacement nodes for each hole
+          const replacements = new Map<number, IRExprNode>();
+          for (const hole of structural.holes) {
+            if (hole.holeKind === 'literal') {
+              // Create a static data table for these literal values
+              const tableName = `tbl_popup_${def.templateKey}_${tables.length}`;
+              const cppType = exprTypeToCpp(hole.type);
+              const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
+              tables.push({
+                name: tableName,
+                elementCppType: cppArrayElemType,
+                values: hole.values.map(v => formatTableLiteral(v, cppArrayElemType)),
+              });
+              replacements.set(hole.holeId, {
+                kind: 'table_lookup',
+                index: muxIndexExpr,
+                table: tableName,
+                elementType: hole.type,
+              });
+            } else {
+              // signal_read hole → localized mux over only the varying signals
+              replacements.set(hole.holeId, {
+                kind: 'mux',
+                index: muxIndexExpr,
+                cases: hole.signalIndices.map(idx => ({ kind: 'signal_read', signalIndex: idx }) as IRExprNode),
+                type: hole.type,
+              });
+            }
+          }
+          // Reconstruct the template, replacing slot sentinels with
+          // table_lookup / localized mux nodes
+          optimisedExpr = resolveSlots(structural.template, replacements);
+        }
+
+        // Use the optimised expression if available, otherwise fall back
+        // to full mux wrapping (current behaviour)
+        const finalExpr: IRExprNode = optimisedExpr ?? {
           kind: 'mux',
           type: exprType,
-          index: { kind: 'signal_read', signalIndex: muxSignalIndex },
+          index: muxIndexExpr,
           cases: perInstanceExprs,
         };
 
-        // Create a new binding with the muxed expression.
+        // Create a new binding with the muxed/optimised expression.
         // Add the mux signal as an additional dependency so the reactive
         // graph wires the Effect to this signal.
         const muxDep = {
@@ -284,7 +335,7 @@ export function processPopupMux(
           ...binding0,
           expression: {
             ...binding0.expression,
-            exprIR: muxExpr,
+            exprIR: finalExpr,
             dependencies: [
               ...(binding0.expression.dependencies ?? []),
               muxDep,
@@ -298,8 +349,8 @@ export function processPopupMux(
     // ── Action muxing ──────────────────────────────────────────────────────
     // Walk per-instance captured actions (trigger handlers) positionally.
     // If all instances share identical actions, keep as-is. If divergent,
-    // build a muxed dispatch: a chain of IRIfAction nodes where each checks
-    // `mux_signal == instanceIndex` and executes that instance's actions.
+    // try structural analysis for table-driven optimization, then fall back
+    // to a muxed dispatch (chain of IRIfAction nodes).
     const instanceActions = def.instances.map(inst => inst.capturedActions ?? []);
     const canonicalActions = instanceActions[0];
     if (canonicalActions && canonicalActions.length > 0 && def.instances.length > 1) {
@@ -317,27 +368,70 @@ export function processPopupMux(
         }
 
         if (!allIdentical) {
-          // Build muxed dispatch: if(mux==0) {inst0 actions} if(mux==1) {inst1 actions} ...
-          const muxedActionList: IRActionNode[] = [];
-          for (let j = 0; j < instanceActions.length; j++) {
-            const instActions = instanceActions[j];
-            if (i >= instActions.length) continue;
-            const condition: IRCondition = {
-              kind: 'lambda_condition',
-              exprIR: {
-                kind: 'binary',
-                op: '==',
-                left: { kind: 'signal_read', signalIndex: muxSignalIndex },
-                right: { kind: 'literal', value: j, type: 'int' },
-              },
-            };
-            muxedActionList.push({
-              kind: 'if',
-              condition,
-              then: instActions[i].rawActions,
+          // Gather the rawActions for this position across all instances
+          const perInstanceRawActions = instanceActions.map(inst =>
+            i < inst.length ? inst[i].rawActions : [],
+          );
+
+          // Try structural analysis first
+          const actionStructural = analyzeActionStructure(perInstanceRawActions);
+          if (actionStructural.kind === 'optimizable') {
+            // Create table-driven actions: replace varying params with
+            // reactive_expr params containing table_lookup expressions
+            const muxIndexExpr: IRExprNode = { kind: 'signal_read', signalIndex: muxSignalIndex };
+            const optimisedActions = actionStructural.templateActions.map(tmplAction => {
+              if (tmplAction.kind !== 'ha_service' || !tmplAction.data) return tmplAction;
+
+              const newData: Record<string, IRActionParam> = { ...tmplAction.data };
+              for (const hole of actionStructural.varyingParams) {
+                // Extract param key from paramPath (e.g. "data.entity_id" → "entity_id")
+                const paramKey = hole.paramPath.replace(/^data\./, '');
+                if (!(paramKey in newData)) continue;
+
+                const tableName = `tbl_popup_${def.templateKey}_act_${tables.length}`;
+                const cppType = exprTypeToCpp(hole.type);
+                const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
+                tables.push({
+                  name: tableName,
+                  elementCppType: cppArrayElemType,
+                  values: hole.values.map((v: string | number | boolean) => formatTableLiteral(v, cppArrayElemType)),
+                });
+                newData[paramKey] = {
+                  kind: 'reactive_expr',
+                  exprIR: {
+                    kind: 'table_lookup',
+                    index: muxIndexExpr,
+                    table: tableName,
+                    elementType: hole.type,
+                  },
+                };
+              }
+              return { ...tmplAction, data: newData } as IRActionNode;
             });
+            muxedActions.set(`${def.templateKey}:${i}`, optimisedActions);
+          } else {
+            // Fallback: build muxed dispatch if-chain
+            const muxedActionList: IRActionNode[] = [];
+            for (let j = 0; j < instanceActions.length; j++) {
+              const instActions = instanceActions[j];
+              if (i >= instActions.length) continue;
+              const condition: IRCondition = {
+                kind: 'lambda_condition',
+                exprIR: {
+                  kind: 'binary',
+                  op: '==',
+                  left: { kind: 'signal_read', signalIndex: muxSignalIndex },
+                  right: { kind: 'literal', value: j, type: 'int' },
+                },
+              };
+              muxedActionList.push({
+                kind: 'if',
+                condition,
+                then: instActions[i].rawActions,
+              });
+            }
+            muxedActions.set(`${def.templateKey}:${i}`, muxedActionList);
           }
-          muxedActions.set(`${def.templateKey}:${i}`, muxedActionList);
         }
       }
     }
@@ -349,5 +443,37 @@ export function processPopupMux(
     additionalReactiveNodes,
     muxSignalIndices,
     muxedActions,
+    tables,
   };
+}
+
+// ── Helper: resolve slot sentinels in a template tree ────────────────────────
+
+/**
+ * Walk an expression template produced by `analyzeExprStructure` and replace
+ * each `slot` sentinel with the corresponding replacement node.
+ */
+function resolveSlots(
+  template: IRExprNode,
+  replacements: Map<number, IRExprNode>,
+): IRExprNode {
+  if (template.kind === 'slot') {
+    const replacement = replacements.get(template.slotIndex);
+    if (!replacement) {
+      throw new Error(`resolveSlots: no replacement for slot ${template.slotIndex}`);
+    }
+    return replacement;
+  }
+  return mapExprChildren(template, child => resolveSlots(child, replacements));
+}
+
+// ── Helper: format a literal value as a C++ array element ────────────────────
+
+function formatTableLiteral(value: string | number | boolean, cppType: string): string {
+  if (cppType === 'const char*' || cppType === 'char* const') {
+    return `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  }
+  if (cppType === 'bool') return value ? 'true' : 'false';
+  if (cppType === 'float') return `${Number(value)}f`;
+  return String(value);
 }

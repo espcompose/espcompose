@@ -251,10 +251,17 @@ export interface IRExpressionParam {
   jsExpression: string;
 }
 
+/** A reactive IR expression — lowered to C++ via exprToCpp at codegen time */
+export interface IRReactiveExprParam {
+  kind: 'reactive_expr';
+  exprIR: IRExprNode;
+}
+
 export type IRActionParam =
   | IRLiteralParam
   | IRTriggerVarParam
-  | IRExpressionParam;
+  | IRExpressionParam
+  | IRReactiveExprParam;
 
 /**
  * A nested object value inside an action config — used for actions like
