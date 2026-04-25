@@ -78,6 +78,8 @@ export type {
   IRExprNode,
 } from './expr-types';
 
+export { getExprChildren, mapExprChildren } from './expr-walk';
+
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {
   IRActionNode,

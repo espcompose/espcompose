@@ -14,6 +14,7 @@ import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import type { IRExprNode } from '@espcompose/core';
+import { getExprChildren } from '@espcompose/core';
 import type { ExprType } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 
@@ -82,51 +83,7 @@ function deriveSourceSignals(
 function collectThemePaths(node: IRExprNode | undefined): string[] {
   if (!node) return [];
   if (node.kind === 'theme_read') return [`${node.scopeId}_${node.path}`];
-  const paths: string[] = [];
-  switch (node.kind) {
-    case 'binary':
-      paths.push(...collectThemePaths(node.left), ...collectThemePaths(node.right));
-      break;
-    case 'unary':
-    case 'postfix':
-      paths.push(...collectThemePaths(node.operand));
-      break;
-    case 'ternary':
-      paths.push(...collectThemePaths(node.test), ...collectThemePaths(node.consequent), ...collectThemePaths(node.alternate));
-      break;
-    case 'call':
-      for (const arg of node.args) paths.push(...collectThemePaths(arg));
-      break;
-    case 'concat':
-      for (const part of node.parts) paths.push(...collectThemePaths(part));
-      break;
-    case 'to_string':
-    case 'group':
-      paths.push(...collectThemePaths(node.expr));
-      break;
-    case 'resolve_font':
-      paths.push(...collectThemePaths(node.family), ...collectThemePaths(node.size));
-      break;
-    case 'type_cast':
-    case 'format_string':
-      paths.push(...collectThemePaths(node.expr));
-      break;
-    case 'null_coalesce':
-      paths.push(...collectThemePaths(node.left), ...collectThemePaths(node.right));
-      break;
-    case 'string_method':
-      paths.push(...collectThemePaths(node.object));
-      for (const arg of node.args) paths.push(...collectThemePaths(arg));
-      break;
-    case 'mux':
-      paths.push(...collectThemePaths(node.index));
-      for (const c of node.cases) paths.push(...collectThemePaths(c));
-      break;
-    case 'table_lookup':
-      paths.push(...collectThemePaths(node.index));
-      break;
-  }
-  return paths;
+  return getExprChildren(node).flatMap(collectThemePaths);
 }
 
 /**
@@ -179,61 +136,10 @@ function walkExprForSources(
     case 'global_read':
       out.add(`sig_global_${node.globalId}`);
       break;
-    case 'binary':
-      walkExprForSources(node.left, ctx, signalMap, out);
-      walkExprForSources(node.right, ctx, signalMap, out);
-      break;
-    case 'unary':
-    case 'postfix':
-      walkExprForSources(node.operand, ctx, signalMap, out);
-      break;
-    case 'ternary':
-      walkExprForSources(node.test, ctx, signalMap, out);
-      walkExprForSources(node.consequent, ctx, signalMap, out);
-      walkExprForSources(node.alternate, ctx, signalMap, out);
-      break;
-    case 'call':
-      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
-      break;
-    case 'concat':
-      for (const part of node.parts) walkExprForSources(part, ctx, signalMap, out);
-      break;
-    case 'to_string':
-    case 'group':
-      walkExprForSources(node.expr, ctx, signalMap, out);
-      break;
-    case 'type_cast':
-    case 'format_string':
-      walkExprForSources(node.expr, ctx, signalMap, out);
-      break;
-    case 'mux':
-      walkExprForSources(node.index, ctx, signalMap, out);
-      for (const c of node.cases) walkExprForSources(c, ctx, signalMap, out);
-      break;
-    case 'table_lookup':
-      walkExprForSources(node.index, ctx, signalMap, out);
-      break;
-    case 'null_coalesce':
-      walkExprForSources(node.left, ctx, signalMap, out);
-      walkExprForSources(node.right, ctx, signalMap, out);
-      break;
-    case 'resolve_font':
-      walkExprForSources(node.family, ctx, signalMap, out);
-      walkExprForSources(node.size, ctx, signalMap, out);
-      break;
-    case 'string_method':
-      walkExprForSources(node.object, ctx, signalMap, out);
-      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
-      break;
-    case 'array_index':
-      walkExprForSources(node.array, ctx, signalMap, out);
-      walkExprForSources(node.index, ctx, signalMap, out);
-      break;
-    case 'array_method':
-      walkExprForSources(node.object, ctx, signalMap, out);
-      for (const arg of node.args) walkExprForSources(arg, ctx, signalMap, out);
-      break;
-    // Leaf nodes: literal, component_read, trigger_var — no reactive sources
+    default:
+      for (const child of getExprChildren(node)) {
+        walkExprForSources(child, ctx, signalMap, out);
+      }
   }
 }
 

@@ -185,6 +185,7 @@ export type {
   IRExprMux, IRExprTableLookup,
   IRExprNode,
 } from './ir/index';
+export { getExprChildren, mapExprChildren } from './ir/index';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
 export type {

@@ -130,5 +130,6 @@ export type { WidgetCategory } from './wireframe';
 // ────────────────────────────────────────────────────────────────────────────
 
 export type { IRExprNode } from './ir/index';
+export { getExprChildren, mapExprChildren } from './ir/index';
 export { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 export type { Signal } from './reactive-node';
