@@ -19,7 +19,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, useContext, withContext } from './useContext';
-import { assertHookContext, getCurrentHookPath } from './useState';
+import { assertHookContext, getCurrentHookPath, getHookPathGeneration } from './useState';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND, POPUP_BRAND } from '../types';
 import type { EspComposeElement } from '../types';
@@ -123,6 +123,10 @@ export interface PopupDefinition {
 interface PopupScopeFrame {
   /** Map templateKey → PopupDefinition. Insertion order is preserved. */
   readonly definitions: Map<string, PopupDefinition>;
+  /** Hook-path generation seen at the last usePopup() call, for reset detection. */
+  _lastGeneration?: number;
+  /** Per-component-invocation call counter for usePopup(). */
+  _hookCallIndex?: number;
 }
 
 const popupScopeContext = createContext<PopupScopeFrame | null>(null);
@@ -173,27 +177,35 @@ export function peekPopupDefinitions(): PopupDefinition[] {
  */
 export type PopupFactory = (ctrl: PopupController) => EspComposeElement | EspComposeElement[];
 
+// ── Hook call counter ───────────────────────────────────────────────────────
+// Disambiguates multiple usePopup() calls within the same component.
+// Uses a Map<hookPath, callIndex> on the popup scope frame to track how many
+// usePopup() calls have occurred for each distinct hook path. The map is
+// cleared when the hook path changes (which means a different component
+// invocation started). This ensures:
+//   - Component instance A calling usePopup() twice → keys path#0, path#1
+//   - Component instance B calling usePopup() twice → keys path#0, path#1
+//     (same keys as A, so B's calls correctly append to A's definitions)
+
 /**
  * Declare a shared popup whose widget subtree is deduplicated across all
  * instances of the calling component.
  *
  * Must be called inside a function component body. The dedup key is derived
- * from the current hook-path stack (component identity).
+ * from the current hook-path stack (component identity) plus a per-component
+ * call index so that multiple `usePopup()` calls in the same component each
+ * get their own unique popup definition.
  */
 export function usePopup(factory: PopupFactory): PopupController {
   assertHookContext('usePopup()');
 
-  const templateKey = getCurrentHookPath();
-  if (!templateKey) {
+  const basePath = getCurrentHookPath();
+  if (!basePath) {
     throw new Error(
       'usePopup() could not derive a template key from the hook-path stack. ' +
       'This is an internal error — usePopup() must be called inside a function component.',
     );
   }
-
-  // Sanitize for use in C++ identifiers and LVGL widget IDs.
-  // The raw hook path may contain '/', '(', ')' etc.
-  const safeKey = sanitizeIdentifier(templateKey);
 
   const frame = useContext(popupScopeContext);
   if (!frame) {
@@ -202,6 +214,25 @@ export function usePopup(factory: PopupFactory): PopupController {
       'The render pass must be wrapped in withPopupScope() (the compiler does this automatically).',
     );
   }
+
+  // Per-hook-path call counter.  Resets at the start of each component
+  // invocation.  We detect invocation boundaries via the hook-path
+  // generation counter — it increments on every pushHookPath/popHookPath,
+  // so even two sibling instances with the same path string will see
+  // different generations after the pop+push cycle between them.
+  const gen = getHookPathGeneration();
+  if (gen !== frame._lastGeneration) {
+    frame._lastGeneration = gen;
+    frame._hookCallIndex = 0;
+  }
+  const callIndex = frame._hookCallIndex!++;
+
+  // Build a unique template key: hook-path + call-site index.
+  const templateKey = `${basePath}#${callIndex}`;
+
+  // Sanitize for use in C++ identifiers and LVGL widget IDs.
+  // The raw hook path may contain '/', '(', ')' etc.
+  const safeKey = sanitizeIdentifier(templateKey);
 
   let def = frame.definitions.get(templateKey);
   if (!def) {

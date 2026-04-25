@@ -21,7 +21,7 @@ Signal<std::string> sig_ha_light_bedroom_state_text;
 Signal<bool> sig_ha_light_kitchen;
 Signal<float> sig_ha_light_kitchen_brightness;
 Signal<std::string> sig_ha_light_kitchen_state_text;
-Signal<int32_t> sig_popup_espcompose_script_render_wireframe_anonymous__mux;
+Signal<int32_t> sig_popup_espcompose_script_render_wireframe_anon_18__0_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -806,12 +806,12 @@ lvgl:
                   id: rw_ref4
               - button:
                   on_press:
-                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anony\\
-                        mous__mux.set(0); if (auto rt =
+                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anon_\\
+                        18__0_mux.set(0); if (auto rt =
                         ::espcompose::EspcomposeRuntimeComponent::get_instance(\\
                         )) { rt->request_flush(); }
                         lv_obj_clear_flag(id(popup_espcompose_script_render_wir\\
-                        eframe_anonymous_), LV_OBJ_FLAG_HIDDEN);"
+                        eframe_anon_18__0), LV_OBJ_FLAG_HIDDEN);"
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -833,12 +833,12 @@ lvgl:
                         id: rw_ref6
               - button:
                   on_press:
-                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anony\\
-                        mous__mux.set(1); if (auto rt =
+                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anon_\\
+                        18__0_mux.set(1); if (auto rt =
                         ::espcompose::EspcomposeRuntimeComponent::get_instance(\\
                         )) { rt->request_flush(); }
                         lv_obj_clear_flag(id(popup_espcompose_script_render_wir\\
-                        eframe_anonymous_), LV_OBJ_FLAG_HIDDEN);"
+                        eframe_anon_18__0), LV_OBJ_FLAG_HIDDEN);"
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -861,7 +861,7 @@ lvgl:
   top_layer:
     widgets:
       - obj:
-          id: popup_espcompose_script_render_wireframe_anonymous_
+          id: popup_espcompose_script_render_wireframe_anon_18__0
           hidden: true
           width: 100%
           height: 100%
@@ -872,7 +872,7 @@ lvgl:
             - obj:
                 on_press:
                   - lambda: !lambda "lv_obj_add_flag(id(popup_espcompose_script_render_wireframe_an\\
-                      onymous_), LV_OBJ_FLAG_HIDDEN);"
+                      on_18__0), LV_OBJ_FLAG_HIDDEN);"
                 width: 100%
                 height: 100%
                 bg_color: "0x000000"
@@ -920,7 +920,7 @@ lvgl:
                                         condition:
                                           - lambda: !lambda "return
                                               espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                              _anonymous__mux.get() == 0;"
+                                              _anon_18__0_mux.get() == 0;"
                                         then:
                                           - homeassistant.action:
                                               action: homeassistant.toggle
@@ -930,7 +930,7 @@ lvgl:
                                         condition:
                                           - lambda: !lambda "return
                                               espcompose::sig_popup_espcompose_script_render_wireframe\\
-                                              _anonymous__mux.get() == 1;"
+                                              _anon_18__0_mux.get() == 1;"
                                         then:
                                           - homeassistant.action:
                                               action: homeassistant.toggle
@@ -959,7 +959,7 @@ lvgl:
                               - button:
                                   on_press:
                                     - lambda: !lambda "lv_obj_add_flag(id(popup_espcompose_script_render_wireframe_an\\
-                                        onymous_), LV_OBJ_FLAG_HIDDEN);"
+                                        on_18__0), LV_OBJ_FLAG_HIDDEN);"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_secondary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return

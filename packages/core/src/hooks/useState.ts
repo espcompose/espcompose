@@ -13,6 +13,21 @@
 const _hookPathStack: string[] = [];
 
 /**
+ * Monotonic generation counter — incremented on every push/pop/set so that
+ * hooks like `usePopup()` can detect component invocation boundaries even
+ * when the hook-path string is identical across sibling instances.
+ */
+let _hookPathGeneration = 0;
+
+/**
+ * Return the current generation counter.
+ * Used by `usePopup()` to detect component invocation boundaries.
+ */
+export function getHookPathGeneration(): number {
+  return _hookPathGeneration;
+}
+
+/**
  * Establish or clear the root hook context frame.
  *
  * Called by withScriptScope() with a non-null root name at the start of a
@@ -20,6 +35,7 @@ const _hookPathStack: string[] = [];
  */
 export function setCurrentHookPath(path: string | null): void {
   _hookPathStack.length = 0;
+  _hookPathGeneration++;
   if (path !== null) _hookPathStack.push(path);
 }
 
@@ -32,6 +48,7 @@ export function setCurrentHookPath(path: string | null): void {
  */
 export function pushHookPath(name: string): void {
   _hookPathStack.push(name);
+  _hookPathGeneration++;
 }
 
 /**
@@ -44,6 +61,7 @@ export function popHookPath(): void {
     throw new Error('popHookPath() called with empty hook path stack — mismatched push/pop');
   }
   _hookPathStack.pop();
+  _hookPathGeneration++;
 }
 
 /**

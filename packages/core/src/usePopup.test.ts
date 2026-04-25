@@ -109,4 +109,29 @@ describe('usePopup', () => {
     expect(() => savedCtrl!.show()).toThrow(/compile-time/);
     expect(() => savedCtrl!.dismiss()).toThrow(/compile-time/);
   });
+
+  it('two usePopup() calls in the same component produce two definitions', () => {
+    const { result: { popups } } = withScriptScope(() => withPopupScope(() => {
+      const stub = { type: 'div', props: {}, __source: undefined as never };
+      // Instance A: two usePopup calls
+      callInsideComponent('LightSwitch', () => {
+        usePopup(() => stub);
+        usePopup(() => stub);
+      });
+      // Instance B: two usePopup calls
+      callInsideComponent('LightSwitch', () => {
+        usePopup(() => stub);
+        usePopup(() => stub);
+      });
+    }));
+    // Two definitions (one per call site), each with 2 instances
+    expect(popups).toHaveLength(2);
+    expect(popups[0].instances).toHaveLength(2);
+    expect(popups[1].instances).toHaveLength(2);
+    // Different template keys
+    expect(popups[0].templateKey).not.toBe(popups[1].templateKey);
+    // Both contain the component name
+    expect(popups[0].templateKey).toContain('LightSwitch');
+    expect(popups[1].templateKey).toContain('LightSwitch');
+  });
 });

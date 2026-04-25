@@ -322,6 +322,14 @@ export function extractElementProps(el: EspComposeElement): {
   allProps: Record<string, unknown>;
   children: EspComposeElement | EspComposeElement[] | undefined;
 } {
+  if (!el || !el.props) {
+    const isFunction = typeof el === 'function';
+    throw new Error(
+      `extractElementProps: ${isFunction ? `received a function (${(el as { name?: string }).name || 'anonymous'}) instead of an element — did you forget to invoke it as JSX (<Component /> instead of Component)?` : `element has undefined props.`} ` +
+      `type=${el ? (typeof el.type === 'function' ? el.type.name : String(el.type)) : 'MISSING'}, ` +
+      `keys=${el ? Object.keys(el).join(',') : 'N/A'}, raw=${JSON.stringify(el)}`,
+    );
+  }
   const { children, ref, "x:custom": xCustom, ...ownProps } = el.props as Record<string, unknown> & { children?: unknown; ref?: unknown; "x:custom"?: unknown };
   const propsWithId = ref != null
     ? { id: isRef(ref) ? ref.toString() : String(ref), ...ownProps }
@@ -347,6 +355,7 @@ export const Fragment: unique symbol = Symbol.for('@espcompose/core.Fragment') a
 export function flattenFragments(elements: EspComposeElement[]): EspComposeElement[] {
   const out: EspComposeElement[] = [];
   for (const el of elements) {
+    if (el == null) continue;
     if (el.type === Fragment) {
       const children = el.props.children;
       if (children != null) {
