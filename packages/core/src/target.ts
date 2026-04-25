@@ -7,6 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR } from './ir/index';
+import type { PopupDefinition } from './hooks/usePopup';
 
 /**
  * Request passed from the compiler to a target's `emit()` method.
@@ -26,6 +27,8 @@ export interface EmitRequest {
   sourceDir: string;
   /** Collected secrets (key → value) from secret() calls. */
   secrets?: ReadonlyMap<string, string>;
+  /** Popup definitions collected during render (usePopup). */
+  popups?: PopupDefinition[];
 }
 
 /** Result returned from a target's `emit()` method. */

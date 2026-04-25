@@ -106,6 +106,9 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
+export type { PopupDefinition, PopupInstance, PopupController, CapturedPopupAction } from './hooks/usePopup';
+export { withPopupScope, peekPopupDefinitions } from './hooks/usePopup';
+export { structuralFingerprint, assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
@@ -179,6 +182,7 @@ export type {
   IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar,
   IRExprTypeCast, IRExprFormatString, IRExprNullCoalesce, IRExprStringMethod,
   IRExprArrayIndex, IRExprArrayMethod,
+  IRExprMux, IRExprTableLookup,
   IRExprNode,
 } from './ir/index';
 
@@ -190,6 +194,7 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRArraySet, IRArrayPush, IRArrayClear,
   IRLambdaAction, IRLambdaSlot,
+  IRPopupShow, IRPopupDismiss,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -201,4 +206,5 @@ export {
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
+  irPopupShow, irPopupDismiss,
 } from './ir/index';

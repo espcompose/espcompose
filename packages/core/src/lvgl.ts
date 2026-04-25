@@ -20,7 +20,13 @@ import { LvglContext } from './hooks/useLvgl';
 import type { LvglComponentRef } from './component-aliases';
 import { isIRReactiveNode } from './reactive-node';
 import type { IRReactiveNode } from './reactive-node';
-import { registerReactiveBinding } from './hooks/useReactiveScope';
+import { registerReactiveBinding, withReactiveScope } from './hooks/useReactiveScope';
+import { pushHookPath, popHookPath } from './hooks/useState';
+import { peekPopupDefinitions } from './hooks/usePopup';
+import type { CapturedPopupAction } from './hooks/usePopup';
+import type { IRActionNode } from './ir/action-types';
+import { assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
+import { resolvePopupControllerRefs, cleanPopupControllerRefs } from './popup-resolve';
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
 import {
   camelToSnake,
@@ -48,6 +54,12 @@ function snakeToCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
+// ── Popup action capture ──────────────────────────────────────────────────
+// Module-level capture list activated during popup widget serialization.
+// `lvglWidgetToPlain()` checks this and pushes action metadata from trigger
+// handler function props (those with `__compiledActions`).
+let _popupActionCapture: CapturedPopupAction[] | null = null;
+
 /** Returns true for any JSX element type that represents an LVGL widget (lvgl-*). */
 export function isLvglElement(type: string | symbol | FunctionComponent): type is string {
   return typeof type === 'string' && type.startsWith('lvgl-');
@@ -69,7 +81,13 @@ function resolveLvglChildren(
       // Extract ref so it is not passed to the component function, then
       // forward it onto the root element the component returns.
       const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
-      const result = el.type(propsWithoutRef as never);
+      pushHookPath(el.type.name || 'anonymous');
+      let result;
+      try {
+        result = el.type(propsWithoutRef as never);
+      } finally {
+        popHookPath();
+      }
       if (result == null) continue;
       const results = Array.isArray(result) ? result : [result];
       let rendered = results;
@@ -213,6 +231,31 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
+  // Capture compiled action metadata from trigger handler props when inside
+  // popup widget serialization.  Trigger handlers are function values with
+  // `__compiledActions` attached by the action compiler.
+  if (_popupActionCapture) {
+    for (const val of Object.values(allProps)) {
+      if (typeof val === 'function' && val != null && '__compiledActions' in val) {
+        const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
+        const rawActions = fn.__compiledActions as IRActionNode[];
+        // Resolve deferred popup controller refs — replace placeholder
+        // templateKey/instanceIndex with actual values from the bound controller.
+        resolvePopupControllerRefs(rawActions, fn.__refBindings);
+        // Remove resolved popup controller objects from refBindings so they
+        // don't corrupt lambda strings during ref resolution (toString →
+        // '[object Object]' would replace 'popup' in signal names).
+        if (fn.__refBindings) {
+          cleanPopupControllerRefs(fn.__refBindings);
+        }
+        _popupActionCapture.push({
+          rawActions,
+          refBindings: fn.__refBindings,
+        });
+      }
+    }
+  }
+
   const widgetChildren = resolveLvglChildren(children);
   const nestedWidgets = widgetChildren
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
@@ -347,6 +390,98 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
     const serialized = stripUndefined(keysToSnakeCase({ ...allProps }));
     if (pages.length > 0) serialized.pages = pages;
     if (topWidgets.length > 0) serialized.widgets = topWidgets;
+
+    // Emit popup widget subtrees into top_layer.
+    //
+    // Children resolution above evaluated all function components, which
+    // registered popup definitions via usePopup(). For each definition:
+    //   1. Validate structural identity across instances (compile-time error
+    //      on mismatch).
+    //   2. Serialize EVERY instance's rendered widgets inside an isolated
+    //      reactive scope to capture per-instance bindings and reactive nodes.
+    //   3. Only emit instance #0's widgets into top_layer.
+    //   4. Store captured bindings on each PopupInstance so the codegen phase
+    //      can zip them across instances and build mux expressions.
+    //
+    // Instance 0's bindings are NOT registered in the top-level scope — they
+    // are captured alongside instances 1..N-1 and handled specially by the
+    // codegen (Phase 6).
+    const popups = peekPopupDefinitions();
+    if (popups.length > 0) {
+      const popupWidgets: Record<string, unknown>[] = [];
+      for (const def of popups) {
+        assertPopupStructuralIdentity(def.templateKey, def.instances);
+
+        for (const instance of def.instances) {
+          const rendered = instance.rendered;
+          if (rendered == null) continue;
+
+          const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
+
+          // Serialize inside an isolated reactive scope to capture bindings
+          // without polluting the top-level scope.
+          // Activate popup action capture to collect trigger handler metadata.
+          _popupActionCapture = [];
+          let capturedActions: CapturedPopupAction[];
+          let bindings: ReturnType<typeof withReactiveScope>['bindings'];
+          let reactiveNodes: ReturnType<typeof withReactiveScope>['reactiveNodes'];
+          try {
+            const scope = withReactiveScope(() => {
+              const resolved = resolveLvglChildren(renderedArr);
+              const widgets: Record<string, unknown>[] = [];
+              for (const child of resolved) {
+                if (isLvglElement(child.type)) {
+                  widgets.push(lvglWidgetToPlain(child));
+                } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
+                  widgets.push(ecCanvasToPlain(child));
+                }
+              }
+              // Only emit instance 0's widgets into top_layer, wrapped in a
+              // hidden container obj with a deterministic ID for action targeting.
+              if (instance.index === 0) {
+                const wrapperId = `popup_${def.templateKey}`;
+                popupWidgets.push({
+                  obj: {
+                    id: wrapperId,
+                    hidden: true,
+                    width: '100%',
+                    height: '100%',
+                    bg_opa: 'TRANSP',
+                    border_width: 0,
+                    pad_all: 0,
+                    widgets,
+                  },
+                });
+              }
+              return null;
+            });
+            bindings = scope.bindings;
+            reactiveNodes = scope.reactiveNodes;
+            capturedActions = _popupActionCapture;
+          } finally {
+            _popupActionCapture = null;
+          }
+
+          // Store captured per-instance data for Phase 6 codegen.
+          (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
+          (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
+          (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
+        }
+      }
+      if (popupWidgets.length > 0) {
+        // Merge with any user-provided top_layer config (snake_case from
+        // keysToSnakeCase). The top_layer accepts a widgets array per ESPHome's
+        // widget_container schema.
+        const existingTopLayer = serialized.top_layer;
+        if (existingTopLayer && typeof existingTopLayer === 'object' && !Array.isArray(existingTopLayer)) {
+          const tl = existingTopLayer as Record<string, unknown>;
+          const existingWidgets = Array.isArray(tl.widgets) ? tl.widgets as unknown[] : [];
+          tl.widgets = [...existingWidgets, ...popupWidgets];
+        } else {
+          serialized.top_layer = { widgets: popupWidgets };
+        }
+      }
+    }
 
     return serialized;
   });

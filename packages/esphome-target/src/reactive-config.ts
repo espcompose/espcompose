@@ -59,6 +59,12 @@ function deriveSourceSignals(
       if (sigName && !names.includes(sigName)) {
         names.push(sigName);
       }
+    } else if (dep.sourceType === 'popup_mux') {
+      // Popup mux dependency — signal name is the sourceId itself (sig_popup_X_mux)
+      const sigName = dep.sourceId;
+      if (!names.includes(sigName)) {
+        names.push(sigName);
+      }
     } else {
       // HA entity dependency — signal name is sig_${sourceId}
       const sigName = `sig_${dep.sourceId}`;
@@ -112,6 +118,13 @@ function collectThemePaths(node: IRExprNode | undefined): string[] {
       paths.push(...collectThemePaths(node.object));
       for (const arg of node.args) paths.push(...collectThemePaths(arg));
       break;
+    case 'mux':
+      paths.push(...collectThemePaths(node.index));
+      for (const c of node.cases) paths.push(...collectThemePaths(c));
+      break;
+    case 'table_lookup':
+      paths.push(...collectThemePaths(node.index));
+      break;
   }
   return paths;
 }
@@ -149,6 +162,12 @@ export function buildRuntimeConfig(
   compiledTriggers?: TriggerFunctionDecl[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   globalComponents?: any[],
+  /** Extra signal index → name entries (e.g. popup mux signals). */
+  extraSignalNames?: Map<number, string>,
+  /** Additional theme memo names that must survive tree-shaking (e.g. tokens
+   *  referenced by reactive IR values in the config tree that are not in the
+   *  reactive bindings pipeline — popup widgets serialized into top_layer). */
+  additionalThemeRefs?: Set<string>,
 ): ReactiveRuntimeConfig {
   // Collect unique signals from HA entities
   const signalMap = new Map<string, SignalDecl>();
@@ -210,7 +229,7 @@ export function buildRuntimeConfig(
   }
 
   const cppCtx: CppLoweringContext = {
-    signalNames: new Map(),
+    signalNames: new Map(extraSignalNames),
     memoNames: new Map(),
     slotExprs: new Map(),
     entityComponentIds,
@@ -411,6 +430,11 @@ export function buildRuntimeConfig(
     for (const s of effect.sourceNames) {
       if (s.startsWith('thm_')) referencedThemeMemos.add(s);
     }
+  }
+  // Include theme memos referenced by the IR config tree (e.g. popup widgets
+  // serialized into top_layer whose bindings may not be in the reactive pipeline).
+  if (additionalThemeRefs) {
+    for (const ref of additionalThemeRefs) referencedThemeMemos.add(ref);
   }
 
   // Filter theme scope configs to only include referenced memos.

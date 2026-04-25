@@ -107,6 +107,16 @@ declare const REF_BRAND: unique symbol;
 export declare const THEME_BRAND: unique symbol;
 
 /**
+ * Phantom brand for popup controllers.
+ *
+ * Types branded with POPUP_BRAND represent compile-time popup controllers
+ * created by `usePopup()`. The compiler uses this brand to detect
+ * `controller.show()` and `controller.dismiss()` calls and lower them to
+ * muxed LVGL show/hide actions.
+ */
+export declare const POPUP_BRAND: unique symbol;
+
+/**
  * Phantom brand for compile-time binding types.
  *
  * Types branded with BINDING_BRAND represent compiler-understood constructs

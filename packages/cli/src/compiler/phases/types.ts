@@ -1,5 +1,5 @@
 import type ts from 'typescript';
-import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { SemanticIR, ComposeTarget, PopupDefinition } from '@espcompose/core/internals';
 
 /** Timing measurement for a single compiler phase. */
 export interface PhaseTiming {
@@ -48,6 +48,8 @@ export interface PhaseContext {
   ir?: SemanticIR;
   /** Collected secrets (key → value) from the execute phase. */
   secrets?: ReadonlyMap<string, string>;
+  /** Collected popup definitions from the execute phase. */
+  popups?: PopupDefinition[];
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
 

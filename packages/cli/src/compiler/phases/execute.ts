@@ -47,28 +47,33 @@ export function executePhase(ctx: PhaseContext): void {
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
+  let collectedPopups: unknown[] = [];
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
-    const { result: config, scripts } = cjsSDK.withScriptScope(() => {
-      const mod = _require(bundlePath) as { default?: unknown };
+    const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
+      const { result: config, popups } = cjsSDK.withPopupScope(() => {
+        const mod = _require(bundlePath) as { default?: unknown };
 
-      const rootElement = mod.default;
+        const rootElement = mod.default;
 
-      if (rootElement == null) {
-        throw new Error(
-          `Entry module does not have a default export. ` +
-            `Make sure your TSX file exports a default ESPCompose element tree.`
-        );
-      }
+        if (rootElement == null) {
+          throw new Error(
+            `Entry module does not have a default export. ` +
+              `Make sure your TSX file exports a default ESPCompose element tree.`
+          );
+        }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
 
-      return rendered;
+        return rendered;
+      });
+      collectedPopups = popups;
+      return config;
     });
     collectedScripts = scripts;
 
-    return config;
+    return scriptResult;
   });
 
   const serializationCaptures = cjsSDK.stopSerializationCapture();
@@ -93,6 +98,12 @@ export function executePhase(ctx: PhaseContext): void {
   const secretsMap: ReadonlyMap<string, string> = cjsSDK.getSecrets();
   if (secretsMap.size > 0) {
     ctx.secrets = new Map(secretsMap);
+  }
+
+  // Stash collected popup definitions for downstream emit phases.
+  if (collectedPopups.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ctx.popups = collectedPopups as any;
   }
 }
 

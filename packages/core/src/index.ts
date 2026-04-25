@@ -33,7 +33,7 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
 } from './types';
-export { BINDING_BRAND, THEME_BRAND, useRef, isRef } from './types';
+export { BINDING_BRAND, THEME_BRAND, POPUP_BRAND, useRef, isRef } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
@@ -66,6 +66,8 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, Vola
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
 export type { GlobalHandle } from './hooks/global-shared';
+export { usePopup } from './hooks/usePopup';
+export type { PopupController, PopupFactory } from './hooks/usePopup';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

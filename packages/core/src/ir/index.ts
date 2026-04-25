@@ -72,6 +72,8 @@ export type {
   IRExprStringMethod,
   IRExprArrayIndex,
   IRExprArrayMethod,
+  IRExprMux,
+  IRExprTableLookup,
   ArrayMethod,
   IRExprNode,
 } from './expr-types';
@@ -97,6 +99,8 @@ export type {
   IRArrayClear,
   IRLambdaAction,
   IRLambdaSlot,
+  IRPopupShow,
+  IRPopupDismiss,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -128,4 +132,6 @@ export {
   irArrayClear,
   irLambdaCondition,
   irLambdaAction,
+  irPopupShow,
+  irPopupDismiss,
 } from './action-types';

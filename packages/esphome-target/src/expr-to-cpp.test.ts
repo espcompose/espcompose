@@ -262,3 +262,76 @@ describe('new builtins', () => {
     expect(exprToCpp(node, emptyCtx())).toBe('std::clamp(x, 0, 255)');
   });
 });
+
+// ─── mux ──────────────────────────────────────────────────────────────────────
+
+describe('mux', () => {
+  it('lowers a 2-case bool mux to an IIFE switch', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(0, 'sig_kitchen');
+    ctx.signalNames.set(1, 'sig_bedroom');
+    ctx.signalNames.set(99, 'popup_mux');
+    const node: IRExprNode = {
+      kind: 'mux',
+      type: 'bool',
+      index: { kind: 'signal_read', signalIndex: 99 },
+      cases: [
+        { kind: 'signal_read', signalIndex: 0 },
+        { kind: 'signal_read', signalIndex: 1 },
+      ],
+    };
+    expect(exprToCpp(node, ctx)).toBe(
+      '([&]() -> bool { switch (popup_mux.get()) { case 0: return sig_kitchen.get(); case 1: return sig_bedroom.get(); default: return bool{}; } })()',
+    );
+  });
+
+  it('lowers a string-typed mux with default fallback', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(7, 'popup_mux');
+    const node: IRExprNode = {
+      kind: 'mux',
+      type: 'string',
+      index: { kind: 'signal_read', signalIndex: 7 },
+      cases: [
+        { kind: 'literal', value: 'on', type: 'string' },
+        { kind: 'literal', value: 'off', type: 'string' },
+      ],
+    };
+    expect(exprToCpp(node, ctx)).toBe(
+      '([&]() -> std::string { switch (popup_mux.get()) { case 0: return std::string("on"); case 1: return std::string("off"); default: return std::string{}; } })()',
+    );
+  });
+});
+
+// ─── table_lookup ─────────────────────────────────────────────────────────────
+
+describe('table_lookup', () => {
+  it('lowers to tableName[index]', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(0, 'popup_mux');
+    const node: IRExprNode = {
+      kind: 'table_lookup',
+      table: 'popup_LightButton_entity_ids',
+      elementType: 'string',
+      index: { kind: 'signal_read', signalIndex: 0 },
+    };
+    expect(exprToCpp(node, ctx)).toBe(
+      'popup_LightButton_entity_ids[popup_mux.get()]',
+    );
+  });
+
+  it('composes inside a mux index', () => {
+    const ctx = emptyCtx();
+    ctx.signalNames.set(0, 'popup_mux');
+    const node: IRExprNode = {
+      kind: 'mux',
+      type: 'int',
+      index: { kind: 'signal_read', signalIndex: 0 },
+      cases: [
+        { kind: 'literal', value: 1, type: 'int' },
+        { kind: 'literal', value: 2, type: 'int' },
+      ],
+    };
+    expect(exprToCpp(node, ctx)).toContain('switch (popup_mux.get())');
+  });
+});

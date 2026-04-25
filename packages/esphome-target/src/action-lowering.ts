@@ -28,6 +28,20 @@ export function setReactiveGlobalIds(ids: Set<string>): void {
   reactiveGlobalIds = ids;
 }
 
+// ── Signal name context ─────────────────────────────────────────────────
+// Signal names map populated by the target before lowering actions that
+// contain signal_read nodes (e.g. popup mux conditions).
+let actionSignalNames: Map<number, string> = new Map();
+
+/**
+ * Set the signal names map for action condition lowering.
+ * Must be called before lowerActionTree() when actions reference signals
+ * (e.g. popup mux dispatch conditions).
+ */
+export function setActionSignalNames(names: Map<number, string>): void {
+  actionSignalNames = names;
+}
+
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
 // Lowered actions are embedded in source via JSON.stringify (in the script
 // transformer), so we use a plain marker object instead of a YAML Scalar.
@@ -92,13 +106,13 @@ function lowerConfig(config: IRActionConfig): unknown {
 }
 
 /**
- * Create an empty lowering context for condition expressions.
- * Action conditions don't use signals/memos/slots — they only reference
- * trigger variables which compile to simple C++ identifiers.
+ * Create a lowering context for condition expressions.
+ * Uses the module-level `actionSignalNames` map so that muxed popup conditions
+ * (which reference signal indices) can resolve signal names.
  */
 function createConditionLoweringContext(): CppLoweringContext {
   return {
-    signalNames: new Map(),
+    signalNames: new Map(actionSignalNames),
     memoNames: new Map(),
     slotExprs: new Map(),
     entityComponentIds: new Map(),
@@ -331,6 +345,26 @@ function lowerAction(action: IRActionNode): unknown {
         code += action.fragments[i + 1];
       }
       return { lambda: lambdaMarker(code) };
+    }
+
+    case 'popup_show': {
+      // Set the mux signal to this instance's index, show the popup
+      // wrapper, and flush the reactive graph so bindings update.
+      const muxSig = `sig_popup_${action.templateKey}_mux`;
+      const popupId = `popup_${action.templateKey}`;
+      return { lambda: lambdaMarker(
+        `espcompose::${muxSig}.set(${action.instanceIndex}); ` +
+        `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); } ` +
+        `lv_obj_clear_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+      )};
+    }
+
+    case 'popup_dismiss': {
+      // Hide the popup wrapper — not muxed, same widget across all instances.
+      const popupId = `popup_${action.templateKey}`;
+      return { lambda: lambdaMarker(
+        `lv_obj_add_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+      )};
     }
   }
 }

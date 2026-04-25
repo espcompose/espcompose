@@ -27,5 +27,6 @@ export async function emitPhase(ctx: PhaseContext): Promise<void> {
     outDir: ctx.outDir,
     sourceDir: ctx.sourceDir,
     secrets: ctx.secrets,
+    popups: ctx.popups,
   });
 }

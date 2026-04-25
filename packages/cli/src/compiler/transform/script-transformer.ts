@@ -395,6 +395,10 @@ function compileAndInjectTriggerHandler(
   for (const key of result.refExpressions) {
     refNameSet.add(key);
   }
+  // Include popup controller refs so they appear in __refBindings
+  for (const key of result.popupControllerRefs) {
+    refNameSet.add(key);
+  }
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
@@ -466,6 +470,10 @@ function compileAndInjectUseScript(
   const refNameSet = symbolSetToNameSet(refSymbols);
   // Include property-access ref binding keys (e.g. 'props.mainPage')
   for (const key of result.refExpressions) {
+    refNameSet.add(key);
+  }
+  // Include popup controller refs so they appear in __refBindings
+  for (const key of result.popupControllerRefs) {
     refNameSet.add(key);
   }
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
@@ -544,6 +552,12 @@ function collectRefNamesFromActions(
             if (slot.kind === 'ref' && refNames.has(slot.name)) {
               names.add(slot.name);
             }
+          }
+          break;
+        case 'popup_show':
+        case 'popup_dismiss':
+          if ('controllerRef' in action && action.controllerRef) {
+            names.add(action.controllerRef);
           }
           break;
       }

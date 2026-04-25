@@ -174,6 +174,25 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     case 'array_method':
       return arrayMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
 
+    case 'mux': {
+      const idx = exprToCpp(node.index, ctx);
+      const retType = exprTypeToCpp(node.type);
+      const cases = node.cases.map((c, i) =>
+        `case ${i}: return ${exprToCpp(c, ctx)};`
+      ).join(' ');
+      // IIFE with switch — the default branch returns a value-initialised
+      // T{} so the lambda always returns something even if the mux index
+      // is out of range (defensive: should not happen in practice).
+      return `([&]() -> ${retType} { switch (${idx}) { ${cases} default: return ${retType}{}; } })()`;
+    }
+
+    case 'table_lookup': {
+      // Compile-time data table read: tableName[index]
+      // Tables are emitted as `const T tableName[]` in espcompose_bindings.h.
+      const idx = exprToCpp(node.index, ctx);
+      return `${node.table}[${idx}]`;
+    }
+
     default:
       throw new Error(`Unknown IRExprNode kind: ${(node as IRExprNode).kind}`);
   }

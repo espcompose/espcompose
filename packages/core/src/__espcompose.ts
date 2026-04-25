@@ -201,6 +201,10 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
       return { ...expr, array: resolveIRExprSlots(expr.array, signals), index: resolveIRExprSlots(expr.index, signals) };
     case 'array_method':
       return { ...expr, object: resolveIRExprSlots(expr.object, signals), args: expr.args.map(a => resolveIRExprSlots(a, signals)) };
+    case 'mux':
+      return { ...expr, index: resolveIRExprSlots(expr.index, signals), cases: expr.cases.map(c => resolveIRExprSlots(c, signals)) };
+    case 'table_lookup':
+      return { ...expr, index: resolveIRExprSlots(expr.index, signals) };
     // Leaf nodes with no child expressions
     case 'literal':
     case 'signal_read':

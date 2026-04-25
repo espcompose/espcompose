@@ -224,6 +224,40 @@ export interface IRExprArrayMethod {
   readonly elementType: ExprType;
 }
 
+/**
+ * Multiplexed expression — selects one of N case expressions by an index.
+ *
+ * Used by usePopup() for shared popup widget subtrees: the `index` is read
+ * from a mux signal (`Signal<int32_t>`), and each case expression yields the
+ * value for one popup instance. Backends lower this to a switch / IIFE.
+ *
+ * The mux memo's *expression* contains direct reads of per-case sources, but
+ * the mux memo's *reactive dependencies* are intentionally limited to the
+ * mux + dirty signals (selective notification) — entity-source reads inside
+ * the cases are imperative, not subscribed.
+ */
+export interface IRExprMux {
+  readonly kind: 'mux';
+  readonly index: IRExprNode;
+  readonly cases: IRExprNode[];
+  readonly type: ExprType;
+}
+
+/**
+ * Compile-time data table lookup — `table[index]`.
+ *
+ * Used by table-driven popup codegen to read per-instance values
+ * (entity IDs, signal pointers, literals) from `.rodata` tables that are
+ * declared in the generated bindings header. The `table` is an opaque
+ * identifier resolved by the backend to a C++ array name.
+ */
+export interface IRExprTableLookup {
+  readonly kind: 'table_lookup';
+  readonly index: IRExprNode;
+  readonly table: string;
+  readonly elementType: ExprType;
+}
+
 // ── Union type ───────────────────────────────────────────────────────────────
 
 export type IRExprNode =
@@ -250,4 +284,6 @@ export type IRExprNode =
   | IRExprNullCoalesce
   | IRExprStringMethod
   | IRExprArrayIndex
-  | IRExprArrayMethod;
+  | IRExprArrayMethod
+  | IRExprMux
+  | IRExprTableLookup;

@@ -16,6 +16,7 @@ import { compileHAAction, inferHAEntityDomainFromType } from './ha.js';
 import { compileRefAction } from './ref.js';
 import { compileGlobalSet, compileArraySet, compileArrayPush } from './global.js';
 import { compileThemeSelect, isThemeSelectCall } from './theme.js';
+import { compilePopupAction, isPopupActionCall } from './popup.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Action call classification and routing
@@ -75,6 +76,11 @@ export function compileActionCall(
     // Handles: props.entity.toggle(), this.light.turnOn(), etc.
     const objExpr = call.expression.expression;
     const objType = ctx.checker.getTypeAtLocation(objExpr);
+
+    // Popup controller — controller.show() / controller.dismiss()
+    if (isPopupActionCall(objType, methodName)) {
+      return compilePopupAction(call, objExpr, objType, methodName, ctx);
+    }
 
     // HA entity action (type-based)
     const inferredDomain = inferHAEntityDomainFromType(objType);
