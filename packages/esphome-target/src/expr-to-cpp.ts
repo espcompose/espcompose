@@ -34,6 +34,8 @@ export interface CppLoweringContext {
    * instead of BoundSignal `.get()`.
    */
   actionContext?: boolean;
+  /** Diagnostic info about the reactive pipeline for error messages. */
+  pipelineInfo?: string;
 }
 
 // ── Entity component ID map builder ──────────────────────────────────────────
@@ -76,13 +78,19 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     case 'signal_read': {
       const name = ctx.signalNames.get(node.signalIndex);
       if (!name) throw new Error(`Unknown signal index: ${node.signalIndex}`);
-      return `${name}.get()`;
+      // In action lambdas (trigger handlers, condition expressions), the
+      // code runs outside the espcompose namespace, so signals must be
+      // qualified.  Reactive-runtime expressions live inside the namespace
+      // and use unqualified names.
+      const prefix = ctx.actionContext ? 'espcompose::' : '';
+      return `${prefix}${name}.get()`;
     }
 
     case 'memo_read': {
       const name = ctx.memoNames.get(node.memoId);
       if (!name) throw new Error(`Unknown memo id: ${node.memoId}`);
-      return `${name}.get()`;
+      const prefix = ctx.actionContext ? 'espcompose::' : '';
+      return `${prefix}${name}.get()`;
     }
 
     case 'binary':

@@ -82,7 +82,7 @@ Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref20).get_lv_font(), id(r_ref20).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref18).get_lv_font(), id(r_ref18).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
@@ -107,12 +107,12 @@ Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref20).get_lv_font(), id(r_ref20).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref18).get_lv_font(), id(r_ref18).get_lv_font()};
   return thm_333e4663_typography_body_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref18).get_lv_font(), id(r_ref18).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref16).get_lv_font(), id(r_ref16).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
@@ -205,15 +205,15 @@ void bootstrap_runtime() {
     auto _src = thm_333e4663_colors_primary_text.get();
     lv_obj_set_style_text_color(&id(rw_ref6), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_text_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_3([]() {
     auto _src = thm_333e4663_sizes_md_font.get();
     lv_obj_set_style_text_font(&id(rw_ref6), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_text_font(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref17), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref15), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_4([]() {
@@ -222,39 +222,39 @@ void bootstrap_runtime() {
     lv_obj_set_style_border_color(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_bg_color(&id(rw_ref7), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_border_color(&id(rw_ref7), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_border_color(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_border_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_6([]() {
     auto _src = thm_333e4663_radii_md.get();
     lv_obj_set_style_radius(&id(rw_ref5), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref7), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_radius(&id(rw_ref13), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_radius(&id(rw_ref16), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref12), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref14), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_7([]() {
     auto _src = memo_0.get();
     lv_obj_set_width(&id(rw_ref5), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref7), static_cast<lv_coord_t>(_src));
-    lv_obj_set_width(&id(rw_ref13), static_cast<lv_coord_t>(_src));
-    lv_obj_set_width(&id(rw_ref16), static_cast<lv_coord_t>(_src));
+    lv_obj_set_width(&id(rw_ref12), static_cast<lv_coord_t>(_src));
+    lv_obj_set_width(&id(rw_ref14), static_cast<lv_coord_t>(_src));
   });
 
   static Effect binding_8([]() {
     auto _src = thm_333e4663_sizes_md_height.get();
     lv_obj_set_height(&id(rw_ref5), static_cast<lv_coord_t>(_src));
     lv_obj_set_height(&id(rw_ref7), static_cast<lv_coord_t>(_src));
-    lv_obj_set_height(&id(rw_ref13), static_cast<lv_coord_t>(_src));
-    lv_obj_set_height(&id(rw_ref16), static_cast<lv_coord_t>(_src));
+    lv_obj_set_height(&id(rw_ref12), static_cast<lv_coord_t>(_src));
+    lv_obj_set_height(&id(rw_ref14), static_cast<lv_coord_t>(_src));
   });
 
   static Effect binding_9([]() {
     auto _src = thm_333e4663_colors_primary_bgPressed.get();
     lv_obj_set_style_bg_color(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
     lv_obj_set_style_bg_color(&id(rw_ref7), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
-    lv_obj_set_style_bg_color(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+    lv_obj_set_style_bg_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
   static Effect binding_18([]() {
@@ -282,17 +282,17 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_34([]() {
-    lv_obj_set_style_text_color(&id(rw_ref17), thm_333e4663_colors_secondary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref15), thm_333e4663_colors_secondary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_36([]() {
     auto _src = thm_333e4663_colors_secondary_bg.get();
-    lv_obj_set_style_bg_color(&id(rw_ref16), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_border_color(&id(rw_ref16), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_border_color(&id(rw_ref14), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_41([]() {
-    lv_obj_set_style_bg_color(&id(rw_ref16), thm_333e4663_colors_secondary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+    lv_obj_set_style_bg_color(&id(rw_ref14), thm_333e4663_colors_secondary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
   static Effect binding_43([]() {
@@ -919,8 +919,8 @@ lvgl:
                                     - if:
                                         condition:
                                           - lambda: !lambda "return
-                                              sig_popup_espcompose_script_render_wireframe_anonymous__\\
-                                              mux.get() == 0;"
+                                              espcompose::sig_popup_espcompose_script_render_wireframe\\
+                                              _anonymous__mux.get() == 0;"
                                         then:
                                           - homeassistant.action:
                                               action: homeassistant.toggle
@@ -929,8 +929,8 @@ lvgl:
                                     - if:
                                         condition:
                                           - lambda: !lambda "return
-                                              sig_popup_espcompose_script_render_wireframe_anonymous__\\
-                                              mux.get() == 1;"
+                                              espcompose::sig_popup_espcompose_script_render_wireframe\\
+                                              _anonymous__mux.get() == 1;"
                                         then:
                                           - homeassistant.action:
                                               action: homeassistant.toggle
@@ -941,21 +941,21 @@ lvgl:
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_ref12.get();"
+                                  width: !lambda "return espcompose::memo_2.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
                                       espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
                                       );"
                                     bg_opa: COVER
-                                  id: rw_ref13
+                                  id: rw_ref12
                                   widgets:
                                     - label:
                                         text: Toggle
                                         text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
                                         text_align: CENTER
                                         align: CENTER
-                                        id: rw_ref14
+                                        id: rw_ref13
                               - button:
                                   on_press:
                                     - lambda: !lambda "lv_obj_add_flag(id(popup_espcompose_script_render_wireframe_an\\
@@ -967,14 +967,14 @@ lvgl:
                                     ;"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_ref15.get();"
+                                  width: !lambda "return espcompose::memo_3.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
                                       espcompose::thm_333e4663_colors_secondary_bgPressed.ge\\
                                       t();"
                                     bg_opa: COVER
-                                  id: rw_ref16
+                                  id: rw_ref14
                                   widgets:
                                     - label:
                                         text: Close
@@ -983,7 +983,7 @@ lvgl:
                                           ;"
                                         text_align: CENTER
                                         align: CENTER
-                                        id: rw_ref17
+                                        id: rw_ref15
 binary_sensor:
   - platform: homeassistant
     id: ha_light_bedroom
@@ -1042,31 +1042,31 @@ external_components:
 espcompose:
   flush_budget_us: 2000
 font:
-  - id: r_ref18
+  - id: r_ref16
     file: gfonts://Roboto
     size: 28
     bpp: 4
-  - id: r_ref19
+  - id: r_ref17
     file: gfonts://Roboto
     size: 20
     bpp: 4
-  - id: r_ref20
+  - id: r_ref18
     file: gfonts://Roboto
     size: 16
     bpp: 4
-  - id: r_ref21
+  - id: r_ref19
     file: gfonts://Roboto
     size: 12
     bpp: 4
-  - id: r_ref22
+  - id: r_ref20
     file: gfonts://Roboto
     size: 14
     bpp: 4
-  - id: r_ref23
+  - id: r_ref21
     file: gfonts://Roboto
     size: 18
     bpp: 4
-  - id: r_ref24
+  - id: r_ref22
     file: gfonts://Roboto
     size: 22
     bpp: 4

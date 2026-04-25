@@ -123,6 +123,9 @@ export interface ReactiveRuntimeConfig {
   themes?: ThemeScopeConfig[];
   /** Compiled trigger functions (from device.inline/device.script AST compilation). */
   triggerFunctions?: TriggerFunctionDecl[];
+  /** Map from IRReactiveNode nodeId → sequential C++ memo name (e.g. `memo_0`).
+   *  Used by the YAML backend to reference the correct memo variables. */
+  memoNames?: Map<string, string>;
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────

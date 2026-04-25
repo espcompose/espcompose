@@ -340,7 +340,17 @@ export function buildRuntimeConfig(
     if (expr.kind === 'memo') {
       // Memo-backed binding: read from the runtime memo variable.
       const canonNodeId = memoCanonical.get(expr.nodeId) ?? expr.nodeId;
-      const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId) ?? 'memo_0';
+      const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId);
+      if (!memoName) {
+        const mapSize = cppCtx.memoNames.size;
+        const knownKeys = Array.from(cppCtx.memoNames.keys()).join(', ');
+        throw new Error(
+          `[espcompose] Memo binding node '${expr.nodeId}' (canonical: '${canonNodeId}') not found in memoNames map.\n` +
+          `  binding target: ${binding.targetType}#${binding.targetId}.${binding.targetProp}\n` +
+          `  expr.kind=${expr.kind}, exprType=${expr.exprType ?? 'undefined'}\n` +
+          `  memoNames has ${mapSize} entries: [${knownKeys}]`,
+        );
+      }
       valueExpr = `${memoName}.get()`;
       const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
       cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
@@ -453,6 +463,7 @@ export function buildRuntimeConfig(
     widgetBindings,
     themes: filteredScopeConfigs.length > 0 ? filteredScopeConfigs : undefined,
     triggerFunctions: compiledTriggers && compiledTriggers.length > 0 ? compiledTriggers : undefined,
+    memoNames: new Map(cppCtx.memoNames),
   };
 }
 

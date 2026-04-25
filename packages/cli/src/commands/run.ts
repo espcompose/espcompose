@@ -35,7 +35,7 @@ export function registerRunCommand(program: Command) {
         const { transformIRForHost } = await import('@espcompose/esphome-target');
 
         console.log(`Compiling ${resolvedDir} for ESPHome host platform…`);
-        const ir = await compileToIR(resolvedDir, { wireframe: opts?.wireframe });
+        const { ir, popups, secrets } = await compileToIR(resolvedDir, { wireframe: opts?.wireframe });
         const hostIR = transformIRForHost(ir, {
           width: opts.width,
           height: opts.height,
@@ -56,6 +56,8 @@ export function registerRunCommand(program: Command) {
           projectDir: resolvedDir,
           outDir,
           sourceDir,
+          popups,
+          secrets,
         });
         console.log(`✓ Written to ${yamlPath}`);
 

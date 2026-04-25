@@ -138,7 +138,22 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
   }
 
   // Memo: read from runtime memo variable
-  const memoName = ctx?.memoNames?.get(node.nodeId) ?? node.nodeId;
+  const memoName = ctx?.memoNames?.get(node.nodeId);
+  if (!memoName) {
+    const mapSize = ctx?.memoNames?.size ?? 0;
+    const knownKeys = ctx?.memoNames ? Array.from(ctx.memoNames.keys()).join(', ') : '(no ctx)';
+    const deps = (node.dependencies ?? []).map((d: { sourceId?: string; sourceType?: string }) => `${d.sourceType ?? '?'}:${d.sourceId ?? '?'}`).join(', ');
+    const exprKind = node.exprIR?.kind ?? 'none';
+    const pipeline = ctx?.pipelineInfo ?? '(no pipeline info)';
+    throw new Error(
+      `[espcompose] Memo node '${node.nodeId}' not found in memoNames map.\n` +
+      `  node.kind=${node.kind}, exprType=${node.exprType ?? 'undefined'}, exprIR.kind=${exprKind}\n` +
+      `  dependencies=[${deps}]\n` +
+      `  pipeline: ${pipeline}\n` +
+      `  memoNames has ${mapSize} entries: [${knownKeys}]\n` +
+      `This memo was referenced in the IR config tree but was not included in the reactive pipeline.`,
+    );
+  }
   const exprType = node.exprType;
   if (exprType === 'string') {
     return `return espcompose::${memoName}.get().c_str();`;
@@ -271,13 +286,20 @@ export function lowerToYamlConfig(
         }
       }
     }
-    // Populate memoNames from reactive nodes
-    const memoNames = new Map<string, string>();
-    let memoIdx = 0;
-    for (const node of reactiveNodes) {
-      if (node.kind === 'memo') {
-        memoNames.set(node.nodeId, `memo_${memoIdx}`);
-        memoIdx++;
+    // Use authoritative memoNames from the C++ backend (includes popup memos
+    // and respects deduplication order). Falls back to local rebuild only if
+    // the C++ backend didn't provide memo names (shouldn't happen in practice).
+    let memoNames: Map<string, string>;
+    if (cppResult.runtimeConfig.memoNames && cppResult.runtimeConfig.memoNames.size > 0) {
+      memoNames = cppResult.runtimeConfig.memoNames;
+    } else {
+      memoNames = new Map<string, string>();
+      let memoIdx = 0;
+      for (const node of reactiveNodes) {
+        if (node.kind === 'memo') {
+          memoNames.set(node.nodeId, `memo_${memoIdx}`);
+          memoIdx++;
+        }
       }
     }
     cppCtx = {
@@ -286,6 +308,7 @@ export function lowerToYamlConfig(
       slotExprs: new Map(),
       entityComponentIds,
       themeVarNames,
+      pipelineInfo: cppResult.pipelineInfo,
     };
   }
 

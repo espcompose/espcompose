@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { SemanticIR, ComposeTarget, PopupDefinition } from '@espcompose/core/internals';
 import type { PipelineStep, PhaseContext, PhaseTiming } from './phases/types';
 import { setupPhase } from './phases/setup';
 import { typeCheckPhase } from './phases/type-check';
@@ -208,8 +208,16 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
  *
  * Runs the IR pipeline (type-check, lint, transform, bundle, execute+render)
  * but skips the emit phase.
+ *
+ * Returns the SemanticIR alongside the popup definitions and secrets
+ * collected during the execute phase, so callers (e.g. --host mode) can
+ * forward them to a downstream `target.emit()`.
  */
-export async function compileToIR(projectDir: string, options?: { wireframe?: boolean }): Promise<SemanticIR> {
+export async function compileToIR(projectDir: string, options?: { wireframe?: boolean }): Promise<{
+  ir: SemanticIR;
+  popups?: PopupDefinition[];
+  secrets?: ReadonlyMap<string, string>;
+}> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -232,7 +240,7 @@ export async function compileToIR(projectDir: string, options?: { wireframe?: bo
     throw new Error('Pipeline did not produce a SemanticIR. Ensure the execute phase ran successfully.');
   }
 
-  return ctx.ir;
+  return { ir: ctx.ir, popups: ctx.popups, secrets: ctx.secrets };
 }
 
 // ────────────────────────────────────────────────────────────────────────────

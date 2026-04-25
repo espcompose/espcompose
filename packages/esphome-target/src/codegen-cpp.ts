@@ -15,6 +15,8 @@ import { processPopupMux } from './popup-mux.js';
 export interface CppBackendResult {
   runtimeConfig: ReactiveRuntimeConfig;
   bindingsHeaderContent: string;
+  /** Diagnostic string describing the reactive pipeline composition. */
+  pipelineInfo?: string;
 }
 
 /**
@@ -96,6 +98,13 @@ export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): C
   return {
     runtimeConfig,
     bindingsHeaderContent: generateBindingsHeader(runtimeConfig),
+    pipelineInfo: `${reactive.memos.length} main memos, ${reactive.effects.length} effects, ` +
+      `${popupMux?.additionalReactiveNodes.length ?? 0} popup nodes ` +
+      `(${popupMux?.additionalReactiveNodes.filter(n => n.kind === 'memo').length ?? 0} popup memos), ` +
+      `${allReactiveNodes.length} total nodes ` +
+      `[popups arg: ${popups === undefined ? 'undefined' : `array(${popups.length})`}, ` +
+      `instances: ${popups?.reduce((s, p) => s + p.instances.length, 0) ?? 0}, ` +
+      `per-instance captured nodes: ${popups?.flatMap(p => p.instances.map(i => i.capturedReactiveNodes?.length ?? -1)).join(',') ?? 'n/a'}]`,
   };
 }
 
