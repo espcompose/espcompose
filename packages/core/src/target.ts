@@ -10,25 +10,35 @@ import type { SemanticIR } from './ir/index';
 import type { PopupDefinition } from './hooks/usePopup';
 
 /**
- * Request passed from the compiler to a target's `emit()` method.
+ * Output of the execute phase (Phase 3).
  *
- * Contains the target-agnostic SemanticIR plus filesystem context.
- * No target-specific fields — each target owns its own serialization,
- * code generation, and file layout.
+ * Bundles the SemanticIR with all sidecar data collected during the render
+ * pass. This is the single transfer object between the execute phase,
+ * emit phase, and `compileToIR()` callers — adding a new sidecar field
+ * here automatically flows it through the entire pipeline.
  */
-export interface EmitRequest {
+export interface ExecuteResult {
   /** The target-agnostic semantic IR produced by the compiler. */
   ir: SemanticIR;
+  /** Collected secrets (key → value) from secret() calls. */
+  secrets?: ReadonlyMap<string, string>;
+  /** Popup definitions collected during render (usePopup). */
+  popups?: PopupDefinition[];
+}
+
+/**
+ * Request passed from the compiler to a target's `emit()` method.
+ *
+ * Extends ExecuteResult with filesystem context. Adding a new sidecar
+ * field to ExecuteResult automatically makes it available here.
+ */
+export interface EmitRequest extends ExecuteResult {
   /** Absolute path to the project root directory. */
   projectDir: string;
   /** Absolute path to the output directory for generated files. */
   outDir: string;
   /** Absolute path to the source directory (for asset resolution). */
   sourceDir: string;
-  /** Collected secrets (key → value) from secret() calls. */
-  secrets?: ReadonlyMap<string, string>;
-  /** Popup definitions collected during render (usePopup). */
-  popups?: PopupDefinition[];
 }
 
 /** Result returned from a target's `emit()` method. */

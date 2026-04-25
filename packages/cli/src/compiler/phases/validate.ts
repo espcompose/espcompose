@@ -10,9 +10,9 @@ import type { PhaseContext } from './types';
  * undefined props that survived into the rendered output.
  */
 export function validatePhase(ctx: PhaseContext): void {
-  if (!ctx.ir) return;
+  if (!ctx.executeResult) return;
 
-  const nullPaths = collectNullPaths(ctx.ir);
+  const nullPaths = collectNullPaths(ctx.executeResult.ir);
   if (nullPaths.length === 0) return;
 
   console.warn('');

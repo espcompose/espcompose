@@ -91,7 +91,7 @@ export type { LvglStylePropDescriptor } from './lvgl-actions';
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ── Target interface ───────────────────────────────────────────────────────
-export type { ComposeTarget, EmitRequest, EmitResult } from './target';
+export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './target';
 
 // ── Hooks ──────────────────────────────────────────────────────────────────
 export { useEffect } from './hooks/useEffect';

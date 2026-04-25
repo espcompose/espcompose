@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeData, ExecuteResult } from '@espcompose/core/internals';
 import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
@@ -81,7 +81,7 @@ export function executePhase(ctx: PhaseContext): void {
   const themes = extractThemeData(cjsSDK);
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
-  ctx.ir = serializationCaptures
+  const ir = serializationCaptures
     ? buildSemanticIR({
         config: reactiveResult,
         captures: serializationCaptures,
@@ -94,17 +94,22 @@ export function executePhase(ctx: PhaseContext): void {
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 
+  // ── Assemble execute result ───────────────────────────────────────────
+  const executeResult: ExecuteResult = { ir };
+
   // Collect secrets before they are cleared on the next run.
   const secretsMap: ReadonlyMap<string, string> = cjsSDK.getSecrets();
   if (secretsMap.size > 0) {
-    ctx.secrets = new Map(secretsMap);
+    executeResult.secrets = new Map(secretsMap);
   }
 
   // Stash collected popup definitions for downstream emit phases.
   if (collectedPopups.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ctx.popups = collectedPopups as any;
+    executeResult.popups = collectedPopups as any;
   }
+
+  ctx.executeResult = executeResult;
 }
 
 /**
