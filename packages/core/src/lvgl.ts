@@ -14,7 +14,7 @@
 
 import type { EspComposeElement, FunctionComponent, Ref } from './types';
 import { RefHandle } from './types';
-import { withContext } from './hooks/useContext';
+import { createContext, withContext, useContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
 import { LvglContext } from './hooks/useLvgl';
 import type { LvglComponentRef } from './component-aliases';
@@ -55,10 +55,10 @@ function snakeToCamel(s: string): string {
 }
 
 // ── Popup action capture ──────────────────────────────────────────────────
-// Module-level capture list activated during popup widget serialization.
+// Context-scoped capture list activated during popup widget serialization.
 // `lvglWidgetToPlain()` checks this and pushes action metadata from trigger
 // handler function props (those with `__compiledActions`).
-let _popupActionCapture: CapturedPopupAction[] | null = null;
+const popupActionCaptureContext = createContext<CapturedPopupAction[] | null>(null);
 
 /** Returns true for any JSX element type that represents an LVGL widget (lvgl-*). */
 export function isLvglElement(type: string | symbol | FunctionComponent): type is string {
@@ -234,7 +234,8 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   // Capture compiled action metadata from trigger handler props when inside
   // popup widget serialization.  Trigger handlers are function values with
   // `__compiledActions` attached by the action compiler.
-  if (_popupActionCapture) {
+  const popupActionCapture = useContext(popupActionCaptureContext);
+  if (popupActionCapture) {
     for (const val of Object.values(allProps)) {
       if (typeof val === 'function' && val != null && '__compiledActions' in val) {
         const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
@@ -248,7 +249,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
         if (fn.__refBindings) {
           cleanPopupControllerRefs(fn.__refBindings);
         }
-        _popupActionCapture.push({
+        popupActionCapture.push({
           rawActions,
           refBindings: fn.__refBindings,
         });
@@ -420,13 +421,11 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
 
           // Serialize inside an isolated reactive scope to capture bindings
           // without polluting the top-level scope.
-          // Activate popup action capture to collect trigger handler metadata.
-          _popupActionCapture = [];
-          let capturedActions: CapturedPopupAction[];
-          let bindings: ReturnType<typeof withReactiveScope>['bindings'];
-          let reactiveNodes: ReturnType<typeof withReactiveScope>['reactiveNodes'];
-          try {
-            const scope = withReactiveScope(() => {
+          // Activate popup action capture to collect trigger handler metadata
+          // via context-scoped capture list.
+          const actionCapture: CapturedPopupAction[] = [];
+          const { bindings, reactiveNodes } = withContext(popupActionCaptureContext, actionCapture, () =>
+            withReactiveScope(() => {
               const resolved = resolveLvglChildren(renderedArr);
               const widgets: Record<string, unknown>[] = [];
               for (const child of resolved) {
@@ -454,13 +453,9 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
                 });
               }
               return null;
-            });
-            bindings = scope.bindings;
-            reactiveNodes = scope.reactiveNodes;
-            capturedActions = _popupActionCapture;
-          } finally {
-            _popupActionCapture = null;
-          }
+            }),
+          );
+          const capturedActions = actionCapture;
 
           // Store captured per-instance data for Phase 6 codegen.
           (instance as { capturedBindings?: unknown }).capturedBindings = bindings;

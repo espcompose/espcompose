@@ -19,7 +19,9 @@
 
 import type { PopupDefinition } from '@espcompose/core/internals';
 import type { IRExprNode, ExprType } from '@espcompose/core/internals';
-import type { IRActionNode, IRCondition } from '@espcompose/core/internals';
+import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
+import type { IRBinding } from '@espcompose/core/internals';
+import type { IRReactiveNode } from '@espcompose/core';
 import type { SignalDecl } from './bindings-codegen.js';
 
 /** Result of popup mux processing, to be merged into the main runtime config. */
@@ -27,11 +29,9 @@ export interface PopupMuxResult {
   /** One mux signal per popup template (Signal<int32_t>). */
   muxSignals: SignalDecl[];
   /** Muxed widget bindings — instance 0's bindings with divergent values wrapped. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  muxedBindings: any[];
+  muxedBindings: IRBinding[];
   /** Per-instance reactive nodes that need to be included in the memo pipeline. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  additionalReactiveNodes: any[];
+  additionalReactiveNodes: IRReactiveNode[];
   /** Mux signal index → name mapping for the CppLoweringContext. */
   muxSignalIndices: Map<number, string>;
   /**
@@ -65,6 +65,8 @@ function exprFingerprint(expr: IRExprNode): string {
       return `B:${expr.op}:(${exprFingerprint(expr.left)},${exprFingerprint(expr.right)})`;
     case 'unary':
       return `U:${expr.op}:(${exprFingerprint(expr.operand)})`;
+    case 'postfix':
+      return `PF:${expr.op}:(${exprFingerprint(expr.operand)})`;
     case 'ternary':
       return `?:(${exprFingerprint(expr.test)},${exprFingerprint(expr.consequent)},${exprFingerprint(expr.alternate)})`;
     case 'call':
@@ -72,9 +74,13 @@ function exprFingerprint(expr: IRExprNode): string {
     case 'concat':
       return `+:(${expr.parts.map(exprFingerprint).join(',')})`;
     case 'to_string':
-      return `str:(${exprFingerprint(expr.expr)})`;
+      return `str:(${exprFingerprint(expr.expr)}${expr.format ? `:${expr.format}` : ''})`;
     case 'group':
       return `G:(${exprFingerprint(expr.expr)})`;
+    case 'slot':
+      return `SL:${expr.slotIndex}`;
+    case 'resolve_font':
+      return `RF:(${exprFingerprint(expr.family)},${exprFingerprint(expr.size)})`;
     case 'mux':
       return `MUX:(${exprFingerprint(expr.index)},${expr.cases.map(exprFingerprint).join(',')})`;
     case 'table_lookup':
@@ -83,9 +89,102 @@ function exprFingerprint(expr: IRExprNode): string {
       return `EP:${expr.entityId}:${expr.property}`;
     case 'global_read':
       return `GL:${expr.globalId}`;
-    default:
-      // Deterministic fallback for any remaining kinds (e.g. type_cast, slot, etc.)
-      return `${(expr as { kind: string }).kind}:${JSON.stringify(expr)}`;
+    case 'component_read':
+      return `CR:${expr.componentId}:${expr.sensorIndex}`;
+    case 'trigger_var':
+      return `TV:${expr.name}`;
+    case 'type_cast':
+      return `TC:${expr.fromType}->${expr.toType}:(${exprFingerprint(expr.expr)})`;
+    case 'format_string':
+      return `FS:${expr.format}:(${exprFingerprint(expr.expr)})`;
+    case 'null_coalesce':
+      return `NC:(${exprFingerprint(expr.left)},${exprFingerprint(expr.right)})`;
+    case 'string_method':
+      return `SM:${expr.method}:(${exprFingerprint(expr.object)},${expr.args.map(exprFingerprint).join(',')})`;
+    case 'array_index':
+      return `AI:(${exprFingerprint(expr.array)},${exprFingerprint(expr.index)})`;
+    case 'array_method':
+      return `AM:${expr.method}:(${exprFingerprint(expr.object)},${expr.args.map(exprFingerprint).join(',')})`;
+  }
+}
+
+/**
+ * Serialize an IRActionParam to a deterministic comparison string.
+ */
+function actionParamFingerprint(param: IRActionParam | string | number | boolean): string {
+  if (typeof param !== 'object' || param === null) return `P:${typeof param}:${String(param)}`;
+  switch (param.kind) {
+    case 'literal':
+      return `PL:${typeof param.value}:${String(param.value)}`;
+    case 'trigger_var':
+      return `PT:${param.varName}`;
+    case 'expression':
+      return `PE:${param.jsExpression}`;
+  }
+}
+
+/**
+ * Serialize an IRCondition to a deterministic comparison string.
+ */
+function conditionFingerprint(cond: IRCondition): string {
+  switch (cond.kind) {
+    case 'lambda_condition':
+      return `LC:(${exprFingerprint(cond.exprIR)})`;
+    case 'native':
+      return `NC:${cond.conditionKey}:${JSON.stringify(cond.config)}`;
+  }
+}
+
+/**
+ * Serialize an IRActionNode[] to a deterministic comparison string.
+ *
+ * Used to detect whether per-instance action trees are identical (no mux
+ * needed) or divergent (mux needed). Recursive for nested action lists.
+ */
+function actionFingerprint(actions: IRActionNode[]): string {
+  return actions.map(a => singleActionFingerprint(a)).join(';');
+}
+
+function singleActionFingerprint(action: IRActionNode): string {
+  switch (action.kind) {
+    case 'native':
+      return `N:${action.actionKey}:${JSON.stringify(action.config)}`;
+    case 'ha_service':
+      return `HA:${action.action}:${action.data ? Object.entries(action.data).map(([k, v]) => `${k}=${actionParamFingerprint(v)}`).join(',') : ''}`;
+    case 'logger':
+      return `LOG:${action.message}:${action.level ?? ''}`;
+    case 'delay':
+      return `DL:${action.duration}`;
+    case 'wait_until':
+      return `WU:${conditionFingerprint(action.condition)}:${action.timeout ?? ''}`;
+    case 'if':
+      return `IF:${conditionFingerprint(action.condition)}:(${actionFingerprint(action.then)})${action.else ? `:(${actionFingerprint(action.else)})` : ''}`;
+    case 'while':
+      return `WH:${conditionFingerprint(action.condition)}:(${actionFingerprint(action.then)})`;
+    case 'repeat':
+      return `RP:${action.count}:(${actionFingerprint(action.then)})`;
+    case 'script_execute':
+      return `SE:${action.scriptId}`;
+    case 'script_wait':
+      return `SW:${action.scriptId}`;
+    case 'script_stop':
+      return `SS:${action.scriptId}`;
+    case 'theme_select':
+      return `TS:${action.scopeId}:${action.themeName}`;
+    case 'global_set':
+      return `GS:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
+    case 'array_set':
+      return `AS:${action.globalId}:${actionParamFingerprint(action.index as IRActionParam)}:${actionParamFingerprint(action.value as IRActionParam)}`;
+    case 'array_push':
+      return `AP:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
+    case 'array_clear':
+      return `AC:${action.globalId}`;
+    case 'lambda_action':
+      return `LA:${action.fragments.join('|')}:${action.slots.map(s => `${s.kind}:${'name' in s ? s.name : 'value' in s ? String(s.value) : 'id' in s ? s.id : ''}`).join(',')}`;
+    case 'popup_show':
+      return `PS:${action.templateKey}:${action.instanceIndex}:${action.controllerRef ?? ''}`;
+    case 'popup_dismiss':
+      return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
   }
 }
 
@@ -101,10 +200,8 @@ export function processPopupMux(
   signalOffset: number,
 ): PopupMuxResult {
   const muxSignals: SignalDecl[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const muxedBindings: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const additionalReactiveNodes: any[] = [];
+  const muxedBindings: IRBinding[] = [];
+  const additionalReactiveNodes: IRReactiveNode[] = [];
   const muxSignalIndices = new Map<number, string>();
   const muxedActions = new Map<string, IRActionNode[]>();
 
@@ -183,7 +280,7 @@ export function processPopupMux(
           sourceDomain: 'popup_mux',
           sourceType: 'popup_mux' as const,
         };
-        const muxedBinding = {
+        const muxedBinding: IRBinding = {
           ...binding0,
           expression: {
             ...binding0.expression,
@@ -193,7 +290,7 @@ export function processPopupMux(
               muxDep,
             ],
           },
-        };
+        } as IRBinding;
         muxedBindings.push(muxedBinding);
       }
     }
@@ -208,12 +305,12 @@ export function processPopupMux(
     if (canonicalActions && canonicalActions.length > 0 && def.instances.length > 1) {
       for (let i = 0; i < canonicalActions.length; i++) {
         const action0 = canonicalActions[i];
-        const fp0 = JSON.stringify(action0.rawActions);
+        const fp0 = actionFingerprint(action0.rawActions);
 
         let allIdentical = true;
         for (let j = 1; j < instanceActions.length; j++) {
           const actions = instanceActions[j];
-          if (i < actions.length && JSON.stringify(actions[i].rawActions) !== fp0) {
+          if (i < actions.length && actionFingerprint(actions[i].rawActions) !== fp0) {
             allIdentical = false;
             break;
           }

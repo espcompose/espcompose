@@ -17,7 +17,7 @@ import { injectReactiveBindingsRuntime } from './reactive-config.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
-import { lowerActionTree, setReactiveGlobalIds, setActionSignalNames } from './action-lowering.js';
+import { lowerActionTree, type ActionLoweringContext } from './action-lowering.js';
 import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
@@ -162,7 +162,7 @@ function wrapInitialConversion(expr: string, fromCppType: string): string {
  * this function creates real yaml.Scalar instances that the YAML serializer
  * handles correctly — preserving tags (!lambda, !secret) and quoting.
  */
-function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
+function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): unknown {
   switch (node.kind) {
     case 'null':
       return null;
@@ -192,7 +192,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
     case 'action': {
       const actionNode = node as IRAction;
       // Lower IRActionNode[] to ESPHome YAML format, then resolve ref bindings
-      let actions: unknown[] = lowerActionTree(actionNode.actions);
+      let actions: unknown[] = lowerActionTree(actionNode.actions, actionCtx);
       if (actionNode.refBindings) {
         actions = actions.map(a =>
           resolveRefBindingsInValue(a, actionNode.refBindings!),
@@ -208,12 +208,12 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
       return createYamlLambda(`return ${(node as IRTriggerVar).name};`);
 
     case 'array':
-      return (node as IRArray).items.map(item => irValueToYaml(item, ctx));
+      return (node as IRArray).items.map(item => irValueToYaml(item, ctx, actionCtx));
 
     case 'object': {
       const obj: Record<string, unknown> = {};
       for (const entry of (node as IRObject).entries) {
-        const val = irValueToYaml(entry.value, ctx);
+        const val = irValueToYaml(entry.value, ctx, actionCtx);
         if (val !== SKIP_ENTRY) {
           obj[entry.key] = val;
         }
@@ -229,10 +229,10 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
 /**
  * Lower a SemanticIR config tree to a plain YAML-ready config object.
  */
-function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext): Record<string, unknown> {
+function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): Record<string, unknown> {
   const config: Record<string, unknown> = {};
   for (const section of ir.esphome.sections) {
-    config[section.key] = irValueToYaml(section.value, ctx);
+    config[section.key] = irValueToYaml(section.value, ctx, actionCtx);
   }
   return config;
 }
@@ -289,24 +289,23 @@ export function lowerToYamlConfig(
     };
   }
 
-  // Set reactive global IDs for action lowering so global_set knows whether
-  // to emit BoundSignal C++ lambda or plain globals.set YAML.
-  if (cppResult?.runtimeConfig?.globalSignals) {
-    setReactiveGlobalIds(new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId)));
-  } else {
-    setReactiveGlobalIds(new Set());
-  }
+  // Build action lowering context so global_set knows whether to emit
+  // BoundSignal C++ lambda or plain globals.set YAML, and so action
+  // conditions can resolve popup mux signal names.
+  const actionCtx: ActionLoweringContext = {
+    reactiveGlobalIds: cppResult?.runtimeConfig?.globalSignals
+      ? new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId))
+      : new Set(),
+    signalNames: (() => {
+      const sigMap = new Map<number, string>();
+      if (cppResult?.runtimeConfig?.signals) {
+        cppResult.runtimeConfig.signals.forEach((s, i) => sigMap.set(i, s.name));
+      }
+      return sigMap;
+    })(),
+  };
 
-  // Set signal names for action condition lowering (e.g. popup mux dispatch).
-  if (cppResult?.runtimeConfig?.signals) {
-    const sigMap = new Map<number, string>();
-    cppResult.runtimeConfig.signals.forEach((s, i) => sigMap.set(i, s.name));
-    setActionSignalNames(sigMap);
-  } else {
-    setActionSignalNames(new Map());
-  }
-
-  const loweredConfig = lowerIRConfig(ir, cppCtx);
+  const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
 
   let finalConfig: Record<string, unknown>;
   if (cppResult) {
@@ -333,7 +332,7 @@ export function lowerToYamlConfig(
   if (ir.esphome.scripts.length > 0) {
     finalConfig['script'] = ir.esphome.scripts.map((s) => ({
       id: s.id,
-      then: lowerActionTree(s.then),
+      then: lowerActionTree(s.then, actionCtx),
     }));
   }
 
