@@ -13,6 +13,7 @@ import type {
   BuiltinFn,
   StringMethod,
   ArrayMethod,
+  IRExprOp,
 } from '@espcompose/core/internals';
 
 // ── Lowering context ─────────────────────────────────────────────────────────
@@ -78,10 +79,6 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     case 'signal_read': {
       const name = ctx.signalNames.get(node.signalIndex);
       if (!name) throw new Error(`Unknown signal index: ${node.signalIndex}`);
-      // In action lambdas (trigger handlers, condition expressions), the
-      // code runs outside the espcompose namespace, so signals must be
-      // qualified.  Reactive-runtime expressions live inside the namespace
-      // and use unqualified names.
       const prefix = ctx.actionContext ? 'espcompose::' : '';
       return `${prefix}${name}.get()`;
     }
@@ -93,45 +90,10 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       return `${prefix}${name}.get()`;
     }
 
-    case 'binary':
-      return `${exprToCpp(node.left, ctx)} ${node.op} ${exprToCpp(node.right, ctx)}`;
-
-    case 'unary':
-      return `${node.op}${exprToCpp(node.operand, ctx)}`;
-
-    case 'postfix':
-      return `${exprToCpp(node.operand, ctx)}${node.op}`;
-
-    case 'ternary':
-      return `(${exprToCpp(node.test, ctx)} ? ${exprToCpp(node.consequent, ctx)} : ${exprToCpp(node.alternate, ctx)})`;
-
-    case 'call':
-      return `${builtinToCpp(node.fn)}(${node.args.map(a => exprToCpp(a, ctx)).join(', ')})`;
-
-    case 'concat':
-      return node.parts.map(p => exprToCpp(p, ctx)).join(' + ');
-
-    case 'to_string': {
-      const inner = exprToCpp(node.expr, ctx);
-      // If the inner expression is already a std::string (literal or concat),
-      // skip the to_string wrapper — std::to_string only accepts numeric types.
-      if (node.expr.kind === 'literal' && node.expr.type === 'string') return inner;
-      return `std::to_string(${inner})`;
-    }
-
-    case 'group':
-      return `(${exprToCpp(node.expr, ctx)})`;
-
     case 'slot': {
       const expr = ctx.slotExprs.get(node.slotIndex);
       if (!expr) throw new Error(`Unresolved slot: ${node.slotIndex}`);
       return expr;
-    }
-
-    case 'resolve_font': {
-      const family = exprToCpp(node.family, ctx);
-      const size = exprToCpp(node.size, ctx);
-      return `resolve_font(${family}, ${size})`;
     }
 
     case 'theme_read': {
@@ -142,7 +104,6 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     }
 
     case 'entity_prop': {
-      // Try property-qualified lookup first (e.g. 'light.kitchen#isOn'), fall back to entityId-only
       const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.property}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (!compId) throw new Error(`Unknown entity: ${node.entityId}`);
       return `sig_${compId}.get()`;
@@ -150,7 +111,6 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
 
     case 'global_read':
       if (ctx.actionContext) {
-        // In action lambdas, ESPHome's id() macro for globals returns the value directly
         return `id(${node.globalId})`;
       }
       return `sig_global_${node.globalId}.get()`;
@@ -161,34 +121,10 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     case 'trigger_var':
       return node.name;
 
-    case 'type_cast':
-      return typeCastToCpp(exprToCpp(node.expr, ctx), node.fromType, node.toType);
-
-    case 'format_string':
-      return `str_sprintf("${node.format}", ${exprToCpp(node.expr, ctx)})`;
-
-    case 'null_coalesce':
-      return nullCoalesceToCpp(exprToCpp(node.left, ctx), exprToCpp(node.right, ctx), node.type);
-
-    case 'string_method':
-      return stringMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
-
-    case 'array_index': {
-      const arr = exprToCpp(node.array, ctx);
-      const idx = exprToCpp(node.index, ctx);
-      return `${arr}[${idx}]`;
-    }
-
-    case 'array_method':
-      return arrayMethodToCpp(node.method, exprToCpp(node.object, ctx), node.args.map(a => exprToCpp(a, ctx)));
-
     case 'mux': {
       const idx = exprToCpp(node.index, ctx);
       const retType = exprTypeToCpp(node.type);
 
-      // Optimisation: if every case is a signal_read, emit a static
-      // NodeBase* pointer table instead of a switch with N branches.
-      // This is O(1) code + O(N) static data.
       if (node.cases.length > 0 && node.cases.every(c => c.kind === 'signal_read')) {
         const ptrs = node.cases.map(c => {
           const name = ctx.signalNames.get((c as { kind: 'signal_read'; signalIndex: number }).signalIndex);
@@ -200,26 +136,67 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       const cases = node.cases.map((c, i) =>
         `case ${i}: return ${exprToCpp(c, ctx)};`
       ).join(' ');
-      // IIFE with switch — the default branch returns a value-initialised
-      // T{} so the lambda always returns something even if the mux index
-      // is out of range (defensive: should not happen in practice).
       return `([&]() -> ${retType} { switch (${idx}) { ${cases} default: return ${retType}{}; } })()`;
     }
 
     case 'table_lookup': {
-      // Compile-time data table read: tableName[index]
-      // Tables are emitted as `const T tableName[]` in espcompose_bindings.h.
       const idx = exprToCpp(node.index, ctx);
       const prefix = ctx.actionContext ? 'espcompose::' : '';
       return `${prefix}${node.table}[${idx}]`;
     }
 
-    default:
-      throw new Error(`Unknown IRExprNode kind: ${(node as IRExprNode).kind}`);
+    case 'op':
+      return opToCpp(node, ctx);
+
+    default: {
+      const _exhaustive: never = node;
+      throw new Error(`Unknown IRExprNode kind: ${(_exhaustive as { kind: string }).kind}`);
+    }
   }
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+function opToCpp(node: IRExprOp, ctx: CppLoweringContext): string {
+  const { op, children } = node;
+  switch (op.tag) {
+    case 'binary':
+      return `${exprToCpp(children[0], ctx)} ${op.op} ${exprToCpp(children[1], ctx)}`;
+    case 'unary':
+      return `${op.op}${exprToCpp(children[0], ctx)}`;
+    case 'postfix':
+      return `${exprToCpp(children[0], ctx)}${op.op}`;
+    case 'ternary':
+      return `(${exprToCpp(children[0], ctx)} ? ${exprToCpp(children[1], ctx)} : ${exprToCpp(children[2], ctx)})`;
+    case 'call':
+      return `${builtinToCpp(op.fn)}(${children.map(a => exprToCpp(a, ctx)).join(', ')})`;
+    case 'concat':
+      return children.map(p => exprToCpp(p, ctx)).join(' + ');
+    case 'to_string': {
+      const inner = exprToCpp(children[0], ctx);
+      if (children[0].kind === 'literal' && children[0].type === 'string') return inner;
+      return `std::to_string(${inner})`;
+    }
+    case 'group':
+      return `(${exprToCpp(children[0], ctx)})`;
+    case 'type_cast':
+      return typeCastToCpp(exprToCpp(children[0], ctx), op.fromType, op.toType);
+    case 'format_string':
+      return `str_sprintf("${op.format}", ${exprToCpp(children[0], ctx)})`;
+    case 'null_coalesce':
+      return nullCoalesceToCpp(exprToCpp(children[0], ctx), exprToCpp(children[1], ctx), op.type);
+    case 'string_method':
+      return stringMethodToCpp(op.method, exprToCpp(children[0], ctx), children.slice(1).map(a => exprToCpp(a, ctx)));
+    case 'array_index':
+      return `${exprToCpp(children[0], ctx)}[${exprToCpp(children[1], ctx)}]`;
+    case 'array_method':
+      return arrayMethodToCpp(op.method, exprToCpp(children[0], ctx), children.slice(1).map(a => exprToCpp(a, ctx)));
+    default: {
+      const _: never = op;
+      throw new Error(`Unknown op tag: ${(_ as { tag: string }).tag}`);
+    }
+  }
+}
 
 function literalToCpp(value: string | number | boolean, type: ExprType): string {
   switch (type) {

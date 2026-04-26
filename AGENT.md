@@ -20,7 +20,6 @@ pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 | `packages/esphome-target` | ESPHome backend — YAML generation, C++ reactive runtime headers, ExprNode → C++ lowering, asset pipeline |
 | `packages/eslint` | ESLint plugin — JSX intent validation, trigger body validation |
 | `packages/ui` | Design system — reusable LVGL components, reactive theme system, pre-built themes |
-| `packages/ir-viewer` | Dev tool — visual inspector for Semantic IR trees |
 | `tests/e2e` | End-to-end snapshot tests — projects built by the full pipeline, YAML snapshot-tested |
 | `metadata/` | Generated metadata files (entity domains, triggers) consumed by codegen |
 

@@ -20,6 +20,7 @@ import {
   type ScriptTransformContext,
   type ScanDiagnostic,
 } from './expr-compiler';
+import { irBinary, irTernary } from '@espcompose/core/internals';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Test helpers
@@ -209,24 +210,21 @@ describe('expr-compiler', () => {
       const { node } = parseExpr('1 + 2');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({
-        kind: 'binary',
-        op: '+',
-        left: { kind: 'literal', value: 1, type: 'float' },
-        right: { kind: 'literal', value: 2, type: 'float' },
-      });
+      expect(result).toEqual(irBinary('+',
+        { kind: 'literal', value: 1, type: 'float' },
+        { kind: 'literal', value: 2, type: 'float' },
+      ));
     });
 
     it('compiles ternary expressions', () => {
       const { node } = parseExpr('true ? 1 : 2');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({
-        kind: 'ternary',
-        test: { kind: 'literal', value: true, type: 'bool' },
-        consequent: { kind: 'literal', value: 1, type: 'float' },
-        alternate: { kind: 'literal', value: 2, type: 'float' },
-      });
+      expect(result).toEqual(irTernary(
+        { kind: 'literal', value: true, type: 'bool' },
+        { kind: 'literal', value: 1, type: 'float' },
+        { kind: 'literal', value: 2, type: 'float' },
+      ));
     });
   });
 

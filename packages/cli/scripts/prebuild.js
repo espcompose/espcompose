@@ -12,7 +12,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const assets = path.resolve(__dirname, '..', 'assets');
 
 const copies = [
-  { src: '../../ir-viewer/dist',        dest: 'ir-viewer' },
   { src: '../../esphome-target/assets/external-component', dest: 'external-component' },
 ];
 

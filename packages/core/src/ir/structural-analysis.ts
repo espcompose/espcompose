@@ -181,189 +181,33 @@ function walkLockstep(
       return first;
     }
 
-    // ── Unary branch nodes ─────────────────────────────────────────────
-    case 'unary': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].op !== first.op) return null;
-      }
-      const operand = walkLockstep(typed.map(n => n.operand), allocHoleId, holes);
-      if (operand === null) return null;
-      return { ...first, operand };
-    }
-
-    case 'postfix': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].op !== first.op) return null;
-      }
-      const operand = walkLockstep(typed.map(n => n.operand), allocHoleId, holes);
-      if (operand === null) return null;
-      return { ...first, operand };
-    }
-
-    case 'to_string': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].format !== first.format) return null;
-      }
-      const expr = walkLockstep(typed.map(n => n.expr), allocHoleId, holes);
-      if (expr === null) return null;
-      return { ...first, expr };
-    }
-
-    case 'group': {
-      const typed = nodes as readonly (typeof first)[];
-      const expr = walkLockstep(typed.map(n => n.expr), allocHoleId, holes);
-      if (expr === null) return null;
-      return { ...first, expr };
-    }
-
-    case 'type_cast': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].fromType !== first.fromType || typed[i].toType !== first.toType) return null;
-      }
-      const expr = walkLockstep(typed.map(n => n.expr), allocHoleId, holes);
-      if (expr === null) return null;
-      return { ...first, expr };
-    }
-
-    case 'format_string': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].format !== first.format) return null;
-      }
-      const expr = walkLockstep(typed.map(n => n.expr), allocHoleId, holes);
-      if (expr === null) return null;
-      return { ...first, expr };
-    }
-
-    // ── Binary branch nodes ────────────────────────────────────────────
-    case 'binary': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].op !== first.op) return null;
-      }
-      const left = walkLockstep(typed.map(n => n.left), allocHoleId, holes);
-      if (left === null) return null;
-      const right = walkLockstep(typed.map(n => n.right), allocHoleId, holes);
-      if (right === null) return null;
-      return { ...first, left, right };
-    }
-
-    case 'null_coalesce': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].type !== first.type) return null;
-      }
-      const left = walkLockstep(typed.map(n => n.left), allocHoleId, holes);
-      if (left === null) return null;
-      const right = walkLockstep(typed.map(n => n.right), allocHoleId, holes);
-      if (right === null) return null;
-      return { ...first, left, right };
-    }
-
-    case 'resolve_font': {
-      const typed = nodes as readonly (typeof first)[];
-      const family = walkLockstep(typed.map(n => n.family), allocHoleId, holes);
-      if (family === null) return null;
-      const size = walkLockstep(typed.map(n => n.size), allocHoleId, holes);
-      if (size === null) return null;
-      return { ...first, family, size };
-    }
-
-    // ── Ternary branch node ────────────────────────────────────────────
-    case 'ternary': {
-      const typed = nodes as readonly (typeof first)[];
-      const test = walkLockstep(typed.map(n => n.test), allocHoleId, holes);
-      if (test === null) return null;
-      const consequent = walkLockstep(typed.map(n => n.consequent), allocHoleId, holes);
-      if (consequent === null) return null;
-      const alternate = walkLockstep(typed.map(n => n.alternate), allocHoleId, holes);
-      if (alternate === null) return null;
-      return { ...first, test, consequent, alternate };
-    }
-
-    // ── N-ary branch nodes ─────────────────────────────────────────────
-    case 'call': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].fn !== first.fn || typed[i].args.length !== first.args.length) return null;
-      }
-      const args: IRExprNode[] = [];
-      for (let a = 0; a < first.args.length; a++) {
-        const arg = walkLockstep(typed.map(n => n.args[a]), allocHoleId, holes);
-        if (arg === null) return null;
-        args.push(arg);
-      }
-      return { ...first, args };
-    }
-
-    case 'concat': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].parts.length !== first.parts.length) return null;
-      }
-      const parts: IRExprNode[] = [];
-      for (let p = 0; p < first.parts.length; p++) {
-        const part = walkLockstep(typed.map(n => n.parts[p]), allocHoleId, holes);
-        if (part === null) return null;
-        parts.push(part);
-      }
-      return { ...first, parts };
-    }
-
-    case 'string_method': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].method !== first.method || typed[i].args.length !== first.args.length) return null;
-      }
-      const object = walkLockstep(typed.map(n => n.object), allocHoleId, holes);
-      if (object === null) return null;
-      const args: IRExprNode[] = [];
-      for (let a = 0; a < first.args.length; a++) {
-        const arg = walkLockstep(typed.map(n => n.args[a]), allocHoleId, holes);
-        if (arg === null) return null;
-        args.push(arg);
-      }
-      return { ...first, object, args };
-    }
-
-    case 'array_index': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].elementType !== first.elementType) return null;
-      }
-      const array = walkLockstep(typed.map(n => n.array), allocHoleId, holes);
-      if (array === null) return null;
-      const index = walkLockstep(typed.map(n => n.index), allocHoleId, holes);
-      if (index === null) return null;
-      return { ...first, array, index };
-    }
-
-    case 'array_method': {
-      const typed = nodes as readonly (typeof first)[];
-      for (let i = 1; i < typed.length; i++) {
-        if (typed[i].method !== first.method || typed[i].args.length !== first.args.length || typed[i].elementType !== first.elementType) return null;
-      }
-      const object = walkLockstep(typed.map(n => n.object), allocHoleId, holes);
-      if (object === null) return null;
-      const args: IRExprNode[] = [];
-      for (let a = 0; a < first.args.length; a++) {
-        const arg = walkLockstep(typed.map(n => n.args[a]), allocHoleId, holes);
-        if (arg === null) return null;
-        args.push(arg);
-      }
-      return { ...first, object, args };
-    }
-
     // ── Mux / table_lookup — structural nodes that may themselves appear
     //    inside expressions being compared. Treat them as divergent since
     //    optimising already-muxed trees would be nested mux-over-mux. ───
     case 'mux':
     case 'table_lookup':
       return null;
+
+    // ── Generic op node — compare tag + scalar attrs, walk children ────
+    case 'op': {
+      const typed = nodes as readonly (typeof first)[];
+      for (let i = 1; i < typed.length; i++) {
+        const other = typed[i];
+        if (other.op.tag !== first.op.tag) return null;
+        if (other.children.length !== first.children.length) return null;
+        // Compare all scalar attrs on the op descriptor (everything except tag)
+        for (const key of Object.keys(first.op)) {
+          if (key !== 'tag' && (first.op as Record<string, unknown>)[key] !== (other.op as Record<string, unknown>)[key]) return null;
+        }
+      }
+      const children: IRExprNode[] = [];
+      for (let c = 0; c < first.children.length; c++) {
+        const child = walkLockstep(typed.map(n => n.children[c]), allocHoleId, holes);
+        if (child === null) return null;
+        children.push(child);
+      }
+      return { ...first, children };
+    }
 
     default: {
       // Exhaustiveness guard — if a new IRExprNode kind is added without

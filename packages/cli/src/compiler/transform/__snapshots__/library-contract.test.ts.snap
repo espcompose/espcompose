@@ -14,7 +14,7 @@ import type { Signal } from '@espcompose/core';
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {
   const light = useHAEntity('light.office');
-  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"ternary","test":{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},"consequent":{"kind":"literal","value":"On","type":"string"},"alternate":{"kind":"literal","value":"Off","type":"string"}}});
+  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}});
 
   return (
     <lvgl-label text={text as unknown as string} />
@@ -23,7 +23,7 @@ export function StatusLabel() {
 
 /** Component that passes a Signal through (slotted path via JSX attribute). */
 export function TemperatureDisplay(props: { temp: Signal<number> }) {
-  const formatted = __espcompose.slotted({type:"string",slots:1,expr:{"kind":"ternary","test":{"kind":"binary","op":">","left":{"kind":"slot","slotIndex":0},"right":{"kind":"literal","value":72,"type":"float"}},"consequent":{"kind":"literal","value":"Hot","type":"string"},"alternate":{"kind":"literal","value":"Cold","type":"string"}}}, props.temp) as any;
+  const formatted = __espcompose.slotted({type:"string",slots:1,expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"op","op":{"tag":"binary","op":">"},"children":[{"kind":"slot","slotIndex":0},{"kind":"literal","value":72,"type":"float"}]},{"kind":"literal","value":"Hot","type":"string"},{"kind":"literal","value":"Cold","type":"string"}]}}, props.temp) as any;
 
   return (
     <lvgl-label text={formatted as unknown as string} />

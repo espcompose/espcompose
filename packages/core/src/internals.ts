@@ -176,14 +176,23 @@ export type {
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
-  IRExprBinary, IRExprUnary, IRExprPostfix, IRExprTernary,
-  IRExprCall, IRExprConcat, IRExprToString, IRExprGroup,
-  IRExprSlot, IRExprResolveFont, IRExprThemeRead,
-  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar,
-  IRExprTypeCast, IRExprFormatString, IRExprNullCoalesce, IRExprStringMethod,
-  IRExprArrayIndex, IRExprArrayMethod,
+  IRExprSlot, IRExprThemeRead,
+  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar, IRExprGlobalRead,
   IRExprMux, IRExprTableLookup,
   IRExprNode,
+  ExprOpDescriptor, IRExprOp,
+} from './ir/index';
+export {
+  irBinary, irUnary, irPostfix, irTernary,
+  irCall, irConcat, irToString, irGroup,
+  irTypeCast, irFormatString, irNullCoalesce,
+  irStringMethod, irArrayIndex, irArrayMethod,
+} from './ir/index';
+export {
+  operandOf, exprOf, leftOf, rightOf,
+  testOf, consequentOf, alternateOf,
+  argsOf, partsOf, objectOf, methodArgsOf,
+  arrayOf, indexOf,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';

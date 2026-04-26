@@ -30,7 +30,7 @@ fs.writeFileSync(
     '      triggerType: "on_state",',
     '      sourceDomain: "binary_sensor"',
     '    }],',
-    '    expr: {"kind":"ternary","test":{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},"consequent":{"kind":"literal","value":"On","type":"string"},"alternate":{"kind":"literal","value":"Off","type":"string"}}',
+    '    expr: {"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}',
     '  });',
     '  return jsx("text_sensor", { platform: "template", name: "Light Status", id: "light_status" });',
     '}',

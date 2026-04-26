@@ -79,63 +79,9 @@ export interface IRExprMemoRead {
   readonly memoId: string;
 }
 
-export interface IRExprBinary {
-  readonly kind: 'binary';
-  readonly op: BinaryOp;
-  readonly left: IRExprNode;
-  readonly right: IRExprNode;
-}
-
-export interface IRExprUnary {
-  readonly kind: 'unary';
-  readonly op: UnaryOp;
-  readonly operand: IRExprNode;
-}
-
-export interface IRExprPostfix {
-  readonly kind: 'postfix';
-  readonly op: PostfixOp;
-  readonly operand: IRExprNode;
-}
-
-export interface IRExprTernary {
-  readonly kind: 'ternary';
-  readonly test: IRExprNode;
-  readonly consequent: IRExprNode;
-  readonly alternate: IRExprNode;
-}
-
-export interface IRExprCall {
-  readonly kind: 'call';
-  readonly fn: BuiltinFn;
-  readonly args: IRExprNode[];
-}
-
-export interface IRExprConcat {
-  readonly kind: 'concat';
-  readonly parts: IRExprNode[];
-}
-
-export interface IRExprToString {
-  readonly kind: 'to_string';
-  readonly expr: IRExprNode;
-  readonly format?: string;
-}
-
-export interface IRExprGroup {
-  readonly kind: 'group';
-  readonly expr: IRExprNode;
-}
-
 export interface IRExprSlot {
   readonly kind: 'slot';
   readonly slotIndex: number;
-}
-
-export interface IRExprResolveFont {
-  readonly kind: 'resolve_font';
-  readonly family: IRExprNode;
-  readonly size: IRExprNode;
 }
 
 export interface IRExprThemeRead {
@@ -174,56 +120,6 @@ export interface IRExprTriggerVar {
   readonly name: string;
 }
 
-/** Explicit type conversion (Number(), String(), Boolean(), Math.trunc()) */
-export interface IRExprTypeCast {
-  readonly kind: 'type_cast';
-  readonly expr: IRExprNode;
-  readonly fromType: ExprType;
-  readonly toType: ExprType;
-}
-
-/** Formatted number-to-string (e.g. .toFixed(2) → format "%.2f") */
-export interface IRExprFormatString {
-  readonly kind: 'format_string';
-  readonly expr: IRExprNode;
-  /** printf-style format specifier, e.g. "%.2f" */
-  readonly format: string;
-}
-
-/** Null-coalescing operator (??) — type determines the null-check strategy */
-export interface IRExprNullCoalesce {
-  readonly kind: 'null_coalesce';
-  readonly left: IRExprNode;
-  readonly right: IRExprNode;
-  /** Type of the left operand — backends use this to determine null semantics. */
-  readonly type: ExprType;
-}
-
-/** String method call or property access (.length, .toUpperCase(), etc.) */
-export interface IRExprStringMethod {
-  readonly kind: 'string_method';
-  readonly method: StringMethod;
-  readonly object: IRExprNode;
-  readonly args: IRExprNode[];
-}
-
-/** Array element access — handle.get(i) → vec[i] */
-export interface IRExprArrayIndex {
-  readonly kind: 'array_index';
-  readonly array: IRExprNode;
-  readonly index: IRExprNode;
-  readonly elementType: ExprType;
-}
-
-/** Array method call — handle.length → vec.size(), etc. */
-export interface IRExprArrayMethod {
-  readonly kind: 'array_method';
-  readonly method: ArrayMethod;
-  readonly object: IRExprNode;
-  readonly args: IRExprNode[];
-  readonly elementType: ExprType;
-}
-
 /**
  * Multiplexed expression — selects one of N case expressions by an index.
  *
@@ -258,32 +154,42 @@ export interface IRExprTableLookup {
   readonly elementType: ExprType;
 }
 
+// ── Op descriptor (discriminated by tag) ─────────────────────────────────────
+
+export type ExprOpDescriptor =
+  | { readonly tag: 'binary'; readonly op: BinaryOp }
+  | { readonly tag: 'unary'; readonly op: UnaryOp }
+  | { readonly tag: 'postfix'; readonly op: PostfixOp }
+  | { readonly tag: 'ternary' }
+  | { readonly tag: 'call'; readonly fn: BuiltinFn }
+  | { readonly tag: 'concat' }
+  | { readonly tag: 'to_string'; readonly format?: string }
+  | { readonly tag: 'group' }
+  | { readonly tag: 'type_cast'; readonly fromType: ExprType; readonly toType: ExprType }
+  | { readonly tag: 'format_string'; readonly format: string }
+  | { readonly tag: 'null_coalesce'; readonly type: ExprType }
+  | { readonly tag: 'string_method'; readonly method: StringMethod }
+  | { readonly tag: 'array_index'; readonly elementType: ExprType }
+  | { readonly tag: 'array_method'; readonly method: ArrayMethod; readonly elementType: ExprType };
+
+export interface IRExprOp {
+  readonly kind: 'op';
+  readonly op: ExprOpDescriptor;
+  readonly children: readonly IRExprNode[];
+}
+
 // ── Union type ───────────────────────────────────────────────────────────────
 
 export type IRExprNode =
   | IRExprLiteral
   | IRExprSignalRead
   | IRExprMemoRead
-  | IRExprBinary
-  | IRExprUnary
-  | IRExprPostfix
-  | IRExprTernary
-  | IRExprCall
-  | IRExprConcat
-  | IRExprToString
-  | IRExprGroup
   | IRExprSlot
-  | IRExprResolveFont
   | IRExprThemeRead
   | IRExprEntityProp
   | IRExprGlobalRead
   | IRExprComponentRead
   | IRExprTriggerVar
-  | IRExprTypeCast
-  | IRExprFormatString
-  | IRExprNullCoalesce
-  | IRExprStringMethod
-  | IRExprArrayIndex
-  | IRExprArrayMethod
   | IRExprMux
-  | IRExprTableLookup;
+  | IRExprTableLookup
+  | IRExprOp;

@@ -17,6 +17,7 @@ import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from '
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
 import { serializeValue } from './serialize';
+import { irTernary, irBinary } from './ir/expr-builders.js';
 
 // ── Zod schemas (duplicated from CLI to prove consumer-side conformance) ──
 // These must match the CLI's schemas exactly — if they diverge, it means
@@ -223,7 +224,11 @@ describe('Library Format Contract (Consumer)', () => {
           triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
         }],
-        expr: { kind: 'ternary' as const, test: { kind: 'signal_read' as const, signalIndex: 0 }, consequent: { kind: 'literal' as const, value: 'On', type: 'string' as const }, alternate: { kind: 'literal' as const, value: 'Off', type: 'string' as const } },
+        expr: irTernary(
+          { kind: 'signal_read' as const, signalIndex: 0 },
+          { kind: 'literal' as const, value: 'On', type: 'string' as const },
+          { kind: 'literal' as const, value: 'Off', type: 'string' as const },
+        ),
       };
 
       withReactiveScope(() => {
@@ -246,7 +251,10 @@ describe('Library Format Contract (Consumer)', () => {
       const goldenMeta = {
         type: 'string' as const,
         slots: 1,
-        expr: { kind: 'binary' as const, op: '>' as const, left: { kind: 'slot' as const, slotIndex: 0, type: 'float' as const }, right: { kind: 'literal' as const, value: 72, type: 'float' as const } },
+        expr: irBinary('>',
+          { kind: 'slot' as const, slotIndex: 0 },
+          { kind: 'literal' as const, value: 72, type: 'float' as const },
+        ),
       };
 
       withReactiveScope(() => {

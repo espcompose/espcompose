@@ -5,6 +5,7 @@ import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveSco
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
+import { irTernary } from './expr-builders.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -42,7 +43,11 @@ function makeMemoNode(index: number): IRReactiveNode {
     ],
     exprType: 'float',
   });
-  node.exprIR = { kind: 'ternary', test: { kind: 'signal_read', signalIndex: 0 }, consequent: { kind: 'literal', value: 1.0, type: 'float' }, alternate: { kind: 'literal', value: 0.0, type: 'float' } };
+  node.exprIR = irTernary(
+    { kind: 'signal_read', signalIndex: 0 },
+    { kind: 'literal', value: 1.0, type: 'float' },
+    { kind: 'literal', value: 0.0, type: 'float' },
+  );
   void index; // index no longer needed; nodeId is assigned at construction
   return node;
 }

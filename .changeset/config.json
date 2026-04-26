@@ -23,7 +23,6 @@
     "@espcompose/esphome-target",
     "@espcompose/metadata",
     "espcompose-docs",
-    "espcompose-e2e",
-    "espcompose-ir-viewer"
+    "espcompose-e2e"
   ]
 }

@@ -22,7 +22,7 @@ import type { IRExprNode, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
-import { analyzeExprStructure, analyzeActionStructure } from '@espcompose/core/internals';
+import { analyzeExprStructure, analyzeActionStructure, irBinary } from '@espcompose/core/internals';
 import { mapExprChildren } from '@espcompose/core/internals';
 import type { SignalDecl, TableDecl } from './bindings-codegen.js';
 import { exprTypeToCpp } from './expr-to-cpp.js';
@@ -66,26 +66,8 @@ function exprFingerprint(expr: IRExprNode): string {
       return `M:${expr.memoId}`;
     case 'theme_read':
       return `T:${expr.scopeId}:${expr.path}`;
-    case 'binary':
-      return `B:${expr.op}:(${exprFingerprint(expr.left)},${exprFingerprint(expr.right)})`;
-    case 'unary':
-      return `U:${expr.op}:(${exprFingerprint(expr.operand)})`;
-    case 'postfix':
-      return `PF:${expr.op}:(${exprFingerprint(expr.operand)})`;
-    case 'ternary':
-      return `?:(${exprFingerprint(expr.test)},${exprFingerprint(expr.consequent)},${exprFingerprint(expr.alternate)})`;
-    case 'call':
-      return `C:${expr.fn}:(${expr.args.map(exprFingerprint).join(',')})`;
-    case 'concat':
-      return `+:(${expr.parts.map(exprFingerprint).join(',')})`;
-    case 'to_string':
-      return `str:(${exprFingerprint(expr.expr)}${expr.format ? `:${expr.format}` : ''})`;
-    case 'group':
-      return `G:(${exprFingerprint(expr.expr)})`;
     case 'slot':
       return `SL:${expr.slotIndex}`;
-    case 'resolve_font':
-      return `RF:(${exprFingerprint(expr.family)},${exprFingerprint(expr.size)})`;
     case 'mux':
       return `MUX:(${exprFingerprint(expr.index)},${expr.cases.map(exprFingerprint).join(',')})`;
     case 'table_lookup':
@@ -98,18 +80,17 @@ function exprFingerprint(expr: IRExprNode): string {
       return `CR:${expr.componentId}:${expr.sensorIndex}`;
     case 'trigger_var':
       return `TV:${expr.name}`;
-    case 'type_cast':
-      return `TC:${expr.fromType}->${expr.toType}:(${exprFingerprint(expr.expr)})`;
-    case 'format_string':
-      return `FS:${expr.format}:(${exprFingerprint(expr.expr)})`;
-    case 'null_coalesce':
-      return `NC:(${exprFingerprint(expr.left)},${exprFingerprint(expr.right)})`;
-    case 'string_method':
-      return `SM:${expr.method}:(${exprFingerprint(expr.object)},${expr.args.map(exprFingerprint).join(',')})`;
-    case 'array_index':
-      return `AI:(${exprFingerprint(expr.array)},${exprFingerprint(expr.index)})`;
-    case 'array_method':
-      return `AM:${expr.method}:(${exprFingerprint(expr.object)},${expr.args.map(exprFingerprint).join(',')})`;
+    case 'op': {
+      const attrs = Object.entries(expr.op)
+        .filter(([k]) => k !== 'tag')
+        .map(([, v]) => String(v))
+        .join(':');
+      return `OP:${expr.op.tag}${attrs ? ':' + attrs : ''}:(${expr.children.map(exprFingerprint).join(',')})`;
+    }
+    default: {
+      const _exhaustive: never = expr;
+      throw new Error(`exprFingerprint: unhandled kind '${(_exhaustive as { kind: string }).kind}'`);
+    }
   }
 }
 
@@ -417,12 +398,11 @@ export function processPopupMux(
               if (i >= instActions.length) continue;
               const condition: IRCondition = {
                 kind: 'lambda_condition',
-                exprIR: {
-                  kind: 'binary',
-                  op: '==',
-                  left: { kind: 'signal_read', signalIndex: muxSignalIndex },
-                  right: { kind: 'literal', value: j, type: 'int' },
-                },
+                exprIR: irBinary(
+                  '==',
+                  { kind: 'signal_read', signalIndex: muxSignalIndex },
+                  { kind: 'literal', value: j, type: 'int' },
+                ),
               };
               muxedActionList.push({
                 kind: 'if',

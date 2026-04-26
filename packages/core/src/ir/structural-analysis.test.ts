@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
 import type { IRExprNode } from './expr-types';
 import type { IRActionNode } from './action-types';
+import { irBinary, irConcat, irTernary } from './expr-builders.js';
 
 // ── Expression Structural Analysis ───────────────────────────────────────────
 
@@ -63,20 +64,14 @@ describe('analyzeExprStructure', () => {
 
   it('handles nested structure with one literal hole', () => {
     // concat("Kitchen: ", signal_read(5)) vs concat("Bedroom: ", signal_read(5))
-    const a: IRExprNode = {
-      kind: 'concat',
-      parts: [
-        { kind: 'literal', value: 'Kitchen: ', type: 'string' },
-        { kind: 'signal_read', signalIndex: 5 },
-      ],
-    };
-    const b: IRExprNode = {
-      kind: 'concat',
-      parts: [
-        { kind: 'literal', value: 'Bedroom: ', type: 'string' },
-        { kind: 'signal_read', signalIndex: 5 },
-      ],
-    };
+    const a: IRExprNode = irConcat([
+      { kind: 'literal', value: 'Kitchen: ', type: 'string' },
+      { kind: 'signal_read', signalIndex: 5 },
+    ]);
+    const b: IRExprNode = irConcat([
+      { kind: 'literal', value: 'Bedroom: ', type: 'string' },
+      { kind: 'signal_read', signalIndex: 5 },
+    ]);
     const result = analyzeExprStructure([a, b]);
     expect(result.kind).toBe('optimizable');
     if (result.kind !== 'optimizable') return;
@@ -86,24 +81,20 @@ describe('analyzeExprStructure', () => {
     if (hole.holeKind !== 'literal') return;
     expect(hole.values).toEqual(['Kitchen: ', 'Bedroom: ']);
     // Template should be concat(slot(0), signal_read(5))
-    expect(result.template.kind).toBe('concat');
+    expect(result.template.kind).toBe('op');
   });
 
   it('handles mixed literal + signal_read holes', () => {
     // concat(literal("Kitchen"), ternary(signal_read(5), ...))
     // concat(literal("Bedroom"), ternary(signal_read(8), ...))
-    const mkExpr = (label: string, sigIdx: number): IRExprNode => ({
-      kind: 'concat',
-      parts: [
-        { kind: 'literal', value: label, type: 'string' },
-        {
-          kind: 'ternary',
-          test: { kind: 'signal_read', signalIndex: sigIdx },
-          consequent: { kind: 'literal', value: 'on', type: 'string' },
-          alternate: { kind: 'literal', value: 'off', type: 'string' },
-        },
-      ],
-    });
+    const mkExpr = (label: string, sigIdx: number): IRExprNode => irConcat([
+      { kind: 'literal', value: label, type: 'string' },
+      irTernary(
+        { kind: 'signal_read', signalIndex: sigIdx },
+        { kind: 'literal', value: 'on', type: 'string' },
+        { kind: 'literal', value: 'off', type: 'string' },
+      ),
+    ]);
     const result = analyzeExprStructure([
       mkExpr('Kitchen', 5),
       mkExpr('Bedroom', 8),
@@ -125,33 +116,23 @@ describe('analyzeExprStructure', () => {
   });
 
   it('returns divergent for different binary operators', () => {
-    const a: IRExprNode = {
-      kind: 'binary',
-      op: '+',
-      left: { kind: 'literal', value: 1, type: 'int' },
-      right: { kind: 'literal', value: 2, type: 'int' },
-    };
-    const b: IRExprNode = {
-      kind: 'binary',
-      op: '-',
-      left: { kind: 'literal', value: 1, type: 'int' },
-      right: { kind: 'literal', value: 2, type: 'int' },
-    };
+    const a: IRExprNode = irBinary('+',
+      { kind: 'literal', value: 1, type: 'int' },
+      { kind: 'literal', value: 2, type: 'int' },
+    );
+    const b: IRExprNode = irBinary('-',
+      { kind: 'literal', value: 1, type: 'int' },
+      { kind: 'literal', value: 2, type: 'int' },
+    );
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('returns divergent for different concat lengths', () => {
-    const a: IRExprNode = {
-      kind: 'concat',
-      parts: [{ kind: 'literal', value: 'a', type: 'string' }],
-    };
-    const b: IRExprNode = {
-      kind: 'concat',
-      parts: [
-        { kind: 'literal', value: 'a', type: 'string' },
-        { kind: 'literal', value: 'b', type: 'string' },
-      ],
-    };
+    const a: IRExprNode = irConcat([{ kind: 'literal', value: 'a', type: 'string' }]);
+    const b: IRExprNode = irConcat([
+      { kind: 'literal', value: 'a', type: 'string' },
+      { kind: 'literal', value: 'b', type: 'string' },
+    ]);
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 });

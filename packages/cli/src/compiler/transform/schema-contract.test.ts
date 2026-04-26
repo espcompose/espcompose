@@ -22,6 +22,7 @@ import {
   LibraryFormatHeaderSchema,
 } from './schemas.js';
 import { LIBRARY_FORMAT_VERSION } from './format-version.js';
+import { irTernary } from '@espcompose/core/internals';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -88,7 +89,11 @@ describe('Library Format Schema Contract (Producer)', () => {
           triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
         }],
-        { kind: 'ternary', test: { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' }, consequent: { kind: 'literal', value: 'On', type: 'string' }, alternate: { kind: 'literal', value: 'Off', type: 'string' } },
+        irTernary(
+          { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' },
+          { kind: 'literal', value: 'On', type: 'string' },
+          { kind: 'literal', value: 'Off', type: 'string' },
+        ),
       );
 
       const meta = extractCompiledMeta(code);

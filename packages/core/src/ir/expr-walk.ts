@@ -17,36 +17,12 @@ import type { IRExprNode } from './expr-types';
  */
 export function getExprChildren(node: IRExprNode): IRExprNode[] {
   switch (node.kind) {
-    case 'binary':
-      return [node.left, node.right];
-    case 'unary':
-    case 'postfix':
-      return [node.operand];
-    case 'ternary':
-      return [node.test, node.consequent, node.alternate];
-    case 'call':
-      return [...node.args];
-    case 'concat':
-      return [...node.parts];
-    case 'to_string':
-    case 'group':
-    case 'type_cast':
-    case 'format_string':
-      return [node.expr];
     case 'mux':
       return [node.index, ...node.cases];
     case 'table_lookup':
       return [node.index];
-    case 'null_coalesce':
-      return [node.left, node.right];
-    case 'resolve_font':
-      return [node.family, node.size];
-    case 'string_method':
-      return [node.object, ...node.args];
-    case 'array_index':
-      return [node.array, node.index];
-    case 'array_method':
-      return [node.object, ...node.args];
+    case 'op':
+      return [...node.children];
     // Leaf nodes — no child expressions
     case 'literal':
     case 'signal_read':
@@ -77,36 +53,12 @@ export function mapExprChildren(
   fn: (child: IRExprNode) => IRExprNode,
 ): IRExprNode {
   switch (node.kind) {
-    case 'binary':
-      return { ...node, left: fn(node.left), right: fn(node.right) };
-    case 'unary':
-    case 'postfix':
-      return { ...node, operand: fn(node.operand) };
-    case 'ternary':
-      return { ...node, test: fn(node.test), consequent: fn(node.consequent), alternate: fn(node.alternate) };
-    case 'call':
-      return { ...node, args: node.args.map(fn) };
-    case 'concat':
-      return { ...node, parts: node.parts.map(fn) };
-    case 'to_string':
-    case 'group':
-    case 'type_cast':
-    case 'format_string':
-      return { ...node, expr: fn(node.expr) };
     case 'mux':
       return { ...node, index: fn(node.index), cases: node.cases.map(fn) };
     case 'table_lookup':
       return { ...node, index: fn(node.index) };
-    case 'null_coalesce':
-      return { ...node, left: fn(node.left), right: fn(node.right) };
-    case 'resolve_font':
-      return { ...node, family: fn(node.family), size: fn(node.size) };
-    case 'string_method':
-      return { ...node, object: fn(node.object), args: node.args.map(fn) };
-    case 'array_index':
-      return { ...node, array: fn(node.array), index: fn(node.index) };
-    case 'array_method':
-      return { ...node, object: fn(node.object), args: node.args.map(fn) };
+    case 'op':
+      return { ...node, children: node.children.map(fn) };
     // Leaf nodes — return as-is
     case 'literal':
     case 'signal_read':

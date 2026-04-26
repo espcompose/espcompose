@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import type { SemanticIR, IRBinding } from '@espcompose/core/internals';
 import { IRReactiveNode } from '@espcompose/core';
+import { irTernary } from '@espcompose/core/internals';
 
 function makeMinimalIR(overrides?: {
   esphome?: Partial<SemanticIR['esphome']>;
@@ -160,19 +161,18 @@ describe('serializeIR', () => {
       dependencies: [],
       exprType: 'string',
     });
-    node.exprIR = {
-      kind: 'ternary',
-      test: { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' },
-      consequent: { kind: 'literal', value: 'On', type: 'string' },
-      alternate: { kind: 'literal', value: 'Off', type: 'string' },
-    };
+    node.exprIR = irTernary(
+      { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' },
+      { kind: 'literal', value: 'On', type: 'string' },
+      { kind: 'literal', value: 'Off', type: 'string' },
+    );
 
     const ir = makeMinimalIR({ espcompose: { reactive: { kind: 'reactive_data', bindings: [], memos: [node], effects: [] } } });
     const result = serializeIR(ir);
     const espcompose2 = result.espcompose as { reactive: { memos: Record<string, unknown>[] } };
     const serializedNode = espcompose2.reactive.memos[0];
     expect(serializedNode.exprIR).toBeDefined();
-    expect((serializedNode.exprIR as Record<string, unknown>).kind).toBe('ternary');
+    expect((serializedNode.exprIR as Record<string, unknown>).kind).toBe('op');
 
     expect(() => JSON.stringify(result)).not.toThrow();
   });
