@@ -7,10 +7,10 @@
  * can switch to the @espcompose/ui import with no other changes.
  */
 
-import { useOverlay } from '@espcompose/core';
-import type { OverlayController, OverlayFactory } from '@espcompose/core';
+import { useOverlay, useLvglVisibility } from '@espcompose/core';
+import type { OverlayFactory, LvglVisibilityController } from '@espcompose/core';
 
-export type PopupController = OverlayController;
+export type PopupController = LvglVisibilityController;
 
 export type PopupFactory = OverlayFactory;
 
@@ -18,8 +18,8 @@ export type PopupFactory = OverlayFactory;
  * Create a popup overlay (z-order 0).
  *
  * @param factory  Render callback `(ctrl) => <Popup>…</Popup>`
- * @returns        An `OverlayController` with `.show()` / `.dismiss()`.
+ * @returns        An `LvglVisibilityController` with `.show()` / `.hide()`.
  */
 export function usePopup(factory: PopupFactory): PopupController {
-  return useOverlay({ zOrder: 0 }, factory);
+  return useLvglVisibility(useOverlay({ zOrder: 0 }, factory));
 }

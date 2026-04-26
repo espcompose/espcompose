@@ -99,15 +99,15 @@ describe('useOverlay', () => {
     expect(new Set(controllers.map(c => c.key)).size).toBe(1);
   });
 
-  it('controller.show()/dismiss() throw at runtime (compile-time markers)', () => {
-    let savedCtrl: { show: () => void; dismiss: () => void } | undefined;
+  it('controller.show()/hide() throw at runtime (compile-time markers)', () => {
+    let savedCtrl: { show: () => void; hide: () => void } | undefined;
     withScriptScope(() => withOverlayScope(() => {
       callInsideComponent('Foo', () => {
         savedCtrl = useOverlay({}, () => ({ type: 'div', props: {}, __source: undefined as never }));
       });
     }));
     expect(() => savedCtrl!.show()).toThrow(/compile-time/);
-    expect(() => savedCtrl!.dismiss()).toThrow(/compile-time/);
+    expect(() => savedCtrl!.hide()).toThrow(/compile-time/);
   });
 
   it('two useOverlay() calls in the same component produce two definitions', () => {

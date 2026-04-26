@@ -26,6 +26,8 @@ export interface ActionCompileResult {
   refExpressions: Set<string>;
   /** Set of overlay controller variable names that need to be in __refBindings. */
   overlayControllerRefs: Set<string>;
+  /** Set of LVGL visibility controller variable names that need to be in __refBindings. */
+  lvglVisibilityControllerRefs: Set<string>;
 }
 
 export interface ActionCompilerContext {
@@ -50,6 +52,8 @@ export interface ActionCompilerContext {
   refExpressions: Set<string>;
   /** Set of overlay controller variable names encountered in overlay actions. */
   overlayControllerRefs: Set<string>;
+  /** Set of LVGL visibility controller variable names encountered in visibility actions. */
+  lvglVisibilityControllerRefs: Set<string>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

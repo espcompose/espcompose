@@ -5,7 +5,7 @@
  *
  * Expected behaviour:
  *   - Both popup and toast overlay definitions are emitted into top_layer
- *   - toast.show() / toast.dismiss() inside the popup's trigger handler
+ *   - toast.show() / toast.hide() inside the popup's trigger handler
  *     correctly references the toast overlay wrapper
  *   - Pressing the toggle button inside the popup triggers the entity
  *     toggle AND shows the toast
@@ -38,7 +38,7 @@ const DeviceCard = createLvglWidget(
       ));
 
       return (
-        <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+        <Popup onBackdropPress={() => { ctrl.hide(); }}>
           <Text text={label} />
           <Button
             text="Toggle"
@@ -46,12 +46,12 @@ const DeviceCard = createLvglWidget(
               entity.toggle();
               toast.show();
               await delay(2000);
-              toast.dismiss();
+              toast.hide();
             }}
           />
           <Button
             text="Close"
-            onPress={() => { ctrl.dismiss(); }}
+            onPress={() => { ctrl.hide(); }}
           />
         </Popup>
       );

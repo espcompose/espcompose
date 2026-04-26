@@ -50,10 +50,10 @@ type LightSwitchProps = WidgetProps<{
 
 const LightSwitch = createLvglWidget<LightSwitchProps>((props) => {
   const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+    <Popup onBackdropPress={() => { ctrl.hide(); }}>
       <Text text="Control" />
       <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
-      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
     </Popup>
   ));
 

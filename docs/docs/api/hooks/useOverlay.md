@@ -37,7 +37,7 @@ The returned controller exposes two methods — both are compile-time markers th
 | Method | Description |
 |--------|-------------|
 | `show()` | Show this instance's overlay. Sets the mux index and unhides the shared widgets. |
-| `dismiss()` | Hide the overlay. Safe to call from any trigger handler. |
+| `hide()` | Hide the overlay. Safe to call from any trigger handler. |
 
 ## Basic usage
 
@@ -50,11 +50,11 @@ const LightButton = createLvglWidget(
     const entity = useHAEntity(entityId, { domain: 'light' });
 
     const overlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-      <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+      <Popup onBackdropPress={() => { ctrl.hide(); }}>
         <Text variant="title" text={label} />
         <Text text={entity.stateText} />
         <Button text="Toggle" onPress={() => { entity.toggle(); }} />
-        <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+        <Button text="Close" onPress={() => { ctrl.hide(); }} />
       </Popup>
     ));
 
@@ -94,17 +94,17 @@ You can call `useOverlay()` more than once in the same component. Each call prod
 ```tsx
 const DeviceControl = createLvglWidget(({ entity }) => {
   const infoOverlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+    <Popup onBackdropPress={() => { ctrl.hide(); }}>
       <Text text={entity.stateText} />
-      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
     </Popup>
   ));
 
   const confirmOverlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+    <Popup onBackdropPress={() => { ctrl.hide(); }}>
       <Text text="Are you sure?" />
-      <Button text="Yes" onPress={() => { entity.toggle(); ctrl.dismiss(); }} />
-      <Button text="Cancel" onPress={() => { ctrl.dismiss(); }} />
+      <Button text="Yes" onPress={() => { entity.toggle(); ctrl.hide(); }} />
+      <Button text="Cancel" onPress={() => { ctrl.hide(); }} />
     </Popup>
   ));
 
@@ -124,7 +124,7 @@ The `zOrder` config determines the rendering tier. Overlays in higher tiers alwa
 ```tsx
 // A popup at tier 0 — rendered at the base overlay level
 const popup = useOverlay({ zOrder: 0 }, (ctrl) => (
-  <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+  <Popup onBackdropPress={() => { ctrl.hide(); }}>
     <Text text="Popup content" />
   </Popup>
 ));
@@ -183,10 +183,10 @@ A translucent bottom-anchored strip for brief, non-blocking messages.
 3. Overlays are grouped into **tier containers** by `zOrder` — each tier is an invisible `lv_obj` that establishes rendering order
 4. The compiler generates a **mux signal** per overlay definition — `show()` sets the mux index to the calling instance
 5. Reactive bindings that differ across instances (entity state, labels) are dispatched through a table lookup keyed by the mux index
-6. `dismiss()` hides the shared widgets regardless of which instance is active
+6. `hide()` hides the shared widgets regardless of which instance is active
 
 ## Rules
 
 - Must be called inside a function component body (created with `createLvglWidget`)
 - All instances of the same component must produce structurally identical overlay trees — the compiler validates this and will error if the tree shapes differ
-- `show()` and `dismiss()` are compile-time markers — they can only be used inside trigger handlers (`onPress`, `onChange`, etc.) or `useScript()` bodies
+- `show()` and `hide()` are compile-time markers — they can only be used inside trigger handlers (`onPress`, `onChange`, etc.) or `useScript()` bodies

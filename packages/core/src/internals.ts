@@ -111,6 +111,8 @@ export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScop
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
 export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
+export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
@@ -215,7 +217,8 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRArraySet, IRArrayPush, IRArrayClear,
   IRLambdaAction, IRLambdaSlot,
-  IROverlayShow, IROverlayDismiss,
+  IROverlayShow, IROverlayHide,
+  IRLvglVisibilityShow, IRLvglVisibilityHide,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -227,5 +230,6 @@ export {
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
-  irOverlayShow, irOverlayDismiss,
+  irOverlayShow, irOverlayHide,
+  irLvglVisibilityShow, irLvglVisibilityHide,
 } from './ir/index';

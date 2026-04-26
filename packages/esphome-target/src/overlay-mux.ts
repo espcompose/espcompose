@@ -171,8 +171,12 @@ function singleActionFingerprint(action: IRActionNode): string {
       return `LA:${action.fragments.join('|')}:${action.slots.map(s => `${s.kind}:${'name' in s ? s.name : 'value' in s ? String(s.value) : 'id' in s ? s.id : ''}`).join(',')}`;
     case 'overlay_show':
       return `PS:${action.templateKey}:${action.instanceIndex}:${action.controllerRef ?? ''}`;
-    case 'overlay_dismiss':
+    case 'overlay_hide':
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
+    case 'lvgl_visibility_show':
+      return `VS:${action.controllerRef}`;
+    case 'lvgl_visibility_hide':
+      return `VH:${action.controllerRef}`;
   }
 }
 

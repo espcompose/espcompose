@@ -169,7 +169,7 @@ function createScriptHandle(id: string): ScriptHandle {
  *
  * Unlike `useScript()`, this does NOT require a user-authored async function
  * body — the action IR is provided directly. Intended for framework-generated
- * lifecycle scripts (e.g. toast auto-dismiss).
+ * lifecycle scripts (e.g. toast auto-hide).
  *
  * Must be called inside a render pass with an active script scope.
  *

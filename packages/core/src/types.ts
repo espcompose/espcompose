@@ -111,11 +111,38 @@ export declare const THEME_BRAND: unique symbol;
  *
  * Types branded with OVERLAY_BRAND represent compile-time overlay controllers
  * created by `useOverlay()`. The compiler uses this brand to detect
- * `controller.show()` and `controller.dismiss()` calls and lower them to
+ * `controller.show()` and `controller.hide()` calls and lower them to
  * muxed LVGL show/hide actions. A single brand covers all overlay types
  * (popup, toast, notification, etc.).
  */
 export declare const OVERLAY_BRAND: unique symbol;
+
+/**
+ * Phantom brand for LVGL visibility controllers.
+ *
+ * Types branded with LVGL_VISIBILITY_BRAND represent compile-time
+ * visibility controllers created by `useLvglVisibility()`. The compiler
+ * uses this brand to detect `controller.show()` and `controller.hide()`
+ * calls and lower them to LVGL hidden-flag toggling or overlay
+ * show/hide actions.
+ */
+export declare const LVGL_VISIBILITY_BRAND: unique symbol;
+
+/**
+ * Controller returned by `useLvglVisibility()`.
+ *
+ * Provides `show()` and `hide()` methods that are compile-time markers
+ * — the action compiler recognises calls and lowers them to the
+ * appropriate LVGL or overlay actions at serialization time.
+ */
+export interface LvglVisibilityController {
+  readonly [BINDING_BRAND]?: true;
+  readonly [LVGL_VISIBILITY_BRAND]?: true;
+  /** Show the target (unhide LVGL widget or show overlay). */
+  show(): void;
+  /** Hide the target (hide LVGL widget or overlay). */
+  hide(): void;
+}
 
 /**
  * Phantom brand for compile-time binding types.

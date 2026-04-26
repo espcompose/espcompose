@@ -53,6 +53,7 @@ export function compileActionBody(
     triggerVars: new Set(),
     refExpressions: new Set(),
     overlayControllerRefs: new Set(),
+    lvglVisibilityControllerRefs: new Set(),
   };
 
   // Extract trigger parameter name
@@ -77,6 +78,7 @@ export function compileActionBody(
     triggerVars: Array.from(ctx.triggerVars),
     refExpressions: ctx.refExpressions,
     overlayControllerRefs: ctx.overlayControllerRefs,
+    lvglVisibilityControllerRefs: ctx.lvglVisibilityControllerRefs,
   };
 }
 

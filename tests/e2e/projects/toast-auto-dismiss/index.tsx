@@ -1,14 +1,14 @@
 /**
  * E2E project: toast-auto-dismiss
  *
- * Validates the useToast() auto-dismiss lifecycle:
+ * Validates the useToast() auto-hide lifecycle:
  *
- *   - Default auto-dismiss (3s): generates a restart-mode script that
- *     sequences overlay_show → delay 3s → overlay_dismiss
+ *   - Default auto-hide (3s): generates a restart-mode script that
+ *     sequences overlay_show → delay 3s → overlay_hide
  *   - Custom duration (5s): same pattern with delay 5s
- *   - Manual dismiss (autoDismiss: false): no lifecycle script, raw
- *     overlay_show / overlay_dismiss in the action tree
- *   - Button handler routes through script.execute (when auto-dismiss
+ *   - Manual hide (autoHide: false): no lifecycle script, raw
+ *     overlay_show / overlay_hide in the action tree
+ *   - Button handler routes through script.execute (when auto-hide
  *     is active) instead of raw overlay_show
  */
 import { DisplayRef, useRef, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
@@ -24,33 +24,33 @@ import {
 
 const ToastDemo = createLvglWidget(
   () => {
-    // Default: auto-dismiss after 3s
+    // Default: auto-hide after 3s
     const toastDefault = useToast(() => (
       <Toast>
         <Text text="Default 3s toast" />
       </Toast>
     ));
 
-    // Custom: auto-dismiss after 5s
+    // Custom: auto-hide after 5s
     const toastCustom = useToast(() => (
       <Toast>
         <Text text="Custom 5s toast" />
       </Toast>
-    ), { autoDismiss: '5s' });
+    ), { autoHide: '5s' });
 
-    // Manual: no auto-dismiss
+    // Manual: no auto-hide
     const toastManual = useToast(() => (
       <Toast>
         <Text text="Manual toast" />
       </Toast>
-    ), { autoDismiss: false });
+    ), { autoHide: false });
 
     return (
       <VStack gap="md">
         <Button text="Show Default" onPress={() => { toastDefault.show(); }} />
         <Button text="Show Custom" onPress={() => { toastCustom.show(); }} />
         <Button text="Show Manual" onPress={() => { toastManual.show(); }} />
-        <Button text="Dismiss Manual" onPress={() => { toastManual.dismiss(); }} />
+        <Button text="Dismiss Manual" onPress={() => { toastManual.hide(); }} />
       </VStack>
     );
   },

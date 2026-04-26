@@ -356,13 +356,20 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       )};
     }
 
-    case 'overlay_dismiss': {
+    case 'overlay_hide': {
       // Hide the overlay wrapper — not muxed, same widget across all instances.
       const overlayId = `overlay_${action.templateKey}`;
       return { lambda: lambdaMarker(
         `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN);`
       )};
     }
+
+    case 'lvgl_visibility_show':
+    case 'lvgl_visibility_hide':
+      throw new Error(
+        `Unresolved ${action.kind} action (controllerRef: ${action.controllerRef}). ` +
+        'LVGL visibility placeholders must be resolved before lowering.',
+      );
   }
 }
 

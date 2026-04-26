@@ -891,10 +891,10 @@ lvgl:
                                               data:
                                                 entity_id: light.bedroom
                                           - script.execute:
-                                              id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_0
+                                              id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_0
                                           - delay: 2000ms
                                           - script.stop:
-                                              id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_0
+                                              id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_0
                                           - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
                                               anon_19__1), LV_OBJ_FLAG_HIDDEN);"
                                     - if:
@@ -908,10 +908,10 @@ lvgl:
                                               data:
                                                 entity_id: light.kitchen
                                           - script.execute:
-                                              id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_1
+                                              id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_1
                                           - delay: 2000ms
                                           - script.stop:
-                                              id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_1
+                                              id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_1
                                           - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
                                               anon_19__1), LV_OBJ_FLAG_HIDDEN);"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1093,7 +1093,7 @@ font:
     size: 22
     bpp: 4
 script:
-  - id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_0
+  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_0
     mode: restart
     then:
       - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
@@ -1107,7 +1107,7 @@ script:
       - delay: 3s
       - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
           anon_19__1), LV_OBJ_FLAG_HIDDEN);"
-  - id: toast_lifecycle_espcompose_script_render_wireframe_anon_19__1_1
+  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_1
     mode: restart
     then:
       - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\

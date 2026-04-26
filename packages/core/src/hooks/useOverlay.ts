@@ -13,7 +13,7 @@
 // The mux signal + table-driven codegen live in the ESPHome target and the
 // compiler — this file is purely the registry + hook surface.
 //
-// Returns an `OverlayController` whose `show()` and `dismiss()` methods are
+// Returns an `OverlayController` whose `show()` and `hide()` methods are
 // compile-time markers (BINDING_BRAND-tagged) — the AST/action compiler
 // recognises them and lowers them to muxed lambda actions.
 //
@@ -44,13 +44,13 @@ function sanitizeIdentifier(key: string): string {
 /**
  * Public controller returned by `useOverlay()` and passed into the factory.
  *
- * Both `show()` and `dismiss()` are BINDING_BRAND-tagged so they are valid
+ * Both `show()` and `hide()` are BINDING_BRAND-tagged so they are valid
  * inside trigger handler bodies. They are compile-time markers — the action
  * compiler recognises calls and lowers them to muxed LVGL show/hide actions.
  *
  * - `show()` sets the overlay's mux index to this instance, unhides the
  *   shared widget subtree, and brings it to the front within its z-order tier.
- * - `dismiss()` hides the shared widget subtree (not muxed — the same
+ * - `hide()` hides the shared widget subtree (not muxed — the same
  *   widgets across all instances).
  */
 export interface OverlayController {
@@ -59,7 +59,7 @@ export interface OverlayController {
   /** Show this instance's overlay. */
   show(): void;
   /** Hide the overlay. Safe to call from any trigger handler in any instance. */
-  dismiss(): void;
+  hide(): void;
 }
 
 /**
@@ -189,7 +189,7 @@ export function peekOverlayDefinitions(): OverlayDefinition[] {
 /**
  * Factory invoked once per component instance to produce the overlay's content.
  *
- * Receives the `OverlayController` so user code can call `ctrl.dismiss()`
+ * Receives the `OverlayController` so user code can call `ctrl.hide()`
  * inside trigger handlers without forward-reference issues.
  */
 export type OverlayFactory = (ctrl: OverlayController) => EspComposeElement | EspComposeElement[];
@@ -282,7 +282,7 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
 /**
  * Build an OverlayController for one instance.
  *
- * `show()` and `dismiss()` throw `throwCompileTimeOnly` at runtime — they are
+ * `show()` and `hide()` throw `throwCompileTimeOnly` at runtime — they are
  * meant to be statically recognised by the action compiler in trigger handler
  * bodies. The `__templateKey`, `__instanceIndex`, and `__zOrder` fields are
  * set on the runtime object (but hidden from the public TS interface) so the
@@ -295,8 +295,8 @@ function createOverlayController(templateKey: string, instanceIndex: number, zOr
     show(): void {
       throwCompileTimeOnly('overlay.show()', 'Overlay actions');
     },
-    dismiss(): void {
-      throwCompileTimeOnly('overlay.dismiss()', 'Overlay actions');
+    hide(): void {
+      throwCompileTimeOnly('overlay.hide()', 'Overlay actions');
     },
     __templateKey: templateKey,
     __instanceIndex: instanceIndex,

@@ -11,6 +11,7 @@ import type { TriggerVar } from './trigger-args';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 import type { IRActionNode } from './ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
+import { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -215,12 +216,15 @@ export function serializeValue(v: unknown): unknown {
     let actions = fn.__compiledActions;
     // Resolve deferred overlay controller refs (templateKey/instanceIndex)
     resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
+    // Resolve deferred LVGL visibility controller refs
+    resolveLvglVisibilityControllerRefs(actions as IRActionNode[], fn.__refBindings);
     // Remove resolved overlay controller objects from refBindings so they don't
     // cause string-replacement damage during lambda ref resolution in the
     // lowering phase (OverlayController.toString() → '[object Object]' would
     // corrupt signal names containing 'overlay').
     if (fn.__refBindings) {
       cleanOverlayControllerRefs(fn.__refBindings);
+      cleanLvglVisibilityControllerRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
     const result = restoreLambdaMarkers(actions);

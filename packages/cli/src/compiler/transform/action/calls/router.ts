@@ -17,6 +17,7 @@ import { compileRefAction } from './ref.js';
 import { compileGlobalSet, compileArraySet, compileArrayPush } from './global.js';
 import { compileThemeSelect, isThemeSelectCall } from './theme.js';
 import { compileOverlayAction, isOverlayActionCall } from './overlay.js';
+import { compileLvglVisibilityAction, isLvglVisibilityActionCall } from './lvgl-visibility.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Action call classification and routing
@@ -77,7 +78,12 @@ export function compileActionCall(
     const objExpr = call.expression.expression;
     const objType = ctx.checker.getTypeAtLocation(objExpr);
 
-    // Overlay controller — controller.show() / controller.dismiss()
+    // LVGL visibility controller — vis.show() / vis.hide()
+    if (isLvglVisibilityActionCall(objType, methodName)) {
+      return compileLvglVisibilityAction(call, objExpr, objType, methodName, ctx);
+    }
+
+    // Overlay controller — controller.show() / controller.hide()
     if (isOverlayActionCall(objType, methodName)) {
       return compileOverlayAction(call, objExpr, objType, methodName, ctx);
     }

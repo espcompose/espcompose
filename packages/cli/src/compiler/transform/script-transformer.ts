@@ -513,6 +513,9 @@ function buildRefNameSet(
   for (const key of result.overlayControllerRefs) {
     refNameSet.add(key);
   }
+  for (const key of result.lvglVisibilityControllerRefs) {
+    refNameSet.add(key);
+  }
   return refNameSet;
 }
 
@@ -558,10 +561,14 @@ function collectRefNamesFromActions(
           }
           break;
         case 'overlay_show':
-        case 'overlay_dismiss':
+        case 'overlay_hide':
           if ('controllerRef' in action && action.controllerRef) {
             names.add(action.controllerRef);
           }
+          break;
+        case 'lvgl_visibility_show':
+        case 'lvgl_visibility_hide':
+          names.add(action.controllerRef);
           break;
       }
     }

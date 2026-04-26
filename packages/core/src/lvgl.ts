@@ -27,6 +27,7 @@ import type { CapturedOverlayAction } from './hooks/useOverlay';
 import type { IRActionNode } from './ir/action-types';
 import { assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
+import { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
 import {
   camelToSnake,
@@ -243,11 +244,14 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
         // Resolve deferred overlay controller refs — replace placeholder
         // templateKey/instanceIndex with actual values from the bound controller.
         resolveOverlayControllerRefs(rawActions, fn.__refBindings);
+        // Resolve deferred LVGL visibility controller refs
+        resolveLvglVisibilityControllerRefs(rawActions, fn.__refBindings);
         // Remove resolved overlay controller objects from refBindings so they
         // don't corrupt lambda strings during ref resolution (toString →
         // '[object Object]' would replace 'overlay' in signal names).
         if (fn.__refBindings) {
           cleanOverlayControllerRefs(fn.__refBindings);
+          cleanLvglVisibilityControllerRefs(fn.__refBindings);
         }
         overlayActionCapture.push({
           rawActions,

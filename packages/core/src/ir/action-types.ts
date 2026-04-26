@@ -159,9 +159,9 @@ export interface IROverlayShow {
   controllerRef?: string;
 }
 
-/** Overlay dismiss action — hides the shared overlay (not muxed). */
-export interface IROverlayDismiss {
-  kind: 'overlay_dismiss';
+/** Overlay hide action — hides the shared overlay (not muxed). */
+export interface IROverlayHide {
+  kind: 'overlay_hide';
   /** Template key identifying the shared overlay definition. */
   templateKey: string;
   /** Z-order tier (carried for naming consistency). */
@@ -210,7 +210,9 @@ export type IRActionNode =
   | IRArrayClear
   | IRLambdaAction
   | IROverlayShow
-  | IROverlayDismiss;
+  | IROverlayHide
+  | IRLvglVisibilityShow
+  | IRLvglVisibilityHide;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -367,7 +369,31 @@ export function irOverlayShow(templateKey: string, instanceIndex: number, zOrder
   return { kind: 'overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-export function irOverlayDismiss(templateKey: string, zOrder: number, controllerRef?: string): IROverlayDismiss {
-  return { kind: 'overlay_dismiss', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayHide(templateKey: string, zOrder: number, controllerRef?: string): IROverlayHide {
+  return { kind: 'overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+}
+
+// ── LVGL Visibility Actions ────────────────────────────────────────────────
+
+/** LVGL visibility show — placeholder resolved at serialization time. */
+export interface IRLvglVisibilityShow {
+  kind: 'lvgl_visibility_show';
+  /** Controller variable name — resolved from __refBindings at serialization. */
+  controllerRef: string;
+}
+
+/** LVGL visibility hide — placeholder resolved at serialization time. */
+export interface IRLvglVisibilityHide {
+  kind: 'lvgl_visibility_hide';
+  /** Controller variable name — resolved from __refBindings at serialization. */
+  controllerRef: string;
+}
+
+export function irLvglVisibilityShow(controllerRef: string): IRLvglVisibilityShow {
+  return { kind: 'lvgl_visibility_show', controllerRef };
+}
+
+export function irLvglVisibilityHide(controllerRef: string): IRLvglVisibilityHide {
+  return { kind: 'lvgl_visibility_hide', controllerRef };
 }
 

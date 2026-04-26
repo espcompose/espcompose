@@ -33,7 +33,8 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
 } from './types';
-export { BINDING_BRAND, THEME_BRAND, OVERLAY_BRAND, useRef, isRef } from './types';
+export { BINDING_BRAND, THEME_BRAND, OVERLAY_BRAND, LVGL_VISIBILITY_BRAND, useRef, isRef } from './types';
+export type { LvglVisibilityController } from './types';
 export * from './intents';
 
 // Re-export the generated barrel: JSX.IntrinsicElements augmentations,
@@ -70,6 +71,8 @@ export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from 
 export type { GlobalHandle } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
+export { useLvglVisibility } from './hooks/useLvglVisibility';
+export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions
