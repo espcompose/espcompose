@@ -1,5 +1,30 @@
 # @espcompose/ui
 
+## 0.6.3
+
+### Patch Changes
+
+- [#46](https://github.com/espcompose/espcompose/pull/46) [`7597490`](https://github.com/espcompose/espcompose/commit/75974902dc9e00c559b4629c6c967570df2e0b4a) Thanks [@xmlguy74](https://github.com/xmlguy74)! - Add popup support via `usePopup()` hook, allowing shared LVGL popup widget subtrees to be declared once and reused across multiple component instances with per-instance reactive bindings.
+
+  ### `@espcompose/core`
+
+  - Added `usePopup(factory)` hook that deduplicates popup widget structure across component instances and returns a `PopupController` with `show()` and `dismiss()` methods
+  - Added `IRPopupShow` and `IRPopupDismiss` IR action node types
+  - Added popup controller reference resolution pipeline (`resolvePopupControllerRefs`, `cleanPopupControllerRefs`) run during script serialization
+  - Added structural fingerprinting (`assertPopupStructuralIdentity`) to enforce that all popup instances produce identical widget trees
+
+  ### `@espcompose/cli`
+
+  - Added compiler support for `controller.show()` / `controller.dismiss()` action calls on `PopupController` types, lowered to `IRPopupShow` / `IRPopupDismiss`
+  - Added `POPUP_BRAND` type-brand detection to identify popup controller values in the action transform pipeline
+
+  ### `@espcompose/ui`
+
+  - Added `Popup` component: a themed backdrop + centered container widget intended for use inside `usePopup()` factory callbacks. Accepts `padding`, `radius`, `gap`, `backdropOpacity`, and `onBackdropPress` props with theme token support
+
+- Updated dependencies [[`7597490`](https://github.com/espcompose/espcompose/commit/75974902dc9e00c559b4629c6c967570df2e0b4a)]:
+  - @espcompose/core@0.6.3
+
 ## 0.6.2
 
 ### Patch Changes
