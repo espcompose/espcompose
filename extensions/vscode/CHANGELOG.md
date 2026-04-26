@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.6.3
+
 ## 0.6.2
 
 All notable changes to the ESPCompose Language Support extension will be documented in this file.

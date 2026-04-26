@@ -2,7 +2,7 @@
   "name": "espcompose-vscode",
   "displayName": "ESPCompose Language Support",
   "description": "Syntax highlighting for inline C++ in ESPCompose lambda tagged templates",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "publisher": "ESPCompose",
   "license": "MIT",
