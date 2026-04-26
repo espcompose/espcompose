@@ -355,7 +355,8 @@ export function lowerToYamlConfig(
   if (ir.esphome.scripts.length > 0) {
     finalConfig['script'] = ir.esphome.scripts.map((s) => ({
       id: s.id,
-      then: lowerActionTree(s.then, actionCtx),
+      ...(s.mode && s.mode !== 'single' ? { mode: s.mode } : {}),
+      then: restoreLambdaMarkers(lowerActionTree(s.then, actionCtx)) as unknown[],
     }));
   }
 

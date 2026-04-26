@@ -24,6 +24,7 @@ import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
+import type { ScriptMode } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { throwCompileTimeOnly } from '../errors';
 
@@ -31,6 +32,7 @@ import { throwCompileTimeOnly } from '../errors';
 
 interface ScriptDefinition {
   id: string;
+  mode?: ScriptMode;
   then: IRActionNode[];
 }
 
@@ -91,8 +93,15 @@ interface CompiledScriptMeta {
  *
  * Must be called inside a function component body (render pass).
  */
+/** Options for `useScript()`. */
+export interface ScriptOptions {
+  /** Execution mode. Controls behavior when script is re-triggered while already running. */
+  mode?: ScriptMode;
+}
+
 export function useScript(
   fn: () => Promise<void>,
+  opts?: ScriptOptions,
 ): ScriptHandle {
   assertHookContext('useScript()');
 
@@ -105,11 +114,12 @@ export function useScript(
       : body.__compiledScript.then as IRActionNode[];
     scriptDef = {
       id: body.__compiledScript.id,
+      mode: opts?.mode,
       then: resolvedActions,
     };
   } else {
     const id = `script_${Math.random().toString(36).slice(2, 9)}`;
-    scriptDef = { id, then: [] };
+    scriptDef = { id, mode: opts?.mode, then: [] };
   }
 
   // Register in scope (deduplication)
@@ -150,4 +160,23 @@ function createScriptHandle(id: string): ScriptHandle {
   });
 
   return callable as ScriptHandle;
+}
+
+// ── Framework-internal script registration ──────────────────────────────────
+
+/**
+ * Register a pre-built script definition directly into the script scope.
+ *
+ * Unlike `useScript()`, this does NOT require a user-authored async function
+ * body — the action IR is provided directly. Intended for framework-generated
+ * lifecycle scripts (e.g. toast auto-dismiss).
+ *
+ * Must be called inside a render pass with an active script scope.
+ *
+ * @internal Exported via `@espcompose/core/internals` for framework use only.
+ */
+export function registerScript(def: ScriptDefinition): void {
+  if (!findInScope(scriptScopeContext, def.id)) {
+    registerInScope(scriptScopeContext, def.id, { def });
+  }
 }

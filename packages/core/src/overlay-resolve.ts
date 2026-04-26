@@ -6,9 +6,22 @@
 // `templateKey`/`instanceIndex` (because the controller type doesn't carry
 // literal values).  These helpers resolve them from `__refBindings` at
 // serialization time.
+//
+// When a controller has `__lifecycleScriptId` (set by useToast auto-dismiss),
+// `overlay_show` is replaced with `script_execute` and `overlay_dismiss`
+// is replaced with `[script_stop, overlay_dismiss]`.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRActionNode } from './ir/action-types';
+import { irScriptExecute, irScriptStop, irOverlayDismiss } from './ir/action-types';
+
+/** Shape of an OverlayController's hidden internal fields. */
+interface OverlayControllerInternal {
+  __templateKey?: string;
+  __instanceIndex?: number;
+  __zOrder?: number;
+  __lifecycleScriptId?: string;
+}
 
 /**
  * Resolve deferred overlay controller references in a compiled action tree.
@@ -16,29 +29,52 @@ import type { IRActionNode } from './ir/action-types';
  * Walks the action tree and replaces `controllerRef` placeholders with the
  * actual `templateKey`/`instanceIndex`/`zOrder` values from the bound
  * OverlayController objects in `refBindings`.
+ *
+ * When the controller carries `__lifecycleScriptId` (toast auto-dismiss):
+ * - `overlay_show` → `script_execute` (the lifecycle script handles show + delay + dismiss)
+ * - `overlay_dismiss` → `[script_stop, overlay_dismiss]` (stop timer + immediate hide)
  */
 export function resolveOverlayControllerRefs(
   actions: IRActionNode[],
   refBindings?: Record<string, unknown>,
 ): void {
   if (!refBindings) return;
-  for (const action of actions) {
+  for (let i = 0; i < actions.length; i++) {
+    const action = actions[i];
     if (action.kind === 'overlay_show' && action.controllerRef) {
-      const ctrl = refBindings[action.controllerRef] as
-        { __templateKey?: string; __instanceIndex?: number; __zOrder?: number } | undefined;
+      const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.instanceIndex = ctrl.__instanceIndex ?? action.instanceIndex;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
-        delete action.controllerRef;
+        if (ctrl.__lifecycleScriptId) {
+          // Replace overlay_show with script_execute — the lifecycle script
+          // handles show → delay → dismiss.
+          actions[i] = irScriptExecute(ctrl.__lifecycleScriptId);
+        } else {
+          action.templateKey = ctrl.__templateKey ?? action.templateKey;
+          action.instanceIndex = ctrl.__instanceIndex ?? action.instanceIndex;
+          action.zOrder = ctrl.__zOrder ?? action.zOrder;
+          delete action.controllerRef;
+        }
       }
     } else if (action.kind === 'overlay_dismiss' && action.controllerRef) {
-      const ctrl = refBindings[action.controllerRef] as
-        { __templateKey?: string; __zOrder?: number } | undefined;
+      const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
-        delete action.controllerRef;
+        if (ctrl.__lifecycleScriptId) {
+          // Replace overlay_dismiss with [script_stop, overlay_dismiss]:
+          // stop any running auto-dismiss timer, then immediately hide.
+          const resolvedDismiss = irOverlayDismiss(
+            ctrl.__templateKey ?? action.templateKey,
+            ctrl.__zOrder ?? action.zOrder,
+          );
+          actions.splice(i, 1,
+            irScriptStop(ctrl.__lifecycleScriptId),
+            resolvedDismiss,
+          );
+          i++; // skip the newly inserted overlay_dismiss
+        } else {
+          action.templateKey = ctrl.__templateKey ?? action.templateKey;
+          action.zOrder = ctrl.__zOrder ?? action.zOrder;
+          delete action.controllerRef;
+        }
       }
     } else if (action.kind === 'if') {
       resolveOverlayControllerRefs(action.then, refBindings);

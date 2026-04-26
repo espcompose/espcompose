@@ -60,4 +60,4 @@ export { Toast } from './components/Toast';
 export { usePopup } from './hooks/usePopup';
 export type { PopupController, PopupFactory } from './hooks/usePopup';
 export { useToast } from './hooks/useToast';
-export type { ToastFactory } from './hooks/useToast';
+export type { ToastFactory, ToastController, ToastOptions } from './hooks/useToast';

@@ -17,9 +17,14 @@ import type { IRActionNode } from './action-types';
 // Script definition
 // ────────────────────────────────────────────────────────────────────────────
 
+/** ESPHome script execution mode. Controls behavior when re-triggered while already running. */
+export type ScriptMode = 'single' | 'restart' | 'queued' | 'parallel';
+
 export interface IRScript {
   readonly kind: 'script';
   id: string;
+  /** Execution mode. Omit for ESPHome default ('single'). */
+  mode?: ScriptMode;
   then: IRActionNode[];
 }
 

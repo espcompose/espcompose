@@ -59,6 +59,8 @@ export type { ImageProps } from './generated/components/image';
 export { useFont } from './hooks/useFont';
 export type { FontProps } from './generated/components/font';
 export { useScript } from './hooks/useScript';
+export type { ScriptOptions } from './hooks/useScript';
+export type { ScriptMode } from './ir/types';
 export { useMemo } from './hooks/useMemo';
 export { useLvgl } from './hooks/useLvgl';
 export { useGlobal } from './hooks/useGlobal';

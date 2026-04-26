@@ -96,6 +96,8 @@ export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './ta
 // ── Hooks ──────────────────────────────────────────────────────────────────
 export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
+export { registerScript } from './hooks/useScript';
+export type { ScriptOptions } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
 export { withGlobalScope, hashGlobalFingerprint, cppTypeToExprType } from './hooks/global-shared';
