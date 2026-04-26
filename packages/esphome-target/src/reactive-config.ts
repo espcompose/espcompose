@@ -60,8 +60,8 @@ function deriveSourceSignals(
       if (sigName && !names.includes(sigName)) {
         names.push(sigName);
       }
-    } else if (dep.sourceType === 'popup_mux') {
-      // Popup mux dependency — signal name is the sourceId itself (sig_popup_X_mux)
+    } else if (dep.sourceType === 'overlay_mux') {
+      // Overlay mux dependency — signal name is the sourceId itself (sig_overlay_X_mux)
       const sigName = dep.sourceId;
       if (!names.includes(sigName)) {
         names.push(sigName);
@@ -351,10 +351,10 @@ export function buildRuntimeConfig(
     let cppType: string;
     let sourceNames: string[];
 
-    // Muxed popup binding: the exprIR has been replaced with a mux node by
-    // processPopupMux. Lower it inline instead of reading from a single memo.
+    // Muxed overlay binding: the exprIR has been replaced with a mux node by
+    // processOverlayMux. Lower it inline instead of reading from a single memo.
     const hasMuxDep = expr.dependencies?.some(
-      (d: { sourceType?: string }) => d.sourceType === 'popup_mux',
+      (d: { sourceType?: string }) => d.sourceType === 'overlay_mux',
     );
     if (hasMuxDep && expr.exprIR?.kind === 'mux') {
       valueExpr = exprToCpp(expr.exprIR, cppCtx);

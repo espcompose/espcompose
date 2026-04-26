@@ -45,7 +45,7 @@ export interface PhaseContext {
   /** Path to the transformed entry file in buildDir. */
   transformedEntry?: string;
   /**
-   * Execute phase output: SemanticIR + sidecar data (secrets, popups, etc.).
+   * Execute phase output: SemanticIR + sidecar data (secrets, overlays, etc.).
    * Set by the execute phase; consumed by validate, emit, and compileToIR.
    */
   executeResult?: ExecuteResult;

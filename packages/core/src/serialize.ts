@@ -10,7 +10,7 @@ import { isTriggerVar } from './trigger-args';
 import type { TriggerVar } from './trigger-args';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 import type { IRActionNode } from './ir/action-types';
-import { resolvePopupControllerRefs, cleanPopupControllerRefs } from './popup-resolve';
+import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -213,14 +213,14 @@ export function serializeValue(v: unknown): unknown {
   if (typeof v === 'function' && hasCompiledActions(v)) {
     const fn = v as CompiledActionFunction;
     let actions = fn.__compiledActions;
-    // Resolve deferred popup controller refs (templateKey/instanceIndex)
-    resolvePopupControllerRefs(actions as IRActionNode[], fn.__refBindings);
-    // Remove resolved popup controller objects from refBindings so they don't
+    // Resolve deferred overlay controller refs (templateKey/instanceIndex)
+    resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
+    // Remove resolved overlay controller objects from refBindings so they don't
     // cause string-replacement damage during lambda ref resolution in the
-    // lowering phase (PopupController.toString() → '[object Object]' would
-    // corrupt signal names containing 'popup').
+    // lowering phase (OverlayController.toString() → '[object Object]' would
+    // corrupt signal names containing 'overlay').
     if (fn.__refBindings) {
-      cleanPopupControllerRefs(fn.__refBindings);
+      cleanOverlayControllerRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
     const result = restoreLambdaMarkers(actions);

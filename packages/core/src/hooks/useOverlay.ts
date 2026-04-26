@@ -1,27 +1,31 @@
 // ────────────────────────────────────────────────────────────────────────────
-// usePopup — shared popup widget subtree with hook-path deduplication
+// useOverlay — shared overlay widget subtree with hook-path deduplication
 //
-// Each `usePopup(factory)` call inside a function component:
+// Each `useOverlay(config, factory)` call inside a function component:
 //   1. Derives a `templateKey` from the current hook-path stack (component
 //      identity). All callers of the same component share a templateKey.
 //   2. Evaluates the factory once per component instance (to capture each
 //      instance's unique closures: entity bindings, action handlers).
 //   3. The first instance's rendered widget subtree is emitted into the
 //      LVGL `top_layer` section once. Subsequent instances contribute only
-//      their per-instance data to the popup definition's instance table.
+//      their per-instance data to the overlay definition's instance table.
 //
 // The mux signal + table-driven codegen live in the ESPHome target and the
 // compiler — this file is purely the registry + hook surface.
 //
-// Returns a `PopupController` whose `show()` and `dismiss()` methods are
+// Returns an `OverlayController` whose `show()` and `dismiss()` methods are
 // compile-time markers (BINDING_BRAND-tagged) — the AST/action compiler
 // recognises them and lowers them to muxed lambda actions.
+//
+// Z-ordering is handled by grouping overlays into tier containers in
+// `top_layer`, sorted by the numeric `zOrder` config. Within a tier,
+// `lv_obj_move_foreground()` in the show action gives last-shown-wins.
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, useContext, withContext } from './useContext';
 import { assertHookContext, getCurrentHookPath, getHookPathGeneration } from './useState';
 import { throwCompileTimeOnly } from '../errors';
-import type { BINDING_BRAND, POPUP_BRAND } from '../types';
+import type { BINDING_BRAND, OVERLAY_BRAND } from '../types';
 import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive-node';
@@ -38,34 +42,34 @@ function sanitizeIdentifier(key: string): string {
 // ── Types ───────────────────────────────────────────────────────────────────
 
 /**
- * Public controller returned by `usePopup()` and passed into the factory.
+ * Public controller returned by `useOverlay()` and passed into the factory.
  *
  * Both `show()` and `dismiss()` are BINDING_BRAND-tagged so they are valid
  * inside trigger handler bodies. They are compile-time markers — the action
  * compiler recognises calls and lowers them to muxed LVGL show/hide actions.
  *
- * - `show()` sets the popup's mux index to this instance and unhides the
- *   shared backdrop + container.
- * - `dismiss()` hides the shared backdrop + container (not muxed — the same
+ * - `show()` sets the overlay's mux index to this instance, unhides the
+ *   shared widget subtree, and brings it to the front within its z-order tier.
+ * - `dismiss()` hides the shared widget subtree (not muxed — the same
  *   widgets across all instances).
  */
-export interface PopupController {
+export interface OverlayController {
   readonly [BINDING_BRAND]?: true;
-  readonly [POPUP_BRAND]?: true;
-  /** Show this instance's popup. */
+  readonly [OVERLAY_BRAND]?: true;
+  /** Show this instance's overlay. */
   show(): void;
-  /** Hide the popup. Safe to call from any trigger handler in any instance. */
+  /** Hide the overlay. Safe to call from any trigger handler in any instance. */
   dismiss(): void;
 }
 
 /**
- * Per-instance data captured during a single `usePopup()` call.
+ * Per-instance data captured during a single `useOverlay()` call.
  *
  * The factory is evaluated for every instance (so per-instance closures are
  * captured). The rendered tree is retained so the codegen pass can walk it
  * to extract per-instance reactive bindings and compiled action handlers.
  */
-export interface PopupInstance {
+export interface OverlayInstance {
   /** Mux index, assigned in order of discovery (0, 1, 2, ...). */
   readonly index: number;
   /** Rendered factory output — JSX subtree this instance produced. */
@@ -86,17 +90,17 @@ export interface PopupInstance {
   /**
    * Compiled action trees captured from trigger handler props during widget
    * serialization.  Each entry is one trigger handler (e.g. on_press) found
-   * depth-first in the popup's widget tree.  Positional indexing across
+   * depth-first in the overlay's widget tree.  Positional indexing across
    * instances is guaranteed by the structural identity assertion.
    */
-  capturedActions?: readonly CapturedPopupAction[];
+  capturedActions?: readonly CapturedOverlayAction[];
 }
 
 /**
  * A single trigger handler's compiled action metadata, captured from a
- * function prop with `__compiledActions` during popup widget serialization.
+ * function prop with `__compiledActions` during overlay widget serialization.
  */
-export interface CapturedPopupAction {
+export interface CapturedOverlayAction {
   /** Raw compiled action tree from the action compiler. */
   readonly rawActions: IRActionNode[];
   /** Ref bindings for resolving ref references in actions. */
@@ -104,65 +108,78 @@ export interface CapturedPopupAction {
 }
 
 /**
- * Per-template popup definition — accumulates instances across the render pass.
+ * Per-template overlay definition — accumulates instances across the render pass.
  *
- * Created by the first `usePopup()` call with this `templateKey`. Subsequent
+ * Created by the first `useOverlay()` call with this `templateKey`. Subsequent
  * calls with the same key append to `instances`. Only `instances[0].rendered`
  * is emitted into the `top_layer` widget tree; the rest contribute their
  * per-instance bindings + actions to the mux tables.
  */
-export interface PopupDefinition {
+export interface OverlayDefinition {
   /** Dedup key derived from the hook-path stack at the call site. */
   readonly templateKey: string;
+  /** Numeric z-order tier for stacking in top_layer. */
+  readonly zOrder: number;
   /** Per-instance records, accumulated across all callers. */
-  readonly instances: PopupInstance[];
+  readonly instances: OverlayInstance[];
+}
+
+/** Configuration for `useOverlay()`. */
+export interface OverlayConfig {
+  /**
+   * Numeric z-order tier. Overlays with higher `zOrder` are rendered above
+   * those with lower values. Within the same tier, last-shown-wins.
+   *
+   * @default 0
+   */
+  zOrder?: number;
 }
 
 // ── Scope frame ─────────────────────────────────────────────────────────────
 
-interface PopupScopeFrame {
-  /** Map templateKey → PopupDefinition. Insertion order is preserved. */
-  readonly definitions: Map<string, PopupDefinition>;
-  /** Hook-path generation seen at the last usePopup() call, for reset detection. */
+interface OverlayScopeFrame {
+  /** Map templateKey → OverlayDefinition. Insertion order is preserved. */
+  readonly definitions: Map<string, OverlayDefinition>;
+  /** Hook-path generation seen at the last useOverlay() call, for reset detection. */
   _lastGeneration?: number;
-  /** Per-component-invocation call counter for usePopup(). */
+  /** Per-component-invocation call counter for useOverlay(). */
   _hookCallIndex?: number;
 }
 
-const popupScopeContext = createContext<PopupScopeFrame | null>(null);
+const overlayScopeContext = createContext<OverlayScopeFrame | null>(null);
 
 // ── Scope lifecycle ─────────────────────────────────────────────────────────
 
-export interface PopupScopeResult<T> {
+export interface OverlayScopeResult<T> {
   result: T;
-  popups: PopupDefinition[];
+  overlays: OverlayDefinition[];
 }
 
 /**
- * Establish a popup scope frame and run `fn` inside it.
+ * Establish an overlay scope frame and run `fn` inside it.
  *
  * Called by the compiler's execute phase to wrap the render pass alongside
  * `withScriptScope` and `withReactiveScope`. After `fn` returns, the
- * collected popup definitions are returned for downstream codegen.
+ * collected overlay definitions are returned for downstream codegen.
  */
-export function withPopupScope<T>(fn: () => T): PopupScopeResult<T> {
-  const frame: PopupScopeFrame = { definitions: new Map() };
-  const result = withContext(popupScopeContext, frame, fn);
+export function withOverlayScope<T>(fn: () => T): OverlayScopeResult<T> {
+  const frame: OverlayScopeFrame = { definitions: new Map() };
+  const result = withContext(overlayScopeContext, frame, fn);
   return {
     result,
-    popups: Array.from(frame.definitions.values()),
+    overlays: Array.from(frame.definitions.values()),
   };
 }
 
 /**
- * Read the popup definitions registered in the currently-active scope.
+ * Read the overlay definitions registered in the currently-active scope.
  *
- * Used by the LVGL serializer (`buildLvglSection`) to emit the popup widget
- * subtree into `top_layer` after children resolution completes. Returns an
- * empty array if no popup scope is active.
+ * Used by the LVGL serializer (`buildLvglSection`) to emit the overlay widget
+ * subtrees into `top_layer` after children resolution completes. Returns an
+ * empty array if no overlay scope is active.
  */
-export function peekPopupDefinitions(): PopupDefinition[] {
-  const frame = useContext(popupScopeContext);
+export function peekOverlayDefinitions(): OverlayDefinition[] {
+  const frame = useContext(overlayScopeContext);
   if (!frame) return [];
   return Array.from(frame.definitions.values());
 }
@@ -170,48 +187,54 @@ export function peekPopupDefinitions(): PopupDefinition[] {
 // ── Hook ────────────────────────────────────────────────────────────────────
 
 /**
- * Factory invoked once per component instance to produce the popup's content.
+ * Factory invoked once per component instance to produce the overlay's content.
  *
- * Receives the `PopupController` so user code can call `ctrl.dismiss()`
+ * Receives the `OverlayController` so user code can call `ctrl.dismiss()`
  * inside trigger handlers without forward-reference issues.
  */
-export type PopupFactory = (ctrl: PopupController) => EspComposeElement | EspComposeElement[];
+export type OverlayFactory = (ctrl: OverlayController) => EspComposeElement | EspComposeElement[];
 
 // ── Hook call counter ───────────────────────────────────────────────────────
-// Disambiguates multiple usePopup() calls within the same component.
-// Uses a Map<hookPath, callIndex> on the popup scope frame to track how many
-// usePopup() calls have occurred for each distinct hook path. The map is
+// Disambiguates multiple useOverlay() calls within the same component.
+// Uses a Map<hookPath, callIndex> on the overlay scope frame to track how many
+// useOverlay() calls have occurred for each distinct hook path. The map is
 // cleared when the hook path changes (which means a different component
 // invocation started). This ensures:
-//   - Component instance A calling usePopup() twice → keys path#0, path#1
-//   - Component instance B calling usePopup() twice → keys path#0, path#1
+//   - Component instance A calling useOverlay() twice → keys path#0, path#1
+//   - Component instance B calling useOverlay() twice → keys path#0, path#1
 //     (same keys as A, so B's calls correctly append to A's definitions)
 
 /**
- * Declare a shared popup whose widget subtree is deduplicated across all
+ * Declare a shared overlay whose widget subtree is deduplicated across all
  * instances of the calling component.
  *
  * Must be called inside a function component body. The dedup key is derived
  * from the current hook-path stack (component identity) plus a per-component
- * call index so that multiple `usePopup()` calls in the same component each
- * get their own unique popup definition.
+ * call index so that multiple `useOverlay()` calls in the same component each
+ * get their own unique overlay definition.
+ *
+ * @param config - Overlay configuration. `zOrder` controls stacking tier
+ *   (default `0`). Higher values render above lower values.
+ * @param factory - Factory producing the overlay's JSX widget subtree.
  */
-export function usePopup(factory: PopupFactory): PopupController {
-  assertHookContext('usePopup()');
+export function useOverlay(config: OverlayConfig, factory: OverlayFactory): OverlayController {
+  assertHookContext('useOverlay()');
+
+  const zOrder = config.zOrder ?? 0;
 
   const basePath = getCurrentHookPath();
   if (!basePath) {
     throw new Error(
-      'usePopup() could not derive a template key from the hook-path stack. ' +
-      'This is an internal error — usePopup() must be called inside a function component.',
+      'useOverlay() could not derive a template key from the hook-path stack. ' +
+      'This is an internal error — useOverlay() must be called inside a function component.',
     );
   }
 
-  const frame = useContext(popupScopeContext);
+  const frame = useContext(overlayScopeContext);
   if (!frame) {
     throw new Error(
-      'usePopup() requires a popup scope frame. ' +
-      'The render pass must be wrapped in withPopupScope() (the compiler does this automatically).',
+      'useOverlay() requires an overlay scope frame. ' +
+      'The render pass must be wrapped in withOverlayScope() (the compiler does this automatically).',
     );
   }
 
@@ -236,12 +259,12 @@ export function usePopup(factory: PopupFactory): PopupController {
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, instances: [] };
+    def = { templateKey: safeKey, zOrder, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 
   const instanceIndex = def.instances.length;
-  const ctrl: PopupController = createPopupController(safeKey, instanceIndex);
+  const ctrl: OverlayController = createOverlayController(safeKey, instanceIndex, zOrder);
 
   // Evaluate the factory — captures this instance's unique closures
   // (entity bindings, compiled action handlers, useMemo() expressions).
@@ -257,24 +280,26 @@ export function usePopup(factory: PopupFactory): PopupController {
 // ── Internal helpers ────────────────────────────────────────────────────────
 
 /**
- * Build a PopupController for one instance.
+ * Build an OverlayController for one instance.
  *
  * `show()` and `dismiss()` throw `throwCompileTimeOnly` at runtime — they are
  * meant to be statically recognised by the action compiler in trigger handler
- * bodies. The `__templateKey` and `__instanceIndex` fields are set on the
- * runtime object (but hidden from the public TS interface) so the deferred
- * ref-binding resolver in `popup-resolve.ts` can recover the popup identity
- * and mux index without needing a separate symbol resolution pass.
+ * bodies. The `__templateKey`, `__instanceIndex`, and `__zOrder` fields are
+ * set on the runtime object (but hidden from the public TS interface) so the
+ * deferred ref-binding resolver in `overlay-resolve.ts` can recover the
+ * overlay identity and mux index without needing a separate symbol resolution
+ * pass.
  */
-function createPopupController(templateKey: string, instanceIndex: number): PopupController {
+function createOverlayController(templateKey: string, instanceIndex: number, zOrder: number): OverlayController {
   return {
     show(): void {
-      throwCompileTimeOnly('popup.show()', 'Popup actions');
+      throwCompileTimeOnly('overlay.show()', 'Overlay actions');
     },
     dismiss(): void {
-      throwCompileTimeOnly('popup.dismiss()', 'Popup actions');
+      throwCompileTimeOnly('overlay.dismiss()', 'Overlay actions');
     },
     __templateKey: templateKey,
     __instanceIndex: instanceIndex,
-  } as PopupController;
+    __zOrder: zOrder,
+  } as OverlayController;
 }

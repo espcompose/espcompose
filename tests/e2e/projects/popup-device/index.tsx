@@ -15,7 +15,7 @@
  *   - show() lambdas setting mux index + unhiding widgets
  *   - dismiss() lambdas hiding widgets
  */
-import { DisplayRef, useRef, useHAEntity, usePopup, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -24,6 +24,7 @@ import {
   Button,
   Popup,
   UITheme,
+  usePopup,
 } from '@espcompose/ui';
 
 /**

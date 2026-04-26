@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Shared popup controller reference resolution
+// Shared overlay controller reference resolution
 //
-// When the script transformer encounters `popup.show()` / `ctrl.dismiss()`,
+// When the script transformer encounters `ctrl.show()` / `ctrl.dismiss()`,
 // it may emit IR actions with `controllerRef` instead of literal
 // `templateKey`/`instanceIndex` (because the controller type doesn't carry
 // literal values).  These helpers resolve them from `__refBindings` at
@@ -11,51 +11,53 @@
 import type { IRActionNode } from './ir/action-types';
 
 /**
- * Resolve deferred popup controller references in a compiled action tree.
+ * Resolve deferred overlay controller references in a compiled action tree.
  *
  * Walks the action tree and replaces `controllerRef` placeholders with the
- * actual `templateKey`/`instanceIndex` values from the bound PopupController
- * objects in `refBindings`.
+ * actual `templateKey`/`instanceIndex`/`zOrder` values from the bound
+ * OverlayController objects in `refBindings`.
  */
-export function resolvePopupControllerRefs(
+export function resolveOverlayControllerRefs(
   actions: IRActionNode[],
   refBindings?: Record<string, unknown>,
 ): void {
   if (!refBindings) return;
   for (const action of actions) {
-    if (action.kind === 'popup_show' && action.controllerRef) {
+    if (action.kind === 'overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as
-        { __templateKey?: string; __instanceIndex?: number } | undefined;
+        { __templateKey?: string; __instanceIndex?: number; __zOrder?: number } | undefined;
       if (ctrl) {
         action.templateKey = ctrl.__templateKey ?? action.templateKey;
         action.instanceIndex = ctrl.__instanceIndex ?? action.instanceIndex;
+        action.zOrder = ctrl.__zOrder ?? action.zOrder;
         delete action.controllerRef;
       }
-    } else if (action.kind === 'popup_dismiss' && action.controllerRef) {
+    } else if (action.kind === 'overlay_dismiss' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as
-        { __templateKey?: string } | undefined;
+        { __templateKey?: string; __zOrder?: number } | undefined;
       if (ctrl) {
         action.templateKey = ctrl.__templateKey ?? action.templateKey;
+        action.zOrder = ctrl.__zOrder ?? action.zOrder;
         delete action.controllerRef;
       }
     } else if (action.kind === 'if') {
-      resolvePopupControllerRefs(action.then, refBindings);
-      if (action.else) resolvePopupControllerRefs(action.else, refBindings);
+      resolveOverlayControllerRefs(action.then, refBindings);
+      if (action.else) resolveOverlayControllerRefs(action.else, refBindings);
     } else if (action.kind === 'while' || action.kind === 'repeat') {
-      resolvePopupControllerRefs(action.then, refBindings);
+      resolveOverlayControllerRefs(action.then, refBindings);
     }
   }
 }
 
 /**
- * Remove resolved popup controller objects from refBindings.
+ * Remove resolved overlay controller objects from refBindings.
  *
- * After resolving popup controller refs, the PopupController objects in
+ * After resolving overlay controller refs, the OverlayController objects in
  * refBindings must be removed so they don't corrupt lambda strings during
- * ref resolution (PopupController.toString() → '[object Object]' would
- * replace 'popup' in signal names).
+ * ref resolution (OverlayController.toString() → '[object Object]' would
+ * replace 'overlay' in signal names).
  */
-export function cleanPopupControllerRefs(
+export function cleanOverlayControllerRefs(
   refBindings: Record<string, unknown>,
 ): void {
   for (const key of Object.keys(refBindings)) {

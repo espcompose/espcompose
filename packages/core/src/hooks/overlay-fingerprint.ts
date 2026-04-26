@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Popup structural fingerprint
+// Overlay structural fingerprint
 //
-// Compares rendered popup subtrees across instances of a shared popup
+// Compares rendered overlay subtrees across instances of a shared overlay
 // template to enforce structural identity. The fingerprint encodes:
 //
 //   - element types in tree position (intrinsic tag name OR function
@@ -26,7 +26,7 @@ const CHILDREN_KEY = 'children';
 const REF_KEY = 'ref';
 
 /**
- * Compute a structural fingerprint for a popup's rendered output.
+ * Compute a structural fingerprint for an overlay's rendered output.
  *
  * The fingerprint is a deterministic string that two structurally-identical
  * trees will share. Function components are represented by their `.name`,
@@ -60,12 +60,12 @@ export function structuralFingerprint(
 }
 
 /**
- * Validate that all popup instances under a single template produced the
+ * Validate that all overlay instances under a single template produced the
  * same structure. Throws on the first mismatch with a directive error.
  *
  * Called by the LVGL serializer once all instances have been collected.
  */
-export function assertPopupStructuralIdentity(
+export function assertOverlayStructuralIdentity(
   templateKey: string,
   instances: ReadonlyArray<{
     index: number;
@@ -78,12 +78,12 @@ export function assertPopupStructuralIdentity(
     const fp = structuralFingerprint(instances[i].rendered);
     if (fp !== canonical) {
       throw new Error(
-        `usePopup() template '${templateKey}' produced divergent structures across instances.\n` +
+        `useOverlay() template '${templateKey}' produced divergent structures across instances.\n` +
         `  Instance 0 fingerprint: ${canonical}\n` +
         `  Instance ${i} fingerprint: ${fp}\n\n` +
-        `All instances of a shared popup must produce the same widget structure ` +
-        `because the popup is deduplicated. Move conditional rendering outside the ` +
-        `popup factory, or use a reactive expression (useMemo) for value differences ` +
+        `All instances of a shared overlay must produce the same widget structure ` +
+        `because the overlay is deduplicated. Move conditional rendering outside the ` +
+        `overlay factory, or use a reactive expression (useMemo) for value differences ` +
         `instead of structural differences.`,
       );
     }

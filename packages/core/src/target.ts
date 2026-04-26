@@ -7,7 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR } from './ir/index';
-import type { PopupDefinition } from './hooks/usePopup';
+import type { OverlayDefinition } from './hooks/useOverlay';
 
 /**
  * Output of the execute phase (Phase 3).
@@ -22,8 +22,8 @@ export interface ExecuteResult {
   ir: SemanticIR;
   /** Collected secrets (key → value) from secret() calls. */
   secrets?: ReadonlyMap<string, string>;
-  /** Popup definitions collected during render (usePopup). */
-  popups?: PopupDefinition[];
+  /** Overlay definitions collected during render (useOverlay). */
+  overlays?: OverlayDefinition[];
 }
 
 /**

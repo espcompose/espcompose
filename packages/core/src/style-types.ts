@@ -275,6 +275,10 @@ export interface CssAliasProps {
   // ── Scrollbar ────────────────────────────────────────────────────────
   /** Maps to `scrollbarMode`. */
   scrollbarMode?: Reactive<'off' | 'on' | 'active' | 'auto'>;
+
+  // ── Interaction ──────────────────────────────────────────────────────
+  /** Whether the widget captures touch/click events. Maps to `clickable`. */
+  clickable?: Reactive<boolean>;
 }
 
 // ── Composite style type ───────────────────────────────────────────────────

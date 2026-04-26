@@ -1,15 +1,15 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Popup mux processing — Table-driven codegen for shared popup widgets
+// Overlay mux processing — Table-driven codegen for shared overlay widgets
 //
-// Takes PopupDefinition[] (with per-instance captured bindings from Phase 4)
+// Takes OverlayDefinition[] (with per-instance captured bindings from Phase 4)
 // and produces:
-//   - Mux signal declarations (one Signal<int32_t> per popup template)
+//   - Mux signal declarations (one Signal<int32_t> per overlay template)
 //   - Muxed widget bindings (instance 0's bindings with divergent values
 //     wrapped in IRExprMux / IRExprTableLookup)
 //   - Additional memos for per-instance reactive nodes
 //
 // The processing flow:
-//   1. For each popup definition, create a mux signal
+//   1. For each overlay definition, create a mux signal
 //   2. Zip bindings positionally across instances (structure is identical)
 //   3. For each binding position:
 //      a. If expressions are identical across all instances → keep as-is
@@ -17,7 +17,7 @@
 //   4. Return signals + modified bindings + reactive nodes for the codegen
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { PopupDefinition } from '@espcompose/core/internals';
+import type { OverlayDefinition } from '@espcompose/core/internals';
 import type { IRExprNode, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
@@ -27,9 +27,9 @@ import { mapExprChildren } from '@espcompose/core/internals';
 import type { SignalDecl, TableDecl } from './bindings-codegen.js';
 import { exprTypeToCpp } from './expr-to-cpp.js';
 
-/** Result of popup mux processing, to be merged into the main runtime config. */
-export interface PopupMuxResult {
-  /** One mux signal per popup template (Signal<int32_t>). */
+/** Result of overlay mux processing, to be merged into the main runtime config. */
+export interface OverlayMuxResult {
+  /** One mux signal per overlay template (Signal<int32_t>). */
   muxSignals: SignalDecl[];
   /** Muxed widget bindings — instance 0's bindings with divergent values wrapped. */
   muxedBindings: IRBinding[];
@@ -38,8 +38,8 @@ export interface PopupMuxResult {
   /** Mux signal index → name mapping for the CppLoweringContext. */
   muxSignalIndices: Map<number, string>;
   /**
-   * Muxed action replacements for trigger handlers inside popup widgets.
-   * Maps sequential action position (within each popup template) to the
+   * Muxed action replacements for trigger handlers inside overlay widgets.
+   * Maps sequential action position (within each overlay template) to the
    * muxed `IRActionNode[]` that should replace the original.  Keyed by
    * `templateKey:position`.
    */
@@ -169,24 +169,24 @@ function singleActionFingerprint(action: IRActionNode): string {
       return `AC:${action.globalId}`;
     case 'lambda_action':
       return `LA:${action.fragments.join('|')}:${action.slots.map(s => `${s.kind}:${'name' in s ? s.name : 'value' in s ? String(s.value) : 'id' in s ? s.id : ''}`).join(',')}`;
-    case 'popup_show':
+    case 'overlay_show':
       return `PS:${action.templateKey}:${action.instanceIndex}:${action.controllerRef ?? ''}`;
-    case 'popup_dismiss':
+    case 'overlay_dismiss':
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
   }
 }
 
 /**
- * Process popup definitions to build mux signals and muxed bindings.
+ * Process overlay definitions to build mux signals and muxed bindings.
  *
- * @param popups       Popup definitions with per-instance captured bindings
+ * @param overlays     Overlay definitions with per-instance captured bindings
  * @param signalOffset Starting signal index for mux signals (after HA entity signals)
  * @returns            Mux processing result to merge into runtime config
  */
-export function processPopupMux(
-  popups: PopupDefinition[],
+export function processOverlayMux(
+  overlays: OverlayDefinition[],
   signalOffset: number,
-): PopupMuxResult {
+): OverlayMuxResult {
   const muxSignals: SignalDecl[] = [];
   const muxedBindings: IRBinding[] = [];
   const additionalReactiveNodes: IRReactiveNode[] = [];
@@ -196,11 +196,11 @@ export function processPopupMux(
 
   let nextSignalIndex = signalOffset;
 
-  for (const def of popups) {
+  for (const def of overlays) {
     if (def.instances.length === 0) continue;
 
-    // Create mux signal for this popup template
-    const muxSignalName = `sig_popup_${def.templateKey}_mux`;
+    // Create mux signal for this overlay template
+    const muxSignalName = `sig_overlay_${def.templateKey}_mux`;
     const muxSignalIndex = nextSignalIndex++;
     muxSignals.push({ name: muxSignalName, cppType: 'int32_t' });
     muxSignalIndices.set(muxSignalIndex, muxSignalName);
@@ -264,7 +264,7 @@ export function processPopupMux(
           for (const hole of structural.holes) {
             if (hole.holeKind === 'literal') {
               // Create a static data table for these literal values
-              const tableName = `tbl_popup_${def.templateKey}_${tables.length}`;
+              const tableName = `tbl_overlay_${def.templateKey}_${tables.length}`;
               const cppType = exprTypeToCpp(hole.type);
               const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
               tables.push({
@@ -309,8 +309,8 @@ export function processPopupMux(
           kind: 'dependency' as const,
           sourceId: muxSignalName,
           triggerType: 'on_value',
-          sourceDomain: 'popup_mux',
-          sourceType: 'popup_mux' as const,
+          sourceDomain: 'overlay_mux',
+          sourceType: 'overlay_mux' as const,
         };
         const muxedBinding: IRBinding = {
           ...binding0,
@@ -369,7 +369,7 @@ export function processPopupMux(
                 const paramKey = hole.paramPath.replace(/^data\./, '');
                 if (!(paramKey in newData)) continue;
 
-                const tableName = `tbl_popup_${def.templateKey}_act_${tables.length}`;
+                const tableName = `tbl_overlay_${def.templateKey}_act_${tables.length}`;
                 const cppType = exprTypeToCpp(hole.type);
                 const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
                 tables.push({

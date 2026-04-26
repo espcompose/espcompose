@@ -95,7 +95,7 @@ function lowerConfig(config: IRActionConfig): unknown {
 
 /**
  * Create a lowering context for condition expressions.
- * Uses the provided `signalNames` map so that muxed popup conditions
+ * Uses the provided `signalNames` map so that muxed overlay conditions
  * (which reference signal indices) can resolve signal names.
  */
 function createConditionLoweringContext(ctx: ActionLoweringContext): CppLoweringContext {
@@ -342,23 +342,25 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(code) };
     }
 
-    case 'popup_show': {
-      // Set the mux signal to this instance's index, show the popup
-      // wrapper, and flush the reactive graph so bindings update.
-      const muxSig = `sig_popup_${action.templateKey}_mux`;
-      const popupId = `popup_${action.templateKey}`;
+    case 'overlay_show': {
+      // Set the mux signal to this instance's index, show the overlay
+      // wrapper, move it to the foreground within its tier container,
+      // and flush the reactive graph so bindings update.
+      const muxSig = `sig_overlay_${action.templateKey}_mux`;
+      const overlayId = `overlay_${action.templateKey}`;
       return { lambda: lambdaMarker(
         `espcompose::${muxSig}.set(${action.instanceIndex}); ` +
         `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); } ` +
-        `lv_obj_clear_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+        `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
+        `lv_obj_move_foreground(id(${overlayId}));`
       )};
     }
 
-    case 'popup_dismiss': {
-      // Hide the popup wrapper — not muxed, same widget across all instances.
-      const popupId = `popup_${action.templateKey}`;
+    case 'overlay_dismiss': {
+      // Hide the overlay wrapper — not muxed, same widget across all instances.
+      const overlayId = `overlay_${action.templateKey}`;
       return { lambda: lambdaMarker(
-        `lv_obj_add_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+        `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN);`
       )};
     }
   }

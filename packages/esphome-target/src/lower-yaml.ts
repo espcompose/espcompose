@@ -286,7 +286,7 @@ export function lowerToYamlConfig(
         }
       }
     }
-    // Use authoritative memoNames from the C++ backend (includes popup memos
+    // Use authoritative memoNames from the C++ backend (includes overlay memos
     // and respects deduplication order). Falls back to local rebuild only if
     // the C++ backend didn't provide memo names (shouldn't happen in practice).
     let memoNames: Map<string, string>;
@@ -314,7 +314,7 @@ export function lowerToYamlConfig(
 
   // Build action lowering context so global_set knows whether to emit
   // BoundSignal C++ lambda or plain globals.set YAML, and so action
-  // conditions can resolve popup mux signal names.
+  // conditions can resolve overlay mux signal names.
   const actionCtx: ActionLoweringContext = {
     reactiveGlobalIds: cppResult?.runtimeConfig?.globalSignals
       ? new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId))

@@ -21,7 +21,7 @@ Signal<std::string> sig_ha_light_bedroom_state_text;
 Signal<bool> sig_ha_light_kitchen;
 Signal<float> sig_ha_light_kitchen_brightness;
 Signal<std::string> sig_ha_light_kitchen_state_text;
-Signal<int32_t> sig_popup_espcompose_script_render_wireframe_anon_18__0_mux;
+Signal<int32_t> sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -123,7 +123,7 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_popup_espcompose_script_render_wireframe_anon_18__0_act_0[] = {
+static const char* tbl_overlay_espcompose_script_render_wireframe_anon_19__0_act_0[] = {
   "light.bedroom",
   "light.kitchen"
 };
@@ -182,8 +182,8 @@ void bootstrap_runtime() {
   sig_ha_light_bedroom_state_text.set_subscriber_storage(sig_ha_light_bedroom_state_text_subs, 1);
   static NodeBase* sig_ha_light_kitchen_state_text_subs[1];
   sig_ha_light_kitchen_state_text.set_subscriber_storage(sig_ha_light_kitchen_state_text_subs, 1);
-  static NodeBase* sig_popup_espcompose_script_render_wireframe_anon_18__0_mux_subs[1];
-  sig_popup_espcompose_script_render_wireframe_anon_18__0_mux.set_subscriber_storage(sig_popup_espcompose_script_render_wireframe_anon_18__0_mux_subs, 1);
+  static NodeBase* sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux_subs[1];
+  sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux.set_subscriber_storage(sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux_subs, 1);
   static NodeBase* thm_333e4663_typography_body_subs[1];
   thm_333e4663_typography_body.set_subscriber_storage(thm_333e4663_typography_body_subs, 1);
   static NodeBase* thm_333e4663_colors_secondary_text_subs[1];
@@ -284,7 +284,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_23([]() {
-    lv_label_set_text(&id(rw_ref11), ([&]() -> std::string { switch (sig_popup_espcompose_script_render_wireframe_anon_18__0_mux.get()) { case 0: return sig_ha_light_bedroom_state_text.get(); case 1: return sig_ha_light_kitchen_state_text.get(); default: return std::string{}; } })().c_str());
+    lv_label_set_text(&id(rw_ref11), ([&]() -> std::string { switch (sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux.get()) { case 0: return sig_ha_light_bedroom_state_text.get(); case 1: return sig_ha_light_kitchen_state_text.get(); default: return std::string{}; } })().c_str());
   });
 
   static Effect binding_25([]() {
@@ -375,7 +375,7 @@ void bootstrap_runtime() {
   binding_19.wire(binding_19_sources, 1);
   static NodeBase* binding_20_sources[] = {&thm_333e4663_spacing_lg};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_23_sources[] = {&sig_popup_espcompose_script_render_wireframe_anon_18__0_mux, &sig_ha_light_bedroom_state_text, &sig_ha_light_kitchen_state_text};
+  static NodeBase* binding_23_sources[] = {&sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux, &sig_ha_light_bedroom_state_text, &sig_ha_light_kitchen_state_text};
   binding_23.wire(binding_23_sources, 3);
   static NodeBase* binding_25_sources[] = {&thm_333e4663_typography_body};
   binding_25.wire(binding_25_sources, 1);
@@ -816,12 +816,14 @@ lvgl:
                   id: rw_ref4
               - button:
                   on_press:
-                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anon_\\
-                        18__0_mux.set(0); if (auto rt =
+                    - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
+                        n_19__0_mux.set(0); if (auto rt =
                         ::espcompose::EspcomposeRuntimeComponent::get_instance(\\
                         )) { rt->request_flush(); }
-                        lv_obj_clear_flag(id(popup_espcompose_script_render_wir\\
-                        eframe_anon_18__0), LV_OBJ_FLAG_HIDDEN);"
+                        lv_obj_clear_flag(id(overlay_espcompose_script_render_w\\
+                        ireframe_anon_19__0), LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_move_foreground(id(overlay_espcompose_script_ren\\
+                        der_wireframe_anon_19__0));"
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -843,12 +845,14 @@ lvgl:
                         id: rw_ref6
               - button:
                   on_press:
-                    - lambda: !lambda "espcompose::sig_popup_espcompose_script_render_wireframe_anon_\\
-                        18__0_mux.set(1); if (auto rt =
+                    - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
+                        n_19__0_mux.set(1); if (auto rt =
                         ::espcompose::EspcomposeRuntimeComponent::get_instance(\\
                         )) { rt->request_flush(); }
-                        lv_obj_clear_flag(id(popup_espcompose_script_render_wir\\
-                        eframe_anon_18__0), LV_OBJ_FLAG_HIDDEN);"
+                        lv_obj_clear_flag(id(overlay_espcompose_script_render_w\\
+                        ireframe_anon_19__0), LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_move_foreground(id(overlay_espcompose_script_ren\\
+                        der_wireframe_anon_19__0));"
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -871,119 +875,130 @@ lvgl:
   top_layer:
     widgets:
       - obj:
-          id: popup_espcompose_script_render_wireframe_anon_18__0
-          hidden: true
+          id: overlay_tier_0
           width: 100%
           height: 100%
           bg_opa: TRANSP
           border_width: 0
           pad_all: 0
+          clickable: false
           widgets:
             - obj:
-                on_press:
-                  - lambda: !lambda "lv_obj_add_flag(id(popup_espcompose_script_render_wireframe_an\\
-                      on_18__0), LV_OBJ_FLAG_HIDDEN);"
+                id: overlay_espcompose_script_render_wireframe_anon_19__0
+                hidden: true
                 width: 100%
                 height: 100%
-                bg_color: "0x000000"
-                bg_opa: 50%
+                bg_opa: TRANSP
                 border_width: 0
                 pad_all: 0
+                clickable: false
                 widgets:
                   - obj:
-                      bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                      bg_opa: COVER
-                      radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
+                      on_press:
+                        - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
+                            anon_19__0), LV_OBJ_FLAG_HIDDEN);"
+                      width: 100%
+                      height: 100%
+                      bg_color: "0x000000"
+                      bg_opa: 50%
                       border_width: 0
-                      pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
-                      width: 90%
-                      height: SIZE_CONTENT
-                      align: CENTER
-                      scrollbar_mode: 'OFF'
-                      layout:
-                        type: flex
-                        flex_flow: COLUMN
-                        pad_row: 0
-                      id: rw_ref9
+                      pad_all: 0
                       widgets:
-                        - label:
-                            text: Bedroom
-                            text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                            id: rw_ref10
-                        - label:
-                            text: !lambda "return id(ha_light_bedroom_state_text).state;"
-                            text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                            id: rw_ref11
                         - obj:
-                            width: 100%
-                            height: SIZE_CONTENT
-                            bg_opa: TRANSP
+                            bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                            bg_opa: COVER
+                            radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
                             border_width: 0
+                            pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                            width: 90%
+                            height: SIZE_CONTENT
+                            align: CENTER
                             scrollbar_mode: 'OFF'
                             layout:
                               type: flex
-                              flex_flow: ROW
+                              flex_flow: COLUMN
+                              pad_row: 0
+                            id: rw_ref9
                             widgets:
-                              - button:
-                                  on_press:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data_template:
-                                          entity_id: "{{ entity_id_expr }}"
-                                        variables:
-                                          entity_id_expr: !lambda "return
-                                            espcompose::tbl_popup_espcompose_script_render_w\\
-                                            ireframe_anon_18__0_act_0[espcompos\\
-                                            e::sig_popup_espcompose_script_rend\\
-                                            er_wireframe_anon_18__0_mux.get()];"
-                                  bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                  bg_opa: COVER
-                                  border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                              - label:
+                                  text: Bedroom
+                                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                  id: rw_ref10
+                              - label:
+                                  text: !lambda "return id(ha_light_bedroom_state_text).state;"
+                                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                  id: rw_ref11
+                              - obj:
+                                  width: 100%
+                                  height: SIZE_CONTENT
+                                  bg_opa: TRANSP
                                   border_width: 0
-                                  radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_2.get();"
-                                  height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                  pressed:
-                                    bg_color: !lambda "return
-                                      espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                      );"
-                                    bg_opa: COVER
-                                  id: rw_ref12
+                                  scrollbar_mode: 'OFF'
+                                  layout:
+                                    type: flex
+                                    flex_flow: ROW
                                   widgets:
-                                    - label:
-                                        text: Toggle
-                                        text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                        text_align: CENTER
-                                        align: CENTER
-                                        id: rw_ref13
-                              - button:
-                                  on_press:
-                                    - lambda: !lambda "lv_obj_add_flag(id(popup_espcompose_script_render_wireframe_an\\
-                                        on_18__0), LV_OBJ_FLAG_HIDDEN);"
-                                  bg_color: !lambda "return espcompose::thm_333e4663_colors_secondary_bg.get();"
-                                  bg_opa: COVER
-                                  border_color: !lambda "return
-                                    espcompose::thm_333e4663_colors_secondary_bg.get()\\
-                                    ;"
-                                  border_width: 0
-                                  radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_3.get();"
-                                  height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                  pressed:
-                                    bg_color: !lambda "return
-                                      espcompose::thm_333e4663_colors_secondary_bgPressed.ge\\
-                                      t();"
-                                    bg_opa: COVER
-                                  id: rw_ref14
-                                  widgets:
-                                    - label:
-                                        text: Close
-                                        text_color: !lambda "return
-                                          espcompose::thm_333e4663_colors_secondary_text.get()\\
+                                    - button:
+                                        on_press:
+                                          - homeassistant.action:
+                                              action: homeassistant.toggle
+                                              data_template:
+                                                entity_id: "{{ entity_id_expr }}"
+                                              variables:
+                                                entity_id_expr: !lambda "return
+                                                  espcompose::tbl_overlay_espcompose_script_render\\
+                                                  _wireframe_anon_19__0_act_0[e\\
+                                                  spcompose::sig_overlay_espcom\\
+                                                  pose_script_render_wireframe_\\
+                                                  anon_19__0_mux.get()];"
+                                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                        bg_opa: COVER
+                                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                        border_width: 0
+                                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                        width: !lambda "return espcompose::memo_2.get();"
+                                        height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                        pressed:
+                                          bg_color: !lambda "return
+                                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                            );"
+                                          bg_opa: COVER
+                                        id: rw_ref12
+                                        widgets:
+                                          - label:
+                                              text: Toggle
+                                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                              text_align: CENTER
+                                              align: CENTER
+                                              id: rw_ref13
+                                    - button:
+                                        on_press:
+                                          - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
+                                              anon_19__0), LV_OBJ_FLAG_HIDDEN);"
+                                        bg_color: !lambda "return espcompose::thm_333e4663_colors_secondary_bg.get();"
+                                        bg_opa: COVER
+                                        border_color: !lambda "return
+                                          espcompose::thm_333e4663_colors_secondary_bg.get()\\
                                           ;"
-                                        text_align: CENTER
-                                        align: CENTER
-                                        id: rw_ref15
+                                        border_width: 0
+                                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                        width: !lambda "return espcompose::memo_3.get();"
+                                        height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                        pressed:
+                                          bg_color: !lambda "return
+                                            espcompose::thm_333e4663_colors_secondary_bgPressed.ge\\
+                                            t();"
+                                          bg_opa: COVER
+                                        id: rw_ref14
+                                        widgets:
+                                          - label:
+                                              text: Close
+                                              text_color: !lambda "return
+                                                espcompose::thm_333e4663_colors_secondary_text.get()\\
+                                                ;"
+                                              text_align: CENTER
+                                              align: CENTER
+                                              id: rw_ref15
 binary_sensor:
   - platform: homeassistant
     id: ha_light_bedroom

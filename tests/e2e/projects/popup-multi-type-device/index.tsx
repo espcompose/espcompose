@@ -15,7 +15,6 @@ import {
   DisplayRef,
   useRef,
   useHAEntity,
-  usePopup,
   createLvglWidget,
   type LightBinding,
   type SwitchBinding,
@@ -30,6 +29,7 @@ import {
   Switch,
   Popup,
   UITheme,
+  usePopup,
 } from '@espcompose/ui';
 
 // ── Component A: light popup ─────────────────────────────────────────────

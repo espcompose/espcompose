@@ -107,14 +107,15 @@ declare const REF_BRAND: unique symbol;
 export declare const THEME_BRAND: unique symbol;
 
 /**
- * Phantom brand for popup controllers.
+ * Phantom brand for overlay controllers.
  *
- * Types branded with POPUP_BRAND represent compile-time popup controllers
- * created by `usePopup()`. The compiler uses this brand to detect
+ * Types branded with OVERLAY_BRAND represent compile-time overlay controllers
+ * created by `useOverlay()`. The compiler uses this brand to detect
  * `controller.show()` and `controller.dismiss()` calls and lower them to
- * muxed LVGL show/hide actions.
+ * muxed LVGL show/hide actions. A single brand covers all overlay types
+ * (popup, toast, notification, etc.).
  */
-export declare const POPUP_BRAND: unique symbol;
+export declare const OVERLAY_BRAND: unique symbol;
 
 /**
  * Phantom brand for compile-time binding types.

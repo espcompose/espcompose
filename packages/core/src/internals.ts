@@ -106,9 +106,9 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
-export type { PopupDefinition, PopupInstance, PopupController, CapturedPopupAction } from './hooks/usePopup';
-export { withPopupScope, peekPopupDefinitions } from './hooks/usePopup';
-export { structuralFingerprint, assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
+export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
+export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
+export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
@@ -213,7 +213,7 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRArraySet, IRArrayPush, IRArrayClear,
   IRLambdaAction, IRLambdaSlot,
-  IRPopupShow, IRPopupDismiss,
+  IROverlayShow, IROverlayDismiss,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
@@ -225,5 +225,5 @@ export {
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
-  irPopupShow, irPopupDismiss,
+  irOverlayShow, irOverlayDismiss,
 } from './ir/index';

@@ -22,11 +22,11 @@ import { isIRReactiveNode } from './reactive-node';
 import type { IRReactiveNode } from './reactive-node';
 import { registerReactiveBinding, withReactiveScope } from './hooks/useReactiveScope';
 import { pushHookPath, popHookPath } from './hooks/useState';
-import { peekPopupDefinitions } from './hooks/usePopup';
-import type { CapturedPopupAction } from './hooks/usePopup';
+import { peekOverlayDefinitions } from './hooks/useOverlay';
+import type { CapturedOverlayAction } from './hooks/useOverlay';
 import type { IRActionNode } from './ir/action-types';
-import { assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
-import { resolvePopupControllerRefs, cleanPopupControllerRefs } from './popup-resolve';
+import { assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
+import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
 import {
   camelToSnake,
@@ -54,11 +54,11 @@ function snakeToCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
-// ── Popup action capture ──────────────────────────────────────────────────
-// Context-scoped capture list activated during popup widget serialization.
+// ── Overlay action capture ────────────────────────────────────────────────
+// Context-scoped capture list activated during overlay widget serialization.
 // `lvglWidgetToPlain()` checks this and pushes action metadata from trigger
 // handler function props (those with `__compiledActions`).
-const popupActionCaptureContext = createContext<CapturedPopupAction[] | null>(null);
+const overlayActionCaptureContext = createContext<CapturedOverlayAction[] | null>(null);
 
 /** Returns true for any JSX element type that represents an LVGL widget (lvgl-*). */
 export function isLvglElement(type: string | symbol | FunctionComponent): type is string {
@@ -232,24 +232,24 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   const { allProps, children } = extractElementProps(el);
 
   // Capture compiled action metadata from trigger handler props when inside
-  // popup widget serialization.  Trigger handlers are function values with
+  // overlay widget serialization.  Trigger handlers are function values with
   // `__compiledActions` attached by the action compiler.
-  const popupActionCapture = useContext(popupActionCaptureContext);
-  if (popupActionCapture) {
+  const overlayActionCapture = useContext(overlayActionCaptureContext);
+  if (overlayActionCapture) {
     for (const val of Object.values(allProps)) {
       if (typeof val === 'function' && val != null && '__compiledActions' in val) {
         const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
         const rawActions = fn.__compiledActions as IRActionNode[];
-        // Resolve deferred popup controller refs — replace placeholder
+        // Resolve deferred overlay controller refs — replace placeholder
         // templateKey/instanceIndex with actual values from the bound controller.
-        resolvePopupControllerRefs(rawActions, fn.__refBindings);
-        // Remove resolved popup controller objects from refBindings so they
+        resolveOverlayControllerRefs(rawActions, fn.__refBindings);
+        // Remove resolved overlay controller objects from refBindings so they
         // don't corrupt lambda strings during ref resolution (toString →
-        // '[object Object]' would replace 'popup' in signal names).
+        // '[object Object]' would replace 'overlay' in signal names).
         if (fn.__refBindings) {
-          cleanPopupControllerRefs(fn.__refBindings);
+          cleanOverlayControllerRefs(fn.__refBindings);
         }
-        popupActionCapture.push({
+        overlayActionCapture.push({
           rawActions,
           refBindings: fn.__refBindings,
         });
@@ -392,26 +392,38 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
     if (pages.length > 0) serialized.pages = pages;
     if (topWidgets.length > 0) serialized.widgets = topWidgets;
 
-    // Emit popup widget subtrees into top_layer.
+    // Emit overlay widget subtrees into top_layer, grouped by z-order tier.
     //
     // Children resolution above evaluated all function components, which
-    // registered popup definitions via usePopup(). For each definition:
+    // registered overlay definitions via useOverlay(). For each definition:
     //   1. Validate structural identity across instances (compile-time error
     //      on mismatch).
     //   2. Serialize EVERY instance's rendered widgets inside an isolated
     //      reactive scope to capture per-instance bindings and reactive nodes.
     //   3. Only emit instance #0's widgets into top_layer.
-    //   4. Store captured bindings on each PopupInstance so the codegen phase
+    //   4. Store captured bindings on each OverlayInstance so the codegen phase
     //      can zip them across instances and build mux expressions.
+    //
+    // Overlays are grouped by zOrder into tier containers for deterministic
+    // z-ordering. Within a tier, lv_obj_move_foreground() in the show action
+    // gives last-shown-wins stacking.
     //
     // Instance 0's bindings are NOT registered in the top-level scope — they
     // are captured alongside instances 1..N-1 and handled specially by the
     // codegen (Phase 6).
-    const popups = peekPopupDefinitions();
-    if (popups.length > 0) {
-      const popupWidgets: Record<string, unknown>[] = [];
-      for (const def of popups) {
-        assertPopupStructuralIdentity(def.templateKey, def.instances);
+    const overlays = peekOverlayDefinitions();
+    if (overlays.length > 0) {
+      // Group overlays by zOrder tier, then sort tiers ascending.
+      const tierMap = new Map<number, { widgets: Record<string, unknown>[]; defs: typeof overlays }>();
+      for (const def of overlays) {
+        assertOverlayStructuralIdentity(def.templateKey, def.instances);
+
+        let tier = tierMap.get(def.zOrder);
+        if (!tier) {
+          tier = { widgets: [], defs: [] };
+          tierMap.set(def.zOrder, tier);
+        }
+        tier.defs.push(def);
 
         for (const instance of def.instances) {
           const rendered = instance.rendered;
@@ -421,10 +433,10 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
 
           // Serialize inside an isolated reactive scope to capture bindings
           // without polluting the top-level scope.
-          // Activate popup action capture to collect trigger handler metadata
+          // Activate overlay action capture to collect trigger handler metadata
           // via context-scoped capture list.
-          const actionCapture: CapturedPopupAction[] = [];
-          const { bindings, reactiveNodes } = withContext(popupActionCaptureContext, actionCapture, () =>
+          const actionCapture: CapturedOverlayAction[] = [];
+          const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
             withReactiveScope(() => {
               const resolved = resolveLvglChildren(renderedArr);
               const widgets: Record<string, unknown>[] = [];
@@ -435,11 +447,11 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
                   widgets.push(ecCanvasToPlain(child));
                 }
               }
-              // Only emit instance 0's widgets into top_layer, wrapped in a
-              // hidden container obj with a deterministic ID for action targeting.
+              // Only emit instance 0's widgets into the tier container, wrapped
+              // in a hidden container obj with a deterministic ID for action targeting.
               if (instance.index === 0) {
-                const wrapperId = `popup_${def.templateKey}`;
-                popupWidgets.push({
+                const wrapperId = `overlay_${def.templateKey}`;
+                tier!.widgets.push({
                   obj: {
                     id: wrapperId,
                     hidden: true,
@@ -448,6 +460,7 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
                     bg_opa: 'TRANSP',
                     border_width: 0,
                     pad_all: 0,
+                    clickable: false,
                     widgets,
                   },
                 });
@@ -463,7 +476,28 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
           (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
         }
       }
-      if (popupWidgets.length > 0) {
+
+      // Build tier containers sorted by ascending zOrder.
+      const sortedTiers = Array.from(tierMap.entries()).sort((a, b) => a[0] - b[0]);
+      const tierWidgets: Record<string, unknown>[] = [];
+      for (const [zOrder, tier] of sortedTiers) {
+        if (tier.widgets.length > 0) {
+          tierWidgets.push({
+            obj: {
+              id: `overlay_tier_${zOrder}`,
+              width: '100%',
+              height: '100%',
+              bg_opa: 'TRANSP',
+              border_width: 0,
+              pad_all: 0,
+              clickable: false,
+              widgets: tier.widgets,
+            },
+          });
+        }
+      }
+
+      if (tierWidgets.length > 0) {
         // Merge with any user-provided top_layer config (snake_case from
         // keysToSnakeCase). The top_layer accepts a widgets array per ESPHome's
         // widget_container schema.
@@ -471,9 +505,9 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
         if (existingTopLayer && typeof existingTopLayer === 'object' && !Array.isArray(existingTopLayer)) {
           const tl = existingTopLayer as Record<string, unknown>;
           const existingWidgets = Array.isArray(tl.widgets) ? tl.widgets as unknown[] : [];
-          tl.widgets = [...existingWidgets, ...popupWidgets];
+          tl.widgets = [...existingWidgets, ...tierWidgets];
         } else {
-          serialized.top_layer = { widgets: popupWidgets };
+          serialized.top_layer = { widgets: tierWidgets };
         }
       }
     }

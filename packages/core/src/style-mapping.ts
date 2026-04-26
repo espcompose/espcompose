@@ -202,6 +202,9 @@ const _cssToLvglMap = {
   // ── Scrollbar ─────────────────────────────────────────────────────
   scrollbarMode:         { kind: 'flat-transform', lvglProp: 'scrollbarMode', valueMap: SCROLLBAR_MODE_VALUES },
 
+  // ── Interaction ───────────────────────────────────────────────────
+  clickable:             { kind: 'direct', lvglProp: 'clickable' },
+
 } as const satisfies Record<string, MappingEntry>;
 
 // Public export: widened to Record<string, MappingEntry> for runtime string-indexed access

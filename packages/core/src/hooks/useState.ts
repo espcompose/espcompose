@@ -6,7 +6,7 @@
 // scope frame. pushHookPath()/popHookPath() are called by the runtime around
 // each function-component invocation to maintain a component call stack.
 // getCurrentHookPath() joins the stack with '/' to form a stable identity
-// key (used by usePopup() for hook-path deduplication).
+// key (used by useOverlay() for hook-path deduplication).
 // assertHookContext() guards that hooks are called inside a render pass.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -14,14 +14,14 @@ const _hookPathStack: string[] = [];
 
 /**
  * Monotonic generation counter — incremented on every push/pop/set so that
- * hooks like `usePopup()` can detect component invocation boundaries even
+ * hooks like `useOverlay()` can detect component invocation boundaries even
  * when the hook-path string is identical across sibling instances.
  */
 let _hookPathGeneration = 0;
 
 /**
  * Return the current generation counter.
- * Used by `usePopup()` to detect component invocation boundaries.
+ * Used by `useOverlay()` to detect component invocation boundaries.
  */
 export function getHookPathGeneration(): number {
   return _hookPathGeneration;
@@ -69,7 +69,7 @@ export function popHookPath(): void {
  *
  * Returns an empty string if the stack is empty (which happens only when
  * called outside a render pass — the same condition assertHookContext()
- * guards against). Used by usePopup() to derive a dedup key per component
+ * guards against). Used by useOverlay() to derive a dedup key per component
  * identity.
  */
 export function getCurrentHookPath(): string {

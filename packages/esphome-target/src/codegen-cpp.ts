@@ -6,11 +6,11 @@
 // functions.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, PopupDefinition, IRValue, IRAction, IRActionNode, IRExprNode } from '@espcompose/core/internals';
+import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings-codegen.js';
 import type { ReactiveRuntimeConfig } from './bindings-codegen.js';
-import { processPopupMux } from './popup-mux.js';
+import { processOverlayMux } from './overlay-mux.js';
 
 export interface CppBackendResult {
   runtimeConfig: ReactiveRuntimeConfig;
@@ -29,25 +29,25 @@ export interface CppBackendResult {
  * Returns null if the IR has no reactive content (no reactive nodes,
  * no themes).
  */
-export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): CppBackendResult | null {
+export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]): CppBackendResult | null {
   const { reactive, themes } = ir.espcompose;
 
   // Extract globals from components (section === 'globals')
   const globalComponents = ir.esphome.components.filter(c => c.section === 'globals');
 
-  // Process popup definitions to build mux signals and muxed bindings.
+  // Process overlay definitions to build mux signals and muxed bindings.
   // This must happen before buildRuntimeConfig so the muxed bindings and
   // additional reactive nodes are included in the reactive pipeline.
-  const popupMux = popups && popups.length > 0
-    ? processPopupMux(popups, ir.esphome.haEntities.length)
+  const overlayMux = overlays && overlays.length > 0
+    ? processOverlayMux(overlays, ir.esphome.haEntities.length)
     : null;
 
-  // Merge popup-sourced data into the reactive pipeline
-  const allBindings = popupMux
-    ? [...reactive.bindings, ...popupMux.muxedBindings]
+  // Merge overlay-sourced data into the reactive pipeline
+  const allBindings = overlayMux
+    ? [...reactive.bindings, ...overlayMux.muxedBindings]
     : reactive.bindings;
-  const allReactiveNodes = popupMux
-    ? [...reactive.memos, ...reactive.effects, ...popupMux.additionalReactiveNodes]
+  const allReactiveNodes = overlayMux
+    ? [...reactive.memos, ...reactive.effects, ...overlayMux.additionalReactiveNodes]
     : [...reactive.memos, ...reactive.effects];
 
   const hasReactiveContent = allBindings.length > 0
@@ -56,11 +56,11 @@ export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): C
 
   if (!hasReactiveContent) return null;
 
-  // Scan the IR config tree for theme_read references and popup_show template
-  // keys. This catches theme tokens referenced by popup widgets in top_layer
+  // Scan the IR config tree for theme_read references and overlay_show template
+  // keys. This catches theme tokens referenced by overlay widgets in top_layer
   // whose bindings may not flow through the reactive pipeline (e.g. when
-  // popup definitions are missing or incomplete).
-  const { themeRefs, popupShowKeys } = collectIRTreeReferences(ir);
+  // overlay definitions are missing or incomplete).
+  const { themeRefs, overlayShowKeys } = collectIRTreeReferences(ir);
 
   const runtimeConfig = buildRuntimeConfig(
     allReactiveNodes,
@@ -69,53 +69,53 @@ export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): C
     themes,
     [],
     globalComponents,
-    popupMux?.muxSignalIndices,
+    overlayMux?.muxSignalIndices,
     themeRefs.size > 0 ? themeRefs : undefined,
   );
 
-  // Inject popup mux signals into the runtime config
-  if (popupMux && popupMux.muxSignals.length > 0) {
-    runtimeConfig.signals.push(...popupMux.muxSignals);
+  // Inject overlay mux signals into the runtime config
+  if (overlayMux && overlayMux.muxSignals.length > 0) {
+    runtimeConfig.signals.push(...overlayMux.muxSignals);
   }
 
   // Inject static data tables from table-driven mux optimisation
-  if (popupMux && popupMux.tables.length > 0) {
+  if (overlayMux && overlayMux.tables.length > 0) {
     if (!runtimeConfig.tables) runtimeConfig.tables = [];
-    runtimeConfig.tables.push(...popupMux.tables);
+    runtimeConfig.tables.push(...overlayMux.tables);
   }
 
-  // Ensure mux signals exist for all popup_show actions in the IR tree.
-  // If popup definitions didn't flow through processPopupMux(), the action
-  // lambdas still reference espcompose::sig_popup_<key>_mux — we must
+  // Ensure mux signals exist for all overlay_show actions in the IR tree.
+  // If overlay definitions didn't flow through processOverlayMux(), the action
+  // lambdas still reference espcompose::sig_overlay_<key>_mux — we must
   // declare the signal so the C++ compiles.
-  for (const key of popupShowKeys) {
-    const muxSigName = `sig_popup_${key}_mux`;
+  for (const key of overlayShowKeys) {
+    const muxSigName = `sig_overlay_${key}_mux`;
     if (!runtimeConfig.signals.some(s => s.name === muxSigName)) {
       runtimeConfig.signals.push({ name: muxSigName, cppType: 'int32_t' });
     }
   }
 
-  // Replace divergent action trees inside popup top_layer widgets with
+  // Replace divergent action trees inside overlay top_layer widgets with
   // muxed dispatch chains (if-actions checking the mux signal).
-  if (popupMux && popupMux.muxedActions.size > 0) {
-    replacePopupActionsInIR(ir, popupMux.muxedActions);
+  if (overlayMux && overlayMux.muxedActions.size > 0) {
+    replaceOverlayActionsInIR(ir, overlayMux.muxedActions);
   }
 
   return {
     runtimeConfig,
     bindingsHeaderContent: generateBindingsHeader(runtimeConfig),
     pipelineInfo: `${reactive.memos.length} main memos, ${reactive.effects.length} effects, ` +
-      `${popupMux?.additionalReactiveNodes.length ?? 0} popup nodes ` +
-      `(${popupMux?.additionalReactiveNodes.filter(n => n.kind === 'memo').length ?? 0} popup memos), ` +
+      `${overlayMux?.additionalReactiveNodes.length ?? 0} overlay nodes ` +
+      `(${overlayMux?.additionalReactiveNodes.filter(n => n.kind === 'memo').length ?? 0} overlay memos), ` +
       `${allReactiveNodes.length} total nodes ` +
-      `[popups arg: ${popups === undefined ? 'undefined' : `array(${popups.length})`}, ` +
-      `instances: ${popups?.reduce((s, p) => s + p.instances.length, 0) ?? 0}, ` +
-      `per-instance captured nodes: ${popups?.flatMap(p => p.instances.map(i => i.capturedReactiveNodes?.length ?? -1)).join(',') ?? 'n/a'}]`,
+      `[overlays arg: ${overlays === undefined ? 'undefined' : `array(${overlays.length})`}, ` +
+      `instances: ${overlays?.reduce((s, p) => s + p.instances.length, 0) ?? 0}, ` +
+      `per-instance captured nodes: ${overlays?.flatMap(p => p.instances.map(i => i.capturedReactiveNodes?.length ?? -1)).join(',') ?? 'n/a'}]`,
   };
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// IR tree replacement for muxed popup actions
+// IR tree replacement for muxed overlay actions
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -123,13 +123,13 @@ export function generateCppFromIR(ir: SemanticIR, popups?: PopupDefinition[]): C
  * `IRAction` nodes with muxed dispatch chains.
  *
  * The `replacements` map is keyed by `templateKey:position` where position
- * is the sequential index of the action within the popup's widget tree
+ * is the sequential index of the action within the overlay's widget tree
  * (depth-first traversal order, matching the capture order in lvgl.ts).
  *
  * This mutates the IR tree in place — the IRAction.actions array is replaced
  * with the muxed IRActionNode[] dispatch chain.
  */
-function replacePopupActionsInIR(
+function replaceOverlayActionsInIR(
   ir: SemanticIR,
   replacements: Map<string, IRActionNode[]>,
 ): void {
@@ -150,71 +150,96 @@ function replacePopupActionsInIR(
     templateKeys.add(key.split(':')[0]);
   }
 
-  // Walk each popup widget's subtree separately with a per-template counter.
-  // Popup widgets are wrapped in `obj` containers with `id: popup_{templateKey}`.
-  for (const item of widgetsEntry.value.items) {
-    if (item.kind !== 'object') continue;
+  // Walk each overlay widget's subtree separately with a per-template counter.
+  // With the tier container architecture, the structure is:
+  //   top_layer → widgets[]
+  //     └─ { obj: { id: "overlay_tier_<zOrder>", widgets: [...] } }
+  //         └─ { obj: { id: "overlay_<templateKey>", widgets: [...] } }
+  //             └─ popup/toast content with action handlers
+  //
+  // We need to dig through the tier containers to find the overlay wrappers.
+  for (const tierItem of widgetsEntry.value.items) {
+    if (tierItem.kind !== 'object') continue;
 
-    // Each popup wrapper is { obj: { id: "popup_xxx", ... } }
-    const objEntry = item.entries.find(e => e.key === 'obj');
-    if (!objEntry || objEntry.value.kind !== 'object') continue;
+    // Each tier container is { obj: { id: "overlay_tier_N", widgets: [...] } }
+    const tierObjEntry = tierItem.entries.find(e => e.key === 'obj');
+    if (!tierObjEntry || tierObjEntry.value.kind !== 'object') continue;
 
-    const idEntry = objEntry.value.entries.find(e => e.key === 'id');
-    if (!idEntry || idEntry.value.kind !== 'scalar') continue;
+    const tierIdEntry = tierObjEntry.value.entries.find(e => e.key === 'id');
+    if (!tierIdEntry || tierIdEntry.value.kind !== 'scalar') continue;
 
-    const id = String(idEntry.value.value);
-    if (!id.startsWith('popup_')) continue;
+    const tierId = String(tierIdEntry.value.value);
+    if (!tierId.startsWith('overlay_tier_')) continue;
 
-    const templateKey = id.slice('popup_'.length);
-    if (!templateKeys.has(templateKey)) continue;
+    // Find the widgets array inside the tier container
+    const tierWidgetsEntry = tierObjEntry.value.entries.find(e => e.key === 'widgets');
+    if (!tierWidgetsEntry || tierWidgetsEntry.value.kind !== 'array') continue;
 
-    // Walk this popup's subtree with a dedicated action counter.
-    let actionIndex = 0;
+    // Now walk the overlay wrappers inside this tier
+    for (const item of tierWidgetsEntry.value.items) {
+      if (item.kind !== 'object') continue;
 
-    function walkIRValue(value: IRValue): void {
-      if (value.kind === 'action') {
-        const action = value as IRAction;
-        const key = `${templateKey}:${actionIndex}`;
-        const muxed = replacements.get(key);
-        if (muxed) {
-          action.actions = muxed;
-        }
-        actionIndex++;
-      } else if (value.kind === 'object') {
-        for (const entry of value.entries) {
-          walkIRValue(entry.value);
-        }
-      } else if (value.kind === 'array') {
-        for (const innerItem of value.items) {
-          walkIRValue(innerItem);
+      // Each overlay wrapper is { obj: { id: "overlay_xxx", ... } }
+      const objEntry = item.entries.find(e => e.key === 'obj');
+      if (!objEntry || objEntry.value.kind !== 'object') continue;
+
+      const idEntry = objEntry.value.entries.find(e => e.key === 'id');
+      if (!idEntry || idEntry.value.kind !== 'scalar') continue;
+
+      const id = String(idEntry.value.value);
+      if (!id.startsWith('overlay_')) continue;
+
+      const templateKey = id.slice('overlay_'.length);
+      if (!templateKeys.has(templateKey)) continue;
+
+      // Walk this overlay's subtree with a dedicated action counter.
+      let actionIndex = 0;
+
+      function walkIRValue(value: IRValue): void {
+        if (value.kind === 'action') {
+          const action = value as IRAction;
+          const key = `${templateKey}:${actionIndex}`;
+          const muxed = replacements.get(key);
+          if (muxed) {
+            action.actions = muxed;
+          }
+          actionIndex++;
+        } else if (value.kind === 'object') {
+          for (const entry of value.entries) {
+            walkIRValue(entry.value);
+          }
+        } else if (value.kind === 'array') {
+          for (const innerItem of value.items) {
+            walkIRValue(innerItem);
+          }
         }
       }
-    }
 
-    walkIRValue(objEntry.value);
+      walkIRValue(objEntry.value);
+    }
   }
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// IR tree scanning — collect theme_read refs and popup_show template keys
+// IR tree scanning — collect theme_read refs and overlay_show template keys
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Walk the IR config tree and collect:
  *   1. Theme memo names referenced by reactive IR values (theme_read exprs)
- *   2. Popup template keys referenced by popup_show actions
+ *   2. Overlay template keys referenced by overlay_show actions
  *
  * These are used to prevent tree-shaking from removing theme tokens that are
  * still referenced by YAML initial-value lambdas, and to ensure mux signals
- * are declared for all popup_show actions even when popup definitions didn't
- * flow through processPopupMux().
+ * are declared for all overlay_show actions even when overlay definitions didn't
+ * flow through processOverlayMux().
  */
 function collectIRTreeReferences(ir: SemanticIR): {
   themeRefs: Set<string>;
-  popupShowKeys: Set<string>;
+  overlayShowKeys: Set<string>;
 } {
   const themeRefs = new Set<string>();
-  const popupShowKeys = new Set<string>();
+  const overlayShowKeys = new Set<string>();
 
   function walkIRValue(val: IRValue): void {
     switch (val.kind) {
@@ -248,8 +273,8 @@ function collectIRTreeReferences(ir: SemanticIR): {
 
   function walkActionNodes(actions: IRActionNode[]): void {
     for (const action of actions) {
-      if (action.kind === 'popup_show' && action.templateKey) {
-        popupShowKeys.add(action.templateKey);
+      if (action.kind === 'overlay_show' && action.templateKey) {
+        overlayShowKeys.add(action.templateKey);
       }
       if ('then' in action && Array.isArray((action as { then?: unknown }).then)) {
         walkActionNodes((action as { then: IRActionNode[] }).then);
@@ -264,7 +289,7 @@ function collectIRTreeReferences(ir: SemanticIR): {
     walkIRValue(section.value);
   }
 
-  return { themeRefs, popupShowKeys };
+  return { themeRefs, overlayShowKeys };
 }
 
 /**

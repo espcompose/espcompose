@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { structuralFingerprint, assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
+import { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 import type { EspComposeElement } from './types';
 
 function el(type: string | ((...args: unknown[]) => unknown), props: Record<string, unknown> = {}, children?: EspComposeElement | EspComposeElement[]): EspComposeElement {
@@ -49,12 +49,12 @@ describe('structuralFingerprint', () => {
   });
 });
 
-describe('assertPopupStructuralIdentity', () => {
+describe('assertOverlayStructuralIdentity', () => {
   const wrap = (rendered: EspComposeElement) => ({ index: 0, rendered });
 
   it('passes when 0-1 instances', () => {
-    expect(() => assertPopupStructuralIdentity('k', [])).not.toThrow();
-    expect(() => assertPopupStructuralIdentity('k', [wrap(el('div'))])).not.toThrow();
+    expect(() => assertOverlayStructuralIdentity('k', [])).not.toThrow();
+    expect(() => assertOverlayStructuralIdentity('k', [wrap(el('div'))])).not.toThrow();
   });
 
   it('passes when all instances structurally identical', () => {
@@ -63,7 +63,7 @@ describe('assertPopupStructuralIdentity', () => {
       { index: 1, rendered: el('lvgl-obj', {}, [el('lvgl-label', { text: 'B' })]) },
       { index: 2, rendered: el('lvgl-obj', {}, [el('lvgl-label', { text: 'C' })]) },
     ];
-    expect(() => assertPopupStructuralIdentity('LightButton', inst)).not.toThrow();
+    expect(() => assertOverlayStructuralIdentity('LightButton', inst)).not.toThrow();
   });
 
   it('throws on structural divergence with diagnostic', () => {
@@ -71,7 +71,7 @@ describe('assertPopupStructuralIdentity', () => {
       { index: 0, rendered: el('lvgl-obj', {}, [el('lvgl-slider', {}), el('lvgl-label', { text: 'X' })]) },
       { index: 1, rendered: el('lvgl-obj', {}, [el('lvgl-label', { text: 'Y' })]) },
     ];
-    expect(() => assertPopupStructuralIdentity('LightButton', inst)).toThrow(
+    expect(() => assertOverlayStructuralIdentity('LightButton', inst)).toThrow(
       /divergent structures.*Instance 0.*Instance 1/s,
     );
   });

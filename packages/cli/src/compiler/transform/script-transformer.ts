@@ -499,7 +499,7 @@ function symbolSetToNameSet(symbols: Set<ts.Symbol>): Set<string> {
 }
 
 /**
- * Merge all ref-like sets (symbol refs, property-access refs, popup controller
+ * Merge all ref-like sets (symbol refs, property-access refs, overlay controller
  * refs) into a single set of binding keys for __refBindings injection.
  */
 function buildRefNameSet(
@@ -510,7 +510,7 @@ function buildRefNameSet(
   for (const key of result.refExpressions) {
     refNameSet.add(key);
   }
-  for (const key of result.popupControllerRefs) {
+  for (const key of result.overlayControllerRefs) {
     refNameSet.add(key);
   }
   return refNameSet;
@@ -557,8 +557,8 @@ function collectRefNamesFromActions(
             }
           }
           break;
-        case 'popup_show':
-        case 'popup_dismiss':
+        case 'overlay_show':
+        case 'overlay_dismiss':
           if ('controllerRef' in action && action.controllerRef) {
             names.add(action.controllerRef);
           }

@@ -143,26 +143,29 @@ export interface IRArrayClear {
   cppType: string;
 }
 
-/** Popup show action — sets the mux index and shows the shared popup. */
-export interface IRPopupShow {
-  kind: 'popup_show';
-  /** Template key identifying the shared popup definition. */
+/** Overlay show action — sets the mux index and shows the shared overlay. */
+export interface IROverlayShow {
+  kind: 'overlay_show';
+  /** Template key identifying the shared overlay definition. */
   templateKey: string;
   /** This instance's mux index (written to the mux signal on show). */
   instanceIndex: number;
+  /** Z-order tier for deterministic stacking in top_layer. */
+  zOrder: number;
   /**
-   * Controller variable name — when present, templateKey and instanceIndex
-   * are resolved at runtime from __refBindings[controllerRef].__templateKey
-   * and __refBindings[controllerRef].__instanceIndex.
+   * Controller variable name — when present, templateKey, instanceIndex,
+   * and zOrder are resolved at runtime from __refBindings[controllerRef].
    */
   controllerRef?: string;
 }
 
-/** Popup dismiss action — hides the shared popup (not muxed). */
-export interface IRPopupDismiss {
-  kind: 'popup_dismiss';
-  /** Template key identifying the shared popup definition. */
+/** Overlay dismiss action — hides the shared overlay (not muxed). */
+export interface IROverlayDismiss {
+  kind: 'overlay_dismiss';
+  /** Template key identifying the shared overlay definition. */
   templateKey: string;
+  /** Z-order tier (carried for naming consistency). */
+  zOrder: number;
   /**
    * Controller variable name — when present, templateKey is resolved at
    * runtime from __refBindings[controllerRef].__templateKey.
@@ -206,8 +209,8 @@ export type IRActionNode =
   | IRArrayPush
   | IRArrayClear
   | IRLambdaAction
-  | IRPopupShow
-  | IRPopupDismiss;
+  | IROverlayShow
+  | IROverlayDismiss;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -360,11 +363,11 @@ export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLa
   return { kind: 'lambda_action', fragments, slots };
 }
 
-export function irPopupShow(templateKey: string, instanceIndex: number, controllerRef?: string): IRPopupShow {
-  return { kind: 'popup_show', templateKey, instanceIndex, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayShow(templateKey: string, instanceIndex: number, zOrder: number, controllerRef?: string): IROverlayShow {
+  return { kind: 'overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-export function irPopupDismiss(templateKey: string, controllerRef?: string): IRPopupDismiss {
-  return { kind: 'popup_dismiss', templateKey, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayDismiss(templateKey: string, zOrder: number, controllerRef?: string): IROverlayDismiss {
+  return { kind: 'overlay_dismiss', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 

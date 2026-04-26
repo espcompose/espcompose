@@ -1,11 +1,11 @@
 /**
- * Popup component — themed backdrop + container for shared popup content.
+ * Popup component — themed backdrop + container for overlay content.
  *
- * Intended for use inside a `usePopup()` factory. Provides:
+ * Intended for use inside a `usePopup()` or `useOverlay()` factory. Provides:
  *   - A full-screen semi-transparent backdrop (clickable, dismiss-on-tap)
  *   - A centered container with surface background and rounded corners
  *
- * The framework automatically wraps popup content in a hidden wrapper widget
+ * The framework automatically wraps overlay content in a hidden wrapper widget
  * with a deterministic ID for show/hide action targeting. The Popup component
  * itself has no knowledge of widget IDs.
  */

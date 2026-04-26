@@ -24,8 +24,8 @@ export interface ActionCompileResult {
    * with local ref identifiers of the same short name.
    */
   refExpressions: Set<string>;
-  /** Set of popup controller variable names that need to be in __refBindings. */
-  popupControllerRefs: Set<string>;
+  /** Set of overlay controller variable names that need to be in __refBindings. */
+  overlayControllerRefs: Set<string>;
 }
 
 export interface ActionCompilerContext {
@@ -48,8 +48,8 @@ export interface ActionCompilerContext {
   triggerVars: Set<string>;
   /** Set of ref binding keys from property-access expressions. */
   refExpressions: Set<string>;
-  /** Set of popup controller variable names encountered in popup actions. */
-  popupControllerRefs: Set<string>;
+  /** Set of overlay controller variable names encountered in overlay actions. */
+  overlayControllerRefs: Set<string>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

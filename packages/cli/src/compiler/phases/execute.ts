@@ -47,11 +47,11 @@ export function executePhase(ctx: PhaseContext): void {
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
-  let collectedPopups: unknown[] = [];
+  let collectedOverlays: unknown[] = [];
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
-      const { result: config, popups } = cjsSDK.withPopupScope(() => {
+      const { result: config, overlays } = cjsSDK.withOverlayScope(() => {
         const mod = _require(bundlePath) as { default?: unknown };
 
         const rootElement = mod.default;
@@ -68,7 +68,7 @@ export function executePhase(ctx: PhaseContext): void {
 
         return rendered;
       });
-      collectedPopups = popups;
+      collectedOverlays = overlays;
       return config;
     });
     collectedScripts = scripts;
@@ -103,10 +103,10 @@ export function executePhase(ctx: PhaseContext): void {
     executeResult.secrets = new Map(secretsMap);
   }
 
-  // Stash collected popup definitions for downstream emit phases.
-  if (collectedPopups.length > 0) {
+  // Stash collected overlay definitions for downstream emit phases.
+  if (collectedOverlays.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    executeResult.popups = collectedPopups as any;
+    executeResult.overlays = collectedOverlays as any;
   }
 
   ctx.executeResult = executeResult;
