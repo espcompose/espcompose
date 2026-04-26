@@ -110,11 +110,11 @@ void select_theme_333e4663(const char* name) {
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return sig_ha_sensor_living_room_temperature.get() > 75 ? std::string("Hot!") : sig_ha_sensor_living_room_temperature.get() > 65 ? std::string("Comfortable") : std::string("Cool");
+  return (sig_ha_sensor_living_room_temperature.get() > 75 ? std::string("Hot!") : (sig_ha_sensor_living_room_temperature.get() > 65 ? std::string("Comfortable") : std::string("Cool")));
 });
 
 Memo<std::string> memo_1([]() -> std::string {
-  return sig_ha_light_kitchen_floods.get() ? std::string("On") : std::string("Off");
+  return (sig_ha_light_kitchen_floods.get() ? std::string("On") : std::string("Off"));
 });
 
 Memo<float> memo_2([]() -> float {
@@ -122,7 +122,7 @@ Memo<float> memo_2([]() -> float {
 });
 
 Memo<std::string> memo_3([]() -> std::string {
-  return sig_ha_light_bedroom_lamp.get() ? std::string("On") : std::string("Off");
+  return (sig_ha_light_bedroom_lamp.get() ? std::string("On") : std::string("Off"));
 });
 
 // ── Memo aliases (deduplicated) ──

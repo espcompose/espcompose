@@ -14,6 +14,7 @@ import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import type { IRExprNode } from '@espcompose/core';
+import { getExprChildren } from '@espcompose/core';
 import type { ExprType } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 
@@ -59,6 +60,12 @@ function deriveSourceSignals(
       if (sigName && !names.includes(sigName)) {
         names.push(sigName);
       }
+    } else if (dep.sourceType === 'popup_mux') {
+      // Popup mux dependency — signal name is the sourceId itself (sig_popup_X_mux)
+      const sigName = dep.sourceId;
+      if (!names.includes(sigName)) {
+        names.push(sigName);
+      }
     } else {
       // HA entity dependency — signal name is sig_${sourceId}
       const sigName = `sig_${dep.sourceId}`;
@@ -76,44 +83,64 @@ function deriveSourceSignals(
 function collectThemePaths(node: IRExprNode | undefined): string[] {
   if (!node) return [];
   if (node.kind === 'theme_read') return [`${node.scopeId}_${node.path}`];
-  const paths: string[] = [];
+  return getExprChildren(node).flatMap(collectThemePaths);
+}
+
+/**
+ * Walk an IRExprNode tree and collect all reactive source names (signals,
+ * memos, theme vars) that the expression depends on. Used to derive the
+ * correct wiring for muxed popup bindings whose expressions reference
+ * multiple entity signals across mux cases.
+ */
+function collectExprSourceNames(
+  node: IRExprNode,
+  ctx: CppLoweringContext,
+  signalMap: Map<string, SignalDecl>,
+): string[] {
+  const names = new Set<string>();
+  walkExprForSources(node, ctx, signalMap, names);
+  return Array.from(names);
+}
+
+function walkExprForSources(
+  node: IRExprNode,
+  ctx: CppLoweringContext,
+  signalMap: Map<string, SignalDecl>,
+  out: Set<string>,
+): void {
   switch (node.kind) {
-    case 'binary':
-      paths.push(...collectThemePaths(node.left), ...collectThemePaths(node.right));
+    case 'signal_read': {
+      const name = ctx.signalNames.get(node.signalIndex);
+      if (name) out.add(name);
       break;
-    case 'unary':
-    case 'postfix':
-      paths.push(...collectThemePaths(node.operand));
+    }
+    case 'memo_read': {
+      const name = ctx.memoNames.get(node.memoId);
+      if (name) out.add(name);
       break;
-    case 'ternary':
-      paths.push(...collectThemePaths(node.test), ...collectThemePaths(node.consequent), ...collectThemePaths(node.alternate));
+    }
+    case 'entity_prop': {
+      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.property}`) ?? ctx.entityComponentIds.get(node.entityId);
+      if (compId) {
+        const sigName = `sig_${compId}`;
+        if (signalMap.has(sigName)) out.add(sigName);
+      }
       break;
-    case 'call':
-      for (const arg of node.args) paths.push(...collectThemePaths(arg));
+    }
+    case 'theme_read': {
+      const scopedKey = `${node.scopeId}_${node.path}`;
+      const name = ctx.themeVarNames.get(scopedKey) ?? `thm_${scopedKey}`;
+      out.add(name);
       break;
-    case 'concat':
-      for (const part of node.parts) paths.push(...collectThemePaths(part));
+    }
+    case 'global_read':
+      out.add(`sig_global_${node.globalId}`);
       break;
-    case 'to_string':
-    case 'group':
-      paths.push(...collectThemePaths(node.expr));
-      break;
-    case 'resolve_font':
-      paths.push(...collectThemePaths(node.family), ...collectThemePaths(node.size));
-      break;
-    case 'type_cast':
-    case 'format_string':
-      paths.push(...collectThemePaths(node.expr));
-      break;
-    case 'null_coalesce':
-      paths.push(...collectThemePaths(node.left), ...collectThemePaths(node.right));
-      break;
-    case 'string_method':
-      paths.push(...collectThemePaths(node.object));
-      for (const arg of node.args) paths.push(...collectThemePaths(arg));
-      break;
+    default:
+      for (const child of getExprChildren(node)) {
+        walkExprForSources(child, ctx, signalMap, out);
+      }
   }
-  return paths;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -149,6 +176,12 @@ export function buildRuntimeConfig(
   compiledTriggers?: TriggerFunctionDecl[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   globalComponents?: any[],
+  /** Extra signal index → name entries (e.g. popup mux signals). */
+  extraSignalNames?: Map<number, string>,
+  /** Additional theme memo names that must survive tree-shaking (e.g. tokens
+   *  referenced by reactive IR values in the config tree that are not in the
+   *  reactive bindings pipeline — popup widgets serialized into top_layer). */
+  additionalThemeRefs?: Set<string>,
 ): ReactiveRuntimeConfig {
   // Collect unique signals from HA entities
   const signalMap = new Map<string, SignalDecl>();
@@ -210,7 +243,7 @@ export function buildRuntimeConfig(
   }
 
   const cppCtx: CppLoweringContext = {
-    signalNames: new Map(),
+    signalNames: new Map(extraSignalNames),
     memoNames: new Map(),
     slotExprs: new Map(),
     entityComponentIds,
@@ -318,10 +351,32 @@ export function buildRuntimeConfig(
     let cppType: string;
     let sourceNames: string[];
 
-    if (expr.kind === 'memo') {
+    // Muxed popup binding: the exprIR has been replaced with a mux node by
+    // processPopupMux. Lower it inline instead of reading from a single memo.
+    const hasMuxDep = expr.dependencies?.some(
+      (d: { sourceType?: string }) => d.sourceType === 'popup_mux',
+    );
+    if (hasMuxDep && expr.exprIR?.kind === 'mux') {
+      valueExpr = exprToCpp(expr.exprIR, cppCtx);
+      const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
+      // Collect all reactive source names referenced in the mux expression
+      // tree: the mux signal itself + all per-instance entity signals/memos.
+      sourceNames = collectExprSourceNames(expr.exprIR, cppCtx, signalMap);
+    } else if (expr.kind === 'memo') {
       // Memo-backed binding: read from the runtime memo variable.
       const canonNodeId = memoCanonical.get(expr.nodeId) ?? expr.nodeId;
-      const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId) ?? 'memo_0';
+      const memoName = cppCtx.memoNames.get(canonNodeId) ?? cppCtx.memoNames.get(expr.nodeId);
+      if (!memoName) {
+        const mapSize = cppCtx.memoNames.size;
+        const knownKeys = Array.from(cppCtx.memoNames.keys()).join(', ');
+        throw new Error(
+          `[espcompose] Memo binding node '${expr.nodeId}' (canonical: '${canonNodeId}') not found in memoNames map.\n` +
+          `  binding target: ${binding.targetType}#${binding.targetId}.${binding.targetProp}\n` +
+          `  expr.kind=${expr.kind}, exprType=${expr.exprType ?? 'undefined'}\n` +
+          `  memoNames has ${mapSize} entries: [${knownKeys}]`,
+        );
+      }
       valueExpr = `${memoName}.get()`;
       const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
       cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
@@ -412,6 +467,11 @@ export function buildRuntimeConfig(
       if (s.startsWith('thm_')) referencedThemeMemos.add(s);
     }
   }
+  // Include theme memos referenced by the IR config tree (e.g. popup widgets
+  // serialized into top_layer whose bindings may not be in the reactive pipeline).
+  if (additionalThemeRefs) {
+    for (const ref of additionalThemeRefs) referencedThemeMemos.add(ref);
+  }
 
   // Filter theme scope configs to only include referenced memos.
   const filteredScopeConfigs = themeScopeConfigs.map(sc => ({
@@ -429,6 +489,7 @@ export function buildRuntimeConfig(
     widgetBindings,
     themes: filteredScopeConfigs.length > 0 ? filteredScopeConfigs : undefined,
     triggerFunctions: compiledTriggers && compiledTriggers.length > 0 ? compiledTriggers : undefined,
+    memoNames: new Map(cppCtx.memoNames),
   };
 }
 

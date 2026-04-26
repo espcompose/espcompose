@@ -143,6 +143,33 @@ export interface IRArrayClear {
   cppType: string;
 }
 
+/** Popup show action — sets the mux index and shows the shared popup. */
+export interface IRPopupShow {
+  kind: 'popup_show';
+  /** Template key identifying the shared popup definition. */
+  templateKey: string;
+  /** This instance's mux index (written to the mux signal on show). */
+  instanceIndex: number;
+  /**
+   * Controller variable name — when present, templateKey and instanceIndex
+   * are resolved at runtime from __refBindings[controllerRef].__templateKey
+   * and __refBindings[controllerRef].__instanceIndex.
+   */
+  controllerRef?: string;
+}
+
+/** Popup dismiss action — hides the shared popup (not muxed). */
+export interface IRPopupDismiss {
+  kind: 'popup_dismiss';
+  /** Template key identifying the shared popup definition. */
+  templateKey: string;
+  /**
+   * Controller variable name — when present, templateKey is resolved at
+   * runtime from __refBindings[controllerRef].__templateKey.
+   */
+  controllerRef?: string;
+}
+
 /** A single interpolation slot inside a lambda tagged template. */
 export type IRLambdaSlot =
   | { kind: 'ref'; name: string }                         // → id(<resolved_ref_token>)
@@ -178,7 +205,9 @@ export type IRActionNode =
   | IRArraySet
   | IRArrayPush
   | IRArrayClear
-  | IRLambdaAction;
+  | IRLambdaAction
+  | IRPopupShow
+  | IRPopupDismiss;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -222,10 +251,17 @@ export interface IRExpressionParam {
   jsExpression: string;
 }
 
+/** A reactive IR expression — lowered to C++ via exprToCpp at codegen time */
+export interface IRReactiveExprParam {
+  kind: 'reactive_expr';
+  exprIR: IRExprNode;
+}
+
 export type IRActionParam =
   | IRLiteralParam
   | IRTriggerVarParam
-  | IRExpressionParam;
+  | IRExpressionParam
+  | IRReactiveExprParam;
 
 /**
  * A nested object value inside an action config — used for actions like
@@ -322,5 +358,13 @@ export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
 
 export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLambdaAction {
   return { kind: 'lambda_action', fragments, slots };
+}
+
+export function irPopupShow(templateKey: string, instanceIndex: number, controllerRef?: string): IRPopupShow {
+  return { kind: 'popup_show', templateKey, instanceIndex, ...(controllerRef ? { controllerRef } : {}) };
+}
+
+export function irPopupDismiss(templateKey: string, controllerRef?: string): IRPopupDismiss {
+  return { kind: 'popup_dismiss', templateKey, ...(controllerRef ? { controllerRef } : {}) };
 }
 

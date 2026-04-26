@@ -17,7 +17,7 @@ import { injectReactiveBindingsRuntime } from './reactive-config.js';
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
-import { lowerActionTree, setReactiveGlobalIds } from './action-lowering.js';
+import { lowerActionTree, type ActionLoweringContext } from './action-lowering.js';
 import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
@@ -138,7 +138,22 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
   }
 
   // Memo: read from runtime memo variable
-  const memoName = ctx?.memoNames?.get(node.nodeId) ?? node.nodeId;
+  const memoName = ctx?.memoNames?.get(node.nodeId);
+  if (!memoName) {
+    const mapSize = ctx?.memoNames?.size ?? 0;
+    const knownKeys = ctx?.memoNames ? Array.from(ctx.memoNames.keys()).join(', ') : '(no ctx)';
+    const deps = (node.dependencies ?? []).map((d: { sourceId?: string; sourceType?: string }) => `${d.sourceType ?? '?'}:${d.sourceId ?? '?'}`).join(', ');
+    const exprKind = node.exprIR?.kind ?? 'none';
+    const pipeline = ctx?.pipelineInfo ?? '(no pipeline info)';
+    throw new Error(
+      `[espcompose] Memo node '${node.nodeId}' not found in memoNames map.\n` +
+      `  node.kind=${node.kind}, exprType=${node.exprType ?? 'undefined'}, exprIR.kind=${exprKind}\n` +
+      `  dependencies=[${deps}]\n` +
+      `  pipeline: ${pipeline}\n` +
+      `  memoNames has ${mapSize} entries: [${knownKeys}]\n` +
+      `This memo was referenced in the IR config tree but was not included in the reactive pipeline.`,
+    );
+  }
   const exprType = node.exprType;
   if (exprType === 'string') {
     return `return espcompose::${memoName}.get().c_str();`;
@@ -162,7 +177,7 @@ function wrapInitialConversion(expr: string, fromCppType: string): string {
  * this function creates real yaml.Scalar instances that the YAML serializer
  * handles correctly — preserving tags (!lambda, !secret) and quoting.
  */
-function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
+function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): unknown {
   switch (node.kind) {
     case 'null':
       return null;
@@ -192,7 +207,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
     case 'action': {
       const actionNode = node as IRAction;
       // Lower IRActionNode[] to ESPHome YAML format, then resolve ref bindings
-      let actions: unknown[] = lowerActionTree(actionNode.actions);
+      let actions: unknown[] = lowerActionTree(actionNode.actions, actionCtx);
       if (actionNode.refBindings) {
         actions = actions.map(a =>
           resolveRefBindingsInValue(a, actionNode.refBindings!),
@@ -208,12 +223,12 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
       return createYamlLambda(`return ${(node as IRTriggerVar).name};`);
 
     case 'array':
-      return (node as IRArray).items.map(item => irValueToYaml(item, ctx));
+      return (node as IRArray).items.map(item => irValueToYaml(item, ctx, actionCtx));
 
     case 'object': {
       const obj: Record<string, unknown> = {};
       for (const entry of (node as IRObject).entries) {
-        const val = irValueToYaml(entry.value, ctx);
+        const val = irValueToYaml(entry.value, ctx, actionCtx);
         if (val !== SKIP_ENTRY) {
           obj[entry.key] = val;
         }
@@ -229,10 +244,10 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext): unknown {
 /**
  * Lower a SemanticIR config tree to a plain YAML-ready config object.
  */
-function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext): Record<string, unknown> {
+function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): Record<string, unknown> {
   const config: Record<string, unknown> = {};
   for (const section of ir.esphome.sections) {
-    config[section.key] = irValueToYaml(section.value, ctx);
+    config[section.key] = irValueToYaml(section.value, ctx, actionCtx);
   }
   return config;
 }
@@ -271,13 +286,20 @@ export function lowerToYamlConfig(
         }
       }
     }
-    // Populate memoNames from reactive nodes
-    const memoNames = new Map<string, string>();
-    let memoIdx = 0;
-    for (const node of reactiveNodes) {
-      if (node.kind === 'memo') {
-        memoNames.set(node.nodeId, `memo_${memoIdx}`);
-        memoIdx++;
+    // Use authoritative memoNames from the C++ backend (includes popup memos
+    // and respects deduplication order). Falls back to local rebuild only if
+    // the C++ backend didn't provide memo names (shouldn't happen in practice).
+    let memoNames: Map<string, string>;
+    if (cppResult.runtimeConfig.memoNames && cppResult.runtimeConfig.memoNames.size > 0) {
+      memoNames = cppResult.runtimeConfig.memoNames;
+    } else {
+      memoNames = new Map<string, string>();
+      let memoIdx = 0;
+      for (const node of reactiveNodes) {
+        if (node.kind === 'memo') {
+          memoNames.set(node.nodeId, `memo_${memoIdx}`);
+          memoIdx++;
+        }
       }
     }
     cppCtx = {
@@ -286,18 +308,27 @@ export function lowerToYamlConfig(
       slotExprs: new Map(),
       entityComponentIds,
       themeVarNames,
+      pipelineInfo: cppResult.pipelineInfo,
     };
   }
 
-  // Set reactive global IDs for action lowering so global_set knows whether
-  // to emit BoundSignal C++ lambda or plain globals.set YAML.
-  if (cppResult?.runtimeConfig?.globalSignals) {
-    setReactiveGlobalIds(new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId)));
-  } else {
-    setReactiveGlobalIds(new Set());
-  }
+  // Build action lowering context so global_set knows whether to emit
+  // BoundSignal C++ lambda or plain globals.set YAML, and so action
+  // conditions can resolve popup mux signal names.
+  const actionCtx: ActionLoweringContext = {
+    reactiveGlobalIds: cppResult?.runtimeConfig?.globalSignals
+      ? new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId))
+      : new Set(),
+    signalNames: (() => {
+      const sigMap = new Map<number, string>();
+      if (cppResult?.runtimeConfig?.signals) {
+        cppResult.runtimeConfig.signals.forEach((s, i) => sigMap.set(i, s.name));
+      }
+      return sigMap;
+    })(),
+  };
 
-  const loweredConfig = lowerIRConfig(ir, cppCtx);
+  const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
 
   let finalConfig: Record<string, unknown>;
   if (cppResult) {
@@ -324,7 +355,7 @@ export function lowerToYamlConfig(
   if (ir.esphome.scripts.length > 0) {
     finalConfig['script'] = ir.esphome.scripts.map((s) => ({
       id: s.id,
-      then: lowerActionTree(s.then),
+      then: lowerActionTree(s.then, actionCtx),
     }));
   }
 

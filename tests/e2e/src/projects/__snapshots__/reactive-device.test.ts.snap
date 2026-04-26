@@ -17,7 +17,7 @@ Signal<bool> sig_ha_switch_space_heater;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return sig_ha_switch_space_heater.get() ? std::string("opaque") : std::string("transparent");
+  return (sig_ha_switch_space_heater.get() ? std::string("opaque") : std::string("transparent"));
 });
 
 // ── Memo aliases (deduplicated) ──

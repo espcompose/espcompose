@@ -29,6 +29,17 @@ import type { EspComposeElement, FunctionComponent } from './types';
 export type WidgetCategory = 'layout' | 'container' | 'widget';
 
 /**
+ * Monotonic counter for anonymous components wrapped by wireframe.
+ *
+ * When a component passed to `wrapWithWireframe` has no `.name` (common for
+ * arrow functions passed as call arguments to `createLvglWidget`), the
+ * counter ensures each wrapper gets a unique function name.  This prevents
+ * hook-path collisions that would otherwise cause two different component
+ * types to share the same popup template key.
+ */
+let _anonymousCounter = 0;
+
+/**
  * Outline colors per widget category.
  *
  * Chosen for strong visual contrast on both light and dark backgrounds.
@@ -58,6 +69,7 @@ export function setWireframeEnabled(enabled: boolean): void {
 /** Reset wireframe state between compile runs. */
 export function clearWireframe(): void {
   _wireframeEnabled = false;
+  _anonymousCounter = 0;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -155,8 +167,11 @@ export function wrapWithWireframe<P>(
   }
 
   // Preserve the original function name for debugging / stack traces.
+  // For anonymous components (arrow functions passed as call arguments),
+  // use a monotonic counter to guarantee unique hook-path identity.
+  const nameOrId = component.name || `anon_${_anonymousCounter++}`;
   Object.defineProperty(wireframeWrapped, 'name', {
-    value: `wireframe(${component.name || 'anonymous'})`,
+    value: `wireframe(${nameOrId})`,
   });
 
   return wireframeWrapped;

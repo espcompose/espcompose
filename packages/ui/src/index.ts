@@ -51,3 +51,6 @@ export type { StyleProps, ButtonVariant } from './components/shared-types';
 
 // Binding-driven components
 export { SensorText } from './components/SensorText';
+
+// Popup system
+export { Popup } from './components/Popup';

@@ -17,6 +17,7 @@ import {
 import {
   compileActionBody,
 } from './action/index.js';
+import type { ActionCompileResult } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
 import { type IRActionNode, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, globalTypeToCpp } from '@espcompose/core/internals';
 
@@ -390,11 +391,7 @@ function compileAndInjectTriggerHandler(
   if (result.diagnostics.length > 0) return;
 
   // Collect ref variable names used in the actions (needed for runtime resolution)
-  const refNameSet = symbolSetToNameSet(refSymbols);
-  // Include property-access ref binding keys (e.g. 'props.mainPage')
-  for (const key of result.refExpressions) {
-    refNameSet.add(key);
-  }
+  const refNameSet = buildRefNameSet(refSymbols, result);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
 
   // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
@@ -463,11 +460,7 @@ function compileAndInjectUseScript(
   }
 
   // Store IRActionNode[] directly - lowering happens in target packages
-  const refNameSet = symbolSetToNameSet(refSymbols);
-  // Include property-access ref binding keys (e.g. 'props.mainPage')
-  for (const key of result.refExpressions) {
-    refNameSet.add(key);
-  }
+  const refNameSet = buildRefNameSet(refSymbols, result);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
   const refBindingsEntries = refNames.map(name => {
     if (result.refExpressions.has(name)) {
@@ -503,6 +496,24 @@ function symbolSetToNameSet(symbols: Set<ts.Symbol>): Set<string> {
     names.add(sym.name);
   }
   return names;
+}
+
+/**
+ * Merge all ref-like sets (symbol refs, property-access refs, popup controller
+ * refs) into a single set of binding keys for __refBindings injection.
+ */
+function buildRefNameSet(
+  refSymbols: Set<ts.Symbol>,
+  result: ActionCompileResult,
+): Set<string> {
+  const refNameSet = symbolSetToNameSet(refSymbols);
+  for (const key of result.refExpressions) {
+    refNameSet.add(key);
+  }
+  for (const key of result.popupControllerRefs) {
+    refNameSet.add(key);
+  }
+  return refNameSet;
 }
 
 /**
@@ -544,6 +555,12 @@ function collectRefNamesFromActions(
             if (slot.kind === 'ref' && refNames.has(slot.name)) {
               names.add(slot.name);
             }
+          }
+          break;
+        case 'popup_show':
+        case 'popup_dismiss':
+          if ('controllerRef' in action && action.controllerRef) {
+            names.add(action.controllerRef);
           }
           break;
       }

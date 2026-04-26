@@ -10,6 +10,7 @@ import { isTriggerVar } from './trigger-args';
 import type { TriggerVar } from './trigger-args';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 import type { IRActionNode } from './ir/action-types';
+import { resolvePopupControllerRefs, cleanPopupControllerRefs } from './popup-resolve';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -212,7 +213,14 @@ export function serializeValue(v: unknown): unknown {
   if (typeof v === 'function' && hasCompiledActions(v)) {
     const fn = v as CompiledActionFunction;
     let actions = fn.__compiledActions;
+    // Resolve deferred popup controller refs (templateKey/instanceIndex)
+    resolvePopupControllerRefs(actions as IRActionNode[], fn.__refBindings);
+    // Remove resolved popup controller objects from refBindings so they don't
+    // cause string-replacement damage during lambda ref resolution in the
+    // lowering phase (PopupController.toString() → '[object Object]' would
+    // corrupt signal names containing 'popup').
     if (fn.__refBindings) {
+      cleanPopupControllerRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
     const result = restoreLambdaMarkers(actions);
@@ -314,6 +322,14 @@ export function extractElementProps(el: EspComposeElement): {
   allProps: Record<string, unknown>;
   children: EspComposeElement | EspComposeElement[] | undefined;
 } {
+  if (!el || !el.props) {
+    const isFunction = typeof el === 'function';
+    throw new Error(
+      `extractElementProps: ${isFunction ? `received a function (${(el as { name?: string }).name || 'anonymous'}) instead of an element — did you forget to invoke it as JSX (<Component /> instead of Component)?` : `element has undefined props.`} ` +
+      `type=${el ? (typeof el.type === 'function' ? el.type.name : String(el.type)) : 'MISSING'}, ` +
+      `keys=${el ? Object.keys(el).join(',') : 'N/A'}, raw=${JSON.stringify(el)}`,
+    );
+  }
   const { children, ref, "x:custom": xCustom, ...ownProps } = el.props as Record<string, unknown> & { children?: unknown; ref?: unknown; "x:custom"?: unknown };
   const propsWithId = ref != null
     ? { id: isRef(ref) ? ref.toString() : String(ref), ...ownProps }
@@ -339,6 +355,7 @@ export const Fragment: unique symbol = Symbol.for('@espcompose/core.Fragment') a
 export function flattenFragments(elements: EspComposeElement[]): EspComposeElement[] {
   const out: EspComposeElement[] = [];
   for (const el of elements) {
+    if (el == null) continue;
     if (el.type === Fragment) {
       const children = el.props.children;
       if (children != null) {

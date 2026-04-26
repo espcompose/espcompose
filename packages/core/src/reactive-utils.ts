@@ -9,6 +9,7 @@
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { useMemo } from './hooks/useMemo';
 import { __espcompose } from './__espcompose';
+import { irCall } from './ir/expr-builders';
 import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from './types';
 import type { CssStyleProps } from './style-types';
 
@@ -130,6 +131,6 @@ export function reactiveIsNaN(node: IRReactiveNode<number>): IRReactiveNode<bool
   return __espcompose.derivedMemo<boolean>({
     exprType: 'bool',
     dependencies: node.dependencies,
-    exprIR: { kind: 'call', fn: 'is_nan', args: [sourceIR] },
+    exprIR: irCall('is_nan', [sourceIR]),
   });
 }

@@ -52,6 +52,7 @@ export function compileActionBody(
     diagnostics: [],
     triggerVars: new Set(),
     refExpressions: new Set(),
+    popupControllerRefs: new Set(),
   };
 
   // Extract trigger parameter name
@@ -75,6 +76,7 @@ export function compileActionBody(
     diagnostics: ctx.diagnostics,
     triggerVars: Array.from(ctx.triggerVars),
     refExpressions: ctx.refExpressions,
+    popupControllerRefs: ctx.popupControllerRefs,
   };
 }
 

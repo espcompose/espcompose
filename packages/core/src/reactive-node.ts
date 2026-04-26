@@ -37,7 +37,7 @@ export interface IRDependency {
    * - 'theme': signal is a theme memo reading from a theme value array
    * - 'global': signal is backed by an ESPHome globals component (BoundSignal<T>)
    */
-  sourceType?: 'ha_entity' | 'theme' | 'global';
+  sourceType?: 'ha_entity' | 'theme' | 'global' | 'popup_mux';
 }
 
 declare const REACTIVE_NODE_BRAND: unique symbol;

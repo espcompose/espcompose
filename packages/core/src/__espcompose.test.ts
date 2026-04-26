@@ -3,6 +3,7 @@ import { setCurrentHookPath } from './hooks/useState';
 import { __espcompose } from './__espcompose';
 import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
 import { withReactiveScope } from './hooks/useReactiveScope';
+import { irTernary, irBinary } from './ir/expr-builders.js';
 
 describe('__espcompose', () => {
   beforeEach(() => {
@@ -93,7 +94,11 @@ describe('__espcompose', () => {
           {
             type: 'string',
             slots: 2,
-            expr: { kind: 'ternary', test: { kind: 'slot', slotIndex: 1 }, consequent: { kind: 'literal', value: 'on', type: 'string' }, alternate: { kind: 'literal', value: 'off', type: 'string' } },
+            expr: irTernary(
+              { kind: 'slot', slotIndex: 1 },
+              { kind: 'literal', value: 'on', type: 'string' },
+              { kind: 'literal', value: 'off', type: 'string' },
+            ),
           },
           sigA, sigB,
         );
@@ -124,7 +129,7 @@ describe('__espcompose', () => {
         sig2.exprIR = { kind: 'signal_read', signalIndex: 1 };
 
         const result = __espcompose.slotted<number>(
-          { type: 'float', slots: 2, expr: { kind: 'binary', op: '+', left: { kind: 'slot', slotIndex: 0 }, right: { kind: 'slot', slotIndex: 1 } } },
+          { type: 'float', slots: 2, expr: irBinary('+', { kind: 'slot', slotIndex: 0 }, { kind: 'slot', slotIndex: 1 }) },
           sig1, sig2,
         );
 

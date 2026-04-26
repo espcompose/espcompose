@@ -13,6 +13,7 @@
 import { IRReactiveNode } from './reactive-node';
 import type { IRDependency } from './reactive-node';
 import type { IRExprNode, ExprType } from './ir/expr-types';
+import { mapExprChildren } from './ir/expr-walk';
 import { registerReactiveNode } from './hooks/useReactiveScope';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -171,49 +172,5 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
   }
 
   // Recursively resolve children
-  switch (expr.kind) {
-    case 'binary':
-      return { ...expr, left: resolveIRExprSlots(expr.left, signals), right: resolveIRExprSlots(expr.right, signals) };
-    case 'unary':
-    case 'postfix':
-      return { ...expr, operand: resolveIRExprSlots(expr.operand, signals) };
-    case 'ternary':
-      return { ...expr, test: resolveIRExprSlots(expr.test, signals), consequent: resolveIRExprSlots(expr.consequent, signals), alternate: resolveIRExprSlots(expr.alternate, signals) };
-    case 'call':
-      return { ...expr, args: expr.args.map(a => resolveIRExprSlots(a, signals)) };
-    case 'concat':
-      return { ...expr, parts: expr.parts.map(p => resolveIRExprSlots(p, signals)) };
-    case 'to_string':
-      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
-    case 'group':
-      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
-    case 'resolve_font':
-      return { ...expr, family: resolveIRExprSlots(expr.family, signals), size: resolveIRExprSlots(expr.size, signals) };
-    case 'type_cast':
-      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
-    case 'format_string':
-      return { ...expr, expr: resolveIRExprSlots(expr.expr, signals) };
-    case 'null_coalesce':
-      return { ...expr, left: resolveIRExprSlots(expr.left, signals), right: resolveIRExprSlots(expr.right, signals) };
-    case 'string_method':
-      return { ...expr, object: resolveIRExprSlots(expr.object, signals), args: expr.args.map(a => resolveIRExprSlots(a, signals)) };
-    case 'array_index':
-      return { ...expr, array: resolveIRExprSlots(expr.array, signals), index: resolveIRExprSlots(expr.index, signals) };
-    case 'array_method':
-      return { ...expr, object: resolveIRExprSlots(expr.object, signals), args: expr.args.map(a => resolveIRExprSlots(a, signals)) };
-    // Leaf nodes with no child expressions
-    case 'literal':
-    case 'signal_read':
-    case 'memo_read':
-    case 'theme_read':
-    case 'entity_prop':
-    case 'global_read':
-    case 'component_read':
-    case 'trigger_var':
-      return expr;
-    default: {
-      const _exhaustive: never = expr;
-      throw new Error(`resolveIRExprSlots: unhandled expression kind '${(_exhaustive as { kind: string }).kind}'`);
-    }
-  }
+  return mapExprChildren(expr, child => resolveIRExprSlots(child, signals));
 }

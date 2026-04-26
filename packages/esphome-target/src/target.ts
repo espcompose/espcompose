@@ -20,11 +20,11 @@ export function createEsphomeTarget(): ComposeTarget {
     name: 'esphome',
 
   async emit(request: EmitRequest): Promise<EmitResult> {
-    const { ir, outDir, sourceDir, secrets } = request;
+    const { ir, outDir, sourceDir, secrets, popups } = request;
     const files: string[] = [];
 
     // ── Generate C++ headers from semantic IR ───────────────────────────
-    const cppResult = generateCppFromIR(ir);
+    const cppResult = generateCppFromIR(ir, popups);
 
     // ── Extract ec-canvas paint scenes for native canvas draw actions ───
     const paintScenes = extractPaintScenesFromIR(ir);

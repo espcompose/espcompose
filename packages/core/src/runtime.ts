@@ -1,8 +1,10 @@
 import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
+import { withPopupScope } from './hooks';
 import { withContext } from './hooks/useContext';
 import type { Context } from './hooks/useContext';
+import { pushHookPath, popHookPath } from './hooks/useState';
 
 import {
   Fragment,
@@ -61,7 +63,13 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   // React 19-style automatic ref forwarding for design-system widgets).
   if (typeof el.type === 'function') {
     const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
-    const result = el.type(propsWithoutRef as never);
+    pushHookPath(el.type.name || 'anonymous');
+    let result;
+    try {
+      result = el.type(propsWithoutRef as never);
+    } finally {
+      popHookPath();
+    }
     if (result == null) return undefined;
     if (ref != null) {
       if (!Array.isArray(result)) {
@@ -265,6 +273,7 @@ export const ESPCompose = {
   useScript,
   withScriptScope,
   withReactiveScope,
+  withPopupScope,
   clearHAEntityCache,
   clearImageCache,
   clearFontCache,

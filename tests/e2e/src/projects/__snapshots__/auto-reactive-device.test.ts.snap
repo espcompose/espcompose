@@ -21,19 +21,19 @@ Signal<std::string> sig_ha_sensor_temp_inside_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return sig_ha_light_office.get() ? std::string("Explicit On") : std::string("Explicit Off");
+  return (sig_ha_light_office.get() ? std::string("Explicit On") : std::string("Explicit Off"));
 });
 
 Memo<std::string> memo_1([]() -> std::string {
-  return sig_ha_light_office.get() ? std::string("Light On") : std::string("Light Off");
+  return (sig_ha_light_office.get() ? std::string("Light On") : std::string("Light Off"));
 });
 
 Memo<float> memo_2([]() -> float {
-  return std::isnan(sig_ha_light_office_brightness.get()) ? 0 : sig_ha_light_office_brightness.get();
+  return (std::isnan(sig_ha_light_office_brightness.get()) ? 0 : sig_ha_light_office_brightness.get());
 });
 
 Memo<std::string> memo_3([]() -> std::string {
-  return sig_ha_light_office.get() && sig_ha_sensor_temp_inside.get() > 72 ? std::string("Comfortable") : std::string("Adjust");
+  return (sig_ha_light_office.get() && sig_ha_sensor_temp_inside.get() > 72 ? std::string("Comfortable") : std::string("Adjust"));
 });
 
 // ── Bootstrap: wire dependency graph ──

@@ -91,7 +91,7 @@ export type { LvglStylePropDescriptor } from './lvgl-actions';
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ── Target interface ───────────────────────────────────────────────────────
-export type { ComposeTarget, EmitRequest, EmitResult } from './target';
+export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './target';
 
 // ── Hooks ──────────────────────────────────────────────────────────────────
 export { useEffect } from './hooks/useEffect';
@@ -106,6 +106,9 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
+export type { PopupDefinition, PopupInstance, PopupController, CapturedPopupAction } from './hooks/usePopup';
+export { withPopupScope, peekPopupDefinitions } from './hooks/usePopup';
+export { structuralFingerprint, assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
@@ -173,13 +176,33 @@ export type {
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
-  IRExprBinary, IRExprUnary, IRExprPostfix, IRExprTernary,
-  IRExprCall, IRExprConcat, IRExprToString, IRExprGroup,
-  IRExprSlot, IRExprResolveFont, IRExprThemeRead,
-  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar,
-  IRExprTypeCast, IRExprFormatString, IRExprNullCoalesce, IRExprStringMethod,
-  IRExprArrayIndex, IRExprArrayMethod,
+  IRExprSlot, IRExprThemeRead,
+  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar, IRExprGlobalRead,
+  IRExprMux, IRExprTableLookup,
   IRExprNode,
+  ExprOpDescriptor, IRExprOp,
+} from './ir/index';
+export {
+  irBinary, irUnary, irPostfix, irTernary,
+  irCall, irConcat, irToString, irGroup,
+  irTypeCast, irFormatString, irNullCoalesce,
+  irStringMethod, irArrayIndex, irArrayMethod,
+} from './ir/index';
+export {
+  operandOf, exprOf, leftOf, rightOf,
+  testOf, consequentOf, alternateOf,
+  argsOf, partsOf, objectOf, methodArgsOf,
+  arrayOf, indexOf,
+} from './ir/index';
+export { getExprChildren, mapExprChildren } from './ir/index';
+export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
+export type {
+  ExprStructuralAnalysis,
+  ExprHole,
+  ExprLiteralHole,
+  ExprSignalReadHole,
+  ActionStructuralAnalysis,
+  ActionParamHole,
 } from './ir/index';
 
 // ── Action IR ────────────────────────────────────────────────────────────────
@@ -190,8 +213,9 @@ export type {
   IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
   IRArraySet, IRArrayPush, IRArrayClear,
   IRLambdaAction, IRLambdaSlot,
+  IRPopupShow, IRPopupDismiss,
   IRCondition, IRLambdaCondition, IRNativeCondition,
-  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam,
+  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
 } from './ir/index';
 export {
@@ -201,4 +225,5 @@ export {
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
+  irPopupShow, irPopupDismiss,
 } from './ir/index';

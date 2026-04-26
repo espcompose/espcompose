@@ -14,7 +14,11 @@
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType } from '@espcompose/core/internals';
-import { getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP } from '@espcompose/core/internals';
+import {
+  getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP,
+  irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
+  irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
+} from '@espcompose/core/internals';
 import { isCoreExportCall } from './type-brands.js';
 
 // ── Array type helpers ───────────────────────────────────────────────────────
@@ -249,7 +253,7 @@ export function translateScriptExprIR(
       const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
       if (globalInfo && isArrayExprType(globalInfo.exprType)) {
         const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
-        return { kind: 'array_method', method: 'size', object: globalRead, args: [], elementType: arrayElementType(globalInfo.exprType) };
+        return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
       }
     }
     return null;
@@ -262,7 +266,7 @@ export function translateScriptExprIR(
       const right = translateScriptExprIR(node.right, ctx);
       if (!left || !right) return null;
       // Default to 'float' in script context (most common for sensor ?? fallback)
-      return { kind: 'null_coalesce', left, right, type: 'float' };
+      return irNullCoalesce(left, right, 'float');
     }
 
     const left = translateScriptExprIR(node.left, ctx);
@@ -270,7 +274,7 @@ export function translateScriptExprIR(
     if (!left || !right) return null;
     const op = translateBinaryOp(node.operatorToken.kind);
     if (!op) return null;
-    return { kind: 'binary', op: op as BinaryOp, left, right };
+    return irBinary(op as BinaryOp, left, right);
   }
 
   if (ts.isPrefixUnaryExpression(node)) {
@@ -278,20 +282,20 @@ export function translateScriptExprIR(
     if (!operand) return null;
     const op = translatePrefixOp(node.operator);
     if (!op) return null;
-    return { kind: 'unary', op: op as UnaryOp, operand };
+    return irUnary(op as UnaryOp, operand);
   }
 
   if (ts.isPostfixUnaryExpression(node)) {
     const operand = translateScriptExprIR(node.operand, ctx);
     if (!operand) return null;
     const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
-    return { kind: 'postfix', op: op as PostfixOp, operand };
+    return irPostfix(op as PostfixOp, operand);
   }
 
   if (ts.isParenthesizedExpression(node)) {
     const inner = translateScriptExprIR(node.expression, ctx);
     if (!inner) return null;
-    return { kind: 'group', expr: inner };
+    return irGroup(inner);
   }
 
   if (ts.isConditionalExpression(node)) {
@@ -299,7 +303,7 @@ export function translateScriptExprIR(
     const consequent = translateScriptExprIR(node.whenTrue, ctx);
     const alternate = translateScriptExprIR(node.whenFalse, ctx);
     if (!test || !consequent || !alternate) return null;
-    return { kind: 'ternary', test, consequent, alternate };
+    return irTernary(test, consequent, alternate);
   }
 
   if (ts.isCallExpression(node)) {
@@ -315,7 +319,7 @@ export function translateScriptExprIR(
         if (!compiled) return null;
         args.push(compiled);
       }
-      return { kind: 'call', fn: builtinFn, args };
+      return irCall(builtinFn, args);
     }
 
     // Number(x), String(x), Boolean(x) → type_cast
@@ -326,7 +330,7 @@ export function translateScriptExprIR(
         const arg = translateScriptExprIR(node.arguments[0], ctx);
         if (!arg) return null;
         // Default fromType to 'float' in script context
-        return { kind: 'type_cast', expr: arg, fromType: 'float', toType: castTarget };
+        return irTypeCast(arg, 'float', castTarget);
       }
     }
 
@@ -338,7 +342,7 @@ export function translateScriptExprIR(
         const indexArg = translateScriptExprIR(node.arguments[0], ctx);
         if (!indexArg) return null;
         const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
-        return { kind: 'array_index', array: globalRead, index: indexArg, elementType: arrayElementType(globalInfo.exprType) };
+        return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
 
@@ -353,13 +357,13 @@ export function translateScriptExprIR(
     for (const span of node.templateSpans) {
       const compiled = translateScriptExprIR(span.expression, ctx);
       if (!compiled) return null;
-      parts.push({ kind: 'to_string', expr: compiled });
+      parts.push(irToString(compiled));
       if (span.literal.text) {
         parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
       }
     }
     return parts.length > 0
-      ? { kind: 'concat', parts }
+      ? irConcat(parts)
       : { kind: 'literal', value: '', type: 'string' };
   }
 
@@ -772,7 +776,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
       const right = compileExprIR(node.right, ctx);
       if (left === null || right === null) return null;
       const leftType = inferExprType(node.left, ctx);
-      return { kind: 'null_coalesce', left, right, type: leftType };
+      return irNullCoalesce(left, right, leftType);
     }
 
     const left = compileExprIR(node.left, ctx);
@@ -780,7 +784,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
     if (left === null || right === null) return null;
     const op = translateBinaryOp(node.operatorToken.kind);
     if (op === null) return null;
-    return { kind: 'binary', op: op as IRExprNode extends { kind: 'binary' } ? IRExprNode['op'] : never, left, right };
+    return irBinary(op as BinaryOp, left, right);
   }
 
   if (ts.isPrefixUnaryExpression(node)) {
@@ -788,20 +792,20 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
     if (operand === null) return null;
     const op = translatePrefixOp(node.operator);
     if (op === null) return null;
-    return { kind: 'unary', op: op as IRExprNode extends { kind: 'unary' } ? IRExprNode['op'] : never, operand };
+    return irUnary(op as UnaryOp, operand);
   }
 
   if (ts.isPostfixUnaryExpression(node)) {
     const operand = compileExprIR(node.operand, ctx);
     if (operand === null) return null;
     const op = node.operator === ts.SyntaxKind.PlusPlusToken ? '++' : '--';
-    return { kind: 'postfix', op: op as '++' | '--', operand };
+    return irPostfix(op as PostfixOp, operand);
   }
 
   if (ts.isParenthesizedExpression(node)) {
     const inner = compileExprIR(node.expression, ctx);
     if (inner === null) return null;
-    return { kind: 'group', expr: inner };
+    return irGroup(inner);
   }
 
   if (ts.isConditionalExpression(node)) {
@@ -809,7 +813,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
     const consequent = compileExprIR(node.whenTrue, ctx);
     const alternate = compileExprIR(node.whenFalse, ctx);
     if (test === null || consequent === null || alternate === null) return null;
-    return { kind: 'ternary', test, consequent, alternate };
+    return irTernary(test, consequent, alternate);
   }
 
   if (ts.isCallExpression(node)) {
@@ -861,7 +865,7 @@ function compilePropertyAccessIR(
         sourceType: 'global',
       });
       const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
-      return { kind: 'array_method', method: 'size', object: globalRead, args: [], elementType: arrayElementType(globalInfo.exprType) };
+      return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
     }
 
     const entity = sym ? ctx.haEntities.get(sym) : undefined;
@@ -893,7 +897,7 @@ function compilePropertyAccessIR(
     const objType = ctx.checker.getTypeAtLocation(node.expression);
     if (isStringLikeType(objType)) {
       const obj = compileExprIR(node.expression, ctx);
-      if (obj !== null) return { kind: 'string_method', method: 'length', object: obj, args: [] };
+      if (obj !== null) return irStringMethod('length', obj, []);
     }
   }
 
@@ -925,7 +929,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
       if (compiled === null) return null;
       args.push(compiled);
     }
-    return { kind: 'call', fn: builtinFn, args };
+    return irCall(builtinFn, args);
   }
 
   // isNaN(x) → call is_nan
@@ -933,7 +937,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
     if (node.arguments.length === 1) {
       const arg = compileExprIR(node.arguments[0], ctx);
       if (arg === null) return null;
-      return { kind: 'call', fn: 'is_nan', args: [arg] };
+      return irCall('is_nan', [arg]);
     }
   }
 
@@ -945,7 +949,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
       const arg = compileExprIR(node.arguments[0], ctx);
       if (arg === null) return null;
       const fromType = inferExprType(node.arguments[0], ctx);
-      return { kind: 'type_cast', expr: arg, fromType, toType: castTarget };
+      return irTypeCast(arg, fromType, castTarget);
     }
   }
 
@@ -961,7 +965,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
       const precisionArg = node.arguments[0];
       if (ts.isNumericLiteral(precisionArg)) {
         const precision = parseInt(precisionArg.text, 10);
-        return { kind: 'format_string', expr: obj, format: `%.${precision}f` };
+        return irFormatString(obj, `%.${precision}f`);
       }
       return null;
     }
@@ -976,7 +980,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         if (compiled === null) return null;
         args.push(compiled);
       }
-      return { kind: 'string_method', method: methodName as StringMethod, object: obj, args };
+      return irStringMethod(methodName as StringMethod, obj, args);
     }
 
     // Array handle .get(index) → array_index
@@ -995,7 +999,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         const indexArg = compileExprIR(node.arguments[0], ctx);
         if (indexArg === null) return null;
         const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
-        return { kind: 'array_index', array: globalRead, index: indexArg, elementType: arrayElementType(globalInfo.exprType) };
+        return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
 
@@ -1027,7 +1031,7 @@ function compileTemplateLiteralIR(
     const exprType = ctx.checker.getTypeAtLocation(span.expression);
     const isString = isStringLikeType(exprType);
 
-    parts.push(isString ? exprIR : { kind: 'to_string', expr: exprIR });
+    parts.push(isString ? exprIR : irToString(exprIR));
 
     if (span.literal.text) {
       parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
@@ -1036,7 +1040,7 @@ function compileTemplateLiteralIR(
 
   if (parts.length === 0) return { kind: 'literal', value: '', type: 'string' };
   if (parts.length === 1) return parts[0];
-  return { kind: 'concat', parts };
+  return irConcat(parts);
 }
 
 function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType {
@@ -1071,13 +1075,19 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
   if ('type' in node && typeof (node as { type?: unknown }).type === 'string') {
     return (node as { type: string }).type as ExprType;
   }
-  // Unwrap grouping parentheses
-  if (node.kind === 'group') {
-    return getIRNodeType((node as { expr: IRExprNode }).expr);
-  }
-  // Ternary: use the consequent branch type
-  if (node.kind === 'ternary') {
-    return getIRNodeType((node as { consequent: IRExprNode }).consequent);
+  if (node.kind === 'op') {
+    // Unwrap grouping parentheses
+    if (node.op.tag === 'group') {
+      return getIRNodeType(node.children[0]);
+    }
+    // Ternary: use the consequent branch type
+    if (node.op.tag === 'ternary') {
+      return getIRNodeType(node.children[1]);
+    }
+    // type_cast, null_coalesce, array_index, array_method carry type info on op descriptor
+    if ('fromType' in node.op) return (node.op as { toType: ExprType }).toType;
+    if ('type' in node.op) return (node.op as { type: ExprType }).type;
+    if ('elementType' in node.op) return (node.op as { elementType: ExprType }).elementType;
   }
   return null;
 }

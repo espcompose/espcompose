@@ -49,10 +49,10 @@ export async function createProjectTest(
   let counter = 0;
   const tokenMap = new Map<string, string>();
   const stabilise = (text: string) =>
-    text.replace(/(?<![a-z0-9])(?:r_|rw_|script_|ec_)[a-z0-9]{8,11}(?![a-z0-9])/g, (tok) => {
+    text.replace(/(?<![a-z0-9])(?:r_|rw_|script_|ec_|memo_)[a-z0-9]{8,11}(?![a-z0-9])/g, (tok) => {
       let stable = tokenMap.get(tok);
       if (!stable) {
-        const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('script_') ? 'script_ref' : tok.startsWith('ec_') ? 'ec_ref' : 'r_ref';
+        const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('script_') ? 'script_ref' : tok.startsWith('ec_') ? 'ec_ref' : tok.startsWith('memo_') ? 'memo_ref' : 'r_ref';
         stable = `${prefix}${counter++}`;
         tokenMap.set(tok, stable);
       }
@@ -76,6 +76,28 @@ export async function createProjectTest(
   if (fs.existsSync(bindingsPath)) {
     const bindingsContent = stabilise(fs.readFileSync(bindingsPath, 'utf8'));
     expect(bindingsContent).toMatchSnapshot('espcompose_bindings.h');
+
+    // Cross-validate: every espcompose::memo_* reference in the YAML must
+    // have a corresponding declaration in the bindings header.  If the YAML
+    // emits a raw IRReactiveNode nodeId (e.g. memo_uahm4rk5n) instead of
+    // the sequential C++ name (memo_0), the build will fail at the C++
+    // compile step.  Catch this early.
+    const rawBindings = fs.readFileSync(bindingsPath, 'utf8');
+    const declaredMemos = new Set<string>();
+    for (const m of rawBindings.matchAll(/(?:Memo<[^>]+>|auto&)\s+(memo_\d+)/g)) {
+      declaredMemos.add(m[1]);
+    }
+    if (declaredMemos.size > 0) {
+      const yamlMemoRefs = new Set<string>();
+      for (const m of yamlContent.matchAll(/espcompose::(memo_[a-z0-9_]+)/g)) {
+        yamlMemoRefs.add(m[1]);
+      }
+      const undeclared = [...yamlMemoRefs].filter(ref => !declaredMemos.has(ref));
+      expect(
+        undeclared,
+        `YAML references memo(s) not declared in espcompose_bindings.h: ${undeclared.join(', ')}`,
+      ).toHaveLength(0);
+    }
   }
 
   if (fs.existsSync(runtimePath)) {

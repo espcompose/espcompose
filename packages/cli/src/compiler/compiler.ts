@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { ComposeTarget, ExecuteResult } from '@espcompose/core/internals';
 import type { PipelineStep, PhaseContext, PhaseTiming } from './phases/types';
 import { setupPhase } from './phases/setup';
 import { typeCheckPhase } from './phases/type-check';
@@ -208,8 +208,11 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
  *
  * Runs the IR pipeline (type-check, lint, transform, bundle, execute+render)
  * but skips the emit phase.
+ *
+ * Returns the ExecuteResult (SemanticIR + sidecar data) so callers
+ * (e.g. --host mode) can forward it to a downstream `target.emit()`.
  */
-export async function compileToIR(projectDir: string, options?: { wireframe?: boolean }): Promise<SemanticIR> {
+export async function compileToIR(projectDir: string, options?: { wireframe?: boolean }): Promise<ExecuteResult> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -228,11 +231,11 @@ export async function compileToIR(projectDir: string, options?: { wireframe?: bo
 
   await runPipeline(ctx, irPipeline);
 
-  if (!ctx.ir) {
-    throw new Error('Pipeline did not produce a SemanticIR. Ensure the execute phase ran successfully.');
+  if (!ctx.executeResult) {
+    throw new Error('Pipeline did not produce an ExecuteResult. Ensure the execute phase ran successfully.');
   }
 
-  return ctx.ir;
+  return ctx.executeResult;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

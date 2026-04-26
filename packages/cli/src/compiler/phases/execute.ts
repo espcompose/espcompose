@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeData } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeData, ExecuteResult } from '@espcompose/core/internals';
 import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
@@ -47,28 +47,33 @@ export function executePhase(ctx: PhaseContext): void {
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
+  let collectedPopups: unknown[] = [];
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
-    const { result: config, scripts } = cjsSDK.withScriptScope(() => {
-      const mod = _require(bundlePath) as { default?: unknown };
+    const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
+      const { result: config, popups } = cjsSDK.withPopupScope(() => {
+        const mod = _require(bundlePath) as { default?: unknown };
 
-      const rootElement = mod.default;
+        const rootElement = mod.default;
 
-      if (rootElement == null) {
-        throw new Error(
-          `Entry module does not have a default export. ` +
-            `Make sure your TSX file exports a default ESPCompose element tree.`
-        );
-      }
+        if (rootElement == null) {
+          throw new Error(
+            `Entry module does not have a default export. ` +
+              `Make sure your TSX file exports a default ESPCompose element tree.`
+          );
+        }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
 
-      return rendered;
+        return rendered;
+      });
+      collectedPopups = popups;
+      return config;
     });
     collectedScripts = scripts;
 
-    return config;
+    return scriptResult;
   });
 
   const serializationCaptures = cjsSDK.stopSerializationCapture();
@@ -76,7 +81,7 @@ export function executePhase(ctx: PhaseContext): void {
   const themes = extractThemeData(cjsSDK);
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
-  ctx.ir = serializationCaptures
+  const ir = serializationCaptures
     ? buildSemanticIR({
         config: reactiveResult,
         captures: serializationCaptures,
@@ -89,11 +94,22 @@ export function executePhase(ctx: PhaseContext): void {
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 
+  // ── Assemble execute result ───────────────────────────────────────────
+  const executeResult: ExecuteResult = { ir };
+
   // Collect secrets before they are cleared on the next run.
   const secretsMap: ReadonlyMap<string, string> = cjsSDK.getSecrets();
   if (secretsMap.size > 0) {
-    ctx.secrets = new Map(secretsMap);
+    executeResult.secrets = new Map(secretsMap);
   }
+
+  // Stash collected popup definitions for downstream emit phases.
+  if (collectedPopups.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    executeResult.popups = collectedPopups as any;
+  }
+
+  ctx.executeResult = executeResult;
 }
 
 /**

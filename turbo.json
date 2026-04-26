@@ -24,7 +24,6 @@
         "src/**", 
         "scripts/**", 
         "templates/**", 
-        "../../packages/ir-viewer/dist/**",
         "../../packages/esphome-target/assets/external-component/**"
       ],
       "outputs": ["dist/**", "assets/**"]

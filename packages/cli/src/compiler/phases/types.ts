@@ -1,5 +1,5 @@
 import type ts from 'typescript';
-import type { SemanticIR, ComposeTarget } from '@espcompose/core/internals';
+import type { ComposeTarget, ExecuteResult } from '@espcompose/core/internals';
 
 /** Timing measurement for a single compiler phase. */
 export interface PhaseTiming {
@@ -44,10 +44,11 @@ export interface PhaseContext {
   program?: ts.Program;
   /** Path to the transformed entry file in buildDir. */
   transformedEntry?: string;
-  /** Semantic IR from the execute phase (device pipeline only). */
-  ir?: SemanticIR;
-  /** Collected secrets (key → value) from the execute phase. */
-  secrets?: ReadonlyMap<string, string>;
+  /**
+   * Execute phase output: SemanticIR + sidecar data (secrets, popups, etc.).
+   * Set by the execute phase; consumed by validate, emit, and compileToIR.
+   */
+  executeResult?: ExecuteResult;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
 

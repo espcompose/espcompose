@@ -15,17 +15,17 @@ import type {
 } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp.js';
 
-// ── Reactive global context ─────────────────────────────────────────────
-// Set of global IDs that have BoundSignal declarations in the reactive runtime.
-// Populated by the target before lowering actions.
-let reactiveGlobalIds: Set<string> = new Set();
+// ── Action lowering context ─────────────────────────────────────────────
 
 /**
- * Set the set of global IDs that have reactive BoundSignal wiring.
- * Must be called before lowerActionTree() when globals are present.
+ * Context for action tree lowering. Passed explicitly to avoid module-level
+ * mutable singletons.
  */
-export function setReactiveGlobalIds(ids: Set<string>): void {
-  reactiveGlobalIds = ids;
+export interface ActionLoweringContext {
+  /** Set of global IDs that have BoundSignal declarations in the reactive runtime. */
+  reactiveGlobalIds: Set<string>;
+  /** Signal index → name map for resolving signal_read in action conditions. */
+  signalNames: Map<number, string>;
 }
 
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
@@ -58,6 +58,8 @@ function lowerParam(param: IRActionParam | string | number | boolean): unknown {
       return lambdaMarker(`return ${param.varName};`);
     case 'expression':
       return expressionMarker(param.jsExpression);
+    case 'reactive_expr':
+      throw new Error('reactive_expr params must be handled in the ha_service case, not lowerParam');
   }
 }
 
@@ -92,13 +94,13 @@ function lowerConfig(config: IRActionConfig): unknown {
 }
 
 /**
- * Create an empty lowering context for condition expressions.
- * Action conditions don't use signals/memos/slots — they only reference
- * trigger variables which compile to simple C++ identifiers.
+ * Create a lowering context for condition expressions.
+ * Uses the provided `signalNames` map so that muxed popup conditions
+ * (which reference signal indices) can resolve signal names.
  */
-function createConditionLoweringContext(): CppLoweringContext {
+function createConditionLoweringContext(ctx: ActionLoweringContext): CppLoweringContext {
   return {
-    signalNames: new Map(),
+    signalNames: new Map(ctx.signalNames),
     memoNames: new Map(),
     slotExprs: new Map(),
     entityComponentIds: new Map(),
@@ -110,11 +112,11 @@ function createConditionLoweringContext(): CppLoweringContext {
 /**
  * Lower an IRCondition to ESPHome condition config.
  */
-function lowerCondition(condition: IRCondition): unknown {
+function lowerCondition(condition: IRCondition, ctx: ActionLoweringContext): unknown {
   switch (condition.kind) {
     case 'lambda_condition': {
-      const ctx = createConditionLoweringContext();
-      const cppExpr = exprToCpp(condition.exprIR, ctx);
+      const cppCtx = createConditionLoweringContext(ctx);
+      const cppExpr = exprToCpp(condition.exprIR, cppCtx);
       // ESPHome expects conditions as a list of condition type mappings.
       // A lambda condition is: [{ lambda: !lambda "return expr;" }]
       return [{ lambda: lambdaMarker(`return ${cppExpr};`) }];
@@ -128,7 +130,7 @@ function lowerCondition(condition: IRCondition): unknown {
  * Lower the value of a global_set action to a C++ expression string.
  * Handles IRActionParam (literal, trigger_var) and IRExprNode (compiled expression).
  */
-function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string): string {
+function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string, ctx: ActionLoweringContext): string {
   if (typeof value === 'object' && value !== null && 'kind' in value) {
     switch (value.kind) {
       case 'literal': {
@@ -145,8 +147,8 @@ function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string)
         return 'varName' in value ? value.varName : value.name;
       default: {
         // IRExprNode — lower to C++ via exprToCpp
-        const ctx = createConditionLoweringContext();
-        return exprToCpp(value as IRExprNode, ctx);
+        const cppCtx = createConditionLoweringContext(ctx);
+        return exprToCpp(value as IRExprNode, cppCtx);
       }
     }
   }
@@ -156,7 +158,7 @@ function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string)
 /**
  * Lower a single IRActionNode to its ESPHome YAML-ready config object.
  */
-function lowerAction(action: IRActionNode): unknown {
+function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown {
   switch (action.kind) {
     case 'native':
       return { [action.actionKey]: lowerConfig(action.config) };
@@ -173,6 +175,13 @@ function lowerAction(action: IRActionNode): unknown {
             // Dynamic value: use variables + data_template
             variables[param.varName] = lambdaMarker(`return ${param.varName};`);
             templateData[key] = `{{ ${param.varName} }}`;
+          } else if (typeof param === 'object' && param !== null && param.kind === 'reactive_expr') {
+            // Reactive expression: lower exprIR to C++ and route through variables + data_template
+            const varName = `${key}_expr`;
+            const cppCtx = createConditionLoweringContext(ctx);
+            const cppExpr = exprToCpp(param.exprIR, cppCtx);
+            variables[varName] = lambdaMarker(`return ${cppExpr};`);
+            templateData[key] = `{{ ${varName} }}`;
           } else {
             staticData[key] = lowerParam(param as IRActionParam);
           }
@@ -202,7 +211,7 @@ function lowerAction(action: IRActionNode): unknown {
 
     case 'wait_until': {
       const config: Record<string, unknown> = {
-        condition: lowerCondition(action.condition),
+        condition: lowerCondition(action.condition, ctx),
       };
       if (action.timeout) {
         config.timeout = action.timeout;
@@ -212,11 +221,11 @@ function lowerAction(action: IRActionNode): unknown {
 
     case 'if': {
       const config: Record<string, unknown> = {
-        condition: lowerCondition(action.condition),
-        then: lowerActionTree(action.then),
+        condition: lowerCondition(action.condition, ctx),
+        then: lowerActionTree(action.then, ctx),
       };
       if (action.else) {
-        config.else = lowerActionTree(action.else);
+        config.else = lowerActionTree(action.else, ctx);
       }
       return { if: config };
     }
@@ -224,8 +233,8 @@ function lowerAction(action: IRActionNode): unknown {
     case 'while':
       return {
         while: {
-          condition: lowerCondition(action.condition),
-          then: lowerActionTree(action.then),
+          condition: lowerCondition(action.condition, ctx),
+          then: lowerActionTree(action.then, ctx),
         },
       };
 
@@ -233,7 +242,7 @@ function lowerAction(action: IRActionNode): unknown {
       return {
         repeat: {
           count: action.count,
-          then: lowerActionTree(action.then),
+          then: lowerActionTree(action.then, ctx),
         },
       };
 
@@ -250,8 +259,8 @@ function lowerAction(action: IRActionNode): unknown {
       return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
 
     case 'global_set': {
-      const valueStr = lowerGlobalSetValue(action.value, action.cppType);
-      if (reactiveGlobalIds.has(action.globalId)) {
+      const valueStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      if (ctx.reactiveGlobalIds.has(action.globalId)) {
         // Reactive global — write through BoundSignal (also writes native storage) + flush
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
@@ -264,9 +273,9 @@ function lowerAction(action: IRActionNode): unknown {
     }
 
     case 'array_set': {
-      const idxStr = lowerGlobalSetValue(action.index, 'int');
-      const valStr = lowerGlobalSetValue(action.value, action.cppType);
-      if (reactiveGlobalIds.has(action.globalId)) {
+      const idxStr = lowerGlobalSetValue(action.index, 'int', ctx);
+      const valStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut()[${idxStr}] = ${valStr}; ` +
@@ -278,8 +287,8 @@ function lowerAction(action: IRActionNode): unknown {
     }
 
     case 'array_push': {
-      const valStr = lowerGlobalSetValue(action.value, action.cppType);
-      if (reactiveGlobalIds.has(action.globalId)) {
+      const valStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut().push_back(${valStr}); ` +
@@ -291,7 +300,7 @@ function lowerAction(action: IRActionNode): unknown {
     }
 
     case 'array_clear': {
-      if (reactiveGlobalIds.has(action.globalId)) {
+      if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut().clear(); ` +
@@ -332,6 +341,26 @@ function lowerAction(action: IRActionNode): unknown {
       }
       return { lambda: lambdaMarker(code) };
     }
+
+    case 'popup_show': {
+      // Set the mux signal to this instance's index, show the popup
+      // wrapper, and flush the reactive graph so bindings update.
+      const muxSig = `sig_popup_${action.templateKey}_mux`;
+      const popupId = `popup_${action.templateKey}`;
+      return { lambda: lambdaMarker(
+        `espcompose::${muxSig}.set(${action.instanceIndex}); ` +
+        `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); } ` +
+        `lv_obj_clear_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+      )};
+    }
+
+    case 'popup_dismiss': {
+      // Hide the popup wrapper — not muxed, same widget across all instances.
+      const popupId = `popup_${action.templateKey}`;
+      return { lambda: lambdaMarker(
+        `lv_obj_add_flag(id(${popupId}), LV_OBJ_FLAG_HIDDEN);`
+      )};
+    }
   }
 }
 
@@ -341,8 +370,8 @@ function lowerAction(action: IRActionNode): unknown {
  * Each action becomes one entry in an ESPHome action list (the `then:` array
  * in triggers, scripts, etc.).
  */
-export function lowerActionTree(actions: IRActionNode[]): unknown[] {
-  return actions.map(lowerAction);
+export function lowerActionTree(actions: IRActionNode[], ctx: ActionLoweringContext = { reactiveGlobalIds: new Set(), signalNames: new Map() }): unknown[] {
+  return actions.map(a => lowerAction(a, ctx));
 }
 
 /**

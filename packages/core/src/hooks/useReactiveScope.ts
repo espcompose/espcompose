@@ -134,16 +134,34 @@ export function registerComponent(reg: IRComponent): void {
 
 /**
  * Register an IRReactiveNode (memo or effect) created during the render pass.
- * Returns the node's stable nodeId. No-op (returns empty string) if called
- * outside a reactive scope.
+ * Returns the node's stable nodeId.
+ *
+ * Throws if called outside a reactive scope — this would result in an
+ * unregistered node that is referenced in the config tree but never
+ * declared in the C++ runtime, producing a downstream "memo not found"
+ * compilation error. The render pass must be wrapped in withReactiveScope().
  */
 export function registerReactiveNode(node: IRReactiveNode): string {
   const frame = useContext(reactiveScopeContext);
-  if (frame) {
-    frame.reactiveNodes.push(node);
-    return node.nodeId;
+  if (!frame) {
+    const depSummary = node.dependencies
+      .map(d => `${d.sourceType ?? '?'}:${d.sourceId}`)
+      .join(', ');
+    throw new Error(
+      `[espcompose] registerReactiveNode() called outside a reactive scope.\n` +
+      `  node.nodeId=${node.nodeId}\n` +
+      `  node.kind=${node.kind}\n` +
+      `  node.exprType=${node.exprType ?? 'undefined'}\n` +
+      `  node.exprIR.kind=${node.exprIR?.kind ?? 'undefined'}\n` +
+      `  dependencies=[${depSummary}]\n` +
+      `  This typically means a reactive value (useMemo / __espcompose.compiled) was\n` +
+      `  created at module top level or after the render pass closed. All reactive\n` +
+      `  node creation must happen inside a function component body, which the\n` +
+      `  compiler wraps in withReactiveScope().`,
+    );
   }
-  return '';
+  frame.reactiveNodes.push(node);
+  return node.nodeId;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
