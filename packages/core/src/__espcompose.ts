@@ -148,27 +148,83 @@ export const __espcompose = {
 function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
   if (expr.kind === 'slot') {
     const sig = signals[expr.slotIndex];
-    if (sig == null) return expr;
+    if (sig == null) {
+      throw new Error(
+        `__espcompose.slotted: slot ${expr.slotIndex} received ${sig === null ? 'null' : 'undefined'}; ` +
+        `slots must be filled with a primitive (string/number/boolean) or a Signal/IRReactiveNode.`,
+      );
+    }
     // Plain primitive values → literal nodes
     if (typeof sig === 'string') return { kind: 'literal', value: sig, type: 'string' };
-    if (typeof sig === 'number') return { kind: 'literal', value: sig, type: 'float' };
+    if (typeof sig === 'number') {
+      // JS has no int/float distinction; pick the narrower type when safe.
+      const type: ExprType = Number.isInteger(sig) ? 'int' : 'float';
+      return { kind: 'literal', value: sig, type };
+    }
     if (typeof sig === 'boolean') return { kind: 'literal', value: sig, type: 'bool' };
+    if (Array.isArray(sig)) {
+      throw new Error(
+        `__espcompose.slotted: slot ${expr.slotIndex} received an array; ` +
+        `array literal slots are not supported (no IRExprArrayLiteral node exists). ` +
+        `Pass elements individually or use a Signal-backed array source.`,
+      );
+    }
+    if (!(sig instanceof IRReactiveNode)) {
+      throw new Error(
+        `__espcompose.slotted: slot ${expr.slotIndex} received an unsupported value of type ${typeof sig}; ` +
+        `expected a primitive (string/number/boolean) or an IRReactiveNode.`,
+      );
+    }
     // IRReactiveNode: use exprIR if available
-    const node = sig as IRReactiveNode;
+    const node = sig;
     if (node.exprIR) return node.exprIR;
     // Resolve from dependency metadata
     const dep = node.dependencies[0];
-    if (dep?.sourceType === 'theme') {
-      const path = dep.sourceId === '__theme__' ? dep.triggerType : '';
-      // Extract scopeId from sourceId pattern __theme_<scopeId>__
-      const match = dep.sourceId.match(/^__theme_([a-f0-9]+)__$/);
-      const scopeId = match?.[1] ?? '';
-      return { kind: 'theme_read', scope: '', scopeId, path, type: node.exprType ?? 'float' };
+    if (!dep) {
+      throw new Error(
+        `__espcompose.slotted: slot ${expr.slotIndex} received an IRReactiveNode with no exprIR and no dependencies; ` +
+        `cannot resolve to an expression node.`,
+      );
     }
-    // Default: entity prop
-    const sourceId = node.sourceId ?? dep?.sourceId ?? '';
-    const property = node.property ?? 'value';
-    return { kind: 'entity_prop', entityId: sourceId, property, type: node.exprType ?? 'float' };
+    if (node.exprType == null) {
+      throw new Error(
+        `__espcompose.slotted: slot ${expr.slotIndex} received an IRReactiveNode without an exprType; ` +
+        `cannot determine the resulting expression type. Source: ${dep.sourceId}.`,
+      );
+    }
+    if (dep.sourceType === 'theme') {
+      // Theme deps encode the scopeId in the sourceId as __theme_<scopeId>__
+      // and the path in the triggerType. Both must be present.
+      const match = dep.sourceId.match(/^__theme_([a-f0-9]+)__$/);
+      if (!match || dep.sourceId === '__theme__') {
+        throw new Error(
+          `__espcompose.slotted: theme slot ${expr.slotIndex} has malformed sourceId ${JSON.stringify(dep.sourceId)}; ` +
+          `expected __theme_<scopeId>__.`,
+        );
+      }
+      const scopeId = match[1]!;
+      const path = dep.triggerType;
+      if (!path) {
+        throw new Error(
+          `__espcompose.slotted: theme slot ${expr.slotIndex} (scope ${scopeId}) is missing a path (dep.triggerType is empty).`,
+        );
+      }
+      return { kind: 'theme_read', scope: '', scopeId, path, type: node.exprType };
+    }
+    // Entity prop: both sourceId and propertyKey must be known.
+    const sourceId = node.sourceId ?? dep.sourceId;
+    if (!sourceId) {
+      throw new Error(
+        `__espcompose.slotted: entity slot ${expr.slotIndex} is missing a sourceId.`,
+      );
+    }
+    if (!node.propertyKey) {
+      throw new Error(
+        `__espcompose.slotted: entity slot ${expr.slotIndex} (entity ${sourceId}) is missing propertyKey; ` +
+        `the IRReactiveNode must declare which property it reads.`,
+      );
+    }
+    return { kind: 'entity_prop', entityId: sourceId, propertyKey: node.propertyKey, type: node.exprType };
   }
 
   // Recursively resolve children

@@ -104,7 +104,7 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
     }
 
     case 'entity_prop': {
-      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.property}`) ?? ctx.entityComponentIds.get(node.entityId);
+      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (!compId) throw new Error(`Unknown entity: ${node.entityId}`);
       return `sig_${compId}.get()`;
     }

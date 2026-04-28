@@ -15,8 +15,9 @@ import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp
 import type { CppLoweringContext } from './expr-to-cpp.js';
 import type { IRExprNode } from '@espcompose/core';
 import { getExprChildren } from '@espcompose/core';
-import type { ExprType } from '@espcompose/core/internals';
+import type { ExprType, IRValueType } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
+import { valueTypeToCpp } from './value-type-cpp.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Sensor type → C++ type mapping
@@ -25,7 +26,7 @@ import { getEntityDomain } from '@espcompose/core/internals';
 function mapSensorTypeToCppType(sensorType: string): string {
   const domain = getEntityDomain(sensorType);
   if (!domain) throw new Error(`Unknown sensor type / entity domain: '${sensorType}'`);
-  return domain.cppType;
+  return valueTypeToCpp(domain.valueType);
 }
 
 /**
@@ -120,7 +121,7 @@ function walkExprForSources(
       break;
     }
     case 'entity_prop': {
-      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.property}`) ?? ctx.entityComponentIds.get(node.entityId);
+      const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (compId) {
         const sigName = `sig_${compId}`;
         if (signalMap.has(sigName)) out.add(sigName);
@@ -221,9 +222,10 @@ export function buildRuntimeConfig(
   if (globalComponents) {
     for (const comp of globalComponents) {
       if (reactiveGlobalIds.has(comp.id)) {
+        const vt = comp.config.valueType as IRValueType | undefined;
         globalSignals.push({
           name: `sig_global_${comp.id}`,
-          cppType: comp.config.type ?? 'int',
+          cppType: vt ? valueTypeToCpp(vt) : 'int',
           globalId: comp.id,
         });
       }

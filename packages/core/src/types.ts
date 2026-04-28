@@ -249,7 +249,7 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
               }],
               exprType: reactiveConfig.exprType,
               sourceId: target._token,
-              property: reactiveConfig.property,
+              propertyKey: reactiveConfig.propertyKey,
               triggerType: reactiveConfig.triggerType,
               sourceDomain: reactiveConfig.sourceDomain,
             });

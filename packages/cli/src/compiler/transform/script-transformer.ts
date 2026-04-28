@@ -19,7 +19,15 @@ import {
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParam, type ScriptParamCppType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToCpp } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParam, type IRValueType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToValueType } from '@espcompose/core/internals';
+
+/** Stable string key for an IRValueType — used in dedup signatures. */
+function valueTypeKey(vt: IRValueType): string {
+  let s = vt.type as string;
+  if (vt.format) s += `:${vt.format}`;
+  if (vt.isArray) s += '[]';
+  return s;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -188,26 +196,27 @@ function extractScriptUserParams(
   for (const param of arg.parameters) {
     if (!ts.isIdentifier(param.name)) continue;
     const name = param.name.text;
-    const cppType = inferParamCppType(param, checker);
-    if (cppType) {
-      params.push({ name, cppType });
+    const valueType = inferParamValueType(param, checker);
+    if (valueType) {
+      params.push({ name, valueType });
     }
   }
   return params;
 }
 
 /**
- * Infer the C++ type for a script parameter from its TypeScript type annotation.
+ * Infer the target-agnostic value type for a script parameter from its
+ * TypeScript type annotation.
  *
- * - `number` → 'float'
- * - `Int` (branded number from @espcompose/core) → 'int'
- * - `string` → 'string'
- * - `boolean` → 'bool'
+ * - `Int` (branded number from @espcompose/core) → { type: 'int' }
+ * - `number` → { type: 'float' }
+ * - `string` → { type: 'string' }
+ * - `boolean` → { type: 'bool' }
  */
-function inferParamCppType(
+function inferParamValueType(
   param: ts.ParameterDeclaration,
   checker: ts.TypeChecker,
-): ScriptParamCppType | null {
+): IRValueType | null {
   const type = checker.getTypeAtLocation(param);
 
   // Check for Int branded type (number & { __espcompose_int__: true })
@@ -216,25 +225,25 @@ function inferParamCppType(
     const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
     if (hasNumber) {
       const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return 'int';
+      if (hasIntBrand) return { type: 'int' };
     }
   }
   // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return 'int';
+  if (type.aliasSymbol?.name === 'Int') return { type: 'int' };
 
   // Plain number
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return 'float';
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return { type: 'float' };
   // String
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return 'string';
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return { type: 'string' };
   // Boolean
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return 'bool';
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return { type: 'bool' };
 
   return null;
 }
 
 /**
  * Scan for `useGlobal()` and `useRetainedGlobal()` patterns and build a
- * map of declaration symbol → GlobalDefinition { id, cppType }.
+ * map of declaration symbol → GlobalDefinition { id, valueType }.
  *
  * Runs on the reactive-transformed AST, so useGlobal() calls already
  * have `__key` injected by the global-key-injector.
@@ -252,13 +261,13 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
         if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
           const typeArg = node.initializer.arguments[0];
           if (ts.isStringLiteral(typeArg)) {
-            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const valueType = globalTypeToValueType(typeArg.text as GlobalType);
             const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
             if (fingerprint) {
               const globalId = hashGlobalFingerprint(fingerprint);
               const sym = checker.getSymbolAtLocation(node.name);
               if (sym) {
-                globalHandles.set(sym, { id: globalId, cppType });
+                globalHandles.set(sym, { id: globalId, valueType });
               }
             }
           }
@@ -269,11 +278,11 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
           const typeArg = node.initializer.arguments[0];
           const keyArg = node.initializer.arguments[1];
           if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const valueType = globalTypeToValueType(typeArg.text as GlobalType);
             const globalId = hashGlobalFingerprint(keyArg.text);
             const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
-              globalHandles.set(sym, { id: globalId, cppType });
+              globalHandles.set(sym, { id: globalId, valueType });
             }
           }
         }
@@ -578,7 +587,7 @@ function compileAndInjectUseScript(
   // uses this hash (combined with the closure-shape signature) as the
   // dedup key.
   const sortedRefNames = [...refNames].sort();
-  const sortedUserParamNames = userParams.map((p) => `${p.name}:${p.cppType}`).sort();
+  const sortedUserParamNames = userParams.map((p) => `${p.name}:${valueTypeKey(p.valueType)}`).sort();
   const hashInput = JSON.stringify({
     actions: result.actions,
     refs: sortedRefNames,

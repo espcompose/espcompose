@@ -144,7 +144,7 @@ function walkLockstep(
     case 'entity_prop': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
-        if (typed[i].entityId !== first.entityId || typed[i].property !== first.property) return null;
+        if (typed[i].entityId !== first.entityId || typed[i].propertyKey !== first.propertyKey) return null;
       }
       return first;
     }

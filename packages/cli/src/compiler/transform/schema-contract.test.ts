@@ -90,7 +90,7 @@ describe('Library Format Schema Contract (Producer)', () => {
           sourceDomain: 'binary_sensor',
         }],
         irTernary(
-          { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' },
+          { kind: 'entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
           { kind: 'literal', value: 'On', type: 'string' },
           { kind: 'literal', value: 'Off', type: 'string' },
         ),

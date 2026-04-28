@@ -21,6 +21,8 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     FILE_HEADER,
     '/* eslint-disable */',
     '',
+    "import type { IRValueType } from '../ir/types.js';",
+    '',
     '// ── Types ────────────────────────────────────────────────────────────────────',
     '',
     "export type SensorPlatform = 'binary_sensor' | 'sensor' | 'text_sensor';",
@@ -29,7 +31,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     '',
     'export interface EntityPropertyDescriptor {',
     '  readonly name: string;',
-    '  readonly cppPath: string;',
+    '  readonly propertyKey: string;',
     '  readonly triggerType: string;',
     '  readonly exprType: ExprType;',
     '  readonly sourceDomain: string;',
@@ -45,7 +47,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     'export interface EntityDomainDescriptor {',
     '  readonly domain: string;',
     '  readonly sensorPlatform: SensorPlatform;',
-    '  readonly cppType: string;',
+    '  readonly valueType: IRValueType;',
     '  readonly defaultState: string;',
     '  readonly activeState: string | null;',
     '  readonly uiCategory: UICategory;',
@@ -54,7 +56,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     '}',
     '',
     'export interface ReactivePropertyConfig {',
-    '  readonly property: string;',
+    '  readonly propertyKey: string;',
     '  readonly triggerType: string;',
     '  readonly sourceDomain: string;',
     '  readonly exprType: ExprType;',
@@ -70,7 +72,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     lines.push(`  ${name}: {`);
     lines.push(`    domain: ${JSON.stringify(name)},`);
     lines.push(`    sensorPlatform: ${JSON.stringify(desc.sensorPlatform)},`);
-    lines.push(`    cppType: ${JSON.stringify(desc.cppType)},`);
+    lines.push(`    valueType: ${JSON.stringify(desc.valueType)},`);
     lines.push(`    defaultState: ${JSON.stringify(desc.defaultState)},`);
     lines.push(`    activeState: ${JSON.stringify(desc.activeState)},`);
     lines.push(`    uiCategory: ${JSON.stringify(desc.uiCategory)},`);
@@ -78,7 +80,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     // Properties
     lines.push('    properties: [');
     for (const prop of desc.properties) {
-      lines.push(`      { name: ${JSON.stringify(prop.name)}, cppPath: ${JSON.stringify(prop.cppPath)}, triggerType: ${JSON.stringify(prop.triggerType)}, exprType: ${JSON.stringify(prop.exprType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)} },`);
+      lines.push(`      { name: ${JSON.stringify(prop.name)}, propertyKey: ${JSON.stringify(prop.propertyKey)}, triggerType: ${JSON.stringify(prop.triggerType)}, exprType: ${JSON.stringify(prop.exprType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)} },`);
     }
     lines.push('    ],');
 
@@ -156,7 +158,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
       const first = seenProperties.get(prop.name);
       if (first && first.domain === domainName) {
         // This domain is the canonical source for this property
-        lines.push(`  ${prop.name}: { property: ${JSON.stringify(prop.cppPath)}, triggerType: ${JSON.stringify(prop.triggerType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)}, exprType: ${JSON.stringify(prop.exprType)} },`);
+        lines.push(`  ${prop.name}: { propertyKey: ${JSON.stringify(prop.propertyKey)}, triggerType: ${JSON.stringify(prop.triggerType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)}, exprType: ${JSON.stringify(prop.exprType)} },`);
       }
     }
   }

@@ -8,6 +8,7 @@ import { createContext, withContext } from './useContext';
 import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
 import type { IRDependency, Signal } from '../reactive-node';
 import type { ExprType } from '../ir/expr-types';
+import type { IRValueType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
 
@@ -16,7 +17,8 @@ import type { BINDING_BRAND } from '../types';
 /** Definition stored in the global scope context for compiler use. */
 export interface GlobalDefinition {
   id: string;
-  cppType: string;
+  /** Target-agnostic value type. The lowering target maps this to a concrete representation. */
+  valueType: IRValueType;
 }
 
 // ── GlobalHandle ───────────────────────────────────────────────────────────
@@ -38,35 +40,26 @@ export interface GlobalHandle<T> {
   readonly id: string;
 }
 
-// ── C++ type → ExprType mapping ────────────────────────────────────────────
+// ── IRValueType → ExprType mapping ─────────────────────────────────────────
 
-export function cppTypeToExprType(cppType: string): ExprType {
-  switch (cppType) {
-    case 'int':
-    case 'int32_t':
-    case 'int16_t':
-    case 'int8_t':
-    case 'uint8_t':
-    case 'uint16_t':
-    case 'uint32_t':
-      return 'int';
-    case 'float':
-    case 'double':
-      return 'float';
-    case 'bool':
-      return 'bool';
-    case 'std::string':
-      return 'string';
-    case 'std::vector<int>':
-      return 'int_array';
-    case 'std::vector<float>':
-      return 'float_array';
-    case 'std::vector<bool>':
-      return 'bool_array';
-    case 'std::vector<std::string>':
-      return 'string_array';
-    default:
-      return 'int';
+/**
+ * Map a target-agnostic `IRValueType` to the corresponding `ExprType`
+ * used by the IR expression layer.
+ */
+export function valueTypeToExprType(vt: IRValueType): ExprType {
+  if (vt.isArray) {
+    switch (vt.type) {
+      case 'int':    return 'int_array';
+      case 'float':  return 'float_array';
+      case 'bool':   return 'bool_array';
+      case 'string': return 'string_array';
+    }
+  }
+  switch (vt.type) {
+    case 'int':    return 'int';
+    case 'float':  return 'float';
+    case 'bool':   return 'bool';
+    case 'string': return 'string';
   }
 }
 
@@ -130,7 +123,7 @@ export function withGlobalScope<T>(fn: () => T): { result: T; globals: GlobalDef
 
 export function createGlobalHandle<T>(
   id: string,
-  cppType: string,
+  _valueType: IRValueType,
   exprType: ExprType,
 ): GlobalHandle<T> {
   let cachedNode: IRReactiveNode<T> | undefined;
@@ -149,7 +142,7 @@ export function createGlobalHandle<T>(
         dependencies: [dep],
         exprType,
         sourceId: id,
-        property: 'value',
+        propertyKey: 'value',
         triggerType: 'on_value',
         sourceDomain: 'globals',
       });

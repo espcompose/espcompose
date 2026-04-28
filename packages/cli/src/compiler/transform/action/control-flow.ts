@@ -5,10 +5,10 @@ import {
   irWhileAction,
   irRepeatAction,
   irLambdaCondition,
+  valueTypeToExprType,
 } from '@espcompose/core/internals';
 import {
   translateScriptExprIR,
-  cppTypeToExprType,
   type GlobalExprInfo,
   type ScriptTransformContext,
 } from '../expr-compiler.js';
@@ -29,7 +29,7 @@ export function buildScriptCtxWithGlobals(ctx: ActionCompilerContext): ScriptTra
   const globalHandlesByName = new Map<string, GlobalExprInfo>();
   for (const [sym, gDef] of ctx.globalHandles) {
     const name = sym.getName();
-    globalHandlesByName.set(name, { globalId: gDef.id, cppType: gDef.cppType, exprType: cppTypeToExprType(gDef.cppType) });
+    globalHandlesByName.set(name, { globalId: gDef.id, valueType: gDef.valueType, exprType: valueTypeToExprType(gDef.valueType) });
   }
   return {
     triggerParamName: ctx.triggerParamName,

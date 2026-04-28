@@ -310,14 +310,12 @@ function restoreLambdaMarkers(value: unknown): unknown {
 /**
  * Serialize a IRReactiveNode as a lambda marker.
  *
- * Generates a placeholder lambda body; the actual target-specific code generation
- * happens in the target's lowering layer (e.g. esphome-target's lower-yaml.ts).
+ * The body is an opaque placeholder — the target's lowering layer
+ * (e.g. esphome-target's lower-yaml.ts) replaces it with the concrete
+ * code via the captured node reference (see `_captures.reactives`).
  */
 function serializeIRReactiveNode(node: IRReactiveNode): unknown {
-  if (node.kind === 'expression' && node.sourceId && node.property) {
-    return createLambdaScalar(`return id(${node.sourceId})${node.property};`);
-  }
-  return createLambdaScalar(`return espcompose::${node.nodeId}.get();`);
+  return createLambdaScalar(`/* reactive ${node.nodeId} */`);
 }
 
 /**

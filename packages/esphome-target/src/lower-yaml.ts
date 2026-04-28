@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Scalar } from 'yaml';
-import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRValueType } from '@espcompose/core/internals';
 import { getTriggerSignature } from '@espcompose/core/internals';
 import { injectHASensorImports } from './reactive-injector.js';
 import { injectReactiveBindingsRuntime } from './reactive-config.js';
@@ -19,6 +19,8 @@ import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
 import { lowerActionTree, type ActionLoweringContext } from './action-lowering.js';
 import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
+import { valueTypeToEsphomeParam, valueTypeToCpp } from './value-type-cpp.js';
+import { resolveEntityPropertyCppPath } from './entity-property-cpp.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 
@@ -140,13 +142,20 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
     }
 
     // HA entity expression — read directly from the ESPHome component
-    if (node.sourceId && node.property) {
-      const raw = `id(${node.sourceId})${node.property}`;
+    if (node.sourceId && node.propertyKey) {
+      if (!node.sourceDomain) {
+        throw new Error(
+          `[espcompose] HA entity expression missing sourceDomain ` +
+            `(sourceId='${node.sourceId}', propertyKey='${node.propertyKey}')`,
+        );
+      }
+      const raw = `id(${node.sourceId})${resolveEntityPropertyCppPath(node.sourceDomain, node.propertyKey)}`;
       const exprType = node.exprType;
       // Check if we need type conversion (e.g. stateText: bool → string)
       if (exprType === 'string' && node.sourceDomain && node.triggerType) {
         const sig = getTriggerSignature(node.sourceDomain, node.triggerType);
-        const sourceType = sig?.variables[0]?.cppType;
+        const sourceVT = sig?.variables[0]?.valueType;
+        const sourceType = sourceVT ? valueTypeToCpp(sourceVT) : undefined;
         if (sourceType && sourceType !== 'std::string') {
           return `return ${wrapInitialConversion(raw, sourceType)};`;
         }
@@ -366,7 +375,14 @@ export function lowerToYamlConfig(
       if (!finalConfig[section]) {
         finalConfig[section] = [];
       }
-      (finalConfig[section] as unknown[]).push(comp.config);
+      // Globals components carry a target-agnostic `valueType: IRValueType`.
+      // Convert it here to the concrete C++ `type:` keyword that ESPHome expects.
+      let outConfig: Record<string, unknown> = comp.config;
+      if (section === 'globals' && 'valueType' in comp.config) {
+        const { valueType, id, ...rest } = comp.config as { valueType: IRValueType; id: unknown } & Record<string, unknown>;
+        outConfig = { id, type: valueTypeToCpp(valueType), ...rest };
+      }
+      (finalConfig[section] as unknown[]).push(outConfig);
     }
   }
 
@@ -378,7 +394,7 @@ export function lowerToYamlConfig(
         params['closure_index'] = 'int';
       }
       if (s.userParams) {
-        for (const p of s.userParams) params[p.name] = p.cppType;
+        for (const p of s.userParams) params[p.name] = valueTypeToEsphomeParam(p.valueType);
       }
       const hasParams = Object.keys(params).length > 0;
 

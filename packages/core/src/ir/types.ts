@@ -20,15 +20,52 @@ import type { IRActionNode } from './action-types';
 /** ESPHome script execution mode. Controls behavior when re-triggered while already running. */
 export type ScriptMode = 'single' | 'restart' | 'queued' | 'parallel';
 
-/** C++ type for an ESPHome script parameter or closure-table field. */
-export type ScriptParamCppType = 'int' | 'float' | 'bool' | 'string' | 'const char*';
+// ────────────────────────────────────────────────────────────────────────────
+// IRValueType — target-agnostic value type descriptor
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Base scalar type. Always present on `IRValueType`. Target-agnostic — the
+ * lowering target (e.g. esphome-target) maps these to concrete C++ types.
+ */
+export type IRScalarType = 'int' | 'float' | 'bool' | 'string';
+
+/**
+ * Optional semantic qualifier on a value. Drives target-specific storage and
+ * code rewriting. Examples:
+ *   - 'id_ref' : value is a reference to an ESPHome component/widget id.
+ *                Stored as a string token; consumers may resolve via `id(...)`.
+ *   - 'entity' : value is a Home Assistant entity id.
+ */
+export type IRScalarFormat = 'id_ref' | 'entity';
+
+/**
+ * Target-agnostic value type descriptor used throughout the IR.
+ *
+ * Replaces ad-hoc backend-specific type strings. The lowering target owns the
+ * mapping from `IRValueType` to its concrete representation.
+ *
+ * Examples (logical):
+ *   { type: 'int' }                              → integer scalar
+ *   { type: 'string' }                           → string scalar
+ *   { type: 'string', format: 'id_ref' }         → identifier reference
+ *   { type: 'float', isArray: true }             → float array
+ */
+export interface IRValueType {
+  /** Base scalar — always present. */
+  readonly type: IRScalarType;
+  /** Semantic qualifier (e.g. `'id_ref'`). Optional. */
+  readonly format?: IRScalarFormat;
+  /** Collection flag. When true, the value is an array of `type`. */
+  readonly isArray?: boolean;
+}
 
 /** A single parameter declaration for a parameterized ESPHome script. */
 export interface IRScriptParam {
-  /** Parameter name (used as C++ identifier in the script body). */
+  /** Parameter name (used as identifier in the script body). */
   name: string;
-  /** C++ type emitted in the ESPHome `parameters:` block. */
-  cppType: ScriptParamCppType;
+  /** Target-agnostic value type. The lowering target maps this to a concrete type. */
+  valueType: IRValueType;
 }
 
 /**
@@ -47,15 +84,18 @@ export interface IRScriptParamRef {
 
 /**
  * Semantic kind of a closure field. Drives how the field is materialized in
- * the C++ closure-table struct and how body references are rewritten.
+ * the closure-table struct and how body references are rewritten.
  *
  *   - 'scalar'  : plain value (int/float/bool/string), stored in the table row
  *                 and referenced as `closure.<field>` in the script body.
- *   - 'id_ref'  : ESPHome component/widget ID (string). Stored as `const char*`
- *                 in the table; native YAML actions whose `id:` slot binds to
- *                 this field get rewritten to lambdas calling `id(closure.<field>)`.
- *   - 'entity'  : Home Assistant entity id (string). Same storage as id_ref;
- *                 entity-specific actions get rewritten via descriptor.
+ *   - 'id_ref'  : ESPHome component/widget ID. Stored as a string token (or
+ *                 lookup-table index); native YAML actions whose `id:` slot
+ *                 binds to this field get rewritten to lambdas calling
+ *                 `id(closure.<field>)`.
+ *   - 'entity'  : Home Assistant entity id. Same storage as id_ref; entity-
+ *                 specific actions get rewritten via descriptor.
+ *
+ * @deprecated Subsumed by `IRValueType.format`. Retained transitionally.
  */
 export type ClosureFieldKind = 'scalar' | 'id_ref' | 'entity';
 
@@ -66,12 +106,18 @@ export type ClosureFieldKind = 'scalar' | 'id_ref' | 'entity';
  * values populate rows in the same order.
  */
 export interface ClosureField {
-  /** C++ struct field name (also referenced in body as `closure.<name>`). */
+  /** Struct field name (also referenced in body as `closure.<name>`). */
   name: string;
-  /** Semantic kind — drives body-rewriting strategy. */
-  kind: ClosureFieldKind;
-  /** C++ type emitted in the generated struct. */
-  cppType: ScriptParamCppType;
+  /**
+   * Target-agnostic value type. Drives both target lowering (struct field
+   * type) and body-rewriting (presence of `format: 'id_ref' | 'entity'`).
+   *
+   * Examples:
+   *   { type: 'int' }                       — plain scalar
+   *   { type: 'int', format: 'id_ref' }     — index into id-ref lookup table
+   *   { type: 'string', format: 'entity' }  — HA entity id
+   */
+  valueType: IRValueType;
 }
 
 /** The deterministic, ordered shape of a script's closure table. */

@@ -79,12 +79,10 @@ export { INTRINSIC_INTENT_REGISTRY } from './intent-registry';
 
 // ── LVGL codegen tables (esphome-target) ───────────────────────────────────
 export {
-  LVGL_STYLE_PROP_TABLE,
   LVGL_REACTIVE_STYLE_PROPS,
-  LVGL_PART_FLAGS,
-  LVGL_STATE_FLAGS,
+  LVGL_PART_NAMES,
+  LVGL_STATE_NAMES,
 } from './lvgl-actions';
-export type { LvglStylePropDescriptor } from './lvgl-actions';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Demoted from public API — still accessible for tooling / target authors
@@ -99,9 +97,9 @@ export type { ScriptHandle } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
-export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, cppTypeToExprType } from './hooks/global-shared';
+export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, valueTypeToExprType } from './hooks/global-shared';
 export type { GlobalDefinition, GlobalHandle } from './hooks/global-shared';
-export { globalTypeToCpp, isArrayGlobalType } from './hooks/useGlobal';
+export { globalTypeToValueType, isArrayGlobalType } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useGlobal';
 export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
@@ -177,7 +175,8 @@ export {
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
   BuildSemanticIRInput, IRThemeData, IRScript,
-  IRScriptParam, IRScriptParamRef, ScriptParamCppType,
+  IRScriptParam, IRScriptParamRef,
+  IRScalarType, IRScalarFormat, IRValueType,
   ClosureField, ClosureFieldKind, ClosureShape, ClosureInstance, IRClosureValue,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,

@@ -14,7 +14,7 @@ import type { Signal } from '@espcompose/core';
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {
   const light = useHAEntity('light.office');
-  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","property":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}});
+  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",triggerType:"on_state",sourceDomain:"binary_sensor"}],expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","propertyKey":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}});
 
   return (
     <lvgl-label text={text as unknown as string} />

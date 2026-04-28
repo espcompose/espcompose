@@ -2,6 +2,8 @@
 
 /* eslint-disable */
 
+import type { IRValueType } from '../ir/types.js';
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export type SensorPlatform = 'binary_sensor' | 'sensor' | 'text_sensor';
@@ -10,7 +12,7 @@ export type UICategory = 'toggleable' | 'sensor' | 'binary' | 'cover' | 'button'
 
 export interface EntityPropertyDescriptor {
   readonly name: string;
-  readonly cppPath: string;
+  readonly propertyKey: string;
   readonly triggerType: string;
   readonly exprType: ExprType;
   readonly sourceDomain: string;
@@ -26,7 +28,7 @@ export interface EntityActionDescriptor {
 export interface EntityDomainDescriptor {
   readonly domain: string;
   readonly sensorPlatform: SensorPlatform;
-  readonly cppType: string;
+  readonly valueType: IRValueType;
   readonly defaultState: string;
   readonly activeState: string | null;
   readonly uiCategory: UICategory;
@@ -35,7 +37,7 @@ export interface EntityDomainDescriptor {
 }
 
 export interface ReactivePropertyConfig {
-  readonly property: string;
+  readonly propertyKey: string;
   readonly triggerType: string;
   readonly sourceDomain: string;
   readonly exprType: ExprType;
@@ -47,14 +49,14 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   light: {
     domain: "light",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
     properties: [
-      { name: "isOn", cppPath: ".state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
-      { name: "brightness", cppPath: ".current_values.get_brightness()", triggerType: "on_state", exprType: "float", sourceDomain: "light" },
-      { name: "stateText", cppPath: ".state", triggerType: "on_state", exprType: "string", sourceDomain: "text_sensor" },
+      { name: "isOn", propertyKey: "state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
+      { name: "brightness", propertyKey: "brightness", triggerType: "on_state", exprType: "float", sourceDomain: "light" },
+      { name: "stateText", propertyKey: "state", triggerType: "on_state", exprType: "string", sourceDomain: "text_sensor" },
     ],
     actions: [
       { name: "toggle", service: "toggle", resultState: null, defaultAttributes: null },
@@ -65,12 +67,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   switch: {
     domain: "switch",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
     properties: [
-      { name: "isOn", cppPath: ".state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
+      { name: "isOn", propertyKey: "state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
     ],
     actions: [
       { name: "toggle", service: "toggle", resultState: null, defaultAttributes: null },
@@ -81,13 +83,13 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   sensor: {
     domain: "sensor",
     sensorPlatform: "sensor",
-    cppType: "float",
+    valueType: {"type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
     properties: [
-      { name: "value", cppPath: ".state", triggerType: "on_value", exprType: "float", sourceDomain: "sensor" },
-      { name: "stateText", cppPath: ".state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
+      { name: "value", propertyKey: "state", triggerType: "on_value", exprType: "float", sourceDomain: "sensor" },
+      { name: "stateText", propertyKey: "state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
     ],
     actions: [
     ],
@@ -95,13 +97,13 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   binary_sensor: {
     domain: "binary_sensor",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "binary",
     properties: [
-      { name: "isOn", cppPath: ".state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
-      { name: "stateText", cppPath: ".state", triggerType: "on_state", exprType: "string", sourceDomain: "text_sensor" },
+      { name: "isOn", propertyKey: "state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
+      { name: "stateText", propertyKey: "state", triggerType: "on_state", exprType: "string", sourceDomain: "text_sensor" },
     ],
     actions: [
     ],
@@ -109,12 +111,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   fan: {
     domain: "fan",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
     properties: [
-      { name: "isOn", cppPath: ".state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
+      { name: "isOn", propertyKey: "state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
     ],
     actions: [
       { name: "toggle", service: "toggle", resultState: null, defaultAttributes: null },
@@ -125,12 +127,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   cover: {
     domain: "cover",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "closed",
     activeState: "open",
     uiCategory: "cover",
     properties: [
-      { name: "isOpen", cppPath: ".position", triggerType: "on_state", exprType: "float", sourceDomain: "cover" },
+      { name: "isOpen", propertyKey: "position", triggerType: "on_state", exprType: "float", sourceDomain: "cover" },
     ],
     actions: [
       { name: "open", service: "open", resultState: "open", defaultAttributes: null },
@@ -141,12 +143,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   number: {
     domain: "number",
     sensorPlatform: "sensor",
-    cppType: "float",
+    valueType: {"type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
     properties: [
-      { name: "value", cppPath: ".state", triggerType: "on_value", exprType: "float", sourceDomain: "sensor" },
+      { name: "value", propertyKey: "state", triggerType: "on_value", exprType: "float", sourceDomain: "sensor" },
     ],
     actions: [
     ],
@@ -154,12 +156,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   select: {
     domain: "select",
     sensorPlatform: "text_sensor",
-    cppType: "std::string",
+    valueType: {"type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
     properties: [
-      { name: "stateText", cppPath: ".state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
+      { name: "stateText", propertyKey: "state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
     ],
     actions: [
     ],
@@ -167,12 +169,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   text_sensor: {
     domain: "text_sensor",
     sensorPlatform: "text_sensor",
-    cppType: "std::string",
+    valueType: {"type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
     properties: [
-      { name: "stateText", cppPath: ".state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
+      { name: "stateText", propertyKey: "state", triggerType: "on_value", exprType: "string", sourceDomain: "text_sensor" },
     ],
     actions: [
     ],
@@ -180,7 +182,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   button: {
     domain: "button",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "",
     activeState: null,
     uiCategory: "button",
@@ -193,12 +195,12 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   lock: {
     domain: "lock",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "locked",
     activeState: "unlocked",
     uiCategory: "toggleable",
     properties: [
-      { name: "isOn", cppPath: ".state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
+      { name: "isOn", propertyKey: "state", triggerType: "on_state", exprType: "bool", sourceDomain: "binary_sensor" },
     ],
     actions: [
       { name: "lock", service: "lock", resultState: "locked", defaultAttributes: null },
@@ -208,7 +210,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   climate: {
     domain: "climate",
     sensorPlatform: "binary_sensor",
-    cppType: "bool",
+    valueType: {"type":"bool"},
     defaultState: "off",
     activeState: null,
     uiCategory: "sensor",
@@ -248,9 +250,9 @@ export function defaultStateForDomain(domain: string): string {
 // ── Reactive property map (flattened from domain properties) ─────────────────
 
 export const REACTIVE_PROPERTY_MAP: Readonly<Record<string, ReactivePropertyConfig>> = {
-  isOn: { property: ".state", triggerType: "on_state", sourceDomain: "binary_sensor", exprType: "bool" },
-  brightness: { property: ".current_values.get_brightness()", triggerType: "on_state", sourceDomain: "light", exprType: "float" },
-  stateText: { property: ".state", triggerType: "on_state", sourceDomain: "text_sensor", exprType: "string" },
-  value: { property: ".state", triggerType: "on_value", sourceDomain: "sensor", exprType: "float" },
-  isOpen: { property: ".position", triggerType: "on_state", sourceDomain: "cover", exprType: "float" },
+  isOn: { propertyKey: "state", triggerType: "on_state", sourceDomain: "binary_sensor", exprType: "bool" },
+  brightness: { propertyKey: "brightness", triggerType: "on_state", sourceDomain: "light", exprType: "float" },
+  stateText: { propertyKey: "state", triggerType: "on_state", sourceDomain: "text_sensor", exprType: "string" },
+  value: { propertyKey: "state", triggerType: "on_value", sourceDomain: "sensor", exprType: "float" },
+  isOpen: { propertyKey: "position", triggerType: "on_state", sourceDomain: "cover", exprType: "float" },
 };

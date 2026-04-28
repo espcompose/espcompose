@@ -97,7 +97,7 @@ export interface IRExprThemeRead {
 export interface IRExprEntityProp {
   readonly kind: 'entity_prop';
   readonly entityId: string;
-  readonly property: string;
+  readonly propertyKey: string;
   readonly type: ExprType;
 }
 
@@ -124,7 +124,7 @@ export interface IRExprTriggerVar {
  * Multiplexed expression — selects one of N case expressions by an index.
  *
  * Used by useOverlay() for shared overlay widget subtrees: the `index` is read
- * from a mux signal (`Signal<int32_t>`), and each case expression yields the
+ * from a mux signal (an integer signal), and each case expression yields the
  * value for one popup instance. Backends lower this to a switch / IIFE.
  *
  * The mux memo's *expression* contains direct reads of per-case sources, but

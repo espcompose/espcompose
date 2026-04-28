@@ -1,61 +1,58 @@
-## Plan: Pure Core — Eliminate C++ Knowledge from `@espcompose/core`
+## Plan: Phase G — Decouple ESPHome Specifics from Core IR
 
-Replace every C++ string/type in src with a target-agnostic, structured `IRValueType` value (`{ type, format?, isArray? }`). Move all C++ mapping functions to `@espcompose/esphome-target`. Replace literal C++ member-access expressions in entity metadata with semantic property keys; the target owns the C++ resolution. Preserve user ergonomics by keeping `number` in user-facing APIs — only the IR layer changes. **Zero C++ leakage tolerated** — any case where the lowering can't determine the C++ representation from `IRValueType` + semantic key is a blocker that must be raised, not worked around.
+The IR layer in `@espcompose/core` currently encodes ESPHome YAML schema vocabulary, ESPHome trigger names, ESPHome platform names, ESPHome action paths, and ESPHome serialization shape directly into IR records. Phase G replaces these with a target-neutral IR vocabulary, and moves all ESPHome-shape lowering into `@espcompose/esphome-target`. Core becomes a true semantic layer; the target owns presentation. **No silent fallbacks** — every translation table throws on unknown semantic input.
 
-### Naming Convention (NEW STANDARD)
-```ts
-// packages/core/src/ir/types.ts
-export type IRScalarType   = 'int' | 'float' | 'bool' | 'string';
-export type IRScalarFormat = 'id_ref' | 'entity';
+### Inventory of leaks (high-severity)
 
-export interface IRValueType {
-  readonly type: IRScalarType;       // base scalar — always present
-  readonly format?: IRScalarFormat;  // semantic qualifier
-  readonly isArray?: boolean;        // collection flag
-}
-```
-- Field name on parent: **`valueType`** (e.g. `IRScriptParam.valueType`, `ClosureField.valueType`, `GlobalDefinition.valueType`, `TriggerVariable.valueType`).
-- Examples:
-  - `{ type: 'int' }` → C++ `int`
-  - `{ type: 'string' }` → C++ `std::string`
-  - `{ type: 'string', format: 'id_ref' }` → C++ `const char*`
-  - `{ type: 'float', isArray: true }` → C++ `std::vector<float>`
-  - `{ type: 'int', format: 'id_ref' }` → index into id-ref lookup table
-
-### Architectural Invariant (NEW)
-Files in `packages/core/src/**` MUST NOT contain: `cpp` in identifiers, `std::`, `int*_t`/`uint*_t`, `const char*`, C++ mapping functions, or literal C++ member-access expressions. Verified by repo-wide grep.
+| Symbol | File | Leak |
+|---|---|---|
+| `IRBinding.targetType / targetProp / targetId / part / state` | hooks/useReactiveScope.ts | YAML widget key, snake_case prop, ESPHome `id:`, snake_case selectors |
+| `IRDependency.triggerType / sourceDomain` | reactive-node.ts | `'on_state'`/`'on_value'`, ESPHome platform names |
+| `IRHAEntity.sensorType / generatedId` | useReactiveScope.ts | ESPHome platform classification, ESPHome id |
+| `IRComponent.section` | useReactiveScope.ts | YAML section key |
+| `IRNativeAction.actionKey` | ir/action-types.ts | `'light.toggle'` action paths |
+| `IRDelayAction.duration` | ir/action-types.ts | `'500ms'` ESPHome duration syntax |
+| `lvglWidgetToPlain` / `buildLvglSection` | lvgl.ts | Emits ESPHome YAML shape (`{widgetKey:{...,widgets:[...]}}`, `top_layer`, `state:{}` wrapper, overlay `obj` containers, snake_case keys) |
+| `camelToSnake / keysToSnakeCase / toYamlKey / stripUndefined` | serialize.ts | YAML utilities |
+| Style value maps (`OPACITY_VALUES` etc.) | style-mapping.ts | LVGL C macro spellings |
 
 ### Phases
 
-**A. Add `IRValueType` (additive)** — Introduce `IRScalarType`, `IRScalarFormat`, `IRValueType` alongside existing types. *Blocks B, D.*
+**G1 — Style value-map extraction** *(low risk, quick win)*  
+Mirror the `LVGL_PART_FLAGS` fix at scale. Lift every C-macro spelling out of style-mapping.ts's `valueMap` entries into a target-side translation table with load-time invariant. Move `transformGridTrackValue` (FR/CONTENT) and `auto-layout.type` injection to target.
 
-**B. Rename IR fields: `cppType → valueType: IRValueType`** — `IRScriptParam`, `ClosureField`, all 3 closure descriptors, `useScript` hook. **Delete `ClosureField.kind`** (subsumed by `valueType.format`). Drop `'const char*'` (encoded as `{ type: 'string', format: 'id_ref' }`). Update CLI compiler + target. *Blocks C. Parallel with D, E.*
+**G2 — Replace `triggerType` enum with semantic value-kind**  
+Drop `'on_state'`/`'on_value'` from `IRDependency` and `IRReactiveNode`. The target derives the trigger choice from `IRValueType` (bool → on_state, numeric → on_value).
 
-**C. Move C++ mapping to esphome-target** — Delete `globalTypeToCpp`, `retainedTypeToCpp`, `cppTypeToExprType` from core. NEW `value-type-cpp.ts` in target with `valueTypeToCpp` (handles `format` and `isArray`). Replace `GlobalDefinition.cppType: string` with `valueType: IRValueType` (no separate `isArray` sibling — it's in `valueType.isArray`). Add token-only `valueTypeToExprType` helper in core. *Blocks F.*
+**G3 — Move LVGL widget serialization shape to esphome-target** *(largest step)*  
+Introduce a target-neutral `IRWidget`/`IRWidgetTree`. lvgl.ts returns IR; new `lvgl-yaml-emitter.ts` in esphome-target owns ESPHome shape (`top_layer`, `state:{}` wrapper, overlay containers, snake_case, auto-id). serialize.ts splits — case utilities move to target. E2E snapshots are the regression gate (must stay byte-identical).
 
-**D. Trigger registry: `cppType → valueType`** — Update `TriggerVariable`, hand-written entries, entity-domains.json, schema, generators. Regenerate. Target consumes `valueType`. *Blocks F. Parallel with B, E.*
+**G4 — Move ESPHome action key strings out of `IRNativeAction`**  
+Replace `actionKey: 'light.toggle'` with `{ domain: 'light', operation: 'toggle' }`. Replace `IRDelayAction.duration: '500ms'` with `{ ms: number } | IRScriptParamRef`. Target formats both.
 
-**E. Entity property `cppPath` → semantic key + `EntityDomainDescriptor.valueType`** — Replace `.state`, `.current_values.get_brightness()`, `.position` with `'state'`, `'brightness'`, `'position'`. Add `resolveCppPath(domain, propertyKey)` in target. Rename `IRReactiveNode.property → propertyKey`. Rename `EntityDomainDescriptor.cppType → valueType`. *Blocks F. Parallel with B, D.*
+**G5 — Move ESPHome platform classification out of `useHAEntity`**  
+HA-domain → ESPHome `sensorType` mapping (`light`→`binary_sensor`, etc.) moves to esphome-target. `IRHAEntity` slims down to `entityId / domain / attribute`. Target mints `generatedId`.
 
-**F. Documentation + repo memory** — Update `ir-types.instructions.md`, `targets.instructions.md`, add invariant to repo memory.
+**G6 — Final guard & residuals**  
+CI grep guard for the full leak inventory. Audit `IRComponent.section` (needs `kind→section` mapping). Replace `ExprType`'s `'color'`/`'font_ptr'` with `IRValueType` (the unfinished Phase E2). Audit markers.ts LambdaCode comment.
 
-### Key Decisions
-- **`isArray` lives inside `IRValueType`** — `std::vector<int>` is one type, not "an int with array flag". Naming `IRValueType` (not `IRScalar`) reflects that arrays are first-class.
-- **`format` qualifier replaces `ClosureField.kind`** — kind values map: `'scalar'` → format undefined; `'id_ref'` → `format: 'id_ref'`; `'entity'` → `format: 'entity'`. Future qualifiers extend the union without restructuring.
-- **No `Float` branded type** — TS arithmetic widens brands to `number`, would force `as Float` after every operation across the entire generated API. User-facing types stay `number`; only IR speaks `IRValueType`.
-- **`'const char*'` removed** — encoded via `format: 'id_ref' | 'entity'`. Closure descriptors storing *indexes* use `{ type: 'int', format: 'id_ref' }` — `int` is the storage, `format` is the semantic.
-- **Generated user-facing types stay `number`** — int/float distinction preserved in metadata only.
+### Cross-phase concerns
 
-### Concerns to Raise (DO NOT silently work around)
-1. Any caller of `cppTypeToExprType` passing values not derivable from `IRValueType` — fix caller, don't preserve the C++ path.
-2. `(domain, propertyKey)` resolver collisions — surface immediately.
-3. Any target code reaching back into core for a C++ string — make target own it.
-4. Generated files that can't be made C++-free without codegen pipeline changes — surface required change.
-5. Any user-facing scenario forcing C++ types into core — should not exist; raise immediately.
-6. Closure-descriptor consumers that treat `kind` as something other than what `format` carries — raise; do not preserve `kind`.
+- **E2E snapshot stability is the regression gate** — especially for G3. Snapshot churn = lowering bug, not acceptance signal.
+- **No silent fallbacks** — every target table throws on unknown semantic input (continues no-cpp strict-error mandate).
+- **No public API changes** — internal IR only. JSX, hooks, action builders all keep current shapes.
+- Build hygiene: `pnpm build` from root after each phase; `pnpm test` must stay EXIT=0.
 
-### Verification
-- `pnpm build:full` after each phase
-- E2E snapshot diff empty for Phases B/D/E (rename only — emitted YAML/C++ identical)
-- Final grep: `grep -rE "cpp[A-Z]|std::|int[0-9]+_t|uint[0-9]+_t|const char\*" packages/core/src/` → zero hits
-- Suggested as a CI / pre-PR check
+### Decisions to confirm before execution
+
+1. **G3 `IRWidget` shape**: open `{ kind: string, props: Record<string, unknown> }` (extensible) vs discriminated union (compile-time safe but closed). **Recommendation: open shape**, with `LVGL_UPDATABLE_WIDGETS` providing soft validation.
+2. **G4 action key split**: `{ domain, operation }` vs opaque enum vs keep dotted string as semantic key. **Recommendation: `{ domain, operation }`**.
+3. **Phase ordering**: G1 → G2 → G3 → G4 → G5 → G6. Alternative: bundle G2+G5 (both touch HA wiring). **Recommendation: listed order** — G1/G2 are warm-ups before the G3 risk surface.
+4. **Subsume Phase E2 (`schema-action-extractor.ts` IRValueType threading) and the `ExprType` cleanup into G6**? **Recommendation: yes** — same concern.
+
+### Out of scope
+
+- Adding a second target (web simulator, Tasmota) — this plan creates the seam, doesn't fill it.
+- User-facing JSX/hook API changes.
+- C++ runtime changes.
+- LVGL widget trigger vocabulary refactor (`on_press`, `on_click`) — same family but separate work item.

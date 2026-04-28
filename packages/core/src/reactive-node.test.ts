@@ -30,13 +30,13 @@ describe('IRReactiveNode', () => {
         dependencies: [{ kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
         exprType: 'bool',
         sourceId: 'ha_light_x',
-        property: '.state',
+        propertyKey: 'state',
         triggerType: 'on_state',
         sourceDomain: 'binary_sensor',
       });
       expect(node.kind).toBe('expression');
       expect(node.sourceId).toBe('ha_light_x');
-      expect(node.property).toBe('.state');
+      expect(node.propertyKey).toBe('state');
       expect(node.exprType).toBe('bool');
     });
 

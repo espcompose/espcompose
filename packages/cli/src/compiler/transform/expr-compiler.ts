@@ -13,9 +13,9 @@
 
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType } from '@espcompose/core/internals';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRValueType } from '@espcompose/core/internals';
 import {
-  getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP,
+  getDomainSensorType, hashGlobalFingerprint, globalTypeToValueType, valueTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
 } from '@espcompose/core/internals';
@@ -76,7 +76,8 @@ export interface DependencyInfo {
 
 export interface GlobalExprInfo {
   globalId: string;
-  cppType: string;
+  /** Target-agnostic value type. The lowering target maps this to a concrete representation. */
+  valueType: IRValueType;
   /** ExprType for the IR node, e.g. 'int', 'float', 'bool', 'string'. */
   exprType: ExprType;
 }
@@ -569,30 +570,6 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
 // Global handle scanning
 // ────────────────────────────────────────────────────────────────────────────
 
-export function cppTypeToExprType(cppType: string): ExprType {
-  switch (cppType) {
-    case 'int': case 'int32_t': case 'int16_t': case 'int8_t':
-    case 'uint8_t': case 'uint16_t': case 'uint32_t':
-      return 'int';
-    case 'float': case 'double':
-      return 'float';
-    case 'bool':
-      return 'bool';
-    case 'std::string':
-      return 'string';
-    case 'std::vector<int>':
-      return 'int_array';
-    case 'std::vector<float>':
-      return 'float_array';
-    case 'std::vector<bool>':
-      return 'bool_array';
-    case 'std::vector<std::string>':
-      return 'string_array';
-    default:
-      return 'int';
-  }
-}
-
 /**
  * Scan a TS AST node for useGlobal() and useRetainedGlobal() calls,
  * populating a symbol → GlobalExprInfo map.
@@ -620,13 +597,13 @@ export function scanForGlobalHandles(
       if (isCoreExportCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
         const typeArg = init.arguments[0];
         if (ts.isStringLiteral(typeArg)) {
-          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const valueType = globalTypeToValueType(typeArg.text as GlobalType);
           const varName = node.name.text;
           const fingerprint = `${varName}_${counter.value++}`;
           const globalId = hashGlobalFingerprint(fingerprint);
           const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
-            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+            globals.set(sym, { globalId, valueType, exprType: valueTypeToExprType(valueType) });
           }
         }
       }
@@ -636,11 +613,11 @@ export function scanForGlobalHandles(
         const typeArg = init.arguments[0];
         const keyArg = init.arguments[1];
         if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const valueType = globalTypeToValueType(typeArg.text as GlobalType);
           const globalId = hashGlobalFingerprint(keyArg.text);
           const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
-            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+            globals.set(sym, { globalId, valueType, exprType: valueTypeToExprType(valueType) });
           }
         }
       }
@@ -848,7 +825,7 @@ function compilePropertyAccessIR(
         sourceId: globalInfo.globalId,
         triggerType: 'on_value',
         sourceDomain: 'globals',
-        valueType: globalInfo.cppType,
+        valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
       });
       return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
@@ -861,7 +838,7 @@ function compilePropertyAccessIR(
         sourceId: globalInfo.globalId,
         triggerType: 'on_value',
         sourceDomain: 'globals',
-        valueType: globalInfo.cppType,
+        valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
       });
       const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
@@ -881,8 +858,8 @@ function compilePropertyAccessIR(
           valueType: signalInfo.valueType,
           sourceType: signalInfo.sourceType,
         });
-        const exprType = valueTypeToExprType(signalInfo.valueType);
-        return { kind: 'entity_prop', entityId: entity.entityId, property: propName, type: exprType };
+        const exprType = signalValueTypeToExprType(signalInfo.valueType);
+        return { kind: 'entity_prop', entityId: entity.entityId, propertyKey: propName, type: exprType };
       }
     }
   }
@@ -993,7 +970,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
           sourceId: globalInfo.globalId,
           triggerType: 'on_value',
           sourceDomain: 'globals',
-          valueType: globalInfo.cppType,
+          valueType: valueTypeToExprType(globalInfo.valueType),
           sourceType: 'global',
         });
         const indexArg = compileExprIR(node.arguments[0], ctx);
@@ -1093,10 +1070,12 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
 }
 
 /**
- * Cast valueType string to ExprType. Since valueType already uses ExprType
- * values, this is essentially an identity function with type validation.
+ * Cast a SignalPropertyInfo.valueType string to ExprType. Since these
+ * strings are already ExprType-aligned, this is essentially an identity
+ * function with validation. Distinct from core's `valueTypeToExprType`,
+ * which takes an `IRValueType` object.
  */
-function valueTypeToExprType(valueType: string): ExprType {
+function signalValueTypeToExprType(valueType: string): ExprType {
   const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
   return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
 }

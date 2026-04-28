@@ -73,7 +73,7 @@ function exprFingerprint(expr: IRExprNode): string {
     case 'table_lookup':
       return `TBL:${expr.table}:(${exprFingerprint(expr.index)})`;
     case 'entity_prop':
-      return `EP:${expr.entityId}:${expr.property}`;
+      return `EP:${expr.entityId}:${expr.propertyKey}`;
     case 'global_read':
       return `GL:${expr.globalId}`;
     case 'component_read':

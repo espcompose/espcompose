@@ -21,6 +21,7 @@ import type {
   ClosureInstance,
   IRClosureValue,
 } from '@espcompose/core/internals';
+import { valueTypeToCpp, valueTypeZeroLiteral } from './value-type-cpp.js';
 
 /** Per-template closure table emission. */
 export interface ClosureTableDecl {
@@ -136,14 +137,14 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Build id_ref index maps ──
   const idRefIndices = new Map<string, { ids: string[]; indexByRow: number[] }>();
   for (const f of decl.fields) {
-    if (f.kind === 'id_ref') {
+    if (f.valueType.format === 'id_ref') {
       idRefIndices.set(f.name, buildIdRefIndex(f.name, decl.rows));
     }
   }
 
   // ── Typed-pointer lookup arrays for id_ref fields ──
   for (const f of decl.fields) {
-    if (f.kind !== 'id_ref') continue;
+    if (f.valueType.format !== 'id_ref') continue;
     const idx = idRefIndices.get(f.name)!;
     if (idx.ids.length === 0) continue;
     // Strip the _idx suffix from the field name to get the binding name,
@@ -164,7 +165,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Struct ──
   lines.push(`struct ${decl.structName} {`);
   for (const f of decl.fields) {
-    lines.push(`  ${f.cppType} ${f.name};`);
+    lines.push(`  ${valueTypeToCpp(f.valueType)} ${f.name};`);
   }
   lines.push('};');
 
@@ -181,7 +182,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
     const cells = decl.fields.map((f) => {
       const val = row.values[f.name];
       // For id_ref fields, emit the integer index into the lookup array.
-      if (f.kind === 'id_ref') {
+      if (f.valueType.format === 'id_ref') {
         const idx = idRefIndices.get(f.name);
         return idx ? String(idx.indexByRow[i]) : '0';
       }
@@ -200,13 +201,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
 
 /** Zero-value literal for a field whose row entry is missing. */
 function defaultCppLiteral(f: ClosureField): string {
-  switch (f.cppType) {
-    case 'int':         return '0';
-    case 'float':       return '0.0f';
-    case 'bool':        return 'false';
-    case 'string':      return '""';
-    case 'const char*': return 'nullptr';
-  }
+  return valueTypeZeroLiteral(f.valueType);
 }
 
 /**

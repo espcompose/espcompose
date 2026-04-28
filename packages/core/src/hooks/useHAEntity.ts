@@ -114,7 +114,7 @@ function makeExpressionNode<T>(
   sourceId: string,
   sourceDomain: string,
   triggerType = 'on_state',
-  property = '.state',
+  property = 'state',
   exprTypeOverride?: ExprType,
   entityId?: string,
   semanticProp?: string,
@@ -132,12 +132,12 @@ function makeExpressionNode<T>(
     dependencies: [dep],
     exprType,
     sourceId,
-    property,
+    propertyKey: property,
     triggerType,
     sourceDomain,
   });
   if (entityId && semanticProp) {
-    node.exprIR = { kind: 'entity_prop', entityId, property: semanticProp, type: exprType };
+    node.exprIR = { kind: 'entity_prop', entityId, propertyKey: semanticProp, type: exprType };
   }
   return node as unknown as Signal<T>;
 }
@@ -170,9 +170,9 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
   });
 
   const binding: LightBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
-    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'on_value', '.state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
+    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'on_value', 'state', undefined, entityId, 'brightness'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -195,8 +195,8 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
   });
 
   return createTrackingProxy({
-    value: makeExpressionNode<number>(sourceId, 'sensor', 'on_value', '.state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    value: makeExpressionNode<number>(sourceId, 'sensor', 'on_value', 'state', undefined, entityId, 'value'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
   });
 }
 
@@ -213,14 +213,14 @@ function createBinarySensorBinding(sourceId: string, entityId: string): BinarySe
   });
 
   return createTrackingProxy({
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
   });
 }
 
 function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding {
   const binding: SwitchBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -231,7 +231,7 @@ function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding 
 
 function createFanBinding(sourceId: string, entityId: string): FanBinding {
   const binding: FanBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -242,7 +242,7 @@ function createFanBinding(sourceId: string, entityId: string): FanBinding {
 
 function createCoverBinding(sourceId: string, entityId: string): CoverBinding {
   const binding: CoverBinding = {
-    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOpen'),
+    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOpen'),
     open() { /* no-op */ },
     close() { /* no-op */ },
     stop() { /* no-op */ },

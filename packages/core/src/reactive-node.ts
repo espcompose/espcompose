@@ -76,7 +76,7 @@ export interface IRReactiveNodeConfig {
   /** ESPHome component ID of the source (set for kind='expression'). */
   sourceId?: string;
   /** Semantic property name on the source entity (e.g. 'isOn', 'brightness'). */
-  property?: string;
+  propertyKey?: string;
   /** Which trigger to subscribe to (set for kind='expression'). */
   triggerType?: string;
   /** Component domain for trigger registry lookup (set for kind='expression'). */
@@ -101,7 +101,7 @@ export class IRReactiveNode<T = unknown> {
 
   // ── Single-source metadata (set for kind='expression') ─────────────────
   readonly sourceId?: string;
-  readonly property?: string;
+  readonly propertyKey?: string;
   readonly triggerType?: string;
   readonly sourceDomain?: string;
 
@@ -125,7 +125,7 @@ export class IRReactiveNode<T = unknown> {
     this.dependencies = config.dependencies;
     this.exprType = config.exprType;
     this.sourceId = config.sourceId;
-    this.property = config.property;
+    this.propertyKey = config.propertyKey;
     this.triggerType = config.triggerType;
     this.sourceDomain = config.sourceDomain;
     this.nodeId = `${config.kind}_${Math.random().toString(36).slice(2, 11)}`;

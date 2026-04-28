@@ -65,7 +65,7 @@ export function compileActionCall(
           return compileGlobalSet(call, globalDef, ctx);
         }
         if (methodName === 'push') return compileArrayPush(call, globalDef, ctx);
-        if (methodName === 'clear') return [irArrayClear(globalDef.id, globalDef.cppType)];
+        if (methodName === 'clear') return [irArrayClear(globalDef.id, globalDef.valueType)];
         return emitError(call, ctx,
           `Global handle does not support .${methodName}(). ` +
           'Supported: .set(), .push(), .clear() (arrays) or .set() (scalars).');

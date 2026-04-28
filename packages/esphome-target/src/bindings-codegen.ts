@@ -9,7 +9,8 @@
 // instance that owns setup/loop lifecycle for the dependency graph.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { LVGL_STYLE_PROP_TABLE, LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '@espcompose/core/internals';
+import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-selector-flags';
+import { LVGL_STYLE_PROP_TABLE } from './lvgl-style-prop-table';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -578,8 +579,16 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
  * Returns e.g. 'LV_PART_MAIN | LV_STATE_DEFAULT' or 'LV_PART_INDICATOR | LV_STATE_PRESSED'.
  */
 function computeStyleFlag(binding: WidgetBindingDecl): string {
-  const partFlag = LVGL_PART_FLAGS[binding.part ?? 'main'] ?? 'LV_PART_MAIN';
-  const stateFlag = LVGL_STATE_FLAGS[binding.state ?? 'default'] ?? 'LV_STATE_DEFAULT';
+  const partKey = binding.part ?? 'main';
+  const stateKey = binding.state ?? 'default';
+  const partFlag = LVGL_PART_FLAGS[partKey];
+  const stateFlag = LVGL_STATE_FLAGS[stateKey];
+  if (!partFlag) {
+    throw new Error(`Unknown LVGL part '${partKey}' for widget binding`);
+  }
+  if (!stateFlag) {
+    throw new Error(`Unknown LVGL state '${stateKey}' for widget binding`);
+  }
   return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
 }
 

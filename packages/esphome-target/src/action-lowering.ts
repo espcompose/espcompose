@@ -14,9 +14,11 @@ import type {
   IRExprNode,
   IRNativeAction,
   IRRefSlot,
+  IRValueType,
 } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp.js';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './action-cpp-emitters.js';
+import { valueTypeToCpp } from './value-type-cpp.js';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -155,7 +157,8 @@ function lowerCondition(condition: IRCondition, ctx: ActionLoweringContext): unk
  * Lower the value of a global_set action to a C++ expression string.
  * Handles IRActionParam (literal, trigger_var) and IRExprNode (compiled expression).
  */
-function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string, ctx: ActionLoweringContext): string {
+function lowerGlobalSetValue(value: IRActionParam | IRExprNode, valueType: IRValueType, ctx: ActionLoweringContext): string {
+  const cppType = valueTypeToCpp(valueType);
   if (typeof value === 'object' && value !== null && 'kind' in value) {
     switch (value.kind) {
       case 'literal': {
@@ -467,7 +470,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
 
     case 'global_set': {
-      const valueStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      const valueStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         // Reactive global — write through BoundSignal (also writes native storage) + flush
         const sigName = `sig_global_${action.globalId}`;
@@ -481,8 +484,8 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     }
 
     case 'array_set': {
-      const idxStr = lowerGlobalSetValue(action.index, 'int', ctx);
-      const valStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      const idxStr = lowerGlobalSetValue(action.index, { type: 'int' }, ctx);
+      const valStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
@@ -495,7 +498,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     }
 
     case 'array_push': {
-      const valStr = lowerGlobalSetValue(action.value, action.cppType, ctx);
+      const valStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(

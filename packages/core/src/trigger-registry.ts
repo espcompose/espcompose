@@ -13,12 +13,13 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { ENTITY_DOMAIN_TRIGGERS } from './generated/entity-domains-triggers.js';
+import type { IRValueType } from './ir/types.js';
 
 export interface TriggerVariable {
   /** Variable name available in the trigger lambda (e.g. `x`). */
   name: string;
-  /** C++ type of the variable (e.g. `bool`, `float`, `std::string`). */
-  cppType: string;
+  /** Target-agnostic value type. Lowering targets map to concrete representations. */
+  valueType: IRValueType;
   /** TypeScript type equivalent for type-checking (e.g. `boolean`, `number`, `string`). */
   tsType: string;
 }
@@ -109,21 +110,21 @@ function withTypedArgs(sig: TriggerSignature): Record<string, TriggerSignature> 
 }
 
 const LVGL_NUMBER_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', cppType: 'float', tsType: 'number' }],
+  variables: [{ name: 'x', valueType: { type: 'float' }, tsType: 'number' }],
 };
 
 const LVGL_BOOLEAN_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', cppType: 'bool', tsType: 'boolean' }],
+  variables: [{ name: 'x', valueType: { type: 'bool' }, tsType: 'boolean' }],
 };
 
 const LVGL_TEXT_VALUE: TriggerSignature = {
-  variables: [{ name: 'text', cppType: 'std::string', tsType: 'string' }],
+  variables: [{ name: 'text', valueType: { type: 'string' }, tsType: 'string' }],
 };
 
 const LVGL_SELECT_VALUE: TriggerSignature = {
   variables: [
-    { name: 'x', cppType: 'int', tsType: 'number' },
-    { name: 'text', cppType: 'std::string', tsType: 'string' },
+    { name: 'x', valueType: { type: 'int' }, tsType: 'number' },
+    { name: 'text', valueType: { type: 'string' }, tsType: 'string' },
   ],
 };
 

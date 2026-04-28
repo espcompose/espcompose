@@ -29,7 +29,7 @@ import { assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
 import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
-import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
+import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './lvgl-actions';
 import {
   camelToSnake,
   extractElementProps,
@@ -46,10 +46,10 @@ import { isEcCanvasElement, ecCanvasToPlain } from './ec-canvas-serialize';
 // Known LVGL part and state names in camelCase, used for recursive binding detection.
 // Excludes 'main' and 'default' since those are the top-level defaults.
 const PART_NAMES_CAMEL = new Set(
-  Object.keys(LVGL_PART_FLAGS).filter(k => k !== 'main').map(k => snakeToCamel(k)),
+  [...LVGL_PART_NAMES].filter(k => k !== 'main').map(k => snakeToCamel(k)),
 );
 const STATE_NAMES_CAMEL = new Set(
-  Object.keys(LVGL_STATE_FLAGS).filter(k => k !== 'default').map(k => snakeToCamel(k)),
+  [...LVGL_STATE_NAMES].filter(k => k !== 'default').map(k => snakeToCamel(k)),
 );
 
 function snakeToCamel(s: string): string {

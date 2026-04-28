@@ -10,7 +10,7 @@
 // in useScript or the compiler.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ClosureField, ClosureFieldKind, IRClosureValue } from './ir/types';
+import type { ClosureField, IRClosureValue, IRValueType } from './ir/types';
 import { isRef } from './types';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -31,9 +31,11 @@ export interface ClosureDescriptor<T = unknown> {
   toClosureKey(value: T): string;
 
   /**
-   * The canonical closure-shape kind this descriptor emits values for.
+   * Hint describing the shape of value this descriptor emits. Optional —
+   * only used for diagnostics; the authoritative type comes from the
+   * `ClosureField` returned by `toClosureField`.
    */
-  valueKind?: ClosureFieldKind;
+  valueType?: IRValueType;
 
   /**
    * Declare the closure-table column for this binding. The `bindingName`
@@ -103,10 +105,10 @@ export const overlayControllerDescriptor: ClosureDescriptor<OverlayControllerInt
     return `overlay:${v.__templateKey}`;
   },
 
-  valueKind: 'scalar',
+  valueType: { type: 'int' },
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_instance_index`, kind: 'scalar', cppType: 'int' };
+    return { name: `${bindingName}_instance_index`, valueType: { type: 'int' } };
   },
 
   toClosureValue(v) {
@@ -133,10 +135,10 @@ export const scriptHandleDescriptor: ClosureDescriptor<ScriptHandleLike> = {
     return `script:${v.id}`;
   },
 
-  valueKind: 'id_ref',
+  valueType: { type: 'int', format: 'id_ref' },
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, kind: 'id_ref', cppType: 'int' };
+    return { name: `${bindingName}_idx`, valueType: { type: 'int', format: 'id_ref' } };
   },
 
   toClosureValue(v) {
@@ -155,10 +157,10 @@ export const refDescriptor: ClosureDescriptor<{ toString(): string }> = {
     return `ref:${v.toString()}`;
   },
 
-  valueKind: 'id_ref',
+  valueType: { type: 'int', format: 'id_ref' },
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, kind: 'id_ref', cppType: 'int' };
+    return { name: `${bindingName}_idx`, valueType: { type: 'int', format: 'id_ref' } };
   },
 
   toClosureValue(v) {
@@ -191,7 +193,7 @@ export const controllerDescriptor: ClosureDescriptor<ControllerInternalShape> = 
 
   // Controllers don't contribute closure fields directly — their
   // underlying script handles carry the closure data.
-  valueKind: undefined,
+  valueType: undefined,
 };
 
 // -- Identity fallback (test-only / explicit reference) --

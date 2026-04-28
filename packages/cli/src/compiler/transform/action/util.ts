@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { IRScriptParamRef, ScriptParamCppType } from '@espcompose/core/internals';
+import type { IRScriptParamRef, IRValueType } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -55,27 +55,27 @@ export function extractReturnExpr(block: ts.Block): ts.Expression | null {
 // Scalar-capture aware duration extraction
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Map from TypeScript type to C++ ScriptParamCppType. */
-function inferScriptParamCppType(
+/** Map from TypeScript type to a target-agnostic IRValueType. */
+function inferScriptParamValueType(
   type: ts.Type,
-): ScriptParamCppType | null {
+): IRValueType | null {
   // Check for Int branded type (number & { __espcompose_int__: true })
   if (type.isIntersection()) {
     const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
     if (hasNumber) {
       const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return 'int';
+      if (hasIntBrand) return { type: 'int' };
     }
   }
   // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return 'int';
+  if (type.aliasSymbol?.name === 'Int') return { type: 'int' };
 
   // Plain number
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return 'float';
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return { type: 'float' };
   // String
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return 'string';
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return { type: 'string' };
   // Boolean
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return 'bool';
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return { type: 'bool' };
 
   return null;
 }
@@ -96,14 +96,14 @@ export function extractDurationArgOrParamRef(
   const literal = extractDurationArg(node);
   if (literal !== null) return literal;
 
-  // Handle identifier references — infer C++ type from TS.
+  // Handle identifier references — infer value type from TS.
   if (ts.isIdentifier(node)) {
     const type = ctx.checker.getTypeAtLocation(node);
-    const cppType = inferScriptParamCppType(type);
-    if (!cppType) return null;
+    const valueType = inferScriptParamValueType(type);
+    if (!valueType) return null;
 
     const name = node.text;
-    ctx.scalarCaptures.set(name, cppType);
+    ctx.scalarCaptures.set(name, valueType);
     return { kind: 'script_param', name };
   }
 

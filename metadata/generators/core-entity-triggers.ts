@@ -39,7 +39,7 @@ export function generateCoreEntityTriggers(domains: DomainMap, repoRoot: string)
         lines.push(`    ${triggerName}: { variables: [] },`);
       } else {
         const vars = sig.variables
-          .map(v => `{ name: ${JSON.stringify(v.name)}, cppType: ${JSON.stringify(v.cppType)}, tsType: ${JSON.stringify(v.tsType)} }`)
+          .map(v => `{ name: ${JSON.stringify(v.name)}, valueType: ${JSON.stringify(v.valueType)}, tsType: ${JSON.stringify(v.tsType)} }`)
           .join(', ');
         lines.push(`    ${triggerName}: { variables: [${vars}] },`);
       }

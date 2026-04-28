@@ -111,18 +111,18 @@ describe('findClosureDescriptor', () => {
 describe('ClosureDescriptor — canonical protocol (toClosureField/toClosureValue)', () => {
   it('overlay controller declares scalar instance_index field', () => {
     const ctrl = makeOverlayCtrl('toast_abc', 7);
-    expect(overlayControllerDescriptor.valueKind).toBe('scalar');
+    expect(overlayControllerDescriptor.valueType).toEqual({ type: 'int' });
     const field = overlayControllerDescriptor.toClosureField?.('myCtrl', ctrl);
-    expect(field).toEqual({ name: 'myCtrl_instance_index', kind: 'scalar', cppType: 'int' });
+    expect(field).toEqual({ name: 'myCtrl_instance_index', valueType: { type: 'int' } });
     expect(overlayControllerDescriptor.toClosureValue?.(ctrl))
       .toEqual({ kind: 'int', value: 7 });
   });
 
-  it('script handle declares id_ref field with int C++ type (index into lookup table)', () => {
+  it('script handle declares id_ref field with int storage (index into lookup table)', () => {
     const handle = makeScriptHandle('activate');
-    expect(scriptHandleDescriptor.valueKind).toBe('id_ref');
+    expect(scriptHandleDescriptor.valueType).toEqual({ type: 'int', format: 'id_ref' });
     const field = scriptHandleDescriptor.toClosureField?.('act', handle);
-    expect(field).toEqual({ name: 'act_idx', kind: 'id_ref', cppType: 'int' });
+    expect(field).toEqual({ name: 'act_idx', valueType: { type: 'int', format: 'id_ref' } });
     expect(scriptHandleDescriptor.toClosureValue?.(handle))
       .toEqual({ kind: 'id_ref', id: 'activate' });
   });

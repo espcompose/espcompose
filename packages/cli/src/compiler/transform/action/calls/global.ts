@@ -33,16 +33,16 @@ export function compileGlobalSet(
   // Try literal first
   if (ts.isNumericLiteral(valueArg)) {
     const num = Number(valueArg.text);
-    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: num })];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, { kind: 'literal', value: num })];
   }
   if (ts.isStringLiteral(valueArg) || ts.isNoSubstitutionTemplateLiteral(valueArg)) {
-    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: valueArg.text })];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, { kind: 'literal', value: valueArg.text })];
   }
   if (valueArg.kind === ts.SyntaxKind.TrueKeyword) {
-    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: true })];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, { kind: 'literal', value: true })];
   }
   if (valueArg.kind === ts.SyntaxKind.FalseKeyword) {
-    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'literal', value: false })];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, { kind: 'literal', value: false })];
   }
 
   // Try trigger variable: args.x
@@ -50,14 +50,14 @@ export function compileGlobalSet(
       valueArg.expression.text === ctx.triggerParamName) {
     const varName = valueArg.name.text;
     ctx.triggerVars.add(varName);
-    return [irGlobalSet(globalDef.id, globalDef.cppType, { kind: 'trigger_var', varName })];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, { kind: 'trigger_var', varName })];
   }
 
   // Try compiling as a reactive expression (e.g. counter.value + 1)
   const scriptCtx = buildScriptCtxWithGlobals(ctx);
   const exprIR = translateScriptExprIR(valueArg, scriptCtx);
   if (exprIR !== null) {
-    return [irGlobalSet(globalDef.id, globalDef.cppType, exprIR)];
+    return [irGlobalSet(globalDef.id, globalDef.valueType, exprIR)];
   }
 
   return emitError(valueArg, ctx,
@@ -83,7 +83,7 @@ export function compileArraySet(
   if (!indexIR) return emitError(indexArg, ctx, 'arrayHandle.set() index must be a literal, trigger variable, or supported expression.');
   if (!valueIR) return emitError(valueArg, ctx, 'arrayHandle.set() value must be a literal, trigger variable, or supported expression.');
 
-  return [irArraySet(globalDef.id, globalDef.cppType, indexIR, valueIR)];
+  return [irArraySet(globalDef.id, globalDef.valueType, indexIR, valueIR)];
 }
 
 export function compileArrayPush(
@@ -101,7 +101,7 @@ export function compileArrayPush(
 
   if (!valueIR) return emitError(valueArg, ctx, 'arrayHandle.push() value must be a literal, trigger variable, or supported expression.');
 
-  return [irArrayPush(globalDef.id, globalDef.cppType, valueIR)];
+  return [irArrayPush(globalDef.id, globalDef.valueType, valueIR)];
 }
 
 /** Compile a value argument to either an IRActionParam or IRExprNode. */

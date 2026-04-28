@@ -24,7 +24,7 @@ import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
-import type { ScriptMode, IRScriptParam, IRScriptParamRef, ScriptParamCppType, ClosureShape, ClosureField, ClosureInstance, IRClosureValue } from '../ir/types';
+import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRValueType, ClosureShape, ClosureField, ClosureInstance, IRClosureValue } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
 import { throwCompileTimeOnly } from '../errors';
@@ -91,7 +91,7 @@ export interface ScriptHandle<A extends ScriptParamScalar[] = ScriptParamScalar[
 /** Compiled metadata injected by the AST transformer */
 interface CompiledScriptMeta {
   id: string;
-  userParams?: Array<{ name: string; cppType: string }>;
+  userParams?: Array<{ name: string; valueType: IRValueType }>;
   then: unknown[];
   /**
    * Deterministic FNV-1a body hash computed by the script
@@ -102,12 +102,12 @@ interface CompiledScriptMeta {
   /**
    * Scalar captures detected by the action compiler.
    *
-   * Maps captured variable name → C++ type (inferred from the TS type at
+   * Maps captured variable name → IRValueType (inferred from the TS type at
    * AST transform time). At render time `useScript` reads the runtime value
    * from `__refBindings[name]` and creates a scalar `ClosureField` +
    * `IRClosureValue` for the closure table.
    */
-  scalarCaptures?: Record<string, ScriptParamCppType>;
+  scalarCaptures?: Record<string, IRValueType>;
 }
 
 /** Scalar types allowed as useScript user-defined parameters. */
@@ -141,7 +141,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const refBindings = body.__refBindings ?? {};
     const userParams = body.__compiledScript.userParams?.map(p => ({
       name: p.name,
-      cppType: p.cppType as ScriptParamCppType,
+      valueType: p.valueType,
     }));
     const scalarCaptures = body.__compiledScript.scalarCaptures;
 
@@ -240,7 +240,7 @@ function createScriptHandle<A extends ScriptParamScalar[]>(
 /** @internal exported for tests */
 export function classifyBindings(
   refBindings: Record<string, unknown>,
-  scalarCaptures?: Record<string, ScriptParamCppType>,
+  scalarCaptures?: Record<string, IRValueType>,
 ): ClosureShape {
   const fields: ClosureField[] = [];
   const names = Object.keys(refBindings).sort();
@@ -250,7 +250,7 @@ export function classifyBindings(
     // Scalar captures from the compiler take priority — they're plain JS
     // values (number, string, boolean) that have no closure descriptor.
     if (scalarCaptures && name in scalarCaptures) {
-      fields.push({ name, kind: 'scalar', cppType: scalarCaptures[name] });
+      fields.push({ name, valueType: scalarCaptures[name] });
       continue;
     }
 
@@ -264,7 +264,15 @@ export function classifyBindings(
 
 /** @internal exported for tests. Stable signature string for a `ClosureShape`. */
 export function closureShapeSignature(shape: ClosureShape): string {
-  return shape.fields.map((f) => `${f.name}:${f.kind}:${f.cppType}`).join(',');
+  return shape.fields.map((f) => `${f.name}:${valueTypeKey(f.valueType)}`).join(',');
+}
+
+/** Stable string key for an `IRValueType` — used in dedup signatures. */
+function valueTypeKey(vt: IRValueType): string {
+  let s = vt.type as string;
+  if (vt.format) s += `:${vt.format}`;
+  if (vt.isArray) s += '[]';
+  return s;
 }
 
 /**
@@ -284,9 +292,12 @@ export function buildClosureRow(
     const value = refBindings[name];
 
     // Check if this field is a scalar capture (plain JS value, no descriptor).
-    const shapeFieldDirect = shape.fields.find((f) => f.name === name && f.kind === 'scalar');
+    // Scalar captures have no `format` qualifier (plain int/float/bool/string).
+    const shapeFieldDirect = shape.fields.find(
+      (f) => f.name === name && !f.valueType.format,
+    );
     if (shapeFieldDirect) {
-      const cell = scalarValueToClosureValue(value, shapeFieldDirect.cppType);
+      const cell = scalarValueToClosureValue(value, shapeFieldDirect.valueType);
       if (cell) values[shapeFieldDirect.name] = cell;
       continue;
     }
@@ -307,12 +318,12 @@ export function buildClosureRow(
   return { values };
 }
 
-/** Convert a plain JS value to an IRClosureValue using the declared cppType. */
+/** Convert a plain JS value to an IRClosureValue using the declared value type. */
 function scalarValueToClosureValue(
   value: unknown,
-  cppType: ScriptParamCppType,
+  valueType: IRValueType,
 ): IRClosureValue | null {
-  switch (cppType) {
+  switch (valueType.type) {
     case 'int':
       return typeof value === 'number' ? { kind: 'int', value: Math.trunc(value) } : null;
     case 'float':
@@ -320,7 +331,6 @@ function scalarValueToClosureValue(
     case 'bool':
       return typeof value === 'boolean' ? { kind: 'bool', value } : null;
     case 'string':
-    case 'const char*':
       return typeof value === 'string' ? { kind: 'string', value } : null;
   }
 }
