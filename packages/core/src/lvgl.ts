@@ -27,7 +27,8 @@ import type { CapturedOverlayAction } from './hooks/useOverlay';
 import type { IRActionNode } from './ir/action-types';
 import { assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
-import { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
+import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
+import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-actions';
 import {
   camelToSnake,
@@ -241,17 +242,20 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
       if (typeof val === 'function' && val != null && '__compiledActions' in val) {
         const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
         const rawActions = fn.__compiledActions as IRActionNode[];
+        // Resolve deferred controller method calls → script_execute
+        resolveControllerMethodCalls(rawActions, fn.__refBindings);
         // Resolve deferred overlay controller refs — replace placeholder
         // templateKey/instanceIndex with actual values from the bound controller.
         resolveOverlayControllerRefs(rawActions, fn.__refBindings);
-        // Resolve deferred LVGL visibility controller refs
-        resolveLvglVisibilityControllerRefs(rawActions, fn.__refBindings);
+        // Patch IRScriptExecute.closureIndex from bound ScriptHandles.
+        resolveScriptHandleClosureIndex(rawActions, fn.__refBindings);
         // Remove resolved overlay controller objects from refBindings so they
         // don't corrupt lambda strings during ref resolution (toString →
         // '[object Object]' would replace 'overlay' in signal names).
         if (fn.__refBindings) {
+          cleanControllerRefs(fn.__refBindings);
           cleanOverlayControllerRefs(fn.__refBindings);
-          cleanLvglVisibilityControllerRefs(fn.__refBindings);
+          cleanScriptHandleRefs(fn.__refBindings);
         }
         overlayActionCapture.push({
           rawActions,

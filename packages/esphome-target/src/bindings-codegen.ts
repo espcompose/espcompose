@@ -138,6 +138,8 @@ export interface ReactiveRuntimeConfig {
   memoNames?: Map<string, string>;
   /** Static data tables for table-driven mux optimisation. */
   tables?: TableDecl[];
+  /** Pre-formatted closure-table block (struct + array per parameterized script). */
+  closureTablesBlock?: string;
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -337,6 +339,12 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       lines.push('};');
       lines.push('');
     }
+  }
+
+  // ── Script closure tables ───────────────────────────────────────────────
+  if (config.closureTablesBlock && config.closureTablesBlock.length > 0) {
+    lines.push(config.closureTablesBlock);
+    lines.push('');
   }
 
   // ── Memo declarations (with alias deduplication) ───────────────────────

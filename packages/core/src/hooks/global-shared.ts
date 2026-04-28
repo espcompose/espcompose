@@ -91,6 +91,23 @@ export function hashGlobalFingerprint(fingerprint: string): string {
   return `g_${(h >>> 0).toString(16).padStart(8, '0')}`;
 }
 
+/**
+ * FNV-1a 32-bit hash of an arbitrary string → 8-char hex digest.
+ *
+ * Computes a stable body hash for `useScript()` dedup. Two scripts with
+ * identical compiled action bodies and identical binding shape signatures
+ * produce the same hash and share an ESPHome script template (with
+ * per-instance closure-table rows).
+ */
+export function hashFnv1a(input: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
 // ── Global scope context ───────────────────────────────────────────────────
 
 export const globalScopeContext = createContext<Map<string, GlobalDefinition>>(new Map());

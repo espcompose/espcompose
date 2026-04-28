@@ -155,6 +155,40 @@ static const char* tbl_overlay_espcompose_script_render_wireframe_anon_20__0_act
   "light.desk_fan"
 };
 
+// ── Script closure tables ──
+struct LvglVisShowEspcomposeScriptRenderWireframeAnon190Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisShowEspcomposeScriptRenderWireframeAnon190Closure lvgl_vis_show_espcompose_script_render_wireframe_anon_19__0_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+struct LvglVisHideEspcomposeScriptRenderWireframeAnon190Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisHideEspcomposeScriptRenderWireframeAnon190Closure lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__0_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+struct LvglVisShowEspcomposeScriptRenderWireframeAnon200Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisShowEspcomposeScriptRenderWireframeAnon200Closure lvgl_vis_show_espcompose_script_render_wireframe_anon_20__0_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+struct LvglVisHideEspcomposeScriptRenderWireframeAnon200Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisHideEspcomposeScriptRenderWireframeAnon200Closure lvgl_vis_hide_espcompose_script_render_wireframe_anon_20__0_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+
 // ── Memos (derived values) ──
 Memo<float> memo_0([]() -> float {
   return thm_333e4663_sizes_xs_paddingX.get() * 2 + 80;
@@ -1020,14 +1054,9 @@ lvgl:
                         id: rw_ref6
                     - button:
                         on_press:
-                          - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-                              n_19__0_mux.set(0); if (auto rt =
-                              ::espcompose::EspcomposeRuntimeComponent::get_ins\\
-                              tance()) { rt->request_flush(); }
-                              lv_obj_clear_flag(id(overlay_espcompose_script_re\\
-                              nder_wireframe_anon_19__0), LV_OBJ_FLAG_HIDDEN);
-                              lv_obj_move_foreground(id(overlay_espcompose_scri\\
-                              pt_render_wireframe_anon_19__0));"
+                          - script.execute:
+                              id: lvgl_vis_show_espcompose_script_render_wireframe_anon_19__0
+                              closure_index: 0
                         bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                         bg_opa: COVER
                         border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1094,14 +1123,9 @@ lvgl:
                         id: rw_ref10
                     - button:
                         on_press:
-                          - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-                              n_19__0_mux.set(1); if (auto rt =
-                              ::espcompose::EspcomposeRuntimeComponent::get_ins\\
-                              tance()) { rt->request_flush(); }
-                              lv_obj_clear_flag(id(overlay_espcompose_script_re\\
-                              nder_wireframe_anon_19__0), LV_OBJ_FLAG_HIDDEN);
-                              lv_obj_move_foreground(id(overlay_espcompose_scri\\
-                              pt_render_wireframe_anon_19__0));"
+                          - script.execute:
+                              id: lvgl_vis_show_espcompose_script_render_wireframe_anon_19__0
+                              closure_index: 1
                         bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                         bg_opa: COVER
                         border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1168,14 +1192,9 @@ lvgl:
                         id: rw_ref14
                     - button:
                         on_press:
-                          - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-                              n_20__0_mux.set(0); if (auto rt =
-                              ::espcompose::EspcomposeRuntimeComponent::get_ins\\
-                              tance()) { rt->request_flush(); }
-                              lv_obj_clear_flag(id(overlay_espcompose_script_re\\
-                              nder_wireframe_anon_20__0), LV_OBJ_FLAG_HIDDEN);
-                              lv_obj_move_foreground(id(overlay_espcompose_scri\\
-                              pt_render_wireframe_anon_20__0));"
+                          - script.execute:
+                              id: lvgl_vis_show_espcompose_script_render_wireframe_anon_20__0
+                              closure_index: 0
                         bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                         bg_opa: COVER
                         border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1242,14 +1261,9 @@ lvgl:
                         id: rw_ref18
                     - button:
                         on_press:
-                          - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-                              n_20__0_mux.set(1); if (auto rt =
-                              ::espcompose::EspcomposeRuntimeComponent::get_ins\\
-                              tance()) { rt->request_flush(); }
-                              lv_obj_clear_flag(id(overlay_espcompose_script_re\\
-                              nder_wireframe_anon_20__0), LV_OBJ_FLAG_HIDDEN);
-                              lv_obj_move_foreground(id(overlay_espcompose_scri\\
-                              pt_render_wireframe_anon_20__0));"
+                          - script.execute:
+                              id: lvgl_vis_show_espcompose_script_render_wireframe_anon_20__0
+                              closure_index: 1
                         bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                         bg_opa: COVER
                         border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1609,5 +1623,54 @@ font:
     file: gfonts://Roboto
     size: 22
     bpp: 4
+script:
+  - id: lvgl_vis_show_espcompose_script_render_wireframe_anon_19__0
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_show_espcompose_script_render_wireframe_anon_19_\\
+          _0_closures[closure_index]; (void)closure;
+          espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__0\\
+          _mux.set(closure.__ctrl_instance_index); if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }
+          lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
+          19__0), LV_OBJ_FLAG_HIDDEN);
+          lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
+          anon_19__0));"
+  - id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__0
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_hide_espcompose_script_render_wireframe_anon_19_\\
+          _0_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __0), LV_OBJ_FLAG_HIDDEN);"
+  - id: lvgl_vis_show_espcompose_script_render_wireframe_anon_20__0
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_show_espcompose_script_render_wireframe_anon_20_\\
+          _0_closures[closure_index]; (void)closure;
+          espcompose::sig_overlay_espcompose_script_render_wireframe_anon_20__0\\
+          _mux.set(closure.__ctrl_instance_index); if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }
+          lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
+          20__0), LV_OBJ_FLAG_HIDDEN);
+          lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
+          anon_20__0));"
+  - id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_20__0
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_hide_espcompose_script_render_wireframe_anon_20_\\
+          _0_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_20\\
+          __0), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

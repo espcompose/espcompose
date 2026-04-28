@@ -12,8 +12,11 @@ import type {
   IRActionParam,
   IRCondition,
   IRExprNode,
+  IRNativeAction,
+  IRRefSlot,
 } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp.js';
+import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './action-cpp-emitters.js';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -26,6 +29,28 @@ export interface ActionLoweringContext {
   reactiveGlobalIds: Set<string>;
   /** Signal index → name map for resolving signal_read in action conditions. */
   signalNames: Map<number, string>;
+  /**
+   * When lowering inside an `IRScript` body, maps each `ref` slot binding name
+   * to the literal ESPHome ID token to emit. Single-instance scripts populate
+   * this; closure-table scripts leave the binding out and instead register it
+   * in {@link scriptClosureNames} below.
+   *
+   * When unset (e.g. lowering trigger handlers), `ref` slots fall through to
+   * the default behaviour where `slot.name` is already a literal token.
+   */
+  scriptRefBindings?: Record<string, string>;
+  /**
+   * Set of binding names declared in the enclosing script's `closureShape`.
+   * `ref` slots whose name appears here are emitted as `closure.<name>`
+   * (the per-instance C++ closure-row is in scope via the lambda preamble).
+   */
+  scriptClosureNames?: Set<string>;
+  /**
+   * ESPHome script ID for the enclosing script. Required when rewriting
+   * native ref actions to lambdas — the generated C++ accessor references
+   * the per-script typed-pointer lookup table: `ec_<scriptId>_<field>s[...]`.
+   */
+  scriptId?: string;
 }
 
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
@@ -155,13 +180,183 @@ function lowerGlobalSetValue(value: IRActionParam | IRExprNode, cppType: string,
   return String(value);
 }
 
+// ── Native→lambda rewrite helpers ────────────────────────────────────────
+
+/**
+ * Find the first refSlot in a native action that is closure-bound
+ * (i.e. its bindingName corresponds to an id_ref field in the closure shape).
+ * id_ref fields are named `<bindingName>_idx` in the closure struct.
+ */
+function findClosureBoundRefSlot(
+  action: IRNativeAction,
+  ctx: ActionLoweringContext,
+): IRRefSlot | undefined {
+  if (!action.refSlots || !ctx.scriptClosureNames) return undefined;
+  return action.refSlots.find(s => ctx.scriptClosureNames!.has(`${s.bindingName}_idx`));
+}
+
+/**
+ * Rewrite a native ref action as a lambda action using the ACTION_CPP_EMITTERS
+ * catalog. The generated C++ dereferences the typed-pointer lookup table that
+ * the closure-table emitter produces.
+ *
+ * Throws a hard build error if the action key is not catalogued — per the
+ * no-fallback policy, missing emitters are build failures, never silent
+ * degradation to legacy N-script emission.
+ */
+function synthesizeNativeAsLambda(
+  action: IRNativeAction,
+  closureSlot: IRRefSlot,
+  ctx: ActionLoweringContext,
+): { lambda: LambdaMarker } {
+  // lvgl.widget.update uses LVGL free functions (lv_obj_add_flag /
+  // lv_obj_clear_flag) that don't fit the accessor->method() emitter
+  // pattern. Handle it directly before the catalog lookup.
+  if (action.actionKey === 'lvgl.widget.update') {
+    return synthesizeLvglWidgetUpdate(action, closureSlot, ctx);
+  }
+
+  const emitter = lookupActionEmitter(action.actionKey);
+  if (!emitter) {
+    throw new Error(
+      `[espcompose] Missing ACTION_CPP_EMITTERS entry for '${action.actionKey}'. ` +
+      `Cannot rewrite closure-bound ref action to lambda. ` +
+      `Add an entry to packages/esphome-target/src/action-cpp-emitters.ts ` +
+      `for this action key.`,
+    );
+  }
+
+  const scriptId = ctx.scriptId;
+  if (!scriptId) {
+    throw new Error(
+      `[espcompose] scriptId missing in ActionLoweringContext while rewriting ` +
+      `'${action.actionKey}' to lambda. This is a compiler bug.`,
+    );
+  }
+
+  const bindingName = closureSlot.bindingName;
+  // Accessor: dereference the typed-pointer lookup array using the closure-row index.
+  const accessor = `ec_${scriptId}_${bindingName}s[closure.${bindingName}_idx]`;
+
+  const code = renderEmitterCall(accessor, emitter, action.config, closureSlot);
+  return { lambda: lambdaMarker(code) };
+}
+
+/**
+ * Synthesize a lambda for `lvgl.widget.update` with a closure-bound ref.
+ *
+ * LVGL widget actions use free functions (`lv_obj_add_flag` / `lv_obj_clear_flag`)
+ * rather than the `accessor->method()` pattern used by ESPHome components.
+ * The `hidden` config value determines which function to emit.
+ */
+function synthesizeLvglWidgetUpdate(
+  action: IRNativeAction,
+  closureSlot: IRRefSlot,
+  ctx: ActionLoweringContext,
+): { lambda: LambdaMarker } {
+  const scriptId = ctx.scriptId;
+  if (!scriptId) {
+    throw new Error(
+      `[espcompose] scriptId missing in ActionLoweringContext while rewriting ` +
+      `'lvgl.widget.update' to lambda. This is a compiler bug.`,
+    );
+  }
+
+  const bindingName = closureSlot.bindingName;
+  const accessor = `ec_${scriptId}_${bindingName}s[closure.${bindingName}_idx]`;
+
+  // Extract the `hidden` flag to decide which LVGL function to emit.
+  const hidden = typeof action.config === 'object' && action.config !== null
+    ? (action.config as Record<string, unknown>)['hidden']
+    : undefined;
+  const fn = hidden === true ? 'lv_obj_add_flag' : 'lv_obj_clear_flag';
+  return { lambda: lambdaMarker(`${fn}(${accessor}, LV_OBJ_FLAG_HIDDEN);`) };
+}
+
+/**
+ * Render the C++ method call for a given emitter + accessor.
+ *
+ * - Fluent (e.g. `light.toggle`):  `accessor->toggle().perform();`
+ * - Fluent with params:  `accessor->turn_on().set_brightness(0.5f).perform();`
+ * - Non-fluent zero-arg: `accessor->toggle();`
+ * - Non-fluent with positional params: `accessor->set_level(0.5f);`
+ */
+function renderEmitterCall(
+  accessor: string,
+  emitter: ActionCppEmitter,
+  config: IRActionConfig,
+  idSlot: IRRefSlot,
+): string {
+  if (emitter.fluent) {
+    let call = `${accessor}->${emitter.method}()`;
+    // Append param setters from the config (excluding the id slot).
+    for (const param of emitter.params) {
+      const rawValue = extractConfigParam(config, param.name, idSlot);
+      if (rawValue !== undefined) {
+        const setter = param.cppSetter ?? `set_${param.name}`;
+        call += `.${setter}(${formatCppLiteral(rawValue, param.cppType)})`;
+      }
+    }
+    call += '.perform();';
+    return call;
+  }
+
+  // Non-fluent: collect positional params, then emit as method(args...).
+  const positionalArgs: string[] = [];
+  for (const param of emitter.params) {
+    const rawValue = extractConfigParam(config, param.name, idSlot);
+    if (rawValue !== undefined) {
+      positionalArgs.push(formatCppLiteral(rawValue, param.cppType));
+    }
+  }
+  if (positionalArgs.length > 0) {
+    return `${accessor}->${emitter.method}(${positionalArgs.join(', ')});`;
+  }
+  return `${accessor}->${emitter.method}();`;
+}
+
+/**
+ * Extract a non-id config parameter's raw value from the action config.
+ */
+function extractConfigParam(
+  config: IRActionConfig,
+  paramName: string,
+  idSlot: IRRefSlot,
+): unknown {
+  // Bare-string configs have no extra params.
+  if (typeof config === 'string') return undefined;
+  // Skip the id slot key (only relevant for object configs).
+  if (idSlot.kind === 'object' && paramName === idSlot.key) return undefined;
+  const value = config[paramName];
+  if (value === undefined) return undefined;
+  // Unwrap IRActionParam literals
+  if (typeof value === 'object' && value !== null && 'kind' in value) {
+    const param = value as { kind: string; value?: unknown };
+    if (param.kind === 'literal') return param.value;
+    // TODO: trigger_var and expression params in closure-rewritten actions
+    // would need C++ variable references — not yet supported.
+    return undefined;
+  }
+  return value;
+}
+
 /**
  * Lower a single IRActionNode to its ESPHome YAML-ready config object.
  */
 function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown {
   switch (action.kind) {
-    case 'native':
+    case 'native': {
+      // ── Closure-bound ref detection ──────────────────────────────
+      // If this native action references a ref that's bound through a
+      // closure-table column, it cannot be expressed as a YAML native
+      // action (which requires a static id). Rewrite to a lambda using
+      // the ACTION_CPP_EMITTERS catalog.
+      const closureBoundSlot = findClosureBoundRefSlot(action, ctx);
+      if (closureBoundSlot) {
+        return synthesizeNativeAsLambda(action, closureBoundSlot, ctx);
+      }
       return { [action.actionKey]: lowerConfig(action.config) };
+    }
 
     case 'ha_service': {
       const serviceConfig: Record<string, unknown> = { action: action.action };
@@ -207,6 +402,9 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'logger.log': action.message };
 
     case 'delay':
+      if (typeof action.duration === 'object' && action.duration.kind === 'script_param') {
+        return { delay: lambdaMarker(`return ${action.duration.name};`) };
+      }
       return { delay: action.duration };
 
     case 'wait_until': {
@@ -246,8 +444,18 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         },
       };
 
-    case 'script_execute':
-      return { 'script.execute': { id: action.scriptId } };
+    case 'script_execute': {
+      const execArgs: Record<string, unknown> = { id: action.scriptId };
+      if (action.closureIndex !== undefined) {
+        execArgs['closure_index'] = action.closureIndex;
+      }
+      if (action.userArgs) {
+        for (const [k, v] of Object.entries(action.userArgs)) {
+          execArgs[k] = lowerParam(v);
+        }
+      }
+      return { 'script.execute': execArgs };
+    }
 
     case 'script_wait':
       return { 'script.wait': { id: action.scriptId } };
@@ -318,16 +526,28 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         const slot = action.slots[i];
         switch (slot.kind) {
           case 'ref':
-            // Ref names are already resolved to ESPHome ID tokens by the
-            // serialize layer. The user's template literal controls the
-            // surrounding C++ (e.g. `id(${ref})`), so we emit just the name.
-            code += slot.name;
+            // In script scope, prefer closure-table or per-script
+            // refBindings resolution. Fall through to slot.name for
+            // trigger handlers where slot.name is already a literal token.
+            if (ctx.scriptClosureNames && ctx.scriptClosureNames.has(slot.name)) {
+              code += `closure.${slot.name}`;
+            } else if (ctx.scriptRefBindings && slot.name in ctx.scriptRefBindings) {
+              code += ctx.scriptRefBindings[slot.name];
+            } else {
+              // Ref names are already resolved to ESPHome ID tokens by the
+              // serialize layer. The user's template literal controls the
+              // surrounding C++ (e.g. `id(${ref})`), so we emit just the name.
+              code += slot.name;
+            }
             break;
           case 'global':
             code += `id(${slot.id})`;
             break;
           case 'trigger_var':
             code += slot.varName;
+            break;
+          case 'script_param':
+            code += slot.name;
             break;
           case 'literal':
             if (typeof slot.value === 'string') {
@@ -348,8 +568,12 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       // and flush the reactive graph so bindings update.
       const muxSig = `sig_overlay_${action.templateKey}_mux`;
       const overlayId = `overlay_${action.templateKey}`;
+      // instanceIndex may be a literal number or a script parameter reference.
+      const indexExpr = typeof action.instanceIndex === 'number'
+        ? String(action.instanceIndex)
+        : action.instanceIndex.name;
       return { lambda: lambdaMarker(
-        `espcompose::${muxSig}.set(${action.instanceIndex}); ` +
+        `espcompose::${muxSig}.set(${indexExpr}); ` +
         `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); } ` +
         `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
         `lv_obj_move_foreground(id(${overlayId}));`
@@ -364,11 +588,10 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       )};
     }
 
-    case 'lvgl_visibility_show':
-    case 'lvgl_visibility_hide':
+    case 'controller_method_call':
       throw new Error(
-        `Unresolved ${action.kind} action (controllerRef: ${action.controllerRef}). ` +
-        'LVGL visibility placeholders must be resolved before lowering.',
+        `Unresolved controller_method_call action (controllerRef: ${action.controllerRef}, ` +
+        `method: ${action.methodName}). Controller method calls must be resolved before lowering.`,
       );
   }
 }

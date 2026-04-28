@@ -2,9 +2,10 @@
 // useLvglVisibility — composable show/hide lifecycle for LVGL widgets & overlays
 //
 // Wraps an LVGL widget ref or overlay controller with a `show()`/`hide()`
-// lifecycle. When `autoHide` is set, generates an ESPHome script
-// (`mode: restart`) that sequences show → delay → hide. Re-triggering
-// resets the timer.
+// lifecycle backed by ESPHome scripts via `useController`.
+//
+// When `autoHide` is set, the `show` script sequences show → delay → hide
+// with `mode: restart` so re-triggering resets the timer.
 //
 // Designed as a composition primitive:
 //   const ctrl = useOverlay({ zOrder: 100 }, factory);
@@ -14,17 +15,25 @@
 //   const ref = useRef<LvglWidgetRef>();
 //   const vis = useLvglVisibility(ref, { autoHide: '5s' });
 //   // vis.show() / vis.hide() in trigger handlers
+//
+// NOTE: This hook lives in @espcompose/core, which is built with tsup (not
+// `espcompose build --library`). The AST-level script transformer therefore
+// never processes these useScript bodies, so we use `makeSyntheticScript` to
+// inject pre-built IR metadata. Library hooks in packages built with
+// `espcompose build --library` (e.g. @espcompose/ui) can use natural
+// useScript arrow bodies with full scalar-capture support instead.
 // ────────────────────────────────────────────────────────────────────────────
 
 import { assertHookContext } from './useState';
 import { isRef } from '../types';
-import { throwCompileTimeOnly } from '../errors';
-import { registerScript } from './useScript';
+import { useScript } from './useScript';
+import { useController } from './useController';
 import {
   irOverlayShow,
   irOverlayHide,
   irDelayAction,
   irNativeAction,
+  irScriptStop,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
 import type { OverlayController } from './useOverlay';
@@ -52,9 +61,6 @@ export interface LvglVisibilityOptions {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-/**
- * Normalize a duration value to an ESPHome duration string.
- */
 function normalizeDuration(value: string | number): string {
   if (typeof value === 'number') {
     return `${value}ms`;
@@ -62,24 +68,44 @@ function normalizeDuration(value: string | number): string {
   return value;
 }
 
-// ── Internal field shapes ───────────────────────────────────────────────────
-
-/** Hidden fields on OverlayController, read at runtime during the render pass. */
+/** Hidden fields on OverlayController, read during the render pass. */
 interface OverlayControllerInternal {
   __templateKey: string;
   __instanceIndex: number;
   __zOrder: number;
-  __lifecycleScriptId?: string;
+}
+
+// ── Synthetic script builder ────────────────────────────────────────────────
+
+/**
+ * Build an arrow function with pre-injected `__compiledScript` metadata.
+ *
+ * Required because this module lives in `@espcompose/core` which is bundled
+ * by tsup — not processed by the script transformer. The metadata format
+ * matches what the transformer would inject for natural useScript bodies.
+ *
+ * Library hooks in packages built with `espcompose build --library` do NOT
+ * need this — they can use natural `useScript(async () => { ... })` bodies
+ * and the scalar-capture system handles non-literal arguments.
+ */
+function makeSyntheticScript(
+  id: string,
+  actions: IRActionNode[],
+  refBindings?: Record<string, unknown>,
+) {
+  return Object.assign(
+    () => Promise.resolve(),
+    {
+      __compiledScript: { id, then: actions },
+      ...(refBindings ? { __refBindings: refBindings } : {}),
+    },
+  );
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
 
 /**
  * Attach a show/hide lifecycle to an LVGL widget ref.
- *
- * @param target  An LVGL widget ref created by `useRef<LvglWidgetRef>()`.
- * @param opts    Visibility options. `autoHide` defaults to `false`.
- * @returns       An `LvglVisibilityController` with `.show()` / `.hide()`.
  */
 export function useLvglVisibility(
   target: Ref<__marker_lv_obj_t>,
@@ -88,10 +114,6 @@ export function useLvglVisibility(
 
 /**
  * Attach a show/hide lifecycle to an overlay controller.
- *
- * @param target  An `OverlayController` from `useOverlay()`.
- * @param opts    Visibility options. `autoHide` defaults to `false`.
- * @returns       An `LvglVisibilityController` with `.show()` / `.hide()`.
  */
 export function useLvglVisibility(
   target: OverlayController,
@@ -122,41 +144,56 @@ function buildOverlayVisibility(
 ): LvglVisibilityController {
   const internal = ctrl as unknown as OverlayControllerInternal;
   const { __templateKey, __instanceIndex, __zOrder } = internal;
+  const ctrlBindingKey = '__ctrl';
 
   if (autoHide === false) {
-    // No lifecycle script — pass through overlay identity only.
-    return createLvglVisibilityController({
-      visibilityTarget: 'overlay',
-      templateKey: __templateKey,
-      instanceIndex: __instanceIndex,
-      zOrder: __zOrder,
-    });
+    // Simple show/hide — one script each, no timer.
+    const showScript = useScript(
+      makeSyntheticScript(
+        `lvgl_vis_show_${__templateKey}`,
+        [irOverlayShow(__templateKey, __instanceIndex, __zOrder, ctrlBindingKey)],
+        { [ctrlBindingKey]: ctrl },
+      ),
+    );
+    const hideScript = useScript(
+      makeSyntheticScript(
+        `lvgl_vis_hide_${__templateKey}`,
+        [irOverlayHide(__templateKey, __zOrder, ctrlBindingKey)],
+        { [ctrlBindingKey]: ctrl },
+      ),
+    );
+    return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
   }
 
   const duration = normalizeDuration(autoHide);
-  const scriptId = `lvgl_vis_${__templateKey}_${__instanceIndex}`;
 
-  // Build lifecycle: show → delay → hide
-  const actions: IRActionNode[] = [
-    irOverlayShow(__templateKey, __instanceIndex, __zOrder),
-    irDelayAction(duration),
-    irOverlayHide(__templateKey, __zOrder),
-  ];
+  // Show script: show → delay → hide (mode: restart so re-trigger resets timer).
+  const showScript = useScript(
+    makeSyntheticScript(
+      `lvgl_vis_${__templateKey}`,
+      [
+        irOverlayShow(__templateKey, __instanceIndex, __zOrder, ctrlBindingKey),
+        irDelayAction(duration),
+        irOverlayHide(__templateKey, __zOrder, ctrlBindingKey),
+      ],
+      { [ctrlBindingKey]: ctrl },
+    ),
+    { mode: 'restart' },
+  );
 
-  registerScript({ id: scriptId, mode: 'restart', then: actions });
+  // Hide script: stop the show timer + immediately hide.
+  const hideScript = useScript(
+    makeSyntheticScript(
+      `lvgl_vis_hide_${__templateKey}`,
+      [
+        irScriptStop(showScript.id),
+        irOverlayHide(__templateKey, __zOrder, ctrlBindingKey),
+      ],
+      { [ctrlBindingKey]: ctrl },
+    ),
+  );
 
-  // Stamp the lifecycle script on the *input* overlay controller so that
-  // factory-internal `ctrl.hide()` correctly stops the timer via the
-  // existing overlay-resolve.ts path.
-  internal.__lifecycleScriptId = scriptId;
-
-  return createLvglVisibilityController({
-    visibilityTarget: 'overlay',
-    lifecycleScriptId: scriptId,
-    templateKey: __templateKey,
-    instanceIndex: __instanceIndex,
-    zOrder: __zOrder,
-  });
+  return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
 }
 
 // ── Widget ref path ─────────────────────────────────────────────────────────
@@ -165,61 +202,64 @@ function buildRefVisibility(
   ref: Ref<__marker_lv_obj_t>,
   autoHide: string | number | false,
 ): LvglVisibilityController {
-  const refToken = ref.toString();
+  const refBindingKey = 'widget';
 
   if (autoHide === false) {
-    return createLvglVisibilityController({
-      visibilityTarget: 'ref',
-      targetRef: refToken,
-    });
+    const showScript = useScript(
+      makeSyntheticScript(
+        'lvgl_vis_ref_show',
+        [irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: false }, [
+          { kind: 'object', key: 'id', bindingName: refBindingKey },
+        ])],
+        { [refBindingKey]: ref },
+      ),
+    );
+    const hideScript = useScript(
+      makeSyntheticScript(
+        'lvgl_vis_ref_hide',
+        [irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+          { kind: 'object', key: 'id', bindingName: refBindingKey },
+        ])],
+        { [refBindingKey]: ref },
+      ),
+    );
+    return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
   }
 
   const duration = normalizeDuration(autoHide);
-  const scriptId = `lvgl_vis_ref_${refToken}`;
+  const safeDuration = duration.replace(/[^a-z0-9_]/gi, '_');
 
-  // Build lifecycle: unhide → delay → hide
-  const actions: IRActionNode[] = [
-    irNativeAction('lvgl.widget.update', { id: refToken, hidden: false }),
-    irDelayAction(duration),
-    irNativeAction('lvgl.widget.update', { id: refToken, hidden: true }),
-  ];
+  // Show script: unhide → delay → hide (mode: restart).
+  const showScript = useScript(
+    makeSyntheticScript(
+      `lvgl_vis_ref_${safeDuration}`,
+      [
+        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: false }, [
+          { kind: 'object', key: 'id', bindingName: refBindingKey },
+        ]),
+        irDelayAction(duration),
+        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+          { kind: 'object', key: 'id', bindingName: refBindingKey },
+        ]),
+      ],
+      { [refBindingKey]: ref },
+    ),
+    { mode: 'restart' },
+  );
 
-  registerScript({ id: scriptId, mode: 'restart', then: actions });
+  // Hide script: stop show timer + immediately hide.
+  const hideScript = useScript(
+    makeSyntheticScript(
+      `lvgl_vis_ref_hide_${safeDuration}`,
+      [
+        irScriptStop(showScript.id),
+        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+          { kind: 'object', key: 'id', bindingName: refBindingKey },
+        ]),
+      ],
+      { [refBindingKey]: ref },
+    ),
+  );
 
-  return createLvglVisibilityController({
-    visibilityTarget: 'ref',
-    lifecycleScriptId: scriptId,
-    targetRef: refToken,
-  });
-}
-
-// ── Controller factory ──────────────────────────────────────────────────────
-
-interface ControllerInternalFields {
-  visibilityTarget: 'overlay' | 'ref';
-  lifecycleScriptId?: string;
-  templateKey?: string;
-  instanceIndex?: number;
-  zOrder?: number;
-  targetRef?: string;
-}
-
-function createLvglVisibilityController(
-  fields: ControllerInternalFields,
-): LvglVisibilityController {
-  return {
-    show(): void {
-      throwCompileTimeOnly('visibility.show()', 'Visibility actions');
-    },
-    hide(): void {
-      throwCompileTimeOnly('visibility.hide()', 'Visibility actions');
-    },
-    // Internal fields for deferred ref-binding resolution at serialization time.
-    __visibilityTarget: fields.visibilityTarget,
-    __lifecycleScriptId: fields.lifecycleScriptId,
-    __templateKey: fields.templateKey,
-    __instanceIndex: fields.instanceIndex,
-    __zOrder: fields.zOrder,
-    __targetRef: fields.targetRef,
-  } as LvglVisibilityController;
+  return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
 }

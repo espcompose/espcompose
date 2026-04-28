@@ -22,7 +22,10 @@ import type {
   IRSection,
   IRValue,
   IRThemeData,
+  IRScriptParam,
   ScriptMode,
+  ClosureShape,
+  ClosureInstance,
 } from './types';
 import {
   irSection,
@@ -160,7 +163,15 @@ export interface BuildSemanticIRInput {
   components: IRComponent[];
 
   /** Named script definitions from useScript() */
-  scripts: Array<{ id: string; mode?: ScriptMode; then: IRActionNode[] }>;
+  scripts: Array<{
+    id: string;
+    mode?: ScriptMode;
+    userParams?: IRScriptParam[];
+    closureShape?: ClosureShape;
+    closureTable?: ClosureInstance[];
+    refBindings?: Record<string, string>;
+    then: IRActionNode[];
+  }>;
 
   /** Reactive nodes registered during the render pass */
   reactiveNodes: IRReactiveNode[];

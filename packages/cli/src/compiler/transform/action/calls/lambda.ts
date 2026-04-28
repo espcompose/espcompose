@@ -78,6 +78,11 @@ function classifyInterpolation(
 
   // ── Identifier-based classification ───────────────────────────────────
   if (ts.isIdentifier(expr)) {
+    // Script parameter reference (must check before ref to avoid false match)
+    if (ctx.scriptParamNames.has(expr.text)) {
+      return { kind: 'script_param', name: expr.text };
+    }
+
     // Component ref
     const type = ctx.checker.getTypeAtLocation(expr);
     if (hasRefBrand(type)) {

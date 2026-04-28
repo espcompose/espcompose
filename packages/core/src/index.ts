@@ -33,7 +33,7 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
 } from './types';
-export { BINDING_BRAND, THEME_BRAND, OVERLAY_BRAND, LVGL_VISIBILITY_BRAND, useRef, isRef } from './types';
+export { BINDING_BRAND, THEME_BRAND, OVERLAY_BRAND, CONTROLLER_BRAND, useRef, isRef } from './types';
 export type { LvglVisibilityController } from './types';
 export * from './intents';
 
@@ -62,6 +62,7 @@ export type { FontProps } from './generated/components/font';
 export { useScript } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 export type { ScriptMode } from './ir/types';
+export type { Int } from './types';
 export { useMemo } from './hooks/useMemo';
 export { useLvgl } from './hooks/useLvgl';
 export { useGlobal } from './hooks/useGlobal';
@@ -73,6 +74,8 @@ export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
 export { useLvglVisibility } from './hooks/useLvglVisibility';
 export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export { useController } from './hooks/useController';
+export type { Controller, ControllerScriptMap } from './hooks/useController';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

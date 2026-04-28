@@ -20,11 +20,113 @@ import type { IRActionNode } from './action-types';
 /** ESPHome script execution mode. Controls behavior when re-triggered while already running. */
 export type ScriptMode = 'single' | 'restart' | 'queued' | 'parallel';
 
+/** C++ type for an ESPHome script parameter or closure-table field. */
+export type ScriptParamCppType = 'int' | 'float' | 'bool' | 'string' | 'const char*';
+
+/** A single parameter declaration for a parameterized ESPHome script. */
+export interface IRScriptParam {
+  /** Parameter name (used as C++ identifier in the script body). */
+  name: string;
+  /** C++ type emitted in the ESPHome `parameters:` block. */
+  cppType: ScriptParamCppType;
+}
+
+/**
+ * Reference to a script parameter inside the script body.
+ * Used in place of a literal value when the value is supplied per call-site.
+ */
+export interface IRScriptParamRef {
+  readonly kind: 'script_param';
+  /** The parameter name — must match an entry in the script's parameter list. */
+  name: string;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Closure model (canonical: template + closure_table + closure_index)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Semantic kind of a closure field. Drives how the field is materialized in
+ * the C++ closure-table struct and how body references are rewritten.
+ *
+ *   - 'scalar'  : plain value (int/float/bool/string), stored in the table row
+ *                 and referenced as `closure.<field>` in the script body.
+ *   - 'id_ref'  : ESPHome component/widget ID (string). Stored as `const char*`
+ *                 in the table; native YAML actions whose `id:` slot binds to
+ *                 this field get rewritten to lambdas calling `id(closure.<field>)`.
+ *   - 'entity'  : Home Assistant entity id (string). Same storage as id_ref;
+ *                 entity-specific actions get rewritten via descriptor.
+ */
+export type ClosureFieldKind = 'scalar' | 'id_ref' | 'entity';
+
+/**
+ * One column in a script's closure table.
+ *
+ * The set of `ClosureField`s defines the table's struct layout; per-instance
+ * values populate rows in the same order.
+ */
+export interface ClosureField {
+  /** C++ struct field name (also referenced in body as `closure.<name>`). */
+  name: string;
+  /** Semantic kind — drives body-rewriting strategy. */
+  kind: ClosureFieldKind;
+  /** C++ type emitted in the generated struct. */
+  cppType: ScriptParamCppType;
+}
+
+/** The deterministic, ordered shape of a script's closure table. */
+export interface ClosureShape {
+  /** Ordered list of fields; order is part of the template's identity. */
+  fields: ClosureField[];
+}
+
+/**
+ * A literal value used to populate a single closure-table cell.
+ *
+ * Distinct from `IRActionParam` (which carries trigger-var/expression kinds)
+ * because closure-table rows are pure compile-time constants.
+ */
+export type IRClosureValue =
+  | { kind: 'int'; value: number }
+  | { kind: 'float'; value: number }
+  | { kind: 'bool'; value: boolean }
+  | { kind: 'string'; value: string }
+  | { kind: 'id_ref'; id: string }
+  | { kind: 'entity'; entityId: string };
+
+/** One row of the closure table: concrete values for every field in the shape. */
+export interface ClosureInstance {
+  /** Field-name → value map. Keys MUST match the script's `closureShape.fields[].name`. */
+  values: Record<string, IRClosureValue>;
+}
+
 export interface IRScript {
   readonly kind: 'script';
   id: string;
   /** Execution mode. Omit for ESPHome default ('single'). */
   mode?: ScriptMode;
+  /** User-defined parameters from the script's arrow function signature. */
+  userParams?: IRScriptParam[];
+  /**
+   * Canonical closure shape (template-level). Defines the closure-table
+   * struct layout. Populated by the compile-time dedup pass.
+   */
+  closureShape?: ClosureShape;
+  /**
+   * Per-instance rows of the closure table. Each entry's index is the
+   * `closureIndex` passed by the corresponding call site. Populated by
+   * the compile-time dedup pass.
+   */
+  closureTable?: ClosureInstance[];
+  /**
+   * Per-script binding name → literal ESPHome ID token map for `ref` slots
+   * inside this script's body. Used by the YAML lowerer to resolve
+   * structured `ref` slots without mutating shared IR.
+   *
+   * When unset, ref slots are assumed to be either pre-resolved to literal
+   * tokens or covered by `closureShape`.
+   */
+  refBindings?: Record<string, string>;
   then: IRActionNode[];
 }
 

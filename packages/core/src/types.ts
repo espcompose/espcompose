@@ -118,26 +118,26 @@ export declare const THEME_BRAND: unique symbol;
 export declare const OVERLAY_BRAND: unique symbol;
 
 /**
- * Phantom brand for LVGL visibility controllers.
+ * Phantom brand for script-backed controllers.
  *
- * Types branded with LVGL_VISIBILITY_BRAND represent compile-time
- * visibility controllers created by `useLvglVisibility()`. The compiler
- * uses this brand to detect `controller.show()` and `controller.hide()`
- * calls and lower them to LVGL hidden-flag toggling or overlay
- * show/hide actions.
+ * Types branded with CONTROLLER_BRAND represent compile-time controllers
+ * created by `useController()`. Each method on the controller maps to a
+ * `ScriptHandle`. The compiler detects method calls on CONTROLLER_BRAND-typed
+ * values and emits `controller_method_call` IR actions, which are resolved
+ * to `script_execute` at serialization time.
  */
-export declare const LVGL_VISIBILITY_BRAND: unique symbol;
+export declare const CONTROLLER_BRAND: unique symbol;
 
 /**
  * Controller returned by `useLvglVisibility()`.
  *
  * Provides `show()` and `hide()` methods that are compile-time markers
- * — the action compiler recognises calls and lowers them to the
- * appropriate LVGL or overlay actions at serialization time.
+ * — the action compiler recognises calls and lowers them to
+ * `script_execute` actions at serialization time.
  */
 export interface LvglVisibilityController {
   readonly [BINDING_BRAND]?: true;
-  readonly [LVGL_VISIBILITY_BRAND]?: true;
+  readonly [CONTROLLER_BRAND]?: true;
   /** Show the target (unhide LVGL widget or show overlay). */
   show(): void;
   /** Hide the target (hide LVGL widget or overlay). */
@@ -155,6 +155,16 @@ export interface LvglVisibilityController {
  *   - The compiler to infer HA entity domains from type structure
  */
 export declare const BINDING_BRAND: unique symbol;
+
+/**
+ * Branded `number` subtype that compiles to C++ `int` instead of `float`.
+ *
+ * Use in `useScript` parameter signatures to request integer semantics:
+ * ```ts
+ * const myScript = useScript(async (count: Int) => { ... });
+ * ```
+ */
+export type Int = number & { readonly __espcompose_int__: true };
 
 /**
  * Base ref interface — a branded, toString-able reference.

@@ -8,8 +8,32 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExprNode } from './expr-types.js';
+import type { IRScriptParamRef } from './types.js';
 
 // ── Action Nodes ───────────────────────────────────────────────────────────
+
+/**
+ * Side-channel: identifies a config slot whose value is a ref binding name.
+ *
+ * Native actions resolve ref values to the underlying ESPHome ID token at
+ * compile time, losing the binding-name context the lowering pass needs to
+ * detect closure-bound refs and rewrite to lambda actions. This side-channel
+ * preserves the original binding name alongside the resolved config so the
+ * native→lambda rewrite can correlate config positions back to
+ * their originating bindings.
+ *
+ * Two variants:
+ *   - `bare`: the action's config IS the bare string
+ *     (e.g. `light.toggle: r_x`).
+ *   - `object`: a key inside an object config
+ *     (e.g. `light.turn_on: { id: r_x, brightness: 0.5 }` → key: 'id').
+ *
+ * `bindingName` is the user-facing variable name of the ref (e.g. `light`),
+ * matched against `IRScript.closureShape.fields[].name` at lowering time.
+ */
+export type IRRefSlot =
+  | { kind: 'bare'; bindingName: string }
+  | { kind: 'object'; key: string; bindingName: string };
 
 /** A component-specific action (light.toggle, switch.turn_on, fan.turn_off, etc.) */
 export interface IRNativeAction {
@@ -18,6 +42,16 @@ export interface IRNativeAction {
   actionKey: string;
   /** Action config — may be a scalar ID string, or an object with params */
   config: IRActionConfig;
+  /**
+   * Optional side-channel describing which config positions hold ref-binding
+   * names. Populated by the action compiler for any native action whose `id:`
+   * slot (or other ref-typed param) was bound from a script-scope ref.
+   *
+   * Used at lowering time to detect closure-bound refs and trigger native→lambda
+   * rewrite. Empty/absent means no rewrite is possible (action treats config as
+   * literal data).
+   */
+  refSlots?: IRRefSlot[];
 }
 
 /** A Home Assistant service call */
@@ -39,8 +73,11 @@ export interface IRLoggerAction {
 /** delay action */
 export interface IRDelayAction {
   kind: 'delay';
-  /** Duration string, e.g. '500ms', '1s', '2min' */
-  duration: string;
+  /**
+   * Duration — either a literal string (e.g. '500ms', '1s', '2min') or an
+   * `IRScriptParamRef` referencing a closure-captured scalar.
+   */
+  duration: string | IRScriptParamRef;
 }
 
 /** wait_until action */
@@ -77,6 +114,13 @@ export interface IRRepeatAction {
 export interface IRScriptExecute {
   kind: 'script_execute';
   scriptId: string;
+  /** User-provided arguments (from the call site). */
+  userArgs?: Record<string, IRActionParam>;
+  /**
+   * Index into the script's `closureTable` row that supplies this call site's
+   * captured values. The `closure_index` script parameter receives this number.
+   */
+  closureIndex?: number;
 }
 
 /** script.wait action */
@@ -148,8 +192,12 @@ export interface IROverlayShow {
   kind: 'overlay_show';
   /** Template key identifying the shared overlay definition. */
   templateKey: string;
-  /** This instance's mux index (written to the mux signal on show). */
-  instanceIndex: number;
+  /**
+   * This instance's mux index (written to the mux signal on show).
+   * When inside a parameterized script, this may be an IRScriptParamRef
+   * that resolves to the parameter's C++ identifier at lowering time.
+   */
+  instanceIndex: number | IRScriptParamRef;
   /** Z-order tier for deterministic stacking in top_layer. */
   zOrder: number;
   /**
@@ -178,6 +226,7 @@ export type IRLambdaSlot =
   | { kind: 'ref'; name: string }                         // → id(<resolved_ref_token>)
   | { kind: 'global'; id: string }                        // → id(<global_id>)
   | { kind: 'trigger_var'; varName: string }               // → raw C++ variable name
+  | { kind: 'script_param'; name: string }                 // → raw C++ script parameter name
   | { kind: 'literal'; value: string | number | boolean }; // → literal C++ value
 
 /** Inline C++ lambda action — emitted as a !lambda block in YAML. */
@@ -211,8 +260,7 @@ export type IRActionNode =
   | IRLambdaAction
   | IROverlayShow
   | IROverlayHide
-  | IRLvglVisibilityShow
-  | IRLvglVisibilityHide;
+  | IRControllerMethodCall;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -293,8 +341,8 @@ export type IRActionConfig =
 
 // ── Constructors ───────────────────────────────────────────────────────────
 
-export function irNativeAction(actionKey: string, config: IRActionConfig): IRNativeAction {
-  return { kind: 'native', actionKey, config };
+export function irNativeAction(actionKey: string, config: IRActionConfig, refSlots?: IRRefSlot[]): IRNativeAction {
+  return { kind: 'native', actionKey, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
 }
 
 export function irHAServiceAction(action: string, data?: Record<string, IRActionParam>): IRHAServiceAction {
@@ -305,7 +353,7 @@ export function irLoggerAction(message: string, level?: string): IRLoggerAction 
   return { kind: 'logger', message, ...(level ? { level } : {}) };
 }
 
-export function irDelayAction(duration: string): IRDelayAction {
+export function irDelayAction(duration: string | IRScriptParamRef): IRDelayAction {
   return { kind: 'delay', duration };
 }
 
@@ -325,8 +373,19 @@ export function irRepeatAction(count: number, then: IRActionNode[]): IRRepeatAct
   return { kind: 'repeat', count, then };
 }
 
-export function irScriptExecute(scriptId: string): IRScriptExecute {
-  return { kind: 'script_execute', scriptId };
+export function irScriptExecute(
+  scriptId: string,
+  args?: {
+    userArgs?: Record<string, IRActionParam>;
+    closureIndex?: number;
+  },
+): IRScriptExecute {
+  return {
+    kind: 'script_execute',
+    scriptId,
+    ...(args?.userArgs ? { userArgs: args.userArgs } : {}),
+    ...(args?.closureIndex !== undefined ? { closureIndex: args.closureIndex } : {}),
+  };
 }
 
 export function irScriptWait(scriptId: string): IRScriptWait {
@@ -365,7 +424,7 @@ export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLa
   return { kind: 'lambda_action', fragments, slots };
 }
 
-export function irOverlayShow(templateKey: string, instanceIndex: number, zOrder: number, controllerRef?: string): IROverlayShow {
+export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, controllerRef?: string): IROverlayShow {
   return { kind: 'overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
@@ -373,27 +432,18 @@ export function irOverlayHide(templateKey: string, zOrder: number, controllerRef
   return { kind: 'overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-// ── LVGL Visibility Actions ────────────────────────────────────────────────
+// ── Controller Method Call ─────────────────────────────────────────────────
 
-/** LVGL visibility show — placeholder resolved at serialization time. */
-export interface IRLvglVisibilityShow {
-  kind: 'lvgl_visibility_show';
+/** Generic controller method call — resolved to script_execute at serialization. */
+export interface IRControllerMethodCall {
+  kind: 'controller_method_call';
   /** Controller variable name — resolved from __refBindings at serialization. */
   controllerRef: string;
+  /** Method name on the controller (e.g. 'show', 'hide'). */
+  methodName: string;
 }
 
-/** LVGL visibility hide — placeholder resolved at serialization time. */
-export interface IRLvglVisibilityHide {
-  kind: 'lvgl_visibility_hide';
-  /** Controller variable name — resolved from __refBindings at serialization. */
-  controllerRef: string;
-}
-
-export function irLvglVisibilityShow(controllerRef: string): IRLvglVisibilityShow {
-  return { kind: 'lvgl_visibility_show', controllerRef };
-}
-
-export function irLvglVisibilityHide(controllerRef: string): IRLvglVisibilityHide {
-  return { kind: 'lvgl_visibility_hide', controllerRef };
+export function irControllerMethodCall(controllerRef: string, methodName: string): IRControllerMethodCall {
+  return { kind: 'controller_method_call', controllerRef, methodName };
 }
 

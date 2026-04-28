@@ -61,6 +61,24 @@ function restoreLambdaMarkers(value: unknown): unknown {
   return value;
 }
 
+/**
+ * Like `restoreLambdaMarkers`, but prepends `prefix` to every lambda body
+ * encountered in the tree. Used when emitting a parameterized script body
+ * that needs `auto& closure = ...;` available in every lambda action.
+ */
+function restoreLambdaMarkersWithPrefix(value: unknown, prefix: string): unknown {
+  if (isLambdaMarker(value)) return createYamlLambda(`${prefix}${value.__lambda__}`);
+  if (Array.isArray(value)) return value.map((v) => restoreLambdaMarkersWithPrefix(v, prefix));
+  if (value !== null && typeof value === 'object') {
+    const obj: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      obj[k] = restoreLambdaMarkersWithPrefix(v, prefix);
+    }
+    return obj;
+  }
+  return value;
+}
+
 // ── Ref binding resolution ───────────────────────────────────────────────
 // Resolves ref variable names in actions to their runtime ref tokens.
 
@@ -353,11 +371,46 @@ export function lowerToYamlConfig(
   }
 
   if (ir.esphome.scripts.length > 0) {
-    finalConfig['script'] = ir.esphome.scripts.map((s) => ({
-      id: s.id,
-      ...(s.mode && s.mode !== 'single' ? { mode: s.mode } : {}),
-      then: restoreLambdaMarkers(lowerActionTree(s.then, actionCtx)) as unknown[],
-    }));
+    finalConfig['script'] = ir.esphome.scripts.map((s) => {
+      const params: Record<string, string> = {};
+      // closure_index ALWAYS comes first when this script has a closure shape.
+      if (s.closureShape && s.closureShape.fields.length > 0) {
+        params['closure_index'] = 'int';
+      }
+      if (s.userParams) {
+        for (const p of s.userParams) params[p.name] = p.cppType;
+      }
+      const hasParams = Object.keys(params).length > 0;
+
+      // Build a per-script lowering context so `ref` slots can be resolved
+      // either against the script's `refBindings` (literal tokens) or its
+      // `closureShape` (per-instance closure-table fields).
+      const scriptCtx: typeof actionCtx = {
+        ...actionCtx,
+        scriptRefBindings: s.refBindings,
+        scriptClosureNames: s.closureShape && s.closureShape.fields.length > 0
+          ? new Set(s.closureShape.fields.map((f) => f.name))
+          : undefined,
+        scriptId: s.id,
+      };
+
+      // When the script has a closure shape, every lambda inside its body must
+      // dereference the per-instance closure row via the closure_index param.
+      const lowered = lowerActionTree(s.then, scriptCtx);
+      const restored = (s.closureShape && s.closureShape.fields.length > 0)
+        ? restoreLambdaMarkersWithPrefix(
+            lowered,
+            `auto& closure = espcompose::${s.id}_closures[closure_index]; (void)closure; `,
+          )
+        : restoreLambdaMarkers(lowered);
+
+      return {
+        id: s.id,
+        ...(s.mode && s.mode !== 'single' ? { mode: s.mode } : {}),
+        ...(hasParams ? { parameters: params } : {}),
+        then: restored as unknown[],
+      };
+    });
   }
 
   // Transform ec_canvas widgets → native canvas widgets.

@@ -6,11 +6,12 @@
 // functions.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode } from '@espcompose/core/internals';
+import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode, IRScript } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings-codegen.js';
 import type { ReactiveRuntimeConfig } from './bindings-codegen.js';
 import { processOverlayMux } from './overlay-mux.js';
+import { generateAllClosureTables } from './closure-table.js';
 
 export interface CppBackendResult {
   runtimeConfig: ReactiveRuntimeConfig;
@@ -54,7 +55,29 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
     || allReactiveNodes.length > 0
     || (themes != null && themes.length > 0);
 
-  if (!hasReactiveContent) return null;
+  // Check for scripts with closure tables — these need C++ struct/array
+  // declarations even when there's no reactive content.
+  const closureTablesBlock = generateAllClosureTables(ir.esphome.scripts as IRScript[]);
+  const hasClosureTables = closureTablesBlock.length > 0;
+
+  if (!hasReactiveContent && !hasClosureTables) return null;
+
+  if (!hasReactiveContent && hasClosureTables) {
+    // No reactive content, but closure tables exist — emit a minimal
+    // bindings header with just the closure table declarations.
+    const minimalConfig: ReactiveRuntimeConfig = {
+      signals: [],
+      globalSignals: [],
+      memos: [],
+      effects: [],
+      widgetBindings: [],
+      closureTablesBlock,
+    };
+    return {
+      runtimeConfig: minimalConfig,
+      bindingsHeaderContent: generateBindingsHeader(minimalConfig),
+    };
+  }
 
   // Scan the IR config tree for theme_read references and overlay_show template
   // keys. This catches theme tokens referenced by overlay widgets in top_layer
@@ -99,6 +122,11 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   // muxed dispatch chains (if-actions checking the mux signal).
   if (overlayMux && overlayMux.muxedActions.size > 0) {
     replaceOverlayActionsInIR(ir, overlayMux.muxedActions);
+  }
+
+  // Attach pre-computed closure tables to the runtime config.
+  if (hasClosureTables) {
+    runtimeConfig.closureTablesBlock = closureTablesBlock;
   }
 
   return {

@@ -11,7 +11,8 @@ import type { TriggerVar } from './trigger-args';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 import type { IRActionNode } from './ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
-import { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
+import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
+import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -119,6 +120,12 @@ function resolveRefBindingsInValue(
     const obj = value as Record<string, unknown>;
     const result: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(obj)) {
+      // refSlots carry binding-name metadata for the closure-rewrite pass.
+      // They must NOT be resolved to literal tokens.
+      if (key === 'refSlots') {
+        result[key] = val;
+        continue;
+      }
       result[key] = resolveRefBindingsInValue(val, refBindings);
     }
     return result;
@@ -214,17 +221,21 @@ export function serializeValue(v: unknown): unknown {
   if (typeof v === 'function' && hasCompiledActions(v)) {
     const fn = v as CompiledActionFunction;
     let actions = fn.__compiledActions;
+    // Resolve deferred controller method calls (ctrl.show() → script_execute)
+    resolveControllerMethodCalls(actions as IRActionNode[], fn.__refBindings);
     // Resolve deferred overlay controller refs (templateKey/instanceIndex)
     resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
-    // Resolve deferred LVGL visibility controller refs
-    resolveLvglVisibilityControllerRefs(actions as IRActionNode[], fn.__refBindings);
+    // Patch IRScriptExecute.closureIndex for user-written scriptHandle calls
+    // by reading __closureIndex from the bound ScriptHandle in __refBindings.
+    resolveScriptHandleClosureIndex(actions as IRActionNode[], fn.__refBindings);
     // Remove resolved overlay controller objects from refBindings so they don't
     // cause string-replacement damage during lambda ref resolution in the
     // lowering phase (OverlayController.toString() → '[object Object]' would
     // corrupt signal names containing 'overlay').
     if (fn.__refBindings) {
+      cleanControllerRefs(fn.__refBindings);
       cleanOverlayControllerRefs(fn.__refBindings);
-      cleanLvglVisibilityControllerRefs(fn.__refBindings);
+      cleanScriptHandleRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
     const result = restoreLambdaMarkers(actions);

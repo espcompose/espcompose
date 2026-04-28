@@ -1,6 +1,14 @@
 import ts from 'typescript';
-import type { GlobalDefinition } from '@espcompose/core/internals';
+import type { GlobalDefinition, IRScriptParam, ScriptParamCppType } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
+
+/** Info about a useScript() declaration visible to the action compiler. */
+export interface ScriptHandleInfo {
+  /** ESPHome script ID. */
+  id: string;
+  /** User-defined parameters from the arrow function signature. */
+  userParams: IRScriptParam[];
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -26,16 +34,31 @@ export interface ActionCompileResult {
   refExpressions: Set<string>;
   /** Set of overlay controller variable names that need to be in __refBindings. */
   overlayControllerRefs: Set<string>;
-  /** Set of LVGL visibility controller variable names that need to be in __refBindings. */
-  lvglVisibilityControllerRefs: Set<string>;
+  /**
+   * Set of script-handle variable names referenced via `myScript.execute()` or
+   * `await myScript()`. Surfacing these into __refBindings allows the runtime
+   * to read each handle's `__closureIndex` and patch IRScriptExecute nodes.
+   */
+  scriptHandleRefs: Set<string>;
+  /** Set of controller variable names that need to be in __refBindings. */
+  controllerRefs: Set<string>;
+  /**
+   * Scalar captures: maps captured variable name → C++ type.
+   * Populated when the action compiler encounters a non-literal identifier
+   * in a position like `delay(durationMs)` and infers the C++ type from
+   * the TypeScript type.
+   */
+  scalarCaptures: Map<string, ScriptParamCppType>;
 }
 
 export interface ActionCompilerContext {
   checker: ts.TypeChecker;
   /** Map of declaration symbol → HA entity info (scope-aware). */
   haEntities: Map<ts.Symbol, HAEntityInfo>;
-  /** Map of declaration symbol → script ID (scope-aware). */
-  scriptHandles: Map<ts.Symbol, string>;
+  /** Map of declaration symbol → script handle info (scope-aware). */
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>;
+  /** Names of user-defined script parameters in the current function scope. */
+  scriptParamNames: Set<string>;
   /** Map of declaration symbol → global variable info (scope-aware). */
   globalHandles: Map<ts.Symbol, GlobalDefinition>;
   /** Set of declaration symbols that are component refs. */
@@ -52,8 +75,17 @@ export interface ActionCompilerContext {
   refExpressions: Set<string>;
   /** Set of overlay controller variable names encountered in overlay actions. */
   overlayControllerRefs: Set<string>;
-  /** Set of LVGL visibility controller variable names encountered in visibility actions. */
-  lvglVisibilityControllerRefs: Set<string>;
+  /** Set of script-handle variable names referenced (so __refBindings can carry them at runtime). */
+  scriptHandleRefs: Set<string>;
+  /** Set of controller variable names encountered in controller method calls. */
+  controllerRefs: Set<string>;
+  /**
+   * Scalar captures: maps captured variable name → C++ type.
+   * Populated when the action compiler encounters a non-literal identifier
+   * in a position like `delay(durationMs)` and infers the C++ type from
+   * the TypeScript type.
+   */
+  scalarCaptures: Map<string, ScriptParamCppType>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

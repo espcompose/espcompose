@@ -21,6 +21,7 @@ interface OverlayControllerInternal {
   __instanceIndex?: number;
   __zOrder?: number;
   __lifecycleScriptId?: string;
+  __closureIndex?: number;
 }
 
 /**
@@ -47,7 +48,9 @@ export function resolveOverlayControllerRefs(
         if (ctrl.__lifecycleScriptId) {
           // Replace overlay_show with script_execute — the lifecycle script
           // handles show → delay → hide.
-          actions[i] = irScriptExecute(ctrl.__lifecycleScriptId);
+          actions[i] = irScriptExecute(ctrl.__lifecycleScriptId, {
+            closureIndex: ctrl.__closureIndex,
+          });
         } else {
           action.templateKey = ctrl.__templateKey ?? action.templateKey;
           action.instanceIndex = ctrl.__instanceIndex ?? action.instanceIndex;

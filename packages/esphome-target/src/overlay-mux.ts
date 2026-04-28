@@ -169,14 +169,16 @@ function singleActionFingerprint(action: IRActionNode): string {
       return `AC:${action.globalId}`;
     case 'lambda_action':
       return `LA:${action.fragments.join('|')}:${action.slots.map(s => `${s.kind}:${'name' in s ? s.name : 'value' in s ? String(s.value) : 'id' in s ? s.id : ''}`).join(',')}`;
-    case 'overlay_show':
-      return `PS:${action.templateKey}:${action.instanceIndex}:${action.controllerRef ?? ''}`;
+    case 'overlay_show': {
+      const idx = typeof action.instanceIndex === 'number'
+        ? String(action.instanceIndex)
+        : `param:${action.instanceIndex.name}`;
+      return `PS:${action.templateKey}:${idx}:${action.controllerRef ?? ''}`;
+    }
     case 'overlay_hide':
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
-    case 'lvgl_visibility_show':
-      return `VS:${action.controllerRef}`;
-    case 'lvgl_visibility_hide':
-      return `VH:${action.controllerRef}`;
+    case 'controller_method_call':
+      return `CM:${action.controllerRef}:${action.methodName}`;
   }
 }
 

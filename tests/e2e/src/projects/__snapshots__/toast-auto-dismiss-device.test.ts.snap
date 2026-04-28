@@ -98,6 +98,50 @@ void select_theme_333e4663(const char* name) {
   if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
 }
 
+// ── Script closure tables ──
+struct LvglVisEspcomposeScriptRenderWireframeAnon190Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisEspcomposeScriptRenderWireframeAnon190Closure lvgl_vis_espcompose_script_render_wireframe_anon_19__0_closures[] = {
+  { 0 }
+};
+
+struct LvglVisHideEspcomposeScriptRenderWireframeAnon190Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisHideEspcomposeScriptRenderWireframeAnon190Closure lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__0_closures[] = {
+  { 0 }
+};
+
+struct LvglVisEspcomposeScriptRenderWireframeAnon191Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisEspcomposeScriptRenderWireframeAnon191Closure lvgl_vis_espcompose_script_render_wireframe_anon_19__1_closures[] = {
+  { 0 }
+};
+
+struct LvglVisHideEspcomposeScriptRenderWireframeAnon191Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisHideEspcomposeScriptRenderWireframeAnon191Closure lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__1_closures[] = {
+  { 0 }
+};
+
+struct LvglVisShowEspcomposeScriptRenderWireframeAnon192Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisShowEspcomposeScriptRenderWireframeAnon192Closure lvgl_vis_show_espcompose_script_render_wireframe_anon_19__2_closures[] = {
+  { 0 }
+};
+
+struct LvglVisHideEspcomposeScriptRenderWireframeAnon192Closure {
+  int __ctrl_instance_index;
+};
+static const LvglVisHideEspcomposeScriptRenderWireframeAnon192Closure lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__2_closures[] = {
+  { 0 }
+};
+
+
 // ── Memos (derived values) ──
 Memo<float> memo_0([]() -> float {
   return thm_333e4663_sizes_md_paddingX.get() * 2 + 80;
@@ -732,7 +776,8 @@ lvgl:
               - button:
                   on_press:
                     - script.execute:
-                        id: lvgl_vis_espcompose_script_render_wireframe_anon_19__0_0
+                        id: lvgl_vis_espcompose_script_render_wireframe_anon_19__0
+                        closure_index: 0
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -755,7 +800,8 @@ lvgl:
               - button:
                   on_press:
                     - script.execute:
-                        id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_0
+                        id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1
+                        closure_index: 0
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -777,14 +823,9 @@ lvgl:
                         id: rw_ref7
               - button:
                   on_press:
-                    - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-                        n_19__2_mux.set(0); if (auto rt =
-                        ::espcompose::EspcomposeRuntimeComponent::get_instance(\\
-                        )) { rt->request_flush(); }
-                        lv_obj_clear_flag(id(overlay_espcompose_script_render_w\\
-                        ireframe_anon_19__2), LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_move_foreground(id(overlay_espcompose_script_ren\\
-                        der_wireframe_anon_19__2));"
+                    - script.execute:
+                        id: lvgl_vis_show_espcompose_script_render_wireframe_anon_19__2
+                        closure_index: 0
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -806,8 +847,9 @@ lvgl:
                         id: rw_ref9
               - button:
                   on_press:
-                    - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
-                        anon_19__2), LV_OBJ_FLAG_HIDDEN);"
+                    - script.execute:
+                        id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__2
+                        closure_index: 0
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   bg_opa: COVER
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -993,11 +1035,16 @@ font:
     size: 22
     bpp: 4
 script:
-  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__0_0
+  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__0
     mode: restart
+    parameters:
+      closure_index: int
     then:
-      - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-          n_19__0_mux.set(0); if (auto rt =
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__0_cl\\
+          osures[closure_index]; (void)closure;
+          espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__0\\
+          _mux.set(closure.__ctrl_instance_index); if (auto rt =
           ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
@@ -1005,13 +1052,32 @@ script:
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
           anon_19__0));"
       - delay: 3s
-      - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
-          anon_19__0), LV_OBJ_FLAG_HIDDEN);"
-  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1_0
-    mode: restart
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__0_cl\\
+          osures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __0), LV_OBJ_FLAG_HIDDEN);"
+  - id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__0
+    parameters:
+      closure_index: int
     then:
-      - lambda: !lambda "espcompose::sig_overlay_espcompose_script_render_wireframe_ano\\
-          n_19__1_mux.set(0); if (auto rt =
+      - script.stop:
+          id: lvgl_vis_espcompose_script_render_wireframe_anon_19__0
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_hide_espcompose_script_render_wireframe_anon_19_\\
+          _0_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __0), LV_OBJ_FLAG_HIDDEN);"
+  - id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1
+    mode: restart
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__1_cl\\
+          osures[closure_index]; (void)closure;
+          espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__1\\
+          _mux.set(closure.__ctrl_instance_index); if (auto rt =
           ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
@@ -1019,7 +1085,45 @@ script:
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
           anon_19__1));"
       - delay: 5s
-      - lambda: !lambda "lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_\\
-          anon_19__1), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__1_cl\\
+          osures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __1), LV_OBJ_FLAG_HIDDEN);"
+  - id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__1
+    parameters:
+      closure_index: int
+    then:
+      - script.stop:
+          id: lvgl_vis_espcompose_script_render_wireframe_anon_19__1
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_hide_espcompose_script_render_wireframe_anon_19_\\
+          _1_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __1), LV_OBJ_FLAG_HIDDEN);"
+  - id: lvgl_vis_show_espcompose_script_render_wireframe_anon_19__2
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_show_espcompose_script_render_wireframe_anon_19_\\
+          _2_closures[closure_index]; (void)closure;
+          espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__2\\
+          _mux.set(closure.__ctrl_instance_index); if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }
+          lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
+          19__2), LV_OBJ_FLAG_HIDDEN);
+          lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
+          anon_19__2));"
+  - id: lvgl_vis_hide_espcompose_script_render_wireframe_anon_19__2
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::lvgl_vis_hide_espcompose_script_render_wireframe_anon_19_\\
+          _2_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(overlay_espcompose_script_render_wireframe_anon_19\\
+          __2), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

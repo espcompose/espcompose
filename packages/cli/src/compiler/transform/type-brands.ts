@@ -18,7 +18,7 @@ const REF_BRAND_RE = /^__@REF_BRAND@\d+$/;
 const BINDING_BRAND_RE = /^__@BINDING_BRAND@\d+$/;
 const THEME_BRAND_RE = /^__@THEME_BRAND@\d+$/;
 const OVERLAY_BRAND_RE = /^__@OVERLAY_BRAND@\d+$/;
-const LVGL_VISIBILITY_BRAND_RE = /^__@LVGL_VISIBILITY_BRAND@\d+$/;
+const CONTROLLER_BRAND_RE = /^__@CONTROLLER_BRAND@\d+$/;
 
 /**
  * Check whether an alias symbol was declared inside `@espcompose/core`.
@@ -175,11 +175,15 @@ export function hasOverlayBrand(type: ts.Type): boolean {
 }
 
 /**
- * Check whether a type carries the LVGL_VISIBILITY_BRAND unique-symbol property.
+ * Check whether a type carries the CONTROLLER_BRAND unique-symbol property.
+ *
+ * Controllers created by `useController()` are branded objects whose methods
+ * map to ScriptHandle values. The action compiler dispatches method calls
+ * on controller-branded types to `irControllerMethodCall`.
  */
-export function hasLvglVisibilityBrand(type: ts.Type): boolean {
+export function hasControllerBrand(type: ts.Type): boolean {
   for (const prop of type.getProperties()) {
-    if (LVGL_VISIBILITY_BRAND_RE.test(prop.name)) {
+    if (CONTROLLER_BRAND_RE.test(prop.name)) {
       return true;
     }
   }

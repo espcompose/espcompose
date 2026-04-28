@@ -4,6 +4,7 @@ import type {
   IRActionConfig,
   IRActionConfigDict,
   IRActionConfigValue,
+  IRRefSlot,
 } from '@espcompose/core/internals';
 import { camelToSnake } from '@espcompose/core/internals';
 import { hasRefBrand } from '../type-brands.js';
@@ -152,18 +153,22 @@ export function buildRefActionConfig(
   call: ts.CallExpression,
   refName: string,
   ctx: ActionCompilerContext,
+  refSlots?: IRRefSlot[],
 ): IRActionConfig {
   if (call.arguments.length === 0) {
-    // Simple action: just the ref ID
+    // Simple action: just the ref ID (bare string config).
+    refSlots?.push({ kind: 'bare', bindingName: refName });
     return refName;
   }
 
   const arg = call.arguments[0];
   if (!ts.isObjectLiteralExpression(arg)) {
+    refSlots?.push({ kind: 'bare', bindingName: refName });
     return refName;
   }
 
-  // Action with params
+  // Action with params — ref goes into the `id` key.
+  refSlots?.push({ kind: 'object', key: 'id', bindingName: refName });
   const config: Record<string, IRActionConfigValue> = { id: refName };
   for (const prop of arg.properties) {
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {

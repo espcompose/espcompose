@@ -96,11 +96,10 @@ export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './ta
 // ── Hooks ──────────────────────────────────────────────────────────────────
 export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
-export { registerScript } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
-export { withGlobalScope, hashGlobalFingerprint, cppTypeToExprType } from './hooks/global-shared';
+export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, cppTypeToExprType } from './hooks/global-shared';
 export type { GlobalDefinition, GlobalHandle } from './hooks/global-shared';
 export { globalTypeToCpp, isArrayGlobalType } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useGlobal';
@@ -112,7 +111,11 @@ export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOve
 export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
-export { resolveLvglVisibilityControllerRefs, cleanLvglVisibilityControllerRefs } from './lvgl-visibility-resolve';
+export { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
+
+// ── Capture Protocol ───────────────────────────────────────────────────────
+export type { ClosureDescriptor } from './closure';
+export { registerClosureDescriptor, findClosureDescriptor } from './closure';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions';
@@ -174,6 +177,8 @@ export {
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
   BuildSemanticIRInput, IRThemeData, IRScript,
+  IRScriptParam, IRScriptParamRef, ScriptParamCppType,
+  ClosureField, ClosureFieldKind, ClosureShape, ClosureInstance, IRClosureValue,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
 } from './ir/index';
@@ -218,10 +223,11 @@ export type {
   IRArraySet, IRArrayPush, IRArrayClear,
   IRLambdaAction, IRLambdaSlot,
   IROverlayShow, IROverlayHide,
-  IRLvglVisibilityShow, IRLvglVisibilityHide,
+  IRControllerMethodCall,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
+  IRRefSlot,
 } from './ir/index';
 export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,
@@ -231,5 +237,5 @@ export {
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
   irOverlayShow, irOverlayHide,
-  irLvglVisibilityShow, irLvglVisibilityHide,
+  irControllerMethodCall,
 } from './ir/index';

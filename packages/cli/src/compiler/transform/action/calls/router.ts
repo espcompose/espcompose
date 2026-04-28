@@ -10,6 +10,7 @@ import {
 import { hasRefBrand, isCoreExportCall, isCorePropertyCall } from '../../type-brands.js';
 import type { ActionCompilerContext } from '../context.js';
 import { lookupBySymbol, emitError } from '../context.js';
+import { compileScriptCallArgs } from './script-args.js';
 import type { HAEntityInfo } from '../../expr-compiler.js';
 import { getCallName, extractDurationArg } from '../util.js';
 import { compileHAAction, inferHAEntityDomainFromType } from './ha.js';
@@ -17,7 +18,7 @@ import { compileRefAction } from './ref.js';
 import { compileGlobalSet, compileArraySet, compileArrayPush } from './global.js';
 import { compileThemeSelect, isThemeSelectCall } from './theme.js';
 import { compileOverlayAction, isOverlayActionCall } from './overlay.js';
-import { compileLvglVisibilityAction, isLvglVisibilityActionCall } from './lvgl-visibility.js';
+import { compileControllerMethodCall, isControllerMethodCall } from './controller.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Action call classification and routing
@@ -41,10 +42,14 @@ export function compileActionCall(
       const objNode = call.expression.expression;
 
       // scriptHandle.execute() / scriptHandle.stop()
-      const scriptId = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
-      if (scriptId) {
-        if (methodName === 'execute') return [irScriptExecute(scriptId)];
-        if (methodName === 'stop') return [irScriptStop(scriptId)];
+      const scriptInfo = lookupBySymbol(ctx.scriptHandles, objNode, ctx.checker);
+      if (scriptInfo) {
+        if (methodName === 'execute') {
+          const userArgs = compileScriptCallArgs(call, scriptInfo.userParams, ctx);
+          ctx.scriptHandleRefs.add(objNode.text);
+          return [irScriptExecute(scriptInfo.id, userArgs ? { userArgs } : undefined)];
+        }
+        if (methodName === 'stop') return [irScriptStop(scriptInfo.id)];
         return emitError(call, ctx,
           `Script handle only supports .execute() and .stop(). '${methodName}' is not a valid script operation.`);
       }
@@ -78,9 +83,9 @@ export function compileActionCall(
     const objExpr = call.expression.expression;
     const objType = ctx.checker.getTypeAtLocation(objExpr);
 
-    // LVGL visibility controller — vis.show() / vis.hide()
-    if (isLvglVisibilityActionCall(objType, methodName)) {
-      return compileLvglVisibilityAction(call, objExpr, objType, methodName, ctx);
+    // Controller method call — ctrl.show(), ctrl.hide(), etc.
+    if (isControllerMethodCall(objType, methodName)) {
+      return compileControllerMethodCall(call, objExpr, objType, methodName, ctx);
     }
 
     // Overlay controller — controller.show() / controller.hide()
@@ -130,9 +135,11 @@ export function compileActionCall(
 
   // scriptHandle() without await — fire and forget
   if (ts.isIdentifier(call.expression)) {
-    const scriptId = lookupBySymbol(ctx.scriptHandles, call.expression, ctx.checker);
-    if (scriptId) {
-      return [irScriptExecute(scriptId)];
+    const scriptInfo = lookupBySymbol(ctx.scriptHandles, call.expression, ctx.checker);
+    if (scriptInfo) {
+      const userArgs = compileScriptCallArgs(call, scriptInfo.userParams, ctx);
+      ctx.scriptHandleRefs.add(call.expression.text);
+      return [irScriptExecute(scriptInfo.id, userArgs ? { userArgs } : undefined)];
     }
   }
 

@@ -277,6 +277,7 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
   return ctrl;
 }
 
+
 // ── Internal helpers ────────────────────────────────────────────────────────
 
 /**

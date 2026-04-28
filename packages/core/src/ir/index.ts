@@ -21,6 +21,14 @@ export type {
   IRTriggerVar,
   IRThemeData,
   IRScript,
+  IRScriptParam,
+  IRScriptParamRef,
+  ScriptParamCppType,
+  ClosureField,
+  ClosureFieldKind,
+  ClosureShape,
+  ClosureInstance,
+  IRClosureValue,
 } from './types';
 
 export {
@@ -133,8 +141,7 @@ export type {
   IRLambdaSlot,
   IROverlayShow,
   IROverlayHide,
-  IRLvglVisibilityShow,
-  IRLvglVisibilityHide,
+  IRControllerMethodCall,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -146,6 +153,7 @@ export type {
   IRActionConfig,
   IRActionConfigDict,
   IRActionConfigValue,
+  IRRefSlot,
 } from './action-types';
 
 export {
@@ -169,6 +177,5 @@ export {
   irLambdaAction,
   irOverlayShow,
   irOverlayHide,
-  irLvglVisibilityShow,
-  irLvglVisibilityHide,
+  irControllerMethodCall,
 } from './action-types';
