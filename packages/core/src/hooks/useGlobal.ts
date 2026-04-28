@@ -213,7 +213,6 @@ function createGlobalArrayHandle<T>(
       const dep: IRDependency = {
         kind: 'dependency',
         sourceId: id,
-        triggerType: 'on_value',
         sourceDomain: 'globals',
         sourceType: 'global',
       };
@@ -223,7 +222,6 @@ function createGlobalArrayHandle<T>(
         exprType,
         sourceId: id,
         propertyKey: 'value',
-        triggerType: 'on_value',
         sourceDomain: 'globals',
       });
     }

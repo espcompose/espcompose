@@ -169,7 +169,6 @@ function serializeCompiledCall(exprType: string, deps: DependencyInfo[], exprIR:
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
-      `triggerType:${JSON.stringify(d.triggerType)}`,
       `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
     ];
     if (d.sourceType) {

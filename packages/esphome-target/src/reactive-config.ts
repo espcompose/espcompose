@@ -18,6 +18,7 @@ import { getExprChildren } from '@espcompose/core';
 import type { ExprType, IRValueType } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 import { valueTypeToCpp } from './value-type-cpp.js';
+import { sourceDomainToTrigger } from './source-trigger.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Sensor type → C++ type mapping
@@ -51,8 +52,8 @@ function deriveSourceSignals(
         if (!names.includes(name)) names.push(name);
       }
       if (themePaths.length === 0) {
-        // Fallback: use sourceId if we can't extract path from IR
-        const name = `thm_${dep.sourceId === '__theme__' ? dep.triggerType : dep.sourceId}`;
+        // Fallback: use themePath if we can't extract path from IR
+        const name = `thm_${dep.themePath ?? dep.sourceId}`;
         if (!names.includes(name)) names.push(name);
       }
     } else if (dep.sourceType === 'global') {
@@ -189,7 +190,11 @@ export function buildRuntimeConfig(
   for (const entity of entities) {
     const sigName = `sig_${entity.generatedId}`;
     if (!signalMap.has(sigName)) {
-      signalMap.set(sigName, { name: sigName, cppType: mapSensorTypeToCppType(entity.sensorType) });
+      signalMap.set(sigName, {
+        name: sigName,
+        cppType: mapSensorTypeToCppType(entity.sensorType),
+        sourceDomain: entity.sensorType,
+      });
     }
   }
 
@@ -536,8 +541,9 @@ export function injectReactiveBindingsRuntime(
 
   // Step 3: Inject signal.set() triggers on each HA sensor source
   for (const sig of runtimeConfig.signals) {
+    if (!sig.sourceDomain) continue; // skip non-HA-bound signals (overlay-mux, etc.)
     const sourceId = sig.name.replace(/^sig_/, '');
-    injectSignalTrigger(result, sourceId, sig.name, sig.cppType);
+    injectSignalTrigger(result, sourceId, sig.name, sig.sourceDomain);
   }
 
   // Step 4: Inject build_flag for HA service calls in compiled triggers
@@ -640,10 +646,10 @@ function injectSignalTrigger(
   config: Record<string, unknown>,
   sourceId: string,
   signalName: string,
-  cppType: string,
+  sourceDomain: string,
 ): void {
-  // Determine the trigger type based on C++ type
-  const triggerType = cppType === 'bool' ? 'on_state' : 'on_value';
+  // Determine the trigger type based on the source domain (semantic).
+  const triggerType = sourceDomainToTrigger(sourceDomain);
 
   // Generate the signal.set() lambda
   const lambdaBody = generateSignalSetLambda(signalName, 'x');

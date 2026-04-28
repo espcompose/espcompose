@@ -26,7 +26,7 @@ describe('reactive-utils', () => {
     it('passes through IRReactiveNode instances', () => {
       const node = new IRReactiveNode({
         kind: 'expression',
-        dependencies: [{ kind: 'dependency', sourceId: 'test', triggerType: 'on_state', sourceDomain: 'sensor' }],
+        dependencies: [{ kind: 'dependency', sourceId: 'test', sourceDomain: 'sensor' }],
       });
       const result = useReactive(node);
       expect(isIRReactiveNode(result)).toBe(true);

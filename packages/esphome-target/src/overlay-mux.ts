@@ -314,7 +314,6 @@ export function processOverlayMux(
         const muxDep = {
           kind: 'dependency' as const,
           sourceId: muxSignalName,
-          triggerType: 'on_value',
           sourceDomain: 'overlay_mux',
           sourceType: 'overlay_mux' as const,
         };

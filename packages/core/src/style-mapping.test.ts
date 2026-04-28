@@ -86,7 +86,7 @@ describe('expandCssProps', () => {
 
   it('maps opacity to opa', () => {
     const result = expandCssProps({ opacity: 'opaque' });
-    expect(result).toEqual({ opa: 'COVER' });
+    expect(result).toEqual({ opa: 'opaque' });
   });
 
   it('maps shadow CSS aliases', () => {
@@ -128,7 +128,7 @@ describe('expandCssProps', () => {
 
   it('maps textDecoration alias', () => {
     const result = expandCssProps({ textDecoration: 'underline' });
-    expect(result).toEqual({ textDecor: 'UNDERLINE' });
+    expect(result).toEqual({ textDecor: 'underline' });
   });
 
   it('maps opacity aliases', () => {
@@ -140,11 +140,11 @@ describe('expandCssProps', () => {
       shadowOpacity: 'opaque',
     });
     expect(result).toEqual({
-      bgOpa: 'COVER',
-      textOpa: 'TRANSP',
-      borderOpa: 'COVER',
-      outlineOpa: 'TRANSP',
-      shadowOpa: 'COVER',
+      bgOpa: 'opaque',
+      textOpa: 'transparent',
+      borderOpa: 'opaque',
+      outlineOpa: 'transparent',
+      shadowOpa: 'opaque',
     });
   });
 
@@ -230,54 +230,54 @@ describe('expandCssProps', () => {
     expect(expandCssProps({ borderDrawOrder: 'before-children' })).toEqual({ borderPost: false });
   });
 
-  it('maps textAlign CSS values to LVGL CAPS', () => {
-    expect(expandCssProps({ textAlign: 'center' })).toEqual({ textAlign: 'CENTER' });
-    expect(expandCssProps({ textAlign: 'left' })).toEqual({ textAlign: 'LEFT' });
-    expect(expandCssProps({ textAlign: 'right' })).toEqual({ textAlign: 'RIGHT' });
-    expect(expandCssProps({ textAlign: 'auto' })).toEqual({ textAlign: 'AUTO' });
+  it('maps textAlign CSS values (semantic identity)', () => {
+    expect(expandCssProps({ textAlign: 'center' })).toEqual({ textAlign: 'center' });
+    expect(expandCssProps({ textAlign: 'left' })).toEqual({ textAlign: 'left' });
+    expect(expandCssProps({ textAlign: 'right' })).toEqual({ textAlign: 'right' });
+    expect(expandCssProps({ textAlign: 'auto' })).toEqual({ textAlign: 'auto' });
   });
 
-  it('maps textDecoration CSS values to LVGL CAPS', () => {
-    expect(expandCssProps({ textDecoration: 'none' })).toEqual({ textDecor: 'NONE' });
-    expect(expandCssProps({ textDecoration: 'underline' })).toEqual({ textDecor: 'UNDERLINE' });
-    expect(expandCssProps({ textDecoration: 'strikethrough' })).toEqual({ textDecor: 'STRIKETHROUGH' });
+  it('maps textDecoration CSS values (semantic identity)', () => {
+    expect(expandCssProps({ textDecoration: 'none' })).toEqual({ textDecor: 'none' });
+    expect(expandCssProps({ textDecoration: 'underline' })).toEqual({ textDecor: 'underline' });
+    expect(expandCssProps({ textDecoration: 'strikethrough' })).toEqual({ textDecor: 'strikethrough' });
   });
 
-  it('maps borderRadius circle to CAPS', () => {
-    expect(expandCssProps({ borderRadius: 'circle' })).toEqual({ radius: 'CIRCLE' });
+  it('maps borderRadius circle (semantic identity)', () => {
+    expect(expandCssProps({ borderRadius: 'circle' })).toEqual({ radius: 'circle' });
     // Numeric values pass through unchanged
     expect(expandCssProps({ borderRadius: 10 })).toEqual({ radius: 10 });
   });
 
-  it('maps borderSides CSS values to LVGL CAPS', () => {
-    expect(expandCssProps({ borderSides: 'top' })).toEqual({ borderSide: 'TOP' });
-    expect(expandCssProps({ borderSides: 'bottom' })).toEqual({ borderSide: 'BOTTOM' });
-    expect(expandCssProps({ borderSides: 'none' })).toEqual({ borderSide: 'NONE' });
-    expect(expandCssProps({ borderSides: 'internal' })).toEqual({ borderSide: 'INTERNAL' });
+  it('maps borderSides CSS values (semantic identity)', () => {
+    expect(expandCssProps({ borderSides: 'top' })).toEqual({ borderSide: 'top' });
+    expect(expandCssProps({ borderSides: 'bottom' })).toEqual({ borderSide: 'bottom' });
+    expect(expandCssProps({ borderSides: 'none' })).toEqual({ borderSide: 'none' });
+    expect(expandCssProps({ borderSides: 'internal' })).toEqual({ borderSide: 'internal' });
   });
 
-  it('maps gradient direction to LVGL abbreviations', () => {
-    expect(expandCssProps({ backgroundGradientDirection: 'horizontal' })).toEqual({ bgGradDir: 'HOR' });
-    expect(expandCssProps({ backgroundGradientDirection: 'vertical' })).toEqual({ bgGradDir: 'VER' });
-    expect(expandCssProps({ backgroundGradientDirection: 'none' })).toEqual({ bgGradDir: 'NONE' });
+  it('maps gradient direction (semantic identity)', () => {
+    expect(expandCssProps({ backgroundGradientDirection: 'horizontal' })).toEqual({ bgGradDir: 'horizontal' });
+    expect(expandCssProps({ backgroundGradientDirection: 'vertical' })).toEqual({ bgGradDir: 'vertical' });
+    expect(expandCssProps({ backgroundGradientDirection: 'none' })).toEqual({ bgGradDir: 'none' });
   });
 
-  it('maps dither mode to LVGL CAPS', () => {
-    expect(expandCssProps({ backgroundGradientDither: 'ordered' })).toEqual({ bgDitherMode: 'ORDERED' });
-    expect(expandCssProps({ backgroundGradientDither: 'error-diffusion' })).toEqual({ bgDitherMode: 'ERR_DIFF' });
-    expect(expandCssProps({ backgroundGradientDither: 'none' })).toEqual({ bgDitherMode: 'NONE' });
+  it('maps dither mode (semantic identity)', () => {
+    expect(expandCssProps({ backgroundGradientDither: 'ordered' })).toEqual({ bgDitherMode: 'ordered' });
+    expect(expandCssProps({ backgroundGradientDither: 'error-diffusion' })).toEqual({ bgDitherMode: 'error-diffusion' });
+    expect(expandCssProps({ backgroundGradientDither: 'none' })).toEqual({ bgDitherMode: 'none' });
   });
 
-  it('maps fit-content to SIZE_CONTENT', () => {
-    expect(expandCssProps({ width: 'fit-content' })).toEqual({ width: 'SIZE_CONTENT' });
-    expect(expandCssProps({ height: 'fit-content' })).toEqual({ height: 'SIZE_CONTENT' });
+  it('maps fit-content size (semantic identity)', () => {
+    expect(expandCssProps({ width: 'fit-content' })).toEqual({ width: 'fit-content' });
+    expect(expandCssProps({ height: 'fit-content' })).toEqual({ height: 'fit-content' });
     // Numeric values pass through unchanged
     expect(expandCssProps({ width: 200 })).toEqual({ width: 200 });
   });
 
-  it('maps opacity named values to LVGL CAPS', () => {
-    expect(expandCssProps({ opacity: 'transparent' })).toEqual({ opa: 'TRANSP' });
-    expect(expandCssProps({ opacity: 'opaque' })).toEqual({ opa: 'COVER' });
+  it('maps opacity named values (semantic identity)', () => {
+    expect(expandCssProps({ opacity: 'transparent' })).toEqual({ opa: 'transparent' });
+    expect(expandCssProps({ opacity: 'opaque' })).toEqual({ opa: 'opaque' });
     // Percentage strings pass through unchanged
     expect(expandCssProps({ opacity: '50%' })).toEqual({ opa: '50%' });
   });
@@ -311,7 +311,7 @@ describe('expandCssProps', () => {
     });
     expect(result).toEqual({
       arcColor: '#FF0000',
-      arcOpa: 'COVER',
+      arcOpa: 'opaque',
       arcWidth: 3,
     });
   });
@@ -375,14 +375,14 @@ describe('expandCssProps', () => {
     });
     expect(result).toEqual({
       animTime: 300,
-      colorFilterOpa: 'COVER',
+      colorFilterOpa: 'opaque',
       imageRecolor: '#FF0000',
       imageRecolorOpa: '50%',
-      opaLayered: 'COVER',
+      opaLayered: 'opaque',
       outlinePad: 4,
       bgImageRecolor: '#00FF00',
-      bgImageRecolorOpa: 'TRANSP',
-      borderSide: 'TOP',
+      bgImageRecolorOpa: 'transparent',
+      borderSide: 'top',
     });
   });
 });
@@ -404,7 +404,7 @@ describe('expandCssStyle', () => {
       bgColor: '#FF0000',
       pressed: {
         bgColor: '#CC0000',
-        opa: 'COVER',
+        opa: 'opaque',
       },
     });
   });
@@ -468,7 +468,7 @@ describe('expandCssStyle', () => {
       bgColor: '#FFF',
       pressed: { bgColor: '#EEE' },
       focused: { borderColor: '#00F' },
-      disabled: { opa: 'TRANSP' },
+      disabled: { opa: 'transparent' },
     });
   });
 });
@@ -489,9 +489,9 @@ describe('expandCssProps — layout', () => {
     });
     expect(result.layout).toEqual({
       type: 'flex',
-      flexFlow: 'COLUMN',
-      flexAlignMain: 'SPACE_BETWEEN',
-      flexAlignCross: 'CENTER',
+      flexFlow: 'column',
+      flexAlignMain: 'spaceBetween',
+      flexAlignCross: 'center',
     });
   });
 
@@ -502,31 +502,31 @@ describe('expandCssProps — layout', () => {
       backgroundColor: '#FFF',
       gap: 12,
     });
-    expect(result.layout).toEqual({ type: 'flex', flexFlow: 'ROW', padRow: 12, padColumn: 12 });
+    expect(result.layout).toEqual({ type: 'flex', flexFlow: 'row', padRow: 12, padColumn: 12 });
     expect(result.bgColor).toBe('#FFF');
   });
 
-  it('maps all flex direction values', () => {
-    expect(expandCssProps({ flexDirection: 'row' }).layout).toEqual({ type: 'flex', flexFlow: 'ROW' });
-    expect(expandCssProps({ flexDirection: 'column' }).layout).toEqual({ type: 'flex', flexFlow: 'COLUMN' });
-    expect(expandCssProps({ flexDirection: 'row-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'ROW_WRAP' });
-    expect(expandCssProps({ flexDirection: 'column-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'COLUMN_WRAP' });
+  it('maps all flex direction values (semantic identity)', () => {
+    expect(expandCssProps({ flexDirection: 'row' }).layout).toEqual({ type: 'flex', flexFlow: 'row' });
+    expect(expandCssProps({ flexDirection: 'column' }).layout).toEqual({ type: 'flex', flexFlow: 'column' });
+    expect(expandCssProps({ flexDirection: 'row-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'row-wrap' });
+    expect(expandCssProps({ flexDirection: 'column-wrap' }).layout).toEqual({ type: 'flex', flexFlow: 'column-wrap' });
   });
 
-  it('maps all justifyContent values', () => {
+  it('maps all justifyContent values (semantic identity)', () => {
     const cases = [
-      ['start', 'START'], ['center', 'CENTER'], ['end', 'END'],
-      ['spaceBetween', 'SPACE_BETWEEN'], ['spaceAround', 'SPACE_AROUND'], ['spaceEvenly', 'SPACE_EVENLY'],
+      ['start'], ['center'], ['end'],
+      ['spaceBetween'], ['spaceAround'], ['spaceEvenly'],
     ] as const;
-    for (const [css, lvgl] of cases) {
-      expect(expandCssProps({ justifyContent: css }).layout).toEqual({ type: 'flex', flexAlignMain: lvgl });
+    for (const [css] of cases) {
+      expect(expandCssProps({ justifyContent: css }).layout).toEqual({ type: 'flex', flexAlignMain: css });
     }
   });
 
-  it('maps all alignItems values', () => {
-    const cases = [['start', 'START'], ['center', 'CENTER'], ['end', 'END'], ['stretch', 'STRETCH']] as const;
-    for (const [css, lvgl] of cases) {
-      expect(expandCssProps({ alignItems: css }).layout).toEqual({ type: 'flex', flexAlignCross: lvgl });
+  it('maps all alignItems values (semantic identity)', () => {
+    const cases = [['start'], ['center'], ['end'], ['stretch']] as const;
+    for (const [css] of cases) {
+      expect(expandCssProps({ alignItems: css }).layout).toEqual({ type: 'flex', flexAlignCross: css });
     }
   });
 
@@ -548,18 +548,19 @@ describe('expandCssProps — layout', () => {
     });
     expect(result.layout).toEqual({
       type: 'grid',
-      gridColumns: ['FR(1)', 'FR(2)', 200],
-      gridRows: ['FR(1)', 100, 'CONTENT'],
-      gridColumnAlign: 'CENTER',
-      gridRowAlign: 'STRETCH',
+      gridColumns: ['fr(1)', 'fr(2)', 200],
+      gridRows: ['fr(1)', 100, 'content'],
+      gridColumnAlign: 'center',
+      gridRowAlign: 'stretch',
     });
   });
 
-  it('passes through LVGL-format grid track values', () => {
+  it('normalizes grid track casing to semantic lowercase (target translates)', () => {
     const result = expandCssProps({
-      gridTemplateColumns: ['FR(1)', 'SIZE_CONTENT'],
+      display: 'grid',
+      gridTemplateColumns: ['FR(1)', 'CONTENT'],
     });
-    expect((result.layout as Record<string, unknown>)).toEqual({ type: 'grid', gridColumns: ['FR(1)', 'SIZE_CONTENT'] });
+    expect((result.layout as Record<string, unknown>)).toEqual({ type: 'grid', gridColumns: ['fr(1)', 'content'] });
   });
 
   it('grid child props are flat (not in layout block)', () => {
@@ -575,25 +576,25 @@ describe('expandCssProps — layout', () => {
     expect(result.gridCellRowPos).toBe(1);
     expect(result.gridCellColumnSpan).toBe(2);
     expect(result.gridCellRowSpan).toBe(3);
-    expect(result.gridCellXAlign).toBe('CENTER');
-    expect(result.gridCellYAlign).toBe('END');
+    expect(result.gridCellXAlign).toBe('center');
+    expect(result.gridCellYAlign).toBe('end');
     expect(result.layout).toBeUndefined();
   });
 
   // ── Widget placement ─────────────────────────────────────────────────
 
-  it('maps placeSelf to align', () => {
-    expect(expandCssProps({ placeSelf: 'center' })).toEqual({ align: 'CENTER' });
-    expect(expandCssProps({ placeSelf: 'topLeft' })).toEqual({ align: 'TOP_LEFT' });
-    expect(expandCssProps({ placeSelf: 'bottomCenter' })).toEqual({ align: 'BOTTOM_MID' });
-    expect(expandCssProps({ placeSelf: 'rightCenter' })).toEqual({ align: 'RIGHT_MID' });
+  it('maps placeSelf to align (semantic identity)', () => {
+    expect(expandCssProps({ placeSelf: 'center' })).toEqual({ align: 'center' });
+    expect(expandCssProps({ placeSelf: 'topLeft' })).toEqual({ align: 'topLeft' });
+    expect(expandCssProps({ placeSelf: 'bottomCenter' })).toEqual({ align: 'bottomCenter' });
+    expect(expandCssProps({ placeSelf: 'rightCenter' })).toEqual({ align: 'rightCenter' });
   });
 
   // ── Scrollbar ────────────────────────────────────────────────────────
 
-  it('maps scrollbarMode', () => {
-    expect(expandCssProps({ scrollbarMode: 'off' })).toEqual({ scrollbarMode: 'OFF' });
-    expect(expandCssProps({ scrollbarMode: 'active' })).toEqual({ scrollbarMode: 'ACTIVE' });
+  it('maps scrollbarMode (semantic identity)', () => {
+    expect(expandCssProps({ scrollbarMode: 'off' })).toEqual({ scrollbarMode: 'off' });
+    expect(expandCssProps({ scrollbarMode: 'active' })).toEqual({ scrollbarMode: 'active' });
   });
 
   // ── No layout block when no layout props ──────────────────────────────

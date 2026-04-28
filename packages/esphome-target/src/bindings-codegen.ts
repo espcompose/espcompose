@@ -21,6 +21,13 @@ export interface SignalDecl {
   name: string;
   /** C++ type (e.g. `bool`, `float`, `std::string`). */
   cppType: string;
+  /**
+   * Semantic ESPHome source-domain (e.g. `sensor`, `binary_sensor`,
+   * `text_sensor`). Used by the YAML lowering to pick the trigger key
+   * (`on_state` / `on_value`) on the source component. Optional for signals
+   * that are not bound to an HA sensor source (e.g. overlay-mux signals).
+   */
+  sourceDomain?: string;
 }
 
 export interface MemoDecl {

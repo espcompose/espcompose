@@ -93,9 +93,9 @@ function getOrCreateLeafNode(
     const dep: IRDependency = {
       kind: 'dependency',
       sourceId: `__theme_${scopeId}__`,
-      triggerType: '__theme__',
       sourceDomain: '__theme__',
       sourceType: 'theme',
+      themePath: path,
     };
 
     node = new IRReactiveNode({

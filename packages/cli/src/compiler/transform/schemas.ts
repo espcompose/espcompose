@@ -25,9 +25,9 @@ const ExprTypeSchema = z.enum(['int', 'float', 'string', 'bool', 'color', 'font_
 /** Single dependency in a compiled reactive expression. */
 export const DependencyInfoSchema = z.object({
   sourceId: z.string(),
-  triggerType: z.string(),
   sourceDomain: z.string(),
   sourceType: z.string().optional(),
+  themePath: z.string().optional(),
 });
 
 /** Metadata for `__espcompose.compiled()` calls. */

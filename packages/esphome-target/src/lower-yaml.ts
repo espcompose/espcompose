@@ -19,8 +19,10 @@ import { buildEntityComponentIds } from './expr-to-cpp.js';
 import type { CppBackendResult } from './codegen-cpp.js';
 import { lowerActionTree, type ActionLoweringContext } from './action-lowering.js';
 import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
+import { translateLvglStyleValues } from './lvgl-style-value-translate.js';
 import { valueTypeToEsphomeParam, valueTypeToCpp } from './value-type-cpp.js';
 import { resolveEntityPropertyCppPath } from './entity-property-cpp.js';
+import { sourceDomainToTrigger } from './source-trigger.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 
@@ -152,8 +154,9 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
       const raw = `id(${node.sourceId})${resolveEntityPropertyCppPath(node.sourceDomain, node.propertyKey)}`;
       const exprType = node.exprType;
       // Check if we need type conversion (e.g. stateText: bool → string)
-      if (exprType === 'string' && node.sourceDomain && node.triggerType) {
-        const sig = getTriggerSignature(node.sourceDomain, node.triggerType);
+      if (exprType === 'string' && node.sourceDomain) {
+        const trigger = sourceDomainToTrigger(node.sourceDomain);
+        const sig = getTriggerSignature(node.sourceDomain, trigger);
         const sourceVT = sig?.variables[0]?.valueType;
         const sourceType = sourceVT ? valueTypeToCpp(sourceVT) : undefined;
         if (sourceType && sourceType !== 'std::string') {
@@ -431,6 +434,13 @@ export function lowerToYamlConfig(
 
   // Transform ec_canvas widgets → native canvas widgets.
   transformEcCanvasWidgets(finalConfig);
+
+  // Translate semantic LVGL style values (e.g. 'transparent', 'fit-content',
+  // 'fr(1)') to LVGL C-macro spellings (TRANSP, SIZE_CONTENT, FR(1)) on the
+  // final lvgl section.
+  if (finalConfig['lvgl'] != null) {
+    translateLvglStyleValues(finalConfig['lvgl']);
+  }
 
   return finalConfig;
 }

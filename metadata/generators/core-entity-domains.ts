@@ -32,7 +32,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     'export interface EntityPropertyDescriptor {',
     '  readonly name: string;',
     '  readonly propertyKey: string;',
-    '  readonly triggerType: string;',
     '  readonly exprType: ExprType;',
     '  readonly sourceDomain: string;',
     '}',
@@ -57,7 +56,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     '',
     'export interface ReactivePropertyConfig {',
     '  readonly propertyKey: string;',
-    '  readonly triggerType: string;',
     '  readonly sourceDomain: string;',
     '  readonly exprType: ExprType;',
     '}',
@@ -80,7 +78,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     // Properties
     lines.push('    properties: [');
     for (const prop of desc.properties) {
-      lines.push(`      { name: ${JSON.stringify(prop.name)}, propertyKey: ${JSON.stringify(prop.propertyKey)}, triggerType: ${JSON.stringify(prop.triggerType)}, exprType: ${JSON.stringify(prop.exprType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)} },`);
+      lines.push(`      { name: ${JSON.stringify(prop.name)}, propertyKey: ${JSON.stringify(prop.propertyKey)}, exprType: ${JSON.stringify(prop.exprType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)} },`);
     }
     lines.push('    ],');
 
@@ -158,7 +156,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
       const first = seenProperties.get(prop.name);
       if (first && first.domain === domainName) {
         // This domain is the canonical source for this property
-        lines.push(`  ${prop.name}: { propertyKey: ${JSON.stringify(prop.propertyKey)}, triggerType: ${JSON.stringify(prop.triggerType)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)}, exprType: ${JSON.stringify(prop.exprType)} },`);
+        lines.push(`  ${prop.name}: { propertyKey: ${JSON.stringify(prop.propertyKey)}, sourceDomain: ${JSON.stringify(prop.sourceDomain)}, exprType: ${JSON.stringify(prop.exprType)} },`);
       }
     }
   }

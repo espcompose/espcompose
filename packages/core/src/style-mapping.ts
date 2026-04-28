@@ -26,22 +26,34 @@ type MappingEntry =
   | { kind: 'flat-transform'; lvglProp: string; valueMap: Readonly<Record<string, unknown>> };
 
 // ── Shared value maps ──────────────────────────────────────────────────────
+//
+// Core only validates that string values are members of the semantic key set.
+// The emitted value is the semantic spelling itself (identity).  The ESPHome
+// target translates these semantic spellings to LVGL C-macro tokens at YAML
+// emission time (see esphome-target/src/lvgl-style-value-translate.ts).  Pure
+// boolean translations stay here because true/false is target-neutral.
 
-const OPACITY_VALUES = { transparent: 'TRANSP', opaque: 'COVER' } as const;
-const TEXT_ALIGN_VALUES = { left: 'LEFT', center: 'CENTER', right: 'RIGHT', auto: 'AUTO' } as const;
-const TEXT_DECOR_VALUES = { none: 'NONE', underline: 'UNDERLINE', strikethrough: 'STRIKETHROUGH' } as const;
-const BORDER_SIDE_VALUES = { none: 'NONE', top: 'TOP', bottom: 'BOTTOM', left: 'LEFT', right: 'RIGHT', internal: 'INTERNAL' } as const;
-const GRAD_DIR_VALUES = { none: 'NONE', horizontal: 'HOR', vertical: 'VER' } as const;
-const DITHER_MODE_VALUES = { none: 'NONE', ordered: 'ORDERED', 'error-diffusion': 'ERR_DIFF' } as const;
-const SIZE_VALUES = { 'fit-content': 'SIZE_CONTENT' } as const;
-const FLEX_FLOW_VALUES = { row: 'ROW', column: 'COLUMN', 'row-wrap': 'ROW_WRAP', 'column-wrap': 'COLUMN_WRAP' } as const;
-const FLEX_ALIGN_MAIN_VALUES = { start: 'START', center: 'CENTER', end: 'END', spaceBetween: 'SPACE_BETWEEN', spaceAround: 'SPACE_AROUND', spaceEvenly: 'SPACE_EVENLY' } as const;
-const FLEX_ALIGN_CROSS_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH' } as const;
-const GRID_ALIGN_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH', spaceBetween: 'SPACE_BETWEEN', spaceAround: 'SPACE_AROUND', spaceEvenly: 'SPACE_EVENLY' } as const;
-const GRID_CELL_ALIGN_VALUES = { start: 'START', center: 'CENTER', end: 'END', stretch: 'STRETCH' } as const;
-const DISPLAY_VALUES = { flex: 'flex', grid: 'grid' } as const;
-const PLACE_SELF_VALUES = { center: 'CENTER', topLeft: 'TOP_LEFT', topCenter: 'TOP_MID', topRight: 'TOP_RIGHT', bottomLeft: 'BOTTOM_LEFT', bottomCenter: 'BOTTOM_MID', bottomRight: 'BOTTOM_RIGHT', leftCenter: 'LEFT_MID', rightCenter: 'RIGHT_MID' } as const;
-const SCROLLBAR_MODE_VALUES = { off: 'OFF', on: 'ON', active: 'ACTIVE', auto: 'AUTO' } as const;
+const makeIdentity = <K extends string>(...keys: K[]): Readonly<Record<K, K>> => {
+  const out = {} as Record<K, K>;
+  for (const k of keys) out[k] = k;
+  return out;
+};
+
+const OPACITY_VALUES = makeIdentity('transparent', 'opaque');
+const TEXT_ALIGN_VALUES = makeIdentity('left', 'center', 'right', 'auto');
+const TEXT_DECOR_VALUES = makeIdentity('none', 'underline', 'strikethrough');
+const BORDER_SIDE_VALUES = makeIdentity('none', 'top', 'bottom', 'left', 'right', 'internal');
+const GRAD_DIR_VALUES = makeIdentity('none', 'horizontal', 'vertical');
+const DITHER_MODE_VALUES = makeIdentity('none', 'ordered', 'error-diffusion');
+const SIZE_VALUES = makeIdentity('fit-content');
+const FLEX_FLOW_VALUES = makeIdentity('row', 'column', 'row-wrap', 'column-wrap');
+const FLEX_ALIGN_MAIN_VALUES = makeIdentity('start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly');
+const FLEX_ALIGN_CROSS_VALUES = makeIdentity('start', 'center', 'end', 'stretch');
+const GRID_ALIGN_VALUES = makeIdentity('start', 'center', 'end', 'stretch', 'spaceBetween', 'spaceAround', 'spaceEvenly');
+const GRID_CELL_ALIGN_VALUES = makeIdentity('start', 'center', 'end', 'stretch');
+const DISPLAY_VALUES = makeIdentity('flex', 'grid');
+const PLACE_SELF_VALUES = makeIdentity('center', 'topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'leftCenter', 'rightCenter');
+const SCROLLBAR_MODE_VALUES = makeIdentity('off', 'on', 'active', 'auto');
 
 // ── CSS → LVGL mapping table ───────────────────────────────────────────────
 
@@ -70,7 +82,7 @@ const _cssToLvglMap = {
   color:                { kind: 'direct', lvglProp: 'textColor' },
 
   // ── Border ─────────────────────────────────────────────────────────────
-  borderRadius:         { kind: 'transform', lvglProp: 'radius', valueMap: { circle: 'CIRCLE' } },
+  borderRadius:         { kind: 'transform', lvglProp: 'radius', valueMap: { circle: 'circle' } },
   borderColor:          { kind: 'direct', lvglProp: 'borderColor' },
   borderWidth:          { kind: 'direct', lvglProp: 'borderWidth' },
 
@@ -362,9 +374,11 @@ export function expandCssProps(
     }
   }
 
-  // Merge layout block if any layout properties were set
+  // Merge layout block if any layout properties were set.  Auto-inject layout
+  // type when flex/grid-specific props are used without explicit display.
+  // `'flex'` / `'grid'` are semantic CSS-style values (not C-tokens), so this
+  // inference legitimately belongs in core.
   if (Object.keys(layoutBag).length > 0) {
-    // Auto-inject layout type when flex/grid-specific props are used without explicit display
     if (!layoutBag.type) {
       if (layoutBag.flexFlow || layoutBag.flexAlignMain || layoutBag.flexAlignCross || layoutBag.flexAlignTrack) {
         layoutBag.type = 'flex';
@@ -379,20 +393,22 @@ export function expandCssProps(
 }
 
 /**
- * Transform a CSS-like grid track value to LVGL format.
+ * Validate a CSS-like grid track value.  Pass through unchanged; the ESPHome
+ * target translates `'fr(n)'` → `'FR(n)'` and `'content'` → `'CONTENT'` at
+ * YAML emission time.
  *
- * - `'fr(n)'` → `'FR(n)'`
- * - `'content'` → `'CONTENT'`
  * - number → number (px)
- * - other strings → pass through (already in LVGL format like 'FR(1)')
+ * - `'fr(n)'` (any case) → normalized to lower-case `'fr(n)'`
+ * - `'content'` → normalized to lower-case `'content'`
+ * - other strings → pass through unchanged
  */
 function transformGridTrackValue(v: unknown): unknown {
   if (typeof v === 'number') return v;
   if (typeof v === 'string') {
     const frMatch = /^fr\((\d+)\)$/i.exec(v);
-    if (frMatch) return `FR(${frMatch[1]})`;
-    if (v.toLowerCase() === 'content') return 'CONTENT';
-    return v; // pass through 'FR(1)', 'SIZE_CONTENT', etc.
+    if (frMatch) return `fr(${frMatch[1]})`;
+    if (v.toLowerCase() === 'content') return 'content';
+    return v;
   }
   return v;
 }

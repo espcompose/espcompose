@@ -60,18 +60,18 @@ export const __espcompose = {
     type: ExprType;
     deps: Array<{
       sourceId: string;
-      triggerType: string;
       sourceDomain: string;
       sourceType?: string;
+      themePath?: string;
     }>;
     expr: IRExprNode;
   }): IRReactiveNode<T> {
     const dependencies: IRDependency[] = meta.deps.map(d => ({
       kind: 'dependency' as const,
       sourceId: d.sourceId,
-      triggerType: d.triggerType,
       sourceDomain: d.sourceDomain,
       sourceType: (d.sourceType as 'ha_entity' | 'theme' | undefined),
+      themePath: d.themePath,
     }));
 
     const node = new IRReactiveNode<T>({
@@ -194,7 +194,7 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
     }
     if (dep.sourceType === 'theme') {
       // Theme deps encode the scopeId in the sourceId as __theme_<scopeId>__
-      // and the path in the triggerType. Both must be present.
+      // and the path in dep.themePath. Both must be present.
       const match = dep.sourceId.match(/^__theme_([a-f0-9]+)__$/);
       if (!match || dep.sourceId === '__theme__') {
         throw new Error(
@@ -203,10 +203,10 @@ function resolveIRExprSlots(expr: IRExprNode, signals: unknown[]): IRExprNode {
         );
       }
       const scopeId = match[1]!;
-      const path = dep.triggerType;
+      const path = dep.themePath;
       if (!path) {
         throw new Error(
-          `__espcompose.slotted: theme slot ${expr.slotIndex} (scope ${scopeId}) is missing a path (dep.triggerType is empty).`,
+          `__espcompose.slotted: theme slot ${expr.slotIndex} (scope ${scopeId}) is missing a themePath.`,
         );
       }
       return { kind: 'theme_read', scope: '', scopeId, path, type: node.exprType };

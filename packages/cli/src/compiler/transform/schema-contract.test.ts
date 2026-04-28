@@ -56,13 +56,12 @@ function extractSlottedMeta(code: string): unknown {
 // functions. The tests validate that this exact format conforms to the schema.
 
 function buildCompiledCallString(exprType: string, deps: Array<{
-  sourceId: string; triggerType: string;
+  sourceId: string;
   sourceDomain: string; sourceType?: string;
 }>, expr: unknown = { kind: 'literal', value: 0, type: 'float' }): string {
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
-      `triggerType:${JSON.stringify(d.triggerType)}`,
       `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
     ];
     if (d.sourceType) {
@@ -86,7 +85,6 @@ describe('Library Format Schema Contract (Producer)', () => {
         'string',
         [{
           sourceId: 'ha_light_office',
-          triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
         }],
         irTernary(
@@ -105,8 +103,8 @@ describe('Library Format Schema Contract (Producer)', () => {
       const code = buildCompiledCallString(
         'float',
         [
-          { sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
         ],
       );
 
@@ -136,7 +134,7 @@ describe('Library Format Schema Contract (Producer)', () => {
     it('rejects dependency missing required fields', () => {
       const bad = {
         type: 'int',
-        deps: [{ sourceId: 'id' }], // missing triggerType, sourceDomain
+        deps: [{ sourceId: 'id' }], // missing sourceDomain
         expr: { kind: 'literal', value: 0, type: 'int' },
       };
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);

@@ -133,7 +133,6 @@ export function createGlobalHandle<T>(
       const dep: IRDependency = {
         kind: 'dependency',
         sourceId: id,
-        triggerType: 'on_value',
         sourceDomain: 'globals',
         sourceType: 'global',
       };
@@ -143,7 +142,6 @@ export function createGlobalHandle<T>(
         exprType,
         sourceId: id,
         propertyKey: 'value',
-        triggerType: 'on_value',
         sourceDomain: 'globals',
       });
     }

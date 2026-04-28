@@ -94,15 +94,11 @@ function createTrackingProxy<T extends object>(binding: T): T {
 // Entity type inference
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Derive ExprType from entity domain and trigger. */
-function inferEntityExprType(
-  sourceDomain: string,
-  triggerType: string,
-): ExprType {
+/** Derive ExprType from entity sourceDomain alone. */
+function inferEntityExprType(sourceDomain: string): ExprType {
   if (sourceDomain === 'text_sensor') return 'string';
-  if (sourceDomain === 'sensor' && triggerType === 'on_value') return 'float';
-  if (sourceDomain === 'binary_sensor' && triggerType === 'on_state') return 'bool';
-  if (triggerType === 'on_value') return 'float';
+  if (sourceDomain === 'sensor') return 'float';
+  if (sourceDomain === 'binary_sensor') return 'bool';
   return 'bool';
 }
 
@@ -113,18 +109,16 @@ function inferEntityExprType(
 function makeExpressionNode<T>(
   sourceId: string,
   sourceDomain: string,
-  triggerType = 'on_state',
   property = 'state',
   exprTypeOverride?: ExprType,
   entityId?: string,
   semanticProp?: string,
 ): Signal<T> {
-  const sourceExprType = inferEntityExprType(sourceDomain, triggerType);
+  const sourceExprType = inferEntityExprType(sourceDomain);
   const exprType = exprTypeOverride ?? sourceExprType;
   const dep: IRDependency = {
     kind: 'dependency',
     sourceId,
-    triggerType,
     sourceDomain,
   };
   const node = new IRReactiveNode<T>({
@@ -133,7 +127,6 @@ function makeExpressionNode<T>(
     exprType,
     sourceId,
     propertyKey: property,
-    triggerType,
     sourceDomain,
   });
   if (entityId && semanticProp) {
@@ -170,9 +163,9 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
   });
 
   const binding: LightBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
-    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'on_value', 'state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
+    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'state', undefined, entityId, 'brightness'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -195,8 +188,8 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
   });
 
   return createTrackingProxy({
-    value: makeExpressionNode<number>(sourceId, 'sensor', 'on_value', 'state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
+    value: makeExpressionNode<number>(sourceId, 'sensor', 'state', undefined, entityId, 'value'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
@@ -213,14 +206,14 @@ function createBinarySensorBinding(sourceId: string, entityId: string): BinarySe
   });
 
   return createTrackingProxy({
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', 'state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
+    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
 function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding {
   const binding: SwitchBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -231,7 +224,7 @@ function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding 
 
 function createFanBinding(sourceId: string, entityId: string): FanBinding {
   const binding: FanBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -242,7 +235,7 @@ function createFanBinding(sourceId: string, entityId: string): FanBinding {
 
 function createCoverBinding(sourceId: string, entityId: string): CoverBinding {
   const binding: CoverBinding = {
-    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', 'state', undefined, entityId, 'isOpen'),
+    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOpen'),
     open() { /* no-op */ },
     close() { /* no-op */ },
     stop() { /* no-op */ },

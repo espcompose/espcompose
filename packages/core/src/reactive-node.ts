@@ -21,16 +21,25 @@ import type { IRExprNode, ExprType } from './ir/expr-types';
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Tracks which source component and trigger a reactive node depends on.
+ * Tracks which source component a reactive node depends on.
  */
 export interface IRDependency {
   readonly kind: 'dependency';
   /** ESPHome component ID that provides the value. */
   sourceId: string;
-  /** The trigger on the source component (e.g. `on_state`, `on_value`). */
-  triggerType: string;
-  /** The component domain for trigger registry lookup (e.g. `binary_sensor`, `sensor`). */
+  /**
+   * The semantic source-domain used to classify the source. Targets translate
+   * this to a concrete YAML trigger key (e.g. ESPHome `on_state` / `on_value`).
+   * For theme deps the domain is `__theme__`; for overlay-mux deps it is
+   * `overlay_mux`; otherwise it is an ESPHome platform name such as `sensor`,
+   * `binary_sensor`, `light`, `text_sensor`, or `globals`.
+   */
   sourceDomain: string;
+  /**
+   * For theme dependencies, the dotted path into the theme registry. Unused
+   * for non-theme deps.
+   */
+  themePath?: string;
   /**
    * Distinguishes HA entity signals from theme signals and global signals.
    * - 'ha_entity' (default): signal is fed by a Home Assistant sensor trigger
@@ -77,8 +86,6 @@ export interface IRReactiveNodeConfig {
   sourceId?: string;
   /** Semantic property name on the source entity (e.g. 'isOn', 'brightness'). */
   propertyKey?: string;
-  /** Which trigger to subscribe to (set for kind='expression'). */
-  triggerType?: string;
   /** Component domain for trigger registry lookup (set for kind='expression'). */
   sourceDomain?: string;
 }
@@ -102,7 +109,6 @@ export class IRReactiveNode<T = unknown> {
   // ── Single-source metadata (set for kind='expression') ─────────────────
   readonly sourceId?: string;
   readonly propertyKey?: string;
-  readonly triggerType?: string;
   readonly sourceDomain?: string;
 
   /**
@@ -126,7 +132,6 @@ export class IRReactiveNode<T = unknown> {
     this.exprType = config.exprType;
     this.sourceId = config.sourceId;
     this.propertyKey = config.propertyKey;
-    this.triggerType = config.triggerType;
     this.sourceDomain = config.sourceDomain;
     this.nodeId = `${config.kind}_${Math.random().toString(36).slice(2, 11)}`;
   }
@@ -212,8 +217,10 @@ export function stopTracking(): IRDependency[] {
 export function trackDependency(dep: IRDependency): void {
   if (trackingStack.length === 0) return;
   const frame = trackingStack[trackingStack.length - 1];
-  // Deduplicate by sourceId + property
-  if (!frame.some(d => d.sourceId === dep.sourceId && d.triggerType === dep.triggerType)) {
+  // Deduplicate by sourceId + themePath (theme deps may share a scope sourceId
+  // but address different leaves within it; non-theme deps have undefined paths
+  // and collapse to one per sourceId).
+  if (!frame.some(d => d.sourceId === dep.sourceId && d.themePath === dep.themePath)) {
     frame.push(dep);
   }
 }

@@ -25,9 +25,9 @@ import { irTernary, irBinary } from './ir/expr-builders.js';
 
 const DependencyInfoSchema = z.object({
   sourceId: z.string(),
-  triggerType: z.string(),
   sourceDomain: z.string(),
   sourceType: z.string().optional(),
+  themePath: z.string().optional(),
 });
 
 const ExprNodeSchema = z.object({
@@ -52,7 +52,6 @@ const VALID_COMPILED_META = {
   type: 'string' as const,
   deps: [{
     sourceId: 'ha_light_office',
-    triggerType: 'on_state',
     sourceDomain: 'binary_sensor',
   }],
   expr: { kind: 'literal' as const, value: 'On', type: 'string' as const },
@@ -136,8 +135,8 @@ describe('Library Format Contract (Consumer)', () => {
       const meta = {
         type: 'float' as const,
         deps: [
-          { kind: 'dependency', sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { kind: 'dependency', sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { kind: 'dependency', sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { kind: 'dependency', sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
         ],
         expr: { kind: 'literal' as const, value: 0, type: 'float' as const },
       };
@@ -170,7 +169,7 @@ describe('Library Format Contract (Consumer)', () => {
       withReactiveScope(() => {
         const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
@@ -221,7 +220,6 @@ describe('Library Format Contract (Consumer)', () => {
         type: 'string' as const,
         deps: [{
           sourceId: 'ha_light_office',
-          triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
         }],
         expr: irTernary(
@@ -239,7 +237,6 @@ describe('Library Format Contract (Consumer)', () => {
         expect(node.exprIR).toBeDefined();
         expect(node.dependencies).toHaveLength(1);
         expect(node.dependencies[0].sourceId).toBe('ha_light_office');
-        expect(node.dependencies[0].triggerType).toBe('on_state');
         expect(node.dependencies[0].sourceDomain).toBe('binary_sensor');
       });
     });
@@ -260,7 +257,7 @@ describe('Library Format Contract (Consumer)', () => {
       withReactiveScope(() => {
         const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', triggerType: 'on_value', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };

@@ -39,7 +39,7 @@ function makeMemoNode(index: number): IRReactiveNode {
   const node = new IRReactiveNode({
     kind: 'memo',
     dependencies: [
-      { kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+      { kind: 'dependency', sourceId: 'ha_light_x', sourceDomain: 'binary_sensor' },
     ],
     exprType: 'float',
   });

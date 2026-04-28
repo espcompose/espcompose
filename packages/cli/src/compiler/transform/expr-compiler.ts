@@ -59,8 +59,6 @@ export interface SignalPropertyInfo {
   sourceDomain: string;
   /** ESPHome component ID, e.g. `ha_light_office` */
   sourceId: string;
-  /** Trigger type, e.g. `on_state`, `on_value` */
-  triggerType: string;
   /** Source type: 'ha_entity' or 'theme' */
   sourceType?: 'ha_entity' | 'theme';
 }
@@ -68,7 +66,6 @@ export interface SignalPropertyInfo {
 export interface DependencyInfo {
   signalName: string;
   sourceId: string;
-  triggerType: string;
   sourceDomain: string;
   valueType: string;
   sourceType?: string;
@@ -158,7 +155,7 @@ export function hasReactiveNodeBrand(type: ts.Type): boolean {
 /**
  * Resolve the C++ signal info for a property access on an HA entity binding.
  *
- * Property metadata (sourceDomain, triggerType, exprType) is looked up from
+ * Property metadata (sourceDomain, exprType) is looked up from
  * the generated REACTIVE_PROPERTY_MAP. Signal IDs are derived from entity IDs.
  */
 function resolveSignalProperty(
@@ -179,11 +176,10 @@ function resolveSignalProperty(
       valueType: propConfig.exprType,
       sourceDomain: propConfig.sourceDomain,
       sourceId: brightnessId,
-      triggerType: propConfig.triggerType,
     };
   }
 
-  // stateText uses a domain-specific trigger type override
+  // stateText uses a domain-specific sensor platform override
   if (propName === 'stateText') {
     const sensorDomain = getDomainSensorType(entity.domain);
     return {
@@ -191,7 +187,6 @@ function resolveSignalProperty(
       valueType: propConfig.exprType,
       sourceDomain: sensorDomain,
       sourceId,
-      triggerType: sensorDomain === 'sensor' ? 'on_value' : 'on_state',
     };
   }
 
@@ -200,7 +195,6 @@ function resolveSignalProperty(
     valueType: propConfig.exprType,
     sourceDomain: propConfig.sourceDomain,
     sourceId,
-    triggerType: propConfig.triggerType,
   };
 }
 
@@ -823,7 +817,6 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        triggerType: 'on_value',
         sourceDomain: 'globals',
         valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
@@ -836,7 +829,6 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        triggerType: 'on_value',
         sourceDomain: 'globals',
         valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
@@ -853,7 +845,6 @@ function compilePropertyAccessIR(
         ctx.dependencies.set(signalInfo.signalName, {
           signalName: signalInfo.signalName,
           sourceId: signalInfo.sourceId,
-          triggerType: signalInfo.triggerType,
           sourceDomain: signalInfo.sourceDomain,
           valueType: signalInfo.valueType,
           sourceType: signalInfo.sourceType,
@@ -968,7 +959,6 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         ctx.dependencies.set(`global_${globalInfo.globalId}`, {
           signalName: `sig_global_${globalInfo.globalId}`,
           sourceId: globalInfo.globalId,
-          triggerType: 'on_value',
           sourceDomain: 'globals',
           valueType: valueTypeToExprType(globalInfo.valueType),
           sourceType: 'global',

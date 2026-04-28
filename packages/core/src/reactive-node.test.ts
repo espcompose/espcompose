@@ -14,8 +14,8 @@ describe('IRReactiveNode', () => {
       const node = new IRReactiveNode({
         kind: 'memo',
         dependencies: [
-          { kind: 'dependency', sourceId: 'sensor_1', triggerType: 'on_value', sourceDomain: 'sensor' },
-          { kind: 'dependency', sourceId: 'sensor_2', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+          { kind: 'dependency', sourceId: 'sensor_1', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'sensor_2', sourceDomain: 'binary_sensor' },
         ],
         exprType: 'float',
       });
@@ -27,11 +27,10 @@ describe('IRReactiveNode', () => {
     it('creates a single-source expression node', () => {
       const node = new IRReactiveNode({
         kind: 'expression',
-        dependencies: [{ kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' }],
+        dependencies: [{ kind: 'dependency', sourceId: 'ha_light_x', sourceDomain: 'binary_sensor' }],
         exprType: 'bool',
         sourceId: 'ha_light_x',
         propertyKey: 'state',
-        triggerType: 'on_state',
         sourceDomain: 'binary_sensor',
       });
       expect(node.kind).toBe('expression');
@@ -43,7 +42,7 @@ describe('IRReactiveNode', () => {
     it('isSingleSource = true for one dependency', () => {
       const node = new IRReactiveNode({
         kind: 'expression',
-        dependencies: [{ kind: 'dependency', sourceId: 'x', triggerType: 'on_state', sourceDomain: 'sensor' }],
+        dependencies: [{ kind: 'dependency', sourceId: 'x', sourceDomain: 'sensor' }],
       });
       expect(node.isSingleSource).toBe(true);
     });
@@ -52,8 +51,8 @@ describe('IRReactiveNode', () => {
       const node = new IRReactiveNode({
         kind: 'memo',
         dependencies: [
-          { kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' },
-          { kind: 'dependency', sourceId: 'b', triggerType: 'on_state', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'a', sourceDomain: 'sensor' },
+          { kind: 'dependency', sourceId: 'b', sourceDomain: 'sensor' },
         ],
         exprType: 'float',
       });
@@ -120,16 +119,16 @@ describe('IRReactiveNode', () => {
   describe('dependency tracking', () => {
     it('tracks dependencies between start/stop', () => {
       startTracking();
-      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
-      trackDependency({ kind: 'dependency', sourceId: 'b', triggerType: 'on_value', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'b', sourceDomain: 'sensor' });
       const deps = stopTracking();
       expect(deps).toHaveLength(2);
     });
 
-    it('deduplicates by sourceId + triggerType', () => {
+    it('deduplicates by sourceId', () => {
       startTracking();
-      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
-      trackDependency({ kind: 'dependency', sourceId: 'a', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'a', sourceDomain: 'sensor' });
       const deps = stopTracking();
       expect(deps).toHaveLength(1);
     });
@@ -144,10 +143,10 @@ describe('IRReactiveNode', () => {
 
     it('supports nested tracking', () => {
       startTracking();
-      trackDependency({ kind: 'dependency', sourceId: 'outer', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'outer', sourceDomain: 'sensor' });
 
       startTracking();
-      trackDependency({ kind: 'dependency', sourceId: 'inner', triggerType: 'on_state', sourceDomain: 'sensor' });
+      trackDependency({ kind: 'dependency', sourceId: 'inner', sourceDomain: 'sensor' });
       const inner = stopTracking();
 
       const outer = stopTracking();

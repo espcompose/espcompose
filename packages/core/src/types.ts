@@ -244,13 +244,11 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
               dependencies: [{
                 kind: 'dependency',
                 sourceId: target._token,
-                triggerType: reactiveConfig.triggerType,
                 sourceDomain: reactiveConfig.sourceDomain,
               }],
               exprType: reactiveConfig.exprType,
               sourceId: target._token,
               propertyKey: reactiveConfig.propertyKey,
-              triggerType: reactiveConfig.triggerType,
               sourceDomain: reactiveConfig.sourceDomain,
             });
           }
