@@ -8,9 +8,9 @@
  * Adapted from the Resolut project's symbol-based intent branding pattern.
  */
 
-import type { FunctionComponent, RefProp } from './types';
-import { wrapWithWireframe } from './wireframe';
-import type { WidgetCategory } from './wireframe';
+import type { FunctionComponent, RefProp } from '../types';
+import { wrapWithWireframe } from '../lvgl/style';
+import type { WidgetCategory } from '../lvgl/style';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Symbols — cross-module branding keys

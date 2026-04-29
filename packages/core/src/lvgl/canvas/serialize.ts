@@ -15,22 +15,22 @@
 //   { type: 'rect', x: 0, y: 0, width: 100, height: 50, fill: '#ff0000' }
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { EspComposeElement, FunctionComponent } from './types';
-import { withContext } from './hooks/useContext';
-import type { Context } from './hooks/useContext';
-import { isIRReactiveNode } from './reactive-node';
-import type { IRReactiveNode } from './reactive-node';
-import { registerReactiveBinding } from './hooks/useReactiveScope';
+import type { EspComposeElement, FunctionComponent } from '../../types';
+import { withContext } from '../../hooks/useContext';
+import type { Context } from '../../hooks/useContext';
+import { isIRReactiveNode } from '../../reactive/node';
+import type { IRReactiveNode } from '../../reactive/node';
+import { registerReactiveBinding } from '../../hooks/useReactiveScope';
 import {
   extractElementProps,
   flattenFragments,
   transformPropKeys,
   setCurrentSource,
   compactObject,
-} from './serialize';
-import { expandCssStyle } from './style-mapping';
-import { lvglWidgetToPlain, isLvglElement } from './lvgl';
-import { isWireframeEnabled, WIREFRAME_COLORS } from './wireframe';
+} from '../../serialize/capture';
+import { expandCssStyle } from '../style/mapping';
+import { lvglWidgetToPlain, isLvglElement } from '../serialize';
+import { isWireframeEnabled, WIREFRAME_COLORS } from '../style/wireframe';
 
 // ── Type guards ────────────────────────────────────────────────────────────
 

@@ -9,9 +9,9 @@
 // the @espcompose/ui Theme interface.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Ref } from '../types';
-import type { FontRef } from '../component-aliases';
-import { useFont } from '../hooks/useFont';
+import type { Ref } from '../../types';
+import type { FontRef } from '../../component-aliases';
+import { useFont } from '../../hooks/useFont';
 import { isFontToken } from './font-token';
 import type { FontToken } from './font-token';
 

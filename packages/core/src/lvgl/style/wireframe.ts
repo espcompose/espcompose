@@ -19,7 +19,7 @@
  * @module
  */
 
-import type { EspComposeElement, FunctionComponent } from './types';
+import type { EspComposeElement, FunctionComponent } from '../../types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Widget categories

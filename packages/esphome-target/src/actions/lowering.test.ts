@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lowerActionTree, type ActionLoweringContext } from './action-lowering';
+import { lowerActionTree, type ActionLoweringContext } from './lowering';
 import type { IRActionNode } from '@espcompose/core/internals';
 
 function emptyCtx(): ActionLoweringContext {

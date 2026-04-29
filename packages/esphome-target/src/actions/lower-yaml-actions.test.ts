@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { SemanticIR, IRValue } from '@espcompose/core/internals';
-import { lowerToYamlConfig } from './lower-yaml.js';
+import { lowerToYamlConfig } from '../lower-yaml.js';
 
 function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
   return {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateBindingsHeader, generateSignalSetLambda, getRuntimeHeaderContent, type ReactiveRuntimeConfig } from './bindings-codegen.js';
+import { generateBindingsHeader, generateSignalSetLambda, getRuntimeHeaderContent, type ReactiveRuntimeConfig } from './bindings.js';
 import { injectReactiveBindingsRuntime } from './reactive-config.js';
 
 describe('runtime component codegen', () => {

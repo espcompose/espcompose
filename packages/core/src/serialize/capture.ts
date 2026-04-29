@@ -1,19 +1,19 @@
-import type { EspComposeElement } from './types';
-import type { JsxSourceLocation } from './types';
-import { isRef } from './types';
-import { isIRReactiveNode } from './reactive-node';
-import type { IRReactiveNode } from './reactive-node';
+import type { EspComposeElement } from '../types';
+import type { JsxSourceLocation } from '../types';
+import { isRef } from '../types';
+import { isIRReactiveNode } from '../reactive';
+import type { IRReactiveNode } from '../reactive';
 import { isSecretValue } from './secret';
 
 import { registerRefTag } from './ref-registry';
-import { isTriggerVar } from './trigger-args';
-import type { TriggerVar } from './trigger-args';
+import { isTriggerVar } from '../actions';
+import type { TriggerVar } from '../actions';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
-import type { IRActionNode } from './ir/action-types';
-import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
-import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
-import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
-import { getYamlShaper } from './lvgl-yaml-hook';
+import type { IRActionNode } from '../ir/action-types';
+import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
+import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
+import { getYamlShaper } from '../lvgl';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data

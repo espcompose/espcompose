@@ -12,8 +12,8 @@
 // is replaced with `[script_stop, overlay_hide]`.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRActionNode } from './ir/action-types';
-import { irScriptExecute, irScriptStop, irOverlayHide } from './ir/action-types';
+import type { IRActionNode } from '../../ir/action-types';
+import { irScriptExecute, irScriptStop, irOverlayHide } from '../../ir/action-types';
 
 /** Shape of an OverlayController's hidden internal fields. */
 interface OverlayControllerInternal {

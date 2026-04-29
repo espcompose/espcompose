@@ -8,17 +8,17 @@
  */
 
 import { injectHASensorImports } from './reactive-injector.js';
-import { generateSignalSetLambda, computeMaxNodes } from './bindings-codegen.js';
-import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings-codegen.js';
+import { generateSignalSetLambda, computeMaxNodes } from './bindings.js';
+import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings.js';
 import { Scalar } from 'yaml';
-import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from './expr-to-cpp.js';
-import type { CppLoweringContext } from './expr-to-cpp.js';
+import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
+import type { CppLoweringContext } from '../lowering';
 import type { IRExprNode } from '@espcompose/core';
 import { getExprChildren } from '@espcompose/core';
 import type { ExprType, IRValueType } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
-import { valueTypeToCpp } from './value-type-cpp.js';
-import { sourceDomainToTrigger } from './source-trigger.js';
+import { valueTypeToCpp } from '../lowering';
+import { sourceDomainToTrigger } from '../lowering';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Sensor type → C++ type mapping
@@ -430,7 +430,7 @@ export function buildRuntimeConfig(
 
   // Build theme memos from per-scope theme data
   const allThemeMemos: ThemeMemoDecl[] = [];
-  const themeScopeConfigs: import('./bindings-codegen.js').ThemeScopeConfig[] = [];
+  const themeScopeConfigs: import('./bindings.js').ThemeScopeConfig[] = [];
 
   if (themes) {
     for (const scopeData of themes) {

@@ -13,8 +13,8 @@
 // Values without captures are classified as scalars, objects, arrays, or null.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
-import type { IRReactiveNode } from '../reactive-node';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
+import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import type {

@@ -7,8 +7,8 @@
 //   - Action methods for controlling the device (compile-time no-ops)
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Signal } from './reactive-node';
-import type { BINDING_BRAND } from './types';
+import type { Signal } from '../reactive';
+import type { BINDING_BRAND } from '../types';
 
 /**
  * Binding for light devices.

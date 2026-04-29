@@ -20,8 +20,8 @@
 //   <ec-image />   — image with transforms
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { EspComposeElement, TriggerHandler, Reactive, ComponentProps } from './types';
-import type { CssStyleProps } from './style-types';
+import type { EspComposeElement, TriggerHandler, Reactive, ComponentProps } from '../../types';
+import type { CssStyleProps } from '../style/types';
 
 // ── Paint primitive prop types ─────────────────────────────────────────────
 

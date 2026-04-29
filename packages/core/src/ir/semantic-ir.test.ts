@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { IRReactiveNode } from '../reactive-node';
+import { IRReactiveNode } from '../reactive';
 import { RefHandle } from '../types';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';

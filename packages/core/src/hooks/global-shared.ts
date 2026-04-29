@@ -5,8 +5,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, withContext } from './useContext';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
-import type { IRDependency, Signal } from '../reactive-node';
+import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
+import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import type { IRValueType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';

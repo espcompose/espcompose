@@ -12,36 +12,33 @@
 // produces { button: { ...props, widgets: [{ label: {...} }] } }.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { EspComposeElement, FunctionComponent, Ref } from './types';
-import { RefHandle } from './types';
-import { createContext, withContext, useContext } from './hooks/useContext';
-import type { Context } from './hooks/useContext';
-import { LvglContext } from './hooks/useLvgl';
-import type { LvglComponentRef } from './component-aliases';
-import { isIRReactiveNode } from './reactive-node';
-import type { IRReactiveNode } from './reactive-node';
-import { registerReactiveBinding, withReactiveScope } from './hooks/useReactiveScope';
-import { pushHookPath, popHookPath } from './hooks/useState';
-import { peekOverlayDefinitions } from './hooks/useOverlay';
-import type { CapturedOverlayAction } from './hooks/useOverlay';
-import type { IRActionNode } from './ir/action-types';
-import { assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
-import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
-import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
-import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
-import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './lvgl-actions';
+import type { EspComposeElement, FunctionComponent, Ref } from '../types';
+import { RefHandle } from '../types';
+import { createContext, withContext, useContext, LvglContext } from '../hooks';
+import type { Context } from '../hooks';
+import type { LvglComponentRef } from '../component-aliases';
+import { isIRReactiveNode } from '../reactive';
+import type { IRReactiveNode } from '../reactive';
+import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath } from '../hooks';
+import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
+import type { CapturedOverlayAction } from '../hooks';
+import type { IRActionNode } from '../ir/action-types';
+import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
+import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
+import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
   extractElementProps,
   flattenFragments,
   serializeValuesPreservingKeys,
   setCurrentSource,
-} from './serialize';
-import { expandCssStyle } from './style-mapping';
-import type { IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier } from './ir/widget-types';
-import { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
-import { getLvglYamlEmitter, getLvglWidgetEmitter } from './lvgl-yaml-hook';
+} from '../serialize';
+import { expandCssStyle } from './style';
+import type { IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier } from '../ir/widget-types';
+import { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from '../ir/widget-types';
+import { getLvglYamlEmitter, getLvglWidgetEmitter } from './yaml-hook';
 
-import { isEcCanvasElement, ecCanvasToPlain } from './ec-canvas-serialize';
+import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
 
 function makeEcCanvasOpaqueIR(payload: Record<string, unknown>): IRWidget {
   return {

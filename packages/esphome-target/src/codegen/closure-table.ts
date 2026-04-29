@@ -21,7 +21,7 @@ import type {
   ClosureInstance,
   IRClosureValue,
 } from '@espcompose/core/internals';
-import { valueTypeToCpp, valueTypeZeroLiteral } from './value-type-cpp.js';
+import { valueTypeToCpp, valueTypeZeroLiteral } from '../lowering';
 
 /** Per-template closure table emission. */
 export interface ClosureTableDecl {

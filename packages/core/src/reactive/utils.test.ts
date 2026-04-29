@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { setCurrentHookPath } from './hooks/useState';
-import { useReactive } from './reactive-utils';
-import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
+import { setCurrentHookPath } from '../hooks';
+import { useReactive } from './utils';
+import { IRReactiveNode, isIRReactiveNode } from './node';
 
 describe('reactive-utils', () => {
   beforeEach(() => {

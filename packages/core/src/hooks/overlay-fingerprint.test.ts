@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
-import type { EspComposeElement } from './types';
+import { structuralFingerprint, assertOverlayStructuralIdentity } from './overlay-fingerprint';
+import type { EspComposeElement } from '../types';
 
 function el(type: string | ((...args: unknown[]) => unknown), props: Record<string, unknown> = {}, children?: EspComposeElement | EspComposeElement[]): EspComposeElement {
   const childArr = children === undefined ? undefined : Array.isArray(children) ? children : [children];

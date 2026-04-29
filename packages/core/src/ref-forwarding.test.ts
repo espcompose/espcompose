@@ -7,9 +7,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, createElement } from './runtime';
 import { RefHandle } from './types';
-import { setCurrentHookPath } from './hooks/useState';
-import { withReactiveScope } from './hooks/useReactiveScope';
-import { clearRefRegistry, getRefTag } from './ref-registry';
+import { setCurrentHookPath } from './hooks';
+import { withReactiveScope } from './hooks';
+import { clearRefRegistry, getRefTag } from './serialize';
 import type { EspComposeElement, FunctionComponent } from './types';
 
 // ── Helpers ────────────────────────────────────────────────────────────────

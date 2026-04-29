@@ -21,7 +21,7 @@
 //   time by InferReactiveProperties<T>.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Signal } from './reactive-node';
+import type { Signal } from './node';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Type-level reactive property interfaces
@@ -89,5 +89,5 @@ export type InferReactiveProperties<T> =
 // in generated/entity-domains.ts.
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { ReactivePropertyConfig } from './generated/entity-domains.js';
-export { REACTIVE_PROPERTY_MAP } from './generated/entity-domains.js';
+export type { ReactivePropertyConfig } from '../generated/entity-domains.js';
+export { REACTIVE_PROPERTY_MAP } from '../generated/entity-domains.js';

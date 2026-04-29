@@ -15,13 +15,13 @@
 // boundaries without needing to scan for the call site.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { EspComposeElement, BINDING_BRAND, THEME_BRAND } from '../types';
-import { createElement, Fragment } from '../runtime';
+import type { EspComposeElement, BINDING_BRAND, THEME_BRAND } from '../../types';
+import { createElement, Fragment } from '../../runtime';
 import { registerTheme, getThemeRegistry } from './registry';
 import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 import { useTheme } from './reactive-proxy';
-import { createLvglWidget, type IntentComponent, type LVGL_INTENTS } from '../intents';
-import { throwCompileTimeOnly } from '../errors';
+import { createLvglWidget, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
+import { throwCompileTimeOnly } from '../../errors';
 
 // ── Public types ───────────────────────────────────────────────────────────
 

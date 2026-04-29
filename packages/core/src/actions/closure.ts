@@ -10,8 +10,8 @@
 // in useScript or the compiler.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ClosureField, IRClosureValue, IRValueType } from './ir/types';
-import { isRef } from './types';
+import type { ClosureField, IRClosureValue, IRValueType } from '../ir/types';
+import { isRef } from '../types';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 

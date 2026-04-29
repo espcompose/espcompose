@@ -6,7 +6,7 @@ import {
   stopTracking,
   trackDependency,
   isTracking,
-} from './reactive-node';
+} from './node';
 
 describe('IRReactiveNode', () => {
   describe('construction', () => {

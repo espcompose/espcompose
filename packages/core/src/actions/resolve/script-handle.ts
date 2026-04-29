@@ -9,7 +9,7 @@
 // found in __refBindings (added by the script transformer at compile time).
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRActionNode } from './ir/action-types';
+import type { IRActionNode } from '../../ir/action-types';
 
 interface ScriptHandleLike {
   id: string;

@@ -9,8 +9,8 @@
 // instance that owns setup/loop lifecycle for the dependency graph.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './lvgl-selector-flags';
-import { LVGL_STYLE_PROP_TABLE } from './lvgl-style-prop-table';
+import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '../lvgl';
+import { LVGL_STYLE_PROP_TABLE } from '../lvgl';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -773,6 +773,6 @@ export function generateInitialValueLambda(valueExpr: string, cppType: string): 
  * Return the contents of espcompose_reactive.h by reading the static asset file.
  */
 export function getRuntimeHeaderContent(): string {
-  const assetPath = path.resolve(__dirname, '..', 'assets', 'external-component', 'espcompose_reactive.h');
+  const assetPath = path.resolve(__dirname, '..', '..', 'assets', 'external-component', 'espcompose_reactive.h');
   return fs.readFileSync(assetPath, 'utf8');
 }

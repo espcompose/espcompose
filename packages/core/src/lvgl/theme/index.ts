@@ -7,8 +7,11 @@ export { createTheme } from './create-theme';
 export type { ThemeHandle, ThemeProviderProps } from './create-theme';
 
 // Registry (internal — used by compiler phases, not user code)
-export { getThemeRegistry } from './registry';
+export { getThemeRegistry, clearThemeRegistry } from './registry';
 export type { FlattenedTheme } from './registry';
+
+// Reactive proxy (internal — used by compiler phases)
+export { clearReactiveThemeProxy, clearThemeNodeCache, createReactiveThemeProxy } from './reactive-proxy';
 
 // Scope hashing (internal — used by compiler)
 export { scopeHash } from './scope-hash';

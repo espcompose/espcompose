@@ -7,9 +7,9 @@
 // `__refBindings` at serialization time, replacing each with `script_execute`.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRActionNode } from './ir/action-types';
-import { irScriptExecute } from './ir/action-types';
-import type { ScriptHandle } from './hooks/useScript';
+import type { IRActionNode } from '../../ir/action-types';
+import { irScriptExecute } from '../../ir/action-types';
+import type { ScriptHandle } from '../../hooks/useScript';
 
 /** Shape of a controller's hidden internal fields. */
 interface ControllerInternal {

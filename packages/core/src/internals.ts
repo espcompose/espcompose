@@ -16,8 +16,8 @@ export {
   createLambdaScalar,
   startSerializationCapture,
   stopSerializationCapture,
-} from './serialize';
-export type { SerializationCaptures } from './serialize';
+} from './serialize/capture';
+export type { SerializationCaptures } from './serialize/capture';
 
 // ── Reactive tracking (internal hook machinery) ────────────────────────────
 export {
@@ -25,33 +25,33 @@ export {
   stopTracking,
   trackDependency,
   isTracking,
-} from './reactive-node';
+} from './reactive/node';
 
 // ── Ref registry (compiler state) ──────────────────────────────────────────
 export {
   registerRefTag,
   getRefTag,
   clearRefRegistry,
-} from './ref-registry';
+} from './serialize/ref-registry';
 
 // ── Secret registry (compiler state) ───────────────────────────────────────
-export { getSecrets, clearSecrets } from './secret';
+export { getSecrets, clearSecrets } from './serialize/secret';
 
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
-} from './theme/registry';
+} from './lvgl/theme/registry';
 export {
   clearReactiveThemeProxy,
   clearThemeNodeCache,
-} from './theme/reactive-proxy';
+} from './lvgl/theme/reactive-proxy';
 export {
   inferValueType,
-} from './theme/signals';
-export type { ThemeLeaf } from './theme/signals';
+} from './lvgl/theme/signals';
+export type { ThemeLeaf } from './lvgl/theme/signals';
 
 // ── Reactive property map (compiler dispatch tables) ───────────────────────
-export { REACTIVE_PROPERTY_MAP } from './reactive-properties';
+export { REACTIVE_PROPERTY_MAP } from './reactive/properties';
 
 // ── Entity domain metadata (generated from metadata/entity-domains.json) ───
 export {
@@ -71,18 +71,18 @@ export type {
 } from './generated/entity-domains.js';
 
 // ── Trigger registry (target codegen) ──────────────────────────────────────
-export { TRIGGER_REGISTRY, getTriggerSignature } from './trigger-registry';
-export type { TriggerSignature, TriggerVariable } from './trigger-registry';
+export { TRIGGER_REGISTRY, getTriggerSignature } from './actions/trigger-registry';
+export type { TriggerSignature, TriggerVariable } from './actions/trigger-registry';
 
 // ── Intent registry (eslint validation) ────────────────────────────────────
-export { INTRINSIC_INTENT_REGISTRY } from './intent-registry';
+export { INTRINSIC_INTENT_REGISTRY } from './intents/registry';
 
 // ── LVGL codegen tables (esphome-target) ───────────────────────────────────
 export {
   LVGL_REACTIVE_STYLE_PROPS,
   LVGL_PART_NAMES,
   LVGL_STATE_NAMES,
-} from './lvgl-actions';
+} from './lvgl/widget-tables';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Demoted from public API — still accessible for tooling / target authors
@@ -109,31 +109,31 @@ export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOve
 export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
-export { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
+export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
-export type { ClosureDescriptor } from './closure';
-export { registerClosureDescriptor, findClosureDescriptor } from './closure';
+export type { ClosureDescriptor } from './actions/closure';
+export { registerClosureDescriptor, findClosureDescriptor } from './actions/closure';
 
 // ── Actions ────────────────────────────────────────────────────────────────
-export { waitUntil } from './actions';
+export { waitUntil } from './actions/primitives';
 
 // ── Types (internal-only) ──────────────────────────────────────────────────
 export { RefHandle } from './types';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
-export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive-node';
-export { useReactive, reactiveIsNaN } from './reactive-utils';
-export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
+export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive/node';
+export { useReactive, reactiveIsNaN } from './reactive/utils';
+export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './reactive/compiler-plumbing';
 
 // ── Secrets ────────────────────────────────────────────────────────────────
-export { secret, SecretValue, isSecretValue } from './secret';
+export { secret, SecretValue, isSecretValue } from './serialize/secret';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
-export type { FlattenedTheme } from './theme/registry';
-export { createReactiveThemeProxy } from './theme/reactive-proxy';
-export { flattenTheme } from './theme/signals';
-export { scopeHash } from './theme/scope-hash';
+export type { FlattenedTheme } from './lvgl/theme/registry';
+export { createReactiveThemeProxy } from './lvgl/theme/reactive-proxy';
+export { flattenTheme } from './lvgl/theme/signals';
+export { scopeHash } from './lvgl/theme/scope-hash';
 // ── HA binding types ───────────────────────────────────────────────────────
 export type {
   SensorBinding,
@@ -142,7 +142,7 @@ export type {
   FanBinding,
   CoverBinding,
   HAEntityBindingMap,
-} from './ha-bindings';
+} from './entity/ha-bindings';
 
 // ── Reactive property types ────────────────────────────────────────────────
 export type {
@@ -154,11 +154,11 @@ export type {
   FanReactiveProps,
   CoverReactiveProps,
   ReactivePropertyConfig,
-} from './reactive-properties';
+} from './reactive/properties';
 
 // ── Serialize markers ──────────────────────────────────────────────────────
 
-export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
+export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './serialize/markers';
 
 // ── LVGL YAML emitter hook (target plugs in here) ──────────────────────────
 export {
@@ -170,8 +170,8 @@ export {
   setYamlShaper,
   getYamlShaper,
   clearYamlShaper,
-} from './lvgl-yaml-hook';
-export type { LvglWidgetTreeEmitter, LvglWidgetEmitter, YamlShaper } from './lvgl-yaml-hook';
+} from './lvgl/yaml-hook';
+export type { LvglWidgetTreeEmitter, LvglWidgetEmitter, YamlShaper } from './lvgl/yaml-hook';
 export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
 
 // ── HA entity classifier hook (target plugs in here) ───────────────────────
@@ -180,18 +180,18 @@ export {
   getHAEntityClassifier,
   classifyHAEntity,
   clearHAEntityClassifier,
-} from './ha-entity-hook';
+} from './entity/ha-classifier';
 export type {
   HAEntityClassifier,
   HAEntityClassifyInput,
   HAEntityClassifyResult,
-} from './ha-entity-hook';
+} from './entity/ha-classifier';
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
-export { LVGL_UPDATABLE_WIDGETS } from './lvgl-actions';
+export { LVGL_UPDATABLE_WIDGETS } from './lvgl/widget-tables';
 
 // ── Trigger args ───────────────────────────────────────────────────────────
-export { isTriggerVar } from './trigger-args';
+export { isTriggerVar } from './actions/triggers';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
 export { buildSemanticIR } from './ir/index';

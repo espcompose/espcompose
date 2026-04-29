@@ -12,17 +12,12 @@
 import { Scalar } from 'yaml';
 import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRValueType } from '@espcompose/core/internals';
 import { getTriggerSignature } from '@espcompose/core/internals';
-import { injectHASensorImports } from './reactive-injector.js';
-import { injectReactiveBindingsRuntime } from './reactive-config.js';
-import type { CppLoweringContext } from './expr-to-cpp.js';
-import { buildEntityComponentIds } from './expr-to-cpp.js';
-import type { CppBackendResult } from './codegen-cpp.js';
-import { lowerActionTree, type ActionLoweringContext } from './action-lowering.js';
-import { transformEcCanvasWidgets } from './ec-canvas-lowering.js';
-import { translateLvglStyleValues } from './lvgl-style-value-translate.js';
-import { valueTypeToEsphomeParam, valueTypeToCpp } from './value-type-cpp.js';
-import { resolveEntityPropertyCppPath } from './entity-property-cpp.js';
-import { sourceDomainToTrigger } from './source-trigger.js';
+import { injectHASensorImports, injectReactiveBindingsRuntime } from './codegen';
+import type { CppLoweringContext } from './lowering';
+import { buildEntityComponentIds, valueTypeToEsphomeParam, valueTypeToCpp, resolveEntityPropertyCppPath, sourceDomainToTrigger } from './lowering';
+import type { CppBackendResult } from './codegen';
+import { lowerActionTree, type ActionLoweringContext } from './actions';
+import { transformEcCanvasWidgets, translateLvglStyleValues } from './lvgl';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 

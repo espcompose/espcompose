@@ -14,11 +14,11 @@
 // same render pass return a cached binding and register only once.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isIRReactiveNode } from '../reactive-node';
-import type { Signal, IRDependency } from '../reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from '../reactive';
+import type { Signal, IRDependency } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import { registerHAEntity } from './useReactiveScope';
-import { isTracking, trackDependency } from '../reactive-node';
+import { isTracking, trackDependency } from '../reactive';
 import { assertHookContext } from './useState';
 import { throwCompileTimeOnly } from '../errors';
 import type {
@@ -29,8 +29,8 @@ import type {
   FanBinding,
   CoverBinding,
   HAEntityBindingMap,
-} from '../ha-bindings';
-import { classifyHAEntity } from '../ha-entity-hook';
+} from '../entity';
+import { classifyHAEntity } from '../entity';
 
 /**
  * Extract the domain from a HA entity ID.

@@ -6,12 +6,12 @@
 // assertion required).
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
-import { useMemo } from './hooks/useMemo';
-import { __espcompose } from './__espcompose';
-import { irCall } from './ir/expr-builders';
-import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from './types';
-import type { CssStyleProps } from './style-types';
+import { IRReactiveNode, isIRReactiveNode } from './node';
+import { useMemo } from '../hooks';
+import { __espcompose } from './compiler-plumbing';
+import { irCall } from '../ir/expr-builders';
+import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from '../types';
+import type { CssStyleProps } from '../lvgl/style';
 
 // ── Reactive<T>: the reactive prop type alias ─────────────────────────────
 

@@ -11,7 +11,7 @@
 //   - CssAliasProps     — type definition (sync-checked at compile time)
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { CssAliasProps } from './style-types';
+import type { CssAliasProps } from './types';
 
 // ── Mapping entry types ────────────────────────────────────────────────────
 

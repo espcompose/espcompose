@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { expandCssProps, expandCssStyle } from './style-mapping';
+import { expandCssProps, expandCssStyle } from './mapping';
 
 // ────────────────────────────────────────────────────────────────────────────
 // expandCssProps — single-level CSS → LVGL mapping

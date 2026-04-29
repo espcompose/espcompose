@@ -28,7 +28,7 @@ import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND, OVERLAY_BRAND } from '../types';
 import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
-import type { IRReactiveNode } from '../reactive-node';
+import type { IRReactiveNode } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
 
 /**

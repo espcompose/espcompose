@@ -23,8 +23,8 @@
 import { useContext } from './useContext';
 import { assertHookContext } from './useState';
 import { registerComponent } from './useReactiveScope';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
-import type { IRDependency, Signal } from '../reactive-node';
+import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
+import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import type { IRValueType } from '../ir/types';
 import type { BINDING_BRAND } from '../types';

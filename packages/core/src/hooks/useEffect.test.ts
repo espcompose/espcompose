@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { setCurrentHookPath } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
-import { useHAEntity, clearHAEntityCache } from './hooks/useHAEntity';
-import { withReactiveScope } from './hooks/useReactiveScope';
+import { setCurrentHookPath } from './useState';
+import { useEffect } from './useEffect';
+import { useHAEntity, clearHAEntityCache } from './useHAEntity';
+import { withReactiveScope } from './useReactiveScope';
 
 describe('useEffect', () => {
   beforeEach(() => {

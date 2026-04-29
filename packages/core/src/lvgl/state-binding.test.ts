@@ -5,11 +5,11 @@
  * the reactive node is detected by collectReactiveProps and registered as a binding.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
-import { withReactiveScope } from './hooks/useReactiveScope';
-import { jsx } from './jsx-runtime';
-import { lvglWidgetToPlain } from './lvgl';
-import { setLvglWidgetEmitter, clearLvglYamlEmitters } from './lvgl-yaml-hook';
+import { IRReactiveNode, isIRReactiveNode } from '../reactive';
+import { withReactiveScope } from '../hooks';
+import { jsx } from '../jsx-runtime';
+import { lvglWidgetToPlain } from './serialize';
+import { setLvglWidgetEmitter, clearLvglYamlEmitters } from './yaml-hook';
 
 describe('lvgl-switch state:checked reactive binding', () => {
   // The test exercises binding-registration side effects produced while

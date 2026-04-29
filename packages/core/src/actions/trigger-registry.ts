@@ -12,8 +12,8 @@
 // LvType callback signatures.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ENTITY_DOMAIN_TRIGGERS } from './generated/entity-domains-triggers.js';
-import type { IRValueType } from './ir/types.js';
+import { ENTITY_DOMAIN_TRIGGERS } from '../generated/entity-domains-triggers.js';
+import type { IRValueType } from '../ir/types.js';
 
 export interface TriggerVariable {
   /** Variable name available in the trigger lambda (e.g. `x`). */

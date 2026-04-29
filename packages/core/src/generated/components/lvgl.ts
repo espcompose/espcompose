@@ -5,8 +5,8 @@
 
 import type { ComponentProps, Reactive, RefProp, TriggerHandler } from "../../types";
 import type { __marker_LvButtonMatrixType, __marker_LvDropdownType, __marker_LvKeyboardType, __marker_LvLineType, __marker_LvPageType, __marker_LvRollerType, __marker_image_Image, __marker_lv_animimg_t, __marker_lv_arc_t, __marker_lv_bar_t, __marker_lv_button_t, __marker_lv_canvas_t, __marker_lv_checkbox_t, __marker_lv_dropdown_list_t, __marker_lv_image_t, __marker_lv_label_t, __marker_lv_led_t, __marker_lv_meter_t, __marker_lv_obj_t, __marker_lv_slider_t, __marker_lv_spinbox_t, __marker_lv_spinner_t, __marker_lv_switch_t, __marker_lv_tabview_t, __marker_lv_textarea_t, __marker_lv_tileview_t, __marker_lv_tileview_tile_t } from "../markers";
-import type { CssStyleProps } from "../../style-types";
-import type { HexColor } from "../../theme/hex-color";
+import type { CssStyleProps } from "../../lvgl/style/types";
+import type { HexColor } from "../../lvgl/theme/hex-color";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
 //
 export interface LvglStyleProps {

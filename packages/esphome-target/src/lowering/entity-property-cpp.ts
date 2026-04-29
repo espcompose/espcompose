@@ -14,7 +14,7 @@
 // fails the build at codegen time.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ENTITY_PROPERTY_CPP_PATHS } from './generated/component-access.js';
+import { ENTITY_PROPERTY_CPP_PATHS } from '../generated/component-access.js';
 
 /**
  * Map a (sourceDomain, propertyKey) pair to its C++ access path. Throws if

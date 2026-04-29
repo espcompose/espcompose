@@ -2,9 +2,8 @@ import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
 import { withOverlayScope } from './hooks';
-import { withContext } from './hooks/useContext';
-import type { Context } from './hooks/useContext';
-import { pushHookPath, popHookPath } from './hooks/useState';
+import { withContext, pushHookPath, popHookPath } from './hooks';
+import type { Context } from './hooks';
 
 import {
   Fragment,
@@ -16,25 +15,30 @@ import {
   startSerializationCapture,
   stopSerializationCapture,
   setCurrentSource,
+  clearRefRegistry,
+  getSecrets,
+  clearSecrets,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
-import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
-import { clearRefRegistry } from './ref-registry';
-import { getSecrets, clearSecrets } from './secret';
-import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
-import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
-import { setWireframeEnabled, clearWireframe } from './wireframe';
+import { ecCanvasToPlain, isEcCanvasElement } from './lvgl';
+import {
+  clearThemeRegistry,
+  getThemeRegistry,
+  clearReactiveThemeProxy,
+  clearThemeNodeCache,
+} from './lvgl/theme';
+import { setWireframeEnabled, clearWireframe } from './lvgl/style';
 import {
   setLvglYamlEmitter,
   setLvglWidgetEmitter,
   clearLvglYamlEmitters,
   setYamlShaper,
   clearYamlShaper,
-} from './lvgl-yaml-hook';
+} from './lvgl';
 import {
   setHAEntityClassifier,
   clearHAEntityClassifier,
-} from './ha-entity-hook';
+} from './entity';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory

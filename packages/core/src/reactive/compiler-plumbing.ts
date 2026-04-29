@@ -10,11 +10,11 @@
 //   __espcompose.derivedMemo()  — explicit C++ memo construction
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode } from './reactive-node';
-import type { IRDependency } from './reactive-node';
-import type { IRExprNode, ExprType } from './ir/expr-types';
-import { mapExprChildren } from './ir/expr-walk';
-import { registerReactiveNode } from './hooks/useReactiveScope';
+import { IRReactiveNode } from './node';
+import type { IRDependency } from './node';
+import type { IRExprNode, ExprType } from '../ir/expr-types';
+import { mapExprChildren } from '../ir/expr-walk';
+import { registerReactiveNode } from '../hooks';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Library format version validation

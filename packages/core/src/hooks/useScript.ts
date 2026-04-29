@@ -28,8 +28,8 @@ import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRValueType, ClosureS
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
 import { throwCompileTimeOnly } from '../errors';
-import { findClosureDescriptor } from '../closure';
-import type { OverlayControllerInternal } from '../closure';
+import { findClosureDescriptor } from '../actions';
+import type { OverlayControllerInternal } from '../actions';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 

@@ -10,11 +10,11 @@
 // live at the top-level of widget interfaces.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Reactive } from './types';
-import type { LvglStyleProps } from './generated/components/lvgl';
-import type { FontRef, ImageRef } from './component-aliases';
-import type { RefProp } from './types';
-import type { HexColor } from './theme/hex-color';
+import type { Reactive } from '../../types';
+import type { LvglStyleProps } from '../../generated/components/lvgl';
+import type { FontRef, ImageRef } from '../../component-aliases';
+import type { RefProp } from '../../types';
+import type { HexColor } from '../theme/hex-color';
 
 // ── Utility types ──────────────────────────────────────────────────────────
 

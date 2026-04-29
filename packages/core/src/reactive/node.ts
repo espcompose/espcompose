@@ -14,7 +14,7 @@
 //   - 'effect':     side-effect callback (useEffect())
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRExprNode, ExprType } from './ir/expr-types';
+import type { IRExprNode, ExprType } from '../ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types

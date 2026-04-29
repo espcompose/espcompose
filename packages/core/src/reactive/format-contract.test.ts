@@ -12,12 +12,12 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { z } from 'zod';
-import { setCurrentHookPath } from './hooks/useState';
-import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
-import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
-import { withReactiveScope } from './hooks/useReactiveScope';
-import { serializeValue } from './serialize';
-import { irTernary, irBinary } from './ir/expr-builders.js';
+import { setCurrentHookPath } from '../hooks';
+import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './compiler-plumbing';
+import { IRReactiveNode, isIRReactiveNode } from './node';
+import { withReactiveScope } from '../hooks';
+import { serializeValue } from '../serialize';
+import { irTernary, irBinary } from '../ir/expr-builders.js';
 
 // ── Zod schemas (duplicated from CLI to prove consumer-side conformance) ──
 // These must match the CLI's schemas exactly — if they diverge, it means

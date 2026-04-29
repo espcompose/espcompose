@@ -18,7 +18,7 @@
 //   }}
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { BINDING_BRAND } from './types';
+import type { BINDING_BRAND } from '../types';
 
 /** Branded action function type. */
 interface ActionFunction<F extends (...args: never[]) => unknown> {

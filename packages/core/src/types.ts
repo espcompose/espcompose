@@ -2,9 +2,9 @@ import type { Context } from './hooks/useContext';
 import type {
   InferActions,
 } from './generated/actions';
-import type { InferReactiveProperties } from './reactive-properties';
-import { REACTIVE_PROPERTY_MAP } from './reactive-properties';
-import { IRReactiveNode } from './reactive-node';
+import type { InferReactiveProperties } from './reactive/properties';
+import { REACTIVE_PROPERTY_MAP } from './reactive/properties';
+import { IRReactiveNode } from './reactive/node';
 import { assertHookContext } from './hooks/useState';
 import { throwCompileTimeOnly } from './errors';
 
@@ -367,7 +367,7 @@ export type Pin = number | PinConfig;
 // ────────────────────────────────────────────────────────────────────────────
 
 // Re-export types for use by generated code
-export type { Reactive, WidgetProps, WidgetPropsWithChildren } from './reactive-utils';
+export type { Reactive, WidgetProps, WidgetPropsWithChildren } from './reactive/utils';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX namespace — base declaration only.

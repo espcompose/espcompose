@@ -13,7 +13,7 @@
 // the getters below, never owning any YAML vocabulary.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRWidget, IRWidgetTree } from './ir/widget-types';
+import type { IRWidget, IRWidgetTree } from '../ir/widget-types';
 
 export type LvglWidgetTreeEmitter = (tree: IRWidgetTree) => Record<string, unknown>;
 export type LvglWidgetEmitter = (widget: IRWidget) => Record<string, unknown>;

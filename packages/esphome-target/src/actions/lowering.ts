@@ -17,9 +17,9 @@ import type {
   IRRefSlot,
   IRValueType,
 } from '@espcompose/core/internals';
-import { exprToCpp, type CppLoweringContext } from './expr-to-cpp.js';
-import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './action-cpp-emitters.js';
-import { valueTypeToCpp } from './value-type-cpp.js';
+import { exprToCpp, type CppLoweringContext } from '../lowering';
+import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
+import { valueTypeToCpp } from '../lowering';
 
 // ── Action lowering context ─────────────────────────────────────────────
 

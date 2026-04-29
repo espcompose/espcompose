@@ -9,8 +9,8 @@
 //   - YAML+C++ backend: produces ESPHome YAML + espcompose_bindings.h
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRReactiveNode } from '../reactive-node';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRReactiveNode } from '../reactive';
+import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
 import type { IRActionNode } from './action-types';
 
 // ────────────────────────────────────────────────────────────────────────────

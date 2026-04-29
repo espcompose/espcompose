@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { withScriptScope } from './hooks/useScript';
-import { withOverlayScope, useOverlay } from './hooks/useOverlay';
-import { pushHookPath, popHookPath, getCurrentHookPath } from './hooks/useState';
+import { withScriptScope } from './useScript';
+import { withOverlayScope, useOverlay } from './useOverlay';
+import { pushHookPath, popHookPath, getCurrentHookPath } from './useState';
 
 describe('hook path stack', () => {
   it('joins pushed names with /', () => {

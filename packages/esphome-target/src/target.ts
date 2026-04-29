@@ -11,10 +11,9 @@ import * as path from 'path';
 import yaml from 'yaml';
 import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/internals';
 import { lowerToYamlConfig } from './lower-yaml.js';
-import { generateCppFromIR } from './codegen-cpp.js';
+import { generateCppFromIR } from './codegen';
 import { resolveAssets } from './assets.js';
-import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './ec-canvas-lowering.js';
-import { lowerLvglWidgetTree, lowerLvglWidget } from './lvgl-yaml-emitter.js';
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerLvglWidgetTree, lowerLvglWidget } from './lvgl';
 import { camelToSnake, toYamlKey } from './yaml-utils.js';
 import { classifyHAEntityForESPHome } from './ha-entity-classifier.js';
 

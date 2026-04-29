@@ -8,8 +8,8 @@
 
 import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode, IRScript } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
-import { generateBindingsHeader } from './bindings-codegen.js';
-import type { ReactiveRuntimeConfig } from './bindings-codegen.js';
+import { generateBindingsHeader } from './bindings.js';
+import type { ReactiveRuntimeConfig } from './bindings.js';
 import { processOverlayMux } from './overlay-mux.js';
 import { generateAllClosureTables } from './closure-table.js';
 

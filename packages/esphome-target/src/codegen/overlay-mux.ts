@@ -24,8 +24,8 @@ import type { IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
 import { analyzeExprStructure, analyzeActionStructure, irBinary } from '@espcompose/core/internals';
 import { mapExprChildren } from '@espcompose/core/internals';
-import type { SignalDecl, TableDecl } from './bindings-codegen.js';
-import { exprTypeToCpp } from './expr-to-cpp.js';
+import type { SignalDecl, TableDecl } from './bindings.js';
+import { exprTypeToCpp } from '../lowering';
 
 /** Result of overlay mux processing, to be merged into the main runtime config. */
 export interface OverlayMuxResult {

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { setCurrentHookPath } from './hooks/useState';
-import { __espcompose } from './__espcompose';
-import { IRReactiveNode, isIRReactiveNode } from './reactive-node';
-import { withReactiveScope } from './hooks/useReactiveScope';
-import { irTernary, irBinary } from './ir/expr-builders.js';
+import { setCurrentHookPath } from '../hooks';
+import { __espcompose } from './compiler-plumbing';
+import { IRReactiveNode, isIRReactiveNode } from './node';
+import { withReactiveScope } from '../hooks';
+import { irTernary, irBinary } from '../ir/expr-builders.js';
 
 describe('__espcompose', () => {
   beforeEach(() => {

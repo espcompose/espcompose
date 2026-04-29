@@ -12,7 +12,7 @@ export type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
-} from './device-bindings';
+} from './bindings';
 
 import type {
   LightBinding,
@@ -21,7 +21,7 @@ import type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
-} from './device-bindings';
+} from './bindings';
 
 // ── HAEntityBindingMap ─────────────────────────────────────────────────────
 

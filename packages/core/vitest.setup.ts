@@ -4,8 +4,8 @@
 // pipeline calls `getYamlShaper()` (target-supplied) for camelCase →
 // snake_case key conversion and JSX-element-to-YAML-key mapping. Provide an
 // ESPHome-equivalent default here so the tests can run in isolation.
-import { setYamlShaper } from './src/lvgl-yaml-hook';
-import { setHAEntityClassifier } from './src/ha-entity-hook';
+import { setYamlShaper } from './src/lvgl/yaml-hook';
+import { setHAEntityClassifier } from './src/entity/ha-classifier';
 
 setYamlShaper({
   transformPropKey: (key: string): string =>

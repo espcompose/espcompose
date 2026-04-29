@@ -133,7 +133,7 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
   }
 }
 
-import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../core/src/lvgl-actions.js';
+import { LVGL_UPDATABLE_WIDGETS, LVGL_REACTIVE_STYLE_PROPS } from '../../core/src/lvgl/widget-tables.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Known type overrides for widget props

@@ -17,7 +17,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Context, createContext, useContext, withContext } from './useContext';
-import type { IRReactiveNode } from '../reactive-node';
+import type { IRReactiveNode } from '../reactive';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Binding types
