@@ -38,8 +38,16 @@ export type IRRefSlot =
 /** A component-specific action (light.toggle, switch.turn_on, fan.turn_off, etc.) */
 export interface IRNativeAction {
   kind: 'native';
-  /** Action key, e.g. 'light.toggle', 'switch.turn_on' */
-  actionKey: string;
+  /**
+   * Semantic component domain (e.g. 'light', 'switch', 'fan', 'lvgl').
+   * Target maps `(domain, operation)` to its native action path at lowering.
+   */
+  domain: string;
+  /**
+   * Semantic operation verb (e.g. 'toggle', 'turn_on', 'widget.update').
+   * May contain dots for nested operation paths.
+   */
+  operation: string;
   /** Action config — may be a scalar ID string, or an object with params */
   config: IRActionConfig;
   /**
@@ -70,22 +78,41 @@ export interface IRLoggerAction {
   level?: string;
 }
 
+/** Semantic time unit for durations and timeouts. */
+export type IRDurationUnit = 'ms' | 's' | 'min' | 'h';
+
+/** Literal duration value with explicit unit (target formats to YAML string). */
+export interface IRDurationLiteral {
+  kind: 'duration';
+  value: number;
+  unit: IRDurationUnit;
+}
+
+/** Duration — literal value+unit or a closure-captured scalar parameter. */
+export type IRDuration = IRDurationLiteral | IRScriptParamRef;
+
+/** Sentinel for an indefinite/never-firing timeout. */
+export interface IRTimeoutNever { kind: 'never'; }
+
+/** Timeout — a duration or the `never` sentinel. */
+export type IRTimeout = IRDuration | IRTimeoutNever;
+
 /** delay action */
 export interface IRDelayAction {
   kind: 'delay';
   /**
-   * Duration — either a literal string (e.g. '500ms', '1s', '2min') or an
-   * `IRScriptParamRef` referencing a closure-captured scalar.
+   * Duration — either a literal value+unit or an `IRScriptParamRef`
+   * referencing a closure-captured scalar.
    */
-  duration: string | IRScriptParamRef;
+  duration: IRDuration;
 }
 
 /** wait_until action */
 export interface IRWaitUntilAction {
   kind: 'wait_until';
   condition: IRCondition;
-  /** Optional timeout string, e.g. '10s' */
-  timeout?: string;
+  /** Optional timeout — duration or `never` sentinel. */
+  timeout?: IRTimeout;
 }
 
 /** if/else action */
@@ -341,8 +368,42 @@ export type IRActionConfig =
 
 // ── Constructors ───────────────────────────────────────────────────────────
 
-export function irNativeAction(actionKey: string, config: IRActionConfig, refSlots?: IRRefSlot[]): IRNativeAction {
-  return { kind: 'native', actionKey, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
+export function irNativeAction(domain: string, operation: string, config: IRActionConfig, refSlots?: IRRefSlot[]): IRNativeAction {
+  return { kind: 'native', domain, operation, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
+}
+
+/**
+ * Split a dotted action key string (e.g. 'light.toggle', 'lvgl.widget.update')
+ * into `{ domain, operation }`. Splits at the first dot; operation may
+ * contain further dots (e.g. 'widget.update' for the 'lvgl' domain).
+ * Throws if the key has no dot — every native action must be domain-qualified.
+ */
+export function splitActionKey(key: string): { domain: string; operation: string } {
+  const i = key.indexOf('.');
+  if (i < 0) {
+    throw new Error(`[espcompose] Action key '${key}' has no domain prefix; expected '<domain>.<operation>'.`);
+  }
+  return { domain: key.slice(0, i), operation: key.slice(i + 1) };
+}
+
+/**
+ * Parse a duration string written by users (`'500ms'`, `'1s'`, `'2min'`,
+ * `'1h'`) into a structured `IRDurationLiteral`. Returns `null` if the
+ * string is not a recognized duration.
+ */
+export function parseDurationString(s: string): IRDurationLiteral | null {
+  const m = /^(\d+(?:\.\d+)?)(ms|s|min|h)$/.exec(s);
+  if (!m) return null;
+  return { kind: 'duration', value: Number(m[1]), unit: m[2] as IRDurationUnit };
+}
+
+/**
+ * Parse a timeout string — like `parseDurationString` but also accepts the
+ * special sentinel `'never'`. Returns `null` if unrecognized.
+ */
+export function parseTimeoutString(s: string): IRTimeout | null {
+  if (s === 'never') return { kind: 'never' };
+  return parseDurationString(s);
 }
 
 export function irHAServiceAction(action: string, data?: Record<string, IRActionParam>): IRHAServiceAction {
@@ -353,11 +414,11 @@ export function irLoggerAction(message: string, level?: string): IRLoggerAction 
   return { kind: 'logger', message, ...(level ? { level } : {}) };
 }
 
-export function irDelayAction(duration: string | IRScriptParamRef): IRDelayAction {
+export function irDelayAction(duration: IRDuration): IRDelayAction {
   return { kind: 'delay', duration };
 }
 
-export function irWaitUntilAction(condition: IRCondition, timeout?: string): IRWaitUntilAction {
+export function irWaitUntilAction(condition: IRCondition, timeout?: IRTimeout): IRWaitUntilAction {
   return { kind: 'wait_until', condition, ...(timeout ? { timeout } : {}) };
 }
 

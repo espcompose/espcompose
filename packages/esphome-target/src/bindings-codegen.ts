@@ -14,6 +14,11 @@ import { LVGL_STYLE_PROP_TABLE } from './lvgl-style-prop-table';
 import * as fs from 'fs';
 import * as path from 'path';
 
+/** Convert a camelCase identifier to snake_case for ESPHome/LVGL table lookups. */
+function camelToSnake(s: string): string {
+  return s.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+}
+
 // ── Input data types ───────────────────────────────────────────────────────
 
 export interface SignalDecl {
@@ -586,8 +591,8 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
  * Returns e.g. 'LV_PART_MAIN | LV_STATE_DEFAULT' or 'LV_PART_INDICATOR | LV_STATE_PRESSED'.
  */
 function computeStyleFlag(binding: WidgetBindingDecl): string {
-  const partKey = binding.part ?? 'main';
-  const stateKey = binding.state ?? 'default';
+  const partKey = binding.part ? camelToSnake(binding.part) : 'main';
+  const stateKey = binding.state ? camelToSnake(binding.state) : 'default';
   const partFlag = LVGL_PART_FLAGS[partKey];
   const stateFlag = LVGL_STATE_FLAGS[stateKey];
   if (!partFlag) {
@@ -657,7 +662,7 @@ function generateWidgetUpdateCode(binding: WidgetBindingDecl): string {
 
   // ── Table-driven style props ───────────────────────────────────────
 
-  const descriptor = LVGL_STYLE_PROP_TABLE[prop];
+  const descriptor = LVGL_STYLE_PROP_TABLE[camelToSnake(prop)];
   if (descriptor) {
     const STYLE_FLAG = computeStyleFlag(binding);
     const val = descriptor.cast ? descriptor.cast.replace('$V', valueExpr) : valueExpr;
@@ -673,7 +678,7 @@ function generateWidgetUpdateCode(binding: WidgetBindingDecl): string {
       ].join(' ');
     }
 
-    // Special: text_font — the value is already const lv_font_t* (from theme font_ptr memo)
+    // Special: text_font — the value is already const lv_font_t* (from theme font_ref memo)
     if (descriptor.special === 'text_font') {
       return `lv_obj_set_style_text_font(${obj}, ${valueExpr}, ${STYLE_FLAG});`;
     }

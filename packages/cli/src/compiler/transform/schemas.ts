@@ -20,7 +20,7 @@ export const LibraryFormatHeaderSchema = z.object({
 // ── Reactive expression metadata ───────────────────────────────────────────
 
 /** ExprType enum values. */
-const ExprTypeSchema = z.enum(['int', 'float', 'string', 'bool', 'color', 'font_ptr']);
+const ExprTypeSchema = z.enum(['int', 'float', 'string', 'bool', 'color', 'font_ref']);
 
 /** Single dependency in a compiled reactive expression. */
 export const DependencyInfoSchema = z.object({

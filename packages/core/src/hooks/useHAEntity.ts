@@ -30,16 +30,7 @@ import type {
   CoverBinding,
   HAEntityBindingMap,
 } from '../ha-bindings';
-import { getDomainSensorType } from '../generated/entity-domains.js';
-
-/**
- * Generate a deterministic ESPHome component ID from an entity ID.
- *
- * `light.kitchen_floods` → `ha_light_kitchen_floods`
- */
-function generateSensorId(entityId: string): string {
-  return `ha_${entityId.replace('.', '_')}`;
-}
+import { classifyHAEntity } from '../ha-entity-hook';
 
 /**
  * Extract the domain from a HA entity ID.
@@ -140,16 +131,16 @@ function makeExpressionNode<T>(
 // ────────────────────────────────────────────────────────────────────────────
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
-  const brightnessId = `${sourceId}_brightness`;
-  const stateTextId = `${sourceId}_state_text`;
+  const brightness = classifyHAEntity({ entityId, domain: 'light', attribute: 'brightness' });
+  const stateText = classifyHAEntity({ entityId, domain: 'light', facet: 'stateText' });
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: 'sensor',
-    generatedId: brightnessId,
+    sensorType: brightness.platform,
+    generatedId: brightness.targetId,
     attribute: 'brightness',
   });
 
@@ -158,14 +149,14 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    sensorType: stateText.platform,
+    generatedId: stateText.targetId,
   });
 
   const binding: LightBinding = {
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
-    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    brightness: makeExpressionNode<number>(brightness.targetId, 'sensor', 'state', undefined, entityId, 'brightness'),
+    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -176,38 +167,38 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 }
 
 function createSensorBinding(sourceId: string, entityId: string): SensorBinding {
-  const stateTextId = `${sourceId}_state_text`;
+  const stateText = classifyHAEntity({ entityId, domain: 'sensor', facet: 'stateText' });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'sensor',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    sensorType: stateText.platform,
+    generatedId: stateText.targetId,
   });
 
   return createTrackingProxy({
     value: makeExpressionNode<number>(sourceId, 'sensor', 'state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
 function createBinarySensorBinding(sourceId: string, entityId: string): BinarySensorBinding {
-  const stateTextId = `${sourceId}_state_text`;
+  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', facet: 'stateText' });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'binary_sensor',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    sensorType: stateText.platform,
+    generatedId: stateText.targetId,
   });
 
   return createTrackingProxy({
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
@@ -285,8 +276,7 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const sensorType = getDomainSensorType(domain);
-  const generatedId = generateSensorId(entityId);
+  const { targetId: generatedId, platform: sensorType } = classifyHAEntity({ entityId, domain });
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({

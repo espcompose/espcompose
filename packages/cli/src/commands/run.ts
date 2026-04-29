@@ -35,7 +35,7 @@ export function registerRunCommand(program: Command) {
         const { transformIRForHost } = await import('@espcompose/esphome-target');
 
         console.log(`Compiling ${resolvedDir} for ESPHome host platform…`);
-        const executeResult = await compileToIR(resolvedDir, { wireframe: opts?.wireframe });
+        const executeResult = await compileToIR(resolvedDir, createEsphomeTarget(), { wireframe: opts?.wireframe });
         const hostIR = transformIRForHost(executeResult.ir, {
           width: opts.width,
           height: opts.height,

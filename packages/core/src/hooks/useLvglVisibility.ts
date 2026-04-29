@@ -34,8 +34,9 @@ import {
   irDelayAction,
   irNativeAction,
   irScriptStop,
+  parseDurationString,
 } from '../ir/action-types';
-import type { IRActionNode } from '../ir/action-types';
+import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
 import type { OverlayController } from './useOverlay';
 import type { LvglVisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
@@ -61,11 +62,19 @@ export interface LvglVisibilityOptions {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-function normalizeDuration(value: string | number): string {
+function normalizeDuration(value: string | number): IRDurationLiteral {
   if (typeof value === 'number') {
-    return `${value}ms`;
+    return { kind: 'duration', value, unit: 'ms' };
   }
-  return value;
+  const parsed = parseDurationString(value);
+  if (!parsed) {
+    throw new Error(`[espcompose] Invalid autoHide duration '${value}'. Expected a number of milliseconds, or a duration literal with a unit suffix (ms, s, or min).`);
+  }
+  return parsed;
+}
+
+function durationSlug(d: IRDurationLiteral): string {
+  return `${d.value}${d.unit}`;
 }
 
 /** Hidden fields on OverlayController, read during the render pass. */
@@ -208,7 +217,7 @@ function buildRefVisibility(
     const showScript = useScript(
       makeSyntheticScript(
         'lvgl_vis_ref_show',
-        [irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: false }, [
+        [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ])],
         { [refBindingKey]: ref },
@@ -217,7 +226,7 @@ function buildRefVisibility(
     const hideScript = useScript(
       makeSyntheticScript(
         'lvgl_vis_ref_hide',
-        [irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+        [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ])],
         { [refBindingKey]: ref },
@@ -227,18 +236,18 @@ function buildRefVisibility(
   }
 
   const duration = normalizeDuration(autoHide);
-  const safeDuration = duration.replace(/[^a-z0-9_]/gi, '_');
+  const safeDuration = durationSlug(duration);
 
   // Show script: unhide → delay → hide (mode: restart).
   const showScript = useScript(
     makeSyntheticScript(
       `lvgl_vis_ref_${safeDuration}`,
       [
-        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: false }, [
+        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ]),
         irDelayAction(duration),
-        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ]),
       ],
@@ -253,7 +262,7 @@ function buildRefVisibility(
       `lvgl_vis_ref_hide_${safeDuration}`,
       [
         irScriptStop(showScript.id),
-        irNativeAction('lvgl.widget.update', { id: refBindingKey, hidden: true }, [
+        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ]),
       ],

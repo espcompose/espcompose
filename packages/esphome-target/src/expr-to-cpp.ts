@@ -210,7 +210,7 @@ function literalToCpp(value: string | number | boolean, type: ExprType): string 
       return String(value);
     case 'color':
       return `lv_color_hex(0x${String(value).replace(/^#/, '')})`;
-    case 'font_ptr':
+    case 'font_ref':
       return String(value);
     default:
       return String(value);
@@ -328,7 +328,7 @@ export function exprTypeToCpp(type: ExprType): string {
     case 'string': return 'std::string';
     case 'bool': return 'bool';
     case 'color': return 'lv_color_t';
-    case 'font_ptr': return 'const lv_font_t*';
+    case 'font_ref': return 'const lv_font_t*';
     case 'int_array': return 'std::vector<int>';
     case 'float_array': return 'std::vector<float>';
     case 'bool_array': return 'std::vector<bool>';

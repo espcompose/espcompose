@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import type { IRActionNode, IRActionConfig, IRRefSlot } from '@espcompose/core/internals';
-import { irNativeAction } from '@espcompose/core/internals';
+import { irNativeAction, splitActionKey } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
 import { LVGL_PAGE_ACTIONS, buildLvglPageActionConfig, buildRefActionConfig } from '../params.js';
@@ -28,7 +28,8 @@ export function compileRefAction(
   // the caller ref as `id`. Build config from params only.
   if (LVGL_PAGE_ACTIONS.has(actionKey)) {
     const config = buildLvglPageActionConfig(call, ctx);
-    return [irNativeAction(actionKey, config)];
+    const { domain, operation } = splitActionKey(actionKey);
+    return [irNativeAction(domain, operation, config)];
   }
 
   // Build action config — always include the ref ID. Track ref slots
@@ -37,7 +38,8 @@ export function compileRefAction(
   const refSlots: IRRefSlot[] = [];
   const config: IRActionConfig = buildRefActionConfig(call, refName, ctx, refSlots);
 
-  return [irNativeAction(actionKey, config, refSlots)];
+  const { domain, operation } = splitActionKey(actionKey);
+  return [irNativeAction(domain, operation, config, refSlots)];
 }
 
 /**

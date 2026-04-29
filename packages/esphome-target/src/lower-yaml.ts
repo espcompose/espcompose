@@ -221,11 +221,11 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: Acti
       return node.value;
 
     case 'reactive': {
-      // font_ptr values are set by the reactive Effect after on_boot —
+      // font_ref values are set by the reactive Effect after on_boot —
       // skip emitting an initial-value lambda in the YAML because ESPHome
       // evaluates it during LVGL widget setup, before fonts are ready.
       const reactiveNode = (node as { node: { exprType?: string } }).node;
-      if (reactiveNode?.exprType === 'font_ptr') {
+      if (reactiveNode?.exprType === 'font_ref') {
         return SKIP_ENTRY;
       }
       return createYamlLambda(generateInitialValueLambda(reactiveNode, ctx));

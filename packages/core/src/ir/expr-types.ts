@@ -13,7 +13,7 @@ export type ExprType =
   | 'string'
   | 'bool'
   | 'color'
-  | 'font_ptr'
+  | 'font_ref'
   | 'int_array'
   | 'float_array'
   | 'string_array'

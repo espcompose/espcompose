@@ -40,6 +40,14 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearReactiveThemeProxy();
   cjsSDK.clearWireframe();
 
+  // Allow the compilation target to register render-pass hooks (e.g. the
+  // LVGL widget-tree YAML emitter) on the same SDK instance the user
+  // bundle will load. Without this, `buildLvglSection()` would have no
+  // emitter to lower its IRWidgetTree through.
+  if (ctx.target?.registerRenderHooks) {
+    ctx.target.registerRenderHooks(cjsSDK);
+  }
+
   // Enable wireframe mode if requested by the CLI.
   if (ctx.wireframe) {
     cjsSDK.setWireframeEnabled(true);

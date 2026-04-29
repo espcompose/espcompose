@@ -31,17 +31,31 @@ import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script
 import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './lvgl-actions';
 import {
-  camelToSnake,
   extractElementProps,
   flattenFragments,
-  keysToSnakeCase,
+  serializeValuesPreservingKeys,
   setCurrentSource,
-  stripUndefined,
-  toYamlKey,
 } from './serialize';
 import { expandCssStyle } from './style-mapping';
+import type { IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier } from './ir/widget-types';
+import { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
+import { getLvglYamlEmitter, getLvglWidgetEmitter } from './lvgl-yaml-hook';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './ec-canvas-serialize';
+
+function makeEcCanvasOpaqueIR(payload: Record<string, unknown>): IRWidget {
+  return {
+    kind: EC_CANVAS_OPAQUE_KIND,
+    props: { [EC_CANVAS_OPAQUE_PAYLOAD_KEY]: payload },
+    children: [],
+  };
+}
+
+/** Convert an `lvgl-*` JSX tag to its semantic camelCase widget kind. */
+function lvglElementKind(tag: string): string {
+  // 'lvgl-dropdown-list' → 'dropdownList'
+  return tag.slice(5).replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+}
 
 // Known LVGL part and state names in camelCase, used for recursive binding detection.
 // Excludes 'main' and 'default' since those are the top-level defaults.
@@ -178,7 +192,7 @@ function collectReactiveProps(
  */
 function detectAndRegisterReactiveProps(
   data: Record<string, unknown>,
-  yamlKey: string,
+  widgetKind: string,
 ): void {
   const reactiveProps: NestedReactiveProp[] = [];
   collectReactiveProps(data, reactiveProps);
@@ -194,11 +208,11 @@ function detectAndRegisterReactiveProps(
       registerReactiveBinding({
         kind: 'binding',
         targetId: widgetId,
-        targetType: yamlKey,
-        targetProp: camelToSnake(propName),
+        targetType: widgetKind,
+        targetProp: propName,
         expression: node,
-        ...(part ? { part: camelToSnake(part) } : {}),
-        ...(state ? { state: camelToSnake(state) } : {}),
+        ...(part ? { part } : {}),
+        ...(state ? { state } : {}),
       });
     }
   }
@@ -230,6 +244,16 @@ function hoistStyleProp(data: Record<string, unknown>): void {
  *    can emit on_state/on_value trigger wiring later.
  */
 export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown> {
+  return getLvglWidgetEmitter()(buildLvglWidgetIR(el));
+}
+
+/**
+ * Build a target-neutral `IRWidget` for an `lvgl-*` element, recursing into
+ * its `lvgl-*` and `ec-canvas` children. Side effects (reactive-binding
+ * registration, overlay action capture) happen here, mirroring the order of
+ * the legacy single-pass implementation so snapshot bytes stay identical.
+ */
+function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
@@ -266,9 +290,13 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   }
 
   const widgetChildren = resolveLvglChildren(children);
-  const nestedWidgets = widgetChildren
+  const childNodes: IRWidget[] = widgetChildren
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
-    .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
+    .map((c): IRWidget =>
+      typeof c.type === 'string' && isEcCanvasElement(c.type)
+        ? makeEcCanvasOpaqueIR(ecCanvasToPlain(c))
+        : buildLvglWidgetIR(c),
+    );
 
   const data: Record<string, unknown> = { ...allProps };
   hoistStyleProp(data);
@@ -279,7 +307,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   // properties are only meaningful inside a layout block, so drop them.
   if (data.layout && typeof data.layout === 'object') {
     const layout = data.layout as Record<string, unknown>;
-    if (!layout.type || nestedWidgets.length === 0) {
+    if (!layout.type || childNodes.length === 0) {
       delete data.layout;
     }
   }
@@ -290,7 +318,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
   // reactive nodes to top-level reactive bindings (which the C++ runtime
   // updates via lv_obj_set_style_pad_*) and replace them with 0 so the YAML
   // serialiser emits a plain integer.
-  const yamlKey = toYamlKey(el.type as string);
+  const widgetKind = lvglElementKind(el.type as string);
   if (data.layout && typeof data.layout === 'object') {
     const layout = data.layout as Record<string, unknown>;
     for (const key of ['padRow', 'padColumn'] as const) {
@@ -303,8 +331,8 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
         registerReactiveBinding({
           kind: 'binding',
           targetId: widgetId,
-          targetType: yamlKey,
-          targetProp: camelToSnake(key),
+          targetType: widgetKind,
+          targetProp: key,
           expression: layout[key] as IRReactiveNode,
         });
         layout[key] = 0;
@@ -312,25 +340,43 @@ export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown
     }
   }
 
-  detectAndRegisterReactiveProps(data, yamlKey);
+  detectAndRegisterReactiveProps(data, widgetKind);
 
-  // Serialize own props first, then attach already-serialized child widgets
-  // to avoid double-serialization which breaks capture WeakMap references.
-  const serialized = stripUndefined(keysToSnakeCase(data));
-  if (nestedWidgets.length > 0) {
-    serialized.widgets = nestedWidgets;
-  }
+  // Pre-serialize prop values while serialization captures are active so
+  // refs/secrets/lambdas/yaml-bool strings are properly capture-tracked.
+  // Keys stay camelCase — the target's widget emitter performs snake_case
+  // conversion during YAML lowering.
+  const serializedProps = serializeValuesPreservingKeys(data);
 
-  return { [yamlKey]: serialized };
+  return {
+    kind: widgetKind,
+    id: typeof serializedProps.id === 'string' ? serializedProps.id : undefined,
+    props: serializedProps,
+    children: childNodes,
+  };
 }
 
 /**
  * Build the LVGL section for a <lvgl> element.
  *
- * Splits children into pages (<lvgl-page>) and direct widgets (other lvgl-*),
- * and merges them with the element's own props.
+ * Produces a target-neutral `IRWidgetTree` and lowers it to YAML via the
+ * target-supplied emitter registered through `setLvglYamlEmitter()`. Core
+ * never owns the YAML shape; it only constructs the semantic IR.
  */
 export function buildLvglSection(el: EspComposeElement): Record<string, unknown> {
+  const tree = buildLvglWidgetTree(el);
+  return getLvglYamlEmitter()(tree);
+}
+
+/**
+ * Build a target-neutral `IRWidgetTree` for a `<lvgl>` element.
+ *
+ * Splits children into pages (`<lvgl-page>`) and direct widgets (other
+ * `lvgl-*`), captures overlay subtrees grouped by zOrder, and registers
+ * reactive bindings / overlay action metadata along the way (same side
+ * effects and ordering as the legacy single-pass implementation).
+ */
+export function buildLvglWidgetTree(el: EspComposeElement): IRWidgetTree {
   setCurrentSource(el.__source);
   // Capture the raw ref before extractElementProps converts it to an id string.
   let lvglRef = (el.props as Record<string, unknown>).ref as Ref<LvglComponentRef> | undefined;
@@ -347,179 +393,157 @@ export function buildLvglSection(el: EspComposeElement): Record<string, unknown>
   // Push the lvgl ref into context so useLvgl() returns it inside the tree.
   return withContext(LvglContext, lvglRef, () => {
     const resolved = resolveLvglChildren(children);
-    const pages: Record<string, unknown>[] = [];
-    const topWidgets: Record<string, unknown>[] = [];
+    const pages: IRWidget[] = [];
+    const topWidgets: IRWidget[] = [];
 
     for (const child of resolved) {
       if (child.type === 'lvgl-page') {
-        setCurrentSource(child.__source);
-        const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
-        const pageResolved = resolveLvglChildren(pageChildren);
-        const pageWidgets = pageResolved
-          .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
-          .map((c) => (typeof c.type === 'string' && isEcCanvasElement(c.type)) ? ecCanvasToPlain(c) : lvglWidgetToPlain(c));
-        const pageData: Record<string, unknown> = { ...pageProps };
-        hoistStyleProp(pageData);
-        // Extract reactive layout spacing — same treatment as widgets (see above).
-        if (pageData.layout && typeof pageData.layout === 'object') {
-          const layout = pageData.layout as Record<string, unknown>;
-          for (const key of ['padRow', 'padColumn'] as const) {
-            if (isIRReactiveNode(layout[key])) {
-              let pageId = typeof pageData.id === 'string' ? pageData.id : undefined;
-              if (!pageId) {
-                pageId = `rw_${Math.random().toString(36).slice(2, 11)}`;
-                pageData.id = pageId;
-              }
-              registerReactiveBinding({
-                kind: 'binding',
-                targetId: pageId,
-                targetType: 'page',
-                targetProp: camelToSnake(key),
-                expression: layout[key] as IRReactiveNode,
-              });
-              layout[key] = 0;
+        pages.push(buildLvglPageIR(child));
+      } else if (isLvglElement(child.type)) {
+        topWidgets.push(buildLvglWidgetIR(child));
+      } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
+        topWidgets.push(makeEcCanvasOpaqueIR(ecCanvasToPlain(child)));
+      }
+    }
+
+    const overlayTiers = collectOverlayTiers();
+
+    // Pre-serialize tree-level lvgl props (camelCase keys preserved). The
+    // target's emitter performs snake_case key conversion when lowering.
+    const serializedTreeProps = serializeValuesPreservingKeys(allProps);
+
+    return {
+      props: serializedTreeProps,
+      pages,
+      widgets: topWidgets,
+      overlayTiers,
+    };
+  });
+}
+
+/**
+ * Build the IRWidget for an `<lvgl-page>` element. Pages share the LVGL
+ * widget shape but always have semantic kind `'page'`. Their reactive layout
+ * pad extraction and reactive prop registration use the YAML key `'page'`
+ * for the binding registry (today's behaviour; switched to camelCase by a
+ * later substep).
+ */
+function buildLvglPageIR(child: EspComposeElement): IRWidget {
+  setCurrentSource(child.__source);
+  const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
+  const pageResolved = resolveLvglChildren(pageChildren);
+  const pageChildIR: IRWidget[] = pageResolved
+    .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
+    .map((c): IRWidget =>
+      typeof c.type === 'string' && isEcCanvasElement(c.type)
+        ? makeEcCanvasOpaqueIR(ecCanvasToPlain(c))
+        : buildLvglWidgetIR(c),
+    );
+
+  const pageData: Record<string, unknown> = { ...pageProps };
+  hoistStyleProp(pageData);
+
+  // Extract reactive layout spacing — same treatment as widgets (see above).
+  if (pageData.layout && typeof pageData.layout === 'object') {
+    const layout = pageData.layout as Record<string, unknown>;
+    for (const key of ['padRow', 'padColumn'] as const) {
+      if (isIRReactiveNode(layout[key])) {
+        let pageId = typeof pageData.id === 'string' ? pageData.id : undefined;
+        if (!pageId) {
+          pageId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+          pageData.id = pageId;
+        }
+        registerReactiveBinding({
+          kind: 'binding',
+          targetId: pageId,
+          targetType: 'page',
+          targetProp: key,
+          expression: layout[key] as IRReactiveNode,
+        });
+        layout[key] = 0;
+      }
+    }
+  }
+
+  detectAndRegisterReactiveProps(pageData, 'page');
+
+  // Pre-serialize prop values while serialization captures are active.
+  const serializedPageProps = serializeValuesPreservingKeys(pageData);
+
+  return {
+    kind: 'page',
+    id: typeof serializedPageProps.id === 'string' ? serializedPageProps.id : undefined,
+    props: serializedPageProps,
+    children: pageChildIR,
+  };
+}
+
+/**
+ * Walk the registered overlay definitions, render each instance inside an
+ * isolated reactive scope (capturing per-instance bindings / reactiveNodes /
+ * actions for later codegen), and return the overlay tiers ordered by
+ * ascending zOrder.
+ *
+ * Only instance #0's widgets are materialised here as `IROverlayContainer`
+ * entries; instances 1..N-1 register their bindings/actions on the
+ * `OverlayInstance` for the codegen mux pass and are not emitted into the
+ * widget tree.
+ */
+function collectOverlayTiers(): IROverlayTier[] {
+  const overlays = peekOverlayDefinitions();
+  if (overlays.length === 0) return [];
+
+  const tierMap = new Map<number, IROverlayContainer[]>();
+  for (const def of overlays) {
+    assertOverlayStructuralIdentity(def.templateKey, def.instances);
+
+    let tierEntries = tierMap.get(def.zOrder);
+    if (!tierEntries) {
+      tierEntries = [];
+      tierMap.set(def.zOrder, tierEntries);
+    }
+
+    for (const instance of def.instances) {
+      const rendered = instance.rendered;
+      if (rendered == null) continue;
+
+      const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
+
+      // Serialize inside an isolated reactive scope to capture bindings
+      // without polluting the top-level scope.
+      // Activate overlay action capture to collect trigger handler metadata
+      // via context-scoped capture list.
+      const actionCapture: CapturedOverlayAction[] = [];
+      const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
+        withReactiveScope(() => {
+          const resolved = resolveLvglChildren(renderedArr);
+          const widgetIR: IRWidget[] = [];
+          for (const ch of resolved) {
+            if (isLvglElement(ch.type)) {
+              widgetIR.push(buildLvglWidgetIR(ch));
+            } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
+              widgetIR.push(makeEcCanvasOpaqueIR(ecCanvasToPlain(ch)));
             }
           }
-        }
-        detectAndRegisterReactiveProps(pageData, 'page');
-        // Serialize own props first, then attach already-serialized child widgets.
-        const serializedPage = stripUndefined(keysToSnakeCase(pageData));
-        if (pageWidgets.length > 0) {
-          serializedPage.widgets = pageWidgets;
-        }
-        pages.push(serializedPage);
-      } else if (isLvglElement(child.type)) {
-        topWidgets.push(lvglWidgetToPlain(child));
-      } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
-        topWidgets.push(ecCanvasToPlain(child));
-      }
+          // Only emit instance 0's widgets into the tier container; others
+          // contribute only their captured bindings/actions for the mux pass.
+          if (instance.index === 0) {
+            tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
+          }
+          return null;
+        }),
+      );
+      const capturedActions = actionCapture;
+
+      // Store captured per-instance data for Phase 6 codegen.
+      (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
+      (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
+      (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
     }
+  }
 
-    // Serialize own props first, then attach already-serialized children.
-    const serialized = stripUndefined(keysToSnakeCase({ ...allProps }));
-    if (pages.length > 0) serialized.pages = pages;
-    if (topWidgets.length > 0) serialized.widgets = topWidgets;
-
-    // Emit overlay widget subtrees into top_layer, grouped by z-order tier.
-    //
-    // Children resolution above evaluated all function components, which
-    // registered overlay definitions via useOverlay(). For each definition:
-    //   1. Validate structural identity across instances (compile-time error
-    //      on mismatch).
-    //   2. Serialize EVERY instance's rendered widgets inside an isolated
-    //      reactive scope to capture per-instance bindings and reactive nodes.
-    //   3. Only emit instance #0's widgets into top_layer.
-    //   4. Store captured bindings on each OverlayInstance so the codegen phase
-    //      can zip them across instances and build mux expressions.
-    //
-    // Overlays are grouped by zOrder into tier containers for deterministic
-    // z-ordering. Within a tier, lv_obj_move_foreground() in the show action
-    // gives last-shown-wins stacking.
-    //
-    // Instance 0's bindings are NOT registered in the top-level scope — they
-    // are captured alongside instances 1..N-1 and handled specially by the
-    // codegen (Phase 6).
-    const overlays = peekOverlayDefinitions();
-    if (overlays.length > 0) {
-      // Group overlays by zOrder tier, then sort tiers ascending.
-      const tierMap = new Map<number, { widgets: Record<string, unknown>[]; defs: typeof overlays }>();
-      for (const def of overlays) {
-        assertOverlayStructuralIdentity(def.templateKey, def.instances);
-
-        let tier = tierMap.get(def.zOrder);
-        if (!tier) {
-          tier = { widgets: [], defs: [] };
-          tierMap.set(def.zOrder, tier);
-        }
-        tier.defs.push(def);
-
-        for (const instance of def.instances) {
-          const rendered = instance.rendered;
-          if (rendered == null) continue;
-
-          const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
-
-          // Serialize inside an isolated reactive scope to capture bindings
-          // without polluting the top-level scope.
-          // Activate overlay action capture to collect trigger handler metadata
-          // via context-scoped capture list.
-          const actionCapture: CapturedOverlayAction[] = [];
-          const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
-            withReactiveScope(() => {
-              const resolved = resolveLvglChildren(renderedArr);
-              const widgets: Record<string, unknown>[] = [];
-              for (const child of resolved) {
-                if (isLvglElement(child.type)) {
-                  widgets.push(lvglWidgetToPlain(child));
-                } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
-                  widgets.push(ecCanvasToPlain(child));
-                }
-              }
-              // Only emit instance 0's widgets into the tier container, wrapped
-              // in a hidden container obj with a deterministic ID for action targeting.
-              if (instance.index === 0) {
-                const wrapperId = `overlay_${def.templateKey}`;
-                tier!.widgets.push({
-                  obj: {
-                    id: wrapperId,
-                    hidden: true,
-                    width: '100%',
-                    height: '100%',
-                    bg_opa: 'transparent',
-                    border_width: 0,
-                    pad_all: 0,
-                    clickable: false,
-                    widgets,
-                  },
-                });
-              }
-              return null;
-            }),
-          );
-          const capturedActions = actionCapture;
-
-          // Store captured per-instance data for Phase 6 codegen.
-          (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
-          (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
-          (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
-        }
-      }
-
-      // Build tier containers sorted by ascending zOrder.
-      const sortedTiers = Array.from(tierMap.entries()).sort((a, b) => a[0] - b[0]);
-      const tierWidgets: Record<string, unknown>[] = [];
-      for (const [zOrder, tier] of sortedTiers) {
-        if (tier.widgets.length > 0) {
-          tierWidgets.push({
-            obj: {
-              id: `overlay_tier_${zOrder}`,
-              width: '100%',
-              height: '100%',
-              bg_opa: 'transparent',
-              border_width: 0,
-              pad_all: 0,
-              clickable: false,
-              widgets: tier.widgets,
-            },
-          });
-        }
-      }
-
-      if (tierWidgets.length > 0) {
-        // Merge with any user-provided top_layer config (snake_case from
-        // keysToSnakeCase). The top_layer accepts a widgets array per ESPHome's
-        // widget_container schema.
-        const existingTopLayer = serialized.top_layer;
-        if (existingTopLayer && typeof existingTopLayer === 'object' && !Array.isArray(existingTopLayer)) {
-          const tl = existingTopLayer as Record<string, unknown>;
-          const existingWidgets = Array.isArray(tl.widgets) ? tl.widgets as unknown[] : [];
-          tl.widgets = [...existingWidgets, ...tierWidgets];
-        } else {
-          serialized.top_layer = { widgets: tierWidgets };
-        }
-      }
-    }
-
-    return serialized;
-  });
+  return Array.from(tierMap.entries())
+    .sort((a, b) => a[0] - b[0])
+    .filter(([, overlays]) => overlays.length > 0)
+    .map(([zOrder, overlays]) => ({ zOrder, overlays }));
 }

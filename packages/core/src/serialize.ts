@@ -13,6 +13,7 @@ import type { IRActionNode } from './ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './overlay-resolve';
 import { resolveControllerMethodCalls, cleanControllerRefs } from './controller-resolve';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './script-handle-resolve';
+import { getYamlShaper } from './lvgl-yaml-hook';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -122,7 +123,11 @@ function resolveRefBindingsInValue(
     for (const [key, val] of Object.entries(obj)) {
       // refSlots carry binding-name metadata for the closure-rewrite pass.
       // They must NOT be resolved to literal tokens.
-      if (key === 'refSlots') {
+      // IR meta keys (kind, domain, operation) are semantic identifiers,
+      // not value slots — they may coincidentally collide with a binding
+      // name (e.g. domain: 'light' colliding with a `light` ref binding)
+      // but must never be substituted.
+      if (key === 'refSlots' || key === 'kind' || key === 'domain' || key === 'operation') {
         result[key] = val;
         continue;
       }
@@ -145,33 +150,27 @@ function resolveRefBindingsInValue(
 // becomes `_<lowercase>`. This handles the common cases produced by codegen.
 // ────────────────────────────────────────────────────────────────────────────
 
-export function camelToSnake(key: string): string {
-  return key
-    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-    .toLowerCase();
+/**
+ * Transform a JSX element type into the target-specific element key.
+ *
+ * Implementation is supplied by the target via `setYamlShaper()` (registered
+ * during `target.registerRenderHooks(coreSdk)`). Core does not encode the
+ * snake_case spelling itself.
+ */
+export function transformElementType(type: string): string {
+  return getYamlShaper().transformElementType(type);
 }
 
 /**
- * Convert a JSX element type to its ESPHome YAML key.
- *
- * Hyphenated LVGL widget tags (e.g. `lvgl-button`, `lvgl-dropdown-list`) are
- * mapped to their ESPHome widget names (`button`, `dropdown_list`) by stripping
- * the `lvgl-` prefix and converting remaining hyphens to underscores.
- *
- * All other element types pass through unchanged.
+ * Transform a record's keys via the target-supplied prop-key transformer
+ * and recursively serialize each value. Target-neutral name; the actual
+ * key transform (e.g. camelCase → snake_case) is hook-supplied.
  */
-export function toYamlKey(type: string): string {
-  if (type.startsWith('lvgl-')) {
-    return type.slice(5).replace(/-/g, '_');
-  }
-  return type;
-}
-
-export function keysToSnakeCase(obj: Record<string, unknown>): Record<string, unknown> {
+export function transformPropKeys(obj: Record<string, unknown>): Record<string, unknown> {
+  const shaper = getYamlShaper();
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(obj)) {
-    out[camelToSnake(k)] = serializeValue(v);
+    out[shaper.transformPropKey(k)] = serializeValue(v);
   }
   return out;
 }
@@ -275,13 +274,61 @@ export function serializeValue(v: unknown): unknown {
   if (Array.isArray(v)) return v.map(serializeValue);
   if (isSerializeMarker(v)) return v;
   if (v !== null && typeof v === 'object') {
-    return keysToSnakeCase(v as Record<string, unknown>);
+    return transformPropKeys(v as Record<string, unknown>);
   }
   return v;
 }
 
-export function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
+/** Remove `undefined`-valued entries from a plain object. Target-neutral. */
+export function compactObject(obj: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+}
+
+/**
+ * Like `serializeValue` for the leaf-value cases (refs/secrets/reactives/
+ * functions/markers/primitives), but for plain object values it recurses
+ * preserving camelCase keys instead of converting to snake_case.
+ *
+ * Used when building target-neutral IR shapes (e.g. `IRWidget.props`) that
+ * must keep camelCase keys; the consuming target performs key conversion in
+ * its own lowering layer. Captures fire normally because the leaf cases are
+ * delegated to `serializeValue`.
+ */
+export function serializeValuePreservingKeys(v: unknown): unknown {
+  if (v == null) return v;
+  if (Array.isArray(v)) return v.map(serializeValuePreservingKeys);
+  if (typeof v === 'object') {
+    if (
+      isTriggerVar(v) ||
+      isIRReactiveNode(v) ||
+      isSecretValue(v) ||
+      isRef(v) ||
+      isSerializeMarker(v)
+    ) {
+      return serializeValue(v);
+    }
+    if (typeof v === 'function') return serializeValue(v);
+    // Plain object: recurse preserving keys.
+    const out: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(v as Record<string, unknown>)) {
+      out[k] = serializeValuePreservingKeys(val);
+    }
+    return out;
+  }
+  // Primitives (strings get hex/yaml-bool processing inside serializeValue)
+  return serializeValue(v);
+}
+
+/**
+ * Apply `serializeValuePreservingKeys` to every value of an object,
+ * preserving the original (camelCase) keys.
+ */
+export function serializeValuesPreservingKeys(obj: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    out[k] = serializeValuePreservingKeys(v);
+  }
+  return out;
 }
 
 // ── Lambda marker restoration ──────────────────────────────────────────────

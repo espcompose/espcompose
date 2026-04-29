@@ -141,7 +141,7 @@ describe('__espcompose', () => {
     it('creates derived memo with explicit expression IR', () => {
       withReactiveScope(() => {
         const result = __espcompose.derivedMemo<string>({
-          exprType: 'font_ptr',
+          exprType: 'font_ref',
           dependencies: [
             { kind: 'dependency', sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
           ],
@@ -150,7 +150,7 @@ describe('__espcompose', () => {
 
         expect(isIRReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
-        expect(result.exprType).toBe('font_ptr');
+        expect(result.exprType).toBe('font_ref');
         expect(result.exprIR).toEqual({ kind: 'literal', value: 'montserrat_28', type: 'string' });
       });
     });

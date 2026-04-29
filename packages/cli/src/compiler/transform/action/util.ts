@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { IRScriptParamRef, IRValueType } from '@espcompose/core/internals';
+import type { IRDuration, IRDurationLiteral, IRValueType } from '@espcompose/core/internals';
+import { parseDurationString } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -31,12 +32,12 @@ export function getCallName(call: ts.CallExpression): string {
 // Value extraction helpers
 // ────────────────────────────────────────────────────────────────────────────
 
-export function extractDurationArg(node: ts.Expression): string | null {
+export function extractDurationArg(node: ts.Expression): IRDurationLiteral | null {
   if (ts.isNumericLiteral(node)) {
-    return `${node.text}ms`;
+    return { kind: 'duration', value: Number(node.text), unit: 'ms' };
   }
   if (ts.isStringLiteral(node)) {
-    return node.text;
+    return parseDurationString(node.text);
   }
   return null;
 }
@@ -91,7 +92,7 @@ function inferScriptParamValueType(
 export function extractDurationArgOrParamRef(
   node: ts.Expression,
   ctx: ActionCompilerContext,
-): string | IRScriptParamRef | null {
+): IRDuration | null {
   // Try literal extraction first.
   const literal = extractDurationArg(node);
   if (literal !== null) return literal;

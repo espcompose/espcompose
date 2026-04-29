@@ -551,7 +551,7 @@ export function injectReactiveBindingsRuntime(
     result = injectBuildFlag(result, 'USE_API_HOMEASSISTANT_SERVICES');
   }
 
-  // Step 5: Inject USE_LVGL_FONT when theme memos contain font_ptr values
+  // Step 5: Inject USE_LVGL_FONT when theme memos contain font_ref values
   if (runtimeConfig.themes?.some(sc => sc.themeMemos.some(tm => tm.cppType === 'const lv_font_t*'))) {
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }

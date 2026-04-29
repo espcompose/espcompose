@@ -330,7 +330,7 @@ describe('buildSemanticIR', () => {
       bindings: [],
       entities: [entity],
       components: [component],
-      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
+      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: { kind: 'duration', value: 500, unit: 'ms' } } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: [{
         kind: 'theme_data',

@@ -6,7 +6,7 @@
 // and ThemeLeaf holds the concrete value and its inferred C++ type.
 //
 // Ref<FontRef> values produced by core's useFont() are treated as opaque
-// `font_ptr` leaves — the flattener stores the ref's string token and
+// `font_ref` leaves — the flattener stores the ref's string token and
 // stops recursion so that no internal Proxy/brand properties leak.
 //
 // This is used by the theme registry to store theme data in a format the
@@ -54,7 +54,7 @@ export function inferValueType(value: unknown): string {
 /**
  * Recursively flatten a theme object into a map of leaf paths → ThemeLeaf.
  *
- * `Ref<FontRef>` values (produced by `useFont()`) are stored as `font_ptr`
+ * `Ref<FontRef>` values (produced by `useFont()`) are stored as `font_ref`
  * leaves — the ref's string token (e.g. `r_abc123`) is the leaf value.
  * The target codegen emits `id(r_abc123)` in the C++ theme value arrays.
  *
@@ -69,9 +69,9 @@ export function flattenTheme(
   const result: Record<string, ThemeLeaf> = {};
   for (const [key, value] of Object.entries(obj)) {
     const path = prefix ? `${prefix}_${key}` : key;
-    // Ref<FontRef> — treat as opaque font_ptr leaf (don't recurse into Proxy)
+    // Ref<FontRef> — treat as opaque font_ref leaf (don't recurse into Proxy)
     if (isRef(value)) {
-      result[path] = { value: value.toString(), valueType: 'font_ptr' };
+      result[path] = { value: value.toString(), valueType: 'font_ref' };
     } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
       Object.assign(result, flattenTheme(value as Record<string, unknown>, path));
     } else {

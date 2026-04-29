@@ -157,8 +157,35 @@ export type {
 } from './reactive-properties';
 
 // ── Serialize markers ──────────────────────────────────────────────────────
-export { camelToSnake } from './serialize';
+
 export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
+
+// ── LVGL YAML emitter hook (target plugs in here) ──────────────────────────
+export {
+  setLvglYamlEmitter,
+  setLvglWidgetEmitter,
+  getLvglYamlEmitter,
+  getLvglWidgetEmitter,
+  clearLvglYamlEmitters,
+  setYamlShaper,
+  getYamlShaper,
+  clearYamlShaper,
+} from './lvgl-yaml-hook';
+export type { LvglWidgetTreeEmitter, LvglWidgetEmitter, YamlShaper } from './lvgl-yaml-hook';
+export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
+
+// ── HA entity classifier hook (target plugs in here) ───────────────────────
+export {
+  setHAEntityClassifier,
+  getHAEntityClassifier,
+  classifyHAEntity,
+  clearHAEntityClassifier,
+} from './ha-entity-hook';
+export type {
+  HAEntityClassifier,
+  HAEntityClassifyInput,
+  HAEntityClassifyResult,
+} from './ha-entity-hook';
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
 export { LVGL_UPDATABLE_WIDGETS } from './lvgl-actions';
@@ -180,6 +207,7 @@ export type {
   ClosureField, ClosureFieldKind, ClosureShape, ClosureInstance, IRClosureValue,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
+  IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
@@ -227,6 +255,7 @@ export type {
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
   IRRefSlot,
+  IRDuration, IRDurationLiteral, IRDurationUnit, IRTimeout, IRTimeoutNever,
 } from './ir/index';
 export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,
@@ -237,4 +266,5 @@ export {
   irLambdaCondition, irLambdaAction,
   irOverlayShow, irOverlayHide,
   irControllerMethodCall,
+  splitActionKey, parseDurationString, parseTimeoutString,
 } from './ir/index';

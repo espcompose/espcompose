@@ -6,7 +6,7 @@ import type {
   IRActionConfigValue,
   IRRefSlot,
 } from '@espcompose/core/internals';
-import { camelToSnake } from '@espcompose/core/internals';
+import { camelToSnake } from '@espcompose/esphome-target';
 import { hasRefBrand } from '../type-brands.js';
 import type { ActionCompilerContext } from './context.js';
 import { emitError } from './context.js';

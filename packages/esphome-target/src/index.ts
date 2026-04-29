@@ -19,3 +19,10 @@ export {
   esphomeRun,
   esphomeLogs,
 } from './esphome-cli.js';
+
+// LVGL widget-tree YAML emitter (registered with core's hook before render)
+export { lowerLvglWidgetTree, lowerLvglWidget } from './lvgl-yaml-emitter.js';
+
+// YAML key/element shaping utilities (also used by the CLI action transformer
+// when emitting ESPHome action configs).
+export { camelToSnake, toYamlKey } from './yaml-utils.js';

@@ -29,17 +29,17 @@ import type { IRReactiveNode } from '../reactive-node';
  */
 export interface IRBinding {
   readonly kind: 'binding';
-  /** ESPHome ID of the target element (auto-assigned if not present). */
+  /** Auto-assigned (or user-supplied) target element ID. */
   targetId: string;
-  /** Element type for dispatch (e.g. `lvgl_button`, `sensor`, `light`). */
+  /** Semantic widget kind in camelCase (e.g. `'button'`, `'label'`, `'dropdownList'`). */
   targetType: string;
-  /** Snake_case prop name on the target (e.g. `checked`, `text`, `text_color`). */
+  /** Semantic prop name on the target in camelCase (e.g. `'checked'`, `'text'`, `'textColor'`). */
   targetProp: string;
   /** The IRReactiveNode instance that provides the reactive value. */
   expression: IRReactiveNode;
-  /** LVGL part name (snake_case) if the binding targets a sub-part, e.g. `'indicator'`, `'knob'`. */
+  /** Semantic LVGL part name in camelCase (e.g. `'indicator'`, `'knob'`, `'textareaPlaceholder'`). */
   part?: string;
-  /** LVGL state name (snake_case) if the binding targets a state variant, e.g. `'pressed'`, `'disabled'`. */
+  /** Semantic LVGL state name in camelCase (e.g. `'pressed'`, `'disabled'`, `'focusKey'`). */
   state?: string;
 }
 
@@ -66,14 +66,16 @@ export interface IRHAEntity {
   /** HA domain extracted from entity ID prefix (e.g. `light`, `sensor`). */
   domain: string;
   /**
-   * ESPHome sensor platform type used to import this entity's state.
-   * Determined by domain:
-   * - `light.*`, `switch.*`, `binary_sensor.*` → `binary_sensor`
-   * - `sensor.*`, `number.*` → `sensor`
-   * - `text_sensor.*`, `select.*` → `text_sensor`
+   * Target-supplied platform/section key (opaque to core). For ESPHome this
+   * is one of `binary_sensor` / `sensor` / `text_sensor`; minted by the
+   * target's HA entity classifier hook (see `ha-entity-hook.ts`).
    */
-  sensorType: 'binary_sensor' | 'sensor' | 'text_sensor';
-  /** Auto-generated ESPHome component ID (e.g. `ha_light_kitchen_floods`). */
+  sensorType: string;
+  /**
+   * Target-supplied component id (opaque to core). For ESPHome this is the
+   * `id:` field of the auto-generated `platform: homeassistant` import;
+   * minted by the target's HA entity classifier hook.
+   */
   generatedId: string;
   /** Optional HA entity attribute name (e.g. `brightness`). When set, the sensor imports this attribute rather than the entity state. */
   attribute?: string;

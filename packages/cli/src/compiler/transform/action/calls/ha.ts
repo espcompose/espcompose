@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import type { IRActionNode, IRActionParam } from '@espcompose/core/internals';
-import { irHAServiceAction, camelToSnake, ENTITY_DOMAINS } from '@espcompose/core/internals';
+import { irHAServiceAction, ENTITY_DOMAINS } from '@espcompose/core/internals';
+import { camelToSnake } from '@espcompose/esphome-target';
 import { hasBindingBrand, hasRefBrand } from '../../type-brands.js';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';

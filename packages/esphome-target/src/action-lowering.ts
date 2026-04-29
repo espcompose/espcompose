@@ -11,6 +11,7 @@ import type {
   IRActionConfigValue,
   IRActionParam,
   IRCondition,
+  IRDurationLiteral,
   IRExprNode,
   IRNativeAction,
   IRRefSlot,
@@ -61,6 +62,11 @@ export interface ActionLoweringContext {
 // The serialiser restores these to !lambda scalars at consumption time.
 export interface LambdaMarker { __lambda__: string }
 function lambdaMarker(code: string): LambdaMarker { return { __lambda__: code }; }
+
+/** Format a literal duration as the ESPHome YAML scalar form (`'500ms'`, `'3s'`). */
+function formatDuration(d: IRDurationLiteral): string {
+  return `${d.value}${d.unit}`;
+}
 
 // ── JSON-safe expression marker ─────────────────────────────────────────
 // Similar to LambdaMarker, but for JS expressions that must be emitted
@@ -215,14 +221,15 @@ function synthesizeNativeAsLambda(
   // lvgl.widget.update uses LVGL free functions (lv_obj_add_flag /
   // lv_obj_clear_flag) that don't fit the accessor->method() emitter
   // pattern. Handle it directly before the catalog lookup.
-  if (action.actionKey === 'lvgl.widget.update') {
+  if (action.domain === 'lvgl' && action.operation === 'widget.update') {
     return synthesizeLvglWidgetUpdate(action, closureSlot, ctx);
   }
 
-  const emitter = lookupActionEmitter(action.actionKey);
+  const actionKey = `${action.domain}.${action.operation}`;
+  const emitter = lookupActionEmitter(actionKey);
   if (!emitter) {
     throw new Error(
-      `[espcompose] Missing ACTION_CPP_EMITTERS entry for '${action.actionKey}'. ` +
+      `[espcompose] Missing ACTION_CPP_EMITTERS entry for '${actionKey}'. ` +
       `Cannot rewrite closure-bound ref action to lambda. ` +
       `Add an entry to packages/esphome-target/src/action-cpp-emitters.ts ` +
       `for this action key.`,
@@ -233,7 +240,7 @@ function synthesizeNativeAsLambda(
   if (!scriptId) {
     throw new Error(
       `[espcompose] scriptId missing in ActionLoweringContext while rewriting ` +
-      `'${action.actionKey}' to lambda. This is a compiler bug.`,
+      `'${actionKey}' to lambda. This is a compiler bug.`,
     );
   }
 
@@ -358,7 +365,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       if (closureBoundSlot) {
         return synthesizeNativeAsLambda(action, closureBoundSlot, ctx);
       }
-      return { [action.actionKey]: lowerConfig(action.config) };
+      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config) };
     }
 
     case 'ha_service': {
@@ -405,17 +412,21 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'logger.log': action.message };
 
     case 'delay':
-      if (typeof action.duration === 'object' && action.duration.kind === 'script_param') {
+      if (action.duration.kind === 'script_param') {
         return { delay: lambdaMarker(`return ${action.duration.name};`) };
       }
-      return { delay: action.duration };
+      return { delay: formatDuration(action.duration) };
 
     case 'wait_until': {
       const config: Record<string, unknown> = {
         condition: lowerCondition(action.condition, ctx),
       };
       if (action.timeout) {
-        config.timeout = action.timeout;
+        config.timeout = action.timeout.kind === 'never'
+          ? 'never'
+          : action.timeout.kind === 'duration'
+            ? formatDuration(action.timeout)
+            : (() => { throw new Error('[espcompose] Script-param timeout not yet supported'); })();
       }
       return { wait_until: config };
     }

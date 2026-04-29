@@ -10,9 +10,9 @@ import {
   Fragment,
   flattenFragments,
   extractElementProps,
-  keysToSnakeCase,
-  stripUndefined,
-  toYamlKey,
+  transformPropKeys,
+  compactObject,
+  transformElementType,
   startSerializationCapture,
   stopSerializationCapture,
   setCurrentSource,
@@ -24,6 +24,17 @@ import { getSecrets, clearSecrets } from './secret';
 import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
 import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
 import { setWireframeEnabled, clearWireframe } from './wireframe';
+import {
+  setLvglYamlEmitter,
+  setLvglWidgetEmitter,
+  clearLvglYamlEmitters,
+  setYamlShaper,
+  clearYamlShaper,
+} from './lvgl-yaml-hook';
+import {
+  setHAEntityClassifier,
+  clearHAEntityClassifier,
+} from './ha-entity-hook';
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -109,7 +120,7 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
       children as EspComposeElement | EspComposeElement[] | undefined
     );
     return {
-      esphome: stripUndefined(keysToSnakeCase(allProps)),
+      esphome: compactObject(transformPropKeys(allProps)),
       ...childSections,
     };
   }
@@ -138,8 +149,8 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   const childData = buildChildData(
     children as EspComposeElement | EspComposeElement[] | undefined
   );
-  const data = stripUndefined(keysToSnakeCase({ ...allProps, ...childData }));
-  return { [toYamlKey(type)]: Object.keys(data).length > 0 ? data : null };
+  const data = compactObject(transformPropKeys({ ...allProps, ...childData }));
+  return { [transformElementType(type)]: Object.keys(data).length > 0 ? data : null };
 }
 
 /**
@@ -232,9 +243,9 @@ function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElem
   const childData = buildChildData(
     grandchildren as EspComposeElement | EspComposeElement[] | undefined
   );
-  // Convert camelCase prop keys to snake_case for YAML output.
-  const data = stripUndefined(keysToSnakeCase({ ...allProps, ...childData }));
-  const yamlKey = toYamlKey(child.type as string);
+  // Convert prop keys via the target-supplied shaper for YAML output.
+  const data = compactObject(transformPropKeys({ ...allProps, ...childData }));
+  const yamlKey = transformElementType(child.type as string);
   if (!sections[yamlKey]) sections[yamlKey] = [];
   sections[yamlKey].push(Object.keys(data).length > 0 ? data : null);
 }
@@ -291,6 +302,16 @@ export const ESPCompose = {
   // Wireframe mode — set by CLI before executing user code.
   setWireframeEnabled,
   clearWireframe,
+  // LVGL YAML emitter hook — target plugs in its lowerer before render.
+  setLvglYamlEmitter,
+  setLvglWidgetEmitter,
+  clearLvglYamlEmitters,
+  // Element/prop key shaper hook — target supplies the transforms.
+  setYamlShaper,
+  clearYamlShaper,
+  // HA entity classifier hook — target supplies platform/id minting rules.
+  setHAEntityClassifier,
+  clearHAEntityClassifier,
 };
 
 export { createElement, Fragment, render };

@@ -50,6 +50,15 @@ export {
 export { buildSemanticIR } from './build';
 export type { BuildSemanticIRInput } from './build';
 
+// ── Widget tree IR (target-neutral) ─────────────────────────────────────────
+export type {
+  IRWidget,
+  IRWidgetTree,
+  IROverlayContainer,
+  IROverlayTier,
+} from './widget-types';
+export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './widget-types';
+
 
 // ── Expression IR ────────────────────────────────────────────────────────────
 export type {
@@ -156,6 +165,11 @@ export type {
   IRActionConfigDict,
   IRActionConfigValue,
   IRRefSlot,
+  IRDuration,
+  IRDurationLiteral,
+  IRDurationUnit,
+  IRTimeout,
+  IRTimeoutNever,
 } from './action-types';
 
 export {
@@ -180,4 +194,7 @@ export {
   irOverlayShow,
   irOverlayHide,
   irControllerMethodCall,
+  splitActionKey,
+  parseDurationString,
+  parseTimeoutString,
 } from './action-types';

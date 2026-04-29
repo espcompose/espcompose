@@ -1066,6 +1066,6 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
  * which takes an `IRValueType` object.
  */
 function signalValueTypeToExprType(valueType: string): ExprType {
-  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
+  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ref', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
   return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
 }

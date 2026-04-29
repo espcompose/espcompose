@@ -22,12 +22,11 @@ import { isIRReactiveNode } from './reactive-node';
 import type { IRReactiveNode } from './reactive-node';
 import { registerReactiveBinding } from './hooks/useReactiveScope';
 import {
-  camelToSnake,
   extractElementProps,
   flattenFragments,
-  keysToSnakeCase,
+  transformPropKeys,
   setCurrentSource,
-  stripUndefined,
+  compactObject,
 } from './serialize';
 import { expandCssStyle } from './style-mapping';
 import { lvglWidgetToPlain, isLvglElement } from './lvgl';
@@ -137,13 +136,13 @@ function paintPrimitiveToPlain(
     registerReactiveBinding({
       kind: 'binding',
       targetId: canvasId,
-      targetType: 'ec_canvas',
-      targetProp: `paint.${type}.${camelToSnake(propName)}`,
+      targetType: 'ecCanvas',
+      targetProp: `paint.${type}.${propName}`,
       expression: node,
     });
   }
 
-  return keysToSnakeCase(data);
+  return transformPropKeys(data);
 }
 
 /**
@@ -227,14 +226,14 @@ export function ecCanvasToPlain(el: EspComposeElement): Record<string, unknown> 
     registerReactiveBinding({
       kind: 'binding',
       targetId: canvasId,
-      targetType: 'ec_canvas',
-      targetProp: camelToSnake(propName),
+      targetType: 'ecCanvas',
+      targetProp: propName,
       expression: node,
     });
   }
 
   // Serialize host props
-  const serialized = stripUndefined(keysToSnakeCase(data));
+  const serialized = compactObject(transformPropKeys(data));
 
   // Process zone children
   const resolved = resolveCanvasChildren(children);

@@ -47,7 +47,7 @@ export function ScriptButton() {
   const greet = useScript(Object.assign(async () => {
     logger.log('Hello!');
     await delay(500);
-  }, { __compiledScript: {"id":"greet","then":[{"kind":"logger","message":"Hello!"},{"kind":"delay","duration":"500ms"}],"bodyHash":"1597c61d"} }));
+  }, { __compiledScript: {"id":"greet","then":[{"kind":"logger","message":"Hello!"},{"kind":"delay","duration":{"kind":"duration","value":500,"unit":"ms"}}],"bodyHash":"d0ca6ab2"} }));
 
   return (
     <binary_sensor

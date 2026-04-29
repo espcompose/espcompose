@@ -136,15 +136,15 @@ function actionFingerprint(actions: IRActionNode[]): string {
 function singleActionFingerprint(action: IRActionNode): string {
   switch (action.kind) {
     case 'native':
-      return `N:${action.actionKey}:${JSON.stringify(action.config)}`;
+      return `N:${action.domain}.${action.operation}:${JSON.stringify(action.config)}`;
     case 'ha_service':
       return `HA:${action.action}:${action.data ? Object.entries(action.data).map(([k, v]) => `${k}=${actionParamFingerprint(v)}`).join(',') : ''}`;
     case 'logger':
       return `LOG:${action.message}:${action.level ?? ''}`;
     case 'delay':
-      return `DL:${action.duration}`;
+      return `DL:${JSON.stringify(action.duration)}`;
     case 'wait_until':
-      return `WU:${conditionFingerprint(action.condition)}:${action.timeout ?? ''}`;
+      return `WU:${conditionFingerprint(action.condition)}:${action.timeout ? JSON.stringify(action.timeout) : ''}`;
     case 'if':
       return `IF:${conditionFingerprint(action.condition)}:(${actionFingerprint(action.then)})${action.else ? `:(${actionFingerprint(action.else)})` : ''}`;
     case 'while':

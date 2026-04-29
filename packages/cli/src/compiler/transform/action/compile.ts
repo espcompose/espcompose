@@ -8,13 +8,14 @@
  */
 
 import ts from 'typescript';
-import type { IRActionNode } from '@espcompose/core/internals';
+import type { IRActionNode, IRTimeout } from '@espcompose/core/internals';
 import {
   irDelayAction,
   irWaitUntilAction,
   irScriptExecute,
   irScriptWait,
   irControllerMethodCall,
+  parseTimeoutString,
 } from '@espcompose/core/internals';
 import type { GlobalDefinition } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
@@ -293,14 +294,19 @@ function compileWaitUntil(
   if (!condition) return null;
 
   // Optional timeout from second argument: { timeout: '10s' }
-  let timeout: string | undefined;
+  let timeout: IRTimeout | undefined;
   if (call.arguments.length >= 2) {
     const optsArg = call.arguments[1];
     if (ts.isObjectLiteralExpression(optsArg)) {
       for (const prop of optsArg.properties) {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name) &&
             prop.name.text === 'timeout' && ts.isStringLiteral(prop.initializer)) {
-          timeout = prop.initializer.text;
+          const parsed = parseTimeoutString(prop.initializer.text);
+          if (!parsed) {
+            return emitError(prop.initializer, ctx,
+              `waitUntil() timeout '${prop.initializer.text}' is not a valid duration (expected e.g. '10s', '500ms', or 'never').`);
+          }
+          timeout = parsed;
         }
       }
     }
