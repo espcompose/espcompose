@@ -12,13 +12,15 @@
 import { Scalar } from 'yaml';
 import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRValueType } from '@espcompose/core/internals';
 import { getTriggerSignature } from '@espcompose/core/internals';
+import type { IRActionNode, IRWidgetTree, IRWidget } from '@espcompose/core/internals';
 import { injectHASensorImports, injectReactiveBindingsRuntime } from './codegen';
 import type { CppLoweringContext } from './lowering';
 import { buildEntityComponentIds, valueTypeToEsphomeParam, valueTypeToCpp, resolveEntityPropertyCppPath, sourceDomainToTrigger } from './lowering';
 import type { CppBackendResult } from './codegen';
 import { lowerActionTree, type ActionLoweringContext } from './actions';
-import { transformEcCanvasWidgets, translateLvglStyleValues } from './lvgl';
+import { transformEcCanvasWidgets, translateLvglStyleValues, lowerLvglWidgetTree, type LvglValueLoweringContext } from './lvgl';
 import { camelToSnake } from './yaml-utils.js';
+import { buildEntityIdMap } from './ha-entity-classifier.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 
@@ -147,7 +149,8 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
             `(sourceId='${node.sourceId}', propertyKey='${node.propertyKey}')`,
         );
       }
-      const raw = `id(${node.sourceId})${resolveEntityPropertyCppPath(node.sourceDomain, node.propertyKey)}`;
+      const resolvedId = ctx?.entityIdRemap?.get(node.sourceId) ?? node.sourceId;
+      const raw = `id(${resolvedId})${resolveEntityPropertyCppPath(node.sourceDomain, node.propertyKey)}`;
       const exprType = node.exprType;
       // Check if we need type conversion (e.g. stateText: bool → string)
       if (exprType === 'string' && node.sourceDomain) {
@@ -282,6 +285,71 @@ function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: Act
 // Public API
 // ────────────────────────────────────────────────────────────────────────────
 
+// ── LVGL tree overlay action replacement ─────────────────────────────────
+
+/**
+ * Detect whether a prop value is an action array (IRActionNode[]).
+ */
+function isActionArrayProp(arr: unknown[]): boolean {
+  if (arr.length === 0) return false;
+  const first = arr[0];
+  return first !== null && typeof first === 'object' && 'kind' in first &&
+    typeof (first as Record<string, unknown>).kind === 'string';
+}
+
+/**
+ * Walk an IRWidget subtree, counting action arrays and replacing them
+ * using the muxed action map.
+ */
+function walkWidgetForActionReplacement(
+  widget: IRWidget,
+  templateKey: string,
+  counter: { index: number },
+  replacements: Map<string, IRActionNode[]>,
+): void {
+  // Check each prop for action arrays
+  for (const key of Object.keys(widget.props)) {
+    const val = widget.props[key];
+    if (Array.isArray(val) && isActionArrayProp(val)) {
+      const mapKey = `${templateKey}:${counter.index}`;
+      const muxed = replacements.get(mapKey);
+      if (muxed) {
+        (widget.props as Record<string, unknown>)[key] = muxed;
+      }
+      counter.index++;
+    }
+  }
+  // Recurse into children
+  for (const child of widget.children) {
+    walkWidgetForActionReplacement(child, templateKey, counter, replacements);
+  }
+}
+
+/**
+ * Apply overlay mux action replacements to the IRWidgetTree's overlay tiers.
+ * Mutates the tree in-place, replacing action arrays at the correct positions.
+ */
+function replaceOverlayActionsInLvglTree(
+  tree: IRWidgetTree,
+  replacements: Map<string, IRActionNode[]>,
+): void {
+  // Extract template keys from the replacement map
+  const templateKeys = new Set<string>();
+  for (const key of replacements.keys()) {
+    templateKeys.add(key.split(':')[0]);
+  }
+
+  for (const tier of tree.overlayTiers) {
+    for (const overlay of tier.overlays) {
+      if (!templateKeys.has(overlay.templateKey)) continue;
+      const counter = { index: 0 };
+      for (const widget of overlay.widgets) {
+        walkWidgetForActionReplacement(widget, overlay.templateKey, counter, replacements);
+      }
+    }
+  }
+}
+
 /**
  * Lower a SemanticIR to a fully-assembled YAML config object.
  *
@@ -300,10 +368,17 @@ export function lowerToYamlConfig(
   const reactiveNodes = [...ir.espcompose.reactive.memos, ...ir.espcompose.reactive.effects];
   const bindings = ir.espcompose.reactive.bindings;
 
+  // ── Build remapped entities for HA sensor injection ──────────────────
+  // Note: reactive node sourceIds are already remapped by target.ts before
+  // this function is called. We only need remapped entities for injection.
+  // Widget-tree reactive nodes still carry semantic IDs — entityIdRemap
+  // resolves them lazily during lambda generation.
+  const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.haEntities);
+
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
   if (cppResult) {
-    const entityComponentIds = buildEntityComponentIds(ir.esphome.haEntities);
+    const entityComponentIds = buildEntityComponentIds(remappedEntities);
     const themeVarNames = new Map<string, string>();
     if (ir.espcompose.themes) {
       for (const scopeData of ir.espcompose.themes) {
@@ -335,6 +410,7 @@ export function lowerToYamlConfig(
       entityComponentIds,
       themeVarNames,
       pipelineInfo: cppResult.pipelineInfo,
+      entityIdRemap: semanticToTarget,
     };
   }
 
@@ -356,16 +432,78 @@ export function lowerToYamlConfig(
 
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
 
+  // ── Lower typed LVGL widget tree to YAML section ─────────────────────
+  // The IR now carries a first-class `IRWidgetTree` on `esphome.lvglTree`
+  // instead of embedding pre-lowered YAML in the generic sections array.
+  if (ir.esphome.lvglTree) {
+    // Build reactive node lookup map (nodeId → reactive node instance)
+    const reactiveNodeMap = new Map<string, unknown>();
+    for (const node of reactiveNodes) {
+      reactiveNodeMap.set(node.nodeId, node);
+    }
+    // Expression nodes are not in memos/effects — they're on bindings
+    for (const binding of ir.espcompose.reactive.bindings) {
+      if (!reactiveNodeMap.has(binding.expression.nodeId)) {
+        reactiveNodeMap.set(binding.expression.nodeId, binding.expression);
+      }
+    }
+    // Include overlay-mux additional reactive nodes (created during C++ codegen)
+    if (cppResult?.additionalReactiveNodes) {
+      for (const node of cppResult.additionalReactiveNodes) {
+        if (!reactiveNodeMap.has(node.nodeId)) {
+          reactiveNodeMap.set(node.nodeId, node);
+        }
+      }
+    }
+    // Include expression nodes from overlay muxed bindings
+    if (cppResult?.overlayBindings) {
+      for (const binding of cppResult.overlayBindings) {
+        if (!reactiveNodeMap.has(binding.expression.nodeId)) {
+          reactiveNodeMap.set(binding.expression.nodeId, binding.expression);
+        }
+      }
+    }
+
+    const lvglValueCtx: LvglValueLoweringContext = {
+      lowerReactiveMarker(nodeId: string) {
+        const node = reactiveNodeMap.get(nodeId) as { exprType?: string } | undefined;
+        if (node?.exprType === 'font_ref') return undefined; // skip
+        return createYamlLambda(generateInitialValueLambda(node, cppCtx));
+      },
+      lowerActions(actions: unknown[]) {
+        const lowered = lowerActionTree(actions as IRActionNode[], actionCtx);
+        return restoreLambdaMarkers(lowered) as unknown[];
+      },
+      lowerQuoted(value: string) {
+        const s = new Scalar(value);
+        s.type = Scalar.QUOTE_SINGLE;
+        return s;
+      },
+      lowerLambda(body: string) {
+        return createYamlLambda(body);
+      },
+    };
+
+    // Apply overlay mux action replacements to the LVGL tree's overlay tiers.
+    // This mirrors replaceOverlayActionsInIR but operates on the IRWidgetTree
+    // structure (action arrays in widget props) instead of the generic sections.
+    if (cppResult?.muxedActions) {
+      replaceOverlayActionsInLvglTree(ir.esphome.lvglTree, cppResult.muxedActions);
+    }
+
+    loweredConfig['lvgl'] = lowerLvglWidgetTree(ir.esphome.lvglTree, lvglValueCtx);
+  }
+
   let finalConfig: Record<string, unknown>;
   if (cppResult) {
     finalConfig = injectReactiveBindingsRuntime(
       loweredConfig,
       bindings,
-      ir.esphome.haEntities,
+      remappedEntities,
       cppResult.runtimeConfig,
     );
   } else {
-    finalConfig = injectHASensorImports(loweredConfig, ir.esphome.haEntities);
+    finalConfig = injectHASensorImports(loweredConfig, remappedEntities);
   }
 
   if (ir.esphome.components.length > 0) {

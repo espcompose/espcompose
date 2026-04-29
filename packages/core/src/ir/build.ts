@@ -17,6 +17,7 @@ import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
 import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
+import type { IRWidgetTree } from './widget-types';
 import type {
   SemanticIR,
   IRSection,
@@ -178,6 +179,9 @@ export interface BuildSemanticIRInput {
 
   /** Theme scope data from the theme registry */
   themes?: IRThemeData[];
+
+  /** LVGL widget trees collected during render (one per `<lvgl>` element). */
+  lvglTrees?: IRWidgetTree[];
 }
 
 /**
@@ -209,6 +213,7 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
       haEntities: input.entities,
       components: input.components,
       scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
+      lvglTree: input.lvglTrees?.[0],
     },
     espcompose: {
       kind: 'espcompose_data' as const,

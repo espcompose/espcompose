@@ -1,13 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────
-// HA entity classifier (ESPHome target)
+// HA entity ID remapping (ESPHome target)
 //
-// Maps semantic HA inputs (entity id + domain + optional attribute/facet)
-// to ESPHome-specific platform names and component ids. Registered via
-// `core.setHAEntityClassifier()` in `ComposeTarget.registerRenderHooks`.
+// At emit time, remaps the core-minted semantic IDs on IRHAEntity and related
+// IR structures (IRReactiveNode.sourceId, IRDependency.sourceId) to ESPHome's
+// naming convention (e.g. `ha_light_kitchen_floods`).
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { HAEntityClassifyInput, HAEntityClassifyResult } from '@espcompose/core/internals';
-import { getDomainSensorType } from '@espcompose/core/internals';
+import type { IRHAEntity } from '@espcompose/core/internals';
 
 /**
  * Mint a deterministic ESPHome component id from a HA entity id, optional
@@ -18,31 +17,52 @@ import { getDomainSensorType } from '@espcompose/core/internals';
  *   - `light.kitchen_floods` + attr `brightness`   → `ha_light_kitchen_floods_brightness`
  *   - `binary_sensor.door` + facet `stateText`     → `ha_binary_sensor_door_state_text`
  */
-function mintTargetId(input: HAEntityClassifyInput): string {
-  const base = `ha_${input.entityId.replace('.', '_')}`;
-  if (input.attribute) return `${base}_${input.attribute}`;
-  if (input.facet === 'stateText') return `${base}_state_text`;
+function mintTargetId(entity: IRHAEntity): string {
+  const base = `ha_${entity.entityId.replace('.', '_')}`;
+  if (entity.attribute) return `${base}_${entity.attribute}`;
+  if (entity.facet === 'stateText') return `${base}_state_text`;
   return base;
 }
 
-/**
- * Choose the ESPHome `platform` (top-level section key) for a HA entity
- * import. Multi-facet bindings dispatch as follows:
- *   - `attribute` set        → `sensor` (numeric attribute import)
- *   - `facet === 'stateText'` → `text_sensor` (string state rendering)
- *   - default                → looked up via `getDomainSensorType(domain)`
- */
-function classifyPlatform(input: HAEntityClassifyInput): string {
-  if (input.attribute) return 'sensor';
-  if (input.facet === 'stateText') return 'text_sensor';
-  return getDomainSensorType(input.domain);
+export interface RemappedHAEntity {
+  /** ESPHome component id (the `id:` field in YAML). */
+  targetId: string;
+  /** Platform/section key (e.g. `binary_sensor`). */
+  platform: string;
+  /** Original HA entity ID. */
+  entityId: string;
+  /** HA domain. */
+  domain: string;
+  /** Optional attribute. */
+  attribute?: string;
 }
 
-export function classifyHAEntityForESPHome(
-  input: HAEntityClassifyInput,
-): HAEntityClassifyResult {
-  return {
-    targetId: mintTargetId(input),
-    platform: classifyPlatform(input),
-  };
+export interface EntityIdMap {
+  /** Maps semantic ID → ESPHome target ID. */
+  semanticToTarget: Map<string, string>;
+  /** Remapped entities with target IDs. */
+  remappedEntities: RemappedHAEntity[];
+}
+
+/**
+ * Build the semantic → target ID mapping for all HA entities and return
+ * remapped entity records with ESPHome-specific target IDs.
+ */
+export function buildEntityIdMap(entities: IRHAEntity[]): EntityIdMap {
+  const semanticToTarget = new Map<string, string>();
+  const remappedEntities: RemappedHAEntity[] = [];
+
+  for (const entity of entities) {
+    const targetId = mintTargetId(entity);
+    semanticToTarget.set(entity.semanticId, targetId);
+    remappedEntities.push({
+      targetId,
+      platform: entity.platform,
+      entityId: entity.entityId,
+      domain: entity.domain,
+      attribute: entity.attribute,
+    });
+  }
+
+  return { semanticToTarget, remappedEntities };
 }

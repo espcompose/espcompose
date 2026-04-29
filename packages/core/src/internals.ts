@@ -160,26 +160,11 @@ export type {
 
 export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './serialize/markers';
 
-// ── LVGL YAML emitter hook (target plugs in here) ──────────────────────────
+// ── HA entity classifier (core-local, deterministic) ───────────────────────
 export {
-  setLvglYamlEmitter,
-  setLvglWidgetEmitter,
-  getLvglYamlEmitter,
-  getLvglWidgetEmitter,
-  clearLvglYamlEmitters,
-} from './lvgl/yaml-hook';
-export type { LvglWidgetTreeEmitter, LvglWidgetEmitter } from './lvgl/yaml-hook';
-export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
-
-// ── HA entity classifier hook (target plugs in here) ───────────────────────
-export {
-  setHAEntityClassifier,
-  getHAEntityClassifier,
   classifyHAEntity,
-  clearHAEntityClassifier,
 } from './entity/ha-classifier';
 export type {
-  HAEntityClassifier,
   HAEntityClassifyInput,
   HAEntityClassifyResult,
 } from './entity/ha-classifier';
@@ -191,7 +176,7 @@ export { LVGL_UPDATABLE_WIDGETS } from './lvgl/widget-tables';
 export { isTriggerVar } from './actions/triggers';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
-export { buildSemanticIR } from './ir/index';
+export { buildSemanticIR, serializeIRToJSON } from './ir/index';
 export {
   irSection, irScalar, irObject, irEntry, irArray, irNull,
   irReactive, irRef, irAction, irSecret, irTriggerVar,

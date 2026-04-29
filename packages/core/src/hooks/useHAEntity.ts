@@ -139,8 +139,8 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: brightness.platform,
-    generatedId: brightness.targetId,
+    platform: brightness.platform,
+    semanticId: brightness.semanticId,
     attribute: 'brightness',
   });
 
@@ -149,14 +149,15 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: stateText.platform,
-    generatedId: stateText.targetId,
+    platform: stateText.platform,
+    semanticId: stateText.semanticId,
+    facet: 'stateText',
   });
 
   const binding: LightBinding = {
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
-    brightness: makeExpressionNode<number>(brightness.targetId, 'sensor', 'state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    brightness: makeExpressionNode<number>(brightness.semanticId, 'sensor', 'state', undefined, entityId, 'brightness'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -174,13 +175,14 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
     kind: 'ha_entity',
     entityId,
     domain: 'sensor',
-    sensorType: stateText.platform,
-    generatedId: stateText.targetId,
+    platform: stateText.platform,
+    semanticId: stateText.semanticId,
+    facet: 'stateText',
   });
 
   return createTrackingProxy({
     value: makeExpressionNode<number>(sourceId, 'sensor', 'state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
@@ -192,13 +194,14 @@ function createBinarySensorBinding(sourceId: string, entityId: string): BinarySe
     kind: 'ha_entity',
     entityId,
     domain: 'binary_sensor',
-    sensorType: stateText.platform,
-    generatedId: stateText.targetId,
+    platform: stateText.platform,
+    semanticId: stateText.semanticId,
+    facet: 'stateText',
   });
 
   return createTrackingProxy({
     isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(stateText.targetId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
@@ -276,15 +279,15 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const { targetId: generatedId, platform: sensorType } = classifyHAEntity({ entityId, domain });
+  const { semanticId, platform } = classifyHAEntity({ entityId, domain });
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain,
-    sensorType,
-    generatedId,
+    platform,
+    semanticId,
   });
 
   // Create the domain-specific binding.
@@ -292,27 +295,27 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
 
   switch (domain) {
     case 'light':
-      binding = createLightBinding(generatedId, entityId);
+      binding = createLightBinding(semanticId, entityId);
       break;
     case 'sensor':
     case 'number':
-      binding = createSensorBinding(generatedId, entityId);
+      binding = createSensorBinding(semanticId, entityId);
       break;
     case 'binary_sensor':
-      binding = createBinarySensorBinding(generatedId, entityId);
+      binding = createBinarySensorBinding(semanticId, entityId);
       break;
     case 'switch':
-      binding = createSwitchBinding(generatedId, entityId);
+      binding = createSwitchBinding(semanticId, entityId);
       break;
     case 'fan':
-      binding = createFanBinding(generatedId, entityId);
+      binding = createFanBinding(semanticId, entityId);
       break;
     case 'cover':
-      binding = createCoverBinding(generatedId, entityId);
+      binding = createCoverBinding(semanticId, entityId);
       break;
     default:
       // Fallback: treat as binary sensor binding.
-      binding = createBinarySensorBinding(generatedId, entityId);
+      binding = createBinarySensorBinding(semanticId, entityId);
       break;
   }
 

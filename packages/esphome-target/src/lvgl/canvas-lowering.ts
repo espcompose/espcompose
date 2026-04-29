@@ -11,6 +11,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, IRValue, IRObject, IRArray, IRScalar } from '@espcompose/core/internals';
+import type { IRWidget } from '@espcompose/core/internals';
 
 /**
  * A collected paint scene from an ec_canvas widget.
@@ -34,12 +35,25 @@ export interface PaintPrimitive {
 
 /**
  * Walk the SemanticIR and extract ec_canvas paint scene data.
- * This runs before YAML lowering and provides data for draw action emit.
+ * Uses the typed `IRWidgetTree` on `ir.esphome.lvglTree` when available,
+ * falling back to the generic sections walk for backward compatibility.
  */
 export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
   const scenes: EcCanvasPaintScene[] = [];
 
-  // Find the lvgl section
+  // Prefer typed LVGL widget tree on the IR
+  if (ir.esphome.lvglTree) {
+    walkIRWidgets(ir.esphome.lvglTree.pages, scenes);
+    walkIRWidgets(ir.esphome.lvglTree.widgets, scenes);
+    for (const tier of ir.esphome.lvglTree.overlayTiers) {
+      for (const overlay of tier.overlays) {
+        walkIRWidgets(overlay.widgets, scenes);
+      }
+    }
+    return scenes;
+  }
+
+  // Fallback: walk generic sections (for backward compat with tests feeding config directly)
   const lvglSection = ir.esphome.sections.find(s => s.key === 'lvgl');
   if (!lvglSection || lvglSection.value.kind !== 'object') return scenes;
 
@@ -64,6 +78,59 @@ export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
   }
 
   return scenes;
+}
+
+/**
+ * Walk typed `IRWidget` nodes (from `IRWidgetTree`) looking for ec-canvas
+ * widgets that contain paint scene data.
+ */
+function walkIRWidgets(widgets: readonly IRWidget[], scenes: EcCanvasPaintScene[]): void {
+  for (const widget of widgets) {
+    if (widget.kind === 'ecCanvas') {
+      const ecCanvas = widget.props['ec_canvas'] as Record<string, unknown> | undefined;
+      if (ecCanvas) {
+        const canvasId = typeof ecCanvas.id === 'string' ? ecCanvas.id : 'ec_unknown';
+        const bgScene = Array.isArray(ecCanvas.backgroundScene)
+          ? extractPaintPrimitivesFromPlain(ecCanvas.backgroundScene)
+          : Array.isArray(ecCanvas.background_scene)
+            ? extractPaintPrimitivesFromPlain(ecCanvas.background_scene)
+            : [];
+        const ovScene = Array.isArray(ecCanvas.overlayScene)
+          ? extractPaintPrimitivesFromPlain(ecCanvas.overlayScene)
+          : Array.isArray(ecCanvas.overlay_scene)
+            ? extractPaintPrimitivesFromPlain(ecCanvas.overlay_scene)
+            : [];
+        if (bgScene.length > 0 || ovScene.length > 0) {
+          scenes.push({ canvasId, backgroundScene: bgScene, overlayScene: ovScene });
+        }
+      }
+    }
+    // Recurse into children
+    if (widget.children.length > 0) {
+      walkIRWidgets(widget.children, scenes);
+    }
+  }
+}
+
+/**
+ * Extract paint primitives from a plain array of primitive objects
+ * (as produced by ec-canvas serialization in core).
+ */
+function extractPaintPrimitivesFromPlain(items: unknown[]): PaintPrimitive[] {
+  const prims: PaintPrimitive[] = [];
+  for (const item of items) {
+    if (item == null || typeof item !== 'object') continue;
+    const obj = item as Record<string, unknown>;
+    const type = typeof obj.type === 'string' ? obj.type : undefined;
+    if (!type) continue;
+    const props: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (key === 'type') continue;
+      props[key] = value;
+    }
+    prims.push({ type, props });
+  }
+  return prims;
 }
 
 function walkIRWidgetsArray(items: IRValue[], scenes: EcCanvasPaintScene[]): void {

@@ -13,6 +13,7 @@ export function registerTranspileCommand(program: Command) {
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
     .option('--metrics', 'Print compiler phase timing breakdown after transpile')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
+    .option('--dump-ir', 'Write semantic-ir.json debug dump to the output directory')
     .option('--library', 'Run AST transforms on a component library (no bundle/emit)')
     .option('--entry <file>', 'Entry file relative to projectDir (library only)', 'src/index.ts')
     .option('--outDir <dir>', 'Output directory for transformed sources (library only)', '.espcompose-build')
@@ -21,6 +22,7 @@ export function registerTranspileCommand(program: Command) {
       debug?: boolean;
       metrics?: boolean;
       wireframe?: boolean;
+      dumpIr?: boolean;
       library?: boolean;
       entry?: string;
       outDir?: string;
@@ -42,7 +44,7 @@ export function registerTranspileCommand(program: Command) {
         const { build } = await import('../compiler');
         const { createEsphomeTarget } = await import('@espcompose/esphome-target');
         const { resolvedDir, yamlPath } = resolvePaths(projectDir);
-        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr });
         if (opts?.metrics) printMetrics(result);
       }
     }));

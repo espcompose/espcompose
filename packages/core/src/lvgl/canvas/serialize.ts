@@ -29,6 +29,7 @@ import {
   compactObject,
 } from '../../serialize/capture';
 import { expandCssStyle } from '../style/mapping';
+import type { IRWidget } from '../../ir/widget-types';
 import { lvglWidgetToPlain, isLvglElement } from '../serialize';
 import { isWireframeEnabled, WIREFRAME_COLORS } from '../style/wireframe';
 
@@ -166,14 +167,15 @@ function serializePaintZone(
 }
 
 /**
- * Serialize widget content children (<ec-canvas-content>) into LVGL widget
+ * Serialize widget content children (<ec-canvas-content>) into IRWidget
  * objects, delegating to the existing lvglWidgetToPlain() path.
+ * The target's ec-canvas lowerer handles lowering these to YAML.
  */
 function serializeContentZone(
   el: EspComposeElement,
-): Record<string, unknown>[] {
+): IRWidget[] {
   const resolved = resolveCanvasChildren(el.props.children as EspComposeElement | EspComposeElement[] | undefined);
-  const widgets: Record<string, unknown>[] = [];
+  const widgets: IRWidget[] = [];
 
   for (const child of resolved) {
     if (typeof child.type === 'string' && isLvglElement(child.type)) {
@@ -187,10 +189,11 @@ function serializeContentZone(
 // ── Main serialization ─────────────────────────────────────────────────────
 
 /**
- * Convert an <ec-canvas> element into its YAML-ready plain object:
- *   { ec_canvas: { ...hostProps, background_scene: [...], widgets: [...], overlay_scene: [...] } }
+ * Convert an <ec-canvas> element into an IRWidget with kind 'ecCanvas'.
+ * The props contain the serialized ec-canvas payload (host props, scenes, widgets).
+ * The target's LVGL emitter lowers this to the native { ec_canvas: {...} } YAML shape.
  */
-export function ecCanvasToPlain(el: EspComposeElement): Record<string, unknown> {
+export function ecCanvasToPlain(el: EspComposeElement): IRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
@@ -266,5 +269,5 @@ export function ecCanvasToPlain(el: EspComposeElement): Record<string, unknown> 
     }
   }
 
-  return { ec_canvas: serialized };
+  return { kind: 'ecCanvas', props: { ec_canvas: serialized }, children: [] };
 }

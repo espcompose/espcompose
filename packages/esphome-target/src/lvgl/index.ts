@@ -1,4 +1,5 @@
 export { lowerLvglWidgetTree, lowerLvglWidget } from './yaml-emitter';
+export type { LvglValueLoweringContext } from './yaml-emitter';
 
 export { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from './selector-flags';
 

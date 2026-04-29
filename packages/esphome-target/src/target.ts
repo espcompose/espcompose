@@ -13,33 +13,25 @@ import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/in
 import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen';
 import { resolveAssets } from './assets.js';
-import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerLvglWidgetTree, lowerLvglWidget } from './lvgl';
-import { classifyHAEntityForESPHome } from './ha-entity-classifier.js';
-
-/** Minimal shape of the core ESPCompose SDK that this target depends on. */
-interface CoreSdkRenderHooks {
-  setLvglYamlEmitter(fn: (tree: unknown) => Record<string, unknown>): void;
-  setLvglWidgetEmitter(fn: (widget: unknown) => Record<string, unknown>): void;
-  setHAEntityClassifier(fn: typeof classifyHAEntityForESPHome): void;
-}
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './lvgl';
+import { buildEntityIdMap } from './ha-entity-classifier.js';
 
 export function createEsphomeTarget(): ComposeTarget {
   return {
     name: 'esphome',
 
-  registerRenderHooks(coreSdk: unknown): void {
-    const sdk = coreSdk as CoreSdkRenderHooks;
-    sdk.setLvglYamlEmitter(lowerLvglWidgetTree as (tree: unknown) => Record<string, unknown>);
-    sdk.setLvglWidgetEmitter(lowerLvglWidget as (widget: unknown) => Record<string, unknown>);
-    sdk.setHAEntityClassifier(classifyHAEntityForESPHome);
-  },
-
   async emit(request: EmitRequest): Promise<EmitResult> {
     const { ir, outDir, sourceDir, secrets, overlays } = request;
     const files: string[] = [];
 
+    // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
+    // Core mints deterministic semantic IDs during render; we remap them
+    // here so all downstream code sees target-specific IDs.
+    const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.haEntities);
+    remapEntityIdsInIR(ir, semanticToTarget);
+
     // ── Generate C++ headers from semantic IR ───────────────────────────
-    const cppResult = generateCppFromIR(ir, overlays);
+    const cppResult = generateCppFromIR(ir, overlays, remappedEntities);
 
     // ── Extract ec-canvas paint scenes for native canvas draw actions ───
     const paintScenes = extractPaintScenesFromIR(ir);
@@ -107,4 +99,51 @@ export function createEsphomeTarget(): ComposeTarget {
     return { files };
   },
   };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Entity ID remapping
+// ────────────────────────────────────────────────────────────────────────────
+
+import type { SemanticIR } from '@espcompose/core/internals';
+
+/**
+ * Mutate the SemanticIR in place: rewrite all `sourceId` fields on reactive
+ * nodes and dependencies from semantic IDs to ESPHome target IDs using the
+ * provided mapping. Also rewrites `IRHAEntity.semanticId` to the target ID
+ * so downstream code can use it as the ESPHome component `id:` field.
+ */
+function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string>): void {
+  if (semanticToTarget.size === 0) return;
+
+  function remap(id: string): string {
+    return semanticToTarget.get(id) ?? id;
+  }
+
+  // Remap reactive nodes (memos + effects)
+  // Cast to mutable — we intentionally mutate IR in-place before codegen
+  const allNodes = [...ir.espcompose.reactive.memos, ...ir.espcompose.reactive.effects];
+  for (const node of allNodes) {
+    if (node.sourceId) (node as { sourceId: string }).sourceId = remap(node.sourceId);
+    if (node.dependencies) {
+      for (const dep of node.dependencies) {
+        if (dep.sourceId && !dep.sourceType) {
+          (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
+        }
+      }
+    }
+  }
+
+  // Remap bindings
+  for (const binding of ir.espcompose.reactive.bindings) {
+    const expr = binding.expression;
+    if (expr.sourceId) (expr as { sourceId: string }).sourceId = remap(expr.sourceId);
+    if (expr.dependencies) {
+      for (const dep of expr.dependencies) {
+        if (dep.sourceId && !dep.sourceType) {
+          (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
+        }
+      }
+    }
+  }
 }

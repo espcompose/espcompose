@@ -21,6 +21,7 @@ import {
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
 import { ecCanvasToPlain, isEcCanvasElement } from './lvgl';
+import type { IRWidgetTree } from './ir/widget-types';
 import {
   clearThemeRegistry,
   getThemeRegistry,
@@ -28,15 +29,20 @@ import {
   clearThemeNodeCache,
 } from './lvgl/theme';
 import { setWireframeEnabled, clearWireframe } from './lvgl/style';
-import {
-  setLvglYamlEmitter,
-  setLvglWidgetEmitter,
-  clearLvglYamlEmitters,
-} from './lvgl';
-import {
-  setHAEntityClassifier,
-  clearHAEntityClassifier,
-} from './entity';
+
+// ────────────────────────────────────────────────────────────────────────────
+// LVGL widget tree capture
+// ────────────────────────────────────────────────────────────────────────────
+
+let _lvglTrees: IRWidgetTree[] = [];
+
+function getLvglTrees(): IRWidgetTree[] {
+  return _lvglTrees;
+}
+
+function clearLvglTrees(): void {
+  _lvglTrees = [];
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -127,10 +133,10 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
     };
   }
 
-  // LVGL container: children become pages/widgets arrays
+  // LVGL container: collect the widget tree for the IR and exclude from config.
   if (el.type === 'lvgl') {
-    const lvglData = buildLvglSection(el);
-    return { lvgl: Object.keys(lvglData).length > 0 ? lvglData : null };
+    _lvglTrees.push(buildLvglSection(el));
+    return undefined;
   }
 
   // At this point, type must be a string (fragments and function components
@@ -233,11 +239,12 @@ function mergeContextSections(
 }
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {
-  // LVGL container: delegate to LVGL-specific serialization
+  // LVGL container: collect the widget tree for the IR and insert a null
+  // placeholder to preserve section ordering in the config object.
   if (child.type === 'lvgl') {
-    const lvglData = buildLvglSection(child);
+    _lvglTrees.push(buildLvglSection(child));
     if (!sections['lvgl']) sections['lvgl'] = [];
-    sections['lvgl'].push(Object.keys(lvglData).length > 0 ? lvglData : null);
+    sections['lvgl'].push(null);
     return;
   }
 
@@ -304,13 +311,9 @@ export const ESPCompose = {
   // Wireframe mode — set by CLI before executing user code.
   setWireframeEnabled,
   clearWireframe,
-  // LVGL YAML emitter hook — target plugs in its lowerer before render.
-  setLvglYamlEmitter,
-  setLvglWidgetEmitter,
-  clearLvglYamlEmitters,
-  // HA entity classifier hook — target supplies platform/id minting rules.
-  setHAEntityClassifier,
-  clearHAEntityClassifier,
+  // LVGL widget tree capture — collected during render, drained after.
+  getLvglTrees,
+  clearLvglTrees,
 };
 
 export { createElement, Fragment, render };

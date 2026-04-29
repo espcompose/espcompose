@@ -37,7 +37,7 @@ describe('buildRuntimeConfig', () => {
       ],
     };
 
-    const entities = [{ entityId: 'light.office', generatedId: 'ha_light_office', sensorType: 'binary_sensor' }];
+    const entities = [{ entityId: 'light.office', targetId: 'ha_light_office', platform: 'binary_sensor' }];
 
     expect(() =>
       buildRuntimeConfig([compiledNode], [], entities),

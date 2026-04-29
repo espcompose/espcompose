@@ -8,6 +8,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, IRSection, IRObject, IREntry, IRValue } from '@espcompose/core/internals';
+import type { IRWidgetTree } from '@espcompose/core/internals';
 import { irSection, irScalar, irObject, irEntry } from '@espcompose/core/internals';
 
 export interface HostTransformOptions {
@@ -133,17 +134,26 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
 }
 
 /**
- * Find `rotation` in the `lvgl` section.
+ * Find `rotation` in the LVGL widget tree.
  * ESPHome 2026.4+ requires rotation in the LVGL config (not the display)
  * when LVGL is active.
  */
-function findLvglRotation(sections: readonly IRSection[]): number | undefined {
-  const lvglSection = sections.find(s => s.key === 'lvgl');
-  if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
-  const rotEntry = findEntry(lvglSection.value, 'rotation');
-  if (!rotEntry) return undefined;
-  const val = getScalarValue(rotEntry.value);
-  return typeof val === 'number' ? val : undefined;
+function findLvglRotation(lvglTree?: IRWidgetTree, sections?: readonly IRSection[]): number | undefined {
+  // Prefer typed widget tree
+  if (lvglTree) {
+    const rotation = lvglTree.props.rotation;
+    return typeof rotation === 'number' ? rotation : undefined;
+  }
+  // Fallback: generic sections (backward compat)
+  if (sections) {
+    const lvglSection = sections.find(s => s.key === 'lvgl');
+    if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
+    const rotEntry = findEntry(lvglSection.value, 'rotation');
+    if (!rotEntry) return undefined;
+    const val = getScalarValue(rotEntry.value);
+    return typeof val === 'number' ? val : undefined;
+  }
+  return undefined;
 }
 
 /**
@@ -309,6 +319,14 @@ function stripLvglRotation(value: IRValue): IRValue {
   return irObject(filtered);
 }
 
+/**
+ * Strip `rotation` from a typed `IRWidgetTree`, returning a new tree.
+ */
+function stripLvglTreeRotation(tree: IRWidgetTree): IRWidgetTree {
+  const { rotation: _rotation, ...rest } = tree.props;
+  return { ...tree, props: rest };
+}
+
 const SIMULATOR_SUFFIX = '-simulator';
 
 /**
@@ -372,7 +390,7 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const lvglRotation = findLvglRotation(sections);
+      const lvglRotation = findLvglRotation(ir.esphome.lvglTree, sections);
       const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
@@ -398,7 +416,8 @@ export function transformIRForHost(
       continue;
     }
 
-    // Strip rotation from LVGL — already baked into SDL dimensions
+    // Strip rotation from LVGL — already baked into SDL dimensions.
+    // (Legacy path: if lvgl was still in sections for backward compat.)
     if (section.key === 'lvgl') {
       result.push(irSection('lvgl', stripLvglRotation(section.value)));
       continue;
@@ -420,6 +439,10 @@ export function transformIRForHost(
     esphome: {
       ...ir.esphome,
       sections: result,
+      // Strip rotation from the typed LVGL tree — already baked into SDL dimensions
+      lvglTree: ir.esphome.lvglTree
+        ? stripLvglTreeRotation(ir.esphome.lvglTree)
+        : undefined,
     },
     espcompose: ir.espcompose,
   };

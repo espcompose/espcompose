@@ -9,13 +9,9 @@ export type {
 
 export type { HAEntityBindingMap } from './ha-bindings';
 export type {
-  HAEntityClassifier,
   HAEntityClassifyInput,
   HAEntityClassifyResult,
 } from './ha-classifier';
 export {
-  setHAEntityClassifier,
-  getHAEntityClassifier,
   classifyHAEntity,
-  clearHAEntityClassifier,
 } from './ha-classifier';

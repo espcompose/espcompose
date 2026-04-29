@@ -313,8 +313,8 @@ describe('buildSemanticIR', () => {
       kind: 'ha_entity',
       entityId: 'light.kitchen',
       domain: 'light',
-      sensorType: 'binary_sensor',
-      generatedId: 'ha_light_kitchen',
+      platform: 'binary_sensor',
+      semanticId: 'ha_entity:light.kitchen',
     };
 
     const component: IRComponent = {

@@ -12,19 +12,6 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Sentinel `kind` used by core's LVGL serializer to wrap an `<ec-canvas>`
- * subtree as an opaque `IRWidget` whose `props[EC_CANVAS_OPAQUE_PAYLOAD_KEY]`
- * holds the already-lowered ec-canvas YAML object. The target widget emitter
- * unwraps this kind by emitting the payload verbatim.
- *
- * This is a transitional bridge while ec-canvas itself still lowers in core
- * (see G3 follow-ups); both core (producer) and target (consumer) reference
- * these constants from this single source of truth.
- */
-export const EC_CANVAS_OPAQUE_KIND = '__ecCanvasOpaque';
-export const EC_CANVAS_OPAQUE_PAYLOAD_KEY = '__yamlPayload';
-
-/**
  * A semantic widget node. `kind` is a camelCase widget identifier
  * (e.g. `'button'`, `'label'`, `'page'`, `'image'`, `'switch'`,
  * `'ecCanvas'`). `props` are camelCase semantic values (the style prop has

@@ -66,19 +66,20 @@ export interface IRHAEntity {
   /** HA domain extracted from entity ID prefix (e.g. `light`, `sensor`). */
   domain: string;
   /**
-   * Target-supplied platform/section key (opaque to core). For ESPHome this
-   * is one of `binary_sensor` / `sensor` / `text_sensor`; minted by the
-   * target's HA entity classifier hook (see `ha-entity-hook.ts`).
+   * Platform/section key computed by core (e.g. `binary_sensor` / `sensor` /
+   * `text_sensor`). Determined by `getDomainSensorType()` for primary state,
+   * forced to `sensor` for attributes, `text_sensor` for stateText facet.
    */
-  sensorType: string;
+  platform: string;
   /**
-   * Target-supplied component id (opaque to core). For ESPHome this is the
-   * `id:` field of the auto-generated `platform: homeassistant` import;
-   * minted by the target's HA entity classifier hook.
+   * Deterministic semantic ID minted by core. The target remaps this to its
+   * own naming convention during emit (e.g. ESPHome `ha_light_kitchen_floods`).
    */
-  generatedId: string;
+  semanticId: string;
   /** Optional HA entity attribute name (e.g. `brightness`). When set, the sensor imports this attribute rather than the entity state. */
   attribute?: string;
+  /** Optional facet (e.g. `stateText`). Used by the target to mint unique IDs. */
+  facet?: 'stateText';
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -112,13 +113,13 @@ export function registerReactiveBinding(binding: IRBinding): void {
 
 /**
  * Register a Home Assistant entity that needs an auto-generated sensor import.
- * Deduplicates by entityId — multiple calls with the same entity are safe.
+ * Deduplicates by semanticId — multiple calls with the same entity are safe.
  * No-op if called outside a reactive scope.
  */
 export function registerHAEntity(entity: IRHAEntity): void {
   const frame = useContext(reactiveScopeContext);
-  if (frame && !frame.entities.has(entity.generatedId)) {
-    frame.entities.set(entity.generatedId, entity);
+  if (frame && !frame.entities.has(entity.semanticId)) {
+    frame.entities.set(entity.semanticId, entity);
   }
 }
 

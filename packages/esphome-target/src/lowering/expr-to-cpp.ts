@@ -37,6 +37,8 @@ export interface CppLoweringContext {
   actionContext?: boolean;
   /** Diagnostic info about the reactive pipeline for error messages. */
   pipelineInfo?: string;
+  /** Map semantic entity ID → target entity ID for widget-tree reactive nodes. */
+  entityIdRemap?: Map<string, string>;
 }
 
 // ── Entity component ID map builder ──────────────────────────────────────────
@@ -48,23 +50,26 @@ export interface CppLoweringContext {
  * and sensor for brightness) resolve to the correct signal.
  */
 export function buildEntityComponentIds(
-  entities: readonly { entityId?: string; generatedId?: string; sensorType?: string; attribute?: string }[],
+  entities: readonly { entityId?: string; targetId?: string; generatedId?: string; platform?: string; sensorType?: string; attribute?: string }[],
 ): Map<string, string> {
   const map = new Map<string, string>();
   for (const entity of entities) {
-    if (!entity.entityId || !entity.generatedId) continue;
-    if (entity.sensorType === 'binary_sensor') {
-      map.set(`${entity.entityId}#isOn`, entity.generatedId);
-      map.set(`${entity.entityId}#isOpen`, entity.generatedId);
-    } else if (entity.sensorType === 'text_sensor') {
-      map.set(`${entity.entityId}#stateText`, entity.generatedId);
+    if (!entity.entityId) continue;
+    const id = entity.targetId ?? entity.generatedId;
+    const platform = entity.platform ?? entity.sensorType;
+    if (!id) continue;
+    if (platform === 'binary_sensor') {
+      map.set(`${entity.entityId}#isOn`, id);
+      map.set(`${entity.entityId}#isOpen`, id);
+    } else if (platform === 'text_sensor') {
+      map.set(`${entity.entityId}#stateText`, id);
     } else if (entity.attribute) {
-      map.set(`${entity.entityId}#${entity.attribute}`, entity.generatedId);
+      map.set(`${entity.entityId}#${entity.attribute}`, id);
     } else {
-      map.set(`${entity.entityId}#value`, entity.generatedId);
+      map.set(`${entity.entityId}#value`, id);
     }
     // Unqualified fallback (last-one-wins, kept for backwards compatibility)
-    map.set(entity.entityId, entity.generatedId);
+    map.set(entity.entityId, id);
   }
   return map;
 }

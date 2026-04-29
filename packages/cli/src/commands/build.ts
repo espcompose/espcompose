@@ -14,6 +14,7 @@ export function registerBuildCommand(program: Command) {
     .option('--debug', 'Keep .espcompose-build/ intermediate files for inspection')
     .option('--metrics', 'Print compiler phase timing breakdown after build')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
+    .option('--dump-ir', 'Write semantic-ir.json debug dump to the output directory')
     .option('--library', 'Build as a distributable component library (ESM + .d.ts)')
     .option('--entry <file>', 'Entry file relative to projectDir (library only)', 'src/index.ts')
     .option('--outDir <dir>', 'Output directory relative to projectDir (library only)', 'dist')
@@ -22,6 +23,7 @@ export function registerBuildCommand(program: Command) {
       debug?: boolean;
       metrics?: boolean;
       wireframe?: boolean;
+      dumpIr?: boolean;
       library?: boolean;
       entry?: string;
       outDir?: string;
@@ -45,7 +47,7 @@ export function registerBuildCommand(program: Command) {
         const { createEsphomeTarget, esphomeCompile } = await import('@espcompose/esphome-target');
         const { resolvedDir, yamlPath } = resolvePaths(projectDir);
         const extraArgs = extractPassthroughArgs();
-        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr });
         if (opts?.metrics) printMetrics(result);
         console.log('Compiling firmware…');
         await esphomeCompile(yamlPath, extraArgs);

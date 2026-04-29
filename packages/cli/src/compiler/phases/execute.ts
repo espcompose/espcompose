@@ -39,14 +39,7 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearThemeRegistry();
   cjsSDK.clearReactiveThemeProxy();
   cjsSDK.clearWireframe();
-
-  // Allow the compilation target to register render-pass hooks (e.g. the
-  // LVGL widget-tree YAML emitter) on the same SDK instance the user
-  // bundle will load. Without this, `buildLvglSection()` would have no
-  // emitter to lower its IRWidgetTree through.
-  if (ctx.target?.registerRenderHooks) {
-    ctx.target.registerRenderHooks(cjsSDK);
-  }
+  cjsSDK.clearLvglTrees();
 
   // Enable wireframe mode if requested by the CLI.
   if (ctx.wireframe) {
@@ -87,6 +80,7 @@ export function executePhase(ctx: PhaseContext): void {
   const serializationCaptures = cjsSDK.stopSerializationCapture();
 
   const themes = extractThemeData(cjsSDK);
+  const lvglTrees = cjsSDK.getLvglTrees();
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
   const ir = serializationCaptures
@@ -99,6 +93,7 @@ export function executePhase(ctx: PhaseContext): void {
         scripts: collectedScripts as BuildSemanticIRInput['scripts'],
         reactiveNodes: reactiveNodes ?? [],
         themes,
+        lvglTrees,
       })
     : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 

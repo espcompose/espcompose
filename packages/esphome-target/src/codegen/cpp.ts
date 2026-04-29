@@ -6,18 +6,27 @@
 // functions.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode, IRScript } from '@espcompose/core/internals';
+import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode, IRScript, IRBinding } from '@espcompose/core/internals';
+import type { IRReactiveNode } from '@espcompose/core';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings.js';
 import type { ReactiveRuntimeConfig } from './bindings.js';
 import { processOverlayMux } from './overlay-mux.js';
 import { generateAllClosureTables } from './closure-table.js';
+import type { RemappedHAEntity } from '../ha-entity-classifier.js';
 
 export interface CppBackendResult {
   runtimeConfig: ReactiveRuntimeConfig;
   bindingsHeaderContent: string;
   /** Diagnostic string describing the reactive pipeline composition. */
   pipelineInfo?: string;
+  /** Additional reactive nodes created by the overlay mux system.
+   *  These must be included in the YAML lowering reactive node map. */
+  additionalReactiveNodes?: IRReactiveNode[];
+  /** Overlay muxed bindings whose expression nodes need to be in the reactive node map. */
+  overlayBindings?: IRBinding[];
+  /** Overlay muxed action replacements (templateKey:position → muxed actions). */
+  muxedActions?: Map<string, IRActionNode[]>;
 }
 
 /**
@@ -30,7 +39,7 @@ export interface CppBackendResult {
  * Returns null if the IR has no reactive content (no reactive nodes,
  * no themes).
  */
-export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]): CppBackendResult | null {
+export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[], remappedEntities?: RemappedHAEntity[]): CppBackendResult | null {
   const { reactive, themes } = ir.espcompose;
 
   // Extract globals from components (section === 'globals')
@@ -40,7 +49,7 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   // This must happen before buildRuntimeConfig so the muxed bindings and
   // additional reactive nodes are included in the reactive pipeline.
   const overlayMux = overlays && overlays.length > 0
-    ? processOverlayMux(overlays, ir.esphome.haEntities.length)
+    ? processOverlayMux(overlays, (remappedEntities ?? ir.esphome.haEntities).length)
     : null;
 
   // Merge overlay-sourced data into the reactive pipeline
@@ -88,7 +97,7 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const runtimeConfig = buildRuntimeConfig(
     allReactiveNodes,
     allBindings,
-    ir.esphome.haEntities,
+    remappedEntities ?? ir.esphome.haEntities,
     themes,
     [],
     globalComponents,
@@ -132,6 +141,9 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   return {
     runtimeConfig,
     bindingsHeaderContent: generateBindingsHeader(runtimeConfig),
+    additionalReactiveNodes: overlayMux?.additionalReactiveNodes,
+    overlayBindings: overlayMux?.muxedBindings,
+    muxedActions: overlayMux?.muxedActions.size ? overlayMux.muxedActions : undefined,
     pipelineInfo: `${reactive.memos.length} main memos, ${reactive.effects.length} effects, ` +
       `${overlayMux?.additionalReactiveNodes.length ?? 0} overlay nodes ` +
       `(${overlayMux?.additionalReactiveNodes.filter(n => n.kind === 'memo').length ?? 0} overlay memos), ` +

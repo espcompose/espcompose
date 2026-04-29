@@ -12,6 +12,7 @@
 import type { IRReactiveNode } from '../reactive';
 import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
 import type { IRActionNode } from './action-types';
+import type { IRWidgetTree } from './widget-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition
@@ -213,6 +214,9 @@ export interface IRESPHomeData {
 
   /** Named script definitions from useScript() */
   scripts: IRScript[];
+
+  /** LVGL widget tree produced during render (undefined when no `<lvgl>` present). */
+  lvglTree?: IRWidgetTree;
 }
 
 /**

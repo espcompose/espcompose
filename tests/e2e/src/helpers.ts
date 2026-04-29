@@ -30,7 +30,7 @@ export async function createProjectTest(
   const projectPath = path.resolve(projectsDir, projectName);
 
   // Run the full compiler pipeline — output lands at .espcompose/esphome.yaml
-  const result: CompileResult = await build(projectPath, createEsphomeTarget());
+  const result: CompileResult = await build(projectPath, createEsphomeTarget(), { dumpIR: true });
 
   const yamlPath = path.join(projectPath, '.espcompose', 'esphome.yaml');
   if (!fs.existsSync(yamlPath)) {

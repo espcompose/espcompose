@@ -50,6 +50,8 @@ export {
 export { buildSemanticIR } from './build';
 export type { BuildSemanticIRInput } from './build';
 
+export { serializeIRToJSON } from './serialize-json';
+
 // ── Widget tree IR (target-neutral) ─────────────────────────────────────────
 export type {
   IRWidget,
@@ -57,7 +59,6 @@ export type {
   IROverlayContainer,
   IROverlayTier,
 } from './widget-types';
-export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './widget-types';
 
 
 // ── Expression IR ────────────────────────────────────────────────────────────

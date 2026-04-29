@@ -71,15 +71,4 @@ export interface ComposeTarget {
    * @returns        A list of files written, for logging and diagnostics.
    */
   emit(request: EmitRequest): Promise<EmitResult>;
-
-  /**
-   * Optional: register target-specific hooks on the core SDK before the
-   * render pass runs. Called once per compile by the CLI with the core
-   * SDK's hook-setter API. Targets that need to plug emitter functions
-   * into core (e.g. the LVGL widget-tree YAML emitter) implement this.
-   *
-   * The argument is the SDK module that the user bundle will load (typed
-   * as `unknown` here so this interface stays target-neutral).
-   */
-  registerRenderHooks?(coreSdk: unknown): void;
 }

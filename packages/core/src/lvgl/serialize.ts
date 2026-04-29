@@ -35,18 +35,8 @@ import {
 } from '../serialize';
 import { expandCssStyle } from './style';
 import type { IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier } from '../ir/widget-types';
-import { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from '../ir/widget-types';
-import { getLvglYamlEmitter, getLvglWidgetEmitter } from './yaml-hook';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
-
-function makeEcCanvasOpaqueIR(payload: Record<string, unknown>): IRWidget {
-  return {
-    kind: EC_CANVAS_OPAQUE_KIND,
-    props: { [EC_CANVAS_OPAQUE_PAYLOAD_KEY]: payload },
-    children: [],
-  };
-}
 
 /** Convert an `lvgl-*` JSX tag to its semantic camelCase widget kind. */
 function lvglElementKind(tag: string): string {
@@ -230,18 +220,13 @@ function hoistStyleProp(data: Record<string, unknown>): void {
 }
 
 /**
- * Convert a single LVGL widget element into its YAML-ready plain object:
- *   { widget_type: { ...props, widgets?: [...] } }
+ * Convert a single LVGL widget element into its target-neutral `IRWidget`.
  *
- * Recursively processes nested lvgl-* children into a `widgets` array.
- *
- * When Expression<T> instances are detected in props:
- * 1. An auto-generated `id` is assigned if the widget doesn't already have one.
- * 2. Each Expression prop is registered as a IRBinding so the compiler
- *    can emit on_state/on_value trigger wiring later.
+ * Returns a semantic `IRWidget` with camelCase props. The target lowers
+ * this to the ESPHome YAML shape during the emit phase.
  */
-export function lvglWidgetToPlain(el: EspComposeElement): Record<string, unknown> {
-  return getLvglWidgetEmitter()(buildLvglWidgetIR(el));
+export function lvglWidgetToPlain(el: EspComposeElement): IRWidget {
+  return buildLvglWidgetIR(el);
 }
 
 /**
@@ -291,7 +276,7 @@ function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): IRWidget =>
       typeof c.type === 'string' && isEcCanvasElement(c.type)
-        ? makeEcCanvasOpaqueIR(ecCanvasToPlain(c))
+        ? ecCanvasToPlain(c)
         : buildLvglWidgetIR(c),
     );
 
@@ -356,13 +341,11 @@ function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
 /**
  * Build the LVGL section for a <lvgl> element.
  *
- * Produces a target-neutral `IRWidgetTree` and lowers it to YAML via the
- * target-supplied emitter registered through `setLvglYamlEmitter()`. Core
- * never owns the YAML shape; it only constructs the semantic IR.
+ * Returns a target-neutral `IRWidgetTree` containing semantic camelCase
+ * widget data. The target lowers this to YAML during the emit phase.
  */
-export function buildLvglSection(el: EspComposeElement): Record<string, unknown> {
-  const tree = buildLvglWidgetTree(el);
-  return getLvglYamlEmitter()(tree);
+export function buildLvglSection(el: EspComposeElement): IRWidgetTree {
+  return buildLvglWidgetTree(el);
 }
 
 /**
@@ -399,7 +382,7 @@ export function buildLvglWidgetTree(el: EspComposeElement): IRWidgetTree {
       } else if (isLvglElement(child.type)) {
         topWidgets.push(buildLvglWidgetIR(child));
       } else if (typeof child.type === 'string' && isEcCanvasElement(child.type)) {
-        topWidgets.push(makeEcCanvasOpaqueIR(ecCanvasToPlain(child)));
+        topWidgets.push(ecCanvasToPlain(child));
       }
     }
 
@@ -433,7 +416,7 @@ function buildLvglPageIR(child: EspComposeElement): IRWidget {
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): IRWidget =>
       typeof c.type === 'string' && isEcCanvasElement(c.type)
-        ? makeEcCanvasOpaqueIR(ecCanvasToPlain(c))
+        ? ecCanvasToPlain(c)
         : buildLvglWidgetIR(c),
     );
 
@@ -519,7 +502,7 @@ function collectOverlayTiers(): IROverlayTier[] {
             if (isLvglElement(ch.type)) {
               widgetIR.push(buildLvglWidgetIR(ch));
             } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
-              widgetIR.push(makeEcCanvasOpaqueIR(ecCanvasToPlain(ch)));
+              widgetIR.push(ecCanvasToPlain(ch));
             }
           }
           // Only emit instance 0's widgets into the tier container; others

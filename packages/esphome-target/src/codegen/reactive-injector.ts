@@ -10,6 +10,19 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRHAEntity } from '@espcompose/core/internals';
+import type { RemappedHAEntity } from '../ha-entity-classifier.js';
+
+/** Entity shape accepted by the injector — works with both remapped and legacy. */
+type InjectableEntity = RemappedHAEntity | IRHAEntity;
+
+function getEntityTargetId(entity: InjectableEntity): string {
+  if ('targetId' in entity) return entity.targetId;
+  return entity.semanticId;
+}
+
+function getEntityPlatform(entity: InjectableEntity): string {
+  return entity.platform;
+}
 
 /**
  * Inject HA entity sensor imports into the rendered config.
@@ -20,7 +33,7 @@ import type { IRHAEntity } from '@espcompose/core/internals';
  */
 export function injectHASensorImports(
   config: Record<string, unknown>,
-  entities: IRHAEntity[],
+  entities: InjectableEntity[],
 ): Record<string, unknown> {
   if (entities.length === 0) {
     return config;
@@ -33,7 +46,7 @@ export function injectHASensorImports(
     if (hasSensorForEntity(result, entity)) continue;
 
     const sensorConfig = buildHASensorConfig(entity);
-    appendToSection(result, entity.sensorType, sensorConfig);
+    appendToSection(result, getEntityPlatform(entity), sensorConfig);
   }
 
   return result;
@@ -48,9 +61,9 @@ export function injectHASensorImports(
  */
 function hasSensorForEntity(
   config: Record<string, unknown>,
-  entity: IRHAEntity,
+  entity: InjectableEntity,
 ): boolean {
-  const section = config[entity.sensorType];
+  const section = config[getEntityPlatform(entity)];
   if (!section) return false;
 
   const entries = Array.isArray(section) ? section : [section];
@@ -66,13 +79,13 @@ function hasSensorForEntity(
 /**
  * Build the ESPHome sensor config for a HA entity import.
  */
-function buildHASensorConfig(entity: IRHAEntity): Record<string, unknown> {
+function buildHASensorConfig(entity: InjectableEntity): Record<string, unknown> {
   return {
     platform: 'homeassistant',
-    id: entity.generatedId,
+    id: getEntityTargetId(entity),
     entity_id: entity.entityId,
     ...(entity.attribute ? { attribute: entity.attribute } : {}),
-    ...(entity.sensorType === 'binary_sensor' ? { trigger_on_initial_state: true } : {}),
+    ...(getEntityPlatform(entity) === 'binary_sensor' ? { trigger_on_initial_state: true } : {}),
   };
 }
 

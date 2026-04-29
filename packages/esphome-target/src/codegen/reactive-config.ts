@@ -188,12 +188,15 @@ export function buildRuntimeConfig(
   // Collect unique signals from HA entities
   const signalMap = new Map<string, SignalDecl>();
   for (const entity of entities) {
-    const sigName = `sig_${entity.generatedId}`;
+    const id = entity.targetId ?? entity.generatedId;
+    const platform = entity.platform ?? entity.sensorType;
+    if (!id || !platform) continue;
+    const sigName = `sig_${id}`;
     if (!signalMap.has(sigName)) {
       signalMap.set(sigName, {
         name: sigName,
-        cppType: mapSensorTypeToCppType(entity.sensorType),
-        sourceDomain: entity.sensorType,
+        cppType: mapSensorTypeToCppType(platform),
+        sourceDomain: platform,
       });
     }
   }
