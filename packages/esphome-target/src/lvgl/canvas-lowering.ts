@@ -326,7 +326,7 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
 
       if (p.fill != null) cfg.bg_color = colorVal(p.fill);
       if (p.stroke != null) cfg.border_color = colorVal(p.stroke);
-      if (p.stroke_width != null) cfg.border_width = numVal(p.stroke_width, 1);
+      if (p.strokeWidth != null) cfg.border_width = numVal(p.strokeWidth, 1);
       if (p.radius != null) cfg.radius = numVal(p.radius, 0);
       if (p.opacity != null) cfg.bg_opa = opacityVal(p.opacity);
 
@@ -343,7 +343,7 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
       };
 
       if (p.stroke != null) cfg.color = colorVal(p.stroke);
-      if (p.stroke_width != null) cfg.width = numVal(p.stroke_width, 1);
+      if (p.strokeWidth != null) cfg.width = numVal(p.strokeWidth, 1);
       if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
 
       return { 'lvgl.canvas.draw_line': cfg };
@@ -355,12 +355,12 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
         x: numVal(p.cx, 0),
         y: numVal(p.cy, 0),
         radius: numVal(p.radius, 0),
-        start_angle: numVal(p.start_angle, 0),
-        end_angle: numVal(p.end_angle, 360),
+        start_angle: numVal(p.startAngle, 0),
+        end_angle: numVal(p.endAngle, 360),
       };
 
       if (p.stroke != null) cfg.color = colorVal(p.stroke);
-      if (p.stroke_width != null) cfg.width = numVal(p.stroke_width, 1);
+      if (p.strokeWidth != null) cfg.width = numVal(p.strokeWidth, 1);
       if (p.rounded != null) cfg.rounded = p.rounded;
       if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
 
@@ -375,7 +375,7 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
 
       if (p.fill != null) cfg.bg_color = colorVal(p.fill);
       if (p.stroke != null) cfg.border_color = colorVal(p.stroke);
-      if (p.stroke_width != null) cfg.border_width = numVal(p.stroke_width, 1);
+      if (p.strokeWidth != null) cfg.border_width = numVal(p.strokeWidth, 1);
       if (p.radius != null) cfg.radius = numVal(p.radius, 0);
       if (p.opacity != null) cfg.bg_opa = opacityVal(p.opacity);
 
@@ -387,15 +387,15 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
         id: canvasId,
         x: numVal(p.x, 0),
         y: numVal(p.y, 0),
-        max_width: numVal(p.max_width, 0),
+        max_width: numVal(p.maxWidth, 0),
       };
 
       if (p.text != null) cfg.text = p.text;
       if (p.font != null) cfg.font = p.font;
       if (p.fill != null) cfg.color = colorVal(p.fill);
-      if (p.text_align != null) cfg.align = p.text_align;
-      if (p.letter_spacing != null) cfg.letter_space = numVal(p.letter_spacing, 0);
-      if (p.line_spacing != null) cfg.line_space = numVal(p.line_spacing, 0);
+      if (p.textAlign != null) cfg.align = p.textAlign;
+      if (p.letterSpacing != null) cfg.letter_space = numVal(p.letterSpacing, 0);
+      if (p.lineSpacing != null) cfg.line_space = numVal(p.lineSpacing, 0);
       if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
 
       return { 'lvgl.canvas.draw_text': cfg };
@@ -411,12 +411,12 @@ function primitiveToAction(canvasId: string, prim: PaintPrimitive): NativeAction
       if (p.src != null) cfg.src = p.src;
       if (p.rotation != null) cfg.rotation = numVal(p.rotation, 0);
       if (p.scale != null) cfg.scale = numVal(p.scale, 256);
-      if (p.scale_x != null) cfg.scale_x = numVal(p.scale_x, 256);
-      if (p.scale_y != null) cfg.scale_y = numVal(p.scale_y, 256);
-      if (p.skew_x != null) cfg.skew_x = numVal(p.skew_x, 0);
-      if (p.skew_y != null) cfg.skew_y = numVal(p.skew_y, 0);
-      if (p.pivot_x != null) cfg.pivot_x = numVal(p.pivot_x, 0);
-      if (p.pivot_y != null) cfg.pivot_y = numVal(p.pivot_y, 0);
+      if (p.scaleX != null) cfg.scale_x = numVal(p.scaleX, 256);
+      if (p.scaleY != null) cfg.scale_y = numVal(p.scaleY, 256);
+      if (p.skewX != null) cfg.skew_x = numVal(p.skewX, 0);
+      if (p.skewY != null) cfg.skew_y = numVal(p.skewY, 0);
+      if (p.pivotX != null) cfg.pivot_x = numVal(p.pivotX, 0);
+      if (p.pivotY != null) cfg.pivot_y = numVal(p.pivotY, 0);
       if (p.opacity != null) cfg.opa = opacityVal(p.opacity);
 
       return { 'lvgl.canvas.draw_image': cfg };

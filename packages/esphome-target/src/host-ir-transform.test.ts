@@ -123,9 +123,9 @@ describe('transformIRForHost', () => {
         value: irObject([
           irEntry('platform', irScalar('ili9xxx')),
           irEntry('model', irScalar('ILI9341')),
-          irEntry('update_interval', irScalar('1s')),
-          irEntry('cs_pin', irScalar(5)),
-          irEntry('dc_pin', irScalar(27)),
+          irEntry('updateInterval', irScalar('1s')),
+          irEntry('csPin', irScalar(5)),
+          irEntry('dcPin', irScalar(27)),
         ]),
       },
       {
@@ -145,11 +145,11 @@ describe('transformIRForHost', () => {
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     expect(dimsObj.entries.find(e => e.key === 'width')?.value).toEqual(irScalar(240));
     expect(dimsObj.entries.find(e => e.key === 'height')?.value).toEqual(irScalar(320));
-    // update_interval IS carried over
-    expect(obj.entries.find(e => e.key === 'update_interval')?.value).toEqual(irScalar('1s'));
+    // updateInterval IS carried over
+    expect(obj.entries.find(e => e.key === 'updateInterval')?.value).toEqual(irScalar('1s'));
     // Hardware-specific pin entries should NOT be carried over
-    expect(obj.entries.find(e => e.key === 'cs_pin')).toBeUndefined();
-    expect(obj.entries.find(e => e.key === 'dc_pin')).toBeUndefined();
+    expect(obj.entries.find(e => e.key === 'csPin')).toBeUndefined();
+    expect(obj.entries.find(e => e.key === 'dcPin')).toBeUndefined();
     // LVGL rotation stripped from output (baked into SDL dimensions)
     const lvgl = result.esphome.sections.find(s => s.key === 'lvgl')!;
     const lvglObj = lvgl.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -457,8 +457,8 @@ describe('transformIRForHost', () => {
         key: 'logger',
         value: irObject([
           irEntry('level', irScalar('DEBUG')),
-          irEntry('hardware_uart', irScalar('UART0')),
-          irEntry('baud_rate', irScalar(115200)),
+          irEntry('hardwareUart', irScalar('UART0')),
+          irEntry('baudRate', irScalar(115200)),
         ]),
       },
     ]);

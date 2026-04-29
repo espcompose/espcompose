@@ -54,39 +54,4 @@ export function clearLvglYamlEmitters(): void {
   _widgetEmitter = null;
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// Element/prop key shaper
-//
-// Core does not encode any element- or prop-key spelling. The target supplies
-// the prop-key transform (e.g. camelCase → snake_case for ESPHome YAML) and
-// the JSX-element-type → element-key mapping. Core's serialize/runtime call
-// these via `getYamlShaper()` so the spelling algorithm itself lives only in
-// the target.
-// ────────────────────────────────────────────────────────────────────────────
 
-export interface YamlShaper {
-  /** Transform a camelCase prop identifier to the target's spelling. */
-  transformPropKey: (key: string) => string;
-  /** Transform a JSX element type name to its target element key. */
-  transformElementType: (type: string) => string;
-}
-
-let _yamlShaper: YamlShaper | null = null;
-
-export function setYamlShaper(s: YamlShaper): void {
-  _yamlShaper = s;
-}
-
-export function getYamlShaper(): YamlShaper {
-  if (_yamlShaper == null) {
-    throw new Error(
-      'No YAML shaper has been registered. ' +
-        'A target must call setYamlShaper() before the render pass runs.',
-    );
-  }
-  return _yamlShaper;
-}
-
-export function clearYamlShaper(): void {
-  _yamlShaper = null;
-}

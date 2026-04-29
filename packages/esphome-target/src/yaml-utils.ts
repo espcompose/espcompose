@@ -2,9 +2,8 @@
 // YAML key shaping utilities (ESPHome target)
 //
 // Owns the camelCase → snake_case algorithm and the JSX-element-to-YAML-key
-// mapping used by ESPHome. Core's `serialize.ts` invokes these via the
-// `setYamlShaper()` hook so the snake_case algorithm itself does not live in
-// `@espcompose/core`.
+// mapping used by ESPHome. The target applies these transforms during the emit
+// phase when lowering semantic IR to YAML output.
 // ────────────────────────────────────────────────────────────────────────────
 
 /**

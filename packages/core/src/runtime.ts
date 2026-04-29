@@ -32,8 +32,6 @@ import {
   setLvglYamlEmitter,
   setLvglWidgetEmitter,
   clearLvglYamlEmitters,
-  setYamlShaper,
-  clearYamlShaper,
 } from './lvgl';
 import {
   setHAEntityClassifier,
@@ -310,9 +308,6 @@ export const ESPCompose = {
   setLvglYamlEmitter,
   setLvglWidgetEmitter,
   clearLvglYamlEmitters,
-  // Element/prop key shaper hook — target supplies the transforms.
-  setYamlShaper,
-  clearYamlShaper,
   // HA entity classifier hook — target supplies platform/id minting rules.
   setHAEntityClassifier,
   clearHAEntityClassifier,

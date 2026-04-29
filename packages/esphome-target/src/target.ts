@@ -14,14 +14,12 @@ import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen';
 import { resolveAssets } from './assets.js';
 import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerLvglWidgetTree, lowerLvglWidget } from './lvgl';
-import { camelToSnake, toYamlKey } from './yaml-utils.js';
 import { classifyHAEntityForESPHome } from './ha-entity-classifier.js';
 
 /** Minimal shape of the core ESPCompose SDK that this target depends on. */
 interface CoreSdkRenderHooks {
   setLvglYamlEmitter(fn: (tree: unknown) => Record<string, unknown>): void;
   setLvglWidgetEmitter(fn: (widget: unknown) => Record<string, unknown>): void;
-  setYamlShaper(s: { transformPropKey: (k: string) => string; transformElementType: (t: string) => string }): void;
   setHAEntityClassifier(fn: typeof classifyHAEntityForESPHome): void;
 }
 
@@ -33,7 +31,6 @@ export function createEsphomeTarget(): ComposeTarget {
     const sdk = coreSdk as CoreSdkRenderHooks;
     sdk.setLvglYamlEmitter(lowerLvglWidgetTree as (tree: unknown) => Record<string, unknown>);
     sdk.setLvglWidgetEmitter(lowerLvglWidget as (widget: unknown) => Record<string, unknown>);
-    sdk.setYamlShaper({ transformPropKey: camelToSnake, transformElementType: toYamlKey });
     sdk.setHAEntityClassifier(classifyHAEntityForESPHome);
   },
 

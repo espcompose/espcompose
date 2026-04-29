@@ -167,11 +167,8 @@ export {
   getLvglYamlEmitter,
   getLvglWidgetEmitter,
   clearLvglYamlEmitters,
-  setYamlShaper,
-  getYamlShaper,
-  clearYamlShaper,
 } from './lvgl/yaml-hook';
-export type { LvglWidgetTreeEmitter, LvglWidgetEmitter, YamlShaper } from './lvgl/yaml-hook';
+export type { LvglWidgetTreeEmitter, LvglWidgetEmitter } from './lvgl/yaml-hook';
 export { EC_CANVAS_OPAQUE_KIND, EC_CANVAS_OPAQUE_PAYLOAD_KEY } from './ir/widget-types';
 
 // ── HA entity classifier hook (target plugs in here) ───────────────────────

@@ -18,6 +18,7 @@ import { buildEntityComponentIds, valueTypeToEsphomeParam, valueTypeToCpp, resol
 import type { CppBackendResult } from './codegen';
 import { lowerActionTree, type ActionLoweringContext } from './actions';
 import { transformEcCanvasWidgets, translateLvglStyleValues } from './lvgl';
+import { camelToSnake } from './yaml-utils.js';
 
 // ── YAML Scalar constructors ─────────────────────────────────────────────
 
@@ -255,7 +256,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: Acti
       for (const entry of (node as IRObject).entries) {
         const val = irValueToYaml(entry.value, ctx, actionCtx);
         if (val !== SKIP_ENTRY) {
-          obj[entry.key] = val;
+          obj[camelToSnake(entry.key)] = val;
         }
       }
       return obj;
@@ -272,7 +273,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: Acti
 function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): Record<string, unknown> {
   const config: Record<string, unknown> = {};
   for (const section of ir.esphome.sections) {
-    config[section.key] = irValueToYaml(section.value, ctx, actionCtx);
+    config[camelToSnake(section.key)] = irValueToYaml(section.value, ctx, actionCtx);
   }
   return config;
 }

@@ -220,12 +220,12 @@ function inferDisplayDimensions(
 // strip the `rotation` entry from the LVGL section.
 
 const PORTABLE_DISPLAY_KEYS = new Set([
-  'update_interval',
-  'auto_clear_enabled',
-  'show_test_card',
+  'updateInterval',
+  'autoClearEnabled',
+  'showTestCard',
   'pages',
   'lambda',
-  'on_page_change',
+  'onPageChange',
 ]);
 
 /**
@@ -280,8 +280,8 @@ function buildSdlTouchscreen(): IRObject {
 // ── Logger entry keys unsupported on host ───────────────────────────────
 
 const LOGGER_STRIP_KEYS = new Set([
-  'hardware_uart',
-  'baud_rate',
+  'hardwareUart',
+  'baudRate',
 ]);
 
 /**

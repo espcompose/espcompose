@@ -13,7 +13,6 @@ import type { IRActionNode } from '../ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
-import { getYamlShaper } from '../lvgl';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -151,26 +150,25 @@ function resolveRefBindingsInValue(
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Transform a JSX element type into the target-specific element key.
+ * Return the element type unchanged.
  *
- * Implementation is supplied by the target via `setYamlShaper()` (registered
- * during `target.registerRenderHooks(coreSdk)`). Core does not encode the
- * snake_case spelling itself.
+ * Target-specific key mapping (e.g. stripping `lvgl-` prefixes) is deferred
+ * to the target's emit phase.
  */
 export function transformElementType(type: string): string {
-  return getYamlShaper().transformElementType(type);
+  return type;
 }
 
 /**
- * Transform a record's keys via the target-supplied prop-key transformer
- * and recursively serialize each value. Target-neutral name; the actual
- * key transform (e.g. camelCase → snake_case) is hook-supplied.
+ * Recursively serialize each value in a record, preserving camelCase keys.
+ *
+ * Target-specific key conversion (e.g. camelCase → snake_case) is deferred
+ * to the target's emit phase.
  */
 export function transformPropKeys(obj: Record<string, unknown>): Record<string, unknown> {
-  const shaper = getYamlShaper();
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(obj)) {
-    out[shaper.transformPropKey(k)] = serializeValue(v);
+    out[k] = serializeValue(v);
   }
   return out;
 }

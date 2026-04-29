@@ -8,11 +8,8 @@ export {
   getLvglYamlEmitter,
   getLvglWidgetEmitter,
   clearLvglYamlEmitters,
-  setYamlShaper,
-  getYamlShaper,
-  clearYamlShaper,
 } from './yaml-hook';
-export type { LvglWidgetTreeEmitter, LvglWidgetEmitter, YamlShaper } from './yaml-hook';
+export type { LvglWidgetTreeEmitter, LvglWidgetEmitter } from './yaml-hook';
 
 export * from './style/index';
 export * from './canvas/index';
