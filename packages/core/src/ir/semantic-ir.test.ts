@@ -316,6 +316,7 @@ describe('buildSemanticIR', () => {
       domain: 'light',
       platform: 'binary_sensor',
       semanticId: 'ha_entity:light.kitchen',
+      variant: { kind: 'state' },
     };
 
     const component: ComponentRegistration = {

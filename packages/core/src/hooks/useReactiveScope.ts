@@ -57,6 +57,16 @@ export interface ComponentRegistration {
 }
 
 /**
+ * Discriminated variant describing which sub-import of a HA entity this
+ * registration represents. Mutually exclusive — an entity import is exactly
+ * one of: primary state, a real attribute, or a synthetic facet.
+ */
+export type HAEntityVariant =
+  | { readonly kind: 'state' }
+  | { readonly kind: 'attribute'; readonly attribute: string }
+  | { readonly kind: 'facet'; readonly facet: 'stateText' };
+
+/**
  * A Home Assistant entity that needs a sensor import in the YAML config.
  */
 export interface IRHAEntity {
@@ -76,10 +86,8 @@ export interface IRHAEntity {
    * own naming convention during emit (e.g. ESPHome `ha_light_kitchen_floods`).
    */
   semanticId: string;
-  /** Optional HA entity attribute name (e.g. `brightness`). When set, the sensor imports this attribute rather than the entity state. */
-  attribute?: string;
-  /** Optional facet (e.g. `stateText`). Used by the target to mint unique IDs. */
-  facet?: 'stateText';
+  /** Which sub-import this represents: primary state, a HA attribute, or a synthetic facet. */
+  variant: HAEntityVariant;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

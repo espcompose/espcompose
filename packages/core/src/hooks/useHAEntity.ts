@@ -28,9 +28,9 @@ import type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
-  HAEntityBindingMap,
-} from '../entity';
-import { classifyHAEntity } from '../entity';
+} from '../entity/bindings';
+import type { HAEntityBindingMap } from '../entity/ha-bindings';
+import { classifyHAEntity } from '../entity/ha-classifier';
 
 /**
  * Extract the domain from a HA entity ID.
@@ -131,8 +131,8 @@ function makeExpressionNode<T>(
 // ────────────────────────────────────────────────────────────────────────────
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
-  const brightness = classifyHAEntity({ entityId, domain: 'light', attribute: 'brightness' });
-  const stateText = classifyHAEntity({ entityId, domain: 'light', facet: 'stateText' });
+  const brightness = classifyHAEntity({ entityId, domain: 'light', variant: { kind: 'attribute', attribute: 'brightness' } });
+  const stateText = classifyHAEntity({ entityId, domain: 'light', variant: { kind: 'facet', facet: 'stateText' } });
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
@@ -141,7 +141,7 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     domain: 'light',
     platform: brightness.platform,
     semanticId: brightness.semanticId,
-    attribute: 'brightness',
+    variant: { kind: 'attribute', attribute: 'brightness' },
   });
 
   // Register a text_sensor import for string state representation
@@ -151,7 +151,7 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     domain: 'light',
     platform: stateText.platform,
     semanticId: stateText.semanticId,
-    facet: 'stateText',
+    variant: { kind: 'facet', facet: 'stateText' },
   });
 
   const binding: LightBinding = {
@@ -168,7 +168,7 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 }
 
 function createSensorBinding(sourceId: string, entityId: string): SensorBinding {
-  const stateText = classifyHAEntity({ entityId, domain: 'sensor', facet: 'stateText' });
+  const stateText = classifyHAEntity({ entityId, domain: 'sensor', variant: { kind: 'facet', facet: 'stateText' } });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
@@ -177,7 +177,7 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
     domain: 'sensor',
     platform: stateText.platform,
     semanticId: stateText.semanticId,
-    facet: 'stateText',
+    variant: { kind: 'facet', facet: 'stateText' },
   });
 
   return createTrackingProxy({
@@ -187,7 +187,7 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
 }
 
 function createBinarySensorBinding(sourceId: string, entityId: string): BinarySensorBinding {
-  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', facet: 'stateText' });
+  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', variant: { kind: 'facet', facet: 'stateText' } });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
@@ -196,7 +196,7 @@ function createBinarySensorBinding(sourceId: string, entityId: string): BinarySe
     domain: 'binary_sensor',
     platform: stateText.platform,
     semanticId: stateText.semanticId,
-    facet: 'stateText',
+    variant: { kind: 'facet', facet: 'stateText' },
   });
 
   return createTrackingProxy({
@@ -279,7 +279,7 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const { semanticId, platform } = classifyHAEntity({ entityId, domain });
+  const { semanticId, platform } = classifyHAEntity({ entityId, domain, variant: { kind: 'state' } });
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({
@@ -288,6 +288,7 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
     domain,
     platform,
     semanticId,
+    variant: { kind: 'state' },
   });
 
   // Create the domain-specific binding.

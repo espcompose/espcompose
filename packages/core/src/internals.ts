@@ -104,7 +104,7 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useG
 export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
-export type { IRHAEntity, IRBinding, ComponentRegistration } from './hooks/useReactiveScope';
+export type { IRHAEntity, IRBinding, ComponentRegistration, HAEntityVariant } from './hooks/useReactiveScope';
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
 export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';

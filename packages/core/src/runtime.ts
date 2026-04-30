@@ -1,7 +1,7 @@
 import type { EspComposeElement, FunctionComponent } from './types';
-import { useScript, withScriptScope } from './hooks';
+import { useScript, withScriptScope } from './hooks/useScript';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
-import { withOverlayScope } from './hooks';
+import { withOverlayScope } from './hooks/useOverlay';
 import { withContext, pushHookPath, popHookPath } from './hooks';
 import type { Context } from './hooks';
 
@@ -28,7 +28,7 @@ import {
   clearReactiveThemeProxy,
   clearThemeNodeCache,
 } from './lvgl/theme';
-import { setWireframeEnabled, clearWireframe } from './lvgl/style';
+import { setWireframeEnabled, clearWireframe } from './lvgl/style/wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
 // LVGL widget tree capture

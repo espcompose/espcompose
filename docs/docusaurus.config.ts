@@ -35,6 +35,24 @@ const config: Config = {
 
   themes: ["@docusaurus/theme-mermaid"],
 
+  plugins: [
+    function ignoreLanguageServerWarning() {
+      return {
+        name: "ignore-vscode-languageserver-types-warning",
+        configureWebpack() {
+          return {
+            ignoreWarnings: [
+              {
+                module: /vscode-languageserver-types/,
+                message: /Critical dependency/,
+              },
+            ],
+          };
+        },
+      };
+    },
+  ],
+
   i18n: {
     defaultLocale: "en",
     locales: ["en"],

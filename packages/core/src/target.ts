@@ -7,7 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR } from './ir/index';
-import type { OverlayDefinition } from './hooks';
+import type { OverlayDefinition } from './hooks/useOverlay';
 
 /**
  * Output of the execute phase (Phase 3).

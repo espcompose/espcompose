@@ -6,22 +6,23 @@
 // naming convention (e.g. `ha_light_kitchen_floods`).
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRHAEntity } from '@espcompose/core/internals';
+import type { IRHAEntity, HAEntityVariant } from '@espcompose/core/internals';
 
 /**
- * Mint a deterministic ESPHome component id from a HA entity id, optional
- * attribute, and optional facet.
+ * Mint a deterministic ESPHome component id from a HA entity id and variant.
  *
  * Examples:
- *   - `light.kitchen_floods`                       → `ha_light_kitchen_floods`
- *   - `light.kitchen_floods` + attr `brightness`   → `ha_light_kitchen_floods_brightness`
- *   - `binary_sensor.door` + facet `stateText`     → `ha_binary_sensor_door_state_text`
+ *   - `light.kitchen_floods` (state)                → `ha_light_kitchen_floods`
+ *   - `light.kitchen_floods` + attr `brightness`    → `ha_light_kitchen_floods_brightness`
+ *   - `binary_sensor.door` + facet `stateText`      → `ha_binary_sensor_door_state_text`
  */
 function mintTargetId(entity: IRHAEntity): string {
   const base = `ha_${entity.entityId.replace('.', '_')}`;
-  if (entity.attribute) return `${base}_${entity.attribute}`;
-  if (entity.facet === 'stateText') return `${base}_state_text`;
-  return base;
+  switch (entity.variant.kind) {
+    case 'attribute': return `${base}_${entity.variant.attribute}`;
+    case 'facet': return `${base}_state_text`;
+    case 'state': return base;
+  }
 }
 
 export interface RemappedHAEntity {
@@ -33,8 +34,8 @@ export interface RemappedHAEntity {
   entityId: string;
   /** HA domain. */
   domain: string;
-  /** Optional attribute. */
-  attribute?: string;
+  /** Which sub-import this represents. */
+  variant: HAEntityVariant;
 }
 
 export interface EntityIdMap {
@@ -60,7 +61,7 @@ export function buildEntityIdMap(entities: IRHAEntity[]): EntityIdMap {
       platform: entity.platform,
       entityId: entity.entityId,
       domain: entity.domain,
-      attribute: entity.attribute,
+      variant: entity.variant,
     });
   }
 

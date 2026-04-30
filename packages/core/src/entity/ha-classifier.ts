@@ -13,6 +13,7 @@
 
 import type { SensorPlatform } from '../generated/entity-domains.js';
 import { getDomainSensorType } from '../generated/entity-domains.js';
+import type { HAEntityVariant } from '../hooks/useReactiveScope.js';
 
 /**
  * Semantic input for entity classification. All fields are
@@ -23,15 +24,8 @@ export interface HAEntityClassifyInput {
   entityId: string;
   /** HA domain prefix of the entity id, e.g. `light`, `sensor`. */
   domain: string;
-  /** Optional HA entity attribute (e.g. `brightness`). */
-  attribute?: string;
-  /**
-   * Optional facet hint for multi-facet bindings. Used to disambiguate
-   * which sub-import to mint (e.g. the text rendering of an entity's
-   * state vs the boolean state itself). `undefined` means the primary
-   * state import.
-   */
-  facet?: 'state' | 'stateText';
+  /** Which sub-import this represents: primary state, a HA attribute, or a synthetic facet. */
+  variant: HAEntityVariant;
 }
 
 /**
@@ -55,21 +49,25 @@ export interface HAEntityClassifyResult {
  */
 function mintSemanticId(input: HAEntityClassifyInput): string {
   const base = `ha_entity:${input.entityId}`;
-  if (input.attribute) return `${base}:${input.attribute}`;
-  if (input.facet === 'stateText') return `${base}:stateText`;
-  return base;
+  switch (input.variant.kind) {
+    case 'attribute': return `${base}:${input.variant.attribute}`;
+    case 'facet': return `${base}:${input.variant.facet}`;
+    case 'state': return base;
+  }
 }
 
 /**
  * Determine the sensor platform for a HA entity classification input.
- *   - `attribute` set         → `sensor` (numeric attribute import)
- *   - `facet === 'stateText'` → `text_sensor` (string state rendering)
- *   - default                 → looked up via `getDomainSensorType(domain)`
+ *   - attribute variant       → `sensor` (numeric attribute import)
+ *   - facet `stateText`       → `text_sensor` (string state rendering)
+ *   - state variant           → looked up via `getDomainSensorType(domain)`
  */
 function classifyPlatform(input: HAEntityClassifyInput): SensorPlatform {
-  if (input.attribute) return 'sensor';
-  if (input.facet === 'stateText') return 'text_sensor';
-  return getDomainSensorType(input.domain);
+  switch (input.variant.kind) {
+    case 'attribute': return 'sensor';
+    case 'facet': return 'text_sensor';
+    case 'state': return getDomainSensorType(input.domain);
+  }
 }
 
 /**

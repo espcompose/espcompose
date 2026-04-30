@@ -24,6 +24,11 @@ function getEntityPlatform(entity: InjectableEntity): string {
   return entity.platform;
 }
 
+/** Extract the HA attribute from a variant, or undefined if not an attribute variant. */
+function getEntityAttribute(entity: InjectableEntity): string | undefined {
+  return entity.variant.kind === 'attribute' ? entity.variant.attribute : undefined;
+}
+
 /**
  * Inject HA entity sensor imports into the rendered config.
  *
@@ -66,11 +71,12 @@ function hasSensorForEntity(
   const section = config[getEntityPlatform(entity)];
   if (!section) return false;
 
+  const entityAttribute = getEntityAttribute(entity);
   const entries = Array.isArray(section) ? section : [section];
   for (const entry of entries) {
     if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
       const obj = entry as Record<string, unknown>;
-      if (obj.entity_id === entity.entityId && (obj.attribute ?? undefined) === (entity.attribute ?? undefined)) return true;
+      if (obj.entity_id === entity.entityId && (obj.attribute ?? undefined) === (entityAttribute ?? undefined)) return true;
     }
   }
   return false;
@@ -80,11 +86,12 @@ function hasSensorForEntity(
  * Build the ESPHome sensor config for a HA entity import.
  */
 function buildHASensorConfig(entity: InjectableEntity): Record<string, unknown> {
+  const attribute = getEntityAttribute(entity);
   return {
     platform: 'homeassistant',
     id: getEntityTargetId(entity),
     entity_id: entity.entityId,
-    ...(entity.attribute ? { attribute: entity.attribute } : {}),
+    ...(attribute ? { attribute } : {}),
     ...(getEntityPlatform(entity) === 'binary_sensor' ? { trigger_on_initial_state: true } : {}),
   };
 }

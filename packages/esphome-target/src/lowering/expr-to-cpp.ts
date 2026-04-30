@@ -50,7 +50,7 @@ export interface CppLoweringContext {
  * and sensor for brightness) resolve to the correct signal.
  */
 export function buildEntityComponentIds(
-  entities: readonly { entityId?: string; targetId?: string; generatedId?: string; platform?: string; sensorType?: string; attribute?: string }[],
+  entities: readonly { entityId?: string; targetId?: string; generatedId?: string; platform?: string; sensorType?: string; variant?: { kind: string; attribute?: string } }[],
 ): Map<string, string> {
   const map = new Map<string, string>();
   for (const entity of entities) {
@@ -58,13 +58,14 @@ export function buildEntityComponentIds(
     const id = entity.targetId ?? entity.generatedId;
     const platform = entity.platform ?? entity.sensorType;
     if (!id) continue;
+    const attribute = entity.variant?.kind === 'attribute' ? entity.variant.attribute : undefined;
     if (platform === 'binary_sensor') {
       map.set(`${entity.entityId}#isOn`, id);
       map.set(`${entity.entityId}#isOpen`, id);
     } else if (platform === 'text_sensor') {
       map.set(`${entity.entityId}#stateText`, id);
-    } else if (entity.attribute) {
-      map.set(`${entity.entityId}#${entity.attribute}`, id);
+    } else if (attribute) {
+      map.set(`${entity.entityId}#${attribute}`, id);
     } else {
       map.set(`${entity.entityId}#value`, id);
     }
