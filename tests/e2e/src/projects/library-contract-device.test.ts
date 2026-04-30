@@ -27,7 +27,7 @@ fs.writeFileSync(
     '    type: "string",',
     '    deps: [{',
     '      sourceId: "ha_light_office",',
-    '      triggerType: "on_state",',
+    '      sourceType: "ha_entity",',
     '      sourceDomain: "binary_sensor"',
     '    }],',
     'expr: {"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","propertyKey":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}',

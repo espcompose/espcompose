@@ -25,7 +25,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     '',
     '// ── Types ────────────────────────────────────────────────────────────────────',
     '',
-    "export type SensorPlatform = 'binary_sensor' | 'sensor' | 'text_sensor';",
     "export type ExprType = 'bool' | 'float' | 'string';",
     "export type UICategory = 'toggleable' | 'sensor' | 'binary' | 'cover' | 'button';",
     '',
@@ -45,7 +44,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     '',
     'export interface EntityDomainDescriptor {',
     '  readonly domain: string;',
-    '  readonly sensorPlatform: SensorPlatform;',
     '  readonly valueType: IRType;',
     '  readonly defaultState: string;',
     '  readonly activeState: string | null;',
@@ -69,7 +67,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
   for (const [name, desc] of Object.entries(domains)) {
     lines.push(`  ${name}: {`);
     lines.push(`    domain: ${JSON.stringify(name)},`);
-    lines.push(`    sensorPlatform: ${JSON.stringify(desc.sensorPlatform)},`);
     lines.push(`    valueType: ${JSON.stringify({ kind: 'type', ...desc.valueType })},`);
     lines.push(`    defaultState: ${JSON.stringify(desc.defaultState)},`);
     lines.push(`    activeState: ${JSON.stringify(desc.activeState)},`);
@@ -116,13 +113,6 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
 
   lines.push('export function isKnownDomain(domain: string): boolean {');
   lines.push('  return domain in ENTITY_DOMAINS;');
-  lines.push('}');
-  lines.push('');
-
-  lines.push("export function getDomainSensorType(domain: string): SensorPlatform {");
-  lines.push('  const desc = ENTITY_DOMAINS[domain];');
-  lines.push('  if (!desc) throw new Error(`Unknown entity domain: ${domain}`);');
-  lines.push('  return desc.sensorPlatform;');
   lines.push('}');
   lines.push('');
 

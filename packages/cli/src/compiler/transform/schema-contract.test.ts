@@ -57,15 +57,15 @@ function extractSlottedMeta(code: string): unknown {
 
 function buildCompiledCallString(exprType: string, deps: Array<{
   sourceId: string;
-  sourceDomain: string; sourceType?: string;
+  sourceDomain?: string; sourceType: string;
 }>, expr: unknown = { kind: 'literal', value: 0, type: 'float' }): string {
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
-      `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
+      `sourceType:${JSON.stringify(d.sourceType)}`,
     ];
-    if (d.sourceType) {
-      parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
+    if (d.sourceDomain) {
+      parts.push(`sourceDomain:${JSON.stringify(d.sourceDomain)}`);
     }
     return `{${parts.join(',')}}`;
   });
@@ -86,6 +86,7 @@ describe('Library Format Schema Contract (Producer)', () => {
         [{
           sourceId: 'ha_light_office',
           sourceDomain: 'binary_sensor',
+          sourceType: 'ha_entity',
         }],
         irTernary(
           { kind: 'entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
@@ -104,7 +105,7 @@ describe('Library Format Schema Contract (Producer)', () => {
         'float',
         [
           { sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { sourceId: '__theme__', sourceType: 'theme' },
         ],
       );
 
@@ -134,7 +135,7 @@ describe('Library Format Schema Contract (Producer)', () => {
     it('rejects dependency missing required fields', () => {
       const bad = {
         type: 'int',
-        deps: [{ sourceId: 'id' }], // missing sourceDomain
+        deps: [{ sourceId: 'id' }], // missing sourceType
         expr: { kind: 'literal', value: 0, type: 'int' },
       };
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);

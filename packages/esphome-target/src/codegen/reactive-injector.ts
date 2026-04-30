@@ -9,23 +9,18 @@
 // generating the `platform: homeassistant` sensor entries.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRHAEntity } from '@espcompose/core/internals';
 import type { RemappedHAEntity } from '../ha-entity-classifier.js';
 
-/** Entity shape accepted by the injector — works with both remapped and legacy. */
-type InjectableEntity = RemappedHAEntity | IRHAEntity;
-
-function getEntityTargetId(entity: InjectableEntity): string {
-  if ('targetId' in entity) return entity.targetId;
-  return entity.semanticId;
+function getEntityTargetId(entity: RemappedHAEntity): string {
+  return entity.targetId;
 }
 
-function getEntityPlatform(entity: InjectableEntity): string {
+function getEntityPlatform(entity: RemappedHAEntity): string {
   return entity.platform;
 }
 
 /** Extract the HA attribute from a variant, or undefined if not an attribute variant. */
-function getEntityAttribute(entity: InjectableEntity): string | undefined {
+function getEntityAttribute(entity: RemappedHAEntity): string | undefined {
   return entity.variant.kind === 'attribute' ? entity.variant.attribute : undefined;
 }
 
@@ -33,12 +28,12 @@ function getEntityAttribute(entity: InjectableEntity): string | undefined {
  * Inject HA entity sensor imports into the rendered config.
  *
  * @param config   - The rendered YAML config object (from `render()`).
- * @param entities - HA entity registrations collected during the render pass.
+ * @param entities - Remapped HA entity registrations with target IDs and platforms.
  * @returns A new config object with injected sensor imports.
  */
 export function injectHASensorImports(
   config: Record<string, unknown>,
-  entities: InjectableEntity[],
+  entities: RemappedHAEntity[],
 ): Record<string, unknown> {
   if (entities.length === 0) {
     return config;
@@ -66,7 +61,7 @@ export function injectHASensorImports(
  */
 function hasSensorForEntity(
   config: Record<string, unknown>,
-  entity: InjectableEntity,
+  entity: RemappedHAEntity,
 ): boolean {
   const section = config[getEntityPlatform(entity)];
   if (!section) return false;
@@ -85,7 +80,7 @@ function hasSensorForEntity(
 /**
  * Build the ESPHome sensor config for a HA entity import.
  */
-function buildHASensorConfig(entity: InjectableEntity): Record<string, unknown> {
+function buildHASensorConfig(entity: RemappedHAEntity): Record<string, unknown> {
   const attribute = getEntityAttribute(entity);
   return {
     platform: 'homeassistant',

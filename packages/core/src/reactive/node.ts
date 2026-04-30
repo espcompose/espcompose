@@ -21,32 +21,36 @@ import type { IRExprNode, ExprType } from '../ir/expr-types';
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Canonical routing discriminator. Determines which codegen path handles
+ * a dependency.
+ * - 'ha_entity': signal fed by a Home Assistant sensor trigger
+ * - 'theme': theme memo reading from a theme value array
+ * - 'global': ESPHome globals component (BoundSignal<T>)
+ * - 'overlay_mux': internal overlay multiplexer signal
+ */
+export type DependencySourceType = 'ha_entity' | 'theme' | 'global' | 'overlay_mux';
+
+/**
  * Tracks which source component a reactive node depends on.
  */
 export interface IRDependency {
   readonly kind: 'dependency';
   /** ESPHome component ID that provides the value. */
   sourceId: string;
+  /** Canonical routing discriminator for this dependency. */
+  sourceType: DependencySourceType;
   /**
-   * The semantic source-domain used to classify the source. Targets translate
-   * this to a concrete YAML trigger key (e.g. ESPHome `on_state` / `on_value`).
-   * For theme deps the domain is `__theme__`; for overlay-mux deps it is
-   * `overlay_mux`; otherwise it is an ESPHome platform name such as `sensor`,
-   * `binary_sensor`, `light`, `text_sensor`, or `globals`.
+   * ESPHome platform/component domain string (e.g. `sensor`, `binary_sensor`,
+   * `light`, `text_sensor`, `cover`). Only meaningful for `sourceType: 'ha_entity'`
+   * deps — used by the target to select the YAML trigger key (`on_state` /
+   * `on_value`) and the C++ property access path.
    */
-  sourceDomain: string;
+  sourceDomain?: string;
   /**
    * For theme dependencies, the dotted path into the theme registry. Unused
    * for non-theme deps.
    */
   themePath?: string;
-  /**
-   * Distinguishes HA entity signals from theme signals and global signals.
-   * - 'ha_entity' (default): signal is fed by a Home Assistant sensor trigger
-   * - 'theme': signal is a theme memo reading from a theme value array
-   * - 'global': signal is backed by an ESPHome globals component (BoundSignal<T>)
-   */
-  sourceType?: 'ha_entity' | 'theme' | 'global' | 'overlay_mux';
 }
 
 declare const REACTIVE_NODE_BRAND: unique symbol;

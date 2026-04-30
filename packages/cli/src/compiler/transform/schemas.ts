@@ -25,8 +25,8 @@ const ExprTypeSchema = z.enum(['int', 'float', 'string', 'bool', 'color', 'font_
 /** Single dependency in a compiled reactive expression. */
 export const DependencyInfoSchema = z.object({
   sourceId: z.string(),
-  sourceDomain: z.string(),
-  sourceType: z.string().optional(),
+  sourceDomain: z.string().optional(),
+  sourceType: z.string(),
   themePath: z.string().optional(),
 });
 

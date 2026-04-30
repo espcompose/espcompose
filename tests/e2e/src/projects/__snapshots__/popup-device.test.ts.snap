@@ -16,11 +16,11 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_bedroom;
-Signal<float> sig_ha_light_bedroom_brightness;
-Signal<std::string> sig_ha_light_bedroom_state_text;
+Signal<float> sig_ha_light_bedroom_attr_brightness;
+Signal<std::string> sig_ha_light_bedroom_facet_state_text;
 Signal<bool> sig_ha_light_kitchen;
-Signal<float> sig_ha_light_kitchen_brightness;
-Signal<std::string> sig_ha_light_kitchen_state_text;
+Signal<float> sig_ha_light_kitchen_attr_brightness;
+Signal<std::string> sig_ha_light_kitchen_facet_state_text;
 Signal<int32_t> sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
@@ -196,10 +196,10 @@ void bootstrap_runtime() {
   thm_333e4663_colors_background.set_subscriber_storage(thm_333e4663_colors_background_subs, 1);
   static NodeBase* thm_333e4663_spacing_lg_subs[1];
   thm_333e4663_spacing_lg.set_subscriber_storage(thm_333e4663_spacing_lg_subs, 1);
-  static NodeBase* sig_ha_light_bedroom_state_text_subs[1];
-  sig_ha_light_bedroom_state_text.set_subscriber_storage(sig_ha_light_bedroom_state_text_subs, 1);
-  static NodeBase* sig_ha_light_kitchen_state_text_subs[1];
-  sig_ha_light_kitchen_state_text.set_subscriber_storage(sig_ha_light_kitchen_state_text_subs, 1);
+  static NodeBase* sig_ha_light_bedroom_facet_state_text_subs[1];
+  sig_ha_light_bedroom_facet_state_text.set_subscriber_storage(sig_ha_light_bedroom_facet_state_text_subs, 1);
+  static NodeBase* sig_ha_light_kitchen_facet_state_text_subs[1];
+  sig_ha_light_kitchen_facet_state_text.set_subscriber_storage(sig_ha_light_kitchen_facet_state_text_subs, 1);
   static NodeBase* sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux_subs[1];
   sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux.set_subscriber_storage(sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux_subs, 1);
   static NodeBase* thm_333e4663_typography_body_subs[1];
@@ -302,7 +302,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_23([]() {
-    lv_label_set_text(&id(rw_ref11), ([&]() -> std::string { switch (sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux.get()) { case 0: return sig_ha_light_bedroom_state_text.get(); case 1: return sig_ha_light_kitchen_state_text.get(); default: return std::string{}; } })().c_str());
+    lv_label_set_text(&id(rw_ref11), ([&]() -> std::string { switch (sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux.get()) { case 0: return sig_ha_light_bedroom_facet_state_text.get(); case 1: return sig_ha_light_kitchen_facet_state_text.get(); default: return std::string{}; } })().c_str());
   });
 
   static Effect binding_25([]() {
@@ -393,7 +393,7 @@ void bootstrap_runtime() {
   binding_19.wire(binding_19_sources, 1);
   static NodeBase* binding_20_sources[] = {&thm_333e4663_spacing_lg};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_23_sources[] = {&sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux, &sig_ha_light_bedroom_state_text, &sig_ha_light_kitchen_state_text};
+  static NodeBase* binding_23_sources[] = {&sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux, &sig_ha_light_bedroom_facet_state_text, &sig_ha_light_kitchen_facet_state_text};
   binding_23.wire(binding_23_sources, 3);
   static NodeBase* binding_25_sources[] = {&thm_333e4663_typography_body};
   binding_25.wire(binding_25_sources, 1);
@@ -933,7 +933,7 @@ lvgl:
                                   text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
                                   id: rw_ref10
                               - label:
-                                  text: !lambda "return id(ha_light_bedroom_state_text).state;"
+                                  text: !lambda "return id(ha_light_bedroom_facet_state_text).state;"
                                   text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
                                   id: rw_ref11
                               - obj:
@@ -1026,35 +1026,35 @@ binary_sensor:
           rt->request_flush(); }"
 sensor:
   - platform: homeassistant
-    id: ha_light_bedroom_brightness
+    id: ha_light_bedroom_attr_brightness
     entity_id: light.bedroom
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_brightness.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_attr_brightness.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_kitchen_brightness
+    id: ha_light_kitchen_attr_brightness
     entity_id: light.kitchen
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_brightness.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_attr_brightness.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 text_sensor:
   - platform: homeassistant
-    id: ha_light_bedroom_state_text
+    id: ha_light_bedroom_facet_state_text
     entity_id: light.bedroom
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_state_text.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_facet_state_text.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_kitchen_state_text
+    id: ha_light_kitchen_facet_state_text
     entity_id: light.kitchen
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_state_text.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_facet_state_text.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 external_components:
   - source:

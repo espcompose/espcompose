@@ -6,7 +6,6 @@ import type { IRType } from '../ir/types.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-export type SensorPlatform = 'binary_sensor' | 'sensor' | 'text_sensor';
 export type ExprType = 'bool' | 'float' | 'string';
 export type UICategory = 'toggleable' | 'sensor' | 'binary' | 'cover' | 'button';
 
@@ -26,7 +25,6 @@ export interface EntityActionDescriptor {
 
 export interface EntityDomainDescriptor {
   readonly domain: string;
-  readonly sensorPlatform: SensorPlatform;
   readonly valueType: IRType;
   readonly defaultState: string;
   readonly activeState: string | null;
@@ -46,7 +44,6 @@ export interface ReactivePropertyConfig {
 export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = {
   light: {
     domain: "light",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
@@ -64,7 +61,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   switch: {
     domain: "switch",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
@@ -80,7 +76,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   sensor: {
     domain: "sensor",
-    sensorPlatform: "sensor",
     valueType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
@@ -94,7 +89,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   binary_sensor: {
     domain: "binary_sensor",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
@@ -108,7 +102,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   fan: {
     domain: "fan",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
@@ -124,7 +117,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   cover: {
     domain: "cover",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "closed",
     activeState: "open",
@@ -140,7 +132,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   number: {
     domain: "number",
-    sensorPlatform: "sensor",
     valueType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
@@ -153,7 +144,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   select: {
     domain: "select",
-    sensorPlatform: "text_sensor",
     valueType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
@@ -166,7 +156,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   text_sensor: {
     domain: "text_sensor",
-    sensorPlatform: "text_sensor",
     valueType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
@@ -179,7 +168,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   button: {
     domain: "button",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "",
     activeState: null,
@@ -192,7 +180,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   lock: {
     domain: "lock",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "locked",
     activeState: "unlocked",
@@ -207,7 +194,6 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   climate: {
     domain: "climate",
-    sensorPlatform: "binary_sensor",
     valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: null,
@@ -231,12 +217,6 @@ export function getEntityDomain(domain: string): EntityDomainDescriptor | undefi
 
 export function isKnownDomain(domain: string): boolean {
   return domain in ENTITY_DOMAINS;
-}
-
-export function getDomainSensorType(domain: string): SensorPlatform {
-  const desc = ENTITY_DOMAINS[domain];
-  if (!desc) throw new Error(`Unknown entity domain: ${domain}`);
-  return desc.sensorPlatform;
 }
 
 export function defaultStateForDomain(domain: string): string {

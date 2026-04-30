@@ -13,9 +13,9 @@
 
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType } from '@espcompose/core/internals';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType, DependencySourceType } from '@espcompose/core/internals';
 import {
-  getDomainSensorType, hashGlobalFingerprint, globalTypeToValueType, valueTypeToExprType, REACTIVE_PROPERTY_MAP,
+  hashGlobalFingerprint, globalTypeToValueType, valueTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
 } from '@espcompose/core/internals';
@@ -51,24 +51,25 @@ export interface HAEntityInfo {
 }
 
 export interface SignalPropertyInfo {
-  /** C++ signal variable name, e.g. `sig_ha_light_office` */
+  /** Signal identifier, e.g. `sig_ha_light_office` */
   signalName: string;
-  /** C++ type of the signal, e.g. `bool`, `float`, `std::string` */
-  valueType: string;
-  /** Source domain for trigger lookup, e.g. `binary_sensor`, `sensor` */
+  /** Expression type of the signal value, e.g. 'bool', 'float', 'string'. */
+  valueType: ExprType;
+  /** ESPHome platform for trigger lookup, e.g. `binary_sensor`, `sensor` */
   sourceDomain: string;
   /** ESPHome component ID, e.g. `ha_light_office` */
   sourceId: string;
-  /** Source type: 'ha_entity' or 'theme' */
-  sourceType?: 'ha_entity' | 'theme';
+  /** Source type — always 'ha_entity' for signal properties */
+  sourceType: 'ha_entity';
 }
 
 export interface DependencyInfo {
   signalName: string;
   sourceId: string;
-  sourceDomain: string;
-  valueType: string;
-  sourceType?: string;
+  sourceDomain?: string;
+  /** Expression type of the dependency's value. */
+  valueType: ExprType;
+  sourceType: DependencySourceType;
 }
 
 export interface GlobalExprInfo {
@@ -153,7 +154,7 @@ export function hasReactiveNodeBrand(type: ts.Type): boolean {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Resolve the C++ signal info for a property access on an HA entity binding.
+ * Resolve signal property info for a property access on an HA entity binding.
  *
  * Property metadata (sourceDomain, exprType) is looked up from
  * the generated REACTIVE_PROPERTY_MAP. Signal IDs are derived from entity IDs.
@@ -176,17 +177,18 @@ function resolveSignalProperty(
       valueType: propConfig.exprType,
       sourceDomain: propConfig.sourceDomain,
       sourceId: brightnessId,
+      sourceType: 'ha_entity',
     };
   }
 
-  // stateText uses a domain-specific sensor platform override
+  // stateText always uses text_sensor regardless of entity domain
   if (propName === 'stateText') {
-    const sensorDomain = getDomainSensorType(entity.domain);
     return {
       signalName: `sig_${sourceId}`,
       valueType: propConfig.exprType,
-      sourceDomain: sensorDomain,
+      sourceDomain: propConfig.sourceDomain,
       sourceId,
+      sourceType: 'ha_entity',
     };
   }
 
@@ -195,6 +197,7 @@ function resolveSignalProperty(
     valueType: propConfig.exprType,
     sourceDomain: propConfig.sourceDomain,
     sourceId,
+    sourceType: 'ha_entity',
   };
 }
 
@@ -817,7 +820,6 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        sourceDomain: 'globals',
         valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
       });
@@ -829,7 +831,6 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        sourceDomain: 'globals',
         valueType: valueTypeToExprType(globalInfo.valueType),
         sourceType: 'global',
       });
@@ -849,8 +850,7 @@ function compilePropertyAccessIR(
           valueType: signalInfo.valueType,
           sourceType: signalInfo.sourceType,
         });
-        const exprType = signalValueTypeToExprType(signalInfo.valueType);
-        return { kind: 'entity_prop', entityId: entity.entityId, propertyKey: propName, type: exprType };
+        return { kind: 'entity_prop', entityId: entity.entityId, propertyKey: propName, type: signalInfo.valueType };
       }
     }
   }
@@ -959,7 +959,6 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         ctx.dependencies.set(`global_${globalInfo.globalId}`, {
           signalName: `sig_global_${globalInfo.globalId}`,
           sourceId: globalInfo.globalId,
-          sourceDomain: 'globals',
           valueType: valueTypeToExprType(globalInfo.valueType),
           sourceType: 'global',
         });
@@ -1059,13 +1058,4 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
   return null;
 }
 
-/**
- * Cast a SignalPropertyInfo.valueType string to ExprType. Since these
- * strings are already ExprType-aligned, this is essentially an identity
- * function with validation. Distinct from core's `valueTypeToExprType`,
- * which takes an `IRType` object.
- */
-function signalValueTypeToExprType(valueType: string): ExprType {
-  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ref', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
-  return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
-}
+

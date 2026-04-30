@@ -16,17 +16,17 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_bedroom;
-Signal<float> sig_ha_light_bedroom_brightness;
-Signal<std::string> sig_ha_light_bedroom_state_text;
+Signal<float> sig_ha_light_bedroom_attr_brightness;
+Signal<std::string> sig_ha_light_bedroom_facet_state_text;
 Signal<bool> sig_ha_light_kitchen;
-Signal<float> sig_ha_light_kitchen_brightness;
-Signal<std::string> sig_ha_light_kitchen_state_text;
+Signal<float> sig_ha_light_kitchen_attr_brightness;
+Signal<std::string> sig_ha_light_kitchen_facet_state_text;
 Signal<bool> sig_ha_light_ceiling_fan;
-Signal<float> sig_ha_light_ceiling_fan_brightness;
-Signal<std::string> sig_ha_light_ceiling_fan_state_text;
+Signal<float> sig_ha_light_ceiling_fan_attr_brightness;
+Signal<std::string> sig_ha_light_ceiling_fan_facet_state_text;
 Signal<bool> sig_ha_light_desk_fan;
-Signal<float> sig_ha_light_desk_fan_brightness;
-Signal<std::string> sig_ha_light_desk_fan_state_text;
+Signal<float> sig_ha_light_desk_fan_attr_brightness;
+Signal<std::string> sig_ha_light_desk_fan_facet_state_text;
 Signal<int32_t> sig_overlay_espcompose_script_render_wireframe_anon_19__0_mux;
 Signal<int32_t> sig_overlay_espcompose_script_render_wireframe_anon_20__0_mux;
 
@@ -1526,65 +1526,66 @@ binary_sensor:
           rt->request_flush(); }"
 sensor:
   - platform: homeassistant
-    id: ha_light_bedroom_brightness
+    id: ha_light_bedroom_attr_brightness
     entity_id: light.bedroom
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_brightness.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-  - platform: homeassistant
-    id: ha_light_kitchen_brightness
-    entity_id: light.kitchen
-    attribute: brightness
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_brightness.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-  - platform: homeassistant
-    id: ha_light_ceiling_fan_brightness
-    entity_id: light.ceiling_fan
-    attribute: brightness
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_ceiling_fan_brightness.set(x); if
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_attr_brightness.set(x); if
           (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_desk_fan_brightness
+    id: ha_light_kitchen_attr_brightness
+    entity_id: light.kitchen
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_attr_brightness.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+  - platform: homeassistant
+    id: ha_light_ceiling_fan_attr_brightness
+    entity_id: light.ceiling_fan
+    attribute: brightness
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_ceiling_fan_attr_brightness.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+  - platform: homeassistant
+    id: ha_light_desk_fan_attr_brightness
     entity_id: light.desk_fan
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_desk_fan_brightness.set(x); if (auto
-          rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_desk_fan_attr_brightness.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 text_sensor:
   - platform: homeassistant
-    id: ha_light_bedroom_state_text
+    id: ha_light_bedroom_facet_state_text
     entity_id: light.bedroom
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_state_text.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-  - platform: homeassistant
-    id: ha_light_kitchen_state_text
-    entity_id: light.kitchen
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_state_text.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-  - platform: homeassistant
-    id: ha_light_ceiling_fan_state_text
-    entity_id: light.ceiling_fan
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_ceiling_fan_state_text.set(x); if
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_facet_state_text.set(x); if
           (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_desk_fan_state_text
+    id: ha_light_kitchen_facet_state_text
+    entity_id: light.kitchen
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_facet_state_text.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+  - platform: homeassistant
+    id: ha_light_ceiling_fan_facet_state_text
+    entity_id: light.ceiling_fan
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_ceiling_fan_facet_state_text.set(x);
+          if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+  - platform: homeassistant
+    id: ha_light_desk_fan_facet_state_text
     entity_id: light.desk_fan
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_desk_fan_state_text.set(x); if (auto
-          rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_desk_fan_facet_state_text.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 external_components:
   - source:

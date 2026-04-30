@@ -6,7 +6,7 @@ describe('buildRuntimeConfig', () => {
     const uncompiledNode = {
       kind: 'memo',
       exprType: 'float',
-      dependencies: [{ sourceId: 'ha_light_office', sourceDomain: 'binary_sensor' }],
+      dependencies: [{ sourceId: 'ha_light_office', sourceDomain: 'binary_sensor', sourceType: 'ha_entity' }],
       // No exprIR — this is the uncompiled marker
     };
 
@@ -19,7 +19,7 @@ describe('buildRuntimeConfig', () => {
     // Effects don't require exprIR — they're side-effect nodes
     const effectNode = {
       kind: 'effect',
-      dependencies: [{ sourceId: 'ha_sensor_temp', sourceDomain: 'sensor' }],
+      dependencies: [{ sourceId: 'ha_sensor_temp', sourceDomain: 'sensor', sourceType: 'ha_entity' }],
     };
 
     expect(() =>
@@ -33,7 +33,7 @@ describe('buildRuntimeConfig', () => {
       exprType: 'bool',
       exprIR: { kind: 'entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
       dependencies: [
-        { sourceId: 'ha_light_office', sourceDomain: 'binary_sensor' },
+        { sourceId: 'ha_light_office', sourceDomain: 'binary_sensor', sourceType: 'ha_entity' },
       ],
     };
 

@@ -169,10 +169,10 @@ function serializeCompiledCall(exprType: string, deps: DependencyInfo[], exprIR:
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
-      `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
+      `sourceType:${JSON.stringify(d.sourceType)}`,
     ];
-    if (d.sourceType) {
-      parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
+    if (d.sourceDomain) {
+      parts.push(`sourceDomain:${JSON.stringify(d.sourceDomain)}`);
     }
     return `{${parts.join(',')}}`;
   });

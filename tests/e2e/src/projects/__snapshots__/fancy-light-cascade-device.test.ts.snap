@@ -16,13 +16,13 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<float> sig_ha_sensor_living_room_temperature;
-Signal<std::string> sig_ha_sensor_living_room_temperature_state_text;
+Signal<std::string> sig_ha_sensor_living_room_temperature_facet_state_text;
 Signal<bool> sig_ha_light_kitchen_floods;
-Signal<float> sig_ha_light_kitchen_floods_brightness;
-Signal<std::string> sig_ha_light_kitchen_floods_state_text;
+Signal<float> sig_ha_light_kitchen_floods_attr_brightness;
+Signal<std::string> sig_ha_light_kitchen_floods_facet_state_text;
 Signal<bool> sig_ha_light_bedroom_lamp;
-Signal<float> sig_ha_light_bedroom_lamp_brightness;
-Signal<std::string> sig_ha_light_bedroom_lamp_state_text;
+Signal<float> sig_ha_light_bedroom_lamp_attr_brightness;
+Signal<std::string> sig_ha_light_bedroom_lamp_facet_state_text;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -855,43 +855,47 @@ sensor:
           (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_kitchen_floods_brightness
+    id: ha_light_kitchen_floods_attr_brightness
     entity_id: light.kitchen_floods
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-  - platform: homeassistant
-    id: ha_light_bedroom_lamp_brightness
-    entity_id: light.bedroom_lamp
-    attribute: brightness
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
-text_sensor:
-  - platform: homeassistant
-    id: ha_sensor_living_room_temperature_state_text
-    entity_id: sensor.living_room_temperature
-    on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature_state_text.s\\
-          et(x); if (auto rt =
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_attr_brightness.set(x);
+          if (auto rt =
           ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_kitchen_floods_state_text
-    entity_id: light.kitchen_floods
+    id: ha_light_bedroom_lamp_attr_brightness
+    entity_id: light.bedroom_lamp
+    attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp_attr_brightness.set(x);
+          if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+text_sensor:
+  - platform: homeassistant
+    id: ha_sensor_living_room_temperature_facet_state_text
+    entity_id: sensor.living_room_temperature
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature_facet_state_\\
+          text.set(x); if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
   - platform: homeassistant
-    id: ha_light_bedroom_lamp_state_text
+    id: ha_light_kitchen_floods_facet_state_text
+    entity_id: light.kitchen_floods
+    on_value:
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_facet_state_text.set(x\\
+          ); if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+          rt->request_flush(); }"
+  - platform: homeassistant
+    id: ha_light_bedroom_lamp_facet_state_text
     entity_id: light.bedroom_lamp
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_lamp_facet_state_text.set(x);
+          if (auto rt =
+          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 binary_sensor:
   - platform: homeassistant

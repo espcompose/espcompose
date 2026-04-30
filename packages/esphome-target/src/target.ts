@@ -127,7 +127,7 @@ function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string
     if (node.sourceId) (node as { sourceId: string }).sourceId = remap(node.sourceId);
     if (node.dependencies) {
       for (const dep of node.dependencies) {
-        if (dep.sourceId && !dep.sourceType) {
+        if (dep.sourceId && dep.sourceType === 'ha_entity') {
           (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
         }
       }
@@ -140,7 +140,7 @@ function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string
     if (expr.sourceId) (expr as { sourceId: string }).sourceId = remap(expr.sourceId);
     if (expr.dependencies) {
       for (const dep of expr.dependencies) {
-        if (dep.sourceId && !dep.sourceType) {
+        if (dep.sourceId && dep.sourceType === 'ha_entity') {
           (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
         }
       }

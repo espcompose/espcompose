@@ -25,8 +25,8 @@ import { irTernary, irBinary } from '../ir/expr-builders.js';
 
 const DependencyInfoSchema = z.object({
   sourceId: z.string(),
-  sourceDomain: z.string(),
-  sourceType: z.string().optional(),
+  sourceDomain: z.string().optional(),
+  sourceType: z.string(),
   themePath: z.string().optional(),
 });
 
@@ -53,6 +53,7 @@ const VALID_COMPILED_META = {
   deps: [{
     sourceId: 'ha_light_office',
     sourceDomain: 'binary_sensor',
+    sourceType: 'ha_entity',
   }],
   expr: { kind: 'literal' as const, value: 'On', type: 'string' as const },
 };
@@ -136,7 +137,7 @@ describe('Library Format Contract (Consumer)', () => {
         type: 'float' as const,
         deps: [
           { kind: 'dependency', sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { kind: 'dependency', sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { kind: 'dependency', sourceId: '__theme__', sourceType: 'theme' },
         ],
         expr: { kind: 'literal' as const, value: 0, type: 'float' as const },
       };
@@ -169,7 +170,7 @@ describe('Library Format Contract (Consumer)', () => {
       withReactiveScope(() => {
         const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
@@ -221,6 +222,7 @@ describe('Library Format Contract (Consumer)', () => {
         deps: [{
           sourceId: 'ha_light_office',
           sourceDomain: 'binary_sensor',
+          sourceType: 'ha_entity',
         }],
         expr: irTernary(
           { kind: 'signal_read' as const, signalIndex: 0 },
@@ -257,7 +259,7 @@ describe('Library Format Contract (Consumer)', () => {
       withReactiveScope(() => {
         const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };

@@ -14,8 +14,8 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_office;
-Signal<float> sig_ha_light_office_brightness;
-Signal<std::string> sig_ha_light_office_state_text;
+Signal<float> sig_ha_light_office_attr_brightness;
+Signal<std::string> sig_ha_light_office_facet_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
@@ -387,11 +387,11 @@ text_sensor:
     name: Light Status
     id: light_status
   - platform: homeassistant
-    id: ha_light_office_state_text
+    id: ha_light_office_facet_state_text
     entity_id: light.office
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_office_state_text.set(x); if (auto rt
-          = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+      - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x); if
+          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
 binary_sensor:
   platform: homeassistant
@@ -404,12 +404,12 @@ binary_sensor:
         rt->request_flush(); }"
 sensor:
   platform: homeassistant
-  id: ha_light_office_brightness
+  id: ha_light_office_attr_brightness
   entity_id: light.office
   attribute: brightness
   on_value:
-    - lambda: !lambda "espcompose::sig_ha_light_office_brightness.set(x); if (auto rt
-        = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+    - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x); if
+        (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
         rt->request_flush(); }"
 external_components:
   - source:

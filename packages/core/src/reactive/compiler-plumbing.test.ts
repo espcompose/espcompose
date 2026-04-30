@@ -57,7 +57,7 @@ describe('__espcompose', () => {
       withReactiveScope(() => {
         const signal = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
@@ -77,14 +77,14 @@ describe('__espcompose', () => {
       withReactiveScope(() => {
         const sigA = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_a', sourceDomain: 'sensor' }],
+          dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_a', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
         sigA.exprIR = { kind: 'signal_read', signalIndex: 0 };
 
         const sigB = new IRReactiveNode({
           kind: 'expression',
-          dependencies: [{ kind: 'dependency', sourceId: 'ha_b', sourceDomain: 'binary_sensor' }],
+          dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_b', sourceDomain: 'binary_sensor' }],
           exprType: 'bool',
         });
         sigB.exprIR = { kind: 'signal_read', signalIndex: 1 };
@@ -111,7 +111,7 @@ describe('__espcompose', () => {
         const sig1 = new IRReactiveNode({
           kind: 'expression',
           dependencies: [
-            { kind: 'dependency', sourceId: 's1', sourceDomain: 'sensor' },
+            { kind: 'dependency', sourceType: 'ha_entity', sourceId: 's1', sourceDomain: 'sensor' },
           ],
           exprType: 'float',
         });
@@ -120,8 +120,8 @@ describe('__espcompose', () => {
         const sig2 = new IRReactiveNode({
           kind: 'expression',
           dependencies: [
-            { kind: 'dependency', sourceId: 's2', sourceDomain: 'binary_sensor' },
-            { kind: 'dependency', sourceId: 's3', sourceDomain: 'sensor' },
+            { kind: 'dependency', sourceType: 'ha_entity', sourceId: 's2', sourceDomain: 'binary_sensor' },
+            { kind: 'dependency', sourceType: 'ha_entity', sourceId: 's3', sourceDomain: 'sensor' },
           ],
           exprType: 'bool',
         });
@@ -143,7 +143,7 @@ describe('__espcompose', () => {
         const result = __espcompose.derivedMemo<string>({
           exprType: 'font_ref',
           dependencies: [
-            { kind: 'dependency', sourceId: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+            { kind: 'dependency', sourceId: '__theme__', sourceType: 'theme' },
           ],
           exprIR: { kind: 'literal', value: 'montserrat_28', type: 'string' },
         });

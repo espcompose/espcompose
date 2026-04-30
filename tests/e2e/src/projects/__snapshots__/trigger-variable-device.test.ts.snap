@@ -14,8 +14,8 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_office;
-Signal<float> sig_ha_light_office_brightness;
-Signal<std::string> sig_ha_light_office_state_text;
+Signal<float> sig_ha_light_office_attr_brightness;
+Signal<std::string> sig_ha_light_office_facet_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
@@ -23,7 +23,7 @@ Memo<std::string> memo_0([]() -> std::string {
 });
 
 Memo<std::string> memo_1([]() -> std::string {
-  return std::string("Light") + std::string(": ") + sig_ha_light_office_state_text.get();
+  return std::string("Light") + std::string(": ") + sig_ha_light_office_facet_state_text.get();
 });
 
 // ── Bootstrap: wire dependency graph ──
@@ -36,8 +36,8 @@ void bootstrap_runtime() {
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* sig_ha_light_office_subs[1];
   sig_ha_light_office.set_subscriber_storage(sig_ha_light_office_subs, 1);
-  static NodeBase* sig_ha_light_office_state_text_subs[1];
-  sig_ha_light_office_state_text.set_subscriber_storage(sig_ha_light_office_state_text_subs, 1);
+  static NodeBase* sig_ha_light_office_facet_state_text_subs[1];
+  sig_ha_light_office_facet_state_text.set_subscriber_storage(sig_ha_light_office_facet_state_text_subs, 1);
   static NodeBase* memo_0_subs[1];
   memo_0.set_subscriber_storage(memo_0_subs, 1);
   static NodeBase* memo_1_subs[1];
@@ -54,7 +54,7 @@ void bootstrap_runtime() {
 
   static NodeBase* memo_0_sources[] = {&sig_ha_light_office};
   memo_0.wire(memo_0_sources, 1);
-  static NodeBase* memo_1_sources[] = {&sig_ha_light_office_state_text};
+  static NodeBase* memo_1_sources[] = {&sig_ha_light_office_facet_state_text};
   memo_1.wire(memo_1_sources, 1);
   static NodeBase* binding_0_sources[] = {&memo_0};
   binding_0.wire(binding_0_sources, 1);
@@ -469,20 +469,20 @@ binary_sensor:
         rt->request_flush(); }"
 sensor:
   platform: homeassistant
-  id: ha_light_office_brightness
+  id: ha_light_office_attr_brightness
   entity_id: light.office
   attribute: brightness
   on_value:
-    - lambda: !lambda "espcompose::sig_ha_light_office_brightness.set(x); if (auto rt
-        = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+    - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x); if
+        (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
         rt->request_flush(); }"
 text_sensor:
   platform: homeassistant
-  id: ha_light_office_state_text
+  id: ha_light_office_facet_state_text
   entity_id: light.office
   on_value:
-    - lambda: !lambda "espcompose::sig_ha_light_office_state_text.set(x); if (auto rt
-        = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
+    - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x); if
+        (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
         rt->request_flush(); }"
 external_components:
   - source:

@@ -20,7 +20,7 @@ export function generateCoreEntityTriggers(domains: DomainMap, repoRoot: string)
     FILE_HEADER,
     '/* eslint-disable */',
     '',
-    'import type { TriggerSignature } from \'../trigger-registry.js\';',
+    'import type { TriggerSignature } from \'../actions/trigger-registry.js\';',
     '',
     '/**',
     ' * Entity domain trigger entries, generated from metadata/entity-domains.json.',

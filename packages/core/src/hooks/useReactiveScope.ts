@@ -18,6 +18,7 @@
 
 import { Context, createContext, useContext, withContext } from './useContext';
 import type { IRReactiveNode } from '../reactive';
+import type { ExprType } from '../generated/entity-domains.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Binding types
@@ -60,11 +61,16 @@ export interface ComponentRegistration {
  * Discriminated variant describing which sub-import of a HA entity this
  * registration represents. Mutually exclusive — an entity import is exactly
  * one of: primary state, a real attribute, or a synthetic facet.
+ *
+ * Attribute and facet variants carry `exprType` so the target can derive the
+ * correct sensor platform from data alone (no hard-coded assumptions).
  */
 export type HAEntityVariant =
   | { readonly kind: 'state' }
-  | { readonly kind: 'attribute'; readonly attribute: string }
-  | { readonly kind: 'facet'; readonly facet: 'stateText' };
+  | { readonly kind: 'attribute'; readonly attribute: string; readonly exprType: ExprType }
+  // Facet name is a closed literal union (not `string`) so downstream switch
+  // sites get exhaustiveness checking. Widen to a union when a second facet is added.
+  | { readonly kind: 'facet'; readonly facet: 'stateText'; readonly exprType: ExprType };
 
 /**
  * A Home Assistant entity that needs a sensor import in the YAML config.
@@ -75,12 +81,6 @@ export interface IRHAEntity {
   entityId: string;
   /** HA domain extracted from entity ID prefix (e.g. `light`, `sensor`). */
   domain: string;
-  /**
-   * Platform/section key computed by core (e.g. `binary_sensor` / `sensor` /
-   * `text_sensor`). Determined by `getDomainSensorType()` for primary state,
-   * forced to `sensor` for attributes, `text_sensor` for stateText facet.
-   */
-  platform: string;
   /**
    * Deterministic semantic ID minted by core. The target remaps this to its
    * own naming convention during emit (e.g. ESPHome `ha_light_kitchen_floods`).

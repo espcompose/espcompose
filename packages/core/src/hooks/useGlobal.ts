@@ -214,7 +214,6 @@ function createGlobalArrayHandle<T>(
       const dep: IRDependency = {
         kind: 'dependency',
         sourceId: id,
-        sourceDomain: 'globals',
         sourceType: 'global',
       };
       cachedNode = new IRReactiveNode<T[]>({
@@ -223,7 +222,6 @@ function createGlobalArrayHandle<T>(
         exprType,
         sourceId: id,
         propertyKey: 'value',
-        sourceDomain: 'globals',
       });
     }
     return cachedNode;

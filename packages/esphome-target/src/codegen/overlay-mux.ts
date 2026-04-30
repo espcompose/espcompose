@@ -314,7 +314,6 @@ export function processOverlayMux(
         const muxDep = {
           kind: 'dependency' as const,
           sourceId: muxSignalName,
-          sourceDomain: 'overlay_mux',
           sourceType: 'overlay_mux' as const,
         };
         const muxedBinding: IRBinding = {

@@ -40,7 +40,7 @@ function makeMemoNode(index: number): IRReactiveNode {
   const node = new IRReactiveNode({
     kind: 'memo',
     dependencies: [
-      { kind: 'dependency', sourceId: 'ha_light_x', sourceDomain: 'binary_sensor' },
+      { kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_light_x', sourceDomain: 'binary_sensor' },
     ],
     exprType: 'float',
   });
@@ -314,7 +314,6 @@ describe('buildSemanticIR', () => {
       kind: 'ha_entity',
       entityId: 'light.kitchen',
       domain: 'light',
-      platform: 'binary_sensor',
       semanticId: 'ha_entity:light.kitchen',
       variant: { kind: 'state' },
     };

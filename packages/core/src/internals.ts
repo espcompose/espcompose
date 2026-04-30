@@ -59,14 +59,11 @@ export {
   KNOWN_DOMAIN_NAMES,
   getEntityDomain,
   isKnownDomain,
-  getDomainSensorType,
   defaultStateForDomain,
 } from './generated/entity-domains.js';
 export type {
   EntityDomainDescriptor,
-  EntityPropertyDescriptor,
   EntityActionDescriptor,
-  SensorPlatform,
   UICategory,
 } from './generated/entity-domains.js';
 
@@ -122,7 +119,7 @@ export { waitUntil } from './actions/primitives';
 export { RefHandle } from './types';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
-export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive/node';
+export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
 export { useReactive, reactiveIsNaN } from './reactive/utils';
 export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './reactive/compiler-plumbing';
 

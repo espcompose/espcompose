@@ -18,6 +18,7 @@ describe('lvgl-switch state:checked reactive binding', () => {
         kind: 'expression',
         dependencies: [{
           kind: 'dependency',
+          sourceType: 'ha_entity',
           sourceId: 'ha_light_office',
           sourceDomain: 'binary_sensor',
         }],
@@ -54,6 +55,7 @@ describe('lvgl-switch state:checked reactive binding', () => {
         kind: 'expression',
         dependencies: [{
           kind: 'dependency',
+          sourceType: 'ha_entity',
           sourceId: 'ha_light_office',
           sourceDomain: 'binary_sensor',
         }],

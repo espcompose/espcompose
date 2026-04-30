@@ -109,6 +109,7 @@ function makeExpressionNode<T>(
   const exprType = exprTypeOverride ?? sourceExprType;
   const dep: IRDependency = {
     kind: 'dependency',
+    sourceType: 'ha_entity',
     sourceId,
     sourceDomain,
   };
@@ -131,17 +132,19 @@ function makeExpressionNode<T>(
 // ────────────────────────────────────────────────────────────────────────────
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
-  const brightness = classifyHAEntity({ entityId, domain: 'light', variant: { kind: 'attribute', attribute: 'brightness' } });
-  const stateText = classifyHAEntity({ entityId, domain: 'light', variant: { kind: 'facet', facet: 'stateText' } });
+  const brightnessVariant = { kind: 'attribute' as const, attribute: 'brightness', exprType: 'float' as const };
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+
+  const brightness = classifyHAEntity({ entityId, domain: 'light', variant: brightnessVariant });
+  const stateText = classifyHAEntity({ entityId, domain: 'light', variant: stateTextVariant });
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    platform: brightness.platform,
     semanticId: brightness.semanticId,
-    variant: { kind: 'attribute', attribute: 'brightness' },
+    variant: brightnessVariant,
   });
 
   // Register a text_sensor import for string state representation
@@ -149,9 +152,8 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    platform: stateText.platform,
     semanticId: stateText.semanticId,
-    variant: { kind: 'facet', facet: 'stateText' },
+    variant: stateTextVariant,
   });
 
   const binding: LightBinding = {
@@ -168,16 +170,16 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 }
 
 function createSensorBinding(sourceId: string, entityId: string): SensorBinding {
-  const stateText = classifyHAEntity({ entityId, domain: 'sensor', variant: { kind: 'facet', facet: 'stateText' } });
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+  const stateText = classifyHAEntity({ entityId, domain: 'sensor', variant: stateTextVariant });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'sensor',
-    platform: stateText.platform,
     semanticId: stateText.semanticId,
-    variant: { kind: 'facet', facet: 'stateText' },
+    variant: stateTextVariant,
   });
 
   return createTrackingProxy({
@@ -187,16 +189,16 @@ function createSensorBinding(sourceId: string, entityId: string): SensorBinding 
 }
 
 function createBinarySensorBinding(sourceId: string, entityId: string): BinarySensorBinding {
-  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', variant: { kind: 'facet', facet: 'stateText' } });
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', variant: stateTextVariant });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'binary_sensor',
-    platform: stateText.platform,
     semanticId: stateText.semanticId,
-    variant: { kind: 'facet', facet: 'stateText' },
+    variant: stateTextVariant,
   });
 
   return createTrackingProxy({
@@ -279,14 +281,13 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const { semanticId, platform } = classifyHAEntity({ entityId, domain, variant: { kind: 'state' } });
+  const { semanticId } = classifyHAEntity({ entityId, domain, variant: { kind: 'state' } });
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain,
-    platform,
     semanticId,
     variant: { kind: 'state' },
   });

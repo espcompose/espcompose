@@ -11,7 +11,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { IRReactiveNode } from './node';
-import type { IRDependency } from './node';
+import type { IRDependency, DependencySourceType } from './node';
 import type { IRExprNode, ExprType } from '../ir/expr-types';
 import { mapExprChildren } from '../ir/expr-walk';
 import { registerReactiveNode } from '../hooks';
@@ -60,7 +60,7 @@ export const __espcompose = {
     type: ExprType;
     deps: Array<{
       sourceId: string;
-      sourceDomain: string;
+      sourceDomain?: string;
       sourceType?: string;
       themePath?: string;
     }>;
@@ -69,8 +69,8 @@ export const __espcompose = {
     const dependencies: IRDependency[] = meta.deps.map(d => ({
       kind: 'dependency' as const,
       sourceId: d.sourceId,
+      sourceType: (d.sourceType as DependencySourceType) ?? 'ha_entity',
       sourceDomain: d.sourceDomain,
-      sourceType: (d.sourceType as 'ha_entity' | 'theme' | undefined),
       themePath: d.themePath,
     }));
 

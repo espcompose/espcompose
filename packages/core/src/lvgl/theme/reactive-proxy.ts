@@ -93,7 +93,6 @@ function getOrCreateLeafNode(
     const dep: IRDependency = {
       kind: 'dependency',
       sourceId: `__theme_${scopeId}__`,
-      sourceDomain: '__theme__',
       sourceType: 'theme',
       themePath: path,
     };
