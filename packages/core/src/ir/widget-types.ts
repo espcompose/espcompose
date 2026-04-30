@@ -11,20 +11,21 @@
 // No ESPHome / LVGL C-token / snake_case vocabulary lives in this file.
 // ────────────────────────────────────────────────────────────────────────────
 
+import type { IRValue } from './types';
+
 /**
  * A semantic widget node. `kind` is a camelCase widget identifier
  * (e.g. `'button'`, `'label'`, `'page'`, `'image'`, `'switch'`,
- * `'ecCanvas'`). `props` are camelCase semantic values (the style prop has
- * already been hoisted/merged; reactive nodes have been extracted into
- * sibling bindings registered via `registerReactiveBinding`).
+ * `'ecCanvas'`). `props` are camelCase semantic values resolved through
+ * `configValueToIR()` — every value is a typed `IRValue` node.
  */
 export interface IRWidget {
   /** Semantic widget kind (camelCase, no `lvgl-` prefix, no snake_case). */
   readonly kind: string;
   /** Explicit or auto-assigned id. May be omitted for purely cosmetic nodes. */
   readonly id?: string;
-  /** Semantic camelCase props bag (post-style-hoist, post-reactive-extract). */
-  readonly props: Record<string, unknown>;
+  /** Semantic camelCase props — all values are typed `IRValue` nodes. */
+  readonly props: Record<string, IRValue>;
   /** Nested child widgets. */
   readonly children: IRWidget[];
 }
@@ -58,8 +59,8 @@ export interface IROverlayTier {
  * semantics (router targets) even though they share the widget shape.
  */
 export interface IRWidgetTree {
-  /** Top-level lvgl section props (camelCase, e.g. theme, displays). */
-  readonly props: Record<string, unknown>;
+  /** Top-level lvgl section props (camelCase) — all values are typed `IRValue` nodes. */
+  readonly props: Record<string, IRValue>;
   /** `<lvgl-page>` subtrees. */
   readonly pages: IRWidget[];
   /** Non-page top-level widgets. */

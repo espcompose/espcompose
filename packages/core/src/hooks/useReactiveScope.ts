@@ -46,7 +46,7 @@ export interface IRBinding {
 /**
  * A component definition (image, font, etc.) for injection into the YAML config.
  */
-export interface IRComponent {
+export interface ComponentRegistration {
   readonly kind: 'component';
   /** ESPHome config section to inject into (e.g. `'image'`, `'font'`). */
   section: string;
@@ -89,7 +89,7 @@ export interface IRHAEntity {
 interface ReactiveScopeFrame {
   bindings: IRBinding[];
   entities: Map<string, IRHAEntity>;
-  components: Map<string, IRComponent>;
+  components: Map<string, ComponentRegistration>;
   reactiveNodes: IRReactiveNode[];
 }
 
@@ -128,7 +128,7 @@ export function registerHAEntity(entity: IRHAEntity): void {
  * final YAML config. Deduplicates by component ID.
  * No-op if called outside a reactive scope.
  */
-export function registerComponent(reg: IRComponent): void {
+export function registerComponent(reg: ComponentRegistration): void {
   const frame = useContext(reactiveScopeContext);
   if (frame && !frame.components.has(reg.id)) {
     frame.components.set(reg.id, reg);
@@ -175,7 +175,7 @@ export interface ReactiveScopeResult<T> {
   result: T;
   bindings: IRBinding[];
   entities: IRHAEntity[];
-  components: IRComponent[];
+  components: ComponentRegistration[];
   reactiveNodes: IRReactiveNode[];
 }
 

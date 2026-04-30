@@ -431,8 +431,8 @@ espcompose:
   flush_budget_us: 2000
 globals:
   - id: g_2b7a548a
-    type: int
     restore_value: true
     initial_value: "0"
+    type: int
 "
 `;

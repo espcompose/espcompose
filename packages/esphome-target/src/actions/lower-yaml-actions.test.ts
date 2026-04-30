@@ -40,7 +40,7 @@ describe('lowerToYamlConfig action lowering', () => {
             },
           ],
           refBindings: {
-            mainScreen: { toString: () => 'main_screen_token' },
+            mainScreen: 'main_screen_token',
           },
         },
       },

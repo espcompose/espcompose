@@ -9,6 +9,7 @@ import {
   buildClosureRow,
 } from './useScript';
 import type { ClosureShape } from '../ir/types';
+import { IR_ID_REF, IR_INT } from '../ir/types';
 
 // ── Test helpers ────────────────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ describe('classifyBindings', () => {
     const ctrl = makeOverlayCtrl('toast', 0);
     const shape = classifyBindings({ ctrl });
     expect(shape.fields).toEqual([
-      { name: 'ctrl_instance_index', valueType: { type: 'int' } },
+      { name: 'ctrl_instance_index', valueType: IR_INT },
     ]);
   });
 
@@ -58,7 +59,7 @@ describe('classifyBindings', () => {
     const h = makeScriptHandle('do_thing');
     const shape = classifyBindings({ act: h });
     expect(shape.fields).toEqual([
-      { name: 'act_idx', valueType: { type: 'int', format: 'id_ref' } },
+      { name: 'act_idx', valueType: IR_ID_REF },
     ]);
   });
 
@@ -81,8 +82,8 @@ describe('classifyBindings', () => {
       overlay: makeOverlayCtrl('o', 2),
     });
     expect(shape.fields).toEqual([
-      { name: 'light_idx', valueType: { type: 'int', format: 'id_ref' } },
-      { name: 'overlay_instance_index', valueType: { type: 'int' } },
+      { name: 'light_idx', valueType: IR_ID_REF },
+      { name: 'overlay_instance_index', valueType: IR_INT },
     ]);
   });
 });
@@ -97,8 +98,8 @@ describe('closureShapeSignature', () => {
   it('produces a deterministic signature', () => {
     const shape: ClosureShape = {
       fields: [
-        { name: 'a_idx', valueType: { type: 'int', format: 'id_ref' } },
-        { name: 'b_instance_index', valueType: { type: 'int' } },
+        { name: 'a_idx', valueType: IR_ID_REF },
+        { name: 'b_instance_index', valueType: IR_INT },
       ],
     };
     expect(closureShapeSignature(shape))
@@ -106,22 +107,22 @@ describe('closureShapeSignature', () => {
   });
 
   it('distinguishes shapes that differ only by format qualifier', () => {
-    const a: ClosureShape = { fields: [{ name: 'x', valueType: { type: 'int' } }] };
-    const b: ClosureShape = { fields: [{ name: 'x', valueType: { type: 'int', format: 'id_ref' } }] };
+    const a: ClosureShape = { fields: [{ name: 'x', valueType: IR_INT }] };
+    const b: ClosureShape = { fields: [{ name: 'x', valueType: IR_ID_REF }] };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));
   });
 
   it('distinguishes shapes that differ only by field order', () => {
     const a: ClosureShape = {
       fields: [
-        { name: 'x', valueType: { type: 'int' } },
-        { name: 'y', valueType: { type: 'int' } },
+        { name: 'x', valueType: IR_INT },
+        { name: 'y', valueType: IR_INT },
       ],
     };
     const b: ClosureShape = {
       fields: [
-        { name: 'y', valueType: { type: 'int' } },
-        { name: 'x', valueType: { type: 'int' } },
+        { name: 'y', valueType: IR_INT },
+        { name: 'x', valueType: IR_INT },
       ],
     };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));

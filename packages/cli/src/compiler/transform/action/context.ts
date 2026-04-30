@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { GlobalDefinition, IRScriptParam, IRValueType } from '@espcompose/core/internals';
+import type { GlobalDefinition, IRScriptParam, IRType } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
 
 /** Info about a useScript() declaration visible to the action compiler. */
@@ -43,12 +43,12 @@ export interface ActionCompileResult {
   /** Set of controller variable names that need to be in __refBindings. */
   controllerRefs: Set<string>;
   /**
-   * Scalar captures: maps captured variable name → IRValueType.
+   * Scalar captures: maps captured variable name → IRType.
    * Populated when the action compiler encounters a non-literal identifier
    * in a position like `delay(durationMs)` and infers the value type from
    * the TypeScript type.
    */
-  scalarCaptures: Map<string, IRValueType>;
+  scalarCaptures: Map<string, IRType>;
 }
 
 export interface ActionCompilerContext {
@@ -80,12 +80,12 @@ export interface ActionCompilerContext {
   /** Set of controller variable names encountered in controller method calls. */
   controllerRefs: Set<string>;
   /**
-   * Scalar captures: maps captured variable name → IRValueType.
+   * Scalar captures: maps captured variable name → IRType.
    * Populated when the action compiler encounters a non-literal identifier
    * in a position like `delay(durationMs)` and infers the value type from
    * the TypeScript type.
    */
-  scalarCaptures: Map<string, IRValueType>;
+  scalarCaptures: Map<string, IRType>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

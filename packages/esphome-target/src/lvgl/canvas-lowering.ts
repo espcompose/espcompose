@@ -87,19 +87,24 @@ export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
 function walkIRWidgets(widgets: readonly IRWidget[], scenes: EcCanvasPaintScene[]): void {
   for (const widget of widgets) {
     if (widget.kind === 'ecCanvas') {
-      const ecCanvas = widget.props['ec_canvas'] as Record<string, unknown> | undefined;
-      if (ecCanvas) {
-        const canvasId = typeof ecCanvas.id === 'string' ? ecCanvas.id : 'ec_unknown';
-        const bgScene = Array.isArray(ecCanvas.backgroundScene)
-          ? extractPaintPrimitivesFromPlain(ecCanvas.backgroundScene)
-          : Array.isArray(ecCanvas.background_scene)
-            ? extractPaintPrimitivesFromPlain(ecCanvas.background_scene)
-            : [];
-        const ovScene = Array.isArray(ecCanvas.overlayScene)
-          ? extractPaintPrimitivesFromPlain(ecCanvas.overlayScene)
-          : Array.isArray(ecCanvas.overlay_scene)
-            ? extractPaintPrimitivesFromPlain(ecCanvas.overlay_scene)
-            : [];
+      const ecCanvasValue = widget.props['ec_canvas'];
+      if (ecCanvasValue && ecCanvasValue.kind === 'object') {
+        const ecObj = ecCanvasValue as IRObject;
+        const idEntry = ecObj.entries.find(e => e.key === 'id');
+        const canvasId = idEntry && idEntry.value.kind === 'scalar' && typeof idEntry.value.value === 'string'
+          ? idEntry.value.value
+          : 'ec_unknown';
+
+        const bgEntry = ecObj.entries.find(e => e.key === 'background_scene');
+        const bgScene = bgEntry && bgEntry.value.kind === 'array'
+          ? extractPaintPrimitivesFromIR((bgEntry.value as IRArray).items)
+          : [];
+
+        const ovEntry = ecObj.entries.find(e => e.key === 'overlay_scene');
+        const ovScene = ovEntry && ovEntry.value.kind === 'array'
+          ? extractPaintPrimitivesFromIR((ovEntry.value as IRArray).items)
+          : [];
+
         if (bgScene.length > 0 || ovScene.length > 0) {
           scenes.push({ canvasId, backgroundScene: bgScene, overlayScene: ovScene });
         }
@@ -110,27 +115,6 @@ function walkIRWidgets(widgets: readonly IRWidget[], scenes: EcCanvasPaintScene[
       walkIRWidgets(widget.children, scenes);
     }
   }
-}
-
-/**
- * Extract paint primitives from a plain array of primitive objects
- * (as produced by ec-canvas serialization in core).
- */
-function extractPaintPrimitivesFromPlain(items: unknown[]): PaintPrimitive[] {
-  const prims: PaintPrimitive[] = [];
-  for (const item of items) {
-    if (item == null || typeof item !== 'object') continue;
-    const obj = item as Record<string, unknown>;
-    const type = typeof obj.type === 'string' ? obj.type : undefined;
-    if (!type) continue;
-    const props: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      if (key === 'type') continue;
-      props[key] = value;
-    }
-    prims.push({ type, props });
-  }
-  return prims;
 }
 
 function walkIRWidgetsArray(items: IRValue[], scenes: EcCanvasPaintScene[]): void {

@@ -24,7 +24,7 @@ import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
-import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRValueType, ClosureShape, ClosureField, ClosureInstance, IRClosureValue } from '../ir/types';
+import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRType, ClosureShape, ClosureField, ClosureInstance, IRClosureValue } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
 import { throwCompileTimeOnly } from '../errors';
@@ -91,7 +91,7 @@ export interface ScriptHandle<A extends ScriptParamScalar[] = ScriptParamScalar[
 /** Compiled metadata injected by the AST transformer */
 interface CompiledScriptMeta {
   id: string;
-  userParams?: Array<{ name: string; valueType: IRValueType }>;
+  userParams?: Array<{ name: string; valueType: IRType }>;
   then: unknown[];
   /**
    * Deterministic FNV-1a body hash computed by the script
@@ -102,12 +102,12 @@ interface CompiledScriptMeta {
   /**
    * Scalar captures detected by the action compiler.
    *
-   * Maps captured variable name → IRValueType (inferred from the TS type at
+   * Maps captured variable name → IRType (inferred from the TS type at
    * AST transform time). At render time `useScript` reads the runtime value
    * from `__refBindings[name]` and creates a scalar `ClosureField` +
    * `IRClosureValue` for the closure table.
    */
-  scalarCaptures?: Record<string, IRValueType>;
+  scalarCaptures?: Record<string, IRType>;
 }
 
 /** Scalar types allowed as useScript user-defined parameters. */
@@ -240,7 +240,7 @@ function createScriptHandle<A extends ScriptParamScalar[]>(
 /** @internal exported for tests */
 export function classifyBindings(
   refBindings: Record<string, unknown>,
-  scalarCaptures?: Record<string, IRValueType>,
+  scalarCaptures?: Record<string, IRType>,
 ): ClosureShape {
   const fields: ClosureField[] = [];
   const names = Object.keys(refBindings).sort();
@@ -267,8 +267,8 @@ export function closureShapeSignature(shape: ClosureShape): string {
   return shape.fields.map((f) => `${f.name}:${valueTypeKey(f.valueType)}`).join(',');
 }
 
-/** Stable string key for an `IRValueType` — used in dedup signatures. */
-function valueTypeKey(vt: IRValueType): string {
+/** Stable string key for an `IRType` — used in dedup signatures. */
+function valueTypeKey(vt: IRType): string {
   let s = vt.type as string;
   if (vt.format) s += `:${vt.format}`;
   if (vt.isArray) s += '[]';
@@ -321,7 +321,7 @@ export function buildClosureRow(
 /** Convert a plain JS value to an IRClosureValue using the declared value type. */
 function scalarValueToClosureValue(
   value: unknown,
-  valueType: IRValueType,
+  valueType: IRType,
 ): IRClosureValue | null {
   switch (valueType.type) {
     case 'int':

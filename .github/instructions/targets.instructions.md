@@ -22,7 +22,7 @@ interface ComposeTarget {
 Core (`@espcompose/core`) is C++-free (see the invariant in
 `ir-types.instructions.md`). The target owns every mapping from IR to C++:
 
-- **`valueTypeToCpp(v: IRValueType): string`** — single source of truth for
+- **`valueTypeToCpp(v: IRType): string`** — single source of truth for
   IR scalar → C++ type strings (lives in
   `packages/esphome-target/src/value-type-cpp.ts`). Handles `format`
   (`id_ref` / `entity` → `const char*`) and `isArray`
@@ -37,7 +37,7 @@ Core (`@espcompose/core`) is C++-free (see the invariant in
   load that its table keys match the core set.
 
 If the target hits a case where the C++ representation cannot be derived from
-`IRValueType` + a semantic key, raise it as a blocker — never reintroduce a
+`IRType` + a semantic key, raise it as a blocker — never reintroduce a
 C++ string into core.
 
 ## ESPHome Target (`createEsphomeTarget()`)

@@ -29,7 +29,7 @@ import {
   compactObject,
 } from '../../serialize/capture';
 import { expandCssStyle } from '../style/mapping';
-import type { IRWidget } from '../../ir/widget-types';
+import type { RawIRWidget } from '../../ir/build';
 import { lvglWidgetToPlain, isLvglElement } from '../serialize';
 import { isWireframeEnabled, WIREFRAME_COLORS } from '../style/wireframe';
 
@@ -173,9 +173,9 @@ function serializePaintZone(
  */
 function serializeContentZone(
   el: EspComposeElement,
-): IRWidget[] {
+): RawIRWidget[] {
   const resolved = resolveCanvasChildren(el.props.children as EspComposeElement | EspComposeElement[] | undefined);
-  const widgets: IRWidget[] = [];
+  const widgets: RawIRWidget[] = [];
 
   for (const child of resolved) {
     if (typeof child.type === 'string' && isLvglElement(child.type)) {
@@ -193,7 +193,7 @@ function serializeContentZone(
  * The props contain the serialized ec-canvas payload (host props, scenes, widgets).
  * The target's LVGL emitter lowers this to the native { ec_canvas: {...} } YAML shape.
  */
-export function ecCanvasToPlain(el: EspComposeElement): IRWidget {
+export function ecCanvasToPlain(el: EspComposeElement): RawIRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 

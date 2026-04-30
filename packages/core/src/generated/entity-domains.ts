@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-import type { IRValueType } from '../ir/types.js';
+import type { IRType } from '../ir/types.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,7 +27,7 @@ export interface EntityActionDescriptor {
 export interface EntityDomainDescriptor {
   readonly domain: string;
   readonly sensorPlatform: SensorPlatform;
-  readonly valueType: IRValueType;
+  readonly valueType: IRType;
   readonly defaultState: string;
   readonly activeState: string | null;
   readonly uiCategory: UICategory;
@@ -47,7 +47,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   light: {
     domain: "light",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -65,7 +65,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   switch: {
     domain: "switch",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -81,7 +81,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   sensor: {
     domain: "sensor",
     sensorPlatform: "sensor",
-    valueType: {"type":"float"},
+    valueType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
@@ -95,7 +95,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   binary_sensor: {
     domain: "binary_sensor",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "binary",
@@ -109,7 +109,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   fan: {
     domain: "fan",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -125,7 +125,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   cover: {
     domain: "cover",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "closed",
     activeState: "open",
     uiCategory: "cover",
@@ -141,7 +141,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   number: {
     domain: "number",
     sensorPlatform: "sensor",
-    valueType: {"type":"float"},
+    valueType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
@@ -154,7 +154,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   select: {
     domain: "select",
     sensorPlatform: "text_sensor",
-    valueType: {"type":"string"},
+    valueType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
@@ -167,7 +167,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   text_sensor: {
     domain: "text_sensor",
     sensorPlatform: "text_sensor",
-    valueType: {"type":"string"},
+    valueType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
@@ -180,7 +180,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   button: {
     domain: "button",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "",
     activeState: null,
     uiCategory: "button",
@@ -193,7 +193,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   lock: {
     domain: "lock",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "locked",
     activeState: "unlocked",
     uiCategory: "toggleable",
@@ -208,7 +208,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   climate: {
     domain: "climate",
     sensorPlatform: "binary_sensor",
-    valueType: {"type":"bool"},
+    valueType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: null,
     uiCategory: "sensor",

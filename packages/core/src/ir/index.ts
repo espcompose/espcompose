@@ -7,6 +7,7 @@ export type {
   IRESPHomeData,
   IRESPComposeData,
   IRReactiveData,
+  IRComponent,
   IRSection,
   IRValue,
   IRScalar,
@@ -19,13 +20,13 @@ export type {
   IRAction,
   IRSecret,
   IRTriggerVar,
+  IRType,
   IRThemeData,
   IRScript,
   IRScriptParam,
   IRScriptParamRef,
   IRScalarType,
   IRScalarFormat,
-  IRValueType,
   ClosureField,
   ClosureFieldKind,
   ClosureShape,
@@ -45,10 +46,14 @@ export {
   irAction,
   irSecret,
   irTriggerVar,
+  irType,
+  IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
+  IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
+  IR_ID_REF, IR_ENTITY,
 } from './types';
 
 export { buildSemanticIR } from './build';
-export type { BuildSemanticIRInput } from './build';
+export type { BuildSemanticIRInput, RawIRWidget, RawIRWidgetTree, RawIROverlayTier, RawIROverlayContainer } from './build';
 
 export { serializeIRToJSON } from './serialize-json';
 

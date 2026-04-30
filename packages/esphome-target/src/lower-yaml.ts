@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Scalar } from 'yaml';
-import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRValueType } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRType } from '@espcompose/core/internals';
 import { getTriggerSignature } from '@espcompose/core/internals';
 import type { IRActionNode, IRWidgetTree, IRWidget } from '@espcompose/core/internals';
 import { injectHASensorImports, injectReactiveBindingsRuntime } from './codegen';
@@ -86,13 +86,13 @@ function restoreLambdaMarkersWithPrefix(value: unknown, prefix: string): unknown
 
 function resolveRefBindingsInValue(
   value: unknown,
-  refBindings: Record<string, unknown>,
+  refBindings: Record<string, string>,
 ): unknown {
   if (value === null || value === undefined) return value;
   if (typeof value === 'string') {
     const bound = refBindings[value];
-    if (bound !== undefined && typeof bound === 'object' && bound !== null && 'toString' in bound) {
-      return bound.toString();
+    if (bound !== undefined) {
+      return bound;
     }
     return value;
   }
@@ -108,9 +108,7 @@ function resolveRefBindingsInValue(
         // replace just the bare ref name, not wrapping in id().
         let code = v;
         for (const [refName, bound] of Object.entries(refBindings)) {
-          if (typeof bound === 'object' && bound !== null && 'toString' in bound) {
-            code = code.replaceAll(refName, bound.toString());
-          }
+          code = code.replaceAll(refName, bound);
         }
         obj[k] = code;
       } else {
@@ -251,6 +249,11 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: Acti
     case 'trigger_var':
       return createYamlLambda(`return ${(node as IRTriggerVar).name};`);
 
+    case 'type':
+      // IRType nodes are handled structurally by component lowering (e.g. globals).
+      // If one leaks into generic YAML emission, skip it.
+      return SKIP_ENTRY;
+
     case 'array':
       return (node as IRArray).items.map(item => irValueToYaml(item, ctx, actionCtx));
 
@@ -288,16 +291,6 @@ function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: Act
 // ── LVGL tree overlay action replacement ─────────────────────────────────
 
 /**
- * Detect whether a prop value is an action array (IRActionNode[]).
- */
-function isActionArrayProp(arr: unknown[]): boolean {
-  if (arr.length === 0) return false;
-  const first = arr[0];
-  return first !== null && typeof first === 'object' && 'kind' in first &&
-    typeof (first as Record<string, unknown>).kind === 'string';
-}
-
-/**
  * Walk an IRWidget subtree, counting action arrays and replacing them
  * using the muxed action map.
  */
@@ -307,14 +300,14 @@ function walkWidgetForActionReplacement(
   counter: { index: number },
   replacements: Map<string, IRActionNode[]>,
 ): void {
-  // Check each prop for action arrays
+  // Check each prop for IRAction values
   for (const key of Object.keys(widget.props)) {
     const val = widget.props[key];
-    if (Array.isArray(val) && isActionArrayProp(val)) {
+    if (val.kind === 'action') {
       const mapKey = `${templateKey}:${counter.index}`;
       const muxed = replacements.get(mapKey);
       if (muxed) {
-        (widget.props as Record<string, unknown>)[key] = muxed;
+        (widget.props as Record<string, IRValue>)[key] = { kind: 'action', actions: muxed } as IRValue;
       }
       counter.index++;
     }
@@ -482,6 +475,10 @@ export function lowerToYamlConfig(
       lowerLambda(body: string) {
         return createYamlLambda(body);
       },
+      lowerIRValue(value: IRValue) {
+        const result = irValueToYaml(value, cppCtx, actionCtx);
+        return result === SKIP_ENTRY ? undefined : result;
+      },
     };
 
     // Apply overlay mux action replacements to the LVGL tree's overlay tiers.
@@ -512,12 +509,18 @@ export function lowerToYamlConfig(
       if (!finalConfig[section]) {
         finalConfig[section] = [];
       }
-      // Globals components carry a target-agnostic `valueType: IRValueType`.
-      // Convert it here to the concrete C++ `type:` keyword that ESPHome expects.
-      let outConfig: Record<string, unknown> = comp.config;
-      if (section === 'globals' && 'valueType' in comp.config) {
-        const { valueType, id, ...rest } = comp.config as { valueType: IRValueType; id: unknown } & Record<string, unknown>;
-        outConfig = { id, type: valueTypeToCpp(valueType), ...rest };
+      // Lower IRValue config back to a plain object for YAML emission
+      let outConfig = irValueToYaml(comp.config) as Record<string, unknown>;
+      // Globals components carry a target-agnostic `valueType: IRType` node
+      // (kind: 'type'). irValueToYaml skips it via SKIP_ENTRY, so we extract
+      // the IRType directly from the config tree and convert to C++ type.
+      if (section === 'globals') {
+        const configObj = comp.config as IRObject;
+        const vtEntry = configObj.entries.find(e => e.key === 'valueType');
+        if (vtEntry && vtEntry.value.kind === 'type') {
+          const vt = vtEntry.value as IRType;
+          outConfig = { ...outConfig, type: valueTypeToCpp(vt) };
+        }
       }
       (finalConfig[section] as unknown[]).push(outConfig);
     }

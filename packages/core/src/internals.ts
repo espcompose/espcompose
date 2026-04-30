@@ -104,7 +104,7 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useG
 export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
-export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
+export type { IRHAEntity, IRBinding, ComponentRegistration } from './hooks/useReactiveScope';
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
 export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
@@ -179,13 +179,16 @@ export { isTriggerVar } from './actions/triggers';
 export { buildSemanticIR, serializeIRToJSON } from './ir/index';
 export {
   irSection, irScalar, irObject, irEntry, irArray, irNull,
-  irReactive, irRef, irAction, irSecret, irTriggerVar,
+  irReactive, irRef, irAction, irSecret, irTriggerVar, irType,
+  IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
+  IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
+  IR_ID_REF, IR_ENTITY,
 } from './ir/index';
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeData, IRScript,
+  BuildSemanticIRInput, IRThemeData, IRScript, IRComponent,
   IRScriptParam, IRScriptParamRef,
-  IRScalarType, IRScalarFormat, IRValueType,
+  IRScalarType, IRScalarFormat, IRType,
   ClosureField, ClosureFieldKind, ClosureShape, ClosureInstance, IRClosureValue,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,

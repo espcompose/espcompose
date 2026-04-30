@@ -88,7 +88,7 @@ export interface ThemeMemoDecl {
   /** C++ value type (e.g. `lv_color_t`, `int32_t`, `std::string`). */
   cppType: string;
   /** Ordered values across all themes, used to generate the static array. */
-  values: unknown[];
+  values: (string | number | boolean)[];
 }
 
 /** Declaration for a compiled trigger function (from device.inline/device.script). */

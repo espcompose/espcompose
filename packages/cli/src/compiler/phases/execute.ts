@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 import type { BuildSemanticIRInput, IRThemeData, ExecuteResult } from '@espcompose/core/internals';
-import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
+import { buildSemanticIR, scopeHash, irScalar } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -137,10 +137,10 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
     if (themeNames.length === 0) continue;
 
     const signalPaths: string[] = registry.getSignalPaths(scope);
-    const leafData = new Map<string, { values: unknown[]; valueType: string }>();
+    const leafData = new Map<string, { values: ReturnType<typeof irScalar>[]; valueType: string }>();
 
     for (const signalPath of signalPaths) {
-      const values: unknown[] = [];
+      const values: ReturnType<typeof irScalar>[] = [];
       let valueType = 'int';
       for (const name of themeNames) {
         const themes = registry.getThemes(scope);
@@ -148,10 +148,10 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
         if (thm) {
           const val = thm.values[signalPath];
           if (val) {
-            values.push(val.value);
+            values.push(irScalar(val.value as string | number | boolean));
             valueType = val.valueType;
           } else {
-            values.push(0);
+            values.push(irScalar(0));
           }
         }
       }

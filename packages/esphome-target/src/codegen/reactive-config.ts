@@ -15,7 +15,7 @@ import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
 import type { CppLoweringContext } from '../lowering';
 import type { IRExprNode } from '@espcompose/core';
 import { getExprChildren } from '@espcompose/core';
-import type { ExprType, IRValueType } from '@espcompose/core/internals';
+import type { ExprType, IRType, IRScalar } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 import { valueTypeToCpp } from '../lowering';
 import { sourceDomainToTrigger } from '../lowering';
@@ -157,7 +157,7 @@ export interface ThemeScopeData {
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
-  leafData: Map<string, { values: unknown[]; valueType: string }>;
+  leafData: Map<string, { values: IRScalar[]; valueType: string }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -230,7 +230,9 @@ export function buildRuntimeConfig(
   if (globalComponents) {
     for (const comp of globalComponents) {
       if (reactiveGlobalIds.has(comp.id)) {
-        const vt = comp.config.valueType as IRValueType | undefined;
+        // Extract IRType directly from the config tree (kind: 'type' node).
+        const vtEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'valueType');
+        const vt: IRType | undefined = vtEntry?.value?.kind === 'type' ? vtEntry.value as IRType : undefined;
         globalSignals.push({
           name: `sig_global_${comp.id}`,
           cppType: vt ? valueTypeToCpp(vt) : 'int',
@@ -400,7 +402,7 @@ export function buildRuntimeConfig(
       const sigName = scopedKey ? themeVarNames.get(scopedKey) ?? `thm_${scopedKey}` : `thm_unknown`;
       valueExpr = `${sigName}.get()`;
       // Look up leaf data from the matching scope
-      let leafData: { values: unknown[]; valueType: string } | undefined;
+      let leafData: { values: IRScalar[]; valueType: string } | undefined;
       if (themeIR?.scope && themePath && themes) {
         const scopeData = themes.find(s => s.scope === themeIR.scope);
         leafData = scopeData?.leafData.get(themePath);
@@ -444,7 +446,7 @@ export function buildRuntimeConfig(
         const memo: ThemeMemoDecl = {
           name: `thm_${scopeData.scopeId}_${signalPath}`,
           cppType: exprTypeToCpp(leafValueType),
-          values: leaf.values,
+          values: leaf.values.map(s => s.value),
         };
         allThemeMemos.push(memo);
         scopeMemos.push(memo);

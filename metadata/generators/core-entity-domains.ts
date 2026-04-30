@@ -21,7 +21,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     FILE_HEADER,
     '/* eslint-disable */',
     '',
-    "import type { IRValueType } from '../ir/types.js';",
+    "import type { IRType } from '../ir/types.js';",
     '',
     '// ── Types ────────────────────────────────────────────────────────────────────',
     '',
@@ -46,7 +46,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     'export interface EntityDomainDescriptor {',
     '  readonly domain: string;',
     '  readonly sensorPlatform: SensorPlatform;',
-    '  readonly valueType: IRValueType;',
+    '  readonly valueType: IRType;',
     '  readonly defaultState: string;',
     '  readonly activeState: string | null;',
     '  readonly uiCategory: UICategory;',
@@ -70,7 +70,7 @@ export function generateCoreEntityDomains(domains: DomainMap, repoRoot: string):
     lines.push(`  ${name}: {`);
     lines.push(`    domain: ${JSON.stringify(name)},`);
     lines.push(`    sensorPlatform: ${JSON.stringify(desc.sensorPlatform)},`);
-    lines.push(`    valueType: ${JSON.stringify(desc.valueType)},`);
+    lines.push(`    valueType: ${JSON.stringify({ kind: 'type', ...desc.valueType })},`);
     lines.push(`    defaultState: ${JSON.stringify(desc.defaultState)},`);
     lines.push(`    activeState: ${JSON.stringify(desc.activeState)},`);
     lines.push(`    uiCategory: ${JSON.stringify(desc.uiCategory)},`);

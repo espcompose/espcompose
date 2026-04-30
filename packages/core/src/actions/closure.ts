@@ -10,7 +10,8 @@
 // in useScript or the compiler.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ClosureField, IRClosureValue, IRValueType } from '../ir/types';
+import type { ClosureField, IRClosureValue, IRType } from '../ir/types';
+import { IR_ID_REF, IR_INT } from '../ir/types';
 import { isRef } from '../types';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ export interface ClosureDescriptor<T = unknown> {
    * only used for diagnostics; the authoritative type comes from the
    * `ClosureField` returned by `toClosureField`.
    */
-  valueType?: IRValueType;
+  valueType?: IRType;
 
   /**
    * Declare the closure-table column for this binding. The `bindingName`
@@ -105,10 +106,10 @@ export const overlayControllerDescriptor: ClosureDescriptor<OverlayControllerInt
     return `overlay:${v.__templateKey}`;
   },
 
-  valueType: { type: 'int' },
+  valueType: IR_INT,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_instance_index`, valueType: { type: 'int' } };
+    return { name: `${bindingName}_instance_index`, valueType: IR_INT };
   },
 
   toClosureValue(v) {
@@ -135,10 +136,10 @@ export const scriptHandleDescriptor: ClosureDescriptor<ScriptHandleLike> = {
     return `script:${v.id}`;
   },
 
-  valueType: { type: 'int', format: 'id_ref' },
+  valueType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, valueType: { type: 'int', format: 'id_ref' } };
+    return { name: `${bindingName}_idx`, valueType: IR_ID_REF };
   },
 
   toClosureValue(v) {
@@ -157,10 +158,10 @@ export const refDescriptor: ClosureDescriptor<{ toString(): string }> = {
     return `ref:${v.toString()}`;
   },
 
-  valueType: { type: 'int', format: 'id_ref' },
+  valueType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, valueType: { type: 'int', format: 'id_ref' } };
+    return { name: `${bindingName}_idx`, valueType: IR_ID_REF };
   },
 
   toClosureValue(v) {

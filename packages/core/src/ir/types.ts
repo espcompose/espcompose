@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRReactiveNode } from '../reactive';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
+import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
 import type { IRWidgetTree } from './widget-types';
 
@@ -22,11 +22,11 @@ import type { IRWidgetTree } from './widget-types';
 export type ScriptMode = 'single' | 'restart' | 'queued' | 'parallel';
 
 // ────────────────────────────────────────────────────────────────────────────
-// IRValueType — target-agnostic value type descriptor
+// IRType — target-agnostic value type descriptor
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Base scalar type. Always present on `IRValueType`. Target-agnostic — the
+ * Base scalar type. Always present on `IRType`. Target-agnostic — the
  * lowering target (e.g. esphome-target) maps these to concrete C++ types.
  */
 export type IRScalarType = 'int' | 'float' | 'bool' | 'string';
@@ -44,7 +44,7 @@ export type IRScalarFormat = 'id_ref' | 'entity';
  * Target-agnostic value type descriptor used throughout the IR.
  *
  * Replaces ad-hoc backend-specific type strings. The lowering target owns the
- * mapping from `IRValueType` to its concrete representation.
+ * mapping from `IRType` to its concrete representation.
  *
  * Examples (logical):
  *   { type: 'int' }                              → integer scalar
@@ -52,7 +52,8 @@ export type IRScalarFormat = 'id_ref' | 'entity';
  *   { type: 'string', format: 'id_ref' }         → identifier reference
  *   { type: 'float', isArray: true }             → float array
  */
-export interface IRValueType {
+export interface IRType {
+  readonly kind: 'type';
   /** Base scalar — always present. */
   readonly type: IRScalarType;
   /** Semantic qualifier (e.g. `'id_ref'`). Optional. */
@@ -66,7 +67,7 @@ export interface IRScriptParam {
   /** Parameter name (used as identifier in the script body). */
   name: string;
   /** Target-agnostic value type. The lowering target maps this to a concrete type. */
-  valueType: IRValueType;
+  valueType: IRType;
 }
 
 /**
@@ -96,7 +97,7 @@ export interface IRScriptParamRef {
  *   - 'entity'  : Home Assistant entity id. Same storage as id_ref; entity-
  *                 specific actions get rewritten via descriptor.
  *
- * @deprecated Subsumed by `IRValueType.format`. Retained transitionally.
+ * @deprecated Subsumed by `IRType.format`. Retained transitionally.
  */
 export type ClosureFieldKind = 'scalar' | 'id_ref' | 'entity';
 
@@ -118,7 +119,7 @@ export interface ClosureField {
    *   { type: 'int', format: 'id_ref' }     — index into id-ref lookup table
    *   { type: 'string', format: 'entity' }  — HA entity id
    */
-  valueType: IRValueType;
+  valueType: IRType;
 }
 
 /** The deterministic, ordered shape of a script's closure table. */
@@ -190,7 +191,24 @@ export interface IRThemeData {
   themeNames: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + value type (ExprType compatible). */
-  leafData: Map<string, { values: unknown[]; valueType: string }>;
+  leafData: Map<string, { values: IRScalar[]; valueType: string }>;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Resolved component (config values converted to IRValue tree)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * A component definition (image, font, etc.) with its config resolved to
+ * IRValue. The raw `IRComponent` from the hooks layer has
+ * `config: Record<string, unknown>`; this resolved version wraps config
+ * values in the IRValue tree for consistent typing.
+ */
+export interface IRComponent {
+  readonly kind: 'component';
+  section: string;
+  id: string;
+  config: IRValue;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -209,7 +227,7 @@ export interface IRESPHomeData {
   /** HA entities for auto-generated sensor imports */
   haEntities: IRHAEntity[];
 
-  /** Component definitions (images, fonts) for injection */
+  /** Component definitions (images, fonts) with resolved configs */
   components: IRComponent[];
 
   /** Named script definitions from useScript() */
@@ -301,7 +319,8 @@ export type IRValue =
   | IRRef
   | IRAction
   | IRSecret
-  | IRTriggerVar;
+  | IRTriggerVar
+  | IRType;
 
 /** A literal scalar value (string, number, boolean). */
 export interface IRScalar {
@@ -369,8 +388,8 @@ export interface IRAction {
   kind: 'action';
   /** The raw compiled action tree (pre-ref-resolution). */
   actions: IRActionNode[];
-  /** Variable name → Ref mappings for resolving ref references in actions. */
-  refBindings?: Record<string, unknown>;
+  /** Variable name → resolved ref token string for resolving ref references in actions. */
+  refBindings?: Record<string, string>;
 }
 
 /**
@@ -429,7 +448,12 @@ export function irRef(token: string): IRRef {
 }
 
 export function irAction(actions: IRActionNode[], refBindings?: Record<string, unknown>): IRAction {
-  return { kind: 'action', actions, ...(refBindings ? { refBindings } : {}) };
+  if (!refBindings) return { kind: 'action', actions };
+  const resolved: Record<string, string> = {};
+  for (const [k, v] of Object.entries(refBindings)) {
+    if (v != null) resolved[k] = String(v);
+  }
+  return { kind: 'action', actions, ...(Object.keys(resolved).length > 0 ? { refBindings: resolved } : {}) };
 }
 
 export function irSecret(key: string): IRSecret {
@@ -439,4 +463,33 @@ export function irSecret(key: string): IRSecret {
 export function irTriggerVar(name: string): IRTriggerVar {
   return { kind: 'trigger_var', name };
 }
+
+export function irType(type: IRScalarType, opts?: { format?: IRScalarFormat; isArray?: boolean }): IRType {
+  return { kind: 'type', type, ...(opts?.format ? { format: opts.format } : {}), ...(opts?.isArray ? { isArray: true } : {}) };
+}
+
+// ── Well-known IRType constants ─────────────────────────────────────────────
+
+/** `int` scalar */
+export const IR_INT = { kind: 'type', type: 'int' } as const satisfies IRType;
+/** `float` scalar */
+export const IR_FLOAT = { kind: 'type', type: 'float' } as const satisfies IRType;
+/** `bool` scalar */
+export const IR_BOOL = { kind: 'type', type: 'bool' } as const satisfies IRType;
+/** `string` scalar */
+export const IR_STRING = { kind: 'type', type: 'string' } as const satisfies IRType;
+
+/** `int` array */
+export const IR_INT_ARRAY = { kind: 'type', type: 'int', isArray: true } as const satisfies IRType;
+/** `float` array */
+export const IR_FLOAT_ARRAY = { kind: 'type', type: 'float', isArray: true } as const satisfies IRType;
+/** `bool` array */
+export const IR_BOOL_ARRAY = { kind: 'type', type: 'bool', isArray: true } as const satisfies IRType;
+/** `string` array */
+export const IR_STRING_ARRAY = { kind: 'type', type: 'string', isArray: true } as const satisfies IRType;
+
+/** `int` with `id_ref` format — ESPHome component/widget ID reference */
+export const IR_ID_REF = { kind: 'type', type: 'int', format: 'id_ref' } as const satisfies IRType;
+/** `string` with `entity` format — Home Assistant entity ID */
+export const IR_ENTITY = { kind: 'type', type: 'string', format: 'entity' } as const satisfies IRType;
 

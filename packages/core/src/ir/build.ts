@@ -13,15 +13,17 @@
 // Values without captures are classified as scalars, objects, arrays, or null.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
+import type { IRBinding, IRHAEntity, ComponentRegistration } from '../hooks';
 import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
-import type { IRWidgetTree } from './widget-types';
+import type { IRWidget, IRWidgetTree, IROverlayTier } from './widget-types';
 import type {
   SemanticIR,
   IRSection,
   IRValue,
+  IRType,
+  IRComponent,
   IRThemeData,
   IRScriptParam,
   ScriptMode,
@@ -99,6 +101,11 @@ function configValueToIR(val: unknown, ctx: WalkContext): IRValue {
     if (actionMeta) {
       return irAction(actionMeta.rawActions, actionMeta.refBindings);
     }
+
+    // IRType value (target-agnostic type descriptor with kind: 'type')
+    if ('kind' in val && (val as Record<string, unknown>).kind === 'type') {
+      return val as IRType;
+    }
   }
 
   // ── Check capture map for ref token strings ────────────────────────────
@@ -144,6 +151,80 @@ function convertObject(obj: Record<string, unknown>, ctx: WalkContext): IRValue 
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Widget tree resolution — resolve raw props through configValueToIR()
+// ────────────────────────────────────────────────────────────────────────────
+
+function resolveWidgetProps(props: Record<string, unknown>, ctx: WalkContext): Record<string, IRValue> {
+  const resolved: Record<string, IRValue> = {};
+  for (const [key, val] of Object.entries(props)) {
+    if (val === undefined) continue;
+    const irVal = configValueToIR(val, ctx);
+    if (irVal.kind === 'null') continue;
+    resolved[key] = irVal;
+  }
+  return resolved;
+}
+
+function resolveWidget(widget: RawIRWidget, ctx: WalkContext): IRWidget {
+  // ecCanvas stores embedded RawIRWidget objects inside its `ec_canvas.widgets`
+  // prop. Extract them as proper IRWidget children instead of flattening into IRValue.
+  if (widget.kind === 'ecCanvas') {
+    return resolveEcCanvasWidget(widget, ctx);
+  }
+  return {
+    kind: widget.kind,
+    id: widget.id,
+    props: resolveWidgetProps(widget.props, ctx),
+    children: widget.children.map(c => resolveWidget(c, ctx)),
+  };
+}
+
+function resolveEcCanvasWidget(widget: RawIRWidget, ctx: WalkContext): IRWidget {
+  const ecCanvasRaw = widget.props['ec_canvas'] as Record<string, unknown> | undefined;
+
+  // Extract embedded widgets before resolution
+  const embeddedWidgets: RawIRWidget[] = [];
+  if (ecCanvasRaw && Array.isArray(ecCanvasRaw.widgets)) {
+    embeddedWidgets.push(...(ecCanvasRaw.widgets as RawIRWidget[]));
+    // Remove widgets from the raw props so they don't get flattened into IRObject
+    const { widgets: _removed, ...ecCanvasWithoutWidgets } = ecCanvasRaw;
+    const propsWithoutEmbeddedWidgets = { ...widget.props, ec_canvas: ecCanvasWithoutWidgets };
+    return {
+      kind: widget.kind,
+      id: widget.id,
+      props: resolveWidgetProps(propsWithoutEmbeddedWidgets, ctx),
+      children: embeddedWidgets.map(w => resolveWidget(w, ctx)),
+    };
+  }
+
+  return {
+    kind: widget.kind,
+    id: widget.id,
+    props: resolveWidgetProps(widget.props, ctx),
+    children: widget.children.map(c => resolveWidget(c, ctx)),
+  };
+}
+
+function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROverlayTier[] {
+  return tiers.map(tier => ({
+    zOrder: tier.zOrder,
+    overlays: tier.overlays.map(overlay => ({
+      templateKey: overlay.templateKey,
+      widgets: overlay.widgets.map(w => resolveWidget(w, ctx)),
+    })),
+  }));
+}
+
+function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRWidgetTree {
+  return {
+    props: resolveWidgetProps(tree.props, ctx),
+    pages: tree.pages.map(p => resolveWidget(p, ctx)),
+    widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
+    overlayTiers: resolveOverlayTiers(tree.overlayTiers, ctx),
+  };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Public API
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -161,7 +242,7 @@ export interface BuildSemanticIRInput {
   entities: IRHAEntity[];
 
   /** Component definitions (images, fonts) */
-  components: IRComponent[];
+  components: ComponentRegistration[];
 
   /** Named script definitions from useScript() */
   scripts: Array<{
@@ -180,8 +261,38 @@ export interface BuildSemanticIRInput {
   /** Theme scope data from the theme registry */
   themes?: IRThemeData[];
 
-  /** LVGL widget trees collected during render (one per `<lvgl>` element). */
-  lvglTrees?: IRWidgetTree[];
+  /**
+   * LVGL widget trees collected during render (one per `<lvgl>` element).
+   * Props are unresolved (`Record<string, unknown>`) — they will be resolved
+   * through `configValueToIR()` inside `buildSemanticIR()`.
+   */
+  lvglTrees?: RawIRWidgetTree[];
+}
+
+/** Pre-resolution widget tree shape (props are `Record<string, unknown>`). */
+export interface RawIRWidget {
+  readonly kind: string;
+  readonly id?: string;
+  readonly props: Record<string, unknown>;
+  readonly children: RawIRWidget[];
+}
+
+/** Pre-resolution widget tree shape (props are `Record<string, unknown>`). */
+export interface RawIRWidgetTree {
+  readonly props: Record<string, unknown>;
+  readonly pages: RawIRWidget[];
+  readonly widgets: RawIRWidget[];
+  readonly overlayTiers: RawIROverlayTier[];
+}
+
+export interface RawIROverlayTier {
+  readonly zOrder: number;
+  readonly overlays: RawIROverlayContainer[];
+}
+
+export interface RawIROverlayContainer {
+  readonly templateKey: string;
+  readonly widgets: RawIRWidget[];
 }
 
 /**
@@ -205,15 +316,28 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
     irSection(key, configValueToIR(value, ctx)),
   );
 
+  // Resolve LVGL widget tree props through the same capture-based pipeline
+  const resolvedLvglTree = input.lvglTrees?.[0]
+    ? resolveWidgetTree(input.lvglTrees[0], ctx)
+    : undefined;
+
+  // Resolve component configs — wrap raw values in IRValue
+  const resolvedComponents: IRComponent[] = input.components.map(c => ({
+    kind: 'component' as const,
+    section: c.section,
+    id: c.id,
+    config: convertObject(c.config, ctx),
+  }));
+
   return {
     kind: 'semantic_ir' as const,
     esphome: {
       kind: 'esphome_data' as const,
       sections,
       haEntities: input.entities,
-      components: input.components,
+      components: resolvedComponents,
       scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
-      lvglTree: input.lvglTrees?.[0],
+      lvglTree: resolvedLvglTree,
     },
     espcompose: {
       kind: 'espcompose_data' as const,

@@ -14,7 +14,8 @@
 import { useContext } from './useContext';
 import { assertHookContext } from './useState';
 import { registerComponent } from './useReactiveScope';
-import type { IRValueType } from '../ir/types';
+import type { IRType } from '../ir/types';
+import { IR_BOOL, IR_FLOAT, IR_INT, IR_STRING } from '../ir/types';
 import {
   type GlobalDefinition,
   type GlobalHandle,
@@ -43,14 +44,14 @@ export interface RetainedGlobalOptions<TK extends RetainedGlobalType> {
   maxRestoreDataLength?: TK extends 'string' ? number : never;
 }
 
-// ── Token → IRValueType mapping ─────────────────────────────────────────────
+// ── Token → IRType mapping ─────────────────────────────────────────────
 
-function retainedTypeToValueType(token: RetainedGlobalType): IRValueType {
+function retainedTypeToValueType(token: RetainedGlobalType): IRType {
   switch (token) {
-    case 'boolean': return { type: 'bool' };
-    case 'integer': return { type: 'int' };
-    case 'float':   return { type: 'float' };
-    case 'string':  return { type: 'string' };
+    case 'boolean': return IR_BOOL;
+    case 'integer': return IR_INT;
+    case 'float':   return IR_FLOAT;
+    case 'string':  return IR_STRING;
   }
 }
 

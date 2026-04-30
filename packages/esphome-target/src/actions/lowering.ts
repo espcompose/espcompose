@@ -15,8 +15,9 @@ import type {
   IRExprNode,
   IRNativeAction,
   IRRefSlot,
-  IRValueType,
+  IRType,
 } from '@espcompose/core/internals';
+import { IR_INT } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from '../lowering';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
 import { valueTypeToCpp } from '../lowering';
@@ -163,7 +164,7 @@ function lowerCondition(condition: IRCondition, ctx: ActionLoweringContext): unk
  * Lower the value of a global_set action to a C++ expression string.
  * Handles IRActionParam (literal, trigger_var) and IRExprNode (compiled expression).
  */
-function lowerGlobalSetValue(value: IRActionParam | IRExprNode, valueType: IRValueType, ctx: ActionLoweringContext): string {
+function lowerGlobalSetValue(value: IRActionParam | IRExprNode, valueType: IRType, ctx: ActionLoweringContext): string {
   const cppType = valueTypeToCpp(valueType);
   if (typeof value === 'object' && value !== null && 'kind' in value) {
     switch (value.kind) {
@@ -495,7 +496,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     }
 
     case 'array_set': {
-      const idxStr = lowerGlobalSetValue(action.index, { type: 'int' }, ctx);
+      const idxStr = lowerGlobalSetValue(action.index, IR_INT, ctx);
       const valStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;

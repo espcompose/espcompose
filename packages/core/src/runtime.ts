@@ -21,7 +21,7 @@ import {
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
 import { ecCanvasToPlain, isEcCanvasElement } from './lvgl';
-import type { IRWidgetTree } from './ir/widget-types';
+import type { RawIRWidgetTree } from './ir/build';
 import {
   clearThemeRegistry,
   getThemeRegistry,
@@ -34,9 +34,9 @@ import { setWireframeEnabled, clearWireframe } from './lvgl/style';
 // LVGL widget tree capture
 // ────────────────────────────────────────────────────────────────────────────
 
-let _lvglTrees: IRWidgetTree[] = [];
+let _lvglTrees: RawIRWidgetTree[] = [];
 
-function getLvglTrees(): IRWidgetTree[] {
+function getLvglTrees(): RawIRWidgetTree[] {
   return _lvglTrees;
 }
 

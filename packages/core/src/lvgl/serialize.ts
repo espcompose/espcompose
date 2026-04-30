@@ -34,7 +34,7 @@ import {
   setCurrentSource,
 } from '../serialize';
 import { expandCssStyle } from './style';
-import type { IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier } from '../ir/widget-types';
+import type { RawIRWidget, RawIRWidgetTree, RawIROverlayContainer, RawIROverlayTier } from '../ir/build';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
 
@@ -225,7 +225,7 @@ function hoistStyleProp(data: Record<string, unknown>): void {
  * Returns a semantic `IRWidget` with camelCase props. The target lowers
  * this to the ESPHome YAML shape during the emit phase.
  */
-export function lvglWidgetToPlain(el: EspComposeElement): IRWidget {
+export function lvglWidgetToPlain(el: EspComposeElement): RawIRWidget {
   return buildLvglWidgetIR(el);
 }
 
@@ -235,7 +235,7 @@ export function lvglWidgetToPlain(el: EspComposeElement): IRWidget {
  * registration, overlay action capture) happen here, mirroring the order of
  * the legacy single-pass implementation so snapshot bytes stay identical.
  */
-function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
+function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
@@ -272,9 +272,9 @@ function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
   }
 
   const widgetChildren = resolveLvglChildren(children);
-  const childNodes: IRWidget[] = widgetChildren
+  const childNodes: RawIRWidget[] = widgetChildren
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
-    .map((c): IRWidget =>
+    .map((c): RawIRWidget =>
       typeof c.type === 'string' && isEcCanvasElement(c.type)
         ? ecCanvasToPlain(c)
         : buildLvglWidgetIR(c),
@@ -344,7 +344,7 @@ function buildLvglWidgetIR(el: EspComposeElement): IRWidget {
  * Returns a target-neutral `IRWidgetTree` containing semantic camelCase
  * widget data. The target lowers this to YAML during the emit phase.
  */
-export function buildLvglSection(el: EspComposeElement): IRWidgetTree {
+export function buildLvglSection(el: EspComposeElement): RawIRWidgetTree {
   return buildLvglWidgetTree(el);
 }
 
@@ -356,10 +356,10 @@ export function buildLvglSection(el: EspComposeElement): IRWidgetTree {
  * reactive bindings / overlay action metadata along the way (same side
  * effects and ordering as the legacy single-pass implementation).
  */
-export function buildLvglWidgetTree(el: EspComposeElement): IRWidgetTree {
+export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
   setCurrentSource(el.__source);
   // Capture the raw ref before extractElementProps converts it to an id string.
-  let lvglRef = (el.props as Record<string, unknown>).ref as Ref<LvglComponentRef> | undefined;
+  let lvglRef = el.props.ref as Ref<LvglComponentRef> | undefined;
 
   // Auto-create a ref when <lvgl> has no explicit ref prop, so useLvgl()
   // works even when the user doesn't need the ref at the call site.
@@ -373,8 +373,8 @@ export function buildLvglWidgetTree(el: EspComposeElement): IRWidgetTree {
   // Push the lvgl ref into context so useLvgl() returns it inside the tree.
   return withContext(LvglContext, lvglRef, () => {
     const resolved = resolveLvglChildren(children);
-    const pages: IRWidget[] = [];
-    const topWidgets: IRWidget[] = [];
+    const pages: RawIRWidget[] = [];
+    const topWidgets: RawIRWidget[] = [];
 
     for (const child of resolved) {
       if (child.type === 'lvgl-page') {
@@ -408,13 +408,13 @@ export function buildLvglWidgetTree(el: EspComposeElement): IRWidgetTree {
  * for the binding registry (today's behaviour; switched to camelCase by a
  * later substep).
  */
-function buildLvglPageIR(child: EspComposeElement): IRWidget {
+function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
   setCurrentSource(child.__source);
   const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
   const pageResolved = resolveLvglChildren(pageChildren);
-  const pageChildIR: IRWidget[] = pageResolved
+  const pageChildIR: RawIRWidget[] = pageResolved
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
-    .map((c): IRWidget =>
+    .map((c): RawIRWidget =>
       typeof c.type === 'string' && isEcCanvasElement(c.type)
         ? ecCanvasToPlain(c)
         : buildLvglWidgetIR(c),
@@ -469,11 +469,11 @@ function buildLvglPageIR(child: EspComposeElement): IRWidget {
  * `OverlayInstance` for the codegen mux pass and are not emitted into the
  * widget tree.
  */
-function collectOverlayTiers(): IROverlayTier[] {
+function collectOverlayTiers(): RawIROverlayTier[] {
   const overlays = peekOverlayDefinitions();
   if (overlays.length === 0) return [];
 
-  const tierMap = new Map<number, IROverlayContainer[]>();
+  const tierMap = new Map<number, RawIROverlayContainer[]>();
   for (const def of overlays) {
     assertOverlayStructuralIdentity(def.templateKey, def.instances);
 
@@ -497,7 +497,7 @@ function collectOverlayTiers(): IROverlayTier[] {
       const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
         withReactiveScope(() => {
           const resolved = resolveLvglChildren(renderedArr);
-          const widgetIR: IRWidget[] = [];
+          const widgetIR: RawIRWidget[] = [];
           for (const ch of resolved) {
             if (isLvglElement(ch.type)) {
               widgetIR.push(buildLvglWidgetIR(ch));

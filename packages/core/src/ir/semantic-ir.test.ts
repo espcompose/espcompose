@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { IRReactiveNode } from '../reactive';
 import { RefHandle } from '../types';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks';
+import type { IRBinding, IRHAEntity, ComponentRegistration } from '../hooks';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
+import { irScalar } from './types';
 import { irTernary } from './expr-builders.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -317,7 +318,7 @@ describe('buildSemanticIR', () => {
       semanticId: 'ha_entity:light.kitchen',
     };
 
-    const component: IRComponent = {
+    const component: ComponentRegistration = {
       kind: 'component',
       section: 'image',
       id: 'img_1',
@@ -338,12 +339,24 @@ describe('buildSemanticIR', () => {
         scopeId: 'abcd1234',
         themeNames: ['light', 'dark'],
         defaultIndex: 0,
-        leafData: new Map([['colors_primary', { values: [0xFF0000, 0x0000FF], valueType: 'int' }]]),
+        leafData: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], valueType: 'int' }]]),
       }],
     });
 
     expect(ir.esphome.haEntities).toEqual([entity]);
-    expect(ir.esphome.components).toEqual([component]);
+    expect(ir.esphome.components).toEqual([{
+      kind: 'component',
+      section: 'image',
+      id: 'img_1',
+      config: {
+        kind: 'object',
+        entries: [
+          { kind: 'entry', key: 'id', value: { kind: 'scalar', value: 'img_1' } },
+          { kind: 'entry', key: 'file', value: { kind: 'scalar', value: './bg.png' } },
+          { kind: 'entry', key: 'type', value: { kind: 'scalar', value: 'RGB565' } },
+        ],
+      },
+    }]);
     expect(ir.esphome.scripts).toHaveLength(1);
     expect(ir.espcompose.themes?.[0].themeNames).toEqual(['light', 'dark']);
   });

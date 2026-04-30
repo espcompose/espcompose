@@ -13,7 +13,7 @@
 
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRValueType } from '@espcompose/core/internals';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType } from '@espcompose/core/internals';
 import {
   getDomainSensorType, hashGlobalFingerprint, globalTypeToValueType, valueTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
@@ -74,7 +74,7 @@ export interface DependencyInfo {
 export interface GlobalExprInfo {
   globalId: string;
   /** Target-agnostic value type. The lowering target maps this to a concrete representation. */
-  valueType: IRValueType;
+  valueType: IRType;
   /** ExprType for the IR node, e.g. 'int', 'float', 'bool', 'string'. */
   exprType: ExprType;
 }
@@ -1063,7 +1063,7 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
  * Cast a SignalPropertyInfo.valueType string to ExprType. Since these
  * strings are already ExprType-aligned, this is essentially an identity
  * function with validation. Distinct from core's `valueTypeToExprType`,
- * which takes an `IRValueType` object.
+ * which takes an `IRType` object.
  */
 function signalValueTypeToExprType(valueType: string): ExprType {
   const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ref', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;

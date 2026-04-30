@@ -26,7 +26,8 @@ import { registerComponent } from './useReactiveScope';
 import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
 import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
-import type { IRValueType } from '../ir/types';
+import type { IRType } from '../ir/types';
+import { IR_BOOL, IR_BOOL_ARRAY, IR_FLOAT, IR_FLOAT_ARRAY, IR_INT, IR_INT_ARRAY, IR_STRING, IR_STRING_ARRAY } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { throwCompileTimeOnly } from '../errors';
 import {
@@ -108,16 +109,16 @@ export interface GlobalArrayHandle<T> {
  * target-agnostic `IRValueType`. Exported from internals for use by
  * compiler scanners.
  */
-export function globalTypeToValueType(token: GlobalType): IRValueType {
+export function globalTypeToValueType(token: GlobalType): IRType {
   switch (token) {
-    case 'boolean':    return { type: 'bool' };
-    case 'integer':    return { type: 'int' };
-    case 'float':      return { type: 'float' };
-    case 'string':     return { type: 'string' };
-    case 'boolean[]':  return { type: 'bool',   isArray: true };
-    case 'integer[]':  return { type: 'int',    isArray: true };
-    case 'float[]':    return { type: 'float',  isArray: true };
-    case 'string[]':   return { type: 'string', isArray: true };
+    case 'boolean':    return IR_BOOL;
+    case 'integer':    return IR_INT;
+    case 'float':      return IR_FLOAT;
+    case 'string':     return IR_STRING;
+    case 'boolean[]':  return IR_BOOL_ARRAY;
+    case 'integer[]':  return IR_INT_ARRAY;
+    case 'float[]':    return IR_FLOAT_ARRAY;
+    case 'string[]':   return IR_STRING_ARRAY;
   }
 }
 
@@ -203,7 +204,7 @@ export function useGlobal<TK extends GlobalType>(
 
 function createGlobalArrayHandle<T>(
   id: string,
-  _valueType: IRValueType,
+  _valueType: IRType,
   exprType: ExprType,
 ): GlobalArrayHandle<T> {
   let cachedNode: IRReactiveNode<T[]> | undefined;

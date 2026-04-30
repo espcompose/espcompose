@@ -8,7 +8,7 @@ import { createContext, withContext } from './useContext';
 import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
 import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
-import type { IRValueType } from '../ir/types';
+import type { IRType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
 
@@ -18,7 +18,7 @@ import type { BINDING_BRAND } from '../types';
 export interface GlobalDefinition {
   id: string;
   /** Target-agnostic value type. The lowering target maps this to a concrete representation. */
-  valueType: IRValueType;
+  valueType: IRType;
 }
 
 // ── GlobalHandle ───────────────────────────────────────────────────────────
@@ -40,13 +40,13 @@ export interface GlobalHandle<T> {
   readonly id: string;
 }
 
-// ── IRValueType → ExprType mapping ─────────────────────────────────────────
+// ── IRType → ExprType mapping ─────────────────────────────────────────
 
 /**
- * Map a target-agnostic `IRValueType` to the corresponding `ExprType`
+ * Map a target-agnostic `IRType` to the corresponding `ExprType`
  * used by the IR expression layer.
  */
-export function valueTypeToExprType(vt: IRValueType): ExprType {
+export function valueTypeToExprType(vt: IRType): ExprType {
   if (vt.isArray) {
     switch (vt.type) {
       case 'int':    return 'int_array';
@@ -123,7 +123,7 @@ export function withGlobalScope<T>(fn: () => T): { result: T; globals: GlobalDef
 
 export function createGlobalHandle<T>(
   id: string,
-  _valueType: IRValueType,
+  _valueType: IRType,
   exprType: ExprType,
 ): GlobalHandle<T> {
   let cachedNode: IRReactiveNode<T> | undefined;

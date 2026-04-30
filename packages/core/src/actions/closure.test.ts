@@ -5,6 +5,7 @@ import {
   scriptHandleDescriptor,
   identityDescriptor,
 } from './closure';
+import { IR_ID_REF, IR_INT } from '../ir/types';
 
 // ── Mock helpers ────────────────────────────────────────────────────────────
 
@@ -111,18 +112,18 @@ describe('findClosureDescriptor', () => {
 describe('ClosureDescriptor — canonical protocol (toClosureField/toClosureValue)', () => {
   it('overlay controller declares scalar instance_index field', () => {
     const ctrl = makeOverlayCtrl('toast_abc', 7);
-    expect(overlayControllerDescriptor.valueType).toEqual({ type: 'int' });
+    expect(overlayControllerDescriptor.valueType).toEqual(IR_INT);
     const field = overlayControllerDescriptor.toClosureField?.('myCtrl', ctrl);
-    expect(field).toEqual({ name: 'myCtrl_instance_index', valueType: { type: 'int' } });
+    expect(field).toEqual({ name: 'myCtrl_instance_index', valueType: IR_INT });
     expect(overlayControllerDescriptor.toClosureValue?.(ctrl))
       .toEqual({ kind: 'int', value: 7 });
   });
 
   it('script handle declares id_ref field with int storage (index into lookup table)', () => {
     const handle = makeScriptHandle('activate');
-    expect(scriptHandleDescriptor.valueType).toEqual({ type: 'int', format: 'id_ref' });
+    expect(scriptHandleDescriptor.valueType).toEqual(IR_ID_REF);
     const field = scriptHandleDescriptor.toClosureField?.('act', handle);
-    expect(field).toEqual({ name: 'act_idx', valueType: { type: 'int', format: 'id_ref' } });
+    expect(field).toEqual({ name: 'act_idx', valueType: IR_ID_REF });
     expect(scriptHandleDescriptor.toClosureValue?.(handle))
       .toEqual({ kind: 'id_ref', id: 'activate' });
   });

@@ -13,13 +13,14 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { ENTITY_DOMAIN_TRIGGERS } from '../generated/entity-domains-triggers.js';
-import type { IRValueType } from '../ir/types.js';
+import type { IRType } from '../ir/types.js';
+import { IR_BOOL, IR_FLOAT, IR_INT, IR_STRING } from '../ir/types.js';
 
 export interface TriggerVariable {
   /** Variable name available in the trigger lambda (e.g. `x`). */
   name: string;
   /** Target-agnostic value type. Lowering targets map to concrete representations. */
-  valueType: IRValueType;
+  valueType: IRType;
   /** TypeScript type equivalent for type-checking (e.g. `boolean`, `number`, `string`). */
   tsType: string;
 }
@@ -110,21 +111,21 @@ function withTypedArgs(sig: TriggerSignature): Record<string, TriggerSignature> 
 }
 
 const LVGL_NUMBER_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', valueType: { type: 'float' }, tsType: 'number' }],
+  variables: [{ name: 'x', valueType: IR_FLOAT, tsType: 'number' }],
 };
 
 const LVGL_BOOLEAN_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', valueType: { type: 'bool' }, tsType: 'boolean' }],
+  variables: [{ name: 'x', valueType: IR_BOOL, tsType: 'boolean' }],
 };
 
 const LVGL_TEXT_VALUE: TriggerSignature = {
-  variables: [{ name: 'text', valueType: { type: 'string' }, tsType: 'string' }],
+  variables: [{ name: 'text', valueType: IR_STRING, tsType: 'string' }],
 };
 
 const LVGL_SELECT_VALUE: TriggerSignature = {
   variables: [
-    { name: 'x', valueType: { type: 'int' }, tsType: 'number' },
-    { name: 'text', valueType: { type: 'string' }, tsType: 'string' },
+    { name: 'x', valueType: IR_INT, tsType: 'number' },
+    { name: 'text', valueType: IR_STRING, tsType: 'string' },
   ],
 };
 

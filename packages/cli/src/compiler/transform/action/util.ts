@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import type { IRExprNode } from '@espcompose/core';
-import type { IRDuration, IRDurationLiteral, IRValueType } from '@espcompose/core/internals';
-import { parseDurationString } from '@espcompose/core/internals';
+import type { IRDuration, IRDurationLiteral, IRType } from '@espcompose/core/internals';
+import { IR_INT, IR_FLOAT, IR_STRING, IR_BOOL, parseDurationString } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -56,27 +56,27 @@ export function extractReturnExpr(block: ts.Block): ts.Expression | null {
 // Scalar-capture aware duration extraction
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Map from TypeScript type to a target-agnostic IRValueType. */
+/** Map from TypeScript type to a target-agnostic IRType. */
 function inferScriptParamValueType(
   type: ts.Type,
-): IRValueType | null {
+): IRType | null {
   // Check for Int branded type (number & { __espcompose_int__: true })
   if (type.isIntersection()) {
     const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
     if (hasNumber) {
       const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return { type: 'int' };
+      if (hasIntBrand) return IR_INT;
     }
   }
   // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return { type: 'int' };
+  if (type.aliasSymbol?.name === 'Int') return IR_INT;
 
   // Plain number
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return { type: 'float' };
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
   // String
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return { type: 'string' };
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
   // Boolean
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return { type: 'bool' };
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
 
   return null;
 }

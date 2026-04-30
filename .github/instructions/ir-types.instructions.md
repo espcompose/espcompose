@@ -22,29 +22,29 @@ grep -rE "cpp[A-Z]|std::|int[0-9]+_t|uint[0-9]+_t|const char\*" packages/core/sr
 ```
 Hits in `generated/` are tolerated; hits anywhere else are violations.
 
-## `IRValueType` — canonical type carrier
+## `IRType` — canonical type carrier
 
 Whenever an IR construct carries type information about an item it represents,
-it MUST use the `IRValueType` shape (`packages/core/src/ir/types.ts`):
+it MUST use the `IRType` shape (`packages/core/src/ir/types.ts`):
 
 ```ts
 export type IRScalarType   = 'int' | 'float' | 'bool' | 'string';
 export type IRScalarFormat = 'id_ref' | 'entity'; // extensible
 
-export interface IRValueType {
+export interface IRType {
   readonly type: IRScalarType;     // base scalar — always present
   readonly format?: IRScalarFormat; // semantic qualifier (e.g. id reference)
   readonly isArray?: boolean;       // collection flag
 }
 ```
 
-- The field carrying an `IRValueType` value is named **`valueType`** on its
+- The field carrying an `IRType` value is named **`valueType`** on its
   parent (e.g. `IRScriptParam.valueType`, `ClosureField.valueType`,
   `GlobalDefinition.valueType`, `TriggerVariable.valueType`,
   `EntityDomainDescriptor.valueType`).
 - `format` replaces the old `ClosureField.kind` flag: `'scalar'` → `format`
   undefined; `'id_ref'` → `format: 'id_ref'`; `'entity'` → `format: 'entity'`.
-- Targets translate `IRValueType` to backend types via their own helper
+- Targets translate `IRType` to backend types via their own helper
   (e.g. `valueTypeToCpp` in `@espcompose/esphome-target/src/value-type-cpp.ts`).
 - Entity property access uses a semantic `propertyKey: string`
   (e.g. `'state'`, `'brightness'`, `'position'`); the target resolves the

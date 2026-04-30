@@ -8,7 +8,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExprNode } from './expr-types.js';
-import type { IRScriptParamRef, IRValueType } from './types.js';
+import type { IRScriptParamRef, IRType } from './types.js';
 
 // ── Action Nodes ───────────────────────────────────────────────────────────
 
@@ -185,7 +185,7 @@ export interface IRGlobalSet {
   /** Auto-generated ESPHome global ID. */
   globalId: string;
   /** Target-agnostic value type of the global. */
-  valueType: IRValueType;
+  valueType: IRType;
   /** Value to set — literal, trigger var, or compiled expression. */
   value: IRActionParam | IRExprNode;
 }
@@ -194,7 +194,7 @@ export interface IRGlobalSet {
 export interface IRArraySet {
   kind: 'array_set';
   globalId: string;
-  valueType: IRValueType;
+  valueType: IRType;
   index: IRActionParam | IRExprNode;
   value: IRActionParam | IRExprNode;
 }
@@ -203,7 +203,7 @@ export interface IRArraySet {
 export interface IRArrayPush {
   kind: 'array_push';
   globalId: string;
-  valueType: IRValueType;
+  valueType: IRType;
   value: IRActionParam | IRExprNode;
 }
 
@@ -211,7 +211,7 @@ export interface IRArrayPush {
 export interface IRArrayClear {
   kind: 'array_clear';
   globalId: string;
-  valueType: IRValueType;
+  valueType: IRType;
 }
 
 /** Overlay show action — sets the mux index and shows the shared overlay. */
@@ -461,19 +461,19 @@ export function irThemeSelect(scope: string, scopeId: string, themeName: string)
   return { kind: 'theme_select', scope, scopeId, themeName };
 }
 
-export function irGlobalSet(globalId: string, valueType: IRValueType, value: IRActionParam | IRExprNode): IRGlobalSet {
+export function irGlobalSet(globalId: string, valueType: IRType, value: IRActionParam | IRExprNode): IRGlobalSet {
   return { kind: 'global_set', globalId, valueType, value };
 }
 
-export function irArraySet(globalId: string, valueType: IRValueType, index: IRActionParam | IRExprNode, value: IRActionParam | IRExprNode): IRArraySet {
+export function irArraySet(globalId: string, valueType: IRType, index: IRActionParam | IRExprNode, value: IRActionParam | IRExprNode): IRArraySet {
   return { kind: 'array_set', globalId, valueType, index, value };
 }
 
-export function irArrayPush(globalId: string, valueType: IRValueType, value: IRActionParam | IRExprNode): IRArrayPush {
+export function irArrayPush(globalId: string, valueType: IRType, value: IRActionParam | IRExprNode): IRArrayPush {
   return { kind: 'array_push', globalId, valueType, value };
 }
 
-export function irArrayClear(globalId: string, valueType: IRValueType): IRArrayClear {
+export function irArrayClear(globalId: string, valueType: IRType): IRArrayClear {
   return { kind: 'array_clear', globalId, valueType };
 }
 
