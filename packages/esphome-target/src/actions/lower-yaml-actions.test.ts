@@ -33,7 +33,7 @@ describe('lowerToYamlConfig action lowering', () => {
           kind: 'action',
           actions: [
             {
-              kind: 'native',
+              kind: 'action:native',
               domain: 'lvgl',
               operation: 'page.show',
               config: { id: 'mainScreen' },

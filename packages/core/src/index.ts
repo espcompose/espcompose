@@ -137,7 +137,7 @@ export type { WidgetCategory } from './lvgl/style/wireframe';
 // Public API — Used by theme resolvers
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { IRExprNode } from './ir/index';
+export type { IRExpression } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { IRReactiveNode, isIRReactiveNode } from './reactive/node';
 export type { Signal } from './reactive/node';

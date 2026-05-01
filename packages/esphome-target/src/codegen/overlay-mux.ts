@@ -5,7 +5,7 @@
 // and produces:
 //   - Mux signal declarations (one Signal<int32_t> per overlay template)
 //   - Muxed widget bindings (instance 0's bindings with divergent values
-//     wrapped in IRExprMux / IRExprTableLookup)
+//     wrapped in IRMuxExpression / IRTableLookupExpression)
 //   - Additional memos for per-instance reactive nodes
 //
 // The processing flow:
@@ -18,7 +18,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { OverlayDefinition } from '@espcompose/core/internals';
-import type { IRExprNode, ExprType } from '@espcompose/core/internals';
+import type { IRExpression, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
@@ -49,38 +49,38 @@ export interface OverlayMuxResult {
 }
 
 /**
- * Serialize an IRExprNode to a deterministic comparison string.
+ * Serialize an IRExpression to a deterministic comparison string.
  *
  * Used to detect whether per-instance binding expressions are identical
  * (no mux needed) or divergent (mux needed). This doesn't need to be
  * a valid C++ expression — just a stable, deterministic representation
  * for equality comparison.
  */
-function exprFingerprint(expr: IRExprNode): string {
+function exprFingerprint(expr: IRExpression): string {
   switch (expr.kind) {
-    case 'literal':
+    case 'expr:literal':
       return `L:${typeof expr.value}:${String(expr.value)}`;
-    case 'signal_read':
+    case 'expr:signal_read':
       return `S:${expr.signalIndex}`;
-    case 'memo_read':
+    case 'expr:memo_read':
       return `M:${expr.memoId}`;
-    case 'theme_read':
+    case 'expr:theme_read':
       return `T:${expr.scopeId}:${expr.path}`;
-    case 'slot':
+    case 'expr:slot':
       return `SL:${expr.slotIndex}`;
-    case 'mux':
+    case 'expr:mux':
       return `MUX:(${exprFingerprint(expr.index)},${expr.cases.map(exprFingerprint).join(',')})`;
-    case 'table_lookup':
+    case 'expr:table_lookup':
       return `TBL:${expr.table}:(${exprFingerprint(expr.index)})`;
-    case 'entity_prop':
+    case 'expr:entity_prop':
       return `EP:${expr.entityId}:${expr.propertyKey}`;
-    case 'global_read':
+    case 'expr:global_read':
       return `GL:${expr.globalId}`;
-    case 'component_read':
+    case 'expr:component_read':
       return `CR:${expr.componentId}:${expr.sensorIndex}`;
-    case 'trigger_var':
+    case 'expr:trigger_var':
       return `TV:${expr.name}`;
-    case 'op': {
+    case 'expr:op': {
       const attrs = Object.entries(expr.op)
         .filter(([k]) => k !== 'tag')
         .map(([, v]) => String(v))
@@ -135,49 +135,49 @@ function actionFingerprint(actions: IRActionNode[]): string {
 
 function singleActionFingerprint(action: IRActionNode): string {
   switch (action.kind) {
-    case 'native':
+    case 'action:native':
       return `N:${action.domain}.${action.operation}:${JSON.stringify(action.config)}`;
-    case 'ha_service':
+    case 'action:ha_service':
       return `HA:${action.action}:${action.data ? Object.entries(action.data).map(([k, v]) => `${k}=${actionParamFingerprint(v)}`).join(',') : ''}`;
-    case 'logger':
+    case 'action:logger':
       return `LOG:${action.message}:${action.level ?? ''}`;
-    case 'delay':
+    case 'action:delay':
       return `DL:${JSON.stringify(action.duration)}`;
-    case 'wait_until':
+    case 'action:wait_until':
       return `WU:${conditionFingerprint(action.condition)}:${action.timeout ? JSON.stringify(action.timeout) : ''}`;
-    case 'if':
+    case 'action:if':
       return `IF:${conditionFingerprint(action.condition)}:(${actionFingerprint(action.then)})${action.else ? `:(${actionFingerprint(action.else)})` : ''}`;
-    case 'while':
+    case 'action:while':
       return `WH:${conditionFingerprint(action.condition)}:(${actionFingerprint(action.then)})`;
-    case 'repeat':
+    case 'action:repeat':
       return `RP:${action.count}:(${actionFingerprint(action.then)})`;
-    case 'script_execute':
+    case 'action:script_execute':
       return `SE:${action.scriptId}`;
-    case 'script_wait':
+    case 'action:script_wait':
       return `SW:${action.scriptId}`;
-    case 'script_stop':
+    case 'action:script_stop':
       return `SS:${action.scriptId}`;
-    case 'theme_select':
+    case 'action:theme_select':
       return `TS:${action.scopeId}:${action.themeName}`;
-    case 'global_set':
+    case 'action:global_set':
       return `GS:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
-    case 'array_set':
+    case 'action:array_set':
       return `AS:${action.globalId}:${actionParamFingerprint(action.index as IRActionParam)}:${actionParamFingerprint(action.value as IRActionParam)}`;
-    case 'array_push':
+    case 'action:array_push':
       return `AP:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
-    case 'array_clear':
+    case 'action:array_clear':
       return `AC:${action.globalId}`;
-    case 'lambda_action':
+    case 'action:lambda_action':
       return `LA:${action.fragments.join('|')}:${action.slots.map(s => `${s.kind}:${'name' in s ? s.name : 'value' in s ? String(s.value) : 'id' in s ? s.id : ''}`).join(',')}`;
-    case 'overlay_show': {
+    case 'action:overlay_show': {
       const idx = typeof action.instanceIndex === 'number'
         ? String(action.instanceIndex)
         : `param:${action.instanceIndex.name}`;
       return `PS:${action.templateKey}:${idx}:${action.controllerRef ?? ''}`;
     }
-    case 'overlay_hide':
+    case 'action:overlay_hide':
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
-    case 'controller_method_call':
+    case 'action:controller_method_call':
       return `CM:${action.controllerRef}:${action.methodName}`;
   }
 }
@@ -235,7 +235,7 @@ export function processOverlayMux(
       const binding0 = canonicalBindings[i];
 
       // Gather corresponding binding from each instance at the same position
-      const perInstanceExprs: IRExprNode[] = [];
+      const perInstanceExprs: IRExpression[] = [];
       let allIdentical = true;
       const fp0 = binding0.expression.exprIR
         ? exprFingerprint(binding0.expression.exprIR)
@@ -259,14 +259,14 @@ export function processOverlayMux(
         // Divergent expressions — try structural analysis before falling
         // back to full mux wrapping
         const exprType: ExprType = binding0.expression.exprType ?? 'int';
-        const muxIndexExpr: IRExprNode = { kind: 'signal_read', signalIndex: muxSignalIndex };
+        const muxIndexExpr: IRExpression = { kind: 'expr:signal_read', signalIndex: muxSignalIndex };
 
         const structural = analyzeExprStructure(perInstanceExprs);
-        let optimisedExpr: IRExprNode | null = null;
+        let optimisedExpr: IRExpression | null = null;
 
         if (structural.kind === 'optimizable') {
           // Build replacement nodes for each hole
-          const replacements = new Map<number, IRExprNode>();
+          const replacements = new Map<number, IRExpression>();
           for (const hole of structural.holes) {
             if (hole.holeKind === 'literal') {
               // Create a static data table for these literal values
@@ -279,7 +279,7 @@ export function processOverlayMux(
                 values: hole.values.map(v => formatTableLiteral(v, cppArrayElemType)),
               });
               replacements.set(hole.holeId, {
-                kind: 'table_lookup',
+                kind: 'expr:table_lookup',
                 index: muxIndexExpr,
                 table: tableName,
                 elementType: hole.type,
@@ -287,9 +287,9 @@ export function processOverlayMux(
             } else {
               // signal_read hole → localized mux over only the varying signals
               replacements.set(hole.holeId, {
-                kind: 'mux',
+                kind: 'expr:mux',
                 index: muxIndexExpr,
-                cases: hole.signalIndices.map(idx => ({ kind: 'signal_read', signalIndex: idx }) as IRExprNode),
+                cases: hole.signalIndices.map(idx => ({ kind: 'expr:signal_read', signalIndex: idx }) as IRExpression),
                 type: hole.type,
               });
             }
@@ -301,8 +301,8 @@ export function processOverlayMux(
 
         // Use the optimised expression if available, otherwise fall back
         // to full mux wrapping (current behaviour)
-        const finalExpr: IRExprNode = optimisedExpr ?? {
-          kind: 'mux',
+        const finalExpr: IRExpression = optimisedExpr ?? {
+          kind: 'expr:mux',
           type: exprType,
           index: muxIndexExpr,
           cases: perInstanceExprs,
@@ -363,9 +363,9 @@ export function processOverlayMux(
           if (actionStructural.kind === 'optimizable') {
             // Create table-driven actions: replace varying params with
             // reactive_expr params containing table_lookup expressions
-            const muxIndexExpr: IRExprNode = { kind: 'signal_read', signalIndex: muxSignalIndex };
+            const muxIndexExpr: IRExpression = { kind: 'expr:signal_read', signalIndex: muxSignalIndex };
             const optimisedActions = actionStructural.templateActions.map(tmplAction => {
-              if (tmplAction.kind !== 'ha_service' || !tmplAction.data) return tmplAction;
+              if (tmplAction.kind !== 'action:ha_service' || !tmplAction.data) return tmplAction;
 
               const newData: Record<string, IRActionParam> = { ...tmplAction.data };
               for (const hole of actionStructural.varyingParams) {
@@ -384,7 +384,7 @@ export function processOverlayMux(
                 newData[paramKey] = {
                   kind: 'reactive_expr',
                   exprIR: {
-                    kind: 'table_lookup',
+                    kind: 'expr:table_lookup',
                     index: muxIndexExpr,
                     table: tableName,
                     elementType: hole.type,
@@ -404,12 +404,12 @@ export function processOverlayMux(
                 kind: 'lambda_condition',
                 exprIR: irBinary(
                   '==',
-                  { kind: 'signal_read', signalIndex: muxSignalIndex },
-                  { kind: 'literal', value: j, type: 'int' },
+                  { kind: 'expr:signal_read', signalIndex: muxSignalIndex },
+                  { kind: 'expr:literal', value: j, type: 'int' },
                 ),
               };
               muxedActionList.push({
-                kind: 'if',
+                kind: 'action:if',
                 condition,
                 then: instActions[i].rawActions,
               });
@@ -438,10 +438,10 @@ export function processOverlayMux(
  * each `slot` sentinel with the corresponding replacement node.
  */
 function resolveSlots(
-  template: IRExprNode,
-  replacements: Map<number, IRExprNode>,
-): IRExprNode {
-  if (template.kind === 'slot') {
+  template: IRExpression,
+  replacements: Map<number, IRExpression>,
+): IRExpression {
+  if (template.kind === 'expr:slot') {
     const replacement = replacements.get(template.slotIndex);
     if (!replacement) {
       throw new Error(`resolveSlots: no replacement for slot ${template.slotIndex}`);

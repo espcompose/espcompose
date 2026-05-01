@@ -31,7 +31,7 @@ describe('buildRuntimeConfig', () => {
     const compiledNode = {
       kind: 'memo',
       exprType: 'bool',
-      exprIR: { kind: 'entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
+      exprIR: { kind: 'expr:entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
       dependencies: [
         { sourceId: 'ha_light_office', sourceDomain: 'binary_sensor', sourceType: 'ha_entity' },
       ],

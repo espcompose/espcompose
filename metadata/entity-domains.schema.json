@@ -22,7 +22,7 @@
       "type": "object",
       "required": [
         "sensorPlatform",
-        "valueType",
+        "irType",
         "defaultState",
         "activeState",
         "uiCategory",
@@ -37,8 +37,8 @@
           "description": "ESPHome sensor platform type this domain maps to for codegen.",
           "enum": ["binary_sensor", "sensor", "text_sensor"]
         },
-        "valueType": {
-          "$ref": "#/$defs/ValueType",
+        "irType": {
+          "$ref": "#/$defs/IRTypeDescriptor",
           "description": "Target-agnostic value type for this domain's signal. Lowering targets map to concrete representations."
         },
         "defaultState": {
@@ -147,15 +147,15 @@
     },
     "TriggerVariable": {
       "type": "object",
-      "required": ["name", "valueType", "tsType"],
+      "required": ["name", "irType", "tsType"],
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
           "description": "Variable name available in the trigger lambda (e.g. 'x')."
         },
-        "valueType": {
-          "$ref": "#/$defs/ValueType",
+        "irType": {
+          "$ref": "#/$defs/IRTypeDescriptor",
           "description": "Target-agnostic value type. Lowering targets map this to concrete C++ types."
         },
         "tsType": {
@@ -164,7 +164,7 @@
         }
       }
     },
-    "ValueType": {
+    "IRTypeDescriptor": {
       "type": "object",
       "required": ["type"],
       "additionalProperties": false,

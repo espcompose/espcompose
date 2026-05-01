@@ -20,7 +20,7 @@ import { isRef } from '../../types';
 export interface ThemeLeaf {
   value: unknown;
   /** Target-agnostic value type (ExprType compatible). */
-  valueType: string;
+  exprType: string;
 }
 
 
@@ -38,7 +38,7 @@ const HEX_COLOR_RE = /^#[0-9a-fA-F]{3,8}$/;
  *  - floats            → 'float'
  *  - booleans          → 'bool'
  */
-export function inferValueType(value: unknown): string {
+export function inferExprType(value: unknown): string {
   if (typeof value === 'string') {
     return HEX_COLOR_RE.test(value) ? 'color' : 'string';
   }
@@ -60,7 +60,7 @@ export function inferValueType(value: unknown): string {
  *
  * @param obj    — any nested plain object (typically a Theme)
  * @param prefix — accumulated path prefix (underscore-separated)
- * @returns flat map, e.g. `{ colors_primary_bg: { value: '#1E88E5', valueType: 'color' } }`
+ * @returns flat map, e.g. `{ colors_primary_bg: { value: '#1E88E5', exprType: 'color' } }`
  */
 export function flattenTheme(
   obj: Record<string, unknown>,
@@ -71,11 +71,11 @@ export function flattenTheme(
     const path = prefix ? `${prefix}_${key}` : key;
     // Ref<FontRef> — treat as opaque font_ref leaf (don't recurse into Proxy)
     if (isRef(value)) {
-      result[path] = { value: value.toString(), valueType: 'font_ref' };
+      result[path] = { value: value.toString(), exprType: 'font_ref' };
     } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
       Object.assign(result, flattenTheme(value as Record<string, unknown>, path));
     } else {
-      result[path] = { value, valueType: inferValueType(value) };
+      result[path] = { value, exprType: inferExprType(value) };
     }
   }
   return result;

@@ -51,7 +51,7 @@ describe('classifyBindings', () => {
     const ctrl = makeOverlayCtrl('toast', 0);
     const shape = classifyBindings({ ctrl });
     expect(shape.fields).toEqual([
-      { name: 'ctrl_instance_index', valueType: IR_INT },
+      { name: 'ctrl_instance_index', irType: IR_INT },
     ]);
   });
 
@@ -59,7 +59,7 @@ describe('classifyBindings', () => {
     const h = makeScriptHandle('do_thing');
     const shape = classifyBindings({ act: h });
     expect(shape.fields).toEqual([
-      { name: 'act_idx', valueType: IR_ID_REF },
+      { name: 'act_idx', irType: IR_ID_REF },
     ]);
   });
 
@@ -82,8 +82,8 @@ describe('classifyBindings', () => {
       overlay: makeOverlayCtrl('o', 2),
     });
     expect(shape.fields).toEqual([
-      { name: 'light_idx', valueType: IR_ID_REF },
-      { name: 'overlay_instance_index', valueType: IR_INT },
+      { name: 'light_idx', irType: IR_ID_REF },
+      { name: 'overlay_instance_index', irType: IR_INT },
     ]);
   });
 });
@@ -98,8 +98,8 @@ describe('closureShapeSignature', () => {
   it('produces a deterministic signature', () => {
     const shape: ClosureShape = {
       fields: [
-        { name: 'a_idx', valueType: IR_ID_REF },
-        { name: 'b_instance_index', valueType: IR_INT },
+        { name: 'a_idx', irType: IR_ID_REF },
+        { name: 'b_instance_index', irType: IR_INT },
       ],
     };
     expect(closureShapeSignature(shape))
@@ -107,22 +107,22 @@ describe('closureShapeSignature', () => {
   });
 
   it('distinguishes shapes that differ only by format qualifier', () => {
-    const a: ClosureShape = { fields: [{ name: 'x', valueType: IR_INT }] };
-    const b: ClosureShape = { fields: [{ name: 'x', valueType: IR_ID_REF }] };
+    const a: ClosureShape = { fields: [{ name: 'x', irType: IR_INT }] };
+    const b: ClosureShape = { fields: [{ name: 'x', irType: IR_ID_REF }] };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));
   });
 
   it('distinguishes shapes that differ only by field order', () => {
     const a: ClosureShape = {
       fields: [
-        { name: 'x', valueType: IR_INT },
-        { name: 'y', valueType: IR_INT },
+        { name: 'x', irType: IR_INT },
+        { name: 'y', irType: IR_INT },
       ],
     };
     const b: ClosureShape = {
       fields: [
-        { name: 'y', valueType: IR_INT },
-        { name: 'x', valueType: IR_INT },
+        { name: 'y', irType: IR_INT },
+        { name: 'x', irType: IR_INT },
       ],
     };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));
@@ -143,7 +143,7 @@ describe('buildClosureRow', () => {
     const shape = classifyBindings({ ctrl });
     const row = buildClosureRow({ ctrl }, shape);
     expect(row.values).toEqual({
-      ctrl_instance_index: { kind: 'int', value: 5 },
+      ctrl_instance_index: { kind: 'scalar', value: 5 },
     });
   });
 
@@ -159,7 +159,7 @@ describe('buildClosureRow', () => {
     const shape = classifyBindings({ act: h });
     const row = buildClosureRow({ act: h }, shape);
     expect(row.values).toEqual({
-      act_idx: { kind: 'id_ref', id: 'act' },
+      act_idx: { kind: 'scalar', value: 'act' },
     });
   });
 
@@ -171,8 +171,8 @@ describe('buildClosureRow', () => {
     const rowA = buildClosureRow({ ctrl: ctrlA }, shape);
     const rowB = buildClosureRow({ ctrl: ctrlB }, shape);
 
-    expect(rowA.values.ctrl_instance_index).toEqual({ kind: 'int', value: 0 });
-    expect(rowB.values.ctrl_instance_index).toEqual({ kind: 'int', value: 1 });
+    expect(rowA.values.ctrl_instance_index).toEqual({ kind: 'scalar', value: 0 });
+    expect(rowB.values.ctrl_instance_index).toEqual({ kind: 'scalar', value: 1 });
     // Same shape signature → same template, distinct rows
     expect(closureShapeSignature(shape))
       .toBe(closureShapeSignature(classifyBindings({ ctrl: ctrlB })));

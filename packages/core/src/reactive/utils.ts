@@ -127,7 +127,7 @@ export function useReactiveMap<T, R>(
  * value={useMemo(() => reactiveIsNaN(light.brightness).get() ? 0 : light.brightness.get())}
  */
 export function reactiveIsNaN(node: IRReactiveNode<number>): IRReactiveNode<boolean> {
-  const sourceIR = node.exprIR ?? { kind: 'literal' as const, value: 0, type: 'float' as const };
+  const sourceIR = node.exprIR ?? { kind: 'expr:literal' as const, value: 0, type: 'float' as const };
   return __espcompose.derivedMemo<boolean>({
     exprType: 'bool',
     dependencies: node.dependencies,

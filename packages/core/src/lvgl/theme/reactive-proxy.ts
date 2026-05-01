@@ -88,8 +88,8 @@ function getOrCreateLeafNode(
   let node = nodeCache.get(cacheKey);
   if (!node) {
     const leaf = registry.getDefaultLeaf(scope, path);
-    // valueType is already ExprType compatible; default to 'int' if unset
-    const exprType = (leaf?.valueType ?? 'int') as ExprType;
+    // exprType is already ExprType compatible; default to 'int' if unset
+    const exprType = (leaf?.exprType ?? 'int') as ExprType;
     const dep: IRDependency = {
       kind: 'dependency',
       sourceId: `__theme_${scopeId}__`,
@@ -102,7 +102,7 @@ function getOrCreateLeafNode(
       dependencies: [dep],
       exprType,
     });
-    node.exprIR = { kind: 'theme_read', scope, scopeId, path, type: exprType };
+    node.exprIR = { kind: 'expr:theme_read', scope, scopeId, path, type: exprType };
     nodeCache.set(cacheKey, node);
   }
 

@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────────────────
-// Structural Similarity Analysis for IRExprNode and IRActionNode trees
+// Structural Similarity Analysis for IRExpression and IRActionNode trees
 //
 // Walks N expression (or action) trees in lockstep to detect when all
 // instances share identical structure and differ only at specific leaf
@@ -11,7 +11,7 @@
 // that is not explicitly recognizable — never silently degrades.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRExprNode, ExprType } from './expr-types.js';
+import type { IRExpression, ExprType } from './expr-types.js';
 import type { IRActionNode, IRActionParam, IRLiteralParam, IRHAServiceAction } from './action-types.js';
 
 // ── Expression Structural Analysis ───────────────────────────────────────────
@@ -25,7 +25,7 @@ export interface ExprLiteralHole {
 
 export interface ExprSignalReadHole {
   readonly holeId: number;
-  readonly holeKind: 'signal_read';
+  readonly holeKind: 'expr:signal_read';
   readonly signalIndices: readonly number[];
   // Type context from the expression tree — inferred from how the signal
   // value is used (e.g. 'bool' for a ternary condition, 'float' for a
@@ -37,7 +37,7 @@ export type ExprHole = ExprLiteralHole | ExprSignalReadHole;
 
 export type ExprStructuralAnalysis =
   | { readonly kind: 'identical' }
-  | { readonly kind: 'optimizable'; readonly template: IRExprNode; readonly holes: readonly ExprHole[] }
+  | { readonly kind: 'optimizable'; readonly template: IRExpression; readonly holes: readonly ExprHole[] }
   | { readonly kind: 'divergent' };
 
 /**
@@ -50,7 +50,7 @@ export type ExprStructuralAnalysis =
  *
  * Requires at least 2 expressions. Returns `'identical'` for a 1-element array.
  */
-export function analyzeExprStructure(exprs: readonly IRExprNode[]): ExprStructuralAnalysis {
+export function analyzeExprStructure(exprs: readonly IRExpression[]): ExprStructuralAnalysis {
   if (exprs.length === 0) return { kind: 'identical' };
   if (exprs.length === 1) return { kind: 'identical' };
 
@@ -69,10 +69,10 @@ export function analyzeExprStructure(exprs: readonly IRExprNode[]): ExprStructur
 // the trees are structurally divergent.
 
 function walkLockstep(
-  nodes: readonly IRExprNode[],
+  nodes: readonly IRExpression[],
   allocHoleId: () => number,
   holes: ExprHole[],
-): IRExprNode | null {
+): IRExpression | null {
   const first = nodes[0];
 
   // All nodes must have the same kind
@@ -82,7 +82,7 @@ function walkLockstep(
 
   switch (first.kind) {
     // ── Leaf nodes ─────────────────────────────────────────────────────
-    case 'literal': {
+    case 'expr:literal': {
       const typed = nodes as readonly (typeof first)[];
       // All must have same type
       for (let i = 1; i < typed.length; i++) {
@@ -102,10 +102,10 @@ function walkLockstep(
         values: typed.map(n => n.value),
         type: first.type,
       });
-      return { kind: 'slot', slotIndex: holeId } as IRExprNode;
+      return { kind: 'expr:slot', slotIndex: holeId } as IRExpression;
     }
 
-    case 'signal_read': {
+    case 'expr:signal_read': {
       const typed = nodes as readonly (typeof first)[];
       let allSame = true;
       for (let i = 1; i < typed.length; i++) {
@@ -118,14 +118,14 @@ function walkLockstep(
       const holeId = allocHoleId();
       holes.push({
         holeId,
-        holeKind: 'signal_read',
+        holeKind: 'expr:signal_read',
         signalIndices: typed.map(n => n.signalIndex),
         type: 'bool',
       });
-      return { kind: 'slot', slotIndex: holeId } as IRExprNode;
+      return { kind: 'expr:slot', slotIndex: holeId } as IRExpression;
     }
 
-    case 'memo_read': {
+    case 'expr:memo_read': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].memoId !== first.memoId) return null;
@@ -133,7 +133,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'theme_read': {
+    case 'expr:theme_read': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].scopeId !== first.scopeId || typed[i].path !== first.path) return null;
@@ -141,7 +141,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'entity_prop': {
+    case 'expr:entity_prop': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].entityId !== first.entityId || typed[i].propertyKey !== first.propertyKey) return null;
@@ -149,7 +149,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'global_read': {
+    case 'expr:global_read': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].globalId !== first.globalId) return null;
@@ -157,7 +157,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'component_read': {
+    case 'expr:component_read': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].componentId !== first.componentId || typed[i].sensorIndex !== first.sensorIndex) return null;
@@ -165,7 +165,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'trigger_var': {
+    case 'expr:trigger_var': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].name !== first.name) return null;
@@ -173,7 +173,7 @@ function walkLockstep(
       return first;
     }
 
-    case 'slot': {
+    case 'expr:slot': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         if (typed[i].slotIndex !== first.slotIndex) return null;
@@ -184,12 +184,12 @@ function walkLockstep(
     // ── Mux / table_lookup — structural nodes that may themselves appear
     //    inside expressions being compared. Treat them as divergent since
     //    optimising already-muxed trees would be nested mux-over-mux. ───
-    case 'mux':
-    case 'table_lookup':
+    case 'expr:mux':
+    case 'expr:table_lookup':
       return null;
 
     // ── Generic op node — compare tag + scalar attrs, walk children ────
-    case 'op': {
+    case 'expr:op': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
         const other = typed[i];
@@ -200,7 +200,7 @@ function walkLockstep(
           if (key !== 'tag' && (first.op as Record<string, unknown>)[key] !== (other.op as Record<string, unknown>)[key]) return null;
         }
       }
-      const children: IRExprNode[] = [];
+      const children: IRExpression[] = [];
       for (let c = 0; c < first.children.length; c++) {
         const child = walkLockstep(typed.map(n => n.children[c]), allocHoleId, holes);
         if (child === null) return null;
@@ -210,7 +210,7 @@ function walkLockstep(
     }
 
     default: {
-      // Exhaustiveness guard — if a new IRExprNode kind is added without
+      // Exhaustiveness guard — if a new IRExpression kind is added without
       // handling here, TypeScript will flag this at compile time.
       const _exhaustive: never = first;
       throw new Error(`analyzeExprStructure: unhandled kind '${(_exhaustive as { kind: string }).kind}'`);
@@ -268,7 +268,7 @@ export function analyzeActionStructure(instances: readonly (readonly IRActionNod
     }
 
     switch (action0.kind) {
-      case 'ha_service': {
+      case 'action:ha_service': {
         const typed = instances.map(inst => inst[a] as IRHAServiceAction);
         const result = analyzeHAServiceActions(typed, a, holes);
         if (result === null) return { kind: 'divergent' };
@@ -372,7 +372,7 @@ function analyzeHAServiceActions(
     }
   }
 
-  return { kind: 'ha_service', action: first.action, data: templateData };
+  return { kind: 'action:ha_service', action: first.action, data: templateData };
 }
 
 /**

@@ -42,7 +42,7 @@ export function resolveOverlayControllerRefs(
   if (!refBindings) return;
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
-    if (action.kind === 'overlay_show' && action.controllerRef) {
+    if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
         if (ctrl.__lifecycleScriptId) {
@@ -58,7 +58,7 @@ export function resolveOverlayControllerRefs(
           delete action.controllerRef;
         }
       }
-    } else if (action.kind === 'overlay_hide' && action.controllerRef) {
+    } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
         if (ctrl.__lifecycleScriptId) {
@@ -79,10 +79,10 @@ export function resolveOverlayControllerRefs(
           delete action.controllerRef;
         }
       }
-    } else if (action.kind === 'if') {
+    } else if (action.kind === 'action:if') {
       resolveOverlayControllerRefs(action.then, refBindings);
       if (action.else) resolveOverlayControllerRefs(action.else, refBindings);
-    } else if (action.kind === 'while' || action.kind === 'repeat') {
+    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
       resolveOverlayControllerRefs(action.then, refBindings);
     }
   }

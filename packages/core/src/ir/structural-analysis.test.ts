@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
-import type { IRExprNode } from './expr-types';
+import type { IRExpression } from './expr-types';
 import type { IRActionNode } from './action-types';
 import { irBinary, irConcat, irTernary } from './expr-builders.js';
 
@@ -8,7 +8,7 @@ import { irBinary, irConcat, irTernary } from './expr-builders.js';
 
 describe('analyzeExprStructure', () => {
   it('returns identical for a single expression', () => {
-    const expr: IRExprNode = { kind: 'literal', value: 42, type: 'int' };
+    const expr: IRExpression = { kind: 'expr:literal', value: 42, type: 'int' };
     expect(analyzeExprStructure([expr])).toEqual({ kind: 'identical' });
   });
 
@@ -17,15 +17,15 @@ describe('analyzeExprStructure', () => {
   });
 
   it('returns identical when all expressions are value-identical', () => {
-    const a: IRExprNode = { kind: 'literal', value: 'hello', type: 'string' };
-    const b: IRExprNode = { kind: 'literal', value: 'hello', type: 'string' };
+    const a: IRExpression = { kind: 'expr:literal', value: 'hello', type: 'string' };
+    const b: IRExpression = { kind: 'expr:literal', value: 'hello', type: 'string' };
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'identical' });
   });
 
   it('detects a literal hole when values differ', () => {
-    const a: IRExprNode = { kind: 'literal', value: 'kitchen', type: 'string' };
-    const b: IRExprNode = { kind: 'literal', value: 'bedroom', type: 'string' };
-    const c: IRExprNode = { kind: 'literal', value: 'office', type: 'string' };
+    const a: IRExpression = { kind: 'expr:literal', value: 'kitchen', type: 'string' };
+    const b: IRExpression = { kind: 'expr:literal', value: 'bedroom', type: 'string' };
+    const c: IRExpression = { kind: 'expr:literal', value: 'office', type: 'string' };
     const result = analyzeExprStructure([a, b, c]);
     expect(result.kind).toBe('optimizable');
     if (result.kind !== 'optimizable') return;
@@ -34,43 +34,43 @@ describe('analyzeExprStructure', () => {
     expect(hole.holeKind).toBe('literal');
     if (hole.holeKind !== 'literal') return;
     expect(hole.values).toEqual(['kitchen', 'bedroom', 'office']);
-    expect(result.template.kind).toBe('slot');
+    expect(result.template.kind).toBe('expr:slot');
   });
 
   it('detects a signal_read hole when signal indices differ', () => {
-    const a: IRExprNode = { kind: 'signal_read', signalIndex: 5 };
-    const b: IRExprNode = { kind: 'signal_read', signalIndex: 8 };
-    const c: IRExprNode = { kind: 'signal_read', signalIndex: 12 };
+    const a: IRExpression = { kind: 'expr:signal_read', signalIndex: 5 };
+    const b: IRExpression = { kind: 'expr:signal_read', signalIndex: 8 };
+    const c: IRExpression = { kind: 'expr:signal_read', signalIndex: 12 };
     const result = analyzeExprStructure([a, b, c]);
     expect(result.kind).toBe('optimizable');
     if (result.kind !== 'optimizable') return;
     expect(result.holes).toHaveLength(1);
-    expect(result.holes[0].holeKind).toBe('signal_read');
-    if (result.holes[0].holeKind !== 'signal_read') return;
+    expect(result.holes[0].holeKind).toBe('expr:signal_read');
+    if (result.holes[0].holeKind !== 'expr:signal_read') return;
     expect(result.holes[0].signalIndices).toEqual([5, 8, 12]);
   });
 
   it('detects identical signal_reads (no hole)', () => {
-    const a: IRExprNode = { kind: 'signal_read', signalIndex: 5 };
-    const b: IRExprNode = { kind: 'signal_read', signalIndex: 5 };
+    const a: IRExpression = { kind: 'expr:signal_read', signalIndex: 5 };
+    const b: IRExpression = { kind: 'expr:signal_read', signalIndex: 5 };
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'identical' });
   });
 
   it('returns divergent for different node kinds', () => {
-    const a: IRExprNode = { kind: 'literal', value: 42, type: 'int' };
-    const b: IRExprNode = { kind: 'signal_read', signalIndex: 0 };
+    const a: IRExpression = { kind: 'expr:literal', value: 42, type: 'int' };
+    const b: IRExpression = { kind: 'expr:signal_read', signalIndex: 0 };
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('handles nested structure with one literal hole', () => {
     // concat("Kitchen: ", signal_read(5)) vs concat("Bedroom: ", signal_read(5))
-    const a: IRExprNode = irConcat([
-      { kind: 'literal', value: 'Kitchen: ', type: 'string' },
-      { kind: 'signal_read', signalIndex: 5 },
+    const a: IRExpression = irConcat([
+      { kind: 'expr:literal', value: 'Kitchen: ', type: 'string' },
+      { kind: 'expr:signal_read', signalIndex: 5 },
     ]);
-    const b: IRExprNode = irConcat([
-      { kind: 'literal', value: 'Bedroom: ', type: 'string' },
-      { kind: 'signal_read', signalIndex: 5 },
+    const b: IRExpression = irConcat([
+      { kind: 'expr:literal', value: 'Bedroom: ', type: 'string' },
+      { kind: 'expr:signal_read', signalIndex: 5 },
     ]);
     const result = analyzeExprStructure([a, b]);
     expect(result.kind).toBe('optimizable');
@@ -81,18 +81,18 @@ describe('analyzeExprStructure', () => {
     if (hole.holeKind !== 'literal') return;
     expect(hole.values).toEqual(['Kitchen: ', 'Bedroom: ']);
     // Template should be concat(slot(0), signal_read(5))
-    expect(result.template.kind).toBe('op');
+    expect(result.template.kind).toBe('expr:op');
   });
 
   it('handles mixed literal + signal_read holes', () => {
     // concat(literal("Kitchen"), ternary(signal_read(5), ...))
     // concat(literal("Bedroom"), ternary(signal_read(8), ...))
-    const mkExpr = (label: string, sigIdx: number): IRExprNode => irConcat([
-      { kind: 'literal', value: label, type: 'string' },
+    const mkExpr = (label: string, sigIdx: number): IRExpression => irConcat([
+      { kind: 'expr:literal', value: label, type: 'string' },
       irTernary(
-        { kind: 'signal_read', signalIndex: sigIdx },
-        { kind: 'literal', value: 'on', type: 'string' },
-        { kind: 'literal', value: 'off', type: 'string' },
+        { kind: 'expr:signal_read', signalIndex: sigIdx },
+        { kind: 'expr:literal', value: 'on', type: 'string' },
+        { kind: 'expr:literal', value: 'off', type: 'string' },
       ),
     ]);
     const result = analyzeExprStructure([
@@ -108,30 +108,30 @@ describe('analyzeExprStructure', () => {
     expect(literalHole).toBeDefined();
     expect(literalHole!.values).toEqual(['Kitchen', 'Bedroom', 'Office']);
     // Second hole: the signal_read in the ternary test
-    const signalHole = result.holes.find(h => h.holeKind === 'signal_read');
+    const signalHole = result.holes.find(h => h.holeKind === 'expr:signal_read');
     expect(signalHole).toBeDefined();
-    if (signalHole?.holeKind === 'signal_read') {
+    if (signalHole?.holeKind === 'expr:signal_read') {
       expect(signalHole.signalIndices).toEqual([5, 8, 12]);
     }
   });
 
   it('returns divergent for different binary operators', () => {
-    const a: IRExprNode = irBinary('+',
-      { kind: 'literal', value: 1, type: 'int' },
-      { kind: 'literal', value: 2, type: 'int' },
+    const a: IRExpression = irBinary('+',
+      { kind: 'expr:literal', value: 1, type: 'int' },
+      { kind: 'expr:literal', value: 2, type: 'int' },
     );
-    const b: IRExprNode = irBinary('-',
-      { kind: 'literal', value: 1, type: 'int' },
-      { kind: 'literal', value: 2, type: 'int' },
+    const b: IRExpression = irBinary('-',
+      { kind: 'expr:literal', value: 1, type: 'int' },
+      { kind: 'expr:literal', value: 2, type: 'int' },
     );
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('returns divergent for different concat lengths', () => {
-    const a: IRExprNode = irConcat([{ kind: 'literal', value: 'a', type: 'string' }]);
-    const b: IRExprNode = irConcat([
-      { kind: 'literal', value: 'a', type: 'string' },
-      { kind: 'literal', value: 'b', type: 'string' },
+    const a: IRExpression = irConcat([{ kind: 'expr:literal', value: 'a', type: 'string' }]);
+    const b: IRExpression = irConcat([
+      { kind: 'expr:literal', value: 'a', type: 'string' },
+      { kind: 'expr:literal', value: 'b', type: 'string' },
     ]);
     expect(analyzeExprStructure([a, b])).toEqual({ kind: 'divergent' });
   });
@@ -141,18 +141,18 @@ describe('analyzeExprStructure', () => {
 
 describe('analyzeActionStructure', () => {
   it('returns identical for single-instance array', () => {
-    const actions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const actions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
     expect(analyzeActionStructure([actions])).toEqual({ kind: 'identical' });
   });
 
   it('returns identical when all instances are the same', () => {
-    const mk = (): IRActionNode[] => [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const mk = (): IRActionNode[] => [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
     expect(analyzeActionStructure([mk(), mk()])).toEqual({ kind: 'identical' });
   });
 
   it('detects optimizable ha_service with differing entity_id', () => {
     const mk = (entityId: string): IRActionNode[] => [
-      { kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: entityId } } },
+      { kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: entityId } } },
     ];
     const result = analyzeActionStructure([mk('light.kitchen'), mk('light.bedroom'), mk('light.office')]);
     expect(result.kind).toBe('optimizable');
@@ -163,30 +163,30 @@ describe('analyzeActionStructure', () => {
   });
 
   it('returns divergent for different action kinds', () => {
-    const a: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
-    const b: IRActionNode[] = [{ kind: 'logger', message: 'hello' }];
+    const a: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle' }];
+    const b: IRActionNode[] = [{ kind: 'action:logger', message: 'hello' }];
     expect(analyzeActionStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('returns divergent for different action counts', () => {
-    const a: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
+    const a: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle' }];
     const b: IRActionNode[] = [
-      { kind: 'ha_service', action: 'light.toggle' },
-      { kind: 'logger', message: 'hello' },
+      { kind: 'action:ha_service', action: 'light.toggle' },
+      { kind: 'action:logger', message: 'hello' },
     ];
     expect(analyzeActionStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('returns divergent for different ha_service actions', () => {
-    const a: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle' }];
-    const b: IRActionNode[] = [{ kind: 'ha_service', action: 'light.turn_on' }];
+    const a: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle' }];
+    const b: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.turn_on' }];
     expect(analyzeActionStructure([a, b])).toEqual({ kind: 'divergent' });
   });
 
   it('handles ha_service with multiple varying params', () => {
     const mk = (entity: string, brightness: number): IRActionNode[] => [
       {
-        kind: 'ha_service',
+        kind: 'action:ha_service',
         action: 'light.turn_on',
         data: {
           entity_id: { kind: 'literal', value: entity },
@@ -206,7 +206,7 @@ describe('analyzeActionStructure', () => {
   it('handles mix of identical and varying params', () => {
     const mk = (entityId: string): IRActionNode[] => [
       {
-        kind: 'ha_service',
+        kind: 'action:ha_service',
         action: 'light.turn_on',
         data: {
           entity_id: { kind: 'literal', value: entityId },
@@ -225,7 +225,7 @@ describe('analyzeActionStructure', () => {
     // After serializeWithExpressions, expression params are resolved to bare
     // primitives at bundle runtime (e.g. entity.__entityId__ → "light.bedroom").
     const mk = (entityId: string): IRActionNode[] => [
-      { kind: 'ha_service', action: 'homeassistant.toggle', data: { entity_id: entityId } } as unknown as IRActionNode,
+      { kind: 'action:ha_service', action: 'homeassistant.toggle', data: { entity_id: entityId } } as unknown as IRActionNode,
     ];
     const result = analyzeActionStructure([mk('light.bedroom'), mk('light.kitchen'), mk('light.office')]);
     expect(result.kind).toBe('optimizable');
@@ -241,7 +241,7 @@ describe('analyzeActionStructure', () => {
 
   it('returns identical for bare string data params when all the same', () => {
     const mk = (): IRActionNode[] => [
-      { kind: 'ha_service', action: 'homeassistant.toggle', data: { entity_id: 'light.bedroom' } } as unknown as IRActionNode,
+      { kind: 'action:ha_service', action: 'homeassistant.toggle', data: { entity_id: 'light.bedroom' } } as unknown as IRActionNode,
     ];
     expect(analyzeActionStructure([mk(), mk()])).toEqual({ kind: 'identical' });
   });

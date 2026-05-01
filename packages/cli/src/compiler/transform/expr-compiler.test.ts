@@ -168,35 +168,35 @@ describe('expr-compiler', () => {
       const { node } = parseExpr('42');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({ kind: 'literal', value: 42, type: 'float' });
+      expect(result).toEqual({ kind: 'expr:literal', value: 42, type: 'float' });
     });
 
     it('compiles string literals', () => {
       const { node } = parseExpr('"hello"');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({ kind: 'literal', value: 'hello', type: 'string' });
+      expect(result).toEqual({ kind: 'expr:literal', value: 'hello', type: 'string' });
     });
 
     it('compiles boolean literals', () => {
       const { node } = parseExpr('true');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({ kind: 'literal', value: true, type: 'bool' });
+      expect(result).toEqual({ kind: 'expr:literal', value: true, type: 'bool' });
     });
 
     it('resolves local variables', () => {
       const { node } = parseExpr('count');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set(['count']) };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({ kind: 'trigger_var', name: 'count' });
+      expect(result).toEqual({ kind: 'expr:trigger_var', name: 'count' });
     });
 
     it('resolves trigger parameter properties', () => {
       const { node } = parseExpr('args.x');
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
-      expect(result).toEqual({ kind: 'trigger_var', name: 'x' });
+      expect(result).toEqual({ kind: 'expr:trigger_var', name: 'x' });
     });
 
     it('returns null for unknown identifiers', () => {
@@ -211,8 +211,8 @@ describe('expr-compiler', () => {
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
       expect(result).toEqual(irBinary('+',
-        { kind: 'literal', value: 1, type: 'float' },
-        { kind: 'literal', value: 2, type: 'float' },
+        { kind: 'expr:literal', value: 1, type: 'float' },
+        { kind: 'expr:literal', value: 2, type: 'float' },
       ));
     });
 
@@ -221,9 +221,9 @@ describe('expr-compiler', () => {
       const ctx: ScriptTransformContext = { triggerParamName: 'args', localVars: new Set() };
       const result = translateScriptExprIR(node, ctx);
       expect(result).toEqual(irTernary(
-        { kind: 'literal', value: true, type: 'bool' },
-        { kind: 'literal', value: 1, type: 'float' },
-        { kind: 'literal', value: 2, type: 'float' },
+        { kind: 'expr:literal', value: true, type: 'bool' },
+        { kind: 'expr:literal', value: 1, type: 'float' },
+        { kind: 'expr:literal', value: 2, type: 'float' },
       ));
     });
   });

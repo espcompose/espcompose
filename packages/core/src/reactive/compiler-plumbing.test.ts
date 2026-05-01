@@ -23,7 +23,7 @@ describe('__espcompose', () => {
             sourceId: 'ha_light_office',
             sourceDomain: 'binary_sensor',
           }],
-          expr: { kind: 'literal', value: 'On', type: 'string' },
+          expr: { kind: 'expr:literal', value: 'On', type: 'string' },
         });
 
         expect(isIRReactiveNode(result)).toBe(true);
@@ -31,7 +31,7 @@ describe('__espcompose', () => {
         expect(result.dependencies).toHaveLength(1);
         expect(result.dependencies[0].sourceId).toBe('ha_light_office');
         expect(result.exprType).toBe('string');
-        expect(result.exprIR).toEqual({ kind: 'literal', value: 'On', type: 'string' });
+        expect(result.exprIR).toEqual({ kind: 'expr:literal', value: 'On', type: 'string' });
       });
     });
 
@@ -43,7 +43,7 @@ describe('__espcompose', () => {
             { sourceId: 'ha_light_office', sourceDomain: 'binary_sensor' },
             { sourceId: 'ha_sensor_temp', sourceDomain: 'sensor' },
           ],
-          expr: { kind: 'literal', value: 'Comfortable', type: 'string' },
+          expr: { kind: 'expr:literal', value: 'Comfortable', type: 'string' },
         });
 
         expect(result.dependencies).toHaveLength(2);
@@ -60,10 +60,10 @@ describe('__espcompose', () => {
           dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
-        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
+        signal.exprIR = { kind: 'expr:signal_read', signalIndex: 0 };
 
         const result = __espcompose.slotted<number>(
-          { type: 'float', slots: 1, expr: { kind: 'slot', slotIndex: 0 } },
+          { type: 'float', slots: 1, expr: { kind: 'expr:slot', slotIndex: 0 } },
           signal,
         );
 
@@ -80,23 +80,23 @@ describe('__espcompose', () => {
           dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_a', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
-        sigA.exprIR = { kind: 'signal_read', signalIndex: 0 };
+        sigA.exprIR = { kind: 'expr:signal_read', signalIndex: 0 };
 
         const sigB = new IRReactiveNode({
           kind: 'expression',
           dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_b', sourceDomain: 'binary_sensor' }],
           exprType: 'bool',
         });
-        sigB.exprIR = { kind: 'signal_read', signalIndex: 1 };
+        sigB.exprIR = { kind: 'expr:signal_read', signalIndex: 1 };
 
         const result = __espcompose.slotted<string>(
           {
             type: 'string',
             slots: 2,
             expr: irTernary(
-              { kind: 'slot', slotIndex: 1 },
-              { kind: 'literal', value: 'on', type: 'string' },
-              { kind: 'literal', value: 'off', type: 'string' },
+              { kind: 'expr:slot', slotIndex: 1 },
+              { kind: 'expr:literal', value: 'on', type: 'string' },
+              { kind: 'expr:literal', value: 'off', type: 'string' },
             ),
           },
           sigA, sigB,
@@ -115,7 +115,7 @@ describe('__espcompose', () => {
           ],
           exprType: 'float',
         });
-        sig1.exprIR = { kind: 'signal_read', signalIndex: 0 };
+        sig1.exprIR = { kind: 'expr:signal_read', signalIndex: 0 };
 
         const sig2 = new IRReactiveNode({
           kind: 'expression',
@@ -125,10 +125,10 @@ describe('__espcompose', () => {
           ],
           exprType: 'bool',
         });
-        sig2.exprIR = { kind: 'signal_read', signalIndex: 1 };
+        sig2.exprIR = { kind: 'expr:signal_read', signalIndex: 1 };
 
         const result = __espcompose.slotted<number>(
-          { type: 'float', slots: 2, expr: irBinary('+', { kind: 'slot', slotIndex: 0 }, { kind: 'slot', slotIndex: 1 }) },
+          { type: 'float', slots: 2, expr: irBinary('+', { kind: 'expr:slot', slotIndex: 0 }, { kind: 'expr:slot', slotIndex: 1 }) },
           sig1, sig2,
         );
 
@@ -145,13 +145,13 @@ describe('__espcompose', () => {
           dependencies: [
             { kind: 'dependency', sourceId: '__theme__', sourceType: 'theme' },
           ],
-          exprIR: { kind: 'literal', value: 'montserrat_28', type: 'string' },
+          exprIR: { kind: 'expr:literal', value: 'montserrat_28', type: 'string' },
         });
 
         expect(isIRReactiveNode(result)).toBe(true);
         expect(result.kind).toBe('memo');
         expect(result.exprType).toBe('font_ref');
-        expect(result.exprIR).toEqual({ kind: 'literal', value: 'montserrat_28', type: 'string' });
+        expect(result.exprIR).toEqual({ kind: 'expr:literal', value: 'montserrat_28', type: 'string' });
       });
     });
   });

@@ -12,6 +12,7 @@
 import type { IRReactiveNode } from '../reactive';
 import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
+import type { ExprType } from './expr-types';
 import type { IRWidgetTree } from './widget-types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -66,8 +67,8 @@ export interface IRType {
 export interface IRScriptParam {
   /** Parameter name (used as identifier in the script body). */
   name: string;
-  /** Target-agnostic value type. The lowering target maps this to a concrete type. */
-  valueType: IRType;
+  /** Target-agnostic type descriptor. The lowering target maps this to a concrete type. */
+  irType: IRType;
 }
 
 /**
@@ -85,23 +86,6 @@ export interface IRScriptParamRef {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Semantic kind of a closure field. Drives how the field is materialized in
- * the closure-table struct and how body references are rewritten.
- *
- *   - 'scalar'  : plain value (int/float/bool/string), stored in the table row
- *                 and referenced as `closure.<field>` in the script body.
- *   - 'id_ref'  : ESPHome component/widget ID. Stored as a string token (or
- *                 lookup-table index); native YAML actions whose `id:` slot
- *                 binds to this field get rewritten to lambdas calling
- *                 `id(closure.<field>)`.
- *   - 'entity'  : Home Assistant entity id. Same storage as id_ref; entity-
- *                 specific actions get rewritten via descriptor.
- *
- * @deprecated Subsumed by `IRType.format`. Retained transitionally.
- */
-export type ClosureFieldKind = 'scalar' | 'id_ref' | 'entity';
-
-/**
  * One column in a script's closure table.
  *
  * The set of `ClosureField`s defines the table's struct layout; per-instance
@@ -111,7 +95,7 @@ export interface ClosureField {
   /** Struct field name (also referenced in body as `closure.<name>`). */
   name: string;
   /**
-   * Target-agnostic value type. Drives both target lowering (struct field
+   * Target-agnostic type descriptor. Drives both target lowering (struct field
    * type) and body-rewriting (presence of `format: 'id_ref' | 'entity'`).
    *
    * Examples:
@@ -119,7 +103,7 @@ export interface ClosureField {
    *   { type: 'int', format: 'id_ref' }     — index into id-ref lookup table
    *   { type: 'string', format: 'entity' }  — HA entity id
    */
-  valueType: IRType;
+  irType: IRType;
 }
 
 /** The deterministic, ordered shape of a script's closure table. */
@@ -128,24 +112,10 @@ export interface ClosureShape {
   fields: ClosureField[];
 }
 
-/**
- * A literal value used to populate a single closure-table cell.
- *
- * Distinct from `IRActionParam` (which carries trigger-var/expression kinds)
- * because closure-table rows are pure compile-time constants.
- */
-export type IRClosureValue =
-  | { kind: 'int'; value: number }
-  | { kind: 'float'; value: number }
-  | { kind: 'bool'; value: boolean }
-  | { kind: 'string'; value: string }
-  | { kind: 'id_ref'; id: string }
-  | { kind: 'entity'; entityId: string };
-
 /** One row of the closure table: concrete values for every field in the shape. */
 export interface ClosureInstance {
   /** Field-name → value map. Keys MUST match the script's `closureShape.fields[].name`. */
-  values: Record<string, IRClosureValue>;
+  values: Record<string, IRScalar>;
 }
 
 export interface IRScript {
@@ -190,8 +160,8 @@ export interface IRThemeData {
   scopeId: string;
   themeNames: string[];
   defaultIndex: number;
-  /** For each signal path, ordered values across themes + value type (ExprType compatible). */
-  leafData: Map<string, { values: IRScalar[]; valueType: string }>;
+  /** For each signal path, ordered values across themes + expression type. */
+  leafData: Map<string, { values: IRScalar[]; exprType: ExprType }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

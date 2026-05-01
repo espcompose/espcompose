@@ -24,7 +24,8 @@ import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import type { IRActionNode } from '../ir/action-types';
-import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRType, ClosureShape, ClosureField, ClosureInstance, IRClosureValue } from '../ir/types';
+import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRType, IRScalar, ClosureShape, ClosureField, ClosureInstance } from '../ir/types';
+import { irScalar } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
 import { throwCompileTimeOnly } from '../errors';
@@ -91,7 +92,7 @@ export interface ScriptHandle<A extends ScriptParamScalar[] = ScriptParamScalar[
 /** Compiled metadata injected by the AST transformer */
 interface CompiledScriptMeta {
   id: string;
-  userParams?: Array<{ name: string; valueType: IRType }>;
+  userParams?: Array<{ name: string; irType: IRType }>;
   then: unknown[];
   /**
    * Deterministic FNV-1a body hash computed by the script
@@ -105,7 +106,7 @@ interface CompiledScriptMeta {
    * Maps captured variable name → IRType (inferred from the TS type at
    * AST transform time). At render time `useScript` reads the runtime value
    * from `__refBindings[name]` and creates a scalar `ClosureField` +
-   * `IRClosureValue` for the closure table.
+   * `IRScalar` for the closure table.
    */
   scalarCaptures?: Record<string, IRType>;
 }
@@ -141,7 +142,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const refBindings = body.__refBindings ?? {};
     const userParams = body.__compiledScript.userParams?.map(p => ({
       name: p.name,
-      valueType: p.valueType,
+      irType: p.irType,
     }));
     const scalarCaptures = body.__compiledScript.scalarCaptures;
 
@@ -250,7 +251,7 @@ export function classifyBindings(
     // Scalar captures from the compiler take priority — they're plain JS
     // values (number, string, boolean) that have no closure descriptor.
     if (scalarCaptures && name in scalarCaptures) {
-      fields.push({ name, valueType: scalarCaptures[name] });
+      fields.push({ name, irType: scalarCaptures[name] });
       continue;
     }
 
@@ -264,11 +265,11 @@ export function classifyBindings(
 
 /** @internal exported for tests. Stable signature string for a `ClosureShape`. */
 export function closureShapeSignature(shape: ClosureShape): string {
-  return shape.fields.map((f) => `${f.name}:${valueTypeKey(f.valueType)}`).join(',');
+  return shape.fields.map((f) => `${f.name}:${irTypeKey(f.irType)}`).join(',');
 }
 
 /** Stable string key for an `IRType` — used in dedup signatures. */
-function valueTypeKey(vt: IRType): string {
+function irTypeKey(vt: IRType): string {
   let s = vt.type as string;
   if (vt.format) s += `:${vt.format}`;
   if (vt.isArray) s += '[]';
@@ -285,7 +286,7 @@ export function buildClosureRow(
   refBindings: Record<string, unknown>,
   shape: ClosureShape,
 ): ClosureInstance {
-  const values: Record<string, IRClosureValue> = {};
+  const values: Record<string, IRScalar> = {};
   // Walk binding names in alphabetical order (matches classifyBindings ordering).
   const names = Object.keys(refBindings).sort();
   for (const name of names) {
@@ -294,10 +295,10 @@ export function buildClosureRow(
     // Check if this field is a scalar capture (plain JS value, no descriptor).
     // Scalar captures have no `format` qualifier (plain int/float/bool/string).
     const shapeFieldDirect = shape.fields.find(
-      (f) => f.name === name && !f.valueType.format,
+      (f) => f.name === name && !f.irType.format,
     );
     if (shapeFieldDirect) {
-      const cell = scalarValueToClosureValue(value, shapeFieldDirect.valueType);
+      const cell = scalarValueToClosureValue(value, shapeFieldDirect.irType);
       if (cell) values[shapeFieldDirect.name] = cell;
       continue;
     }
@@ -318,20 +319,20 @@ export function buildClosureRow(
   return { values };
 }
 
-/** Convert a plain JS value to an IRClosureValue using the declared value type. */
+/** Convert a plain JS value to an IRScalar using the declared value type. */
 function scalarValueToClosureValue(
   value: unknown,
-  valueType: IRType,
-): IRClosureValue | null {
-  switch (valueType.type) {
+  irType: IRType,
+): IRScalar | null {
+  switch (irType.type) {
     case 'int':
-      return typeof value === 'number' ? { kind: 'int', value: Math.trunc(value) } : null;
+      return typeof value === 'number' ? irScalar(Math.trunc(value)) : null;
     case 'float':
-      return typeof value === 'number' ? { kind: 'float', value } : null;
+      return typeof value === 'number' ? irScalar(value) : null;
     case 'bool':
-      return typeof value === 'boolean' ? { kind: 'bool', value } : null;
+      return typeof value === 'boolean' ? irScalar(value) : null;
     case 'string':
-      return typeof value === 'string' ? { kind: 'string', value } : null;
+      return typeof value === 'string' ? irScalar(value) : null;
   }
 }
 
@@ -444,7 +445,7 @@ function resolveControllerRefsParameterized(
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
 
-    if (action.kind === 'overlay_show' && action.controllerRef) {
+    if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
         const paramRefs = paramRefMap.get(action.controllerRef);
@@ -453,17 +454,17 @@ function resolveControllerRefsParameterized(
         action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl.__instanceIndex ?? action.instanceIndex;
         delete action.controllerRef;
       }
-    } else if (action.kind === 'overlay_hide' && action.controllerRef) {
+    } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
         action.templateKey = ctrl.__templateKey ?? action.templateKey;
         action.zOrder = ctrl.__zOrder ?? action.zOrder;
         delete action.controllerRef;
       }
-    } else if (action.kind === 'if') {
+    } else if (action.kind === 'action:if') {
       resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
       if (action.else) resolveControllerRefsParameterized(action.else, refBindings, paramRefMap);
-    } else if (action.kind === 'while' || action.kind === 'repeat') {
+    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
       resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
     }
   }
@@ -476,15 +477,15 @@ function resolveControllerRefsParameterized(
  */
 function rewriteScalarParamRefs(actions: IRActionNode[]): void {
   for (const action of actions) {
-    if (action.kind === 'delay') {
+    if (action.kind === 'action:delay') {
       const dur = action.duration;
       if (typeof dur === 'object' && dur.kind === 'script_param' && !dur.name.startsWith('closure.')) {
         dur.name = `closure.${dur.name}`;
       }
-    } else if (action.kind === 'if') {
+    } else if (action.kind === 'action:if') {
       rewriteScalarParamRefs(action.then);
       if (action.else) rewriteScalarParamRefs(action.else);
-    } else if (action.kind === 'while' || action.kind === 'repeat') {
+    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
       rewriteScalarParamRefs(action.then);
     }
   }

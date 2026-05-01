@@ -1,19 +1,19 @@
 // ────────────────────────────────────────────────────────────────────────────
-// IRExprNode → C++ expression lowering
+// IRExpression → C++ expression lowering
 //
-// Converts target-agnostic IRExprNode AST trees into C++ expression strings
+// Converts target-agnostic IRExpression AST trees into C++ expression strings
 // for the ESPHome firmware reactive runtime.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type {
-  IRExprNode,
+  IRExpression,
 } from '@espcompose/core';
 import type {
   ExprType,
   BuiltinFn,
   StringMethod,
   ArrayMethod,
-  IRExprOp,
+  IROpExpression,
 } from '@espcompose/core/internals';
 
 // ── Lowering context ─────────────────────────────────────────────────────────
@@ -77,63 +77,63 @@ export function buildEntityComponentIds(
 
 // ── Main lowering function ───────────────────────────────────────────────────
 
-export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
+export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
   switch (node.kind) {
-    case 'literal':
+    case 'expr:literal':
       return literalToCpp(node.value, node.type);
 
-    case 'signal_read': {
+    case 'expr:signal_read': {
       const name = ctx.signalNames.get(node.signalIndex);
       if (!name) throw new Error(`Unknown signal index: ${node.signalIndex}`);
       const prefix = ctx.actionContext ? 'espcompose::' : '';
       return `${prefix}${name}.get()`;
     }
 
-    case 'memo_read': {
+    case 'expr:memo_read': {
       const name = ctx.memoNames.get(node.memoId);
       if (!name) throw new Error(`Unknown memo id: ${node.memoId}`);
       const prefix = ctx.actionContext ? 'espcompose::' : '';
       return `${prefix}${name}.get()`;
     }
 
-    case 'slot': {
+    case 'expr:slot': {
       const expr = ctx.slotExprs.get(node.slotIndex);
       if (!expr) throw new Error(`Unresolved slot: ${node.slotIndex}`);
       return expr;
     }
 
-    case 'theme_read': {
+    case 'expr:theme_read': {
       const scopedKey = `${node.scopeId}_${node.path}`;
       const name = ctx.themeVarNames.get(scopedKey);
       if (!name) throw new Error(`Unknown theme path: ${node.scope}/${node.path} (key: ${scopedKey})`);
       return `${name}.get()`;
     }
 
-    case 'entity_prop': {
+    case 'expr:entity_prop': {
       const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (!compId) throw new Error(`Unknown entity: ${node.entityId}`);
       return `sig_${compId}.get()`;
     }
 
-    case 'global_read':
+    case 'expr:global_read':
       if (ctx.actionContext) {
         return `id(${node.globalId})`;
       }
       return `sig_global_${node.globalId}.get()`;
 
-    case 'component_read':
+    case 'expr:component_read':
       return `id(${node.componentId}).state`;
 
-    case 'trigger_var':
+    case 'expr:trigger_var':
       return node.name;
 
-    case 'mux': {
+    case 'expr:mux': {
       const idx = exprToCpp(node.index, ctx);
       const retType = exprTypeToCpp(node.type);
 
-      if (node.cases.length > 0 && node.cases.every(c => c.kind === 'signal_read')) {
+      if (node.cases.length > 0 && node.cases.every(c => c.kind === 'expr:signal_read')) {
         const ptrs = node.cases.map(c => {
-          const name = ctx.signalNames.get((c as { kind: 'signal_read'; signalIndex: number }).signalIndex);
+          const name = ctx.signalNames.get((c as { kind: 'expr:signal_read'; signalIndex: number }).signalIndex);
           return `&${name}`;
         }).join(', ');
         return `([&]() -> ${retType} { static NodeBase* _tbl[] = {${ptrs}}; return static_cast<Signal<${retType}>*>(_tbl[${idx}])->get(); })()`;
@@ -145,25 +145,25 @@ export function exprToCpp(node: IRExprNode, ctx: CppLoweringContext): string {
       return `([&]() -> ${retType} { switch (${idx}) { ${cases} default: return ${retType}{}; } })()`;
     }
 
-    case 'table_lookup': {
+    case 'expr:table_lookup': {
       const idx = exprToCpp(node.index, ctx);
       const prefix = ctx.actionContext ? 'espcompose::' : '';
       return `${prefix}${node.table}[${idx}]`;
     }
 
-    case 'op':
+    case 'expr:op':
       return opToCpp(node, ctx);
 
     default: {
       const _exhaustive: never = node;
-      throw new Error(`Unknown IRExprNode kind: ${(_exhaustive as { kind: string }).kind}`);
+      throw new Error(`Unknown IRExpression kind: ${(_exhaustive as { kind: string }).kind}`);
     }
   }
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function opToCpp(node: IRExprOp, ctx: CppLoweringContext): string {
+function opToCpp(node: IROpExpression, ctx: CppLoweringContext): string {
   const { op, children } = node;
   switch (op.tag) {
     case 'binary':
@@ -180,7 +180,7 @@ function opToCpp(node: IRExprOp, ctx: CppLoweringContext): string {
       return children.map(p => exprToCpp(p, ctx)).join(' + ');
     case 'to_string': {
       const inner = exprToCpp(children[0], ctx);
-      if (children[0].kind === 'literal' && children[0].type === 'string') return inner;
+      if (children[0].kind === 'expr:literal' && children[0].type === 'string') return inner;
       return `std::to_string(${inner})`;
     }
     case 'group':

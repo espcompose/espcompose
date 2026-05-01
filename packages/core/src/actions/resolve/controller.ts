@@ -36,7 +36,7 @@ export function resolveControllerMethodCalls(
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
 
-    if (action.kind === 'controller_method_call') {
+    if (action.kind === 'action:controller_method_call') {
       const ctrl = refBindings[action.controllerRef];
       if (isController(ctrl)) {
         const handle = ctrl.__scripts[action.methodName];
@@ -46,10 +46,10 @@ export function resolveControllerMethodCalls(
           });
         }
       }
-    } else if (action.kind === 'if') {
+    } else if (action.kind === 'action:if') {
       resolveControllerMethodCalls(action.then, refBindings);
       if (action.else) resolveControllerMethodCalls(action.else, refBindings);
-    } else if (action.kind === 'while' || action.kind === 'repeat') {
+    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
       resolveControllerMethodCalls(action.then, refBindings);
     }
   }

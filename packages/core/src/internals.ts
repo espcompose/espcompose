@@ -46,7 +46,7 @@ export {
   clearThemeNodeCache,
 } from './lvgl/theme/reactive-proxy';
 export {
-  inferValueType,
+  inferExprType,
 } from './lvgl/theme/signals';
 export type { ThemeLeaf } from './lvgl/theme/signals';
 
@@ -94,9 +94,9 @@ export type { ScriptHandle } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
-export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, valueTypeToExprType } from './hooks/global-shared';
+export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, irTypeToExprType } from './hooks/global-shared';
 export type { GlobalDefinition, GlobalHandle } from './hooks/global-shared';
-export { globalTypeToValueType, isArrayGlobalType } from './hooks/useGlobal';
+export { globalTypeToIRType, isArrayGlobalType } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useGlobal';
 export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
@@ -186,31 +186,25 @@ export type {
   BuildSemanticIRInput, IRThemeData, IRScript, IRComponent,
   IRScriptParam, IRScriptParamRef,
   IRScalarType, IRScalarFormat, IRType,
-  ClosureField, ClosureFieldKind, ClosureShape, ClosureInstance, IRClosureValue,
+  ClosureField, ClosureShape, ClosureInstance,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
   IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
-  IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
-  IRExprSlot, IRExprThemeRead,
-  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar, IRExprGlobalRead,
-  IRExprMux, IRExprTableLookup,
-  IRExprNode,
-  ExprOpDescriptor, IRExprOp,
+  IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
+  IRSlotExpression, IRThemeReadExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IRMuxExpression, IRTableLookupExpression,
+  IRExpression,
+  ExprOpDescriptor, IROpExpression,
 } from './ir/index';
 export {
   irBinary, irUnary, irPostfix, irTernary,
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-} from './ir/index';
-export {
-  operandOf, exprOf, leftOf, rightOf,
-  testOf, consequentOf, alternateOf,
-  argsOf, partsOf, objectOf, methodArgsOf,
-  arrayOf, indexOf,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
@@ -228,11 +222,11 @@ export type {
   IRActionNode,
   IRNativeAction, IRHAServiceAction, IRLoggerAction, IRDelayAction,
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
-  IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
-  IRArraySet, IRArrayPush, IRArrayClear,
+  IRScriptExecuteAction, IRScriptWaitAction, IRScriptStopAction, IRThemeSelectAction, IRGlobalSetAction,
+  IRArraySetAction, IRArrayPushAction, IRArrayClearAction,
   IRLambdaAction, IRLambdaSlot,
-  IROverlayShow, IROverlayHide,
-  IRControllerMethodCall,
+  IROverlayShowAction, IROverlayHideAction,
+  IRControllerMethodCallAction,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,

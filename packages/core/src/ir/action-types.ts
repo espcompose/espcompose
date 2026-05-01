@@ -7,7 +7,7 @@
 // happens in the respective target packages.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRExprNode } from './expr-types.js';
+import type { IRExpression } from './expr-types.js';
 import type { IRScriptParamRef, IRType } from './types.js';
 
 // ── Action Nodes ───────────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ export type IRRefSlot =
 
 /** A component-specific action (light.toggle, switch.turn_on, fan.turn_off, etc.) */
 export interface IRNativeAction {
-  kind: 'native';
+  kind: 'action:native';
   /**
    * Semantic component domain (e.g. 'light', 'switch', 'fan', 'lvgl').
    * Target maps `(domain, operation)` to its native action path at lowering.
@@ -64,7 +64,7 @@ export interface IRNativeAction {
 
 /** A Home Assistant service call */
 export interface IRHAServiceAction {
-  kind: 'ha_service';
+  kind: 'action:ha_service';
   /** Fully qualified HA action name, e.g. 'light.turn_on' */
   action: string;
   /** Optional data payload for the service call */
@@ -73,7 +73,7 @@ export interface IRHAServiceAction {
 
 /** logger.log action */
 export interface IRLoggerAction {
-  kind: 'logger';
+  kind: 'action:logger';
   message: string;
   level?: string;
 }
@@ -99,7 +99,7 @@ export type IRTimeout = IRDuration | IRTimeoutNever;
 
 /** delay action */
 export interface IRDelayAction {
-  kind: 'delay';
+  kind: 'action:delay';
   /**
    * Duration — either a literal value+unit or an `IRScriptParamRef`
    * referencing a closure-captured scalar.
@@ -109,7 +109,7 @@ export interface IRDelayAction {
 
 /** wait_until action */
 export interface IRWaitUntilAction {
-  kind: 'wait_until';
+  kind: 'action:wait_until';
   condition: IRCondition;
   /** Optional timeout — duration or `never` sentinel. */
   timeout?: IRTimeout;
@@ -117,7 +117,7 @@ export interface IRWaitUntilAction {
 
 /** if/else action */
 export interface IRIfAction {
-  kind: 'if';
+  kind: 'action:if';
   condition: IRCondition;
   then: IRActionNode[];
   else?: IRActionNode[];
@@ -125,21 +125,21 @@ export interface IRIfAction {
 
 /** while loop action */
 export interface IRWhileAction {
-  kind: 'while';
+  kind: 'action:while';
   condition: IRCondition;
   then: IRActionNode[];
 }
 
 /** repeat action */
 export interface IRRepeatAction {
-  kind: 'repeat';
+  kind: 'action:repeat';
   count: number;
   then: IRActionNode[];
 }
 
 /** script.execute action */
-export interface IRScriptExecute {
-  kind: 'script_execute';
+export interface IRScriptExecuteAction {
+  kind: 'action:script_execute';
   scriptId: string;
   /** User-provided arguments (from the call site). */
   userArgs?: Record<string, IRActionParam>;
@@ -151,20 +151,20 @@ export interface IRScriptExecute {
 }
 
 /** script.wait action */
-export interface IRScriptWait {
-  kind: 'script_wait';
+export interface IRScriptWaitAction {
+  kind: 'action:script_wait';
   scriptId: string;
 }
 
 /** script.stop action */
-export interface IRScriptStop {
-  kind: 'script_stop';
+export interface IRScriptStopAction {
+  kind: 'action:script_stop';
   scriptId: string;
 }
 
 /** Theme selection action */
-export interface IRThemeSelect {
-  kind: 'theme_select';
+export interface IRThemeSelectAction {
+  kind: 'action:theme_select';
   /** Human-readable scope name (e.g. 'espcompose:ui'). */
   scope: string;
   /** 8-char hex hash of the scope — C++ identifier fragment. */
@@ -180,43 +180,43 @@ export interface IRThemeSelect {
  * a BoundSignal write (if the global has reactive dependents) or a
  * plain globals.set: YAML action (if non-reactive).
  */
-export interface IRGlobalSet {
-  kind: 'global_set';
+export interface IRGlobalSetAction {
+  kind: 'action:global_set';
   /** Auto-generated ESPHome global ID. */
   globalId: string;
-  /** Target-agnostic value type of the global. */
-  valueType: IRType;
+  /** Target-agnostic type descriptor of the global. */
+  irType: IRType;
   /** Value to set — literal, trigger var, or compiled expression. */
-  value: IRActionParam | IRExprNode;
+  value: IRActionParam | IRExpression;
 }
 
 /** Array element set: handle.set(index, value) → vec[i] = val */
-export interface IRArraySet {
-  kind: 'array_set';
+export interface IRArraySetAction {
+  kind: 'action:array_set';
   globalId: string;
-  valueType: IRType;
-  index: IRActionParam | IRExprNode;
-  value: IRActionParam | IRExprNode;
+  irType: IRType;
+  index: IRActionParam | IRExpression;
+  value: IRActionParam | IRExpression;
 }
 
 /** Array push: handle.push(value) → vec.push_back(val) */
-export interface IRArrayPush {
-  kind: 'array_push';
+export interface IRArrayPushAction {
+  kind: 'action:array_push';
   globalId: string;
-  valueType: IRType;
-  value: IRActionParam | IRExprNode;
+  irType: IRType;
+  value: IRActionParam | IRExpression;
 }
 
 /** Array clear: handle.clear() → vec.clear() */
-export interface IRArrayClear {
-  kind: 'array_clear';
+export interface IRArrayClearAction {
+  kind: 'action:array_clear';
   globalId: string;
-  valueType: IRType;
+  irType: IRType;
 }
 
 /** Overlay show action — sets the mux index and shows the shared overlay. */
-export interface IROverlayShow {
-  kind: 'overlay_show';
+export interface IROverlayShowAction {
+  kind: 'action:overlay_show';
   /** Template key identifying the shared overlay definition. */
   templateKey: string;
   /**
@@ -235,8 +235,8 @@ export interface IROverlayShow {
 }
 
 /** Overlay hide action — hides the shared overlay (not muxed). */
-export interface IROverlayHide {
-  kind: 'overlay_hide';
+export interface IROverlayHideAction {
+  kind: 'action:overlay_hide';
   /** Template key identifying the shared overlay definition. */
   templateKey: string;
   /** Z-order tier (carried for naming consistency). */
@@ -258,7 +258,7 @@ export type IRLambdaSlot =
 
 /** Inline C++ lambda action — emitted as a !lambda block in YAML. */
 export interface IRLambdaAction {
-  kind: 'lambda_action';
+  kind: 'action:lambda_action';
   /** Static string fragments from the tagged template (N+1 entries for N slots). */
   fragments: string[];
   /** Typed interpolation slots — interleaved with fragments to reconstruct C++ code. */
@@ -276,26 +276,26 @@ export type IRActionNode =
   | IRIfAction
   | IRWhileAction
   | IRRepeatAction
-  | IRScriptExecute
-  | IRScriptWait
-  | IRScriptStop
-  | IRThemeSelect
-  | IRGlobalSet
-  | IRArraySet
-  | IRArrayPush
-  | IRArrayClear
+  | IRScriptExecuteAction
+  | IRScriptWaitAction
+  | IRScriptStopAction
+  | IRThemeSelectAction
+  | IRGlobalSetAction
+  | IRArraySetAction
+  | IRArrayPushAction
+  | IRArrayClearAction
   | IRLambdaAction
-  | IROverlayShow
-  | IROverlayHide
-  | IRControllerMethodCall;
+  | IROverlayShowAction
+  | IROverlayHideAction
+  | IRControllerMethodCallAction;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
-/** A lambda condition — compiled from a boolean expression to IRExprNode IR */
+/** A lambda condition — compiled from a boolean expression to IRExpression IR */
 export interface IRLambdaCondition {
   kind: 'lambda_condition';
   /** Target-agnostic expression IR for the condition */
-  exprIR: IRExprNode;
+  exprIR: IRExpression;
 }
 
 /** A native condition (e.g. binary_sensor.is_on) */
@@ -334,7 +334,7 @@ export interface IRExpressionParam {
 /** A reactive IR expression — lowered to C++ via exprToCpp at codegen time */
 export interface IRReactiveExprParam {
   kind: 'reactive_expr';
-  exprIR: IRExprNode;
+  exprIR: IRExpression;
 }
 
 export type IRActionParam =
@@ -369,7 +369,7 @@ export type IRActionConfig =
 // ── Constructors ───────────────────────────────────────────────────────────
 
 export function irNativeAction(domain: string, operation: string, config: IRActionConfig, refSlots?: IRRefSlot[]): IRNativeAction {
-  return { kind: 'native', domain, operation, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
+  return { kind: 'action:native', domain, operation, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
 }
 
 /**
@@ -407,31 +407,31 @@ export function parseTimeoutString(s: string): IRTimeout | null {
 }
 
 export function irHAServiceAction(action: string, data?: Record<string, IRActionParam>): IRHAServiceAction {
-  return { kind: 'ha_service', action, ...(data ? { data } : {}) };
+  return { kind: 'action:ha_service', action, ...(data ? { data } : {}) };
 }
 
 export function irLoggerAction(message: string, level?: string): IRLoggerAction {
-  return { kind: 'logger', message, ...(level ? { level } : {}) };
+  return { kind: 'action:logger', message, ...(level ? { level } : {}) };
 }
 
 export function irDelayAction(duration: IRDuration): IRDelayAction {
-  return { kind: 'delay', duration };
+  return { kind: 'action:delay', duration };
 }
 
 export function irWaitUntilAction(condition: IRCondition, timeout?: IRTimeout): IRWaitUntilAction {
-  return { kind: 'wait_until', condition, ...(timeout ? { timeout } : {}) };
+  return { kind: 'action:wait_until', condition, ...(timeout ? { timeout } : {}) };
 }
 
 export function irIfAction(condition: IRCondition, then: IRActionNode[], elseActions?: IRActionNode[]): IRIfAction {
-  return { kind: 'if', condition, then, ...(elseActions ? { else: elseActions } : {}) };
+  return { kind: 'action:if', condition, then, ...(elseActions ? { else: elseActions } : {}) };
 }
 
 export function irWhileAction(condition: IRCondition, then: IRActionNode[]): IRWhileAction {
-  return { kind: 'while', condition, then };
+  return { kind: 'action:while', condition, then };
 }
 
 export function irRepeatAction(count: number, then: IRActionNode[]): IRRepeatAction {
-  return { kind: 'repeat', count, then };
+  return { kind: 'action:repeat', count, then };
 }
 
 export function irScriptExecute(
@@ -440,71 +440,71 @@ export function irScriptExecute(
     userArgs?: Record<string, IRActionParam>;
     closureIndex?: number;
   },
-): IRScriptExecute {
+): IRScriptExecuteAction {
   return {
-    kind: 'script_execute',
+    kind: 'action:script_execute',
     scriptId,
     ...(args?.userArgs ? { userArgs: args.userArgs } : {}),
     ...(args?.closureIndex !== undefined ? { closureIndex: args.closureIndex } : {}),
   };
 }
 
-export function irScriptWait(scriptId: string): IRScriptWait {
-  return { kind: 'script_wait', scriptId };
+export function irScriptWait(scriptId: string): IRScriptWaitAction {
+  return { kind: 'action:script_wait', scriptId };
 }
 
-export function irScriptStop(scriptId: string): IRScriptStop {
-  return { kind: 'script_stop', scriptId };
+export function irScriptStop(scriptId: string): IRScriptStopAction {
+  return { kind: 'action:script_stop', scriptId };
 }
 
-export function irThemeSelect(scope: string, scopeId: string, themeName: string): IRThemeSelect {
-  return { kind: 'theme_select', scope, scopeId, themeName };
+export function irThemeSelect(scope: string, scopeId: string, themeName: string): IRThemeSelectAction {
+  return { kind: 'action:theme_select', scope, scopeId, themeName };
 }
 
-export function irGlobalSet(globalId: string, valueType: IRType, value: IRActionParam | IRExprNode): IRGlobalSet {
-  return { kind: 'global_set', globalId, valueType, value };
+export function irGlobalSet(globalId: string, irType: IRType, value: IRActionParam | IRExpression): IRGlobalSetAction {
+  return { kind: 'action:global_set', globalId, irType, value };
 }
 
-export function irArraySet(globalId: string, valueType: IRType, index: IRActionParam | IRExprNode, value: IRActionParam | IRExprNode): IRArraySet {
-  return { kind: 'array_set', globalId, valueType, index, value };
+export function irArraySet(globalId: string, irType: IRType, index: IRActionParam | IRExpression, value: IRActionParam | IRExpression): IRArraySetAction {
+  return { kind: 'action:array_set', globalId, irType, index, value };
 }
 
-export function irArrayPush(globalId: string, valueType: IRType, value: IRActionParam | IRExprNode): IRArrayPush {
-  return { kind: 'array_push', globalId, valueType, value };
+export function irArrayPush(globalId: string, irType: IRType, value: IRActionParam | IRExpression): IRArrayPushAction {
+  return { kind: 'action:array_push', globalId, irType, value };
 }
 
-export function irArrayClear(globalId: string, valueType: IRType): IRArrayClear {
-  return { kind: 'array_clear', globalId, valueType };
+export function irArrayClear(globalId: string, irType: IRType): IRArrayClearAction {
+  return { kind: 'action:array_clear', globalId, irType };
 }
 
-export function irLambdaCondition(exprIR: IRExprNode): IRLambdaCondition {
+export function irLambdaCondition(exprIR: IRExpression): IRLambdaCondition {
   return { kind: 'lambda_condition', exprIR };
 }
 
 export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLambdaAction {
-  return { kind: 'lambda_action', fragments, slots };
+  return { kind: 'action:lambda_action', fragments, slots };
 }
 
-export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, controllerRef?: string): IROverlayShow {
-  return { kind: 'overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, controllerRef?: string): IROverlayShowAction {
+  return { kind: 'action:overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-export function irOverlayHide(templateKey: string, zOrder: number, controllerRef?: string): IROverlayHide {
-  return { kind: 'overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayHide(templateKey: string, zOrder: number, controllerRef?: string): IROverlayHideAction {
+  return { kind: 'action:overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
 }
 
 // ── Controller Method Call ─────────────────────────────────────────────────
 
 /** Generic controller method call — resolved to script_execute at serialization. */
-export interface IRControllerMethodCall {
-  kind: 'controller_method_call';
+export interface IRControllerMethodCallAction {
+  kind: 'action:controller_method_call';
   /** Controller variable name — resolved from __refBindings at serialization. */
   controllerRef: string;
   /** Method name on the controller (e.g. 'show', 'hide'). */
   methodName: string;
 }
 
-export function irControllerMethodCall(controllerRef: string, methodName: string): IRControllerMethodCall {
-  return { kind: 'controller_method_call', controllerRef, methodName };
+export function irControllerMethodCall(controllerRef: string, methodName: string): IRControllerMethodCallAction {
+  return { kind: 'action:controller_method_call', controllerRef, methodName };
 }
 

@@ -17,8 +17,8 @@ import type { BINDING_BRAND } from '../types';
 /** Definition stored in the global scope context for compiler use. */
 export interface GlobalDefinition {
   id: string;
-  /** Target-agnostic value type. The lowering target maps this to a concrete representation. */
-  valueType: IRType;
+  /** Target-agnostic type descriptor. The lowering target maps this to a concrete representation. */
+  irType: IRType;
 }
 
 // ── GlobalHandle ───────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ export interface GlobalHandle<T> {
  * Map a target-agnostic `IRType` to the corresponding `ExprType`
  * used by the IR expression layer.
  */
-export function valueTypeToExprType(vt: IRType): ExprType {
+export function irTypeToExprType(vt: IRType): ExprType {
   if (vt.isArray) {
     switch (vt.type) {
       case 'int':    return 'int_array';
@@ -123,7 +123,7 @@ export function withGlobalScope<T>(fn: () => T): { result: T; globals: GlobalDef
 
 export function createGlobalHandle<T>(
   id: string,
-  _valueType: IRType,
+  _irType: IRType,
   exprType: ExprType,
 ): GlobalHandle<T> {
   let cachedNode: IRReactiveNode<T> | undefined;

@@ -6,7 +6,7 @@
 // functions.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExprNode, IRScript, IRBinding } from '@espcompose/core/internals';
+import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings.js';
@@ -313,7 +313,7 @@ function collectIRTreeReferences(ir: SemanticIR): {
 
   function walkActionNodes(actions: IRActionNode[]): void {
     for (const action of actions) {
-      if (action.kind === 'overlay_show' && action.templateKey) {
+      if (action.kind === 'action:overlay_show' && action.templateKey) {
         overlayShowKeys.add(action.templateKey);
       }
       if ('then' in action && Array.isArray((action as { then?: unknown }).then)) {
@@ -333,34 +333,34 @@ function collectIRTreeReferences(ir: SemanticIR): {
 }
 
 /**
- * Recursively collect `thm_<scopeId>_<path>` names from an IRExprNode tree.
+ * Recursively collect `thm_<scopeId>_<path>` names from an IRExpression tree.
  */
-function collectThemeReadsFromExpr(expr: IRExprNode, refs: Set<string>): void {
+function collectThemeReadsFromExpr(expr: IRExpression, refs: Set<string>): void {
   if (!expr || typeof expr !== 'object') return;
-  if (expr.kind === 'theme_read') {
+  if (expr.kind === 'expr:theme_read') {
     refs.add(`thm_${expr.scopeId}_${expr.path}`);
     return;
   }
   // Recurse into composite expression nodes
-  if ('left' in expr) collectThemeReadsFromExpr((expr as { left: IRExprNode }).left, refs);
-  if ('right' in expr) collectThemeReadsFromExpr((expr as { right: IRExprNode }).right, refs);
-  if ('operand' in expr) collectThemeReadsFromExpr((expr as { operand: IRExprNode }).operand, refs);
-  if ('test' in expr) collectThemeReadsFromExpr((expr as { test: IRExprNode }).test, refs);
-  if ('consequent' in expr) collectThemeReadsFromExpr((expr as { consequent: IRExprNode }).consequent, refs);
-  if ('alternate' in expr) collectThemeReadsFromExpr((expr as { alternate: IRExprNode }).alternate, refs);
+  if ('left' in expr) collectThemeReadsFromExpr((expr as { left: IRExpression }).left, refs);
+  if ('right' in expr) collectThemeReadsFromExpr((expr as { right: IRExpression }).right, refs);
+  if ('operand' in expr) collectThemeReadsFromExpr((expr as { operand: IRExpression }).operand, refs);
+  if ('test' in expr) collectThemeReadsFromExpr((expr as { test: IRExpression }).test, refs);
+  if ('consequent' in expr) collectThemeReadsFromExpr((expr as { consequent: IRExpression }).consequent, refs);
+  if ('alternate' in expr) collectThemeReadsFromExpr((expr as { alternate: IRExpression }).alternate, refs);
   if ('args' in expr && Array.isArray((expr as { args?: unknown }).args)) {
-    for (const a of (expr as { args: IRExprNode[] }).args) collectThemeReadsFromExpr(a, refs);
+    for (const a of (expr as { args: IRExpression[] }).args) collectThemeReadsFromExpr(a, refs);
   }
   if ('parts' in expr && Array.isArray((expr as { parts?: unknown }).parts)) {
-    for (const p of (expr as { parts: IRExprNode[] }).parts) collectThemeReadsFromExpr(p, refs);
+    for (const p of (expr as { parts: IRExpression[] }).parts) collectThemeReadsFromExpr(p, refs);
   }
   if ('expr' in expr && typeof (expr as { expr?: unknown }).expr === 'object') {
-    collectThemeReadsFromExpr((expr as { expr: IRExprNode }).expr, refs);
+    collectThemeReadsFromExpr((expr as { expr: IRExpression }).expr, refs);
   }
   if ('cases' in expr && Array.isArray((expr as { cases?: unknown }).cases)) {
-    for (const c of (expr as { cases: IRExprNode[] }).cases) collectThemeReadsFromExpr(c, refs);
+    for (const c of (expr as { cases: IRExpression[] }).cases) collectThemeReadsFromExpr(c, refs);
   }
   if ('index' in expr && typeof (expr as { index?: unknown }).index === 'object') {
-    collectThemeReadsFromExpr((expr as { index: IRExprNode }).index, refs);
+    collectThemeReadsFromExpr((expr as { index: IRExpression }).index, refs);
   }
 }

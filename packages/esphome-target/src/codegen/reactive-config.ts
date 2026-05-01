@@ -13,11 +13,11 @@ import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDe
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
 import type { CppLoweringContext } from '../lowering';
-import type { IRExprNode } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core';
 import { getExprChildren } from '@espcompose/core';
 import type { ExprType, IRType, IRScalar } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
-import { valueTypeToCpp } from '../lowering';
+import { irTypeToCpp } from '../lowering';
 import { sourceDomainToTrigger } from '../lowering';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ import { sourceDomainToTrigger } from '../lowering';
 function mapSensorTypeToCppType(sensorType: string): string {
   const domain = getEntityDomain(sensorType);
   if (!domain) throw new Error(`Unknown sensor type / entity domain: '${sensorType}'`);
-  return valueTypeToCpp(domain.valueType);
+  return irTypeToCpp(domain.irType);
 }
 
 /**
@@ -80,22 +80,22 @@ function deriveSourceSignals(
 }
 
 /**
- * Collect all theme_read scoped keys (`scopeId_path`) from an IRExprNode tree.
+ * Collect all theme_read scoped keys (`scopeId_path`) from an IRExpression tree.
  */
-function collectThemePaths(node: IRExprNode | undefined): string[] {
+function collectThemePaths(node: IRExpression | undefined): string[] {
   if (!node) return [];
-  if (node.kind === 'theme_read') return [`${node.scopeId}_${node.path}`];
+  if (node.kind === 'expr:theme_read') return [`${node.scopeId}_${node.path}`];
   return getExprChildren(node).flatMap(collectThemePaths);
 }
 
 /**
- * Walk an IRExprNode tree and collect all reactive source names (signals,
+ * Walk an IRExpression tree and collect all reactive source names (signals,
  * memos, theme vars) that the expression depends on. Used to derive the
  * correct wiring for muxed popup bindings whose expressions reference
  * multiple entity signals across mux cases.
  */
 function collectExprSourceNames(
-  node: IRExprNode,
+  node: IRExpression,
   ctx: CppLoweringContext,
   signalMap: Map<string, SignalDecl>,
 ): string[] {
@@ -105,23 +105,23 @@ function collectExprSourceNames(
 }
 
 function walkExprForSources(
-  node: IRExprNode,
+  node: IRExpression,
   ctx: CppLoweringContext,
   signalMap: Map<string, SignalDecl>,
   out: Set<string>,
 ): void {
   switch (node.kind) {
-    case 'signal_read': {
+    case 'expr:signal_read': {
       const name = ctx.signalNames.get(node.signalIndex);
       if (name) out.add(name);
       break;
     }
-    case 'memo_read': {
+    case 'expr:memo_read': {
       const name = ctx.memoNames.get(node.memoId);
       if (name) out.add(name);
       break;
     }
-    case 'entity_prop': {
+    case 'expr:entity_prop': {
       const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (compId) {
         const sigName = `sig_${compId}`;
@@ -129,13 +129,13 @@ function walkExprForSources(
       }
       break;
     }
-    case 'theme_read': {
+    case 'expr:theme_read': {
       const scopedKey = `${node.scopeId}_${node.path}`;
       const name = ctx.themeVarNames.get(scopedKey) ?? `thm_${scopedKey}`;
       out.add(name);
       break;
     }
-    case 'global_read':
+    case 'expr:global_read':
       out.add(`sig_global_${node.globalId}`);
       break;
     default:
@@ -156,8 +156,8 @@ export interface ThemeScopeData {
   scopeId: string;
   themeNames: string[];
   defaultIndex: number;
-  /** For each signal path, ordered values across themes + value type (ExprType compatible). */
-  leafData: Map<string, { values: IRScalar[]; valueType: string }>;
+  /** For each signal path, ordered values across themes + expr type (ExprType compatible). */
+  leafData: Map<string, { values: IRScalar[]; exprType: string }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -231,11 +231,11 @@ export function buildRuntimeConfig(
     for (const comp of globalComponents) {
       if (reactiveGlobalIds.has(comp.id)) {
         // Extract IRType directly from the config tree (kind: 'type' node).
-        const vtEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'valueType');
+        const vtEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'irType');
         const vt: IRType | undefined = vtEntry?.value?.kind === 'type' ? vtEntry.value as IRType : undefined;
         globalSignals.push({
           name: `sig_global_${comp.id}`,
-          cppType: vt ? valueTypeToCpp(vt) : 'int',
+          cppType: vt ? irTypeToCpp(vt) : 'int',
           globalId: comp.id,
         });
       }
@@ -305,7 +305,7 @@ export function buildRuntimeConfig(
 
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
-      const exprIR: IRExprNode | undefined = node.exprIR;
+      const exprIR: IRExpression | undefined = node.exprIR;
       const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
       const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
       const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
@@ -368,7 +368,7 @@ export function buildRuntimeConfig(
     const hasMuxDep = expr.dependencies?.some(
       (d: { sourceType?: string }) => d.sourceType === 'overlay_mux',
     );
-    if (hasMuxDep && expr.exprIR?.kind === 'mux') {
+    if (hasMuxDep && expr.exprIR?.kind === 'expr:mux') {
       valueExpr = exprToCpp(expr.exprIR, cppCtx);
       const irType = expr.exprIR && 'type' in expr.exprIR ? (expr.exprIR as { type?: string }).type as ExprType | undefined : undefined;
       cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
@@ -396,20 +396,20 @@ export function buildRuntimeConfig(
     } else if (expr.dependencies?.[0]?.sourceType === 'theme') {
       // Theme-sourced binding: read from the generated theme memo
       const themeIR = expr.exprIR as { kind: string; scope?: string; scopeId?: string; path?: string; type?: string } | undefined;
-      const themeScopeId = themeIR?.kind === 'theme_read' ? themeIR.scopeId : undefined;
-      const themePath = themeIR?.kind === 'theme_read' ? themeIR.path : undefined;
+      const themeScopeId = themeIR?.kind === 'expr:theme_read' ? themeIR.scopeId : undefined;
+      const themePath = themeIR?.kind === 'expr:theme_read' ? themeIR.path : undefined;
       const scopedKey = themeScopeId && themePath ? `${themeScopeId}_${themePath}` : undefined;
       const sigName = scopedKey ? themeVarNames.get(scopedKey) ?? `thm_${scopedKey}` : `thm_unknown`;
       valueExpr = `${sigName}.get()`;
       // Look up leaf data from the matching scope
-      let leafData: { values: IRScalar[]; valueType: string } | undefined;
+      let leafData: { values: IRScalar[]; exprType: string } | undefined;
       if (themeIR?.scope && themePath && themes) {
         const scopeData = themes.find(s => s.scope === themeIR.scope);
         leafData = scopeData?.leafData.get(themePath);
       }
-      // Convert valueType (ExprType) to C++ type; fallback to exprType if available
-      const leafValueType = leafData?.valueType as ExprType | undefined;
-      cppType = leafValueType ? exprTypeToCpp(leafValueType) : (expr.exprType ? exprTypeToCpp(expr.exprType) : 'int32_t');
+      // Convert exprType (ExprType) to C++ type; fallback to exprType if available
+      const leafExprType = leafData?.exprType as ExprType | undefined;
+      cppType = leafExprType ? exprTypeToCpp(leafExprType) : (expr.exprType ? exprTypeToCpp(expr.exprType) : 'int32_t');
       sourceNames = [sigName];
     } else {
       // Single-source binding: read directly from signal
@@ -442,10 +442,10 @@ export function buildRuntimeConfig(
       if (scopeData.themeNames.length === 0) continue;
       const scopeMemos: ThemeMemoDecl[] = [];
       for (const [signalPath, leaf] of scopeData.leafData) {
-        const leafValueType = leaf.valueType as ExprType;
+        const leafExprType = leaf.exprType as ExprType;
         const memo: ThemeMemoDecl = {
           name: `thm_${scopeData.scopeId}_${signalPath}`,
-          cppType: exprTypeToCpp(leafValueType),
+          cppType: exprTypeToCpp(leafExprType),
           values: leaf.values.map(s => s.value),
         };
         allThemeMemos.push(memo);

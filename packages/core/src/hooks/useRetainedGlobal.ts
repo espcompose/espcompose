@@ -21,7 +21,7 @@ import {
   type GlobalHandle,
   globalScopeContext,
   hashGlobalFingerprint,
-  valueTypeToExprType,
+  irTypeToExprType,
   createGlobalHandle,
 } from './global-shared';
 
@@ -46,7 +46,7 @@ export interface RetainedGlobalOptions<TK extends RetainedGlobalType> {
 
 // ── Token → IRType mapping ─────────────────────────────────────────────
 
-function retainedTypeToValueType(token: RetainedGlobalType): IRType {
+function retainedTypeToIRType(token: RetainedGlobalType): IRType {
   switch (token) {
     case 'boolean': return IR_BOOL;
     case 'integer': return IR_INT;
@@ -87,9 +87,9 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
     );
   }
 
-  const valueType = retainedTypeToValueType(type);
+  const irType = retainedTypeToIRType(type);
   const id = hashGlobalFingerprint(key);
-  const exprType = valueTypeToExprType(valueType);
+  const exprType = irTypeToExprType(irType);
 
   // Detect duplicate keys within the same global scope
   const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition>;
@@ -99,11 +99,11 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
     );
   }
 
-  // Build the ESPHome globals config. The `valueType` is target-agnostic;
+  // Build the ESPHome globals config. The `irType` is target-agnostic;
   // the lowering target converts it to the concrete `type:` keyword.
   const config: Record<string, unknown> = {
     id,
-    valueType,
+    irType,
     restore_value: true,
   };
   if (opts?.initialValue != null) {
@@ -117,7 +117,7 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
   registerComponent({ kind: 'component', section: 'globals', id, config });
 
   // Register in the global scope context for action compiler symbol lookup
-  scopeMap.set(id, { id, valueType });
+  scopeMap.set(id, { id, irType });
 
-  return createGlobalHandle<InferRetainedTS<TK>>(id, valueType, exprType);
+  return createGlobalHandle<InferRetainedTS<TK>>(id, irType, exprType);
 }

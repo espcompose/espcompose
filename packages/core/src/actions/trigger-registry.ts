@@ -19,8 +19,8 @@ import { IR_BOOL, IR_FLOAT, IR_INT, IR_STRING } from '../ir/types.js';
 export interface TriggerVariable {
   /** Variable name available in the trigger lambda (e.g. `x`). */
   name: string;
-  /** Target-agnostic value type. Lowering targets map to concrete representations. */
-  valueType: IRType;
+  /** Target-agnostic type descriptor. Lowering targets map to concrete representations. */
+  irType: IRType;
   /** TypeScript type equivalent for type-checking (e.g. `boolean`, `number`, `string`). */
   tsType: string;
 }
@@ -111,21 +111,21 @@ function withTypedArgs(sig: TriggerSignature): Record<string, TriggerSignature> 
 }
 
 const LVGL_NUMBER_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', valueType: IR_FLOAT, tsType: 'number' }],
+  variables: [{ name: 'x', irType: IR_FLOAT, tsType: 'number' }],
 };
 
 const LVGL_BOOLEAN_VALUE: TriggerSignature = {
-  variables: [{ name: 'x', valueType: IR_BOOL, tsType: 'boolean' }],
+  variables: [{ name: 'x', irType: IR_BOOL, tsType: 'boolean' }],
 };
 
 const LVGL_TEXT_VALUE: TriggerSignature = {
-  variables: [{ name: 'text', valueType: IR_STRING, tsType: 'string' }],
+  variables: [{ name: 'text', irType: IR_STRING, tsType: 'string' }],
 };
 
 const LVGL_SELECT_VALUE: TriggerSignature = {
   variables: [
-    { name: 'x', valueType: IR_INT, tsType: 'number' },
-    { name: 'text', valueType: IR_STRING, tsType: 'string' },
+    { name: 'x', irType: IR_INT, tsType: 'number' },
+    { name: 'text', irType: IR_STRING, tsType: 'string' },
   ],
 };
 

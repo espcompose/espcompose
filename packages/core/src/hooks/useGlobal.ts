@@ -35,7 +35,7 @@ import {
   type GlobalHandle,
   globalScopeContext,
   hashGlobalFingerprint,
-  valueTypeToExprType,
+  irTypeToExprType,
   createGlobalHandle,
 } from './global-shared';
 
@@ -102,14 +102,14 @@ export interface GlobalArrayHandle<T> {
   readonly id: string;
 }
 
-// ── Token → IRValueType mapping (internal) ────────────────────────────────────
+// ── Token → IRType mapping (internal) ────────────────────────────────────────
 
 /**
  * Convert a TS-native GlobalType token to the corresponding
- * target-agnostic `IRValueType`. Exported from internals for use by
+ * target-agnostic `IRType`. Exported from internals for use by
  * compiler scanners.
  */
-export function globalTypeToValueType(token: GlobalType): IRType {
+export function globalTypeToIRType(token: GlobalType): IRType {
   switch (token) {
     case 'boolean':    return IR_BOOL;
     case 'integer':    return IR_INT;
@@ -169,9 +169,9 @@ export function useGlobal<TK extends GlobalType>(
     );
   }
 
-  const valueType = globalTypeToValueType(type);
+  const irType = globalTypeToIRType(type);
   const id = hashGlobalFingerprint(fingerprint);
-  const exprType = valueTypeToExprType(valueType);
+  const exprType = irTypeToExprType(irType);
 
   // Detect duplicate keys within the same global scope
   const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition>;
@@ -181,9 +181,9 @@ export function useGlobal<TK extends GlobalType>(
     );
   }
 
-  // Build the ESPHome globals config. The `valueType` is target-agnostic;
+  // Build the ESPHome globals config. The `irType` is target-agnostic;
   // the lowering target converts it to the concrete `type:` keyword.
-  const config: Record<string, unknown> = { id, valueType };
+  const config: Record<string, unknown> = { id, irType };
   if (opts?.initialValue != null) {
     config.initial_value = String(opts.initialValue);
   }
@@ -192,19 +192,19 @@ export function useGlobal<TK extends GlobalType>(
   registerComponent({ kind: 'component', section: 'globals', id, config });
 
   // Register in the global scope context for action compiler symbol lookup
-  scopeMap.set(id, { id, valueType });
+  scopeMap.set(id, { id, irType });
 
   if (isArrayGlobalType(type)) {
-    return createGlobalArrayHandle(id, valueType, exprType);
+    return createGlobalArrayHandle(id, irType, exprType);
   }
-  return createGlobalHandle<InferGlobalTS<TK>>(id, valueType, exprType);
+  return createGlobalHandle<InferGlobalTS<TK>>(id, irType, exprType);
 }
 
 // ── Array handle factory ───────────────────────────────────────────────────
 
 function createGlobalArrayHandle<T>(
   id: string,
-  _valueType: IRType,
+  _irType: IRType,
   exprType: ExprType,
 ): GlobalArrayHandle<T> {
   let cachedNode: IRReactiveNode<T[]> | undefined;

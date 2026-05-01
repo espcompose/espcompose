@@ -14,7 +14,7 @@ import type { Signal } from '@espcompose/core';
 /** Component with a fully-static reactive expression (compiled path). */
 export function StatusLabel() {
   const light = useHAEntity('light.office');
-  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",sourceType:"ha_entity",sourceDomain:"binary_sensor"}],expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"entity_prop","entityId":"light.office","propertyKey":"isOn","type":"bool"},{"kind":"literal","value":"On","type":"string"},{"kind":"literal","value":"Off","type":"string"}]}});
+  const text = __espcompose.compiled({type:"string",deps:[{sourceId:"ha_light_office",sourceType:"ha_entity",sourceDomain:"binary_sensor"}],expr:{"kind":"expr:op","op":{"tag":"ternary"},"children":[{"kind":"expr:entity_prop","entityId":"light.office","propertyKey":"isOn","type":"bool"},{"kind":"expr:literal","value":"On","type":"string"},{"kind":"expr:literal","value":"Off","type":"string"}]}});
 
   return (
     <lvgl-label text={text as unknown as string} />
@@ -23,7 +23,7 @@ export function StatusLabel() {
 
 /** Component that passes a Signal through (slotted path via JSX attribute). */
 export function TemperatureDisplay(props: { temp: Signal<number> }) {
-  const formatted = __espcompose.slotted({type:"string",slots:1,expr:{"kind":"op","op":{"tag":"ternary"},"children":[{"kind":"op","op":{"tag":"binary","op":">"},"children":[{"kind":"slot","slotIndex":0},{"kind":"literal","value":72,"type":"float"}]},{"kind":"literal","value":"Hot","type":"string"},{"kind":"literal","value":"Cold","type":"string"}]}}, props.temp) as any;
+  const formatted = __espcompose.slotted({type:"string",slots:1,expr:{"kind":"expr:op","op":{"tag":"ternary"},"children":[{"kind":"expr:op","op":{"tag":"binary","op":">"},"children":[{"kind":"expr:slot","slotIndex":0},{"kind":"expr:literal","value":72,"type":"float"}]},{"kind":"expr:literal","value":"Hot","type":"string"},{"kind":"expr:literal","value":"Cold","type":"string"}]}}, props.temp) as any;
 
   return (
     <lvgl-label text={formatted as unknown as string} />
@@ -47,14 +47,14 @@ export function ScriptButton() {
   const greet = useScript(Object.assign(async () => {
     logger.log('Hello!');
     await delay(500);
-  }, { __compiledScript: {"id":"greet","then":[{"kind":"logger","message":"Hello!"},{"kind":"delay","duration":{"kind":"duration","value":500,"unit":"ms"}}],"bodyHash":"d0ca6ab2"} }));
+  }, { __compiledScript: {"id":"greet","then":[{"kind":"action:logger","message":"Hello!"},{"kind":"action:delay","duration":{"kind":"duration","value":500,"unit":"ms"}}],"bodyHash":"c127151a"} }));
 
   return (
     <binary_sensor
       platform="gpio"
       pin={4}
       name="ScriptBtn"
-      onPress={Object.assign(async () => { await greet(); }, { __compiledActions: [{"kind":"script_execute","scriptId":"greet"},{"kind":"script_wait","scriptId":"greet"}], __refBindings: { greet: greet } })}
+      onPress={Object.assign(async () => { await greet(); }, { __compiledActions: [{"kind":"action:script_execute","scriptId":"greet"},{"kind":"action:script_wait","scriptId":"greet"}], __refBindings: { greet: greet } })}
     />
   );
 }

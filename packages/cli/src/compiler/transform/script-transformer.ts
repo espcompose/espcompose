@@ -19,10 +19,10 @@ import {
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParam, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToValueType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParam, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
-function valueTypeKey(vt: IRType): string {
+function irTypeKey(vt: IRType): string {
   let s = vt.type as string;
   if (vt.format) s += `:${vt.format}`;
   if (vt.isArray) s += '[]';
@@ -196,9 +196,9 @@ function extractScriptUserParams(
   for (const param of arg.parameters) {
     if (!ts.isIdentifier(param.name)) continue;
     const name = param.name.text;
-    const valueType = inferParamValueType(param, checker);
-    if (valueType) {
-      params.push({ name, valueType });
+    const irType = inferParamIRType(param, checker);
+    if (irType) {
+      params.push({ name, irType });
     }
   }
   return params;
@@ -213,7 +213,7 @@ function extractScriptUserParams(
  * - `string` → { type: 'string' }
  * - `boolean` → { type: 'bool' }
  */
-function inferParamValueType(
+function inferParamIRType(
   param: ts.ParameterDeclaration,
   checker: ts.TypeChecker,
 ): IRType | null {
@@ -243,7 +243,7 @@ function inferParamValueType(
 
 /**
  * Scan for `useGlobal()` and `useRetainedGlobal()` patterns and build a
- * map of declaration symbol → GlobalDefinition { id, valueType }.
+ * map of declaration symbol → GlobalDefinition { id, irType }.
  *
  * Runs on the reactive-transformed AST, so useGlobal() calls already
  * have `__key` injected by the global-key-injector.
@@ -261,13 +261,13 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
         if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
           const typeArg = node.initializer.arguments[0];
           if (ts.isStringLiteral(typeArg)) {
-            const valueType = globalTypeToValueType(typeArg.text as GlobalType);
+            const irType = globalTypeToIRType(typeArg.text as GlobalType);
             const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
             if (fingerprint) {
               const globalId = hashGlobalFingerprint(fingerprint);
               const sym = checker.getSymbolAtLocation(node.name);
               if (sym) {
-                globalHandles.set(sym, { id: globalId, valueType });
+                globalHandles.set(sym, { id: globalId, irType });
               }
             }
           }
@@ -278,11 +278,11 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
           const typeArg = node.initializer.arguments[0];
           const keyArg = node.initializer.arguments[1];
           if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-            const valueType = globalTypeToValueType(typeArg.text as GlobalType);
+            const irType = globalTypeToIRType(typeArg.text as GlobalType);
             const globalId = hashGlobalFingerprint(keyArg.text);
             const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
-              globalHandles.set(sym, { id: globalId, valueType });
+              globalHandles.set(sym, { id: globalId, irType });
             }
           }
         }
@@ -587,7 +587,7 @@ function compileAndInjectUseScript(
   // uses this hash (combined with the closure-shape signature) as the
   // dedup key.
   const sortedRefNames = [...refNames].sort();
-  const sortedUserParamNames = userParams.map((p) => `${p.name}:${valueTypeKey(p.valueType)}`).sort();
+  const sortedUserParamNames = userParams.map((p) => `${p.name}:${irTypeKey(p.irType)}`).sort();
   const hashInput = JSON.stringify({
     actions: result.actions,
     refs: sortedRefNames,
@@ -661,7 +661,7 @@ function collectRefNamesFromActions(
   const walk = (actionList: IRActionNode[]): void => {
     for (const action of actionList) {
       switch (action.kind) {
-        case 'native': {
+        case 'action:native': {
           const config = action.config;
           if (typeof config === 'string' && refNames.has(config)) {
             names.add(config);
@@ -673,33 +673,33 @@ function collectRefNamesFromActions(
           }
           break;
         }
-        case 'if':
+        case 'action:if':
           walk(action.then);
           if (action.else) walk(action.else);
           break;
-        case 'while':
+        case 'action:while':
           walk(action.then);
           break;
-        case 'repeat':
+        case 'action:repeat':
           walk(action.then);
           break;
-        case 'lambda_action':
+        case 'action:lambda_action':
           for (const slot of action.slots) {
             if (slot.kind === 'ref' && refNames.has(slot.name)) {
               names.add(slot.name);
             }
           }
           break;
-        case 'overlay_show':
-        case 'overlay_hide':
+        case 'action:overlay_show':
+        case 'action:overlay_hide':
           if ('controllerRef' in action && action.controllerRef) {
             names.add(action.controllerRef);
           }
           break;
-        case 'controller_method_call':
+        case 'action:controller_method_call':
           names.add(action.controllerRef);
           break;
-        case 'delay':
+        case 'action:delay':
           // If duration is an IRScriptParamRef, its name is a captured
           // variable that needs to appear in __refBindings.
           if (typeof action.duration === 'object' && action.duration.kind === 'script_param') {

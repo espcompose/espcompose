@@ -25,7 +25,7 @@ export interface EntityActionDescriptor {
 
 export interface EntityDomainDescriptor {
   readonly domain: string;
-  readonly valueType: IRType;
+  readonly irType: IRType;
   readonly defaultState: string;
   readonly activeState: string | null;
   readonly uiCategory: UICategory;
@@ -44,7 +44,7 @@ export interface ReactivePropertyConfig {
 export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = {
   light: {
     domain: "light",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -61,7 +61,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   switch: {
     domain: "switch",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -76,7 +76,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   sensor: {
     domain: "sensor",
-    valueType: {"kind":"type","type":"float"},
+    irType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
@@ -89,7 +89,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   binary_sensor: {
     domain: "binary_sensor",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "binary",
@@ -102,7 +102,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   fan: {
     domain: "fan",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: "on",
     uiCategory: "toggleable",
@@ -117,7 +117,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   cover: {
     domain: "cover",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "closed",
     activeState: "open",
     uiCategory: "cover",
@@ -132,7 +132,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   number: {
     domain: "number",
-    valueType: {"kind":"type","type":"float"},
+    irType: {"kind":"type","type":"float"},
     defaultState: "0",
     activeState: null,
     uiCategory: "sensor",
@@ -144,7 +144,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   select: {
     domain: "select",
-    valueType: {"kind":"type","type":"string"},
+    irType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
@@ -156,7 +156,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   text_sensor: {
     domain: "text_sensor",
-    valueType: {"kind":"type","type":"string"},
+    irType: {"kind":"type","type":"string"},
     defaultState: "",
     activeState: null,
     uiCategory: "sensor",
@@ -168,7 +168,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   button: {
     domain: "button",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "",
     activeState: null,
     uiCategory: "button",
@@ -180,7 +180,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   lock: {
     domain: "lock",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "locked",
     activeState: "unlocked",
     uiCategory: "toggleable",
@@ -194,7 +194,7 @@ export const ENTITY_DOMAINS: Readonly<Record<string, EntityDomainDescriptor>> = 
   },
   climate: {
     domain: "climate",
-    valueType: {"kind":"type","type":"bool"},
+    irType: {"kind":"type","type":"bool"},
     defaultState: "off",
     activeState: null,
     uiCategory: "sensor",

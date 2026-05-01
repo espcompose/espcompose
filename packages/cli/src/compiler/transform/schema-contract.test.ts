@@ -58,7 +58,7 @@ function extractSlottedMeta(code: string): unknown {
 function buildCompiledCallString(exprType: string, deps: Array<{
   sourceId: string;
   sourceDomain?: string; sourceType: string;
-}>, expr: unknown = { kind: 'literal', value: 0, type: 'float' }): string {
+}>, expr: unknown = { kind: 'expr:literal', value: 0, type: 'float' }): string {
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
@@ -72,7 +72,7 @@ function buildCompiledCallString(exprType: string, deps: Array<{
   return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(expr)}})`;
 }
 
-function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'slot', slotIndex: 0 }): string {
+function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'expr:slot', slotIndex: 0 }): string {
   return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(expr)}}, signal0) as any`;
 }
 
@@ -89,9 +89,9 @@ describe('Library Format Schema Contract (Producer)', () => {
           sourceType: 'ha_entity',
         }],
         irTernary(
-          { kind: 'entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
-          { kind: 'literal', value: 'On', type: 'string' },
-          { kind: 'literal', value: 'Off', type: 'string' },
+          { kind: 'expr:entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
+          { kind: 'expr:literal', value: 'On', type: 'string' },
+          { kind: 'expr:literal', value: 'Off', type: 'string' },
         ),
       );
 
@@ -136,7 +136,7 @@ describe('Library Format Schema Contract (Producer)', () => {
       const bad = {
         type: 'int',
         deps: [{ sourceId: 'id' }], // missing sourceType
-        expr: { kind: 'literal', value: 0, type: 'int' },
+        expr: { kind: 'expr:literal', value: 0, type: 'int' },
       };
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);
     });
@@ -152,7 +152,7 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
 
     it('rejects metadata missing slots', () => {
-      const bad = { type: 'int', expr: { kind: 'literal', value: 0, type: 'int' } }; // missing slots
+      const bad = { type: 'int', expr: { kind: 'expr:literal', value: 0, type: 'int' } }; // missing slots
       expect(SlottedReactiveSchema.safeParse(bad).success).toBe(false);
     });
   });

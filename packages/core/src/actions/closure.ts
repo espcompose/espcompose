@@ -10,8 +10,8 @@
 // in useScript or the compiler.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { ClosureField, IRClosureValue, IRType } from '../ir/types';
-import { IR_ID_REF, IR_INT } from '../ir/types';
+import type { ClosureField, IRScalar, IRType } from '../ir/types';
+import { IR_ID_REF, IR_INT, irScalar } from '../ir/types';
 import { isRef } from '../types';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ export interface ClosureDescriptor<T = unknown> {
    * only used for diagnostics; the authoritative type comes from the
    * `ClosureField` returned by `toClosureField`.
    */
-  valueType?: IRType;
+  irType?: IRType;
 
   /**
    * Declare the closure-table column for this binding. The `bindingName`
@@ -54,7 +54,7 @@ export interface ClosureDescriptor<T = unknown> {
    * Returns `null` when this descriptor does not contribute a value
    * (matches a `null` field).
    */
-  toClosureValue?(value: T): IRClosureValue | null;
+  toClosureValue?(value: T): IRScalar | null;
 }
 
 // ── Registry ────────────────────────────────────────────────────────────────
@@ -106,14 +106,14 @@ export const overlayControllerDescriptor: ClosureDescriptor<OverlayControllerInt
     return `overlay:${v.__templateKey}`;
   },
 
-  valueType: IR_INT,
+  irType: IR_INT,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_instance_index`, valueType: IR_INT };
+    return { name: `${bindingName}_instance_index`, irType: IR_INT };
   },
 
   toClosureValue(v) {
-    return { kind: 'int', value: v.__instanceIndex };
+    return irScalar(v.__instanceIndex);
   },
 };
 
@@ -136,14 +136,14 @@ export const scriptHandleDescriptor: ClosureDescriptor<ScriptHandleLike> = {
     return `script:${v.id}`;
   },
 
-  valueType: IR_ID_REF,
+  irType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, valueType: IR_ID_REF };
+    return { name: `${bindingName}_idx`, irType: IR_ID_REF };
   },
 
   toClosureValue(v) {
-    return { kind: 'id_ref', id: v.id };
+    return irScalar(v.id);
   },
 };
 
@@ -158,14 +158,14 @@ export const refDescriptor: ClosureDescriptor<{ toString(): string }> = {
     return `ref:${v.toString()}`;
   },
 
-  valueType: IR_ID_REF,
+  irType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, valueType: IR_ID_REF };
+    return { name: `${bindingName}_idx`, irType: IR_ID_REF };
   },
 
   toClosureValue(v) {
-    return { kind: 'id_ref', id: v.toString() };
+    return irScalar(v.toString());
   },
 };
 
@@ -194,7 +194,7 @@ export const controllerDescriptor: ClosureDescriptor<ControllerInternalShape> = 
 
   // Controllers don't contribute closure fields directly — their
   // underlying script handles carry the closure data.
-  valueType: undefined,
+  irType: undefined,
 };
 
 // -- Identity fallback (test-only / explicit reference) --

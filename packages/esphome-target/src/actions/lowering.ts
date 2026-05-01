@@ -12,7 +12,7 @@ import type {
   IRActionParam,
   IRCondition,
   IRDurationLiteral,
-  IRExprNode,
+  IRExpression,
   IRNativeAction,
   IRRefSlot,
   IRType,
@@ -20,7 +20,7 @@ import type {
 import { IR_INT } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from '../lowering';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
-import { valueTypeToCpp } from '../lowering';
+import { irTypeToCpp } from '../lowering';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -162,10 +162,10 @@ function lowerCondition(condition: IRCondition, ctx: ActionLoweringContext): unk
 
 /**
  * Lower the value of a global_set action to a C++ expression string.
- * Handles IRActionParam (literal, trigger_var) and IRExprNode (compiled expression).
+ * Handles IRActionParam (literal, trigger_var) and IRExpression (compiled expression).
  */
-function lowerGlobalSetValue(value: IRActionParam | IRExprNode, valueType: IRType, ctx: ActionLoweringContext): string {
-  const cppType = valueTypeToCpp(valueType);
+function lowerGlobalSetValue(value: IRActionParam | IRExpression, irType: IRType, ctx: ActionLoweringContext): string {
+  const cppType = irTypeToCpp(irType);
   if (typeof value === 'object' && value !== null && 'kind' in value) {
     switch (value.kind) {
       case 'literal': {
@@ -178,12 +178,11 @@ function lowerGlobalSetValue(value: IRActionParam | IRExprNode, valueType: IRTyp
         return String(v);
       }
       case 'trigger_var':
-        // IRTriggerVarParam uses 'varName', IRExprTriggerVar uses 'name'
-        return 'varName' in value ? value.varName : value.name;
+        return value.varName;
       default: {
-        // IRExprNode — lower to C++ via exprToCpp
+        // IRExpression — lower to C++ via exprToCpp
         const cppCtx = createConditionLoweringContext(ctx);
-        return exprToCpp(value as IRExprNode, cppCtx);
+        return exprToCpp(value as IRExpression, cppCtx);
       }
     }
   }
@@ -356,7 +355,7 @@ function extractConfigParam(
  */
 function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown {
   switch (action.kind) {
-    case 'native': {
+    case 'action:native': {
       // ── Closure-bound ref detection ──────────────────────────────
       // If this native action references a ref that's bound through a
       // closure-table column, it cannot be expressed as a YAML native
@@ -369,7 +368,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config) };
     }
 
-    case 'ha_service': {
+    case 'action:ha_service': {
       const serviceConfig: Record<string, unknown> = { action: action.action };
       if (action.data) {
         const staticData: Record<string, unknown> = {};
@@ -406,19 +405,19 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'homeassistant.action': serviceConfig };
     }
 
-    case 'logger':
+    case 'action:logger':
       if (action.level) {
         return { 'logger.log': { format: action.message, level: action.level } };
       }
       return { 'logger.log': action.message };
 
-    case 'delay':
+    case 'action:delay':
       if (action.duration.kind === 'script_param') {
         return { delay: lambdaMarker(`return ${action.duration.name};`) };
       }
       return { delay: formatDuration(action.duration) };
 
-    case 'wait_until': {
+    case 'action:wait_until': {
       const config: Record<string, unknown> = {
         condition: lowerCondition(action.condition, ctx),
       };
@@ -432,7 +431,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { wait_until: config };
     }
 
-    case 'if': {
+    case 'action:if': {
       const config: Record<string, unknown> = {
         condition: lowerCondition(action.condition, ctx),
         then: lowerActionTree(action.then, ctx),
@@ -443,7 +442,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { if: config };
     }
 
-    case 'while':
+    case 'action:while':
       return {
         while: {
           condition: lowerCondition(action.condition, ctx),
@@ -451,7 +450,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         },
       };
 
-    case 'repeat':
+    case 'action:repeat':
       return {
         repeat: {
           count: action.count,
@@ -459,7 +458,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         },
       };
 
-    case 'script_execute': {
+    case 'action:script_execute': {
       const execArgs: Record<string, unknown> = { id: action.scriptId };
       if (action.closureIndex !== undefined) {
         execArgs['closure_index'] = action.closureIndex;
@@ -472,17 +471,17 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'script.execute': execArgs };
     }
 
-    case 'script_wait':
+    case 'action:script_wait':
       return { 'script.wait': { id: action.scriptId } };
 
-    case 'script_stop':
+    case 'action:script_stop':
       return { 'script.stop': { id: action.scriptId } };
 
-    case 'theme_select':
+    case 'action:theme_select':
       return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
 
-    case 'global_set': {
-      const valueStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
+    case 'action:global_set': {
+      const valueStr = lowerGlobalSetValue(action.value, action.irType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         // Reactive global — write through BoundSignal (also writes native storage) + flush
         const sigName = `sig_global_${action.globalId}`;
@@ -495,9 +494,9 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'globals.set': { id: action.globalId, value: lambdaMarker(`return ${valueStr};`) } };
     }
 
-    case 'array_set': {
+    case 'action:array_set': {
       const idxStr = lowerGlobalSetValue(action.index, IR_INT, ctx);
-      const valStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
+      const valStr = lowerGlobalSetValue(action.value, action.irType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
@@ -509,8 +508,8 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(`id(${action.globalId})[${idxStr}] = ${valStr};`) };
     }
 
-    case 'array_push': {
-      const valStr = lowerGlobalSetValue(action.value, action.valueType, ctx);
+    case 'action:array_push': {
+      const valStr = lowerGlobalSetValue(action.value, action.irType, ctx);
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
@@ -522,7 +521,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(`id(${action.globalId}).push_back(${valStr});`) };
     }
 
-    case 'array_clear': {
+    case 'action:array_clear': {
       if (ctx.reactiveGlobalIds.has(action.globalId)) {
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
@@ -534,7 +533,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(`id(${action.globalId}).clear();`) };
     }
 
-    case 'lambda_action': {
+    case 'action:lambda_action': {
       // Reconstruct C++ code from fragments + slots
       let code = action.fragments[0];
       for (let i = 0; i < action.slots.length; i++) {
@@ -577,7 +576,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { lambda: lambdaMarker(code) };
     }
 
-    case 'overlay_show': {
+    case 'action:overlay_show': {
       // Set the mux signal to this instance's index, show the overlay
       // wrapper, move it to the foreground within its tier container,
       // and flush the reactive graph so bindings update.
@@ -595,7 +594,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       )};
     }
 
-    case 'overlay_hide': {
+    case 'action:overlay_hide': {
       // Hide the overlay wrapper — not muxed, same widget across all instances.
       const overlayId = `overlay_${action.templateKey}`;
       return { lambda: lambdaMarker(
@@ -603,7 +602,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       )};
     }
 
-    case 'controller_method_call':
+    case 'action:controller_method_call':
       throw new Error(
         `Unresolved controller_method_call action (controllerRef: ${action.controllerRef}, ` +
         `method: ${action.methodName}). Controller method calls must be resolved before lowering.`,

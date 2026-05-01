@@ -38,14 +38,14 @@ export interface IRType {
 }
 ```
 
-- The field carrying an `IRType` value is named **`valueType`** on its
-  parent (e.g. `IRScriptParam.valueType`, `ClosureField.valueType`,
-  `GlobalDefinition.valueType`, `TriggerVariable.valueType`,
-  `EntityDomainDescriptor.valueType`).
+- The field carrying an `IRType` value is named **`irType`** on its
+  parent (e.g. `IRScriptParam.irType`, `ClosureField.irType`,
+  `GlobalDefinition.irType`, `TriggerVariable.irType`,
+  `EntityDomainDescriptor.irType`).
 - `format` replaces the old `ClosureField.kind` flag: `'scalar'` → `format`
   undefined; `'id_ref'` → `format: 'id_ref'`; `'entity'` → `format: 'entity'`.
 - Targets translate `IRType` to backend types via their own helper
-  (e.g. `valueTypeToCpp` in `@espcompose/esphome-target/src/value-type-cpp.ts`).
+  (e.g. `irTypeToCpp` in `@espcompose/esphome-target/src/lowering/value-type-cpp.ts`).
 - Entity property access uses a semantic `propertyKey: string`
   (e.g. `'state'`, `'brightness'`, `'position'`); the target resolves the
   backend access path (e.g. `resolveEntityPropertyCppPath`).

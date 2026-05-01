@@ -3,7 +3,7 @@
   "domains": {
     "light": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
@@ -29,7 +29,7 @@
 
     "switch": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
@@ -42,7 +42,7 @@
         { "name": "turnOff", "service": "turn_off",  "resultState": "off" }
       ],
       "triggers": {
-        "on_state":    { "variables": [{ "name": "x", "valueType": { "type": "bool" }, "tsType": "boolean" }] },
+        "on_state":    { "variables": [{ "name": "x", "irType": { "type": "bool" }, "tsType": "boolean" }] },
         "on_turn_on":  { "variables": [] },
         "on_turn_off": { "variables": [] }
       },
@@ -51,7 +51,7 @@
 
     "sensor": {
       "sensorPlatform": "sensor",
-      "valueType": { "type": "float" },
+      "irType": { "type": "float" },
       "defaultState": "0",
       "activeState": null,
       "uiCategory": "sensor",
@@ -61,9 +61,9 @@
       ],
       "actions": [],
       "triggers": {
-        "on_value":       { "variables": [{ "name": "x", "valueType": { "type": "float" }, "tsType": "number" }] },
-        "on_raw_value":   { "variables": [{ "name": "x", "valueType": { "type": "float" }, "tsType": "number" }] },
-        "on_value_range": { "variables": [{ "name": "x", "valueType": { "type": "float" }, "tsType": "number" }] }
+        "on_value":       { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_raw_value":   { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_value_range": { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] }
       },
       "componentAccess": {
         "state": ".state"
@@ -72,7 +72,7 @@
 
     "binary_sensor": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "binary",
@@ -82,7 +82,7 @@
       ],
       "actions": [],
       "triggers": {
-        "on_state":        { "variables": [{ "name": "x", "valueType": { "type": "bool" }, "tsType": "boolean" }] },
+        "on_state":        { "variables": [{ "name": "x", "irType": { "type": "bool" }, "tsType": "boolean" }] },
         "on_press":        { "variables": [] },
         "on_release":      { "variables": [] },
         "on_click":        { "variables": [] },
@@ -96,7 +96,7 @@
 
     "fan": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
@@ -120,7 +120,7 @@
 
     "cover": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "closed",
       "activeState": "open",
       "uiCategory": "cover",
@@ -143,7 +143,7 @@
 
     "number": {
       "sensorPlatform": "sensor",
-      "valueType": { "type": "float" },
+      "irType": { "type": "float" },
       "defaultState": "0",
       "activeState": null,
       "uiCategory": "sensor",
@@ -152,15 +152,15 @@
       ],
       "actions": [],
       "triggers": {
-        "on_value":       { "variables": [{ "name": "x", "valueType": { "type": "float" }, "tsType": "number" }] },
-        "on_value_range": { "variables": [{ "name": "x", "valueType": { "type": "float" }, "tsType": "number" }] }
+        "on_value":       { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_value_range": { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] }
       },
       "componentAccess": {}
     },
 
     "select": {
       "sensorPlatform": "text_sensor",
-      "valueType": { "type": "string" },
+      "irType": { "type": "string" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "sensor",
@@ -169,14 +169,14 @@
       ],
       "actions": [],
       "triggers": {
-        "on_value": { "variables": [{ "name": "x", "valueType": { "type": "string" }, "tsType": "string" }] }
+        "on_value": { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] }
       },
       "componentAccess": {}
     },
 
     "text_sensor": {
       "sensorPlatform": "text_sensor",
-      "valueType": { "type": "string" },
+      "irType": { "type": "string" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "sensor",
@@ -185,8 +185,8 @@
       ],
       "actions": [],
       "triggers": {
-        "on_value":     { "variables": [{ "name": "x", "valueType": { "type": "string" }, "tsType": "string" }] },
-        "on_raw_value": { "variables": [{ "name": "x", "valueType": { "type": "string" }, "tsType": "string" }] }
+        "on_value":     { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] },
+        "on_raw_value": { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] }
       },
       "componentAccess": {
         "state": ".state"
@@ -195,7 +195,7 @@
 
     "button": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "button",
@@ -209,7 +209,7 @@
 
     "lock": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "locked",
       "activeState": "unlocked",
       "uiCategory": "toggleable",
@@ -230,7 +230,7 @@
 
     "climate": {
       "sensorPlatform": "binary_sensor",
-      "valueType": { "type": "bool" },
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": null,
       "uiCategory": "sensor",

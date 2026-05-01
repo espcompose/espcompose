@@ -5,7 +5,7 @@
 export type ValueScalarType = 'int' | 'float' | 'bool' | 'string';
 export type ValueScalarFormat = 'id_ref' | 'entity';
 
-export interface ValueType {
+export interface IRTypeDescriptor {
   type: ValueScalarType;
   format?: ValueScalarFormat;
   isArray?: boolean;
@@ -13,7 +13,7 @@ export interface ValueType {
 
 export interface TriggerVariable {
   name: string;
-  valueType: ValueType;
+  irType: IRTypeDescriptor;
   tsType: string;
 }
 
@@ -38,7 +38,7 @@ export interface ActionDescriptor {
 
 export interface DomainDescriptor {
   sensorPlatform: 'binary_sensor' | 'sensor' | 'text_sensor';
-  valueType: ValueType;
+  irType: IRTypeDescriptor;
   defaultState: string;
   activeState: string | null;
   uiCategory: 'toggleable' | 'sensor' | 'binary' | 'cover' | 'button';

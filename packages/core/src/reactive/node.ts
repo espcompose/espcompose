@@ -14,7 +14,7 @@
 //   - 'effect':     side-effect callback (useEffect())
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRExprNode, ExprType } from '../ir/expr-types';
+import type { IRExpression, ExprType } from '../ir/expr-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types
@@ -128,7 +128,7 @@ export class IRReactiveNode<T = unknown> {
    * Set by the AST compiler (__espcompose.compiled) when the expression is
    * statically analyzed. Backends lower this to target code (C++ or JS).
    */
-  exprIR?: IRExprNode;
+  exprIR?: IRExpression;
 
   constructor(config: IRReactiveNodeConfig) {
     this.kind = config.kind;

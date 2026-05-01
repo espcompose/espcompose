@@ -15,7 +15,7 @@ import { getTriggerSignature } from '@espcompose/core/internals';
 import type { IRActionNode, IRWidgetTree, IRWidget } from '@espcompose/core/internals';
 import { injectHASensorImports, injectReactiveBindingsRuntime } from './codegen';
 import type { CppLoweringContext } from './lowering';
-import { buildEntityComponentIds, valueTypeToEsphomeParam, valueTypeToCpp, resolveEntityPropertyCppPath, sourceDomainToTrigger } from './lowering';
+import { buildEntityComponentIds, irTypeToEsphomeParam, irTypeToCpp, resolveEntityPropertyCppPath, sourceDomainToTrigger } from './lowering';
 import type { CppBackendResult } from './codegen';
 import { lowerActionTree, type ActionLoweringContext } from './actions';
 import { transformEcCanvasWidgets, translateLvglStyleValues, lowerLvglWidgetTree, type LvglValueLoweringContext } from './lvgl';
@@ -131,7 +131,7 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
     // Theme-sourced expression — read from the generated theme memo
     if (node.dependencies?.[0]?.sourceType === 'theme') {
       const exprIR = node.exprIR;
-      if (exprIR?.kind === 'theme_read') {
+      if (exprIR?.kind === 'expr:theme_read') {
         const scopedKey = `${exprIR.scopeId}_${exprIR.path}`;
         const varName = ctx?.themeVarNames.get(scopedKey) ?? `thm_${scopedKey}`;
         return `return espcompose::${varName}.get();`;
@@ -154,8 +154,8 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
       if (exprType === 'string' && node.sourceDomain) {
         const trigger = sourceDomainToTrigger(node.sourceDomain);
         const sig = getTriggerSignature(node.sourceDomain, trigger);
-        const sourceVT = sig?.variables[0]?.valueType;
-        const sourceType = sourceVT ? valueTypeToCpp(sourceVT) : undefined;
+        const sourceVT = sig?.variables[0]?.irType;
+        const sourceType = sourceVT ? irTypeToCpp(sourceVT) : undefined;
         if (sourceType && sourceType !== 'std::string') {
           return `return ${wrapInitialConversion(raw, sourceType)};`;
         }
@@ -511,15 +511,15 @@ export function lowerToYamlConfig(
       }
       // Lower IRValue config back to a plain object for YAML emission
       let outConfig = irValueToYaml(comp.config) as Record<string, unknown>;
-      // Globals components carry a target-agnostic `valueType: IRType` node
+      // Globals components carry a target-agnostic `irType: IRType` node
       // (kind: 'type'). irValueToYaml skips it via SKIP_ENTRY, so we extract
       // the IRType directly from the config tree and convert to C++ type.
       if (section === 'globals') {
         const configObj = comp.config as IRObject;
-        const vtEntry = configObj.entries.find(e => e.key === 'valueType');
+        const vtEntry = configObj.entries.find(e => e.key === 'irType');
         if (vtEntry && vtEntry.value.kind === 'type') {
           const vt = vtEntry.value as IRType;
-          outConfig = { ...outConfig, type: valueTypeToCpp(vt) };
+          outConfig = { ...outConfig, type: irTypeToCpp(vt) };
         }
       }
       (finalConfig[section] as unknown[]).push(outConfig);
@@ -534,7 +534,7 @@ export function lowerToYamlConfig(
         params['closure_index'] = 'int';
       }
       if (s.userParams) {
-        for (const p of s.userParams) params[p.name] = valueTypeToEsphomeParam(p.valueType);
+        for (const p of s.userParams) params[p.name] = irTypeToEsphomeParam(p.irType);
       }
       const hasParams = Object.keys(params).length > 0;
 

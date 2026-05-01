@@ -55,13 +55,13 @@ const VALID_COMPILED_META = {
     sourceDomain: 'binary_sensor',
     sourceType: 'ha_entity',
   }],
-  expr: { kind: 'literal' as const, value: 'On', type: 'string' as const },
+  expr: { kind: 'expr:literal' as const, value: 'On', type: 'string' as const },
 };
 
 const VALID_SLOTTED_META = {
   type: 'float' as const,
   slots: 1,
-  expr: { kind: 'slot' as const, slotIndex: 0, type: 'float' as const },
+  expr: { kind: 'expr:slot' as const, slotIndex: 0, type: 'float' as const },
 };
 
 const VALID_COMPILED_ACTIONS = [
@@ -139,7 +139,7 @@ describe('Library Format Contract (Consumer)', () => {
           { kind: 'dependency', sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
           { kind: 'dependency', sourceId: '__theme__', sourceType: 'theme' },
         ],
-        expr: { kind: 'literal' as const, value: 0, type: 'float' as const },
+        expr: { kind: 'expr:literal' as const, value: 0, type: 'float' as const },
       };
 
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
@@ -153,7 +153,7 @@ describe('Library Format Contract (Consumer)', () => {
     });
 
     it('accepts metadata with zero deps', () => {
-      const meta = { type: 'int' as const, deps: [], expr: { kind: 'literal' as const, value: 42, type: 'int' as const } };
+      const meta = { type: 'int' as const, deps: [], expr: { kind: 'expr:literal' as const, value: 42, type: 'int' as const } };
       expect(CompiledReactiveSchema.safeParse(meta).success).toBe(true);
 
       withReactiveScope(() => {
@@ -173,7 +173,7 @@ describe('Library Format Contract (Consumer)', () => {
           dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
-        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
+        signal.exprIR = { kind: 'expr:signal_read', signalIndex: 0 };
 
         const node = __espcompose.slotted<number>(VALID_SLOTTED_META, signal);
         expect(isIRReactiveNode(node)).toBe(true);
@@ -225,9 +225,9 @@ describe('Library Format Contract (Consumer)', () => {
           sourceType: 'ha_entity',
         }],
         expr: irTernary(
-          { kind: 'signal_read' as const, signalIndex: 0 },
-          { kind: 'literal' as const, value: 'On', type: 'string' as const },
-          { kind: 'literal' as const, value: 'Off', type: 'string' as const },
+          { kind: 'expr:signal_read' as const, signalIndex: 0 },
+          { kind: 'expr:literal' as const, value: 'On', type: 'string' as const },
+          { kind: 'expr:literal' as const, value: 'Off', type: 'string' as const },
         ),
       };
 
@@ -251,8 +251,8 @@ describe('Library Format Contract (Consumer)', () => {
         type: 'string' as const,
         slots: 1,
         expr: irBinary('>',
-          { kind: 'slot' as const, slotIndex: 0 },
-          { kind: 'literal' as const, value: 72, type: 'float' as const },
+          { kind: 'expr:slot' as const, slotIndex: 0 },
+          { kind: 'expr:literal' as const, value: 72, type: 'float' as const },
         ),
       };
 
@@ -262,7 +262,7 @@ describe('Library Format Contract (Consumer)', () => {
           dependencies: [{ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_temp', sourceDomain: 'sensor' }],
           exprType: 'float',
         });
-        signal.exprIR = { kind: 'signal_read', signalIndex: 0 };
+        signal.exprIR = { kind: 'expr:signal_read', signalIndex: 0 };
 
         const node = __espcompose.slotted<string>(goldenMeta, signal);
         expect(isIRReactiveNode(node)).toBe(true);

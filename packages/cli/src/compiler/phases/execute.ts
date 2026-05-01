@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeData, ExecuteResult } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeData, ExecuteResult, ExprType } from '@espcompose/core/internals';
 import { buildSemanticIR, scopeHash, irScalar } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
@@ -137,11 +137,11 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
     if (themeNames.length === 0) continue;
 
     const signalPaths: string[] = registry.getSignalPaths(scope);
-    const leafData = new Map<string, { values: ReturnType<typeof irScalar>[]; valueType: string }>();
+    const leafData = new Map<string, { values: ReturnType<typeof irScalar>[]; exprType: ExprType }>();
 
     for (const signalPath of signalPaths) {
       const values: ReturnType<typeof irScalar>[] = [];
-      let valueType = 'int';
+      let exprType: ExprType = 'int';
       for (const name of themeNames) {
         const themes = registry.getThemes(scope);
         const thm = themes.get(name);
@@ -149,13 +149,13 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
           const val = thm.values[signalPath];
           if (val) {
             values.push(irScalar(val.value as string | number | boolean));
-            valueType = val.valueType;
+            exprType = val.exprType as ExprType;
           } else {
             values.push(irScalar(0));
           }
         }
       }
-      leafData.set(signalPath, { values, valueType });
+      leafData.set(signalPath, { values, exprType });
     }
 
     result.push({

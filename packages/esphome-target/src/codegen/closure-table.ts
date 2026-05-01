@@ -19,9 +19,10 @@ import type {
   IRScript,
   ClosureField,
   ClosureInstance,
-  IRClosureValue,
+  IRScalar,
+  IRType,
 } from '@espcompose/core/internals';
-import { valueTypeToCpp, valueTypeZeroLiteral } from '../lowering';
+import { irTypeToCpp, irTypeZeroLiteral } from '../lowering';
 
 /** Per-template closure table emission. */
 export interface ClosureTableDecl {
@@ -78,15 +79,13 @@ export function buildClosureTableDecl(script: IRScript): ClosureTableDecl | null
 // C++ code generation
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Format an `IRClosureValue` as a C++ literal. */
-export function formatClosureValue(v: IRClosureValue): string {
-  switch (v.kind) {
-    case 'int':    return Number.isInteger(v.value) ? String(v.value) : String(Math.trunc(v.value));
-    case 'float':  return Number.isFinite(v.value) ? `${v.value}f` : '0.0f';
+/** Format an `IRScalar` closure cell as a C++ literal, guided by the field's `IRType`. */
+export function formatClosureValue(v: IRScalar, irType: IRType): string {
+  switch (irType.type) {
+    case 'int':    return Number.isInteger(v.value as number) ? String(v.value) : String(Math.trunc(v.value as number));
+    case 'float':  return Number.isFinite(v.value as number) ? `${v.value}f` : '0.0f';
     case 'bool':   return v.value ? 'true' : 'false';
-    case 'string': return cppStringLiteral(v.value);
-    case 'id_ref': return cppStringLiteral(v.id); // fallback — overridden by id_ref index in generateClosureTableLines
-    case 'entity': return cppStringLiteral(v.entityId);
+    case 'string': return cppStringLiteral(String(v.value));
   }
 }
 
@@ -109,12 +108,13 @@ function buildIdRefIndex(
   const indexByRow: number[] = [];
   for (const row of rows) {
     const val = row.values[fieldName];
-    if (val && val.kind === 'id_ref') {
-      let idx = idToIndex.get(val.id);
+    if (val) {
+      const id = String(val.value);
+      let idx = idToIndex.get(id);
       if (idx === undefined) {
         idx = ids.length;
-        ids.push(val.id);
-        idToIndex.set(val.id, idx);
+        ids.push(id);
+        idToIndex.set(id, idx);
       }
       indexByRow.push(idx);
     } else {
@@ -137,14 +137,14 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Build id_ref index maps ──
   const idRefIndices = new Map<string, { ids: string[]; indexByRow: number[] }>();
   for (const f of decl.fields) {
-    if (f.valueType.format === 'id_ref') {
+    if (f.irType.format === 'id_ref') {
       idRefIndices.set(f.name, buildIdRefIndex(f.name, decl.rows));
     }
   }
 
   // ── Typed-pointer lookup arrays for id_ref fields ──
   for (const f of decl.fields) {
-    if (f.valueType.format !== 'id_ref') continue;
+    if (f.irType.format !== 'id_ref') continue;
     const idx = idRefIndices.get(f.name)!;
     if (idx.ids.length === 0) continue;
     // Strip the _idx suffix from the field name to get the binding name,
@@ -165,7 +165,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Struct ──
   lines.push(`struct ${decl.structName} {`);
   for (const f of decl.fields) {
-    lines.push(`  ${valueTypeToCpp(f.valueType)} ${f.name};`);
+    lines.push(`  ${irTypeToCpp(f.irType)} ${f.name};`);
   }
   lines.push('};');
 
@@ -182,14 +182,14 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
     const cells = decl.fields.map((f) => {
       const val = row.values[f.name];
       // For id_ref fields, emit the integer index into the lookup array.
-      if (f.valueType.format === 'id_ref') {
+      if (f.irType.format === 'id_ref') {
         const idx = idRefIndices.get(f.name);
         return idx ? String(idx.indexByRow[i]) : '0';
       }
       if (!val) {
         return defaultCppLiteral(f);
       }
-      return formatClosureValue(val);
+      return formatClosureValue(val, f.irType);
     });
     const comma = i < decl.rows.length - 1 ? ',' : '';
     lines.push(`  { ${cells.join(', ')} }${comma}`);
@@ -201,7 +201,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
 
 /** Zero-value literal for a field whose row entry is missing. */
 function defaultCppLiteral(f: ClosureField): string {
-  return valueTypeZeroLiteral(f.valueType);
+  return irTypeZeroLiteral(f.irType);
 }
 
 /**

@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { IRExprNode } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core';
 import type { IRDuration, IRDurationLiteral, IRType } from '@espcompose/core/internals';
 import { IR_INT, IR_FLOAT, IR_STRING, IR_BOOL, parseDurationString } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';
@@ -9,7 +9,7 @@ import type { ActionCompilerContext } from './context.js';
 // ────────────────────────────────────────────────────────────────────────────
 
 /** Placeholder false literal for error recovery in control flow. */
-export const FALSE_EXPR: IRExprNode = { kind: 'literal', value: false, type: 'bool' };
+export const FALSE_EXPR: IRExpression = { kind: 'expr:literal', value: false, type: 'bool' };
 
 // ────────────────────────────────────────────────────────────────────────────
 // Call-site helpers
@@ -57,7 +57,7 @@ export function extractReturnExpr(block: ts.Block): ts.Expression | null {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** Map from TypeScript type to a target-agnostic IRType. */
-function inferScriptParamValueType(
+function inferScriptParamIRType(
   type: ts.Type,
 ): IRType | null {
   // Check for Int branded type (number & { __espcompose_int__: true })
@@ -100,11 +100,11 @@ export function extractDurationArgOrParamRef(
   // Handle identifier references — infer value type from TS.
   if (ts.isIdentifier(node)) {
     const type = ctx.checker.getTypeAtLocation(node);
-    const valueType = inferScriptParamValueType(type);
-    if (!valueType) return null;
+    const irType = inferScriptParamIRType(type);
+    if (!irType) return null;
 
     const name = node.text;
-    ctx.scalarCaptures.set(name, valueType);
+    ctx.scalarCaptures.set(name, irType);
     return { kind: 'script_param', name };
   }
 

@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────────────────
-// value-type-cpp.ts — Map target-agnostic IRType to C++ / ESPHome types
+// ir-type-cpp.ts — Map target-agnostic IRType to C++ / ESPHome types
 //
 // The core library exposes `IRType` (target-agnostic). The ESPHome
 // target owns the concrete C++ representation — this module is the single
@@ -21,7 +21,7 @@ import type { IRType } from '@espcompose/core/internals';
  *   { type: 'string', format: 'entity' }     → 'const char*'
  *   { type: 'int', isArray: true }           → 'std::vector<int>'
  */
-export function valueTypeToCpp(vt: IRType): string {
+export function irTypeToCpp(vt: IRType): string {
   const base = baseCppType(vt);
   if (vt.isArray) return `std::vector<${base}>`;
   return base;
@@ -44,7 +44,7 @@ function baseCppType(vt: IRType): string {
  *
  * ESPHome accepts: `int`, `float`, `bool`, `string`.
  */
-export function valueTypeToEsphomeParam(vt: IRType): string {
+export function irTypeToEsphomeParam(vt: IRType): string {
   // ESPHome script parameters don't have a separate id_ref keyword;
   // id-ref slots are passed as `int` (the lookup-table index).
   if (vt.format === 'id_ref') return 'int';
@@ -57,7 +57,7 @@ export function valueTypeToEsphomeParam(vt: IRType): string {
 }
 
 /** Zero-value C++ literal for an `IRType`. */
-export function valueTypeZeroLiteral(vt: IRType): string {
+export function irTypeZeroLiteral(vt: IRType): string {
   if (vt.isArray) return '{}';
   switch (vt.type) {
     case 'int': return '0';

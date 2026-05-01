@@ -122,7 +122,7 @@ function makeExpressionNode<T>(
     sourceDomain,
   });
   if (entityId && semanticProp) {
-    node.exprIR = { kind: 'entity_prop', entityId, propertyKey: semanticProp, type: exprType };
+    node.exprIR = { kind: 'expr:entity_prop', entityId, propertyKey: semanticProp, type: exprType };
   }
   return node as unknown as Signal<T>;
 }

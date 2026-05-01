@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp';
-import type { IRExprNode } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core';
 import { irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irCall } from '@espcompose/core/internals';
 
 function emptyCtx(): CppLoweringContext {
@@ -17,8 +17,8 @@ function emptyCtx(): CppLoweringContext {
 
 describe('type_cast', () => {
   it('float → int (static_cast)', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: 3.7, type: 'float' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: 3.7, type: 'float' },
       'float',
       'int',
     );
@@ -26,8 +26,8 @@ describe('type_cast', () => {
   });
 
   it('int → float (static_cast)', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: 42, type: 'int' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: 42, type: 'int' },
       'int',
       'float',
     );
@@ -35,8 +35,8 @@ describe('type_cast', () => {
   });
 
   it('string → float (std::stof)', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: '3.14', type: 'string' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: '3.14', type: 'string' },
       'string',
       'float',
     );
@@ -44,8 +44,8 @@ describe('type_cast', () => {
   });
 
   it('string → int (std::stoi)', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: '42', type: 'string' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: '42', type: 'string' },
       'string',
       'int',
     );
@@ -53,8 +53,8 @@ describe('type_cast', () => {
   });
 
   it('float → string (std::to_string)', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: 3.14, type: 'float' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: 3.14, type: 'float' },
       'float',
       'string',
     );
@@ -62,8 +62,8 @@ describe('type_cast', () => {
   });
 
   it('bool → string', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: true, type: 'bool' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: true, type: 'bool' },
       'bool',
       'string',
     );
@@ -73,8 +73,8 @@ describe('type_cast', () => {
   });
 
   it('string → bool', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'trigger_var', name: 'x' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:trigger_var', name: 'x' },
       'string',
       'bool',
     );
@@ -82,8 +82,8 @@ describe('type_cast', () => {
   });
 
   it('same type is no-op', () => {
-    const node: IRExprNode = irTypeCast(
-      { kind: 'literal', value: 42, type: 'float' },
+    const node: IRExpression = irTypeCast(
+      { kind: 'expr:literal', value: 42, type: 'float' },
       'float',
       'float',
     );
@@ -95,16 +95,16 @@ describe('type_cast', () => {
 
 describe('format_string', () => {
   it('%.2f format', () => {
-    const node: IRExprNode = irFormatString(
-      { kind: 'literal', value: 3.14159, type: 'float' },
+    const node: IRExpression = irFormatString(
+      { kind: 'expr:literal', value: 3.14159, type: 'float' },
       '%.2f',
     );
     expect(exprToCpp(node, emptyCtx())).toBe('str_sprintf("%.2f", 3.14159)');
   });
 
   it('%.0f format (no decimals)', () => {
-    const node: IRExprNode = irFormatString(
-      { kind: 'trigger_var', name: 'temp' },
+    const node: IRExpression = irFormatString(
+      { kind: 'expr:trigger_var', name: 'temp' },
       '%.0f',
     );
     expect(exprToCpp(node, emptyCtx())).toBe('str_sprintf("%.0f", temp)');
@@ -115,18 +115,18 @@ describe('format_string', () => {
 
 describe('null_coalesce', () => {
   it('float: isnan check', () => {
-    const node: IRExprNode = irNullCoalesce(
-      { kind: 'trigger_var', name: 'x' },
-      { kind: 'literal', value: 0, type: 'float' },
+    const node: IRExpression = irNullCoalesce(
+      { kind: 'expr:trigger_var', name: 'x' },
+      { kind: 'expr:literal', value: 0, type: 'float' },
       'float',
     );
     expect(exprToCpp(node, emptyCtx())).toBe('std::isnan(x) ? 0 : x');
   });
 
   it('string: empty check', () => {
-    const node: IRExprNode = irNullCoalesce(
-      { kind: 'trigger_var', name: 's' },
-      { kind: 'literal', value: 'default', type: 'string' },
+    const node: IRExpression = irNullCoalesce(
+      { kind: 'expr:trigger_var', name: 's' },
+      { kind: 'expr:literal', value: 'default', type: 'string' },
       'string',
     );
     expect(exprToCpp(node, emptyCtx())).toBe(
@@ -135,9 +135,9 @@ describe('null_coalesce', () => {
   });
 
   it('int: passthrough (no null concept)', () => {
-    const node: IRExprNode = irNullCoalesce(
-      { kind: 'trigger_var', name: 'n' },
-      { kind: 'literal', value: 0, type: 'int' },
+    const node: IRExpression = irNullCoalesce(
+      { kind: 'expr:trigger_var', name: 'n' },
+      { kind: 'expr:literal', value: 0, type: 'int' },
       'int',
     );
     expect(exprToCpp(node, emptyCtx())).toBe('n');
@@ -148,52 +148,52 @@ describe('null_coalesce', () => {
 
 describe('string_method', () => {
   it('.length', () => {
-    const node: IRExprNode = irStringMethod('length',
-      { kind: 'trigger_var', name: 's' },
+    const node: IRExpression = irStringMethod('length',
+      { kind: 'expr:trigger_var', name: 's' },
       [],
     );
     expect(exprToCpp(node, emptyCtx())).toBe('static_cast<int>(s.length())');
   });
 
   it('.toUpperCase()', () => {
-    const node: IRExprNode = irStringMethod('toUpperCase',
-      { kind: 'trigger_var', name: 's' },
+    const node: IRExpression = irStringMethod('toUpperCase',
+      { kind: 'expr:trigger_var', name: 's' },
       [],
     );
     expect(exprToCpp(node, emptyCtx())).toContain('toupper');
   });
 
   it('.toLowerCase()', () => {
-    const node: IRExprNode = irStringMethod('toLowerCase',
-      { kind: 'trigger_var', name: 's' },
+    const node: IRExpression = irStringMethod('toLowerCase',
+      { kind: 'expr:trigger_var', name: 's' },
       [],
     );
     expect(exprToCpp(node, emptyCtx())).toContain('tolower');
   });
 
   it('.substring(a, b)', () => {
-    const node: IRExprNode = irStringMethod('substring',
-      { kind: 'trigger_var', name: 's' },
+    const node: IRExpression = irStringMethod('substring',
+      { kind: 'expr:trigger_var', name: 's' },
       [
-        { kind: 'literal', value: 0, type: 'int' },
-        { kind: 'literal', value: 5, type: 'int' },
+        { kind: 'expr:literal', value: 0, type: 'int' },
+        { kind: 'expr:literal', value: 5, type: 'int' },
       ],
     );
     expect(exprToCpp(node, emptyCtx())).toBe('s.substr(0, (5) - (0))');
   });
 
   it('.charAt(i)', () => {
-    const node: IRExprNode = irStringMethod('charAt',
-      { kind: 'trigger_var', name: 's' },
-      [{ kind: 'literal', value: 0, type: 'int' }],
+    const node: IRExpression = irStringMethod('charAt',
+      { kind: 'expr:trigger_var', name: 's' },
+      [{ kind: 'expr:literal', value: 0, type: 'int' }],
     );
     expect(exprToCpp(node, emptyCtx())).toBe('std::string(1, s.at(0))');
   });
 
   it('.indexOf(str)', () => {
-    const node: IRExprNode = irStringMethod('indexOf',
-      { kind: 'trigger_var', name: 's' },
-      [{ kind: 'literal', value: 'hello', type: 'string' }],
+    const node: IRExpression = irStringMethod('indexOf',
+      { kind: 'expr:trigger_var', name: 's' },
+      [{ kind: 'expr:literal', value: 'hello', type: 'string' }],
     );
     const result = exprToCpp(node, emptyCtx());
     expect(result).toContain('.find(');
@@ -201,8 +201,8 @@ describe('string_method', () => {
   });
 
   it('.trim()', () => {
-    const node: IRExprNode = irStringMethod('trim',
-      { kind: 'trigger_var', name: 's' },
+    const node: IRExpression = irStringMethod('trim',
+      { kind: 'expr:trigger_var', name: 's' },
       [],
     );
     const result = exprToCpp(node, emptyCtx());
@@ -215,18 +215,18 @@ describe('string_method', () => {
 
 describe('new builtins', () => {
   it('math_trunc', () => {
-    const node: IRExprNode = irCall('math_trunc',
-      [{ kind: 'literal', value: 3.7, type: 'float' }],
+    const node: IRExpression = irCall('math_trunc',
+      [{ kind: 'expr:literal', value: 3.7, type: 'float' }],
     );
     expect(exprToCpp(node, emptyCtx())).toBe('static_cast<int32_t>(3.7)');
   });
 
   it('math_clamp', () => {
-    const node: IRExprNode = irCall('math_clamp',
+    const node: IRExpression = irCall('math_clamp',
       [
-        { kind: 'trigger_var', name: 'x' },
-        { kind: 'literal', value: 0, type: 'float' },
-        { kind: 'literal', value: 255, type: 'float' },
+        { kind: 'expr:trigger_var', name: 'x' },
+        { kind: 'expr:literal', value: 0, type: 'float' },
+        { kind: 'expr:literal', value: 255, type: 'float' },
       ],
     );
     expect(exprToCpp(node, emptyCtx())).toBe('std::clamp(x, 0, 255)');
@@ -235,19 +235,19 @@ describe('new builtins', () => {
 
 // ─── mux ──────────────────────────────────────────────────────────────────────
 
-describe('mux', () => {
+describe('expr:mux', () => {
   it('lowers an all-signal-read mux to a pointer table IIFE', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'sig_kitchen');
     ctx.signalNames.set(1, 'sig_bedroom');
     ctx.signalNames.set(99, 'popup_mux');
-    const node: IRExprNode = {
-      kind: 'mux',
+    const node: IRExpression = {
+      kind: 'expr:mux',
       type: 'bool',
-      index: { kind: 'signal_read', signalIndex: 99 },
+      index: { kind: 'expr:signal_read', signalIndex: 99 },
       cases: [
-        { kind: 'signal_read', signalIndex: 0 },
-        { kind: 'signal_read', signalIndex: 1 },
+        { kind: 'expr:signal_read', signalIndex: 0 },
+        { kind: 'expr:signal_read', signalIndex: 1 },
       ],
     };
     expect(exprToCpp(node, ctx)).toBe(
@@ -258,13 +258,13 @@ describe('mux', () => {
   it('lowers a mixed mux (not all signal_read) to an IIFE switch', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(7, 'popup_mux');
-    const node: IRExprNode = {
-      kind: 'mux',
+    const node: IRExpression = {
+      kind: 'expr:mux',
       type: 'string',
-      index: { kind: 'signal_read', signalIndex: 7 },
+      index: { kind: 'expr:signal_read', signalIndex: 7 },
       cases: [
-        { kind: 'literal', value: 'on', type: 'string' },
-        { kind: 'literal', value: 'off', type: 'string' },
+        { kind: 'expr:literal', value: 'on', type: 'string' },
+        { kind: 'expr:literal', value: 'off', type: 'string' },
       ],
     };
     expect(exprToCpp(node, ctx)).toBe(
@@ -276,13 +276,13 @@ describe('mux', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'sig_kitchen');
     ctx.signalNames.set(99, 'popup_mux');
-    const node: IRExprNode = {
-      kind: 'mux',
+    const node: IRExpression = {
+      kind: 'expr:mux',
       type: 'int',
-      index: { kind: 'signal_read', signalIndex: 99 },
+      index: { kind: 'expr:signal_read', signalIndex: 99 },
       cases: [
-        { kind: 'signal_read', signalIndex: 0 },
-        { kind: 'literal', value: 42, type: 'int' },
+        { kind: 'expr:signal_read', signalIndex: 0 },
+        { kind: 'expr:literal', value: 42, type: 'int' },
       ],
     };
     expect(exprToCpp(node, ctx)).toContain('switch (popup_mux.get())');
@@ -291,15 +291,15 @@ describe('mux', () => {
 
 // ─── table_lookup ─────────────────────────────────────────────────────────────
 
-describe('table_lookup', () => {
+describe('expr:table_lookup', () => {
   it('lowers to tableName[index] in reactive context', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'popup_mux');
-    const node: IRExprNode = {
-      kind: 'table_lookup',
+    const node: IRExpression = {
+      kind: 'expr:table_lookup',
       table: 'popup_LightButton_entity_ids',
       elementType: 'string',
-      index: { kind: 'signal_read', signalIndex: 0 },
+      index: { kind: 'expr:signal_read', signalIndex: 0 },
     };
     expect(exprToCpp(node, ctx)).toBe(
       'popup_LightButton_entity_ids[popup_mux.get()]',
@@ -310,11 +310,11 @@ describe('table_lookup', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'popup_mux');
     ctx.actionContext = true;
-    const node: IRExprNode = {
-      kind: 'table_lookup',
+    const node: IRExpression = {
+      kind: 'expr:table_lookup',
       table: 'popup_LightButton_entity_ids',
       elementType: 'string',
-      index: { kind: 'signal_read', signalIndex: 0 },
+      index: { kind: 'expr:signal_read', signalIndex: 0 },
     };
     expect(exprToCpp(node, ctx)).toBe(
       'espcompose::popup_LightButton_entity_ids[espcompose::popup_mux.get()]',
@@ -324,13 +324,13 @@ describe('table_lookup', () => {
   it('composes inside a mux index', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'popup_mux');
-    const node: IRExprNode = {
-      kind: 'mux',
+    const node: IRExpression = {
+      kind: 'expr:mux',
       type: 'int',
-      index: { kind: 'signal_read', signalIndex: 0 },
+      index: { kind: 'expr:signal_read', signalIndex: 0 },
       cases: [
-        { kind: 'literal', value: 1, type: 'int' },
-        { kind: 'literal', value: 2, type: 'int' },
+        { kind: 'expr:literal', value: 1, type: 'int' },
+        { kind: 'expr:literal', value: 2, type: 'int' },
       ],
     };
     expect(exprToCpp(node, ctx)).toContain('switch (popup_mux.get())');

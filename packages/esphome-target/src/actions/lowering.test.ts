@@ -14,14 +14,14 @@ describe('reactive_expr param in ha_service', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'sig_popup_mux');
     const action: IRActionNode = {
-      kind: 'ha_service',
+      kind: 'action:ha_service',
       action: 'light.toggle',
       data: {
         entity_id: {
           kind: 'reactive_expr',
           exprIR: {
-            kind: 'table_lookup',
-            index: { kind: 'signal_read', signalIndex: 0 },
+            kind: 'expr:table_lookup',
+            index: { kind: 'expr:signal_read', signalIndex: 0 },
             table: 'tbl_popup_abc_entity_ids',
             elementType: 'string',
           },
@@ -48,14 +48,14 @@ describe('reactive_expr param in ha_service', () => {
     const ctx = emptyCtx();
     ctx.signalNames.set(0, 'sig_popup_mux');
     const action: IRActionNode = {
-      kind: 'ha_service',
+      kind: 'action:ha_service',
       action: 'light.turn_on',
       data: {
         entity_id: {
           kind: 'reactive_expr',
           exprIR: {
-            kind: 'table_lookup',
-            index: { kind: 'signal_read', signalIndex: 0 },
+            kind: 'expr:table_lookup',
+            index: { kind: 'expr:signal_read', signalIndex: 0 },
             table: 'tbl_entity_ids',
             elementType: 'string',
           },

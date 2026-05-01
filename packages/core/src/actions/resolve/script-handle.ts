@@ -45,15 +45,15 @@ function walkAndPatch(
   byId: Map<string, ScriptHandleLike>,
 ): void {
   for (const action of actions) {
-    if (action.kind === 'script_execute' && action.closureIndex === undefined) {
+    if (action.kind === 'action:script_execute' && action.closureIndex === undefined) {
       const handle = byId.get(action.scriptId);
       if (handle && typeof handle.__closureIndex === 'number') {
         action.closureIndex = handle.__closureIndex;
       }
-    } else if (action.kind === 'if') {
+    } else if (action.kind === 'action:if') {
       walkAndPatch(action.then, byId);
       if (action.else) walkAndPatch(action.else, byId);
-    } else if (action.kind === 'while' || action.kind === 'repeat') {
+    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
       walkAndPatch(action.then, byId);
     }
   }

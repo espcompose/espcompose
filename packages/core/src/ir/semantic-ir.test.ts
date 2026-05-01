@@ -45,9 +45,9 @@ function makeMemoNode(index: number): IRReactiveNode {
     exprType: 'float',
   });
   node.exprIR = irTernary(
-    { kind: 'signal_read', signalIndex: 0 },
-    { kind: 'literal', value: 1.0, type: 'float' },
-    { kind: 'literal', value: 0.0, type: 'float' },
+    { kind: 'expr:signal_read', signalIndex: 0 },
+    { kind: 'expr:literal', value: 1.0, type: 'float' },
+    { kind: 'expr:literal', value: 0.0, type: 'float' },
   );
   void index; // index no longer needed; nodeId is assigned at construction
   return node;
@@ -191,7 +191,7 @@ describe('buildSemanticIR', () => {
   });
 
   it('captures compiled action metadata', () => {
-    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const rawActions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
     const serializedResult = [{ 'homeassistant.service': { service: 'light.toggle', entity_id: 'light.kitchen' } }];
 
     const captures = emptyCaptures();
@@ -331,7 +331,7 @@ describe('buildSemanticIR', () => {
       bindings: [],
       entities: [entity],
       components: [component],
-      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: { kind: 'duration', value: 500, unit: 'ms' } } satisfies IRActionNode] }],
+      scripts: [{ id: 'script_1', then: [{ kind: 'action:delay', duration: { kind: 'duration', value: 500, unit: 'ms' } } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: [{
         kind: 'theme_data',
@@ -339,7 +339,7 @@ describe('buildSemanticIR', () => {
         scopeId: 'abcd1234',
         themeNames: ['light', 'dark'],
         defaultIndex: 0,
-        leafData: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], valueType: 'int' }]]),
+        leafData: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], exprType: 'int' }]]),
       }],
     });
 
