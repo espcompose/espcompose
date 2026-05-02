@@ -21,7 +21,6 @@ describe('IRReactiveNode', () => {
       });
       expect(node.kind).toBe('memo');
       expect(node.dependencies).toHaveLength(2);
-      expect(node.__reactive_node__).toBe(true);
     });
 
     it('creates a single-source expression node', () => {

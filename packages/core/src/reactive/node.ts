@@ -103,7 +103,6 @@ export interface IRReactiveNodeConfig {
  */
 export class IRReactiveNode<T = unknown> {
   declare readonly [REACTIVE_NODE_BRAND]?: T;
-  readonly __reactive_node__ = true;
 
   readonly kind: IRReactiveNodeKind;
   readonly dependencies: IRDependency[];
