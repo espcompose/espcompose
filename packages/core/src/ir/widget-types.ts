@@ -55,19 +55,6 @@ export interface IROverlayTier {
   readonly overlays: IROverlayContainer[];
 }
 
-/**
- * The full LVGL widget tree produced for a single `<lvgl>` element.
- * Pages and top-level widgets are kept separate because pages have distinct
- * semantics (router targets) even though they share the widget shape.
- */
-export interface IRWidgetTree {
-  readonly kind: 'widget_tree';
-  /** Top-level lvgl section props (camelCase) — all values are typed `IRValue` nodes. */
-  readonly props: Record<string, IRValue>;
-  /** `<lvgl-page>` subtrees. */
-  readonly pages: IRWidget[];
-  /** Non-page top-level widgets. */
-  readonly widgets: IRWidget[];
-  /** Overlay subtrees grouped by zOrder, ascending. */
-  readonly overlayTiers: IROverlayTier[];
-}
+// NOTE: IRWidgetTree has been replaced by IRUIRegistry in ./types.ts.
+// IRUIRegistry flattens the widget tree into the top-level SemanticIR with
+// renamed fields: props → config, overlayTiers → overlays.

@@ -4,9 +4,8 @@
 
 export type {
   SemanticIR,
-  IRESPHomeData,
-  IRESPComposeData,
-  IRReactiveData,
+  IRReactiveRegistry,
+  IRUIRegistry,
   IRComponent,
   IRSection,
   IRValue,
@@ -29,9 +28,11 @@ export type {
   ClosureField,
   ClosureShape,
   ClosureInstance,
+  IRSectionRegistry,
   IREntityRegistry,
   IRComponentRegistry,
   IRScriptRegistry,
+  IRThemeRegistry,
 } from './types';
 
 export {
@@ -47,6 +48,7 @@ export {
   irSecret,
   irTriggerVar,
   irType,
+  brandArray,
   IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
   IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
   IR_ID_REF, IR_ENTITY,
@@ -57,10 +59,9 @@ export type { BuildSemanticIRInput, RawIRWidget, RawIRWidgetTree, RawIROverlayTi
 
 export { serializeIRToJSON } from './serialize-json';
 
-// ── Widget tree IR (target-neutral) ─────────────────────────────────────────
+// ── Widget IR (target-neutral) ─────────────────────────────────────────────
 export type {
   IRWidget,
-  IRWidgetTree,
   IROverlayContainer,
   IROverlayTier,
 } from './widget-types';

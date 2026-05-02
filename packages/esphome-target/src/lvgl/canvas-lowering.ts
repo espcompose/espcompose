@@ -35,17 +35,17 @@ export interface PaintPrimitive {
 
 /**
  * Walk the SemanticIR and extract ec_canvas paint scene data.
- * Uses the typed `IRWidgetTree` on `ir.esphome.lvglTree` when available,
+ * Uses the typed `IRUIRegistry` on `ir.ui` when available,
  * falling back to the generic sections walk for backward compatibility.
  */
 export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
   const scenes: EcCanvasPaintScene[] = [];
 
   // Prefer typed LVGL widget tree on the IR
-  if (ir.esphome.lvglTree) {
-    walkIRWidgets(ir.esphome.lvglTree.pages, scenes);
-    walkIRWidgets(ir.esphome.lvglTree.widgets, scenes);
-    for (const tier of ir.esphome.lvglTree.overlayTiers) {
+  if (ir.ui) {
+    walkIRWidgets(ir.ui.pages, scenes);
+    walkIRWidgets(ir.ui.widgets, scenes);
+    for (const tier of ir.ui.overlays) {
       for (const overlay of tier.overlays) {
         walkIRWidgets(overlay.widgets, scenes);
       }
@@ -54,7 +54,7 @@ export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
   }
 
   // Fallback: walk generic sections (for backward compat with tests feeding config directly)
-  const lvglSection = ir.esphome.sections.find(s => s.key === 'lvgl');
+  const lvglSection = ir.sections.find(s => s.key === 'lvgl');
   if (!lvglSection || lvglSection.value.kind !== 'object') return scenes;
 
   const lvglObj = lvglSection.value as IRObject;

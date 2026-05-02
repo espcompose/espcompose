@@ -403,15 +403,6 @@ display:
   cs_pin: 5
   dc_pin: 27
   reset_pin: 33
-lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return espcompose::memo_0.get().c_str();"
-            id: rw_ref2
 binary_sensor:
   - platform: gpio
     pin: 4
@@ -440,6 +431,15 @@ binary_sensor:
           ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
           rt->request_flush(); }"
       - logger.log: Cleared array
+lvgl:
+  id: r_ref1
+  displays:
+    - r_ref0
+  pages:
+    - widgets:
+        - label:
+            text: !lambda "return espcompose::memo_0.get().c_str();"
+            id: rw_ref2
 external_components:
   - source:
       type: local

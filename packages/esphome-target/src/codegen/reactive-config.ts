@@ -154,10 +154,10 @@ export interface ThemeScopeData {
   scope: string;
   /** 8-char hex hash of the scope — C++ identifier fragment. */
   scopeId: string;
-  themeNames: string[];
+  names: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + expr type (ExprType compatible). */
-  leafData: Map<string, { values: IRScalar[]; exprType: string }>;
+  values: Map<string, { values: IRScalar[]; exprType: string }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -248,7 +248,7 @@ export function buildRuntimeConfig(
   const themeVarNames = new Map<string, string>();
   if (themes) {
     for (const scopeData of themes) {
-      for (const signalPath of scopeData.leafData.keys()) {
+      for (const signalPath of scopeData.values.keys()) {
         themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
       }
     }
@@ -406,7 +406,7 @@ export function buildRuntimeConfig(
       let leafData: { values: IRScalar[]; exprType: string } | undefined;
       if (themeIR?.scope && themePath && themes) {
         const scopeData = themes.find(s => s.scope === themeIR.scope);
-        leafData = scopeData?.leafData.get(themePath);
+        leafData = scopeData?.values.get(themePath);
       }
       // Convert exprType (ExprType) to C++ type; fallback to exprType if available
       const leafExprType = leafData?.exprType as ExprType | undefined;
@@ -440,9 +440,9 @@ export function buildRuntimeConfig(
 
   if (themes) {
     for (const scopeData of themes) {
-      if (scopeData.themeNames.length === 0) continue;
+      if (scopeData.names.length === 0) continue;
       const scopeMemos: ThemeMemoDecl[] = [];
-      for (const [signalPath, leaf] of scopeData.leafData) {
+      for (const [signalPath, leaf] of scopeData.values) {
         const leafExprType = leaf.exprType as ExprType;
         const memo: ThemeMemoDecl = {
           name: `thm_${scopeData.scopeId}_${signalPath}`,
@@ -457,7 +457,7 @@ export function buildRuntimeConfig(
         scopeId: scopeData.scopeId,
         themeMemos: scopeMemos,
         defaultIndex: scopeData.defaultIndex,
-        themeNames: scopeData.themeNames,
+        themeNames: scopeData.names,
       });
     }
   }

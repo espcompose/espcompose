@@ -27,7 +27,7 @@ export function createEsphomeTarget(): ComposeTarget {
     // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
     // Core mints deterministic semantic IDs during render; we remap them
     // here so all downstream code sees target-specific IDs.
-    const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.entityRegistry.entities);
+    const { semanticToTarget, remappedEntities } = buildEntityIdMap([...ir.entities]);
     remapEntityIdsInIR(ir, semanticToTarget);
 
     // ── Generate C++ headers from semantic IR ───────────────────────────
@@ -122,7 +122,7 @@ function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string
 
   // Remap reactive nodes (memos + effects)
   // Cast to mutable — we intentionally mutate IR in-place before codegen
-  const allNodes = [...ir.espcompose.reactive.memos, ...ir.espcompose.reactive.effects];
+  const allNodes = [...ir.reactives.memos, ...ir.reactives.effects];
   for (const node of allNodes) {
     if (node.sourceId) (node as { sourceId: string }).sourceId = remap(node.sourceId);
     if (node.dependencies) {
@@ -135,7 +135,7 @@ function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string
   }
 
   // Remap bindings
-  for (const binding of ir.espcompose.reactive.bindings) {
+  for (const binding of ir.reactives.bindings) {
     const expr = binding.expression;
     if (expr.sourceId) (expr as { sourceId: string }).sourceId = remap(expr.sourceId);
     if (expr.dependencies) {

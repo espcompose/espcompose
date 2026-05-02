@@ -13,7 +13,7 @@ import type { IRReactiveNode } from '../reactive';
 import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
 import type { ExprType } from './expr-types';
-import type { IRWidgetTree } from './widget-types';
+import type { IRWidget, IROverlayTier } from './widget-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition
@@ -147,15 +147,15 @@ export interface IRScript {
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface IRThemeData {
-  readonly kind: 'theme_data';
+  readonly kind: 'theme_scope';
   /** Human-readable scope name (e.g. 'espcompose:ui'). */
   scope: string;
   /** 8-char hex hash of the scope — used as C++ identifier fragment. */
   scopeId: string;
-  themeNames: string[];
+  names: string[];
   defaultIndex: number;
   /** For each signal path, ordered values across themes + expression type. */
-  leafData: Map<string, { values: IRScalar[]; exprType: ExprType }>;
+  values: Map<string, { values: IRScalar[]; exprType: ExprType }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -176,52 +176,40 @@ export interface IRComponent {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Registry wrapper nodes — typed containers for side-channel collections
+// Branded array registries
+//
+// Each registry is a plain array intersected with a `kind` discriminator.
+// This avoids stutter (e.g. `entities.entities`) while remaining iterable
+// and carrying a discriminator for the IR walker / JSON serializer.
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Registry of HA entities discovered during the render pass. */
-export interface IREntityRegistry {
-  readonly kind: 'entity_registry';
-  entities: IRHAEntity[];
-}
+/** Branded array of top-level config sections. */
+export type IRSectionRegistry = IRSection[] & { readonly kind: 'section_registry' };
 
-/** Registry of component definitions (images, fonts, globals) from hooks. */
-export interface IRComponentRegistry {
-  readonly kind: 'component_registry';
-  components: IRComponent[];
-}
+/** Branded array of HA entities discovered during the render pass. */
+export type IREntityRegistry = IRHAEntity[] & { readonly kind: 'entity_registry' };
 
-/** Registry of script definitions from useScript(). */
-export interface IRScriptRegistry {
-  readonly kind: 'script_registry';
-  scripts: IRScript[];
-}
+/** Branded array of component definitions (images, fonts, globals) from hooks. */
+export type IRComponentRegistry = IRComponent[] & { readonly kind: 'component_registry' };
 
-// ────────────────────────────────────────────────────────────────────────────
-// Semantic IR root
-// ────────────────────────────────────────────────────────────────────────────
+/** Branded array of script definitions from useScript(). */
+export type IRScriptRegistry = IRScript[] & { readonly kind: 'script_registry' };
+
+/** Branded array of theme scope data from the theme registry. */
+export type IRThemeRegistry = IRThemeData[] & { readonly kind: 'theme_registry' };
 
 /**
- * ESPHome-targeted data: config tree, HA entities, components, and scripts.
- * All of this becomes ESPHome YAML or injected YAML sections.
+ * Create a branded array — a plain array with an attached `kind` discriminator.
+ *
+ * The result is iterable, indexable, and carries `.kind` for the IR walker.
  */
-export interface IRESPHomeData {
-  readonly kind: 'esphome_data';
-  /** Top-level config sections (esphome:, wifi:, lvgl:, sensor:, etc.) */
-  sections: IRSection[];
-
-  /** HA entities for auto-generated sensor imports */
-  entityRegistry: IREntityRegistry;
-
-  /** Component definitions (images, fonts) with resolved configs */
-  componentRegistry: IRComponentRegistry;
-
-  /** Named script definitions from useScript() */
-  scriptRegistry: IRScriptRegistry;
-
-  /** LVGL widget tree produced during render (undefined when no `<lvgl>` present). */
-  lvglTree?: IRWidgetTree;
+export function brandArray<T, K extends string>(items: T[], kind: K): T[] & { readonly kind: K } {
+  return Object.assign(items, { kind } as const);
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Reactive registry
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Reactive side-channel data: bindings, memos, and effects.
@@ -231,8 +219,8 @@ export interface IRESPHomeData {
  * These are the authoritative sources for reactive data — hook-registered
  * nodes may not appear in the config tree.
  */
-export interface IRReactiveData {
-  readonly kind: 'reactive_data';
+export interface IRReactiveRegistry {
+  readonly kind: 'reactive_registry';
   /** Reactive bindings linking memo/effect nodes to widget props */
   bindings: IRBinding[];
 
@@ -243,18 +231,30 @@ export interface IRReactiveData {
   effects: IRReactiveNode[];
 }
 
-/**
- * ESPCompose-owned data: the reactive runtime and theme system.
- * This drives C++ header generation and is target-agnostic.
- */
-export interface IRESPComposeData {
-  readonly kind: 'espcompose_data';
-  /** Reactive bindings, memos, and effects */
-  reactive: IRReactiveData;
+// ────────────────────────────────────────────────────────────────────────────
+// UI registry
+// ────────────────────────────────────────────────────────────────────────────
 
-  /** Theme data from the theme registry (undefined if no themes) */
-  themes?: IRThemeData[];
+/**
+ * UI data produced for a single `<lvgl>` element.
+ * Pages and top-level widgets are kept separate because pages have distinct
+ * semantics (router targets) even though they share the widget shape.
+ */
+export interface IRUIRegistry {
+  readonly kind: 'ui_registry';
+  /** Top-level lvgl section config (camelCase) — all values are typed `IRValue` nodes. */
+  readonly config: Record<string, IRValue>;
+  /** `<lvgl-page>` subtrees. */
+  readonly pages: IRWidget[];
+  /** Non-page top-level widgets. */
+  readonly widgets: IRWidget[];
+  /** Overlay subtrees grouped by zOrder, ascending. */
+  readonly overlays: IROverlayTier[];
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Semantic IR root
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * The complete semantic IR for a device project.
@@ -263,16 +263,33 @@ export interface IRESPComposeData {
  * target backends (esphome-target). Backends consume a
  * SemanticIR and produce target-specific output (YAML + C++ headers).
  *
- * The config tree contains semantic value nodes (IRReactive, IRRef, etc.)
- * that preserve pre-serialization data.
+ * The tree has seven flat top-level children — no intermediate grouping.
+ * Branded-array registries (sections, entities, components, scripts, themes)
+ * are directly iterable and carry a `.kind` discriminator.
  */
 export interface SemanticIR {
   readonly kind: 'semantic_ir';
-  /** ESPHome-targeted sections, HA entities, components, and scripts */
-  esphome: IRESPHomeData;
 
-  /** ESPCompose reactive runtime and theme data */
-  espcompose: IRESPComposeData;
+  /** Top-level config sections (esphome:, wifi:, sensor:, etc.) */
+  sections: IRSectionRegistry;
+
+  /** HA entities for auto-generated sensor imports */
+  entities: IREntityRegistry;
+
+  /** Component definitions (images, fonts, globals) with resolved configs */
+  components: IRComponentRegistry;
+
+  /** Named script definitions from useScript() */
+  scripts: IRScriptRegistry;
+
+  /** Theme scope data from the theme registry */
+  themes: IRThemeRegistry;
+
+  /** Reactive bindings, memos, and effects */
+  reactives: IRReactiveRegistry;
+
+  /** UI widget tree (undefined when no `<lvgl>` element present) */
+  ui?: IRUIRegistry;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

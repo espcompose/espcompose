@@ -1,25 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import type { SemanticIR, IRValue } from '@espcompose/core/internals';
+import { brandArray } from '@espcompose/core/internals';
 import { lowerToYamlConfig } from '../lower-yaml.js';
 
 function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
   return {
     kind: 'semantic_ir',
-    esphome: {
-      kind: 'esphome_data',
-      sections: sections.map(s => ({ kind: 'section' as const, ...s })),
-      entityRegistry: { kind: 'entity_registry' as const, entities: [] },
-      componentRegistry: { kind: 'component_registry' as const, components: [] },
-      scriptRegistry: { kind: 'script_registry' as const, scripts: [] },
-    },
-    espcompose: {
-      kind: 'espcompose_data',
-      reactive: {
-        kind: 'reactive_data',
-        bindings: [],
-        memos: [],
-        effects: [],
-      },
+    sections: brandArray(sections.map(s => ({ kind: 'section' as const, ...s })), 'section_registry'),
+    entities: brandArray([], 'entity_registry'),
+    components: brandArray([], 'component_registry'),
+    scripts: brandArray([], 'script_registry'),
+    themes: brandArray([], 'theme_registry'),
+    reactives: {
+      kind: 'reactive_registry',
+      bindings: [],
+      memos: [],
+      effects: [],
     },
   };
 }

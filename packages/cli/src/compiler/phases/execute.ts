@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 import type { BuildSemanticIRInput, IRThemeData, ExecuteResult, ExprType } from '@espcompose/core/internals';
-import { buildSemanticIR, scopeHash, irScalar } from '@espcompose/core/internals';
+import { buildSemanticIR, brandArray, scopeHash, irScalar } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -95,7 +95,7 @@ export function executePhase(ctx: PhaseContext): void {
         themes,
         lvglTrees,
       })
-    : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], entityRegistry: { kind: 'entity_registry' as const, entities: [] }, componentRegistry: { kind: 'component_registry' as const, components: [] }, scriptRegistry: { kind: 'script_registry' as const, scripts: [] } }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
+    : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] } };
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };
@@ -137,7 +137,7 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
     if (themeNames.length === 0) continue;
 
     const signalPaths: string[] = registry.getSignalPaths(scope);
-    const leafData = new Map<string, { values: ReturnType<typeof irScalar>[]; exprType: ExprType }>();
+    const themeValues = new Map<string, { values: ReturnType<typeof irScalar>[]; exprType: ExprType }>();
 
     for (const signalPath of signalPaths) {
       const values: ReturnType<typeof irScalar>[] = [];
@@ -155,16 +155,16 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
           }
         }
       }
-      leafData.set(signalPath, { values, exprType });
+      themeValues.set(signalPath, { values, exprType });
     }
 
     result.push({
-      kind: 'theme_data',
+      kind: 'theme_scope',
       scope,
       scopeId: scopeHash(scope),
-      themeNames,
+      names: themeNames,
       defaultIndex: registry.getDefaultIndex(scope),
-      leafData,
+      values: themeValues,
     });
   }
 

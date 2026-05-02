@@ -239,12 +239,10 @@ function mergeContextSections(
 }
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {
-  // LVGL container: collect the widget tree for the IR and insert a null
-  // placeholder to preserve section ordering in the config object.
+  // LVGL container: collect the widget tree for the UI registry IR.
+  // No config section is emitted — the tree is consumed via ir.ui instead.
   if (child.type === 'lvgl') {
     _lvglTrees.push(buildLvglSection(child));
-    if (!sections['lvgl']) sections['lvgl'] = [];
-    sections['lvgl'].push(null);
     return;
   }
 

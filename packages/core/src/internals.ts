@@ -176,20 +176,21 @@ export { buildSemanticIR, serializeIRToJSON } from './ir/index';
 export {
   irSection, irScalar, irObject, irEntry, irArray, irNull,
   irReactive, irRef, irAction, irSecret, irTriggerVar, irType,
+  brandArray,
   IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
   IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
   IR_ID_REF, IR_ENTITY,
 } from './ir/index';
 export type {
-  SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
+  SemanticIR, IRReactiveRegistry, IRUIRegistry,
   BuildSemanticIRInput, IRThemeData, IRScript, IRComponent,
   IRScriptParamDecl, IRScriptParamRef,
   IRScalarType, IRScalarFormat, IRType,
   ClosureField, ClosureShape, ClosureInstance,
-  IREntityRegistry, IRComponentRegistry, IRScriptRegistry,
+  IRSectionRegistry, IREntityRegistry, IRComponentRegistry, IRScriptRegistry, IRThemeRegistry,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
-  IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier,
+  IRWidget, IROverlayContainer, IROverlayTier,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,

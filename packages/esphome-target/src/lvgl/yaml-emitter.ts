@@ -14,7 +14,7 @@
 // and pre-serialized values); the target lowers them during the emit phase.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRWidget, IRWidgetTree, IRValue } from '@espcompose/core/internals';
+import type { IRWidget, IRUIRegistry, IRValue } from '@espcompose/core/internals';
 
 // ── Value lowering context ──────────────────────────────────────────────────
 
@@ -139,16 +139,16 @@ function lowerLvglPage(page: IRWidget, ctx?: LvglValueLoweringContext): Record<s
  * When `ctx` is provided, serialization markers (LambdaMarker, QuotedMarker)
  * and action arrays in widget props are lowered to YAML-ready values.
  */
-export function lowerLvglWidgetTree(tree: IRWidgetTree, ctx?: LvglValueLoweringContext): Record<string, unknown> {
-  const serialized = lowerWidgetProps(tree.props, ctx);
+export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringContext): Record<string, unknown> {
+  const serialized = lowerWidgetProps(tree.config, ctx);
   const pagesYaml = tree.pages.map(p => lowerLvglPage(p, ctx));
   const widgetsYaml = tree.widgets.map(w => lowerLvglWidget(w, ctx));
   if (pagesYaml.length > 0) serialized.pages = pagesYaml;
   if (widgetsYaml.length > 0) serialized.widgets = widgetsYaml;
 
-  if (tree.overlayTiers.length > 0) {
+  if (tree.overlays.length > 0) {
     const tierWidgets: Record<string, unknown>[] = [];
-    for (const tier of tree.overlayTiers) {
+    for (const tier of tree.overlays) {
       const overlayContainerWidgets: Record<string, unknown>[] = [];
       for (const overlay of tier.overlays) {
         const widgets = overlay.widgets.map(w => lowerLvglWidget(w, ctx));

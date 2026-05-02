@@ -4,7 +4,7 @@
 // Produces a human-readable JSON representation of the SemanticIR tree for
 // debugging and auditing. Handles:
 //   - IRReactiveNode class instances (extracts plain data fields)
-//   - Map objects (leafData on IRThemeData) → key-value arrays
+//   - Map objects (values on IRThemeData) → key-value arrays
 //   - Functions / undefined → omitted (standard JSON behavior)
 //
 // $id / $ref convention
@@ -97,6 +97,18 @@ export function serializeIRToJSON(ir: SemanticIR): { json: string; warnings: str
         }
       }
       return out;
+    }
+
+    // Branded array (has a `kind` property) → serialize as an object node
+    // with `$id`, `kind`, and `items` so the viewer renders the registry
+    // kind instead of a generic "array" label.
+    if (Array.isArray(value) && 'kind' in value && typeof (value as Record<string, unknown>).kind === 'string') {
+      pathOf.set(value, path);
+      return {
+        $id: path,
+        kind: (value as Record<string, unknown>).kind,
+        items: value.map((v, i) => walk(v, childPath(path, i))),
+      };
     }
 
     // Array → bare JSON array. Cannot carry $id, so not registered as a

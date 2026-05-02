@@ -17,7 +17,7 @@ import type { IRBinding, IRHAEntity, ComponentRegistration } from '../hooks';
 import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
-import type { IRWidget, IRWidgetTree, IROverlayTier } from './widget-types';
+import type { IRWidget, IROverlayTier } from './widget-types';
 import type {
   SemanticIR,
   IRSection,
@@ -29,6 +29,7 @@ import type {
   ScriptMode,
   ClosureShape,
   ClosureInstance,
+  IRUIRegistry,
 } from './types';
 import {
   irSection,
@@ -42,6 +43,7 @@ import {
   irAction,
   irSecret,
   irTriggerVar,
+  brandArray,
 } from './types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -217,13 +219,13 @@ function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROve
   }));
 }
 
-function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRWidgetTree {
+function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRUIRegistry {
   return {
-    kind: 'widget_tree' as const,
-    props: resolveWidgetProps(tree.props, ctx),
+    kind: 'ui_registry' as const,
+    config: resolveWidgetProps(tree.props, ctx),
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
-    overlayTiers: resolveOverlayTiers(tree.overlayTiers, ctx),
+    overlays: resolveOverlayTiers(tree.overlayTiers, ctx),
   };
 }
 
@@ -334,32 +336,20 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
 
   return {
     kind: 'semantic_ir' as const,
-    esphome: {
-      kind: 'esphome_data' as const,
-      sections,
-      entityRegistry: {
-        kind: 'entity_registry' as const,
-        entities: input.entities,
-      },
-      componentRegistry: {
-        kind: 'component_registry' as const,
-        components: resolvedComponents,
-      },
-      scriptRegistry: {
-        kind: 'script_registry' as const,
-        scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
-      },
-      lvglTree: resolvedLvglTree,
+    sections: brandArray(sections, 'section_registry'),
+    entities: brandArray(input.entities, 'entity_registry'),
+    components: brandArray(resolvedComponents, 'component_registry'),
+    scripts: brandArray(
+      input.scripts.map(s => ({ kind: 'script' as const, ...s })),
+      'script_registry',
+    ),
+    themes: brandArray(input.themes ?? [], 'theme_registry'),
+    reactives: {
+      kind: 'reactive_registry' as const,
+      bindings: input.bindings,
+      memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
+      effects: input.reactiveNodes.filter(n => n.kind === 'effect'),
     },
-    espcompose: {
-      kind: 'espcompose_data' as const,
-      reactive: {
-        kind: 'reactive_data' as const,
-        bindings: input.bindings,
-        memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
-        effects: input.reactiveNodes.filter(n => n.kind === 'effect'),
-      },
-      themes: input.themes,
-    },
+    ui: resolvedLvglTree,
   };
 }

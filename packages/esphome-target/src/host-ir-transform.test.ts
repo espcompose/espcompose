@@ -1,44 +1,39 @@
 import { describe, it, expect } from 'vitest';
-import type { SemanticIR, IRValue, IRWidgetTree } from '@espcompose/core/internals';
-import { irScalar, irObject, irEntry, irArray, irRef } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRUIRegistry } from '@espcompose/core/internals';
+import { irScalar, irObject, irEntry, irArray, irRef, brandArray } from '@espcompose/core/internals';
 import { transformIRForHost } from './host-ir-transform.js';
 
 function makeIR(
   sections: Array<{ key: string; value: IRValue }>,
-  lvglTree?: IRWidgetTree,
+  ui?: IRUIRegistry,
 ): SemanticIR {
   return {
     kind: 'semantic_ir',
-    esphome: {
-      kind: 'esphome_data',
-      sections: sections.map(s => ({ kind: 'section' as const, ...s })),
-      entityRegistry: { kind: 'entity_registry' as const, entities: [] },
-      componentRegistry: { kind: 'component_registry' as const, components: [] },
-      scriptRegistry: { kind: 'script_registry' as const, scripts: [] },
-      lvglTree,
+    sections: brandArray(sections.map(s => ({ kind: 'section' as const, ...s })), 'section_registry'),
+    entities: brandArray([], 'entity_registry'),
+    components: brandArray([], 'component_registry'),
+    scripts: brandArray([], 'script_registry'),
+    themes: brandArray([], 'theme_registry'),
+    reactives: {
+      kind: 'reactive_registry',
+      bindings: [],
+      memos: [],
+      effects: [],
     },
-    espcompose: {
-      kind: 'espcompose_data',
-      reactive: {
-        kind: 'reactive_data',
-        bindings: [],
-        memos: [],
-        effects: [],
-      },
-    },
+    ui,
   };
 }
 
-function makeLvglTree(rotation?: number): IRWidgetTree {
+function makeUI(rotation?: number): IRUIRegistry {
   return {
-    kind: 'widget_tree',
-    props: {
+    kind: 'ui_registry',
+    config: {
       displays: irArray([irRef('r_disp')]),
       ...(rotation != null ? { rotation: irScalar(rotation) } : {}),
     },
     pages: [],
     widgets: [],
-    overlayTiers: [],
+    overlays: [],
   };
 }
 
@@ -50,13 +45,13 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
 
     expect(keys).toContain('host');
     expect(keys).not.toContain('esp32');
     expect(keys).toContain('esphome');
 
-    const hostSection = result.esphome.sections.find(s => s.key === 'host')!;
+    const hostSection = result.sections.find(s => s.key === 'host')!;
     expect(hostSection.value).toEqual(irObject([
       irEntry('mac_address', irScalar('AC:BC:32:89:0E:A1')),
     ]));
@@ -68,7 +63,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
 
     expect(keys).toContain('host');
     expect(keys).not.toContain('esp8266');
@@ -81,7 +76,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const esphome = result.esphome.sections.find(s => s.key === 'esphome')!;
+    const esphome = result.sections.find(s => s.key === 'esphome')!;
     const obj = esphome.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     expect(obj.entries.find(e => e.key === 'name')?.value).toEqual(irScalar('my-device-simulator'));
   });
@@ -100,7 +95,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
 
     expect(display.value.kind).toBe('object');
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -127,7 +122,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const idEntry = obj.entries.find(e => e.key === 'id');
     expect(idEntry?.value).toEqual(irRef('r_display123'));
@@ -147,11 +142,11 @@ describe('transformIRForHost', () => {
           ]),
         },
       ],
-      makeLvglTree(270),
+      makeUI(270),
     );
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     // LVGL rotation baked into swapped dimensions (ILI9341 is 320×240 → 240×320 after 270°)
     const dims = obj.entries.find(e => e.key === 'dimensions');
@@ -164,9 +159,9 @@ describe('transformIRForHost', () => {
     expect(obj.entries.find(e => e.key === 'csPin')).toBeUndefined();
     expect(obj.entries.find(e => e.key === 'dcPin')).toBeUndefined();
     // rotation stripped from lvglTree (baked into SDL dimensions)
-    expect(result.esphome.lvglTree?.props.rotation).toBeUndefined();
+    expect(result.ui?.config.rotation).toBeUndefined();
     // other lvglTree props preserved
-    expect(result.esphome.lvglTree?.props.displays).toBeDefined();
+    expect(result.ui?.config.displays).toBeDefined();
   });
 
   it('swaps dimensions for 90° LVGL rotation', () => {
@@ -183,11 +178,11 @@ describe('transformIRForHost', () => {
           ]),
         },
       ],
-      makeLvglTree(90),
+      makeUI(90),
     );
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -209,11 +204,11 @@ describe('transformIRForHost', () => {
           ]),
         },
       ],
-      makeLvglTree(180),
+      makeUI(180),
     );
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -236,7 +231,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -256,7 +251,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir, { width: 1024, height: 768 });
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -276,7 +271,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const ts = result.esphome.sections.find(s => s.key === 'touchscreen')!;
+    const ts = result.sections.find(s => s.key === 'touchscreen')!;
     const obj = ts.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     expect(obj.entries.find(e => e.key === 'platform')?.value).toEqual(irScalar('sdl'));
     expect(obj.entries).toHaveLength(1);
@@ -297,7 +292,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
 
     expect(keys).toEqual(['esphome', 'host', 'api', 'logger']);
   });
@@ -310,13 +305,13 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
     // host injected at front since no device platform was present
     expect(keys).toEqual(['host', 'esphome', 'api']);
   });
 
   it('leaves lvglTree unchanged when it has no rotation', () => {
-    const tree = makeLvglTree();
+    const tree = makeUI();
     const ir = makeIR(
       [
         { key: 'esphome', value: irObject([irEntry('name', irScalar('test'))]) },
@@ -326,9 +321,9 @@ describe('transformIRForHost', () => {
     );
 
     const result = transformIRForHost(ir);
-    // Tree is rebuilt (props spread) but rotation remains absent
-    expect(result.esphome.lvglTree?.props.rotation).toBeUndefined();
-    expect(result.esphome.lvglTree?.props.displays).toBeDefined();
+    // Tree is rebuilt (config spread) but rotation remains absent
+    expect(result.ui?.config.rotation).toBeUndefined();
+    expect(result.ui?.config.displays).toBeDefined();
   });
 
   it('injects host section even when no device platform exists', () => {
@@ -337,7 +332,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
     expect(keys[0]).toBe('host');
   });
 
@@ -347,7 +342,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const hostSection = result.esphome.sections.find(s => s.key === 'host')!;
+    const hostSection = result.sections.find(s => s.key === 'host')!;
     const obj = hostSection.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const mac = obj.entries.find(e => e.key === 'mac_address');
     expect(mac).toBeDefined();
@@ -365,7 +360,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -388,7 +383,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
@@ -406,11 +401,11 @@ describe('transformIRForHost', () => {
       { key: 'wifi', value: irObject([irEntry('ssid', irScalar('test'))]) },
     ]);
 
-    const originalSectionCount = ir.esphome.sections.length;
+    const originalSectionCount = ir.sections.length;
     transformIRForHost(ir);
 
-    expect(ir.esphome.sections).toHaveLength(originalSectionCount);
-    expect(ir.esphome.sections[0].key).toBe('esp32');
+    expect(ir.sections).toHaveLength(originalSectionCount);
+    expect(ir.sections[0].key).toBe('esp32');
   });
 
   it('strips device-adjacent sections (esp32_hosted, esp_ldo, psram)', () => {
@@ -423,34 +418,27 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const keys = result.esphome.sections.map(s => s.key);
+    const keys = result.sections.map(s => s.key);
     expect(keys).toEqual(['host', 'api']);
   });
 
-  it('preserves espcompose data unchanged', () => {
+  it('preserves theme data unchanged', () => {
+    const themeItem = {
+      kind: 'theme_scope' as const,
+      scope: 'test',
+      scopeId: 'abc12345',
+      names: ['dark'],
+      defaultIndex: 0,
+      values: new Map(),
+    };
     const ir = makeIR([
       { key: 'esp32', value: irObject([]) },
     ]);
-    ir.espcompose = {
-      kind: 'espcompose_data',
-      reactive: {
-        kind: 'reactive_data',
-        bindings: [],
-        memos: [],
-        effects: [],
-      },
-      themes: [{
-        kind: 'theme_data',
-        scope: 'test',
-        scopeId: 'abc12345',
-        themeNames: ['dark'],
-        defaultIndex: 0,
-        leafData: new Map(),
-      }],
-    };
+    ir.themes = brandArray([themeItem], 'theme_registry');
 
     const result = transformIRForHost(ir);
-    expect(result.espcompose).toBe(ir.espcompose);
+    expect(result.themes).toHaveLength(1);
+    expect(result.themes[0]).toBe(themeItem);
   });
 
   it('strips hardware_uart and baud_rate from logger section', () => {
@@ -466,7 +454,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const logger = result.esphome.sections.find(s => s.key === 'logger')!;
+    const logger = result.sections.find(s => s.key === 'logger')!;
     const obj = logger.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const keys = obj.entries.map(e => e.key);
     expect(keys).toEqual(['level']);
@@ -480,7 +468,7 @@ describe('transformIRForHost', () => {
     ]);
 
     const result = transformIRForHost(ir);
-    const logger = result.esphome.sections.find(s => s.key === 'logger')!;
+    const logger = result.sections.find(s => s.key === 'logger')!;
     // Same reference since no entries were stripped
     expect(logger.value).toBe(loggerValue);
   });
@@ -499,11 +487,11 @@ describe('transformIRForHost', () => {
           ]),
         },
       ],
-      makeLvglTree(270),
+      makeUI(270),
     );
 
     const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
+    const display = result.sections.find(s => s.key === 'display')!;
     const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
     const dims = obj.entries.find(e => e.key === 'dimensions');
     const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };

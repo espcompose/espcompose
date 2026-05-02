@@ -12,7 +12,7 @@
 import { Scalar } from 'yaml';
 import type { SemanticIR, IRValue, IRObject, IRArray, IRAction, IRSecret, IRTriggerVar, IRType } from '@espcompose/core/internals';
 import { getTriggerSignature } from '@espcompose/core/internals';
-import type { IRActionNode, IRWidgetTree, IRWidget } from '@espcompose/core/internals';
+import type { IRActionNode, IRUIRegistry, IRWidget } from '@espcompose/core/internals';
 import { injectHASensorImports, injectReactiveBindingsRuntime } from './codegen';
 import type { CppLoweringContext } from './lowering';
 import { buildEntityComponentIds, irTypeToEsphomeParam, irTypeToCpp, resolveEntityPropertyCppPath, sourceDomainToTrigger } from './lowering';
@@ -278,7 +278,7 @@ function irValueToYaml(node: IRValue, ctx?: CppLoweringContext, actionCtx?: Acti
  */
 function lowerIRConfig(ir: SemanticIR, ctx?: CppLoweringContext, actionCtx?: ActionLoweringContext): Record<string, unknown> {
   const config: Record<string, unknown> = {};
-  for (const section of ir.esphome.sections) {
+  for (const section of ir.sections) {
     config[camelToSnake(section.key)] = irValueToYaml(section.value, ctx, actionCtx);
   }
   return config;
@@ -323,7 +323,7 @@ function walkWidgetForActionReplacement(
  * Mutates the tree in-place, replacing action arrays at the correct positions.
  */
 function replaceOverlayActionsInLvglTree(
-  tree: IRWidgetTree,
+  tree: IRUIRegistry,
   replacements: Map<string, IRActionNode[]>,
 ): void {
   // Extract template keys from the replacement map
@@ -332,7 +332,7 @@ function replaceOverlayActionsInLvglTree(
     templateKeys.add(key.split(':')[0]);
   }
 
-  for (const tier of tree.overlayTiers) {
+  for (const tier of tree.overlays) {
     for (const overlay of tier.overlays) {
       if (!templateKeys.has(overlay.templateKey)) continue;
       const counter = { index: 0 };
@@ -358,24 +358,24 @@ export function lowerToYamlConfig(
 ): Record<string, unknown> {
   // Use side-channel arrays as authoritative source for reactive data
   // (hook-registered nodes may not appear in the config tree)
-  const reactiveNodes = [...ir.espcompose.reactive.memos, ...ir.espcompose.reactive.effects];
-  const bindings = ir.espcompose.reactive.bindings;
+  const reactiveNodes = [...ir.reactives.memos, ...ir.reactives.effects];
+  const bindings = ir.reactives.bindings;
 
   // ── Build remapped entities for HA sensor injection ──────────────────
   // Note: reactive node sourceIds are already remapped by target.ts before
   // this function is called. We only need remapped entities for injection.
   // Widget-tree reactive nodes still carry semantic IDs — entityIdRemap
   // resolves them lazily during lambda generation.
-  const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.entityRegistry.entities);
+  const { semanticToTarget, remappedEntities } = buildEntityIdMap([...ir.entities]);
 
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
   if (cppResult) {
     const entityComponentIds = buildEntityComponentIds(remappedEntities);
     const themeVarNames = new Map<string, string>();
-    if (ir.espcompose.themes) {
-      for (const scopeData of ir.espcompose.themes) {
-        for (const signalPath of scopeData.leafData.keys()) {
+    if (ir.themes.length > 0) {
+      for (const scopeData of ir.themes) {
+        for (const signalPath of scopeData.values.keys()) {
           themeVarNames.set(`${scopeData.scopeId}_${signalPath}`, `thm_${scopeData.scopeId}_${signalPath}`);
         }
       }
@@ -428,14 +428,14 @@ export function lowerToYamlConfig(
   // ── Lower typed LVGL widget tree to YAML section ─────────────────────
   // The IR now carries a first-class `IRWidgetTree` on `esphome.lvglTree`
   // instead of embedding pre-lowered YAML in the generic sections array.
-  if (ir.esphome.lvglTree) {
+  if (ir.ui) {
     // Build reactive node lookup map (nodeId → reactive node instance)
     const reactiveNodeMap = new Map<string, unknown>();
     for (const node of reactiveNodes) {
       reactiveNodeMap.set(node.nodeId, node);
     }
     // Expression nodes are not in memos/effects — they're on bindings
-    for (const binding of ir.espcompose.reactive.bindings) {
+    for (const binding of ir.reactives.bindings) {
       if (!reactiveNodeMap.has(binding.expression.nodeId)) {
         reactiveNodeMap.set(binding.expression.nodeId, binding.expression);
       }
@@ -485,10 +485,10 @@ export function lowerToYamlConfig(
     // This mirrors replaceOverlayActionsInIR but operates on the IRWidgetTree
     // structure (action arrays in widget props) instead of the generic sections.
     if (cppResult?.muxedActions) {
-      replaceOverlayActionsInLvglTree(ir.esphome.lvglTree, cppResult.muxedActions);
+      replaceOverlayActionsInLvglTree(ir.ui, cppResult.muxedActions);
     }
 
-    loweredConfig['lvgl'] = lowerLvglWidgetTree(ir.esphome.lvglTree, lvglValueCtx);
+    loweredConfig['lvgl'] = lowerLvglWidgetTree(ir.ui, lvglValueCtx);
   }
 
   let finalConfig: Record<string, unknown>;
@@ -503,8 +503,8 @@ export function lowerToYamlConfig(
     finalConfig = injectHASensorImports(loweredConfig, remappedEntities);
   }
 
-  if (ir.esphome.componentRegistry.components.length > 0) {
-    for (const comp of ir.esphome.componentRegistry.components) {
+  if (ir.components.length > 0) {
+    for (const comp of ir.components) {
       const section = comp.section;
       if (!finalConfig[section]) {
         finalConfig[section] = [];
@@ -526,8 +526,8 @@ export function lowerToYamlConfig(
     }
   }
 
-  if (ir.esphome.scriptRegistry.scripts.length > 0) {
-    finalConfig['script'] = ir.esphome.scriptRegistry.scripts.map((s) => {
+  if (ir.scripts.length > 0) {
+    finalConfig['script'] = ir.scripts.map((s) => {
       const params: Record<string, string> = {};
       // closure_index ALWAYS comes first when this script has a closure shape.
       if (s.closureShape && s.closureShape.fields.length > 0) {

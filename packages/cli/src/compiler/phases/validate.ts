@@ -24,7 +24,7 @@ export function validatePhase(ctx: PhaseContext): void {
 
 function collectNullPaths(ir: SemanticIR): string[] {
   const paths: string[] = [];
-  for (const section of ir.esphome.sections) {
+  for (const section of ir.sections) {
     walkSection(section, paths);
   }
   return paths;

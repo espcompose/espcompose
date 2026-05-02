@@ -7,9 +7,8 @@
 // without physical hardware.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, IRSection, IRObject, IREntry, IRValue } from '@espcompose/core/internals';
-import type { IRWidgetTree } from '@espcompose/core/internals';
-import { irSection, irScalar, irObject, irEntry } from '@espcompose/core/internals';
+import type { SemanticIR, IRSection, IRObject, IREntry, IRValue, IRUIRegistry } from '@espcompose/core/internals';
+import { irSection, irScalar, irObject, irEntry, brandArray } from '@espcompose/core/internals';
 
 
 export interface HostTransformOptions {
@@ -138,9 +137,9 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
  * ESPHome 2026.4+ requires rotation in the LVGL config (not the display)
  * when LVGL is active.
  */
-function findLvglRotation(lvglTree?: IRWidgetTree): number | undefined {
-  if (!lvglTree) return undefined;
-  const rotation = lvglTree.props.rotation;
+function findLvglRotation(ui?: IRUIRegistry): number | undefined {
+  if (!ui) return undefined;
+  const rotation = ui.config.rotation;
   if (rotation && rotation.kind === 'scalar' && typeof rotation.value === 'number') {
     return rotation.value;
   }
@@ -298,11 +297,11 @@ function stripLoggerHardwareEntries(value: IRValue): IRValue {
 }
 
 /**
- * Strip `rotation` from a typed `IRWidgetTree`, returning a new tree.
+ * Strip `rotation` from a typed `IRUIRegistry`, returning a new registry.
  */
-function stripLvglTreeRotation(tree: IRWidgetTree): IRWidgetTree {
-  const { rotation: _rotation, ...rest } = tree.props;
-  return { ...tree, props: rest };
+function stripLvglTreeRotation(ui: IRUIRegistry): IRUIRegistry {
+  const { rotation: _rotation, ...rest } = ui.config;
+  return { ...ui, config: rest };
 }
 
 const SIMULATOR_SUFFIX = '-simulator';
@@ -345,7 +344,7 @@ export function transformIRForHost(
   ir: SemanticIR,
   options?: HostTransformOptions,
 ): SemanticIR {
-  const sections = ir.esphome.sections;
+  const sections = [...ir.sections];
   const result: IRSection[] = [];
   let hostSectionInjected = false;
 
@@ -368,7 +367,7 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const lvglRotation = findLvglRotation(ir.esphome.lvglTree);
+      const lvglRotation = findLvglRotation(ir.ui);
       const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
@@ -406,15 +405,11 @@ export function transformIRForHost(
   }
 
   return {
-    kind: 'semantic_ir',
-    esphome: {
-      ...ir.esphome,
-      sections: result,
-      // Strip rotation from the typed LVGL tree — already baked into SDL dimensions
-      lvglTree: ir.esphome.lvglTree
-        ? stripLvglTreeRotation(ir.esphome.lvglTree)
-        : undefined,
-    },
-    espcompose: ir.espcompose,
+    ...ir,
+    sections: brandArray(result, 'section_registry'),
+    // Strip rotation from the typed LVGL tree — already baked into SDL dimensions
+    ui: ir.ui
+      ? stripLvglTreeRotation(ir.ui)
+      : undefined,
   };
 }

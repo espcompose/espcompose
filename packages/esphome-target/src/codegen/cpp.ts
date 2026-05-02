@@ -40,16 +40,17 @@ export interface CppBackendResult {
  * no themes).
  */
 export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[], remappedEntities?: RemappedHAEntity[]): CppBackendResult | null {
-  const { reactive, themes } = ir.espcompose;
+  const reactive = ir.reactives;
+  const themes = ir.themes;
 
   // Extract globals from components (section === 'globals')
-  const globalComponents = ir.esphome.componentRegistry.components.filter(c => c.section === 'globals');
+  const globalComponents = ir.components.filter(c => c.section === 'globals');
 
   // Process overlay definitions to build mux signals and muxed bindings.
   // This must happen before buildRuntimeConfig so the muxed bindings and
   // additional reactive nodes are included in the reactive pipeline.
   const overlayMux = overlays && overlays.length > 0
-    ? processOverlayMux(overlays, (remappedEntities ?? ir.esphome.entityRegistry.entities).length)
+    ? processOverlayMux(overlays, (remappedEntities ?? [...ir.entities]).length)
     : null;
 
   // Merge overlay-sourced data into the reactive pipeline
@@ -62,11 +63,11 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
 
   const hasReactiveContent = allBindings.length > 0
     || allReactiveNodes.length > 0
-    || (themes != null && themes.length > 0);
+    || themes.length > 0;
 
   // Check for scripts with closure tables — these need C++ struct/array
   // declarations even when there's no reactive content.
-  const closureTablesBlock = generateAllClosureTables(ir.esphome.scriptRegistry.scripts as IRScript[]);
+  const closureTablesBlock = generateAllClosureTables([...ir.scripts] as IRScript[]);
   const hasClosureTables = closureTablesBlock.length > 0;
 
   if (!hasReactiveContent && !hasClosureTables) return null;
@@ -97,8 +98,8 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const runtimeConfig = buildRuntimeConfig(
     allReactiveNodes,
     allBindings,
-    remappedEntities ?? ir.esphome.entityRegistry.entities,
-    themes,
+    remappedEntities ?? [...ir.entities],
+    [...themes],
     [],
     globalComponents,
     overlayMux?.muxSignalIndices,
@@ -174,7 +175,7 @@ function replaceOverlayActionsInIR(
   replacements: Map<string, IRActionNode[]>,
 ): void {
   // Navigate: sections → 'lvgl' → value.entries → 'top_layer' → widgets
-  const lvglSection = ir.esphome.sections.find(s => s.key === 'lvgl');
+  const lvglSection = ir.sections.find(s => s.key === 'lvgl');
   if (!lvglSection || lvglSection.value.kind !== 'object') return;
 
   const topLayerEntry = lvglSection.value.entries.find(e => e.key === 'top_layer');
@@ -325,7 +326,7 @@ function collectIRTreeReferences(ir: SemanticIR): {
     }
   }
 
-  for (const section of ir.esphome.sections) {
+  for (const section of ir.sections) {
     walkIRValue(section.value);
   }
 

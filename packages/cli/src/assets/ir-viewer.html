@@ -218,13 +218,15 @@ document.getElementById('ref-count').textContent = REF_COUNT + ' refs';
 const DOM_BY_ID = new Map();
 // Stable kind palette mapping.
 const KIND_COLOR = {
-  semantic_ir: 'container', esphome_data: 'container', espcompose_data: 'container',
-  reactive_data: 'container', section: 'container', object: 'container',
+  semantic_ir: 'container', section: 'container', object: 'container',
+  section_registry: 'container', entity_registry: 'container',
+  component_registry: 'container', script_registry: 'container',
+  theme_registry: 'container', reactive_registry: 'container', ui_registry: 'container',
   array: 'container', entry: 'container', null: 'container',
   scalar: 'scalar',
   reactive: 'reactive', dependency: 'reactive', binding: 'reactive',
   ha_entity: 'entity', component: 'entity', script: 'entity',
-  theme_data: 'expr', type: 'expr',
+  theme_scope: 'expr', type: 'expr',
   action: 'action',
   ref: 'ref', trigger_var: 'ref',
   secret: 'secret',
@@ -252,6 +254,10 @@ function summary(node) {
   if (Array.isArray(node)) return { label: `[${node.length}]`, cls: 'meta' };
   if ('$ref' in node) return { label: `→ #${node.$ref}`, cls: 'ref-stub' };
   const k = node.kind;
+  if (typeof k === 'string' && k.endsWith('_registry')) {
+    const count = Array.isArray(node.items) ? node.items.length : 0;
+    return { label: `[${count}]`, cls: 'meta' };
+  }
   if (k === 'scalar') {
     const v = node.value;
     if (typeof v === 'string') return { label: JSON.stringify(v), cls: 'val-str' };
@@ -346,8 +352,8 @@ function childrenOf(node) {
   if (k === 'object' && Array.isArray(node.entries)) {
     return node.entries.map(e => [e && e.key != null ? e.key : '?', e]);
   }
-  // IRArray → flatten: skip items array wrapper, show items directly
-  if (k === 'array' && Array.isArray(node.items)) {
+  // IRArray / branded registry → flatten: skip items array wrapper, show items directly
+  if ((k === 'array' || (typeof k === 'string' && k.endsWith('_registry'))) && Array.isArray(node.items) && node.items.length > 0) {
     return node.items.map((v, i) => [String(i), v]);
   }
   // IREntry / IRSection → skip value wrapper
@@ -390,7 +396,7 @@ function mightHaveChildren(node) {
   if (k === 'scalar' || k === 'null') return false;
   if (k === 'entry' || k === 'section') return inlineLabel(node.value) === null;
   if (k === 'object') return (node.entries || []).length > 0;
-  if (k === 'array') return (node.items || []).length > 0;
+  if ((k === 'array' || (typeof k === 'string' && k.endsWith('_registry'))) && Array.isArray(node.items)) return node.items.length > 0;
   // Generic object — has children if any property is a non-null object.
   for (const key of Object.keys(node)) {
     if (key === '$id' || key === 'kind') continue;

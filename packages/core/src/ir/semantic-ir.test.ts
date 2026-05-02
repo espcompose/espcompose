@@ -74,9 +74,9 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    expect(ir.esphome.sections).toHaveLength(2);
-    expect(ir.esphome.sections[0].key).toBe('esphome');
-    expect(ir.esphome.sections[1].key).toBe('wifi');
+    expect(ir.sections).toHaveLength(2);
+    expect(ir.sections[0].key).toBe('esphome');
+    expect(ir.sections[1].key).toBe('wifi');
   });
 
   it('preserves scalar types correctly', () => {
@@ -94,7 +94,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const esphome = ir.esphome.sections[0].value;
+    const esphome = ir.sections[0].value;
     expect(esphome.kind).toBe('object');
     if (esphome.kind === 'object') {
       expect(esphome.entries.find(e => e.key === 'name')?.value).toEqual({ kind: 'scalar', value: 'test' });
@@ -139,7 +139,7 @@ describe('buildSemanticIR', () => {
     });
 
     // Walk to the label text value
-    const lvgl = ir.esphome.sections[0].value;
+    const lvgl = ir.sections[0].value;
     expect(lvgl.kind).toBe('object');
     if (lvgl.kind !== 'object') return;
     const pages = lvgl.entries.find(e => e.key === 'pages')?.value;
@@ -181,7 +181,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const sensor = ir.esphome.sections[0].value;
+    const sensor = ir.sections[0].value;
     if (sensor.kind !== 'object') return;
     const i2cVal = sensor.entries.find(e => e.key === 'i2c_id')?.value;
 
@@ -215,7 +215,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const lvgl = ir.esphome.sections[0].value;
+    const lvgl = ir.sections[0].value;
     if (lvgl.kind !== 'object') return;
     const widgets = lvgl.entries.find(e => e.key === 'widgets')?.value;
     if (widgets?.kind !== 'array') return;
@@ -250,7 +250,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const wifi = ir.esphome.sections[0].value;
+    const wifi = ir.sections[0].value;
     if (wifi.kind !== 'object') return;
     const pwdVal = wifi.entries.find(e => e.key === 'password')?.value;
 
@@ -279,7 +279,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const sensor = ir.esphome.sections[0].value;
+    const sensor = ir.sections[0].value;
     if (sensor.kind !== 'object') return;
     const val = sensor.entries.find(e => e.key === 'value')?.value;
 
@@ -303,7 +303,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const esphome = ir.esphome.sections[0].value;
+    const esphome = ir.sections[0].value;
     if (esphome.kind !== 'object') return;
     const entry = esphome.entries.find(e => e.key === 'enabled');
     expect(entry?.value).toEqual({ kind: 'scalar', value: 'on', quoted: true });
@@ -334,17 +334,17 @@ describe('buildSemanticIR', () => {
       scripts: [{ id: 'script_1', then: [{ kind: 'action:delay', duration: { kind: 'duration', value: 500, unit: 'ms' } } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: [{
-        kind: 'theme_data',
+        kind: 'theme_scope',
         scope: 'test',
         scopeId: 'abcd1234',
-        themeNames: ['light', 'dark'],
+        names: ['light', 'dark'],
         defaultIndex: 0,
-        leafData: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], exprType: 'int' }]]),
+        values: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], exprType: 'int' }]]),
       }],
     });
 
-    expect(ir.esphome.entityRegistry.entities).toEqual([entity]);
-    expect(ir.esphome.componentRegistry.components).toEqual([{
+    expect([...ir.entities]).toEqual([entity]);
+    expect([...ir.components]).toEqual([{
       kind: 'component',
       section: 'image',
       id: 'img_1',
@@ -357,8 +357,10 @@ describe('buildSemanticIR', () => {
         ],
       },
     }]);
-    expect(ir.esphome.scriptRegistry.scripts).toHaveLength(1);
-    expect(ir.espcompose.themes?.[0].themeNames).toEqual(['light', 'dark']);
+    expect(ir.scripts).toHaveLength(1);
+    expect(ir.entities.kind).toBe('entity_registry');
+    expect(ir.components.kind).toBe('component_registry');
+    expect(ir.themes[0].names).toEqual(['light', 'dark']);
   });
 });
 
