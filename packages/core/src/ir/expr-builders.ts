@@ -1,6 +1,8 @@
 import type {
   IROpExpression,
   IRExpression,
+  IRLiteralExpression,
+  IRTriggerVarExpression,
   BinaryOp,
   UnaryOp,
   PostfixOp,
@@ -9,6 +11,23 @@ import type {
   StringMethod,
   ArrayMethod,
 } from './expr-types.js';
+
+/** Infer the ExprType of a JS literal value. Integers vs floats are distinguished. */
+export function inferLiteralExprType(value: string | number | boolean): ExprType {
+  if (typeof value === 'string') return 'string';
+  if (typeof value === 'boolean') return 'bool';
+  return Number.isInteger(value) ? 'int' : 'float';
+}
+
+/** Construct an IRLiteralExpression, inferring `type` from the JS value. */
+export function irLiteralExpression(value: string | number | boolean, type?: ExprType): IRLiteralExpression {
+  return { kind: 'expr:literal', value, type: type ?? inferLiteralExprType(value) };
+}
+
+/** Construct an IRTriggerVarExpression for a trigger/script local variable name. */
+export function irTriggerVarExpression(name: string): IRTriggerVarExpression {
+  return { kind: 'expr:trigger_var', name };
+}
 
 // ── Builder functions ────────────────────────────────────────────────────────
 // Each returns an `IROpExpression` node with the appropriate `ExprOpDescriptor`.

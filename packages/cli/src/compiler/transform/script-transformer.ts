@@ -19,7 +19,7 @@ import {
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParam, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
 function irTypeKey(vt: IRType): string {
@@ -186,13 +186,13 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
 function extractScriptUserParams(
   call: ts.CallExpression,
   checker: ts.TypeChecker,
-): IRScriptParam[] {
+): IRScriptParamDecl[] {
   if (call.arguments.length < 1) return [];
   const arg = call.arguments[0];
   if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return [];
   if (arg.parameters.length === 0) return [];
 
-  const params: IRScriptParam[] = [];
+  const params: IRScriptParamDecl[] = [];
   for (const param of arg.parameters) {
     if (!ts.isIdentifier(param.name)) continue;
     const name = param.name.text;
@@ -512,7 +512,7 @@ function compileAndInjectUseScript(
   // up the call's parent variable declaration symbol in the scriptHandles
   // map; fall back to extracting on the fly only for non-declaration uses
   // (which currently can't occur — useScript must be assigned).
-  let userParams: IRScriptParam[] = [];
+  let userParams: IRScriptParamDecl[] = [];
   const parent = callExpr.parent;
   if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
     const sym = ctx.checker.getSymbolAtLocation(parent.name);
@@ -685,7 +685,7 @@ function collectRefNamesFromActions(
           break;
         case 'action:lambda_action':
           for (const slot of action.slots) {
-            if (slot.kind === 'ref' && refNames.has(slot.name)) {
+            if (slot.kind === 'interp:ref' && refNames.has(slot.name)) {
               names.add(slot.name);
             }
           }
@@ -715,20 +715,20 @@ function collectRefNamesFromActions(
 }
 
 /**
- * Serialize a value to a JSON-like string, replacing ExpressionMarker objects
- * with raw JavaScript expressions instead of quoted strings.
+ * Serialize a value to a JSON-like string, replacing DynamicValueMarker
+ * objects with raw JavaScript expressions instead of quoted strings.
  *
- * This is needed because IRExpressionParam values must be emitted as variable
- * references (e.g., `entity.__entityId__`) rather than string literals in the
- * injected source code.
+ * `DynamicValueMarker` is a compiler-local marker (see ./action/calls/ha.ts)
+ * used at positions in the action tree whose value is only known at bundle
+ * runtime — e.g. the `entity_id` of a dynamically-bound HA entity.  The
+ * marker carries a JS expression text (e.g. `entity.__entityId__`) which
+ * must be emitted as raw code in the injected bundle source so that bundle
+ * evaluation can resolve it to a concrete value before the action tree
+ * reaches structural analysis or target lowering.
  */
 function serializeWithExpressions(value: unknown): string {
-  return JSON.stringify(value, (_key, val) => {
-    // IRExpressionParam objects stay as-is through JSON.stringify, then we
-    // post-process the output to replace their JSON representation with raw code.
-    return val;
-  }).replace(
-    /\{"kind":"expression","jsExpression":"([^"]+)"\}/g,
+  return JSON.stringify(value).replace(
+    /\{"__dynamic__":"([^"]+)"\}/g,
     (_match, expr) => expr,
   );
 }

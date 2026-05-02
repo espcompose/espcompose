@@ -25,7 +25,7 @@ import type {
   IRType,
   IRComponent,
   IRThemeData,
-  IRScriptParam,
+  IRScriptParamDecl,
   ScriptMode,
   ClosureShape,
   ClosureInstance,
@@ -248,7 +248,7 @@ export interface BuildSemanticIRInput {
   scripts: Array<{
     id: string;
     mode?: ScriptMode;
-    userParams?: IRScriptParam[];
+    userParams?: IRScriptParamDecl[];
     closureShape?: ClosureShape;
     closureTable?: ClosureInstance[];
     refBindings?: Record<string, string>;

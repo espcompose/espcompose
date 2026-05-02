@@ -1,11 +1,12 @@
 import ts from 'typescript';
 import type {
-  IRActionParam,
+  IRExpression,
   IRActionConfig,
   IRActionConfigDict,
   IRActionConfigValue,
-  IRRefSlot,
+  IRRefAnnotation,
 } from '@espcompose/core/internals';
+import { irLiteralExpression, irTriggerVarExpression } from '@espcompose/core/internals';
 import { camelToSnake } from '@espcompose/esphome-target';
 import { hasRefBrand } from '../type-brands.js';
 import type { ActionCompilerContext } from './context.js';
@@ -19,31 +20,31 @@ import { emitError } from './context.js';
  * Compile an expression used as an action parameter value.
  *
  * Supported:
- * - Literal values (numbers, strings, booleans) → IRLiteralParam
- * - Trigger variable references (args.x) → IRTriggerVarParam
+ * - Literal values (numbers, strings, booleans) → IRLiteralExpression
+ * - Trigger variable references (args.x) → IRTriggerVarExpression
  *
  * Unsupported expressions produce compile errors.
  */
 export function compileActionParam(
   expr: ts.Expression,
   ctx: ActionCompilerContext,
-): IRActionParam | null {
+): IRExpression | null {
   // Numeric literal
   if (ts.isNumericLiteral(expr)) {
-    return { kind: 'literal', value: parseFloat(expr.text) };
+    return irLiteralExpression(parseFloat(expr.text));
   }
 
   // String literal
   if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) {
-    return { kind: 'literal', value: expr.text };
+    return irLiteralExpression(expr.text);
   }
 
   // Boolean literal
   if (expr.kind === ts.SyntaxKind.TrueKeyword) {
-    return { kind: 'literal', value: true };
+    return irLiteralExpression(true);
   }
   if (expr.kind === ts.SyntaxKind.FalseKeyword) {
-    return { kind: 'literal', value: false };
+    return irLiteralExpression(false);
   }
 
   // Trigger variable: args.x
@@ -52,7 +53,7 @@ export function compileActionParam(
       expr.expression.text === ctx.triggerParamName) {
     const varName = expr.name.text;
     ctx.triggerVars.add(varName);
-    return { kind: 'trigger_var', varName };
+    return irTriggerVarExpression(varName);
   }
 
   emitError(expr, ctx,
@@ -153,7 +154,7 @@ export function buildRefActionConfig(
   call: ts.CallExpression,
   refName: string,
   ctx: ActionCompilerContext,
-  refSlots?: IRRefSlot[],
+  refSlots?: IRRefAnnotation[],
 ): IRActionConfig {
   if (call.arguments.length === 0) {
     // Simple action: just the ref ID (bare string config).

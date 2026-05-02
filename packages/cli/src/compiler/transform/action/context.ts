@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { GlobalDefinition, IRScriptParam, IRType } from '@espcompose/core/internals';
+import type { GlobalDefinition, IRScriptParamDecl, IRType } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
 
 /** Info about a useScript() declaration visible to the action compiler. */
@@ -7,7 +7,7 @@ export interface ScriptHandleInfo {
   /** ESPHome script ID. */
   id: string;
   /** User-defined parameters from the arrow function signature. */
-  userParams: IRScriptParam[];
+  userParams: IRScriptParamDecl[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────

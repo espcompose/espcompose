@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { IRActionNode, IRActionConfig, IRRefSlot } from '@espcompose/core/internals';
+import type { IRActionNode, IRActionConfig, IRRefAnnotation } from '@espcompose/core/internals';
 import { irNativeAction, splitActionKey } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
@@ -35,7 +35,7 @@ export function compileRefAction(
   // Build action config — always include the ref ID. Track ref slots
   // (config positions whose value is a binding name) for the closure-rewrite
   // pass at lowering time.
-  const refSlots: IRRefSlot[] = [];
+  const refSlots: IRRefAnnotation[] = [];
   const config: IRActionConfig = buildRefActionConfig(call, refName, ctx, refSlots);
 
   const { domain, operation } = splitActionKey(actionKey);

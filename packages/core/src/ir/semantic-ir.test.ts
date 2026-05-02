@@ -191,7 +191,7 @@ describe('buildSemanticIR', () => {
   });
 
   it('captures compiled action metadata', () => {
-    const rawActions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const rawActions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'expr:literal', value: 'light.kitchen', type: 'string' } } }];
     const serializedResult = [{ 'homeassistant.service': { service: 'light.toggle', entity_id: 'light.kitchen' } }];
 
     const captures = emptyCaptures();

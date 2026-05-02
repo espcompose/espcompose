@@ -8,7 +8,19 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExpression } from './expr-types.js';
-import type { IRScriptParamRef, IRType } from './types.js';
+import type { IRType } from './types.js';
+
+// ── Script param reference ─────────────────────────────────────────────────
+
+/**
+ * Reference to a script parameter inside the script body.
+ * Used in place of a literal value when the value is supplied per call-site.
+ */
+export interface IRScriptParamRef {
+  readonly kind: 'script_param';
+  /** The parameter name — must match an entry in the script's parameter list. */
+  name: string;
+}
 
 // ── Action Nodes ───────────────────────────────────────────────────────────
 
@@ -31,7 +43,7 @@ import type { IRScriptParamRef, IRType } from './types.js';
  * `bindingName` is the user-facing variable name of the ref (e.g. `light`),
  * matched against `IRScript.closureShape.fields[].name` at lowering time.
  */
-export type IRRefSlot =
+export type IRRefAnnotation =
   | { kind: 'bare'; bindingName: string }
   | { kind: 'object'; key: string; bindingName: string };
 
@@ -59,7 +71,7 @@ export interface IRNativeAction {
    * rewrite. Empty/absent means no rewrite is possible (action treats config as
    * literal data).
    */
-  refSlots?: IRRefSlot[];
+  refSlots?: IRRefAnnotation[];
 }
 
 /** A Home Assistant service call */
@@ -68,7 +80,7 @@ export interface IRHAServiceAction {
   /** Fully qualified HA action name, e.g. 'light.turn_on' */
   action: string;
   /** Optional data payload for the service call */
-  data?: Record<string, IRActionParam>;
+  data?: Record<string, IRExpression>;
 }
 
 /** logger.log action */
@@ -142,7 +154,7 @@ export interface IRScriptExecuteAction {
   kind: 'action:script_execute';
   scriptId: string;
   /** User-provided arguments (from the call site). */
-  userArgs?: Record<string, IRActionParam>;
+  userArgs?: Record<string, IRExpression>;
   /**
    * Index into the script's `closureTable` row that supplies this call site's
    * captured values. The `closure_index` script parameter receives this number.
@@ -186,8 +198,8 @@ export interface IRGlobalSetAction {
   globalId: string;
   /** Target-agnostic type descriptor of the global. */
   irType: IRType;
-  /** Value to set — literal, trigger var, or compiled expression. */
-  value: IRActionParam | IRExpression;
+  /** Value to set — IR expression (literal, trigger var, or compiled). */
+  value: IRExpression;
 }
 
 /** Array element set: handle.set(index, value) → vec[i] = val */
@@ -195,8 +207,8 @@ export interface IRArraySetAction {
   kind: 'action:array_set';
   globalId: string;
   irType: IRType;
-  index: IRActionParam | IRExpression;
-  value: IRActionParam | IRExpression;
+  index: IRExpression;
+  value: IRExpression;
 }
 
 /** Array push: handle.push(value) → vec.push_back(val) */
@@ -204,7 +216,7 @@ export interface IRArrayPushAction {
   kind: 'action:array_push';
   globalId: string;
   irType: IRType;
-  value: IRActionParam | IRExpression;
+  value: IRExpression;
 }
 
 /** Array clear: handle.clear() → vec.clear() */
@@ -248,21 +260,21 @@ export interface IROverlayHideAction {
   controllerRef?: string;
 }
 
-/** A single interpolation slot inside a lambda tagged template. */
-export type IRLambdaSlot =
-  | { kind: 'ref'; name: string }                         // → id(<resolved_ref_token>)
-  | { kind: 'global'; id: string }                        // → id(<global_id>)
-  | { kind: 'trigger_var'; varName: string }               // → raw C++ variable name
-  | { kind: 'script_param'; name: string }                 // → raw C++ script parameter name
-  | { kind: 'literal'; value: string | number | boolean }; // → literal C++ value
+/** A single interpolation inside a lambda tagged template. */
+export type IRLambdaInterpolation =
+  | { kind: 'interp:ref'; name: string }                         // → id(<resolved_ref_token>)
+  | { kind: 'interp:global'; id: string }                        // → id(<global_id>)
+  | { kind: 'interp:trigger_var'; varName: string }              // → raw C++ variable name
+  | { kind: 'interp:script_param'; name: string }                // → raw C++ script parameter name
+  | { kind: 'interp:literal'; value: string | number | boolean };// → literal C++ value
 
 /** Inline C++ lambda action — emitted as a !lambda block in YAML. */
 export interface IRLambdaAction {
   kind: 'action:lambda_action';
   /** Static string fragments from the tagged template (N+1 entries for N slots). */
   fragments: string[];
-  /** Typed interpolation slots — interleaved with fragments to reconstruct C++ code. */
-  slots: IRLambdaSlot[];
+  /** Typed interpolations — interleaved with fragments to reconstruct C++ code. */
+  slots: IRLambdaInterpolation[];
 }
 
 // ── Discriminated Union ────────────────────────────────────────────────────
@@ -312,42 +324,11 @@ export type IRCondition =
 
 // ── Action Parameter Types ─────────────────────────────────────────────────
 
-/** A literal value — emitted directly */
-export interface IRLiteralParam {
-  kind: 'literal';
-  value: string | number | boolean;
-}
-
-/** A trigger variable reference */
-export interface IRTriggerVarParam {
-  kind: 'trigger_var';
-  varName: string;
-}
-
-/** A runtime expression — resolved at execution time */
-export interface IRExpressionParam {
-  kind: 'expression';
-  /** The expression text, e.g. 'entity.__entityId__' */
-  jsExpression: string;
-}
-
-/** A reactive IR expression — lowered to C++ via exprToCpp at codegen time */
-export interface IRReactiveExprParam {
-  kind: 'reactive_expr';
-  exprIR: IRExpression;
-}
-
-export type IRActionParam =
-  | IRLiteralParam
-  | IRTriggerVarParam
-  | IRExpressionParam
-  | IRReactiveExprParam;
-
 /**
  * A nested object value inside an action config — used for actions like
  * `lvgl.widget.update` whose params include sub-part dictionaries
  * (e.g. `knob: { padding: 8 }`).  Recursive: nested dicts can themselves
- * contain primitives, params, or further nested dicts.
+ * contain primitives, IRExpressions, or further nested dicts.
  */
 export interface IRActionConfigDict {
   kind: 'config_dict';
@@ -355,7 +336,7 @@ export interface IRActionConfigDict {
 }
 
 export type IRActionConfigValue =
-  | IRActionParam
+  | IRExpression
   | IRActionConfigDict
   | string
   | number
@@ -368,7 +349,7 @@ export type IRActionConfig =
 
 // ── Constructors ───────────────────────────────────────────────────────────
 
-export function irNativeAction(domain: string, operation: string, config: IRActionConfig, refSlots?: IRRefSlot[]): IRNativeAction {
+export function irNativeAction(domain: string, operation: string, config: IRActionConfig, refSlots?: IRRefAnnotation[]): IRNativeAction {
   return { kind: 'action:native', domain, operation, config, ...(refSlots && refSlots.length > 0 ? { refSlots } : {}) };
 }
 
@@ -406,7 +387,7 @@ export function parseTimeoutString(s: string): IRTimeout | null {
   return parseDurationString(s);
 }
 
-export function irHAServiceAction(action: string, data?: Record<string, IRActionParam>): IRHAServiceAction {
+export function irHAServiceAction(action: string, data?: Record<string, IRExpression>): IRHAServiceAction {
   return { kind: 'action:ha_service', action, ...(data ? { data } : {}) };
 }
 
@@ -437,7 +418,7 @@ export function irRepeatAction(count: number, then: IRActionNode[]): IRRepeatAct
 export function irScriptExecute(
   scriptId: string,
   args?: {
-    userArgs?: Record<string, IRActionParam>;
+    userArgs?: Record<string, IRExpression>;
     closureIndex?: number;
   },
 ): IRScriptExecuteAction {
@@ -461,15 +442,15 @@ export function irThemeSelect(scope: string, scopeId: string, themeName: string)
   return { kind: 'action:theme_select', scope, scopeId, themeName };
 }
 
-export function irGlobalSet(globalId: string, irType: IRType, value: IRActionParam | IRExpression): IRGlobalSetAction {
+export function irGlobalSet(globalId: string, irType: IRType, value: IRExpression): IRGlobalSetAction {
   return { kind: 'action:global_set', globalId, irType, value };
 }
 
-export function irArraySet(globalId: string, irType: IRType, index: IRActionParam | IRExpression, value: IRActionParam | IRExpression): IRArraySetAction {
+export function irArraySet(globalId: string, irType: IRType, index: IRExpression, value: IRExpression): IRArraySetAction {
   return { kind: 'action:array_set', globalId, irType, index, value };
 }
 
-export function irArrayPush(globalId: string, irType: IRType, value: IRActionParam | IRExpression): IRArrayPushAction {
+export function irArrayPush(globalId: string, irType: IRType, value: IRExpression): IRArrayPushAction {
   return { kind: 'action:array_push', globalId, irType, value };
 }
 
@@ -481,7 +462,7 @@ export function irLambdaCondition(exprIR: IRExpression): IRLambdaCondition {
   return { kind: 'lambda_condition', exprIR };
 }
 
-export function irLambdaAction(fragments: string[], slots: IRLambdaSlot[]): IRLambdaAction {
+export function irLambdaAction(fragments: string[], slots: IRLambdaInterpolation[]): IRLambdaAction {
   return { kind: 'action:lambda_action', fragments, slots };
 }
 

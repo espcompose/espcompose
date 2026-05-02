@@ -184,7 +184,7 @@ export {
 export type {
   SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
   BuildSemanticIRInput, IRThemeData, IRScript, IRComponent,
-  IRScriptParam, IRScriptParamRef,
+  IRScriptParamDecl, IRScriptParamRef,
   IRScalarType, IRScalarFormat, IRType,
   ClosureField, ClosureShape, ClosureInstance,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
@@ -205,6 +205,7 @@ export {
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
+  irLiteralExpression, irTriggerVarExpression, inferLiteralExprType,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
@@ -224,13 +225,12 @@ export type {
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
   IRScriptExecuteAction, IRScriptWaitAction, IRScriptStopAction, IRThemeSelectAction, IRGlobalSetAction,
   IRArraySetAction, IRArrayPushAction, IRArrayClearAction,
-  IRLambdaAction, IRLambdaSlot,
+  IRLambdaAction, IRLambdaInterpolation,
   IROverlayShowAction, IROverlayHideAction,
   IRControllerMethodCallAction,
   IRCondition, IRLambdaCondition, IRNativeCondition,
-  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
-  IRRefSlot,
+  IRRefAnnotation,
   IRDuration, IRDurationLiteral, IRDurationUnit, IRTimeout, IRTimeoutNever,
 } from './ir/index';
 export {

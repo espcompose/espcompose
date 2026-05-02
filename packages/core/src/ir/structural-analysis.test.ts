@@ -141,18 +141,18 @@ describe('analyzeExprStructure', () => {
 
 describe('analyzeActionStructure', () => {
   it('returns identical for single-instance array', () => {
-    const actions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const actions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'expr:literal', value: 'light.kitchen', type: 'string' } } }];
     expect(analyzeActionStructure([actions])).toEqual({ kind: 'identical' });
   });
 
   it('returns identical when all instances are the same', () => {
-    const mk = (): IRActionNode[] => [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const mk = (): IRActionNode[] => [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'expr:literal', value: 'light.kitchen', type: 'string' } } }];
     expect(analyzeActionStructure([mk(), mk()])).toEqual({ kind: 'identical' });
   });
 
   it('detects optimizable ha_service with differing entity_id', () => {
     const mk = (entityId: string): IRActionNode[] => [
-      { kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: entityId } } },
+      { kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'expr:literal', value: entityId, type: 'string' } } },
     ];
     const result = analyzeActionStructure([mk('light.kitchen'), mk('light.bedroom'), mk('light.office')]);
     expect(result.kind).toBe('optimizable');
@@ -189,8 +189,8 @@ describe('analyzeActionStructure', () => {
         kind: 'action:ha_service',
         action: 'light.turn_on',
         data: {
-          entity_id: { kind: 'literal', value: entity },
-          brightness: { kind: 'literal', value: brightness },
+          entity_id: { kind: 'expr:literal', value: entity, type: 'string' },
+          brightness: { kind: 'expr:literal', value: brightness, type: Number.isInteger(brightness) ? 'int' : 'float' },
         },
       },
     ];
@@ -209,8 +209,8 @@ describe('analyzeActionStructure', () => {
         kind: 'action:ha_service',
         action: 'light.turn_on',
         data: {
-          entity_id: { kind: 'literal', value: entityId },
-          transition: { kind: 'literal', value: 1 },
+          entity_id: { kind: 'expr:literal', value: entityId, type: 'string' },
+          transition: { kind: 'expr:literal', value: 1, type: 'int' },
         },
       },
     ];
@@ -236,7 +236,7 @@ describe('analyzeActionStructure', () => {
     expect(result.varyingParams[0].type).toBe('string');
     // Template should contain normalised literal param
     const tmpl = result.templateActions[0] as { kind: string; data?: Record<string, unknown> };
-    expect(tmpl.data?.entity_id).toEqual({ kind: 'literal', value: 'light.bedroom' });
+    expect(tmpl.data?.entity_id).toEqual({ kind: 'expr:literal', value: 'light.bedroom', type: 'string' });
   });
 
   it('returns identical for bare string data params when all the same', () => {

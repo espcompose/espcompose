@@ -19,7 +19,7 @@
 
 import type { OverlayDefinition } from '@espcompose/core/internals';
 import type { IRExpression, ExprType } from '@espcompose/core/internals';
-import type { IRActionNode, IRActionParam, IRCondition } from '@espcompose/core/internals';
+import type { IRActionNode, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core';
 import { analyzeExprStructure, analyzeActionStructure, irBinary } from '@espcompose/core/internals';
@@ -95,20 +95,18 @@ function exprFingerprint(expr: IRExpression): string {
 }
 
 /**
- * Serialize an IRActionParam to a deterministic comparison string.
+ * Serialize an action data value (IRExpression or already-resolved primitive)
+ * to a deterministic comparison string.
  */
-function actionParamFingerprint(param: IRActionParam | string | number | boolean): string {
+function actionParamFingerprint(param: IRExpression | string | number | boolean): string {
   if (typeof param !== 'object' || param === null) return `P:${typeof param}:${String(param)}`;
-  switch (param.kind) {
-    case 'literal':
-      return `PL:${typeof param.value}:${String(param.value)}`;
-    case 'trigger_var':
-      return `PT:${param.varName}`;
-    case 'expression':
-      return `PE:${param.jsExpression}`;
-    case 'reactive_expr':
-      return `PR:${exprFingerprint(param.exprIR)}`;
+  if (param.kind === 'expr:literal') {
+    return `PL:${typeof param.value}:${String(param.value)}`;
   }
+  if (param.kind === 'expr:trigger_var') {
+    return `PT:${param.name}`;
+  }
+  return `PE:${exprFingerprint(param)}`;
 }
 
 /**
@@ -160,11 +158,11 @@ function singleActionFingerprint(action: IRActionNode): string {
     case 'action:theme_select':
       return `TS:${action.scopeId}:${action.themeName}`;
     case 'action:global_set':
-      return `GS:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
+      return `GS:${action.globalId}:${actionParamFingerprint(action.value)}`;
     case 'action:array_set':
-      return `AS:${action.globalId}:${actionParamFingerprint(action.index as IRActionParam)}:${actionParamFingerprint(action.value as IRActionParam)}`;
+      return `AS:${action.globalId}:${actionParamFingerprint(action.index)}:${actionParamFingerprint(action.value)}`;
     case 'action:array_push':
-      return `AP:${action.globalId}:${actionParamFingerprint(action.value as IRActionParam)}`;
+      return `AP:${action.globalId}:${actionParamFingerprint(action.value)}`;
     case 'action:array_clear':
       return `AC:${action.globalId}`;
     case 'action:lambda_action':
@@ -367,7 +365,7 @@ export function processOverlayMux(
             const optimisedActions = actionStructural.templateActions.map(tmplAction => {
               if (tmplAction.kind !== 'action:ha_service' || !tmplAction.data) return tmplAction;
 
-              const newData: Record<string, IRActionParam> = { ...tmplAction.data };
+              const newData: Record<string, IRExpression> = { ...tmplAction.data };
               for (const hole of actionStructural.varyingParams) {
                 // Extract param key from paramPath (e.g. "data.entity_id" → "entity_id")
                 const paramKey = hole.paramPath.replace(/^data\./, '');
@@ -382,13 +380,10 @@ export function processOverlayMux(
                   values: hole.values.map((v: string | number | boolean) => formatTableLiteral(v, cppArrayElemType)),
                 });
                 newData[paramKey] = {
-                  kind: 'reactive_expr',
-                  exprIR: {
-                    kind: 'expr:table_lookup',
-                    index: muxIndexExpr,
-                    table: tableName,
-                    elementType: hole.type,
-                  },
+                  kind: 'expr:table_lookup',
+                  index: muxIndexExpr,
+                  table: tableName,
+                  elementType: hole.type,
                 };
               }
               return { ...tmplAction, data: newData } as IRActionNode;

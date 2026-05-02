@@ -9,12 +9,11 @@ import type {
   IRActionNode,
   IRActionConfig,
   IRActionConfigValue,
-  IRActionParam,
   IRCondition,
   IRDurationLiteral,
   IRExpression,
   IRNativeAction,
-  IRRefSlot,
+  IRRefAnnotation,
   IRType,
 } from '@espcompose/core/internals';
 import { IR_INT } from '@espcompose/core/internals';
@@ -69,60 +68,60 @@ function formatDuration(d: IRDurationLiteral): string {
   return `${d.value}${d.unit}`;
 }
 
-// ── JSON-safe expression marker ─────────────────────────────────────────
-// Similar to LambdaMarker, but for JS expressions that must be emitted
-// as raw code rather than JSON-stringified values. The script-transformer
-// replaces these markers with the actual expression text.
-export interface ExpressionMarker { __expression__: string }
-function expressionMarker(expr: string): ExpressionMarker { return { __expression__: expr }; }
-
 // ── Lowering ───────────────────────────────────────────────────────────────
 
 /**
- * Lower an IRActionParam to its YAML-ready value.
- * Also handles already-resolved primitive values (e.g., expression params
- * that were resolved at runtime via serializeWithExpressions).
+ * Lower an action-position IRExpression to its YAML-ready value.
+ *
+ * Fast paths:
+ *   - `expr:literal` → raw value
+ *   - `expr:trigger_var` → lambda returning the C++ variable
+ *
+ * All other expressions are lowered to C++ via `exprToCpp` and wrapped in
+ * a `return ...;` lambda. Already-resolved primitive values (e.g. dynamic
+ * entity IDs spliced in by `serializeWithExpressions`) pass through
+ * unchanged.
  */
-function lowerParam(param: IRActionParam | string | number | boolean): unknown {
+function lowerParam(param: IRExpression | string | number | boolean, ctx: ActionLoweringContext): unknown {
   if (typeof param !== 'object' || param === null) return param;
   switch (param.kind) {
-    case 'literal':
+    case 'expr:literal':
       return param.value;
-    case 'trigger_var':
-      return lambdaMarker(`return ${param.varName};`);
-    case 'expression':
-      return expressionMarker(param.jsExpression);
-    case 'reactive_expr':
-      throw new Error('reactive_expr params must be handled in the ha_service case, not lowerParam');
+    case 'expr:trigger_var':
+      return lambdaMarker(`return ${param.name};`);
+    default: {
+      const cppCtx = createConditionLoweringContext(ctx);
+      return lambdaMarker(`return ${exprToCpp(param, cppCtx)};`);
+    }
   }
 }
 
 /**
- * Lower a single config value: literal/trigger/expression param, nested dict,
- * or already-resolved primitive.
+ * Lower a single config value: IRExpression, nested dict, or already-resolved
+ * primitive.
  */
-function lowerConfigValue(value: IRActionConfigValue): unknown {
+function lowerConfigValue(value: IRActionConfigValue, ctx: ActionLoweringContext): unknown {
   if (typeof value !== 'object' || value === null) return value;
   if (value.kind === 'config_dict') {
     const dict: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value.entries)) {
-      dict[k] = lowerConfigValue(v);
+      dict[k] = lowerConfigValue(v, ctx);
     }
     return dict;
   }
-  return lowerParam(value);
+  return lowerParam(value, ctx);
 }
 
 /**
  * Lower an IRActionConfig to its YAML-ready value.
  */
-function lowerConfig(config: IRActionConfig): unknown {
+function lowerConfig(config: IRActionConfig, ctx: ActionLoweringContext): unknown {
   if (typeof config === 'string') {
     return config;
   }
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(config)) {
-    result[key] = lowerConfigValue(value);
+    result[key] = lowerConfigValue(value, ctx);
   }
   return result;
 }
@@ -156,37 +155,34 @@ function lowerCondition(condition: IRCondition, ctx: ActionLoweringContext): unk
       return [{ lambda: lambdaMarker(`return ${cppExpr};`) }];
     }
     case 'native':
-      return { [condition.conditionKey]: lowerConfig(condition.config) };
+      return { [condition.conditionKey]: lowerConfig(condition.config, ctx) };
   }
 }
 
 /**
  * Lower the value of a global_set action to a C++ expression string.
- * Handles IRActionParam (literal, trigger_var) and IRExpression (compiled expression).
+ * Fast paths for `expr:literal` and `expr:trigger_var`; everything else
+ * lowers via `exprToCpp`.
  */
-function lowerGlobalSetValue(value: IRActionParam | IRExpression, irType: IRType, ctx: ActionLoweringContext): string {
+function lowerGlobalSetValue(value: IRExpression, irType: IRType, ctx: ActionLoweringContext): string {
   const cppType = irTypeToCpp(irType);
-  if (typeof value === 'object' && value !== null && 'kind' in value) {
-    switch (value.kind) {
-      case 'literal': {
-        const v = value.value;
-        if (typeof v === 'boolean') return v ? 'true' : 'false';
-        if (typeof v === 'string') {
-          if (cppType === 'std::string') return `std::string("${escapeStringForCpp(v)}")`;
-          return `"${escapeStringForCpp(v)}"`;
-        }
-        return String(v);
+  switch (value.kind) {
+    case 'expr:literal': {
+      const v = value.value;
+      if (typeof v === 'boolean') return v ? 'true' : 'false';
+      if (typeof v === 'string') {
+        if (cppType === 'std::string') return `std::string("${escapeStringForCpp(v)}")`;
+        return `"${escapeStringForCpp(v)}"`;
       }
-      case 'trigger_var':
-        return value.varName;
-      default: {
-        // IRExpression — lower to C++ via exprToCpp
-        const cppCtx = createConditionLoweringContext(ctx);
-        return exprToCpp(value as IRExpression, cppCtx);
-      }
+      return String(v);
+    }
+    case 'expr:trigger_var':
+      return value.name;
+    default: {
+      const cppCtx = createConditionLoweringContext(ctx);
+      return exprToCpp(value, cppCtx);
     }
   }
-  return String(value);
 }
 
 // ── Native→lambda rewrite helpers ────────────────────────────────────────
@@ -199,7 +195,7 @@ function lowerGlobalSetValue(value: IRActionParam | IRExpression, irType: IRType
 function findClosureBoundRefSlot(
   action: IRNativeAction,
   ctx: ActionLoweringContext,
-): IRRefSlot | undefined {
+): IRRefAnnotation | undefined {
   if (!action.refSlots || !ctx.scriptClosureNames) return undefined;
   return action.refSlots.find(s => ctx.scriptClosureNames!.has(`${s.bindingName}_idx`));
 }
@@ -215,7 +211,7 @@ function findClosureBoundRefSlot(
  */
 function synthesizeNativeAsLambda(
   action: IRNativeAction,
-  closureSlot: IRRefSlot,
+  closureSlot: IRRefAnnotation,
   ctx: ActionLoweringContext,
 ): { lambda: LambdaMarker } {
   // lvgl.widget.update uses LVGL free functions (lv_obj_add_flag /
@@ -261,7 +257,7 @@ function synthesizeNativeAsLambda(
  */
 function synthesizeLvglWidgetUpdate(
   action: IRNativeAction,
-  closureSlot: IRRefSlot,
+  closureSlot: IRRefAnnotation,
   ctx: ActionLoweringContext,
 ): { lambda: LambdaMarker } {
   const scriptId = ctx.scriptId;
@@ -295,7 +291,7 @@ function renderEmitterCall(
   accessor: string,
   emitter: ActionCppEmitter,
   config: IRActionConfig,
-  idSlot: IRRefSlot,
+  idSlot: IRRefAnnotation,
 ): string {
   if (emitter.fluent) {
     let call = `${accessor}->${emitter.method}()`;
@@ -331,7 +327,7 @@ function renderEmitterCall(
 function extractConfigParam(
   config: IRActionConfig,
   paramName: string,
-  idSlot: IRRefSlot,
+  idSlot: IRRefAnnotation,
 ): unknown {
   // Bare-string configs have no extra params.
   if (typeof config === 'string') return undefined;
@@ -339,12 +335,12 @@ function extractConfigParam(
   if (idSlot.kind === 'object' && paramName === idSlot.key) return undefined;
   const value = config[paramName];
   if (value === undefined) return undefined;
-  // Unwrap IRActionParam literals
+  // Unwrap IRLiteralExpression literals
   if (typeof value === 'object' && value !== null && 'kind' in value) {
     const param = value as { kind: string; value?: unknown };
-    if (param.kind === 'literal') return param.value;
-    // TODO: trigger_var and expression params in closure-rewritten actions
-    // would need C++ variable references — not yet supported.
+    if (param.kind === 'expr:literal') return param.value;
+    // TODO: trigger_var and other expression params in closure-rewritten
+    // actions would need C++ variable references — not yet supported.
     return undefined;
   }
   return value;
@@ -365,7 +361,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       if (closureBoundSlot) {
         return synthesizeNativeAsLambda(action, closureBoundSlot, ctx);
       }
-      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config) };
+      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config, ctx) };
     }
 
     case 'action:ha_service': {
@@ -376,19 +372,21 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         const variables: Record<string, unknown> = {};
 
         for (const [key, param] of Object.entries(action.data)) {
-          if (typeof param === 'object' && param !== null && param.kind === 'trigger_var') {
-            // Dynamic value: use variables + data_template
-            variables[param.varName] = lambdaMarker(`return ${param.varName};`);
-            templateData[key] = `{{ ${param.varName} }}`;
-          } else if (typeof param === 'object' && param !== null && param.kind === 'reactive_expr') {
-            // Reactive expression: lower exprIR to C++ and route through variables + data_template
+          if (typeof param === 'object' && param !== null && param.kind === 'expr:trigger_var') {
+            // Trigger variable: route through variables + data_template so
+            // HA receives the runtime value rather than a literal token.
+            variables[param.name] = lambdaMarker(`return ${param.name};`);
+            templateData[key] = `{{ ${param.name} }}`;
+          } else if (typeof param === 'object' && param !== null && 'kind' in param &&
+                     param.kind !== 'expr:literal') {
+            // Compiled expression: lower to C++ and route through variables + data_template
             const varName = `${key}_expr`;
             const cppCtx = createConditionLoweringContext(ctx);
-            const cppExpr = exprToCpp(param.exprIR, cppCtx);
+            const cppExpr = exprToCpp(param as IRExpression, cppCtx);
             variables[varName] = lambdaMarker(`return ${cppExpr};`);
             templateData[key] = `{{ ${varName} }}`;
           } else {
-            staticData[key] = lowerParam(param as IRActionParam);
+            staticData[key] = lowerParam(param, ctx);
           }
         }
 
@@ -465,7 +463,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       }
       if (action.userArgs) {
         for (const [k, v] of Object.entries(action.userArgs)) {
-          execArgs[k] = lowerParam(v);
+          execArgs[k] = lowerParam(v, ctx);
         }
       }
       return { 'script.execute': execArgs };
@@ -539,7 +537,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       for (let i = 0; i < action.slots.length; i++) {
         const slot = action.slots[i];
         switch (slot.kind) {
-          case 'ref':
+          case 'interp:ref':
             // In script scope, prefer closure-table or per-script
             // refBindings resolution. Fall through to slot.name for
             // trigger handlers where slot.name is already a literal token.
@@ -554,16 +552,16 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
               code += slot.name;
             }
             break;
-          case 'global':
+          case 'interp:global':
             code += `id(${slot.id})`;
             break;
-          case 'trigger_var':
+          case 'interp:trigger_var':
             code += slot.varName;
             break;
-          case 'script_param':
+          case 'interp:script_param':
             code += slot.name;
             break;
-          case 'literal':
+          case 'interp:literal':
             if (typeof slot.value === 'string') {
               code += `"${escapeStringForCpp(slot.value)}"`;
             } else {

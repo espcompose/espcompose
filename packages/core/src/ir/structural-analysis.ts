@@ -11,8 +11,9 @@
 // that is not explicitly recognizable — never silently degrades.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRExpression, ExprType } from './expr-types.js';
-import type { IRActionNode, IRActionParam, IRLiteralParam, IRHAServiceAction } from './action-types.js';
+import type { IRExpression, IRLiteralExpression, ExprType } from './expr-types.js';
+import { irLiteralExpression } from './expr-builders.js';
+import type { IRActionNode, IRHAServiceAction } from './action-types.js';
 
 // ── Expression Structural Analysis ───────────────────────────────────────────
 
@@ -326,21 +327,21 @@ function analyzeHAServiceActions(
   }
 
   // Compare each data param
-  const templateData: Record<string, IRActionParam> = {};
+  const templateData: Record<string, IRExpression> = {};
 
   for (const key of keys) {
     const param0 = first.data[key];
 
     // Normalise: bare primitives (from runtime-resolved expression params in
-    // the compiled bundle) are treated like { kind: 'literal', value: ... }.
-    const norm0 = normaliseLiteralParam(param0);
+    // the compiled bundle) are treated like an IRLiteralExpression.
+    const norm0 = normaliseLiteralExpression(param0);
     const isLiteral0 = norm0 !== null;
 
     if (!isLiteral0) {
       // Non-literal (trigger_var, expression, etc.): require exact identity
       for (let i = 1; i < actions.length; i++) {
         const paramI = actions[i].data![key];
-        if (normaliseLiteralParam(paramI) !== null) return null; // kind mismatch
+        if (normaliseLiteralExpression(paramI) !== null) return null; // kind mismatch
         if (JSON.stringify(paramI) !== JSON.stringify(param0)) return null;
       }
       templateData[key] = param0;
@@ -351,7 +352,7 @@ function analyzeHAServiceActions(
     let allSame = true;
     const values: (string | number | boolean)[] = [norm0.value];
     for (let i = 1; i < actions.length; i++) {
-      const normI = normaliseLiteralParam(actions[i].data![key]);
+      const normI = normaliseLiteralExpression(actions[i].data![key]);
       if (normI === null) return null; // kind mismatch → divergent
       values.push(normI.value);
       if (normI.value !== norm0.value) { allSame = false; }
@@ -367,7 +368,7 @@ function analyzeHAServiceActions(
         values,
         type: inferTypeFromValues(values),
       });
-      // Placeholder — will be replaced by reactive_expr in Phase 5
+      // Placeholder — will be replaced downstream by a table_lookup expression.
       templateData[key] = norm0;
     }
   }
@@ -376,17 +377,18 @@ function analyzeHAServiceActions(
 }
 
 /**
- * Normalise an action param to `IRLiteralParam` if it is a literal or bare
- * primitive.  Runtime-resolved expression params (via `serializeWithExpressions`
- * in the compiled bundle) arrive as bare strings/numbers/booleans rather than
- * `{ kind: 'literal', value: ... }` objects.  Returns `null` for non-literal params.
+ * Normalise an action data value to `IRLiteralExpression` if it is a literal
+ * or a bare primitive.  Runtime-resolved expression params (via
+ * `serializeWithExpressions` in the compiled bundle) arrive as bare
+ * strings/numbers/booleans rather than `IRLiteralExpression` objects.
+ * Returns `null` for non-literal expressions.
  */
-function normaliseLiteralParam(param: IRActionParam | string | number | boolean): IRLiteralParam | null {
+function normaliseLiteralExpression(param: IRExpression | string | number | boolean): IRLiteralExpression | null {
   if (typeof param === 'string' || typeof param === 'number' || typeof param === 'boolean') {
-    return { kind: 'literal', value: param };
+    return irLiteralExpression(param);
   }
-  if (typeof param === 'object' && param !== null && 'kind' in param && param.kind === 'literal') {
-    return param as IRLiteralParam;
+  if (typeof param === 'object' && param !== null && 'kind' in param && param.kind === 'expr:literal') {
+    return param as IRLiteralExpression;
   }
   return null;
 }

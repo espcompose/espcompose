@@ -1,11 +1,13 @@
 import ts from 'typescript';
-import type { IRActionNode, IRActionParam } from '@espcompose/core/internals';
+import type { IRActionNode } from '@espcompose/core/internals';
 import type { IRExpression } from '@espcompose/core';
 import type { GlobalDefinition } from '@espcompose/core/internals';
 import {
   irGlobalSet,
   irArraySet,
   irArrayPush,
+  irLiteralExpression,
+  irTriggerVarExpression,
 } from '@espcompose/core/internals';
 import {
   translateScriptExprIR,
@@ -33,16 +35,16 @@ export function compileGlobalSet(
   // Try literal first
   if (ts.isNumericLiteral(valueArg)) {
     const num = Number(valueArg.text);
-    return [irGlobalSet(globalDef.id, globalDef.irType, { kind: 'literal', value: num })];
+    return [irGlobalSet(globalDef.id, globalDef.irType, irLiteralExpression(num))];
   }
   if (ts.isStringLiteral(valueArg) || ts.isNoSubstitutionTemplateLiteral(valueArg)) {
-    return [irGlobalSet(globalDef.id, globalDef.irType, { kind: 'literal', value: valueArg.text })];
+    return [irGlobalSet(globalDef.id, globalDef.irType, irLiteralExpression(valueArg.text))];
   }
   if (valueArg.kind === ts.SyntaxKind.TrueKeyword) {
-    return [irGlobalSet(globalDef.id, globalDef.irType, { kind: 'literal', value: true })];
+    return [irGlobalSet(globalDef.id, globalDef.irType, irLiteralExpression(true))];
   }
   if (valueArg.kind === ts.SyntaxKind.FalseKeyword) {
-    return [irGlobalSet(globalDef.id, globalDef.irType, { kind: 'literal', value: false })];
+    return [irGlobalSet(globalDef.id, globalDef.irType, irLiteralExpression(false))];
   }
 
   // Try trigger variable: args.x
@@ -50,7 +52,7 @@ export function compileGlobalSet(
       valueArg.expression.text === ctx.triggerParamName) {
     const varName = valueArg.name.text;
     ctx.triggerVars.add(varName);
-    return [irGlobalSet(globalDef.id, globalDef.irType, { kind: 'trigger_var', varName })];
+    return [irGlobalSet(globalDef.id, globalDef.irType, irTriggerVarExpression(varName))];
   }
 
   // Try compiling as a reactive expression (e.g. counter.value + 1)
@@ -104,29 +106,29 @@ export function compileArrayPush(
   return [irArrayPush(globalDef.id, globalDef.irType, valueIR)];
 }
 
-/** Compile a value argument to either an IRActionParam or IRExpression. */
+/** Compile a value argument to an IRExpression. */
 function compileActionValueArg(
   arg: ts.Expression,
   ctx: ActionCompilerContext,
   scriptCtx: ScriptTransformContext,
-): IRActionParam | IRExpression | null {
+): IRExpression | null {
   if (ts.isNumericLiteral(arg)) {
-    return { kind: 'literal', value: Number(arg.text) };
+    return irLiteralExpression(Number(arg.text));
   }
   if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
-    return { kind: 'literal', value: arg.text };
+    return irLiteralExpression(arg.text);
   }
   if (arg.kind === ts.SyntaxKind.TrueKeyword) {
-    return { kind: 'literal', value: true };
+    return irLiteralExpression(true);
   }
   if (arg.kind === ts.SyntaxKind.FalseKeyword) {
-    return { kind: 'literal', value: false };
+    return irLiteralExpression(false);
   }
   if (ts.isPropertyAccessExpression(arg) && ts.isIdentifier(arg.expression) &&
       arg.expression.text === ctx.triggerParamName) {
     const varName = arg.name.text;
     ctx.triggerVars.add(varName);
-    return { kind: 'trigger_var', varName };
+    return irTriggerVarExpression(varName);
   }
   return translateScriptExprIR(arg, scriptCtx);
 }

@@ -64,21 +64,11 @@ export interface IRType {
 }
 
 /** A single parameter declaration for a parameterized ESPHome script. */
-export interface IRScriptParam {
+export interface IRScriptParamDecl {
   /** Parameter name (used as identifier in the script body). */
   name: string;
   /** Target-agnostic type descriptor. The lowering target maps this to a concrete type. */
   irType: IRType;
-}
-
-/**
- * Reference to a script parameter inside the script body.
- * Used in place of a literal value when the value is supplied per call-site.
- */
-export interface IRScriptParamRef {
-  readonly kind: 'script_param';
-  /** The parameter name — must match an entry in the script's parameter list. */
-  name: string;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -124,7 +114,7 @@ export interface IRScript {
   /** Execution mode. Omit for ESPHome default ('single'). */
   mode?: ScriptMode;
   /** User-defined parameters from the script's arrow function signature. */
-  userParams?: IRScriptParam[];
+  userParams?: IRScriptParamDecl[];
   /**
    * Canonical closure shape (template-level). Defines the closure-table
    * struct layout. Populated by the compile-time dedup pass.

@@ -23,8 +23,8 @@ import { setCurrentHookPath, assertHookContext } from './useState';
 import { findInScope, registerInScope } from './useScope';
 import type { ScopeFrame } from './useScope';
 import { resolveRefBindingsInActions } from '../serialize';
-import type { IRActionNode } from '../ir/action-types';
-import type { ScriptMode, IRScriptParam, IRScriptParamRef, IRType, IRScalar, ClosureShape, ClosureField, ClosureInstance } from '../ir/types';
+import type { IRActionNode, IRScriptParamRef } from '../ir/action-types';
+import type { ScriptMode, IRScriptParamDecl, IRType, IRScalar, ClosureShape, ClosureField, ClosureInstance } from '../ir/types';
 import { irScalar } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
@@ -37,7 +37,7 @@ import type { OverlayControllerInternal } from '../actions';
 interface ScriptDefinition {
   id: string;
   mode?: ScriptMode;
-  userParams?: IRScriptParam[];
+  userParams?: IRScriptParamDecl[];
   /** Per-script binding name → literal ESPHome ID token. */
   refBindings?: Record<string, string>;
   /** Canonical closure shape (template-level field layout). */
