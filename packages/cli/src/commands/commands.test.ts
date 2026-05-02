@@ -30,13 +30,13 @@ describe('command registration', () => {
       name: 'init',
       register: registerInitCommand,
       expectedName: 'init',
-      expectedOptions: ['--board', '--library'],
+      expectedOptions: ['--board'],
     },
     {
       name: 'transpile',
       register: registerTranspileCommand,
       expectedName: 'transpile',
-      expectedOptions: ['--debug', '--library', '--entry', '--outDir', '--tsconfig'],
+      expectedOptions: ['--debug'],
     },
     {
       name: 'config',
@@ -48,7 +48,7 @@ describe('command registration', () => {
       name: 'build',
       register: registerBuildCommand,
       expectedName: 'build',
-      expectedOptions: ['--debug', '--library', '--entry', '--outDir', '--tsconfig'],
+      expectedOptions: ['--debug'],
     },
     {
       name: 'run',

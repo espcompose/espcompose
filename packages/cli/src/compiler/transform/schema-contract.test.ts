@@ -19,9 +19,7 @@ import {
   SlottedReactiveSchema,
   CompiledActionsMetaSchema,
   CompiledScriptMetaSchema,
-  LibraryFormatHeaderSchema,
 } from './schemas.js';
-import { LIBRARY_FORMAT_VERSION } from './format-version.js';
 import { irTernary } from '@espcompose/core/internals';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -217,31 +215,4 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
   });
 
-  describe('Library format version', () => {
-    it('valid version matches schema', () => {
-      const header = { __espcompose_format__: LIBRARY_FORMAT_VERSION };
-      expect(LibraryFormatHeaderSchema.safeParse(header).success).toBe(true);
-    });
-
-    it('rejects non-integer version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: 1.5 }).success).toBe(false);
-    });
-
-    it('rejects zero version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: 0 }).success).toBe(false);
-    });
-
-    it('rejects string version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: '1' }).success).toBe(false);
-    });
-
-    it('rejects missing version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({}).success).toBe(false);
-    });
-
-    it('current LIBRARY_FORMAT_VERSION is a positive integer', () => {
-      expect(Number.isInteger(LIBRARY_FORMAT_VERSION)).toBe(true);
-      expect(LIBRARY_FORMAT_VERSION).toBeGreaterThan(0);
-    });
-  });
 });

@@ -1,21 +1,12 @@
 /**
- * Zod schemas for the ESPCompose compiled library format.
+ * Zod schemas for ESPCompose AST-emitted metadata.
  *
  * These schemas define the exact shape of metadata emitted by the CLI's
  * AST transformers and consumed by the SDK at runtime. They serve as a
  * machine-readable contract between the two sides.
- *
- * Any change to these schemas represents a protocol change and MUST be
- * accompanied by a bump to LIBRARY_FORMAT_VERSION.
  */
 
 import { z } from 'zod';
-
-// ── Format version header ──────────────────────────────────────────────────
-
-export const LibraryFormatHeaderSchema = z.object({
-  __espcompose_format__: z.number().int().positive(),
-});
 
 // ── Reactive expression metadata ───────────────────────────────────────────
 

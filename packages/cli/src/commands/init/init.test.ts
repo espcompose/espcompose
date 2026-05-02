@@ -79,49 +79,4 @@ describe('initProject', () => {
       );
     });
   });
-
-  describe('library project', () => {
-    it('scaffolds expected files with correct content', () => {
-      initProject('my-lib', { library: true });
-
-      const root = path.join(tmpDir, 'my-lib');
-
-      // Expected file structure
-      expect(fs.existsSync(path.join(root, 'package.json'))).toBe(true);
-      expect(fs.existsSync(path.join(root, 'tsconfig.json'))).toBe(true);
-      expect(fs.existsSync(path.join(root, 'eslint.config.mjs'))).toBe(true);
-      expect(fs.existsSync(path.join(root, '.gitignore'))).toBe(true);
-      expect(fs.existsSync(path.join(root, 'src', 'index.ts'))).toBe(true);
-      expect(fs.existsSync(path.join(root, 'src', 'MyComponent.tsx'))).toBe(true);
-
-      // No template artifacts
-      expect(fs.existsSync(path.join(root, 'dot.gitignore'))).toBe(false);
-
-      // package.json has library-specific fields
-      const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-      expect(pkg.name).toBe('my-lib');
-      expect(pkg.espcompose).toEqual({ library: true });
-      expect(pkg.type).toBe('module');
-      expect(pkg.exports['.']).toBeDefined();
-      expect(pkg.exports['.'].import).toBe('./dist/index.js');
-
-      // Source files have correct token replacements
-      const indexTs = fs.readFileSync(path.join(root, 'src', 'index.ts'), 'utf8');
-      expect(indexTs).toContain('my-lib');
-      expect(indexTs).toContain("export { MyComponent }");
-
-      const component = fs.readFileSync(path.join(root, 'src', 'MyComponent.tsx'), 'utf8');
-      expect(component).toContain("Hello from my-lib!");
-      expect(component).toContain('createLvglWidget');
-
-      // tsconfig includes src patterns
-      const tsconfig = JSON.parse(fs.readFileSync(path.join(root, 'tsconfig.json'), 'utf8'));
-      expect(tsconfig.include).toContain('src/**/*.ts');
-
-      // .gitignore has library-specific patterns
-      const gitignore = fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
-      expect(gitignore).toContain('dist/');
-      expect(gitignore).not.toContain('.espcompose/');
-    });
-  });
 });

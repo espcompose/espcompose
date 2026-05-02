@@ -1,14 +1,19 @@
 /**
  * Phase 1: TypeScript AST transformation.
  *
- * Transforms every user source file in the ts.Program and writes the
- * results to an output directory (`<projectDir>/.espcompose-build/`),
- * preserving the original directory structure. This mirrors the Resolut CLI
- * pattern where individual transformed files are inspectable on disk.
+ * Transforms every app source file and every source-mode library file in the
+ * `ts.Program`, writing the results to a layout under `<buildDir>/` that
+ * mirrors Node module resolution:
  *
- * After writing, esbuild bundles from the build directory to produce a
- * single CJS file. Because the transformed sources are real files, esbuild
- * resolves imports normally — no load-plugin needed.
+ *   - app-source                  → `<buildDir>/app/<rel-to-projectDir>`
+ *   - espcompose-source-library   → `<buildDir>/node_modules/<pkgName>/<rel-to-pkgRoot>`
+ *
+ * Because the resulting layout is a normal `node_modules`-style tree, the
+ * downstream esbuild bundle phase resolves bare specifiers without any
+ * custom resolver plugin.
+ *
+ * Files classified as `runtime-external` (e.g. `@espcompose/core`,
+ * untransformed third-party deps) are skipped entirely.
  */
 
 import * as fs from 'fs';
@@ -16,6 +21,7 @@ import * as path from 'path';
 import ts from 'typescript';
 import { transformScriptFile, type TransformDiagnostic } from './script-transformer.js';
 import { transformReactiveExpressions } from './reactive-transformer.js';
+import type { SourceLibraryRegistry } from '../resolver/index.js';
 
 export type { TransformDiagnostic };
 
@@ -31,24 +37,21 @@ export interface TransformResult {
 }
 
 /**
- * Transform all user source files in the TypeScript program and write
- * them to `buildDir`, preserving directory structure relative to `sourceDir`.
- *
- * Files inside `node_modules` are skipped — only project source files are
- * transformed and written. Unchanged files are copied verbatim so esbuild
- * can resolve all imports from within the build directory.
+ * Transform every classified source file in the TypeScript program and write
+ * to the build directory under the layout described above.
  *
  * @param program   - The TypeScript program (from Phase 0 type-check).
  * @param entryFile - Absolute path to the original entry file.
- * @param sourceDir - The project's source root directory.
  * @param buildDir  - The output directory (`.espcompose-build/`).
- * @returns The path to the transformed entry file + any diagnostics.
+ * @param registry  - Source-library registry, used to classify each file.
+ * @param pathMap   - Mutable map of original→buildPath, populated as files are written.
  */
 export function writeTransformedFiles(
   program: ts.Program,
   entryFile: string,
-  sourceDir: string,
   buildDir: string,
+  registry: SourceLibraryRegistry,
+  pathMap: Map<string, string>,
 ): TransformResult {
   const diagnostics: TransformDiagnostic[] = [];
   let transformedEntryFile = '';
@@ -58,12 +61,11 @@ export function writeTransformedFiles(
   for (const sourceFile of program.getSourceFiles()) {
     const filePath = sourceFile.fileName;
 
-    // Skip dependencies — only transform user source files
-    if (filePath.includes('node_modules')) continue;
+    const klass = registry.classifyPath(filePath);
+    if (klass === 'runtime-external') continue;
 
-    // Only transform files under the project source directory
-    const rel = path.relative(sourceDir, filePath);
-    if (rel.startsWith('..') || path.isAbsolute(rel)) continue;
+    const outputPath = computeOutputPath(filePath, klass, registry, buildDir);
+    if (!outputPath) continue;
 
     const originalText = sourceFile.getFullText();
 
@@ -128,9 +130,10 @@ export function writeTransformedFiles(
         ? reactiveResult.sourceText
         : originalText;
 
-    const outputPath = path.join(buildDir, rel);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, outputText, 'utf8');
+
+    pathMap.set(path.normalize(filePath), outputPath);
 
     filesWritten++;
     if (outputText !== originalText) filesTransformed++;
@@ -143,10 +146,34 @@ export function writeTransformedFiles(
 
   if (!transformedEntryFile) {
     // Entry file wasn't in the program's source files — fall back to
-    // mirroring its relative position
-    const rel = path.relative(sourceDir, entryFile);
-    transformedEntryFile = path.join(buildDir, rel);
+    // computing its build location from the registry.
+    const klass = registry.classifyPath(entryFile);
+    const fallback = computeOutputPath(entryFile, klass, registry, buildDir);
+    transformedEntryFile = fallback ?? path.join(buildDir, 'app', path.basename(entryFile));
   }
 
   return { entryFile: transformedEntryFile, diagnostics, filesWritten, filesTransformed };
+}
+
+/**
+ * Compute the build-dir output path for a source file, based on its class.
+ * Returns `undefined` for runtime-external files.
+ */
+function computeOutputPath(
+  filePath: string,
+  klass: 'app-source' | 'espcompose-source-library' | 'runtime-external',
+  registry: SourceLibraryRegistry,
+  buildDir: string,
+): string | undefined {
+  if (klass === 'app-source') {
+    const rel = path.relative(registry.projectRoot, fs.realpathSync(filePath));
+    return path.join(buildDir, 'app', rel);
+  }
+  if (klass === 'espcompose-source-library') {
+    const lib = registry.matchPath(filePath);
+    if (!lib) return undefined;
+    const rel = path.relative(lib.rootDir, fs.realpathSync(filePath));
+    return path.join(buildDir, 'node_modules', lib.packageName, rel);
+  }
+  return undefined;
 }

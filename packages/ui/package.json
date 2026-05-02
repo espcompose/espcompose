@@ -3,21 +3,18 @@
   "version": "0.6.3",
   "description": "LVGL Design System components for ESPHome Compose",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "espcompose": "./src/index.ts",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
+    "src",
     "dist"
   ],
-  "espcompose": {
-    "library": true
-  },
   "scripts": {
-    "build": "espcompose build --library",
+    "build": "tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "lint": "eslint src",
@@ -46,14 +43,13 @@
     "@espcompose/core": "workspace:*"
   },
   "devDependencies": {
-    "@espcompose/cli": "workspace:*",
     "@espcompose/eslint": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "rimraf": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
-    "rimraf": "catalog:",
     "vitest": "catalog:"
   }
 }

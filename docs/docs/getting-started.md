@@ -263,7 +263,7 @@ export default <App />;
 
 | Command | Description | Requires ESPHome |
 |---------|-------------|:----------------:|
-| `espcompose init <name>` | Scaffold a new project (`--board`, `--library`) | |
+| `espcompose init <name>` | Scaffold a new project (`--board`) | |
 | `espcompose transpile [dir]` | Transpile TSX to YAML | |
 | `espcompose config [dir]` | Transpile + validate via `esphome config` | Yes |
 | `espcompose build [dir]` | Transpile + compile firmware | Yes |

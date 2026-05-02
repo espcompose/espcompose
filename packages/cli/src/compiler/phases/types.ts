@@ -1,5 +1,6 @@
 import type ts from 'typescript';
 import type { ComposeTarget, ExecuteResult } from '@espcompose/core/internals';
+import type { SourceLibraryRegistry } from '../resolver/index.js';
 
 /** Timing measurement for a single compiler phase. */
 export interface PhaseTiming {
@@ -53,6 +54,17 @@ export interface PhaseContext {
   executeResult?: ExecuteResult;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
+
+  /**
+   * Registry of source-mode libraries reachable from the project.
+   * Built once in setupPhase from `package.json#exports` `espcompose` conditions.
+   */
+  registry?: SourceLibraryRegistry;
+  /**
+   * Map of original absolute path → transformed-copy path inside `buildDir`.
+   * Populated by the transform phase; used by diagnostic-path rewriting.
+   */
+  pathMap?: Map<string, string>;
 
   /** Per-phase timing measurements (populated by runPipeline). */
   phaseTiming?: PhaseTiming[];
