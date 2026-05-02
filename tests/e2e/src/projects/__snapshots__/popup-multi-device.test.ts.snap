@@ -152,7 +152,7 @@ Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
 void select_theme_333e4663(const char* name) {
   if (strcmp(name, "dark") == 0) { theme_index_333e4663.set(0); }
   else if (strcmp(name, "light") == 0) { theme_index_333e4663.set(1); }
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
+  espcompose::flush();
 }
 
 // ── Static data tables (table-driven mux) ──
@@ -713,9 +713,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -1758,65 +1756,49 @@ binary_sensor:
     entity_id: light.kitchen_floods
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_kitchen_island
     entity_id: light.kitchen_island
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_island.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_island.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_living_room
     entity_id: light.living_room
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_living_room.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_living_room.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_dining_room
     entity_id: light.dining_room
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_dining_room.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_dining_room.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_bedroom
     entity_id: light.bedroom
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_office
     entity_id: light.office
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_office.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_office.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_deck
     entity_id: light.deck
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_deck.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_deck.set(x); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_garage
     entity_id: light.garage
     trigger_on_initial_state: true
     on_state:
-      - lambda: !lambda "espcompose::sig_ha_light_garage.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_garage.set(x); espcompose::flush();"
 sensor:
   - platform: homeassistant
     id: ha_light_kitchen_floods_attr_brightness
@@ -1824,127 +1806,105 @@ sensor:
     attribute: brightness
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_attr_brightness.set(x);
-          if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_kitchen_island_attr_brightness
     entity_id: light.kitchen_island
     attribute: brightness
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_island_attr_brightness.set(x);
-          if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_living_room_attr_brightness
     entity_id: light.living_room
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_living_room_attr_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_living_room_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_dining_room_attr_brightness
     entity_id: light.dining_room
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_dining_room_attr_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_dining_room_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_bedroom_attr_brightness
     entity_id: light.bedroom
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_attr_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_office_attr_brightness
     entity_id: light.office
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_deck_attr_brightness
     entity_id: light.deck
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_deck_attr_brightness.set(x); if (auto
-          rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_deck_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_garage_attr_brightness
     entity_id: light.garage
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_garage_attr_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_garage_attr_brightness.set(x);
+          espcompose::flush();"
 text_sensor:
   - platform: homeassistant
     id: ha_light_kitchen_floods_facet_state_text
     entity_id: light.kitchen_floods
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_facet_state_text.set(x\\
-          ); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          ); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_kitchen_island_facet_state_text
     entity_id: light.kitchen_island
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_island_facet_state_text.set(x\\
-          ); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          ); espcompose::flush();"
   - platform: homeassistant
     id: ha_light_living_room_facet_state_text
     entity_id: light.living_room
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_living_room_facet_state_text.set(x);
-          if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_dining_room_facet_state_text
     entity_id: light.dining_room
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_dining_room_facet_state_text.set(x);
-          if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_bedroom_facet_state_text
     entity_id: light.bedroom
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_bedroom_facet_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_bedroom_facet_state_text.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_office_facet_state_text
     entity_id: light.office
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_deck_facet_state_text
     entity_id: light.deck
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_deck_facet_state_text.set(x); if (auto
-          rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_deck_facet_state_text.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_light_garage_facet_state_text
     entity_id: light.garage
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_garage_facet_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_garage_facet_state_text.set(x);
+          espcompose::flush();"
 external_components:
   - source:
       type: local
@@ -1991,9 +1951,7 @@ script:
           espcompose::lvgl_vis_show_espcompose_script_render_wireframe_anon_19_\\
           _0_closures[closure_index]; (void)closure;
           espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__0\\
-          _mux.set(closure.__ctrl_instance_index); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }
+          _mux.set(closure.__ctrl_instance_index); espcompose::flush();
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
           19__0), LV_OBJ_FLAG_HIDDEN);
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\

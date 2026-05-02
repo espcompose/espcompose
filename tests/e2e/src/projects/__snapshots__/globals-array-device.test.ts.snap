@@ -56,9 +56,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -409,27 +407,21 @@ binary_sensor:
     name: Push Button
     on_press:
       - lambda: !lambda "espcompose::sig_global_g_4b763005.get_mut().push_back(100);
-          espcompose::sig_global_g_4b763005.notify(); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::sig_global_g_4b763005.notify(); espcompose::flush();"
       - logger.log: Pushed 100
   - platform: gpio
     pin: 15
     name: Set Button
     on_press:
       - lambda: !lambda "espcompose::sig_global_g_4b763005.get_mut()[0] = 42;
-          espcompose::sig_global_g_4b763005.notify(); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::sig_global_g_4b763005.notify(); espcompose::flush();"
       - logger.log: Set index 0 to 42
   - platform: gpio
     pin: 16
     name: Clear Button
     on_press:
       - lambda: !lambda "espcompose::sig_global_g_4b763005.get_mut().clear();
-          espcompose::sig_global_g_4b763005.notify(); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::sig_global_g_4b763005.notify(); espcompose::flush();"
       - logger.log: Cleared array
 lvgl:
   id: r_ref1

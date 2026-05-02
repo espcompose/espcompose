@@ -3,11 +3,10 @@ import { generateBindingsHeader, generateSignalSetLambda, getRuntimeHeaderConten
 import { injectReactiveBindingsRuntime } from './reactive-config.js';
 
 describe('runtime component codegen', () => {
-  it('generates callback lambdas that request flush via static instance getter', () => {
+  it('generates callback lambdas that request flush via free function', () => {
     const lambda = generateSignalSetLambda('sig_ha_sensor_temp');
 
-    expect(lambda).toContain('EspcomposeRuntimeComponent::get_instance()');
-    expect(lambda).toContain('rt->request_flush()');
+    expect(lambda).toContain('espcompose::flush()');
     expect(lambda).not.toContain('Scheduler::instance().flush()');
   });
 
@@ -31,7 +30,7 @@ describe('runtime component codegen', () => {
     // Bindings header wires graph via bootstrap and uses static getter
     expect(header).toContain('void bootstrap_runtime()');
     expect(header).toContain('EspcomposeRuntimeComponent::get_instance()');
-    expect(header).toContain('rt->request_flush()');
+    expect(header).toContain('espcompose::flush()');
     expect(header).toContain('#include "esphome/components/espcompose/espcompose_runtime.h"');
     expect(header).not.toContain('void runtime_loop()');
   });

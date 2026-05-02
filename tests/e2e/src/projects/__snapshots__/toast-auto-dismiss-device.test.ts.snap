@@ -95,7 +95,7 @@ Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
 void select_theme_333e4663(const char* name) {
   if (strcmp(name, "dark") == 0) { theme_index_333e4663.set(0); }
   else if (strcmp(name, "light") == 0) { theme_index_333e4663.set(1); }
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
+  espcompose::flush();
 }
 
 // ── Script closure tables ──
@@ -399,9 +399,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -1044,9 +1042,7 @@ script:
           espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__0_cl\\
           osures[closure_index]; (void)closure;
           espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__0\\
-          _mux.set(closure.__ctrl_instance_index); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }
+          _mux.set(closure.__ctrl_instance_index); espcompose::flush();
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
           19__0), LV_OBJ_FLAG_HIDDEN);
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
@@ -1077,9 +1073,7 @@ script:
           espcompose::lvgl_vis_espcompose_script_render_wireframe_anon_19__1_cl\\
           osures[closure_index]; (void)closure;
           espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__1\\
-          _mux.set(closure.__ctrl_instance_index); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }
+          _mux.set(closure.__ctrl_instance_index); espcompose::flush();
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
           19__1), LV_OBJ_FLAG_HIDDEN);
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\
@@ -1109,9 +1103,7 @@ script:
           espcompose::lvgl_vis_show_espcompose_script_render_wireframe_anon_19_\\
           _2_closures[closure_index]; (void)closure;
           espcompose::sig_overlay_espcompose_script_render_wireframe_anon_19__2\\
-          _mux.set(closure.__ctrl_instance_index); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }
+          _mux.set(closure.__ctrl_instance_index); espcompose::flush();
           lv_obj_clear_flag(id(overlay_espcompose_script_render_wireframe_anon_\\
           19__2), LV_OBJ_FLAG_HIDDEN);
           lv_obj_move_foreground(id(overlay_espcompose_script_render_wireframe_\\

@@ -333,7 +333,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         const cond = i === 0 ? 'if' : 'else if';
         lines.push(`  ${cond} (strcmp(name, "${sc.themeNames[i]}") == 0) { ${indexName}.set(${i}); }`);
       }
-      lines.push('  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }');
+      lines.push('  espcompose::flush();');
       lines.push('}');
       lines.push('');
     }
@@ -575,9 +575,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('  });');
   lines.push('');
 
-  lines.push('  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {');
-  lines.push('    rt->request_flush();  // Initial flush to process dirty nodes marked during setup');
-  lines.push('  }');
+  lines.push('  espcompose::flush();  // Initial flush to process dirty nodes marked during setup');
   lines.push('}');
 
   lines.push('');
@@ -751,7 +749,7 @@ export function generateSignalSetLambda(
 ): string {
   return [
     `espcompose::${signalName}.set(${triggerVar});`,
-    `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`,
+    `espcompose::flush();`,
   ].join(' ');
 }
 /**

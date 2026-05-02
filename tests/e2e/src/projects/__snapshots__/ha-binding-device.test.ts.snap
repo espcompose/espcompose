@@ -56,9 +56,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -441,9 +439,7 @@ binary_sensor:
   entity_id: light.kitchen_floods
   trigger_on_initial_state: true
   on_state:
-    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); espcompose::flush();"
 sensor:
   - platform: homeassistant
     id: ha_light_kitchen_floods_attr_brightness
@@ -451,33 +447,26 @@ sensor:
     attribute: brightness
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_attr_brightness.set(x);
-          if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_sensor_living_room_temperature
     entity_id: sensor.living_room_temperature
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x);
+          espcompose::flush();"
 text_sensor:
   - platform: homeassistant
     id: ha_light_kitchen_floods_facet_state_text
     entity_id: light.kitchen_floods
     on_value:
       - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_facet_state_text.set(x\\
-          ); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          ); espcompose::flush();"
   - platform: homeassistant
     id: ha_sensor_living_room_temperature_facet_state_text
     entity_id: sensor.living_room_temperature
     on_value:
       - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature_facet_state_\\
-          text.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+          text.set(x); espcompose::flush();"
 external_components:
   - source:
       type: local

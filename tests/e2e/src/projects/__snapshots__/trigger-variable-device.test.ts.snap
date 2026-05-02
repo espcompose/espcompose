@@ -73,9 +73,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -464,26 +462,22 @@ binary_sensor:
   entity_id: light.office
   trigger_on_initial_state: true
   on_state:
-    - lambda: !lambda "espcompose::sig_ha_light_office.set(x); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_office.set(x); espcompose::flush();"
 sensor:
   platform: homeassistant
   id: ha_light_office_attr_brightness
   entity_id: light.office
   attribute: brightness
   on_value:
-    - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x); if
-        (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_office_attr_brightness.set(x);
+        espcompose::flush();"
 text_sensor:
   platform: homeassistant
   id: ha_light_office_facet_state_text
   entity_id: light.office
   on_value:
-    - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x); if
-        (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_office_facet_state_text.set(x);
+        espcompose::flush();"
 external_components:
   - source:
       type: local

@@ -58,4 +58,11 @@ class EspcomposeRuntimeComponent : public esphome::Component {
   static EspcomposeRuntimeComponent* instance_;
 };
 
+/// Convenience free function: request a reactive flush if the runtime is available.
+inline void flush() {
+  if (auto* rt = EspcomposeRuntimeComponent::get_instance()) {
+    rt->request_flush();
+  }
+}
+
 }  // namespace espcompose

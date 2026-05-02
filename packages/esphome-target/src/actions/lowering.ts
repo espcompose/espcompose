@@ -484,8 +484,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         // Reactive global — write through BoundSignal (also writes native storage) + flush
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
-          `espcompose::${sigName}.set(${valueStr}); ` +
-          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+          `espcompose::${sigName}.set(${valueStr}); espcompose::flush();`
         )};
       }
       // Non-reactive global — plain globals.set YAML action
@@ -499,8 +498,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut()[${idxStr}] = ${valStr}; ` +
-          `espcompose::${sigName}.notify(); ` +
-          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+          `espcompose::${sigName}.notify(); espcompose::flush();`
         )};
       }
       return { lambda: lambdaMarker(`id(${action.globalId})[${idxStr}] = ${valStr};`) };
@@ -512,8 +510,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut().push_back(${valStr}); ` +
-          `espcompose::${sigName}.notify(); ` +
-          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+          `espcompose::${sigName}.notify(); espcompose::flush();`
         )};
       }
       return { lambda: lambdaMarker(`id(${action.globalId}).push_back(${valStr});`) };
@@ -524,8 +521,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         const sigName = `sig_global_${action.globalId}`;
         return { lambda: lambdaMarker(
           `espcompose::${sigName}.get_mut().clear(); ` +
-          `espcompose::${sigName}.notify(); ` +
-          `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }`
+          `espcompose::${sigName}.notify(); espcompose::flush();`
         )};
       }
       return { lambda: lambdaMarker(`id(${action.globalId}).clear();`) };
@@ -585,8 +581,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         ? String(action.instanceIndex)
         : action.instanceIndex.name;
       return { lambda: lambdaMarker(
-        `espcompose::${muxSig}.set(${indexExpr}); ` +
-        `if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); } ` +
+        `espcompose::${muxSig}.set(${indexExpr}); espcompose::flush(); ` +
         `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
         `lv_obj_move_foreground(id(${overlayId}));`
       )};

@@ -56,9 +56,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -408,9 +406,7 @@ binary_sensor:
   pin: 4
   name: Button
   on_press:
-    - lambda: !lambda "espcompose::sig_global_g_2b7a548a.set(42); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_global_g_2b7a548a.set(42); espcompose::flush();"
     - logger.log: Counter set to 42
 lvgl:
   id: r_ref1

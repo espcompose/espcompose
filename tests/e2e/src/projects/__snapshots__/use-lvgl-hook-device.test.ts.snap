@@ -70,7 +70,7 @@ Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
 void select_theme_333e4663(const char* name) {
   if (strcmp(name, "dark") == 0) { theme_index_333e4663.set(0); }
   else if (strcmp(name, "light") == 0) { theme_index_333e4663.set(1); }
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) { rt->request_flush(); }
+  espcompose::flush();
 }
 
 // ── Memos (derived values) ──
@@ -263,9 +263,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
