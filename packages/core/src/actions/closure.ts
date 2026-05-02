@@ -109,7 +109,7 @@ export const overlayControllerDescriptor: ClosureDescriptor<OverlayControllerInt
   irType: IR_INT,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_instance_index`, irType: IR_INT };
+    return { kind: 'closure_field' as const, name: `${bindingName}_instance_index`, irType: IR_INT };
   },
 
   toClosureValue(v) {
@@ -139,7 +139,7 @@ export const scriptHandleDescriptor: ClosureDescriptor<ScriptHandleLike> = {
   irType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, irType: IR_ID_REF };
+    return { kind: 'closure_field' as const, name: `${bindingName}_idx`, irType: IR_ID_REF };
   },
 
   toClosureValue(v) {
@@ -161,7 +161,7 @@ export const refDescriptor: ClosureDescriptor<{ toString(): string }> = {
   irType: IR_ID_REF,
 
   toClosureField(bindingName) {
-    return { name: `${bindingName}_idx`, irType: IR_ID_REF };
+    return { kind: 'closure_field' as const, name: `${bindingName}_idx`, irType: IR_ID_REF };
   },
 
   toClosureValue(v) {

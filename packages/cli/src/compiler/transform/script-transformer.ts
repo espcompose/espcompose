@@ -198,7 +198,7 @@ function extractScriptUserParams(
     const name = param.name.text;
     const irType = inferParamIRType(param, checker);
     if (irType) {
-      params.push({ name, irType });
+      params.push({ kind: 'script_param_decl', name, irType });
     }
   }
   return params;

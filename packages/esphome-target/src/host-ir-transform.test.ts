@@ -12,9 +12,9 @@ function makeIR(
     esphome: {
       kind: 'esphome_data',
       sections: sections.map(s => ({ kind: 'section' as const, ...s })),
-      haEntities: [],
-      components: [],
-      scripts: [],
+      entityRegistry: { kind: 'entity_registry' as const, entities: [] },
+      componentRegistry: { kind: 'component_registry' as const, components: [] },
+      scriptRegistry: { kind: 'script_registry' as const, scripts: [] },
       lvglTree,
     },
     espcompose: {
@@ -31,6 +31,7 @@ function makeIR(
 
 function makeLvglTree(rotation?: number): IRWidgetTree {
   return {
+    kind: 'widget_tree',
     props: {
       displays: irArray([irRef('r_disp')]),
       ...(rotation != null ? { rotation: irScalar(rotation) } : {}),

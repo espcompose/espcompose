@@ -207,8 +207,10 @@ function resolveEcCanvasWidget(widget: RawIRWidget, ctx: WalkContext): IRWidget 
 
 function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROverlayTier[] {
   return tiers.map(tier => ({
+    kind: 'overlay_tier' as const,
     zOrder: tier.zOrder,
     overlays: tier.overlays.map(overlay => ({
+      kind: 'overlay_container' as const,
       templateKey: overlay.templateKey,
       widgets: overlay.widgets.map(w => resolveWidget(w, ctx)),
     })),
@@ -217,6 +219,7 @@ function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROve
 
 function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRWidgetTree {
   return {
+    kind: 'widget_tree' as const,
     props: resolveWidgetProps(tree.props, ctx),
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
@@ -334,9 +337,18 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
     esphome: {
       kind: 'esphome_data' as const,
       sections,
-      haEntities: input.entities,
-      components: resolvedComponents,
-      scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
+      entityRegistry: {
+        kind: 'entity_registry' as const,
+        entities: input.entities,
+      },
+      componentRegistry: {
+        kind: 'component_registry' as const,
+        components: resolvedComponents,
+      },
+      scriptRegistry: {
+        kind: 'script_registry' as const,
+        scripts: input.scripts.map(s => ({ kind: 'script' as const, ...s })),
+      },
       lvglTree: resolvedLvglTree,
     },
     espcompose: {

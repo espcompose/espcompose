@@ -39,7 +39,7 @@ function makeScriptHandle(id: string) {
 
 describe('classifyBindings', () => {
   it('returns empty shape for empty bindings', () => {
-    expect(classifyBindings({})).toEqual({ fields: [] });
+    expect(classifyBindings({})).toEqual({ kind: 'closure_shape', fields: [] });
   });
 
   it('skips bindings with no matching descriptor', () => {
@@ -51,7 +51,7 @@ describe('classifyBindings', () => {
     const ctrl = makeOverlayCtrl('toast', 0);
     const shape = classifyBindings({ ctrl });
     expect(shape.fields).toEqual([
-      { name: 'ctrl_instance_index', irType: IR_INT },
+      { kind: 'closure_field', name: 'ctrl_instance_index', irType: IR_INT },
     ]);
   });
 
@@ -59,7 +59,7 @@ describe('classifyBindings', () => {
     const h = makeScriptHandle('do_thing');
     const shape = classifyBindings({ act: h });
     expect(shape.fields).toEqual([
-      { name: 'act_idx', irType: IR_ID_REF },
+      { kind: 'closure_field', name: 'act_idx', irType: IR_ID_REF },
     ]);
   });
 
@@ -82,8 +82,8 @@ describe('classifyBindings', () => {
       overlay: makeOverlayCtrl('o', 2),
     });
     expect(shape.fields).toEqual([
-      { name: 'light_idx', irType: IR_ID_REF },
-      { name: 'overlay_instance_index', irType: IR_INT },
+      { kind: 'closure_field', name: 'light_idx', irType: IR_ID_REF },
+      { kind: 'closure_field', name: 'overlay_instance_index', irType: IR_INT },
     ]);
   });
 });
@@ -92,14 +92,15 @@ describe('classifyBindings', () => {
 
 describe('closureShapeSignature', () => {
   it('returns empty string for empty shape', () => {
-    expect(closureShapeSignature({ fields: [] })).toBe('');
+    expect(closureShapeSignature({ kind: 'closure_shape', fields: [] })).toBe('');
   });
 
   it('produces a deterministic signature', () => {
     const shape: ClosureShape = {
+      kind: 'closure_shape',
       fields: [
-        { name: 'a_idx', irType: IR_ID_REF },
-        { name: 'b_instance_index', irType: IR_INT },
+        { kind: 'closure_field', name: 'a_idx', irType: IR_ID_REF },
+        { kind: 'closure_field', name: 'b_instance_index', irType: IR_INT },
       ],
     };
     expect(closureShapeSignature(shape))
@@ -107,22 +108,24 @@ describe('closureShapeSignature', () => {
   });
 
   it('distinguishes shapes that differ only by format qualifier', () => {
-    const a: ClosureShape = { fields: [{ name: 'x', irType: IR_INT }] };
-    const b: ClosureShape = { fields: [{ name: 'x', irType: IR_ID_REF }] };
+    const a: ClosureShape = { kind: 'closure_shape', fields: [{ kind: 'closure_field', name: 'x', irType: IR_INT }] };
+    const b: ClosureShape = { kind: 'closure_shape', fields: [{ kind: 'closure_field', name: 'x', irType: IR_ID_REF }] };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));
   });
 
   it('distinguishes shapes that differ only by field order', () => {
     const a: ClosureShape = {
+      kind: 'closure_shape',
       fields: [
-        { name: 'x', irType: IR_INT },
-        { name: 'y', irType: IR_INT },
+        { kind: 'closure_field', name: 'x', irType: IR_INT },
+        { kind: 'closure_field', name: 'y', irType: IR_INT },
       ],
     };
     const b: ClosureShape = {
+      kind: 'closure_shape',
       fields: [
-        { name: 'y', irType: IR_INT },
-        { name: 'x', irType: IR_INT },
+        { kind: 'closure_field', name: 'y', irType: IR_INT },
+        { kind: 'closure_field', name: 'x', irType: IR_INT },
       ],
     };
     expect(closureShapeSignature(a)).not.toBe(closureShapeSignature(b));
@@ -134,7 +137,7 @@ describe('closureShapeSignature', () => {
 describe('buildClosureRow', () => {
   it('returns an empty row when shape has no fields', () => {
     const ctrl = makeOverlayCtrl('toast', 0);
-    const row = buildClosureRow({ ctrl }, { fields: [] });
+    const row = buildClosureRow({ ctrl }, { kind: 'closure_shape', fields: [] });
     expect(row.values).toEqual({});
   });
 

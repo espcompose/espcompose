@@ -186,6 +186,7 @@ export type {
   IRScriptParamDecl, IRScriptParamRef,
   IRScalarType, IRScalarFormat, IRType,
   ClosureField, ClosureShape, ClosureInstance,
+  IREntityRegistry, IRComponentRegistry, IRScriptRegistry,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
   IRWidget, IRWidgetTree, IROverlayContainer, IROverlayTier,

@@ -8,9 +8,9 @@ function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
     esphome: {
       kind: 'esphome_data',
       sections: sections.map(s => ({ kind: 'section' as const, ...s })),
-      haEntities: [],
-      components: [],
-      scripts: [],
+      entityRegistry: { kind: 'entity_registry' as const, entities: [] },
+      componentRegistry: { kind: 'component_registry' as const, components: [] },
+      scriptRegistry: { kind: 'script_registry' as const, scripts: [] },
     },
     espcompose: {
       kind: 'espcompose_data',

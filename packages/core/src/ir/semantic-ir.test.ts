@@ -343,8 +343,8 @@ describe('buildSemanticIR', () => {
       }],
     });
 
-    expect(ir.esphome.haEntities).toEqual([entity]);
-    expect(ir.esphome.components).toEqual([{
+    expect(ir.esphome.entityRegistry.entities).toEqual([entity]);
+    expect(ir.esphome.componentRegistry.components).toEqual([{
       kind: 'component',
       section: 'image',
       id: 'img_1',
@@ -357,7 +357,7 @@ describe('buildSemanticIR', () => {
         ],
       },
     }]);
-    expect(ir.esphome.scripts).toHaveLength(1);
+    expect(ir.esphome.scriptRegistry.scripts).toHaveLength(1);
     expect(ir.espcompose.themes?.[0].themeNames).toEqual(['light', 'dark']);
   });
 });

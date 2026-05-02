@@ -141,6 +141,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const bodyHash = body.__compiledScript.bodyHash;
     const refBindings = body.__refBindings ?? {};
     const userParams = body.__compiledScript.userParams?.map(p => ({
+      kind: 'script_param_decl' as const,
       name: p.name,
       irType: p.irType,
     }));
@@ -251,7 +252,7 @@ export function classifyBindings(
     // Scalar captures from the compiler take priority — they're plain JS
     // values (number, string, boolean) that have no closure descriptor.
     if (scalarCaptures && name in scalarCaptures) {
-      fields.push({ name, irType: scalarCaptures[name] });
+      fields.push({ kind: 'closure_field', name, irType: scalarCaptures[name] });
       continue;
     }
 
@@ -260,7 +261,7 @@ export function classifyBindings(
     const field = desc.toClosureField(name, value);
     if (field) fields.push(field);
   }
-  return { fields };
+  return { kind: 'closure_shape', fields };
 }
 
 /** @internal exported for tests. Stable signature string for a `ClosureShape`. */
@@ -316,7 +317,7 @@ export function buildClosureRow(
       values[shapeField.name] = cell;
     }
   }
-  return { values };
+  return { kind: 'closure_instance', values };
 }
 
 /** Convert a plain JS value to an IRScalar using the declared value type. */

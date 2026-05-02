@@ -43,13 +43,13 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const { reactive, themes } = ir.espcompose;
 
   // Extract globals from components (section === 'globals')
-  const globalComponents = ir.esphome.components.filter(c => c.section === 'globals');
+  const globalComponents = ir.esphome.componentRegistry.components.filter(c => c.section === 'globals');
 
   // Process overlay definitions to build mux signals and muxed bindings.
   // This must happen before buildRuntimeConfig so the muxed bindings and
   // additional reactive nodes are included in the reactive pipeline.
   const overlayMux = overlays && overlays.length > 0
-    ? processOverlayMux(overlays, (remappedEntities ?? ir.esphome.haEntities).length)
+    ? processOverlayMux(overlays, (remappedEntities ?? ir.esphome.entityRegistry.entities).length)
     : null;
 
   // Merge overlay-sourced data into the reactive pipeline
@@ -66,7 +66,7 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
 
   // Check for scripts with closure tables — these need C++ struct/array
   // declarations even when there's no reactive content.
-  const closureTablesBlock = generateAllClosureTables(ir.esphome.scripts as IRScript[]);
+  const closureTablesBlock = generateAllClosureTables(ir.esphome.scriptRegistry.scripts as IRScript[]);
   const hasClosureTables = closureTablesBlock.length > 0;
 
   if (!hasReactiveContent && !hasClosureTables) return null;
@@ -97,7 +97,7 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const runtimeConfig = buildRuntimeConfig(
     allReactiveNodes,
     allBindings,
-    remappedEntities ?? ir.esphome.haEntities,
+    remappedEntities ?? ir.esphome.entityRegistry.entities,
     themes,
     [],
     globalComponents,

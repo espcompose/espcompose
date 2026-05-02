@@ -65,6 +65,7 @@ export interface IRType {
 
 /** A single parameter declaration for a parameterized ESPHome script. */
 export interface IRScriptParamDecl {
+  readonly kind: 'script_param_decl';
   /** Parameter name (used as identifier in the script body). */
   name: string;
   /** Target-agnostic type descriptor. The lowering target maps this to a concrete type. */
@@ -82,6 +83,7 @@ export interface IRScriptParamDecl {
  * values populate rows in the same order.
  */
 export interface ClosureField {
+  readonly kind: 'closure_field';
   /** Struct field name (also referenced in body as `closure.<name>`). */
   name: string;
   /**
@@ -98,12 +100,14 @@ export interface ClosureField {
 
 /** The deterministic, ordered shape of a script's closure table. */
 export interface ClosureShape {
+  readonly kind: 'closure_shape';
   /** Ordered list of fields; order is part of the template's identity. */
   fields: ClosureField[];
 }
 
 /** One row of the closure table: concrete values for every field in the shape. */
 export interface ClosureInstance {
+  readonly kind: 'closure_instance';
   /** Field-name → value map. Keys MUST match the script's `closureShape.fields[].name`. */
   values: Record<string, IRScalar>;
 }
@@ -172,6 +176,28 @@ export interface IRComponent {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Registry wrapper nodes — typed containers for side-channel collections
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Registry of HA entities discovered during the render pass. */
+export interface IREntityRegistry {
+  readonly kind: 'entity_registry';
+  entities: IRHAEntity[];
+}
+
+/** Registry of component definitions (images, fonts, globals) from hooks. */
+export interface IRComponentRegistry {
+  readonly kind: 'component_registry';
+  components: IRComponent[];
+}
+
+/** Registry of script definitions from useScript(). */
+export interface IRScriptRegistry {
+  readonly kind: 'script_registry';
+  scripts: IRScript[];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Semantic IR root
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -185,13 +211,13 @@ export interface IRESPHomeData {
   sections: IRSection[];
 
   /** HA entities for auto-generated sensor imports */
-  haEntities: IRHAEntity[];
+  entityRegistry: IREntityRegistry;
 
   /** Component definitions (images, fonts) with resolved configs */
-  components: IRComponent[];
+  componentRegistry: IRComponentRegistry;
 
   /** Named script definitions from useScript() */
-  scripts: IRScript[];
+  scriptRegistry: IRScriptRegistry;
 
   /** LVGL widget tree produced during render (undefined when no `<lvgl>` present). */
   lvglTree?: IRWidgetTree;

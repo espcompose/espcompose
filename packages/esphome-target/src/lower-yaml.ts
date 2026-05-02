@@ -366,7 +366,7 @@ export function lowerToYamlConfig(
   // this function is called. We only need remapped entities for injection.
   // Widget-tree reactive nodes still carry semantic IDs — entityIdRemap
   // resolves them lazily during lambda generation.
-  const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.haEntities);
+  const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.entityRegistry.entities);
 
   // Build a CppLoweringContext for initial value lambda generation
   let cppCtx: CppLoweringContext | undefined;
@@ -503,8 +503,8 @@ export function lowerToYamlConfig(
     finalConfig = injectHASensorImports(loweredConfig, remappedEntities);
   }
 
-  if (ir.esphome.components.length > 0) {
-    for (const comp of ir.esphome.components) {
+  if (ir.esphome.componentRegistry.components.length > 0) {
+    for (const comp of ir.esphome.componentRegistry.components) {
       const section = comp.section;
       if (!finalConfig[section]) {
         finalConfig[section] = [];
@@ -526,8 +526,8 @@ export function lowerToYamlConfig(
     }
   }
 
-  if (ir.esphome.scripts.length > 0) {
-    finalConfig['script'] = ir.esphome.scripts.map((s) => {
+  if (ir.esphome.scriptRegistry.scripts.length > 0) {
+    finalConfig['script'] = ir.esphome.scriptRegistry.scripts.map((s) => {
       const params: Record<string, string> = {};
       // closure_index ALWAYS comes first when this script has a closure shape.
       if (s.closureShape && s.closureShape.fields.length > 0) {

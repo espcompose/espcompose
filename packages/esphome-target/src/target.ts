@@ -27,7 +27,7 @@ export function createEsphomeTarget(): ComposeTarget {
     // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
     // Core mints deterministic semantic IDs during render; we remap them
     // here so all downstream code sees target-specific IDs.
-    const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.haEntities);
+    const { semanticToTarget, remappedEntities } = buildEntityIdMap(ir.esphome.entityRegistry.entities);
     remapEntityIdsInIR(ir, semanticToTarget);
 
     // ── Generate C++ headers from semantic IR ───────────────────────────

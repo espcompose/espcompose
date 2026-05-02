@@ -36,6 +36,7 @@ export interface IRWidget {
  * tracked separately on the overlay definition for the codegen mux pass.
  */
 export interface IROverlayContainer {
+  readonly kind: 'overlay_container';
   /** Stable template key for the overlay definition. */
   readonly templateKey: string;
   /** Instance-0 widgets to render inside the overlay container. */
@@ -47,6 +48,7 @@ export interface IROverlayContainer {
  * The target lowers each tier to its native overlay container shape.
  */
 export interface IROverlayTier {
+  readonly kind: 'overlay_tier';
   /** Ascending z-order. */
   readonly zOrder: number;
   /** Overlay containers at this tier. */
@@ -59,6 +61,7 @@ export interface IROverlayTier {
  * semantics (router targets) even though they share the widget shape.
  */
 export interface IRWidgetTree {
+  readonly kind: 'widget_tree';
   /** Top-level lvgl section props (camelCase) — all values are typed `IRValue` nodes. */
   readonly props: Record<string, IRValue>;
   /** `<lvgl-page>` subtrees. */

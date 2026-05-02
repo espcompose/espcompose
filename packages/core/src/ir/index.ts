@@ -29,6 +29,9 @@ export type {
   ClosureField,
   ClosureShape,
   ClosureInstance,
+  IREntityRegistry,
+  IRComponentRegistry,
+  IRScriptRegistry,
 } from './types';
 
 export {

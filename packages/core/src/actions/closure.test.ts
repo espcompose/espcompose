@@ -114,7 +114,7 @@ describe('ClosureDescriptor — canonical protocol (toClosureField/toClosureValu
     const ctrl = makeOverlayCtrl('toast_abc', 7);
     expect(overlayControllerDescriptor.irType).toEqual(IR_INT);
     const field = overlayControllerDescriptor.toClosureField?.('myCtrl', ctrl);
-    expect(field).toEqual({ name: 'myCtrl_instance_index', irType: IR_INT });
+    expect(field).toEqual({ kind: 'closure_field', name: 'myCtrl_instance_index', irType: IR_INT });
     expect(overlayControllerDescriptor.toClosureValue?.(ctrl))
       .toEqual({ kind: 'scalar', value: 7 });
   });
@@ -123,7 +123,7 @@ describe('ClosureDescriptor — canonical protocol (toClosureField/toClosureValu
     const handle = makeScriptHandle('activate');
     expect(scriptHandleDescriptor.irType).toEqual(IR_ID_REF);
     const field = scriptHandleDescriptor.toClosureField?.('act', handle);
-    expect(field).toEqual({ name: 'act_idx', irType: IR_ID_REF });
+    expect(field).toEqual({ kind: 'closure_field', name: 'act_idx', irType: IR_ID_REF });
     expect(scriptHandleDescriptor.toClosureValue?.(handle))
       .toEqual({ kind: 'scalar', value: 'activate' });
   });

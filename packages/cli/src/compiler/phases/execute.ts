@@ -95,7 +95,7 @@ export function executePhase(ctx: PhaseContext): void {
         themes,
         lvglTrees,
       })
-    : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
+    : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], entityRegistry: { kind: 'entity_registry' as const, entities: [] }, componentRegistry: { kind: 'component_registry' as const, components: [] }, scriptRegistry: { kind: 'script_registry' as const, scripts: [] } }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };
