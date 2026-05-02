@@ -1,9 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import type { SemanticIR, IRValue } from '@espcompose/core/internals';
+import type { SemanticIR, IRValue, IRWidgetTree } from '@espcompose/core/internals';
 import { irScalar, irObject, irEntry, irArray, irRef } from '@espcompose/core/internals';
 import { transformIRForHost } from './host-ir-transform.js';
 
-function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
+function makeIR(
+  sections: Array<{ key: string; value: IRValue }>,
+  lvglTree?: IRWidgetTree,
+): SemanticIR {
   return {
     kind: 'semantic_ir',
     esphome: {
@@ -12,6 +15,7 @@ function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
       haEntities: [],
       components: [],
       scripts: [],
+      lvglTree,
     },
     espcompose: {
       kind: 'espcompose_data',
@@ -22,6 +26,18 @@ function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
         effects: [],
       },
     },
+  };
+}
+
+function makeLvglTree(rotation?: number): IRWidgetTree {
+  return {
+    props: {
+      displays: irArray([irRef('r_disp')]),
+      ...(rotation != null ? { rotation: irScalar(rotation) } : {}),
+    },
+    pages: [],
+    widgets: [],
+    overlayTiers: [],
   };
 }
 
@@ -116,26 +132,22 @@ describe('transformIRForHost', () => {
     expect(idEntry?.value).toEqual(irRef('r_display123'));
   });
 
-  it('swaps dimensions for 270° LVGL rotation and omits rotation from output', () => {
-    const ir = makeIR([
-      {
-        key: 'display',
-        value: irObject([
-          irEntry('platform', irScalar('ili9xxx')),
-          irEntry('model', irScalar('ILI9341')),
-          irEntry('updateInterval', irScalar('1s')),
-          irEntry('csPin', irScalar(5)),
-          irEntry('dcPin', irScalar(27)),
-        ]),
-      },
-      {
-        key: 'lvgl',
-        value: irObject([
-          irEntry('displays', irArray([irRef('r_disp')])),
-          irEntry('rotation', irScalar(270)),
-        ]),
-      },
-    ]);
+  it('swaps dimensions for 270° LVGL rotation and strips rotation from lvglTree', () => {
+    const ir = makeIR(
+      [
+        {
+          key: 'display',
+          value: irObject([
+            irEntry('platform', irScalar('ili9xxx')),
+            irEntry('model', irScalar('ILI9341')),
+            irEntry('updateInterval', irScalar('1s')),
+            irEntry('csPin', irScalar(5)),
+            irEntry('dcPin', irScalar(27)),
+          ]),
+        },
+      ],
+      makeLvglTree(270),
+    );
 
     const result = transformIRForHost(ir);
     const display = result.esphome.sections.find(s => s.key === 'display')!;
@@ -150,33 +162,28 @@ describe('transformIRForHost', () => {
     // Hardware-specific pin entries should NOT be carried over
     expect(obj.entries.find(e => e.key === 'csPin')).toBeUndefined();
     expect(obj.entries.find(e => e.key === 'dcPin')).toBeUndefined();
-    // LVGL rotation stripped from output (baked into SDL dimensions)
-    const lvgl = result.esphome.sections.find(s => s.key === 'lvgl')!;
-    const lvglObj = lvgl.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
-    expect(lvglObj.entries.find(e => e.key === 'rotation')).toBeUndefined();
-    expect(lvglObj.entries.find(e => e.key === 'displays')).toBeDefined();
+    // rotation stripped from lvglTree (baked into SDL dimensions)
+    expect(result.esphome.lvglTree?.props.rotation).toBeUndefined();
+    // other lvglTree props preserved
+    expect(result.esphome.lvglTree?.props.displays).toBeDefined();
   });
 
   it('swaps dimensions for 90° LVGL rotation', () => {
-    const ir = makeIR([
-      {
-        key: 'display',
-        value: irObject([
-          irEntry('platform', irScalar('ili9xxx')),
-          irEntry('dimensions', irObject([
-            irEntry('width', irScalar(800)),
-            irEntry('height', irScalar(1280)),
-          ])),
-        ]),
-      },
-      {
-        key: 'lvgl',
-        value: irObject([
-          irEntry('displays', irArray([irRef('r_disp')])),
-          irEntry('rotation', irScalar(90)),
-        ]),
-      },
-    ]);
+    const ir = makeIR(
+      [
+        {
+          key: 'display',
+          value: irObject([
+            irEntry('platform', irScalar('ili9xxx')),
+            irEntry('dimensions', irObject([
+              irEntry('width', irScalar(800)),
+              irEntry('height', irScalar(1280)),
+            ])),
+          ]),
+        },
+      ],
+      makeLvglTree(90),
+    );
 
     const result = transformIRForHost(ir);
     const display = result.esphome.sections.find(s => s.key === 'display')!;
@@ -188,25 +195,21 @@ describe('transformIRForHost', () => {
   });
 
   it('does not swap dimensions for 0° or 180° LVGL rotation', () => {
-    const ir = makeIR([
-      {
-        key: 'display',
-        value: irObject([
-          irEntry('platform', irScalar('ili9xxx')),
-          irEntry('dimensions', irObject([
-            irEntry('width', irScalar(800)),
-            irEntry('height', irScalar(1280)),
-          ])),
-        ]),
-      },
-      {
-        key: 'lvgl',
-        value: irObject([
-          irEntry('displays', irArray([irRef('r_disp')])),
-          irEntry('rotation', irScalar(180)),
-        ]),
-      },
-    ]);
+    const ir = makeIR(
+      [
+        {
+          key: 'display',
+          value: irObject([
+            irEntry('platform', irScalar('ili9xxx')),
+            irEntry('dimensions', irObject([
+              irEntry('width', irScalar(800)),
+              irEntry('height', irScalar(1280)),
+            ])),
+          ]),
+        },
+      ],
+      makeLvglTree(180),
+    );
 
     const result = transformIRForHost(ir);
     const display = result.esphome.sections.find(s => s.key === 'display')!;
@@ -311,22 +314,20 @@ describe('transformIRForHost', () => {
     expect(keys).toEqual(['host', 'esphome', 'api']);
   });
 
-  it('preserves LVGL section unchanged when it has no rotation', () => {
-    const lvglValue = irObject([
-      irEntry('displays', irArray([irRef('r_disp')])),
-      irEntry('pages', irArray([])),
-    ]);
-    const ir = makeIR([
-      { key: 'esphome', value: irObject([irEntry('name', irScalar('test'))]) },
-      { key: 'api', value: irObject([]) },
-      { key: 'logger', value: irObject([irEntry('level', irScalar('DEBUG'))]) },
-      { key: 'lvgl', value: lvglValue },
-    ]);
+  it('leaves lvglTree unchanged when it has no rotation', () => {
+    const tree = makeLvglTree();
+    const ir = makeIR(
+      [
+        { key: 'esphome', value: irObject([irEntry('name', irScalar('test'))]) },
+        { key: 'api', value: irObject([]) },
+      ],
+      tree,
+    );
 
     const result = transformIRForHost(ir);
-    const lvgl = result.esphome.sections.find(s => s.key === 'lvgl')!;
-    // Same reference since no rotation entry was stripped
-    expect(lvgl.value).toBe(lvglValue);
+    // Tree is rebuilt (props spread) but rotation remains absent
+    expect(result.esphome.lvglTree?.props.rotation).toBeUndefined();
+    expect(result.esphome.lvglTree?.props.displays).toBeDefined();
   });
 
   it('injects host section even when no device platform exists', () => {
@@ -483,26 +484,22 @@ describe('transformIRForHost', () => {
     expect(logger.value).toBe(loggerValue);
   });
 
-  it('reads rotation from lvgl section when display has none', () => {
-    const ir = makeIR([
-      {
-        key: 'display',
-        value: irObject([
-          irEntry('platform', irScalar('mipi_dsi')),
-          irEntry('dimensions', irObject([
-            irEntry('width', irScalar(800)),
-            irEntry('height', irScalar(1280)),
-          ])),
-        ]),
-      },
-      {
-        key: 'lvgl',
-        value: irObject([
-          irEntry('displays', irArray([irRef('r_disp')])),
-          irEntry('rotation', irScalar(270)),
-        ]),
-      },
-    ]);
+  it('infers rotation from lvglTree even when display dimensions are explicit', () => {
+    const ir = makeIR(
+      [
+        {
+          key: 'display',
+          value: irObject([
+            irEntry('platform', irScalar('mipi_dsi')),
+            irEntry('dimensions', irObject([
+              irEntry('width', irScalar(800)),
+              irEntry('height', irScalar(1280)),
+            ])),
+          ]),
+        },
+      ],
+      makeLvglTree(270),
+    );
 
     const result = transformIRForHost(ir);
     const display = result.esphome.sections.find(s => s.key === 'display')!;
@@ -512,34 +509,5 @@ describe('transformIRForHost', () => {
     // 270° swaps 800×1280 → 1280×800
     expect(dimsObj.entries.find(e => e.key === 'width')?.value).toEqual(irScalar(1280));
     expect(dimsObj.entries.find(e => e.key === 'height')?.value).toEqual(irScalar(800));
-  });
-
-  it('ignores display-level rotation, uses only LVGL rotation', () => {
-    const ir = makeIR([
-      {
-        key: 'display',
-        value: irObject([
-          irEntry('platform', irScalar('ili9xxx')),
-          irEntry('model', irScalar('ILI9341')),
-          irEntry('rotation', irScalar(270)),
-        ]),
-      },
-      {
-        key: 'lvgl',
-        value: irObject([
-          irEntry('displays', irArray([irRef('r_disp')])),
-          irEntry('rotation', irScalar(0)),
-        ]),
-      },
-    ]);
-
-    const result = transformIRForHost(ir);
-    const display = result.esphome.sections.find(s => s.key === 'display')!;
-    const obj = display.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
-    const dims = obj.entries.find(e => e.key === 'dimensions');
-    const dimsObj = dims!.value as { kind: 'object'; entries: Array<{ key: string; value: IRValue }> };
-    // LVGL rotation is 0 — no swap. Display rotation (270) is ignored.
-    expect(dimsObj.entries.find(e => e.key === 'width')?.value).toEqual(irScalar(320));
-    expect(dimsObj.entries.find(e => e.key === 'height')?.value).toEqual(irScalar(240));
   });
 });

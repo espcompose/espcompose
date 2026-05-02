@@ -11,6 +11,7 @@ import type { SemanticIR, IRSection, IRObject, IREntry, IRValue } from '@espcomp
 import type { IRWidgetTree } from '@espcompose/core/internals';
 import { irSection, irScalar, irObject, irEntry } from '@espcompose/core/internals';
 
+
 export interface HostTransformOptions {
   /** Override SDL display width. */
   width?: number;
@@ -45,7 +46,6 @@ const HOST_ALLOWED_SECTIONS = new Set([
   // UI
   'display',       // replaced with SDL
   'touchscreen',   // replaced with SDL
-  'lvgl',
   'font',
   'image',
   'animation',
@@ -138,20 +138,11 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
  * ESPHome 2026.4+ requires rotation in the LVGL config (not the display)
  * when LVGL is active.
  */
-function findLvglRotation(lvglTree?: IRWidgetTree, sections?: readonly IRSection[]): number | undefined {
-  // Prefer typed widget tree
-  if (lvglTree) {
-    const rotation = lvglTree.props.rotation;
-    return typeof rotation === 'number' ? rotation : undefined;
-  }
-  // Fallback: generic sections (backward compat)
-  if (sections) {
-    const lvglSection = sections.find(s => s.key === 'lvgl');
-    if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
-    const rotEntry = findEntry(lvglSection.value, 'rotation');
-    if (!rotEntry) return undefined;
-    const val = getScalarValue(rotEntry.value);
-    return typeof val === 'number' ? val : undefined;
+function findLvglRotation(lvglTree?: IRWidgetTree): number | undefined {
+  if (!lvglTree) return undefined;
+  const rotation = lvglTree.props.rotation;
+  if (rotation && rotation.kind === 'scalar' && typeof rotation.value === 'number') {
+    return rotation.value;
   }
   return undefined;
 }
@@ -307,19 +298,6 @@ function stripLoggerHardwareEntries(value: IRValue): IRValue {
 }
 
 /**
- * Strip the `rotation` entry from the LVGL section.
- * ESPHome 2026.4+ handles rotation in LVGL, but for SDL host mode we bake
- * the rotation into the SDL window dimensions. Keeping `rotation` in the
- * LVGL config would cause a double-rotation.
- */
-function stripLvglRotation(value: IRValue): IRValue {
-  if (value.kind !== 'object') return value;
-  const filtered = value.entries.filter(e => e.key !== 'rotation');
-  if (filtered.length === value.entries.length) return value;
-  return irObject(filtered);
-}
-
-/**
  * Strip `rotation` from a typed `IRWidgetTree`, returning a new tree.
  */
 function stripLvglTreeRotation(tree: IRWidgetTree): IRWidgetTree {
@@ -390,7 +368,7 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const lvglRotation = findLvglRotation(ir.esphome.lvglTree, sections);
+      const lvglRotation = findLvglRotation(ir.esphome.lvglTree);
       const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
@@ -413,13 +391,6 @@ export function transformIRForHost(
     // Append "(simulator)" to device name in esphome section
     if (section.key === 'esphome') {
       result.push(irSection('esphome', appendSimulatorSuffix(section.value)));
-      continue;
-    }
-
-    // Strip rotation from LVGL — already baked into SDL dimensions.
-    // (Legacy path: if lvgl was still in sections for backward compat.)
-    if (section.key === 'lvgl') {
-      result.push(irSection('lvgl', stripLvglRotation(section.value)));
       continue;
     }
 
