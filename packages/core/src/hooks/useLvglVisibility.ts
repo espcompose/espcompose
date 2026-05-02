@@ -17,10 +17,10 @@
 //   // vis.show() / vis.hide() in trigger handlers
 //
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
-// `espcompose build --library`). The AST-level script transformer therefore
-// never processes these useScript bodies, so we use `makeSyntheticScript` to
-// inject pre-built IR metadata. Library hooks in packages built with
-// `espcompose build --library` (e.g. @espcompose/ui) can use natural
+// transformed by the ESPCompose CLI). The AST-level script transformer
+// therefore never processes these useScript bodies, so we use
+// `makeSyntheticScript` to inject pre-built IR metadata. Library hooks in
+// packages consumed in source-mode (e.g. @espcompose/ui) can use natural
 // useScript arrow bodies with full scalar-capture support instead.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -93,7 +93,7 @@ interface OverlayControllerInternal {
  * by tsup — not processed by the script transformer. The metadata format
  * matches what the transformer would inject for natural useScript bodies.
  *
- * Library hooks in packages built with `espcompose build --library` do NOT
+ * Library hooks in packages consumed in source-mode do NOT
  * need this — they can use natural `useScript(async () => { ... })` bodies
  * and the scalar-capture system handles non-literal arguments.
  */

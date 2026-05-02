@@ -121,7 +121,6 @@ export { RefHandle } from './types';
 // ── Reactive utilities ─────────────────────────────────────────────────────
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
 export { useReactive, reactiveIsNaN } from './reactive/utils';
-export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './reactive/compiler-plumbing';
 
 // ── Secrets ────────────────────────────────────────────────────────────────
 export { secret, SecretValue, isSecretValue } from './serialize/secret';

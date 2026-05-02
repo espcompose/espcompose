@@ -280,12 +280,13 @@ export function buildRuntimeConfig(
     ).join('\n');
     throw new Error(
       `Found ${uncompiledNodes.length} reactive expression(s) that were not compiled.\n` +
-      `This usually means a component library provides reactive JSX but was not\n` +
-      `built with \`espcompose build --library\`. Uncompiled nodes:\n` +
+      `This usually means a component library provides reactive JSX but was\n` +
+      `imported from a non-source-mode package (the ESPCompose CLI only\n` +
+      `transforms TypeScript/TSX sources resolved via the "espcompose"\n` +
+      `export condition). Uncompiled nodes:\n` +
       `${summary}\n\n` +
-      `If you are the library author, run:\n` +
-      `  espcompose build --library\n` +
-      `to produce a distributable library with pre-compiled reactive expressions.`,
+      `If you are the library author, ensure your package.json exports map\n` +
+      `includes an "espcompose" condition pointing at your TS/TSX sources.`,
     );
   }
 

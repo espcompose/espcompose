@@ -13,7 +13,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { z } from 'zod';
 import { setCurrentHookPath } from '../hooks';
-import { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './compiler-plumbing';
+import { __espcompose } from './compiler-plumbing';
 import { IRReactiveNode, isIRReactiveNode } from './node';
 import { withReactiveScope } from '../hooks';
 import { serializeValue } from '../serialize';
@@ -78,41 +78,6 @@ describe('Library Format Contract (Consumer)', () => {
 
   afterEach(() => {
     setCurrentHookPath(null);
-  });
-
-  describe('validateLibraryFormat()', () => {
-    it('accepts current supported version', () => {
-      for (const v of SUPPORTED_FORMAT_VERSIONS) {
-        expect(() => validateLibraryFormat(v)).not.toThrow();
-      }
-    });
-
-    it('rejects unsupported version number', () => {
-      expect(() => validateLibraryFormat(999)).toThrow(/format v999/);
-    });
-
-    it('rejects undefined (missing marker)', () => {
-      expect(() => validateLibraryFormat(undefined)).toThrow(/not compiled with format versioning/);
-    });
-
-    it('rejects string version', () => {
-      expect(() => validateLibraryFormat('1')).toThrow(/not compiled with format versioning/);
-    });
-
-    it('rejects null', () => {
-      expect(() => validateLibraryFormat(null)).toThrow(/not compiled with format versioning/);
-    });
-
-    it('SUPPORTED_FORMAT_VERSIONS contains at least one version', () => {
-      expect(SUPPORTED_FORMAT_VERSIONS.length).toBeGreaterThan(0);
-    });
-
-    it('all supported versions are positive integers', () => {
-      for (const v of SUPPORTED_FORMAT_VERSIONS) {
-        expect(Number.isInteger(v)).toBe(true);
-        expect(v).toBeGreaterThan(0);
-      }
-    });
   });
 
   describe('__espcompose.compiled() consumes schema-conforming metadata', () => {

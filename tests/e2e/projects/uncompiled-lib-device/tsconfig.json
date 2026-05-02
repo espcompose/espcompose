@@ -1,5 +1,0 @@
-{
-  "extends": "@espcompose/core/tsconfig.sdk.json",
-  "include": ["index.tsx"],
-  "exclude": ["node_modules"]
-}

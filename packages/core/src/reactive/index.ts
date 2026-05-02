@@ -23,4 +23,4 @@ export type {
   ReactivePropertyConfig,
 } from './properties';
 
-export { __espcompose, validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './compiler-plumbing';
+export { __espcompose } from './compiler-plumbing';

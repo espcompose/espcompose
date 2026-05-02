@@ -26,6 +26,5 @@ Run with: `pnpm --filter espcompose-e2e test`
 - **HA Integration**: `ha-binding-device`, `ha-dynamic-device`
 - **Theme & UI**: `design-system-device`, `reactive-theme-device`, `style-device`, `boot-screen-device`
 - **Assets**: `image-font-device`
-- **Libraries**: `library-contract-device`, `uncompiled-lib-device`
 - **Complex**: `dashboard-device`, `fancy-light-cascade-device`
 - **Other**: `project-device`, `device-script-device`, `secret-device`
