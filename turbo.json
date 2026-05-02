@@ -24,6 +24,7 @@
         "src/**", 
         "scripts/**", 
         "templates/**", 
+        "assets/**",
         "../../packages/esphome-target/assets/external-component/**"
       ],
       "outputs": ["dist/**", "assets/**"]
