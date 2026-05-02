@@ -8,19 +8,22 @@
  */
 
 import ts from 'typescript';
-import type { IRActionNode } from '@espcompose/core/internals';
+import type { IRActionNode, IRTimeout } from '@espcompose/core/internals';
 import {
   irDelayAction,
   irWaitUntilAction,
   irScriptExecute,
   irScriptWait,
+  irControllerMethodCall,
+  parseTimeoutString,
 } from '@espcompose/core/internals';
 import type { GlobalDefinition } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
-import type { ActionCompileResult, ActionCompilerContext } from './context.js';
-import { emitError } from './context.js';
-import { resolveScriptCall, extractDurationArg, extractReturnExpr } from './util.js';
-import { isCoreExportCall, isCoreExportTaggedTemplate } from '../type-brands.js';
+import type { ActionCompileResult, ActionCompilerContext, ScriptHandleInfo } from './context.js';
+import { emitError, lookupBySymbol } from './context.js';
+import { extractDurationArgOrParamRef, extractReturnExpr } from './util.js';
+import { compileScriptCallArgs } from './calls/script-args.js';
+import { isCoreExportCall, isCoreExportTaggedTemplate, hasControllerBrand } from '../type-brands.js';
 import { compileConditionExpr, compileIf, compileWhile, compileFor } from './control-flow.js';
 import { compileActionCall } from './calls/router.js';
 import { compileLambdaTaggedTemplate } from './calls/lambda.js';
@@ -36,10 +39,12 @@ export function compileActionBody(
   callback: ts.ArrowFunction | ts.FunctionExpression,
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
-  scriptHandles: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>,
   globalHandles: Map<ts.Symbol, GlobalDefinition>,
   refSymbols: Set<ts.Symbol>,
   filePath: string,
+  /** Names of user-defined script params (excluded from ref resolution). */
+  scriptParamNames?: Set<string>,
 ): ActionCompileResult {
   const ctx: ActionCompilerContext = {
     checker,
@@ -47,12 +52,16 @@ export function compileActionBody(
     scriptHandles,
     globalHandles,
     refSymbols,
+    scriptParamNames: scriptParamNames ?? new Set(),
     triggerParamName: '',
     filePath,
     diagnostics: [],
     triggerVars: new Set(),
     refExpressions: new Set(),
-    popupControllerRefs: new Set(),
+    overlayControllerRefs: new Set(),
+    scriptHandleRefs: new Set(),
+    controllerRefs: new Set(),
+    scalarCaptures: new Map(),
   };
 
   // Extract trigger parameter name
@@ -76,7 +85,10 @@ export function compileActionBody(
     diagnostics: ctx.diagnostics,
     triggerVars: Array.from(ctx.triggerVars),
     refExpressions: ctx.refExpressions,
-    popupControllerRefs: ctx.popupControllerRefs,
+    overlayControllerRefs: ctx.overlayControllerRefs,
+    scriptHandleRefs: ctx.scriptHandleRefs,
+    controllerRefs: ctx.controllerRefs,
+    scalarCaptures: ctx.scalarCaptures,
   };
 }
 
@@ -211,10 +223,10 @@ function compileAwait(
       return emitError(expr, ctx, 'delay() requires a duration argument.');
     }
     const durationArg = inner.arguments[0];
-    const duration = extractDurationArg(durationArg);
+    const duration = extractDurationArgOrParamRef(durationArg, ctx);
     if (duration === null) {
       return emitError(durationArg, ctx,
-        'delay() argument must be a numeric literal (milliseconds) or a string duration (e.g. "1s").');
+        'delay() argument must be a numeric literal (milliseconds), a string duration (e.g. "1s"), or a captured variable.');
     }
     return [irDelayAction(duration)];
   }
@@ -226,9 +238,30 @@ function compileAwait(
 
   // await scriptHandle() — callable script that waits for completion
   if (ts.isCallExpression(inner)) {
-    const scriptId = resolveScriptCall(inner, ctx);
-    if (scriptId) {
-      return [irScriptExecute(scriptId), irScriptWait(scriptId)];
+    const scriptInfo = resolveScriptCallInfo(inner, ctx);
+    if (scriptInfo) {
+      const userArgs = compileScriptCallArgs(inner, scriptInfo.userParams, ctx);
+      if (ts.isIdentifier(inner.expression)) {
+        ctx.scriptHandleRefs.add(inner.expression.text);
+      }
+      return [
+        irScriptExecute(scriptInfo.id, userArgs ? { userArgs } : undefined),
+        irScriptWait(scriptInfo.id),
+      ];
+    }
+
+    // await ctrl.show() — controller method call with await
+    if (ts.isPropertyAccessExpression(inner.expression)) {
+      const objExpr = inner.expression.expression;
+      const objType = ctx.checker.getTypeAtLocation(objExpr);
+      if (hasControllerBrand(objType)) {
+        const methodName = inner.expression.name.text;
+        const controllerRef = objExpr.getText().trim();
+        if (controllerRef) {
+          ctx.controllerRefs.add(controllerRef);
+          return [irControllerMethodCall(controllerRef, methodName)];
+        }
+      }
     }
   }
 
@@ -261,14 +294,19 @@ function compileWaitUntil(
   if (!condition) return null;
 
   // Optional timeout from second argument: { timeout: '10s' }
-  let timeout: string | undefined;
+  let timeout: IRTimeout | undefined;
   if (call.arguments.length >= 2) {
     const optsArg = call.arguments[1];
     if (ts.isObjectLiteralExpression(optsArg)) {
       for (const prop of optsArg.properties) {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name) &&
             prop.name.text === 'timeout' && ts.isStringLiteral(prop.initializer)) {
-          timeout = prop.initializer.text;
+          const parsed = parseTimeoutString(prop.initializer.text);
+          if (!parsed) {
+            return emitError(prop.initializer, ctx,
+              `waitUntil() timeout '${prop.initializer.text}' is not a valid duration (expected e.g. '10s', '500ms', or 'never').`);
+          }
+          timeout = parsed;
         }
       }
     }
@@ -289,4 +327,21 @@ function compileStatementBody(
     return compileStatements(stmt.statements, ctx);
   }
   return compileStatement(stmt, ctx) ?? [];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Script call argument helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Resolve a script call expression to its full ScriptHandleInfo.
+ */
+function resolveScriptCallInfo(
+  call: ts.CallExpression,
+  ctx: ActionCompilerContext,
+): ScriptHandleInfo | null {
+  if (ts.isIdentifier(call.expression)) {
+    return lookupBySymbol(ctx.scriptHandles, call.expression, ctx.checker) ?? null;
+  }
+  return null;
 }

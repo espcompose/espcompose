@@ -9,9 +9,8 @@ export function registerInitCommand(program: Command) {
       'Sets up the SDK, CLI, ESLint plugin, and TypeScript configuration.',
     )
     .option('-b, --board <board>', 'ESP32 board identifier', 'esp32dev')
-    .option('--library', 'Create a component library project instead of a device project')
-    .action(withErrorHandler('Init', async (name: string, opts: { board: string; library?: boolean }) => {
+    .action(withErrorHandler('Init', async (name: string, opts: { board: string }) => {
       const { initProject } = await import('./init');
-      initProject(name, { board: opts.board, library: opts.library });
+      initProject(name, { board: opts.board });
     }));
 }

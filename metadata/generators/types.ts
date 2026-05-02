@@ -2,9 +2,18 @@
 // Shared types for domain metadata generators
 // ────────────────────────────────────────────────────────────────────────────
 
+export type ValueScalarType = 'int' | 'float' | 'bool' | 'string';
+export type ValueScalarFormat = 'id_ref' | 'entity';
+
+export interface IRTypeDescriptor {
+  type: ValueScalarType;
+  format?: ValueScalarFormat;
+  isArray?: boolean;
+}
+
 export interface TriggerVariable {
   name: string;
-  cppType: string;
+  irType: IRTypeDescriptor;
   tsType: string;
 }
 
@@ -14,7 +23,7 @@ export interface TriggerSignature {
 
 export interface PropertyDescriptor {
   name: string;
-  cppPath: string;
+  propertyKey: string;
   triggerType: string;
   exprType: 'bool' | 'float' | 'string';
   sourceDomain: string;
@@ -29,13 +38,14 @@ export interface ActionDescriptor {
 
 export interface DomainDescriptor {
   sensorPlatform: 'binary_sensor' | 'sensor' | 'text_sensor';
-  cppType: string;
+  irType: IRTypeDescriptor;
   defaultState: string;
   activeState: string | null;
   uiCategory: 'toggleable' | 'sensor' | 'binary' | 'cover' | 'button';
   properties: PropertyDescriptor[];
   actions: ActionDescriptor[];
   triggers: Record<string, TriggerSignature>;
+  componentAccess: Record<string, string>;
 }
 
 export type DomainMap = Record<string, DomainDescriptor>;

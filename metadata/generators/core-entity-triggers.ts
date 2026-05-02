@@ -20,7 +20,7 @@ export function generateCoreEntityTriggers(domains: DomainMap, repoRoot: string)
     FILE_HEADER,
     '/* eslint-disable */',
     '',
-    'import type { TriggerSignature } from \'../trigger-registry.js\';',
+    'import type { TriggerSignature } from \'../actions/trigger-registry.js\';',
     '',
     '/**',
     ' * Entity domain trigger entries, generated from metadata/entity-domains.json.',
@@ -39,7 +39,7 @@ export function generateCoreEntityTriggers(domains: DomainMap, repoRoot: string)
         lines.push(`    ${triggerName}: { variables: [] },`);
       } else {
         const vars = sig.variables
-          .map(v => `{ name: ${JSON.stringify(v.name)}, cppType: ${JSON.stringify(v.cppType)}, tsType: ${JSON.stringify(v.tsType)} }`)
+          .map(v => `{ name: ${JSON.stringify(v.name)}, irType: ${JSON.stringify({ kind: 'type', ...v.irType })}, tsType: ${JSON.stringify(v.tsType)} }`)
           .join(', ');
         lines.push(`    ${triggerName}: { variables: [${vars}] },`);
       }

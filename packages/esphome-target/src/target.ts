@@ -11,20 +11,27 @@ import * as path from 'path';
 import yaml from 'yaml';
 import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/internals';
 import { lowerToYamlConfig } from './lower-yaml.js';
-import { generateCppFromIR } from './codegen-cpp.js';
+import { generateCppFromIR } from './codegen';
 import { resolveAssets } from './assets.js';
-import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './ec-canvas-lowering.js';
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './lvgl';
+import { buildEntityIdMap } from './ha-entity-classifier.js';
 
 export function createEsphomeTarget(): ComposeTarget {
   return {
     name: 'esphome',
 
   async emit(request: EmitRequest): Promise<EmitResult> {
-    const { ir, outDir, sourceDir, secrets, popups } = request;
+    const { ir, outDir, sourceDir, secrets, overlays } = request;
     const files: string[] = [];
 
+    // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
+    // Core mints deterministic semantic IDs during render; we remap them
+    // here so all downstream code sees target-specific IDs.
+    const { semanticToTarget, remappedEntities } = buildEntityIdMap([...ir.entities]);
+    remapEntityIdsInIR(ir, semanticToTarget);
+
     // ── Generate C++ headers from semantic IR ───────────────────────────
-    const cppResult = generateCppFromIR(ir, popups);
+    const cppResult = generateCppFromIR(ir, overlays, remappedEntities);
 
     // ── Extract ec-canvas paint scenes for native canvas draw actions ───
     const paintScenes = extractPaintScenesFromIR(ir);
@@ -92,4 +99,51 @@ export function createEsphomeTarget(): ComposeTarget {
     return { files };
   },
   };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Entity ID remapping
+// ────────────────────────────────────────────────────────────────────────────
+
+import type { SemanticIR } from '@espcompose/core/internals';
+
+/**
+ * Mutate the SemanticIR in place: rewrite all `sourceId` fields on reactive
+ * nodes and dependencies from semantic IDs to ESPHome target IDs using the
+ * provided mapping. Also rewrites `IRHAEntity.semanticId` to the target ID
+ * so downstream code can use it as the ESPHome component `id:` field.
+ */
+function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string>): void {
+  if (semanticToTarget.size === 0) return;
+
+  function remap(id: string): string {
+    return semanticToTarget.get(id) ?? id;
+  }
+
+  // Remap reactive nodes (memos + effects)
+  // Cast to mutable — we intentionally mutate IR in-place before codegen
+  const allNodes = [...ir.reactives.memos, ...ir.reactives.effects];
+  for (const node of allNodes) {
+    if (node.sourceId) (node as { sourceId: string }).sourceId = remap(node.sourceId);
+    if (node.dependencies) {
+      for (const dep of node.dependencies) {
+        if (dep.sourceId && dep.sourceType === 'ha_entity') {
+          (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
+        }
+      }
+    }
+  }
+
+  // Remap bindings
+  for (const binding of ir.reactives.bindings) {
+    const expr = binding.expression;
+    if (expr.sourceId) (expr as { sourceId: string }).sourceId = remap(expr.sourceId);
+    if (expr.dependencies) {
+      for (const dep of expr.dependencies) {
+        if (dep.sourceId && dep.sourceType === 'ha_entity') {
+          (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
+        }
+      }
+    }
+  }
 }

@@ -1,17 +1,22 @@
 import * as esbuild from 'esbuild';
-import * as fs from 'fs';
 import * as path from 'path';
-import { LIBRARY_FORMAT_VERSION } from '../transform/format-version.js';
+import { formatDiagnosticPath } from '../resolver/diagnostic-path.js';
 import type { PhaseContext } from './types';
 
 /**
  * Phase 2: Bundle
  *
  * Uses esbuild to bundle the pre-transformed files from the build directory
- * into a single CJS file. Because the sources are real files on disk, esbuild
- * resolves imports normally — no load plugin needed.
+ * into a single CJS file. Both app code and source-mode library code have
+ * already been transformed and written to disk under `<buildDir>/app/` and
+ * `<buildDir>/node_modules/<pkg>/`. The latter layout means bare specifiers
+ * for source-mode libraries resolve naturally via esbuild's normal node
+ * resolution — no resolver plugin needed for the common case.
  *
- * Also validates format versions of any ESPCompose libraries pulled into the bundle.
+ * A guard plugin verifies that any specifier that *should* resolve to a
+ * source-mode library actually loads from `<buildDir>/node_modules/`, not
+ * the real `node_modules/` tree, and fails the build with a clear error
+ * otherwise.
  */
 export async function bundlePhase(ctx: PhaseContext): Promise<void> {
   if (!ctx.transformedEntry) {
@@ -31,69 +36,87 @@ export async function bundlePhase(ctx: PhaseContext): Promise<void> {
     jsx: 'automatic',
     jsxDev: true,
     jsxImportSource: '@espcompose/core',
+    conditions: ['espcompose'],
     // Keep the SDK external — it will be require()'d from the host process
     external: ['@espcompose/core'],
     outfile: bundlePath,
     sourcemap: false,
     metafile: true,
+    plugins: [sourceLibraryGuardPlugin(ctx)],
   });
 
   if (result.errors.length > 0) {
-    const messages = await esbuild.formatMessages(result.errors, { kind: 'error' });
+    // Rewrite build-dir paths to original locations before formatting.
+    const rewritten = result.errors.map((err) => {
+      if (!err.location) return err;
+      return { ...err, location: { ...err.location, file: formatDiagnosticPath(ctx, err.location.file) } };
+    });
+    const messages = await esbuild.formatMessages(rewritten, { kind: 'error' });
     throw new Error(`Bundle failed:\n${messages.join('\n')}`);
-  }
-
-  // Check format versions of any ESPCompose libraries pulled into the bundle.
-  if (result.metafile) {
-    validateBundledLibraryVersions(result.metafile, ctx.transformedEntry);
   }
 }
 
 /**
- * Scan esbuild metafile inputs for ESPCompose library format version markers.
- * Reads each resolved input file (outside the project's own source tree) and
- * checks for `__espcompose_format__` exports. Throws if any are incompatible.
+ * Esbuild plugin: fails the build if a file under a registered source-mode
+ * library is loaded from somewhere other than `<buildDir>/node_modules/`.
+ *
+ * This catches the case where the transform phase didn't see a library file
+ * (e.g. it wasn't in the TypeScript program) and esbuild would silently
+ * load the original from the real `node_modules/` tree — which, for source-
+ * mode libraries that ship only `.ts(x)`, would either fail at parse or
+ * load stale code.
  */
-function validateBundledLibraryVersions(
-  metafile: esbuild.Metafile,
-  entryFile: string,
-): void {
-  const buildDir = path.dirname(path.resolve(entryFile));
+function sourceLibraryGuardPlugin(ctx: PhaseContext): esbuild.Plugin {
+  return {
+    name: 'espcompose-source-library-guard',
+    setup(build) {
+      build.onLoad({ filter: /\.(ts|tsx|js|jsx|mjs|cjs)$/ }, (args) => {
+        const registry = ctx.registry;
+        const buildDirWithSep = ctx.buildDir + path.sep;
+        const buildLibsRoot = path.join(ctx.buildDir, 'node_modules') + path.sep;
 
-  for (const inputPath of Object.keys(metafile.inputs)) {
-    const absPath = path.resolve(inputPath);
+        // Files loaded from inside the build directory are always OK —
+        // they are the transformed copies that the transform phase wrote.
+        if (args.path.startsWith(buildDirWithSep)) return null;
 
-    // Skip the project's own transformed sources
-    if (absPath.startsWith(buildDir)) continue;
-    if (!fs.existsSync(absPath)) continue;
+        // Case 1: the path matches a *registered* source-mode library but
+        // is being loaded from outside the build directory. The transform
+        // phase missed this file or the shim wasn't written.
+        const lib = registry?.matchPath(args.path);
+        if (lib) {
+          return {
+            errors: [{
+              text:
+                `ESPCompose source-mode library "${lib.packageName}" was loaded from ` +
+                `"${args.path}" — expected the transformed copy under ` +
+                `"${buildLibsRoot}${lib.packageName}/". This usually means the transform ` +
+                `phase did not see this file (e.g. it was not in the TypeScript program).`,
+            }],
+          };
+        }
 
-    let content: string;
-    try {
-      content = fs.readFileSync(absPath, 'utf8');
-    } catch {
-      continue;
-    }
+        // Case 2: any .ts/.tsx file loaded from outside the build directory
+        // is suspicious — it bypassed the transform phase entirely. The only
+        // .ts(x) sources we should ever bundle are the ones written into
+        // `<buildDir>/app/` and `<buildDir>/node_modules/<lib>/`. A .ts(x)
+        // load from a real `node_modules/` path means a source-mode library
+        // wasn't registered (e.g. the registry was empty or incomplete) and
+        // would silently bundle untransformed source.
+        if (/\.(ts|tsx)$/.test(args.path) && args.path.includes(`${path.sep}node_modules${path.sep}`)) {
+          return {
+            errors: [{
+              text:
+                `Untransformed TypeScript source loaded during bundling: "${args.path}". ` +
+                `Only .ts/.tsx files transformed into "${buildDirWithSep}" may be bundled. ` +
+                `This typically means a dependency declares an "espcompose" export condition ` +
+                `but was not registered as a source-mode library — check that the project's ` +
+                `package.json lists this dependency and that the registry build saw it.`,
+            }],
+          };
+        }
 
-    // Look for __espcompose_format__ assignments in the source
-    const versionMatch = content.match(
-      /(?:export\s+(?:const|var|let)\s+)?__espcompose_format__\s*=\s*(\d+)/,
-    );
-    if (!versionMatch) continue;
-
-    const version = parseInt(versionMatch[1], 10);
-    if (version !== LIBRARY_FORMAT_VERSION) {
-      const libName = extractLibraryName(inputPath);
-      throw new Error(
-        `Library ${libName} was compiled with ESPCompose format v${version}, ` +
-        `but this compiler requires format v${LIBRARY_FORMAT_VERSION}. ` +
-        `Please rebuild the library with a compatible ESPCompose CLI version.`,
-      );
-    }
-  }
-}
-
-/** Extract a human-readable library name from a node_modules path. */
-function extractLibraryName(inputPath: string): string {
-  const match = inputPath.match(/node_modules\/(@[^/]+\/[^/]+|[^/]+)/);
-  return match ? match[1] : inputPath;
+        return null;
+      });
+    },
+  };
 }

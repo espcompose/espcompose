@@ -37,11 +37,10 @@ pnpm --filter espcompose-e2e test         # Run E2E snapshot tests
 
 | Command | Description |
 |---------|-------------|
-| `espcompose init <name>` | Create a new project (device or library with `--library`) |
+| `espcompose init <name>` | Create a new project |
 | `espcompose transpile [dir]` | TSX → ESPHome YAML (fast, no ESPHome dependency) |
 | `espcompose config [dir] [-- args]` | Transpile + validate via `esphome config` |
 | `espcompose build [dir] [-- args]` | Transpile + compile firmware via `esphome compile` |
-| `espcompose build --library [dir]` | Build a component library (ESM + `.d.ts`) |
 | `espcompose run [dir] [-- args]` | Transpile + compile + upload via `esphome run` (`--host` for local SDL2 preview) |
 | `espcompose logs [dir] [-- args]` | Transpile + open serial monitor |
 

@@ -5,10 +5,10 @@ import {
   irWhileAction,
   irRepeatAction,
   irLambdaCondition,
+  irTypeToExprType,
 } from '@espcompose/core/internals';
 import {
   translateScriptExprIR,
-  cppTypeToExprType,
   type GlobalExprInfo,
   type ScriptTransformContext,
 } from '../expr-compiler.js';
@@ -29,7 +29,7 @@ export function buildScriptCtxWithGlobals(ctx: ActionCompilerContext): ScriptTra
   const globalHandlesByName = new Map<string, GlobalExprInfo>();
   for (const [sym, gDef] of ctx.globalHandles) {
     const name = sym.getName();
-    globalHandlesByName.set(name, { globalId: gDef.id, cppType: gDef.cppType, exprType: cppTypeToExprType(gDef.cppType) });
+    globalHandlesByName.set(name, { globalId: gDef.id, irType: gDef.irType, exprType: irTypeToExprType(gDef.irType) });
   }
   return {
     triggerParamName: ctx.triggerParamName,
@@ -45,7 +45,7 @@ export function buildScriptCtxWithGlobals(ctx: ActionCompilerContext): ScriptTra
 /**
  * Compile a TS boolean expression to an IRCondition.
  *
- * Uses the shared expr-compiler to produce a target-agnostic IRExprNode tree.
+ * Uses the shared expr-compiler to produce a target-agnostic IRExpression tree.
  */
 export function compileConditionExpr(
   expr: ts.Expression,

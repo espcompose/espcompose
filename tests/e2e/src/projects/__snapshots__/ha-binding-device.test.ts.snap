@@ -14,10 +14,10 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_kitchen_floods;
-Signal<float> sig_ha_light_kitchen_floods_brightness;
-Signal<std::string> sig_ha_light_kitchen_floods_state_text;
+Signal<float> sig_ha_light_kitchen_floods_attr_brightness;
+Signal<std::string> sig_ha_light_kitchen_floods_facet_state_text;
 Signal<float> sig_ha_sensor_living_room_temperature;
-Signal<std::string> sig_ha_sensor_living_room_temperature_state_text;
+Signal<std::string> sig_ha_sensor_living_room_temperature_facet_state_text;
 
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
@@ -27,23 +27,23 @@ void bootstrap_runtime() {
     return;
   }
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* sig_ha_light_kitchen_floods_state_text_subs[1];
-  sig_ha_light_kitchen_floods_state_text.set_subscriber_storage(sig_ha_light_kitchen_floods_state_text_subs, 1);
-  static NodeBase* sig_ha_sensor_living_room_temperature_state_text_subs[1];
-  sig_ha_sensor_living_room_temperature_state_text.set_subscriber_storage(sig_ha_sensor_living_room_temperature_state_text_subs, 1);
+  static NodeBase* sig_ha_light_kitchen_floods_facet_state_text_subs[1];
+  sig_ha_light_kitchen_floods_facet_state_text.set_subscriber_storage(sig_ha_light_kitchen_floods_facet_state_text_subs, 1);
+  static NodeBase* sig_ha_sensor_living_room_temperature_facet_state_text_subs[1];
+  sig_ha_sensor_living_room_temperature_facet_state_text.set_subscriber_storage(sig_ha_sensor_living_room_temperature_facet_state_text_subs, 1);
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
-    lv_label_set_text(&id(rw_ref2), sig_ha_light_kitchen_floods_state_text.get().c_str());
+    lv_label_set_text(&id(rw_ref2), sig_ha_light_kitchen_floods_facet_state_text.get().c_str());
   });
 
   static Effect binding_1([]() {
-    lv_label_set_text(&id(rw_ref3), sig_ha_sensor_living_room_temperature_state_text.get().c_str());
+    lv_label_set_text(&id(rw_ref3), sig_ha_sensor_living_room_temperature_facet_state_text.get().c_str());
   });
 
-  static NodeBase* binding_0_sources[] = {&sig_ha_light_kitchen_floods_state_text};
+  static NodeBase* binding_0_sources[] = {&sig_ha_light_kitchen_floods_facet_state_text};
   binding_0.wire(binding_0_sources, 1);
-  static NodeBase* binding_1_sources[] = {&sig_ha_sensor_living_room_temperature_state_text};
+  static NodeBase* binding_1_sources[] = {&sig_ha_sensor_living_room_temperature_facet_state_text};
   binding_1.wire(binding_1_sources, 1);
 
   Scheduler::instance().schedule(&binding_0);
@@ -56,9 +56,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -411,7 +409,7 @@ lvgl:
   pages:
     - widgets:
         - label:
-            text: !lambda "return id(ha_light_kitchen_floods_state_text).state;"
+            text: !lambda "return id(ha_light_kitchen_floods_facet_state_text).state;"
             x: 10
             y: 10
             id: rw_ref2
@@ -430,7 +428,8 @@ lvgl:
                   text: Toggle
                   align: CENTER
         - label:
-            text: !lambda "return id(ha_sensor_living_room_temperature_state_text).state;"
+            text: !lambda "return
+              id(ha_sensor_living_room_temperature_facet_state_text).state;"
             x: 10
             y: 100
             id: rw_ref3
@@ -440,41 +439,34 @@ binary_sensor:
   entity_id: light.kitchen_floods
   trigger_on_initial_state: true
   on_state:
-    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); espcompose::flush();"
 sensor:
   - platform: homeassistant
-    id: ha_light_kitchen_floods_brightness
+    id: ha_light_kitchen_floods_attr_brightness
     entity_id: light.kitchen_floods
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_sensor_living_room_temperature
     entity_id: sensor.living_room_temperature
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature.set(x);
+          espcompose::flush();"
 text_sensor:
   - platform: homeassistant
-    id: ha_light_kitchen_floods_state_text
+    id: ha_light_kitchen_floods_facet_state_text
     entity_id: light.kitchen_floods
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_facet_state_text.set(x\\
+          ); espcompose::flush();"
   - platform: homeassistant
-    id: ha_sensor_living_room_temperature_state_text
+    id: ha_sensor_living_room_temperature_facet_state_text
     entity_id: sensor.living_room_temperature
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature_state_text.s\\
-          et(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_sensor_living_room_temperature_facet_state_\\
+          text.set(x); espcompose::flush();"
 external_components:
   - source:
       type: local

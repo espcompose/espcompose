@@ -1,6 +1,6 @@
 import ts from 'typescript';
-import type { IRActionNode, IRActionConfig } from '@espcompose/core/internals';
-import { irNativeAction } from '@espcompose/core/internals';
+import type { IRActionNode, IRActionConfig, IRRefAnnotation } from '@espcompose/core/internals';
+import { irNativeAction, splitActionKey } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
 import { LVGL_PAGE_ACTIONS, buildLvglPageActionConfig, buildRefActionConfig } from '../params.js';
@@ -28,13 +28,18 @@ export function compileRefAction(
   // the caller ref as `id`. Build config from params only.
   if (LVGL_PAGE_ACTIONS.has(actionKey)) {
     const config = buildLvglPageActionConfig(call, ctx);
-    return [irNativeAction(actionKey, config)];
+    const { domain, operation } = splitActionKey(actionKey);
+    return [irNativeAction(domain, operation, config)];
   }
 
-  // Build action config — always include the ref ID
-  const config: IRActionConfig = buildRefActionConfig(call, refName, ctx);
+  // Build action config — always include the ref ID. Track ref slots
+  // (config positions whose value is a binding name) for the closure-rewrite
+  // pass at lowering time.
+  const refSlots: IRRefAnnotation[] = [];
+  const config: IRActionConfig = buildRefActionConfig(call, refName, ctx, refSlots);
 
-  return [irNativeAction(actionKey, config)];
+  const { domain, operation } = splitActionKey(actionKey);
+  return [irNativeAction(domain, operation, config, refSlots)];
 }
 
 /**

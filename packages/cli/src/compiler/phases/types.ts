@@ -1,5 +1,6 @@
 import type ts from 'typescript';
 import type { ComposeTarget, ExecuteResult } from '@espcompose/core/internals';
+import type { SourceLibraryRegistry } from '../resolver/index.js';
 
 /** Timing measurement for a single compiler phase. */
 export interface PhaseTiming {
@@ -28,6 +29,8 @@ export interface PhaseContext {
   debug: boolean;
   /** When true, enable wireframe outline overlays on all widgets. */
   wireframe?: boolean;
+  /** When true, write a `semantic-ir.json` debug dump to the output directory. */
+  dumpIR?: boolean;
 
   // ── Emit options (set before the pipeline when emit phase is included) ──
 
@@ -45,12 +48,23 @@ export interface PhaseContext {
   /** Path to the transformed entry file in buildDir. */
   transformedEntry?: string;
   /**
-   * Execute phase output: SemanticIR + sidecar data (secrets, popups, etc.).
+   * Execute phase output: SemanticIR + sidecar data (secrets, overlays, etc.).
    * Set by the execute phase; consumed by validate, emit, and compileToIR.
    */
   executeResult?: ExecuteResult;
   /** Transform statistics (set by transform phase). */
   transformStats?: { filesWritten: number; filesTransformed: number };
+
+  /**
+   * Registry of source-mode libraries reachable from the project.
+   * Built once in setupPhase from `package.json#exports` `espcompose` conditions.
+   */
+  registry?: SourceLibraryRegistry;
+  /**
+   * Map of original absolute path → transformed-copy path inside `buildDir`.
+   * Populated by the transform phase; used by diagnostic-path rewriting.
+   */
+  pathMap?: Map<string, string>;
 
   /** Per-phase timing measurements (populated by runPipeline). */
   phaseTiming?: PhaseTiming[];

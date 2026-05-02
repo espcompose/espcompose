@@ -9,17 +9,136 @@
 //   - YAML+C++ backend: produces ESPHome YAML + espcompose_bindings.h
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { IRReactiveNode } from '../reactive-node';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRReactiveNode } from '../reactive';
+import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
+import type { ExprType } from './expr-types';
+import type { IRWidget, IROverlayTier } from './widget-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition
 // ────────────────────────────────────────────────────────────────────────────
 
+/** ESPHome script execution mode. Controls behavior when re-triggered while already running. */
+export type ScriptMode = 'single' | 'restart' | 'queued' | 'parallel';
+
+// ────────────────────────────────────────────────────────────────────────────
+// IRType — target-agnostic value type descriptor
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Base scalar type. Always present on `IRType`. Target-agnostic — the
+ * lowering target (e.g. esphome-target) maps these to concrete C++ types.
+ */
+export type IRScalarType = 'int' | 'float' | 'bool' | 'string';
+
+/**
+ * Optional semantic qualifier on a value. Drives target-specific storage and
+ * code rewriting. Examples:
+ *   - 'id_ref' : value is a reference to an ESPHome component/widget id.
+ *                Stored as a string token; consumers may resolve via `id(...)`.
+ *   - 'entity' : value is a Home Assistant entity id.
+ */
+export type IRScalarFormat = 'id_ref' | 'entity';
+
+/**
+ * Target-agnostic value type descriptor used throughout the IR.
+ *
+ * Replaces ad-hoc backend-specific type strings. The lowering target owns the
+ * mapping from `IRType` to its concrete representation.
+ *
+ * Examples (logical):
+ *   { type: 'int' }                              → integer scalar
+ *   { type: 'string' }                           → string scalar
+ *   { type: 'string', format: 'id_ref' }         → identifier reference
+ *   { type: 'float', isArray: true }             → float array
+ */
+export interface IRType {
+  readonly kind: 'type';
+  /** Base scalar — always present. */
+  readonly type: IRScalarType;
+  /** Semantic qualifier (e.g. `'id_ref'`). Optional. */
+  readonly format?: IRScalarFormat;
+  /** Collection flag. When true, the value is an array of `type`. */
+  readonly isArray?: boolean;
+}
+
+/** A single parameter declaration for a parameterized ESPHome script. */
+export interface IRScriptParamDecl {
+  readonly kind: 'script_param_decl';
+  /** Parameter name (used as identifier in the script body). */
+  name: string;
+  /** Target-agnostic type descriptor. The lowering target maps this to a concrete type. */
+  irType: IRType;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Closure model (canonical: template + closure_table + closure_index)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * One column in a script's closure table.
+ *
+ * The set of `ClosureField`s defines the table's struct layout; per-instance
+ * values populate rows in the same order.
+ */
+export interface ClosureField {
+  readonly kind: 'closure_field';
+  /** Struct field name (also referenced in body as `closure.<name>`). */
+  name: string;
+  /**
+   * Target-agnostic type descriptor. Drives both target lowering (struct field
+   * type) and body-rewriting (presence of `format: 'id_ref' | 'entity'`).
+   *
+   * Examples:
+   *   { type: 'int' }                       — plain scalar
+   *   { type: 'int', format: 'id_ref' }     — index into id-ref lookup table
+   *   { type: 'string', format: 'entity' }  — HA entity id
+   */
+  irType: IRType;
+}
+
+/** The deterministic, ordered shape of a script's closure table. */
+export interface ClosureShape {
+  readonly kind: 'closure_shape';
+  /** Ordered list of fields; order is part of the template's identity. */
+  fields: ClosureField[];
+}
+
+/** One row of the closure table: concrete values for every field in the shape. */
+export interface ClosureInstance {
+  readonly kind: 'closure_instance';
+  /** Field-name → value map. Keys MUST match the script's `closureShape.fields[].name`. */
+  values: Record<string, IRScalar>;
+}
+
 export interface IRScript {
   readonly kind: 'script';
   id: string;
+  /** Execution mode. Omit for ESPHome default ('single'). */
+  mode?: ScriptMode;
+  /** User-defined parameters from the script's arrow function signature. */
+  userParams?: IRScriptParamDecl[];
+  /**
+   * Canonical closure shape (template-level). Defines the closure-table
+   * struct layout. Populated by the compile-time dedup pass.
+   */
+  closureShape?: ClosureShape;
+  /**
+   * Per-instance rows of the closure table. Each entry's index is the
+   * `closureIndex` passed by the corresponding call site. Populated by
+   * the compile-time dedup pass.
+   */
+  closureTable?: ClosureInstance[];
+  /**
+   * Per-script binding name → literal ESPHome ID token map for `ref` slots
+   * inside this script's body. Used by the YAML lowerer to resolve
+   * structured `ref` slots without mutating shared IR.
+   *
+   * When unset, ref slots are assumed to be either pre-resolved to literal
+   * tokens or covered by `closureShape`.
+   */
+  refBindings?: Record<string, string>;
   then: IRActionNode[];
 }
 
@@ -28,39 +147,69 @@ export interface IRScript {
 // ────────────────────────────────────────────────────────────────────────────
 
 export interface IRThemeData {
-  readonly kind: 'theme_data';
+  readonly kind: 'theme_scope';
   /** Human-readable scope name (e.g. 'espcompose:ui'). */
   scope: string;
   /** 8-char hex hash of the scope — used as C++ identifier fragment. */
   scopeId: string;
-  themeNames: string[];
+  names: string[];
   defaultIndex: number;
-  /** For each signal path, ordered values across themes + value type (ExprType compatible). */
-  leafData: Map<string, { values: unknown[]; valueType: string }>;
+  /** For each signal path, ordered values across themes + expression type. */
+  values: Map<string, { values: IRScalar[]; exprType: ExprType }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Semantic IR root
+// Resolved component (config values converted to IRValue tree)
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * ESPHome-targeted data: config tree, HA entities, components, and scripts.
- * All of this becomes ESPHome YAML or injected YAML sections.
+ * A component definition (image, font, etc.) with its config resolved to
+ * IRValue. The raw `IRComponent` from the hooks layer has
+ * `config: Record<string, unknown>`; this resolved version wraps config
+ * values in the IRValue tree for consistent typing.
  */
-export interface IRESPHomeData {
-  readonly kind: 'esphome_data';
-  /** Top-level config sections (esphome:, wifi:, lvgl:, sensor:, etc.) */
-  sections: IRSection[];
-
-  /** HA entities for auto-generated sensor imports */
-  haEntities: IRHAEntity[];
-
-  /** Component definitions (images, fonts) for injection */
-  components: IRComponent[];
-
-  /** Named script definitions from useScript() */
-  scripts: IRScript[];
+export interface IRComponent {
+  readonly kind: 'component';
+  section: string;
+  id: string;
+  config: IRValue;
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Branded array registries
+//
+// Each registry is a plain array intersected with a `kind` discriminator.
+// This avoids stutter (e.g. `entities.entities`) while remaining iterable
+// and carrying a discriminator for the IR walker / JSON serializer.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Branded array of top-level config sections. */
+export type IRSectionRegistry = IRSection[] & { readonly kind: 'section_registry' };
+
+/** Branded array of HA entities discovered during the render pass. */
+export type IREntityRegistry = IRHAEntity[] & { readonly kind: 'entity_registry' };
+
+/** Branded array of component definitions (images, fonts, globals) from hooks. */
+export type IRComponentRegistry = IRComponent[] & { readonly kind: 'component_registry' };
+
+/** Branded array of script definitions from useScript(). */
+export type IRScriptRegistry = IRScript[] & { readonly kind: 'script_registry' };
+
+/** Branded array of theme scope data from the theme registry. */
+export type IRThemeRegistry = IRThemeData[] & { readonly kind: 'theme_registry' };
+
+/**
+ * Create a branded array — a plain array with an attached `kind` discriminator.
+ *
+ * The result is iterable, indexable, and carries `.kind` for the IR walker.
+ */
+export function brandArray<T, K extends string>(items: T[], kind: K): T[] & { readonly kind: K } {
+  return Object.assign(items, { kind } as const);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Reactive registry
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Reactive side-channel data: bindings, memos, and effects.
@@ -70,8 +219,8 @@ export interface IRESPHomeData {
  * These are the authoritative sources for reactive data — hook-registered
  * nodes may not appear in the config tree.
  */
-export interface IRReactiveData {
-  readonly kind: 'reactive_data';
+export interface IRReactiveRegistry {
+  readonly kind: 'reactive_registry';
   /** Reactive bindings linking memo/effect nodes to widget props */
   bindings: IRBinding[];
 
@@ -82,18 +231,30 @@ export interface IRReactiveData {
   effects: IRReactiveNode[];
 }
 
-/**
- * ESPCompose-owned data: the reactive runtime and theme system.
- * This drives C++ header generation and is target-agnostic.
- */
-export interface IRESPComposeData {
-  readonly kind: 'espcompose_data';
-  /** Reactive bindings, memos, and effects */
-  reactive: IRReactiveData;
+// ────────────────────────────────────────────────────────────────────────────
+// UI registry
+// ────────────────────────────────────────────────────────────────────────────
 
-  /** Theme data from the theme registry (undefined if no themes) */
-  themes?: IRThemeData[];
+/**
+ * UI data produced for a single `<lvgl>` element.
+ * Pages and top-level widgets are kept separate because pages have distinct
+ * semantics (router targets) even though they share the widget shape.
+ */
+export interface IRUIRegistry {
+  readonly kind: 'ui_registry';
+  /** Top-level lvgl section config (camelCase) — all values are typed `IRValue` nodes. */
+  readonly config: Record<string, IRValue>;
+  /** `<lvgl-page>` subtrees. */
+  readonly pages: IRWidget[];
+  /** Non-page top-level widgets. */
+  readonly widgets: IRWidget[];
+  /** Overlay subtrees grouped by zOrder, ascending. */
+  readonly overlays: IROverlayTier[];
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Semantic IR root
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * The complete semantic IR for a device project.
@@ -102,16 +263,33 @@ export interface IRESPComposeData {
  * target backends (esphome-target). Backends consume a
  * SemanticIR and produce target-specific output (YAML + C++ headers).
  *
- * The config tree contains semantic value nodes (IRReactive, IRRef, etc.)
- * that preserve pre-serialization data.
+ * The tree has seven flat top-level children — no intermediate grouping.
+ * Branded-array registries (sections, entities, components, scripts, themes)
+ * are directly iterable and carry a `.kind` discriminator.
  */
 export interface SemanticIR {
   readonly kind: 'semantic_ir';
-  /** ESPHome-targeted sections, HA entities, components, and scripts */
-  esphome: IRESPHomeData;
 
-  /** ESPCompose reactive runtime and theme data */
-  espcompose: IRESPComposeData;
+  /** Top-level config sections (esphome:, wifi:, sensor:, etc.) */
+  sections: IRSectionRegistry;
+
+  /** HA entities for auto-generated sensor imports */
+  entities: IREntityRegistry;
+
+  /** Component definitions (images, fonts, globals) with resolved configs */
+  components: IRComponentRegistry;
+
+  /** Named script definitions from useScript() */
+  scripts: IRScriptRegistry;
+
+  /** Theme scope data from the theme registry */
+  themes: IRThemeRegistry;
+
+  /** Reactive bindings, memos, and effects */
+  reactives: IRReactiveRegistry;
+
+  /** UI widget tree (undefined when no `<lvgl>` element present) */
+  ui?: IRUIRegistry;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -144,7 +322,8 @@ export type IRValue =
   | IRRef
   | IRAction
   | IRSecret
-  | IRTriggerVar;
+  | IRTriggerVar
+  | IRType;
 
 /** A literal scalar value (string, number, boolean). */
 export interface IRScalar {
@@ -212,8 +391,8 @@ export interface IRAction {
   kind: 'action';
   /** The raw compiled action tree (pre-ref-resolution). */
   actions: IRActionNode[];
-  /** Variable name → Ref mappings for resolving ref references in actions. */
-  refBindings?: Record<string, unknown>;
+  /** Variable name → resolved ref token string for resolving ref references in actions. */
+  refBindings?: Record<string, string>;
 }
 
 /**
@@ -272,7 +451,12 @@ export function irRef(token: string): IRRef {
 }
 
 export function irAction(actions: IRActionNode[], refBindings?: Record<string, unknown>): IRAction {
-  return { kind: 'action', actions, ...(refBindings ? { refBindings } : {}) };
+  if (!refBindings) return { kind: 'action', actions };
+  const resolved: Record<string, string> = {};
+  for (const [k, v] of Object.entries(refBindings)) {
+    if (v != null) resolved[k] = String(v);
+  }
+  return { kind: 'action', actions, ...(Object.keys(resolved).length > 0 ? { refBindings: resolved } : {}) };
 }
 
 export function irSecret(key: string): IRSecret {
@@ -282,4 +466,33 @@ export function irSecret(key: string): IRSecret {
 export function irTriggerVar(name: string): IRTriggerVar {
   return { kind: 'trigger_var', name };
 }
+
+export function irType(type: IRScalarType, opts?: { format?: IRScalarFormat; isArray?: boolean }): IRType {
+  return { kind: 'type', type, ...(opts?.format ? { format: opts.format } : {}), ...(opts?.isArray ? { isArray: true } : {}) };
+}
+
+// ── Well-known IRType constants ─────────────────────────────────────────────
+
+/** `int` scalar */
+export const IR_INT = { kind: 'type', type: 'int' } as const satisfies IRType;
+/** `float` scalar */
+export const IR_FLOAT = { kind: 'type', type: 'float' } as const satisfies IRType;
+/** `bool` scalar */
+export const IR_BOOL = { kind: 'type', type: 'bool' } as const satisfies IRType;
+/** `string` scalar */
+export const IR_STRING = { kind: 'type', type: 'string' } as const satisfies IRType;
+
+/** `int` array */
+export const IR_INT_ARRAY = { kind: 'type', type: 'int', isArray: true } as const satisfies IRType;
+/** `float` array */
+export const IR_FLOAT_ARRAY = { kind: 'type', type: 'float', isArray: true } as const satisfies IRType;
+/** `bool` array */
+export const IR_BOOL_ARRAY = { kind: 'type', type: 'bool', isArray: true } as const satisfies IRType;
+/** `string` array */
+export const IR_STRING_ARRAY = { kind: 'type', type: 'string', isArray: true } as const satisfies IRType;
+
+/** `int` with `id_ref` format — ESPHome component/widget ID reference */
+export const IR_ID_REF = { kind: 'type', type: 'int', format: 'id_ref' } as const satisfies IRType;
+/** `string` with `entity` format — Home Assistant entity ID */
+export const IR_ENTITY = { kind: 'type', type: 'string', format: 'entity' } as const satisfies IRType;
 

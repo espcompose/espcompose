@@ -322,9 +322,6 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@espcompose/cli':
-        specifier: workspace:*
-        version: link:../cli
       '@espcompose/eslint':
         specifier: workspace:*
         version: link:../eslint

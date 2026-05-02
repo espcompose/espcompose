@@ -5,7 +5,7 @@
 export { createEsphomeTarget } from './target.js';
 
 // Action lowering (used by CLI script-transformer)
-export { lowerActionTree } from './action-lowering.js';
+export { lowerActionTree } from './actions';
 
 // Host platform IR transform
 export { transformIRForHost } from './host-ir-transform.js';
@@ -19,3 +19,10 @@ export {
   esphomeRun,
   esphomeLogs,
 } from './esphome-cli.js';
+
+// LVGL widget-tree YAML emitter (registered with core's hook before render)
+export { lowerLvglWidgetTree, lowerLvglWidget } from './lvgl';
+
+// YAML key/element shaping utilities (also used by the CLI action transformer
+// when emitting ESPHome action configs).
+export { camelToSnake, toYamlKey } from './yaml-utils.js';

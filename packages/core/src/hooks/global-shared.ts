@@ -5,9 +5,10 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, withContext } from './useContext';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
-import type { IRDependency, Signal } from '../reactive-node';
+import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
+import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
+import type { IRType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
 
@@ -16,7 +17,8 @@ import type { BINDING_BRAND } from '../types';
 /** Definition stored in the global scope context for compiler use. */
 export interface GlobalDefinition {
   id: string;
-  cppType: string;
+  /** Target-agnostic type descriptor. The lowering target maps this to a concrete representation. */
+  irType: IRType;
 }
 
 // ── GlobalHandle ───────────────────────────────────────────────────────────
@@ -38,35 +40,26 @@ export interface GlobalHandle<T> {
   readonly id: string;
 }
 
-// ── C++ type → ExprType mapping ────────────────────────────────────────────
+// ── IRType → ExprType mapping ─────────────────────────────────────────
 
-export function cppTypeToExprType(cppType: string): ExprType {
-  switch (cppType) {
-    case 'int':
-    case 'int32_t':
-    case 'int16_t':
-    case 'int8_t':
-    case 'uint8_t':
-    case 'uint16_t':
-    case 'uint32_t':
-      return 'int';
-    case 'float':
-    case 'double':
-      return 'float';
-    case 'bool':
-      return 'bool';
-    case 'std::string':
-      return 'string';
-    case 'std::vector<int>':
-      return 'int_array';
-    case 'std::vector<float>':
-      return 'float_array';
-    case 'std::vector<bool>':
-      return 'bool_array';
-    case 'std::vector<std::string>':
-      return 'string_array';
-    default:
-      return 'int';
+/**
+ * Map a target-agnostic `IRType` to the corresponding `ExprType`
+ * used by the IR expression layer.
+ */
+export function irTypeToExprType(vt: IRType): ExprType {
+  if (vt.isArray) {
+    switch (vt.type) {
+      case 'int':    return 'int_array';
+      case 'float':  return 'float_array';
+      case 'bool':   return 'bool_array';
+      case 'string': return 'string_array';
+    }
+  }
+  switch (vt.type) {
+    case 'int':    return 'int';
+    case 'float':  return 'float';
+    case 'bool':   return 'bool';
+    case 'string': return 'string';
   }
 }
 
@@ -91,6 +84,23 @@ export function hashGlobalFingerprint(fingerprint: string): string {
   return `g_${(h >>> 0).toString(16).padStart(8, '0')}`;
 }
 
+/**
+ * FNV-1a 32-bit hash of an arbitrary string → 8-char hex digest.
+ *
+ * Computes a stable body hash for `useScript()` dedup. Two scripts with
+ * identical compiled action bodies and identical binding shape signatures
+ * produce the same hash and share an ESPHome script template (with
+ * per-instance closure-table rows).
+ */
+export function hashFnv1a(input: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
 // ── Global scope context ───────────────────────────────────────────────────
 
 export const globalScopeContext = createContext<Map<string, GlobalDefinition>>(new Map());
@@ -113,7 +123,7 @@ export function withGlobalScope<T>(fn: () => T): { result: T; globals: GlobalDef
 
 export function createGlobalHandle<T>(
   id: string,
-  cppType: string,
+  _irType: IRType,
   exprType: ExprType,
 ): GlobalHandle<T> {
   let cachedNode: IRReactiveNode<T> | undefined;
@@ -123,8 +133,6 @@ export function createGlobalHandle<T>(
       const dep: IRDependency = {
         kind: 'dependency',
         sourceId: id,
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
         sourceType: 'global',
       };
       cachedNode = new IRReactiveNode<T>({
@@ -132,9 +140,7 @@ export function createGlobalHandle<T>(
         dependencies: [dep],
         exprType,
         sourceId: id,
-        property: 'value',
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
+        propertyKey: 'value',
       });
     }
     return cachedNode;

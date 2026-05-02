@@ -22,13 +22,14 @@
       "type": "object",
       "required": [
         "sensorPlatform",
-        "cppType",
+        "irType",
         "defaultState",
         "activeState",
         "uiCategory",
         "properties",
         "actions",
-        "triggers"
+        "triggers",
+        "componentAccess"
       ],
       "additionalProperties": false,
       "properties": {
@@ -36,9 +37,9 @@
           "description": "ESPHome sensor platform type this domain maps to for codegen.",
           "enum": ["binary_sensor", "sensor", "text_sensor"]
         },
-        "cppType": {
-          "type": "string",
-          "description": "C++ signal type for esphome-target codegen (e.g. 'bool', 'float', 'std::string')."
+        "irType": {
+          "$ref": "#/$defs/IRTypeDescriptor",
+          "description": "Target-agnostic value type for this domain's signal. Lowering targets map to concrete representations."
         },
         "defaultState": {
           "type": "string",
@@ -72,21 +73,26 @@
           "additionalProperties": {
             "$ref": "#/$defs/TriggerSignature"
           }
+        },
+        "componentAccess": {
+          "type": "object",
+          "description": "ESPHome C++ access expression appended directly to `id(comp_id)` for each propertyKey this component exposes (e.g. { \"state\": \".state\" }). Required (use {} for domains never used as a sourceDomain). Keys must include the leading '.' or '->'.",
+          "additionalProperties": { "type": "string" }
         }
       }
     },
     "PropertyDescriptor": {
       "type": "object",
-      "required": ["name", "cppPath", "triggerType", "exprType", "sourceDomain"],
+      "required": ["name", "propertyKey", "triggerType", "exprType", "sourceDomain"],
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
           "description": "camelCase property name matching the binding interface (e.g. 'isOn', 'brightness')."
         },
-        "cppPath": {
+        "propertyKey": {
           "type": "string",
-          "description": "C++ access path on the component (e.g. '.state', '.current_values.get_brightness()')."
+          "description": "Semantic property key. Lowering targets resolve this to a concrete access path (e.g. C++ '.state')."
         },
         "triggerType": {
           "type": "string",
@@ -141,21 +147,37 @@
     },
     "TriggerVariable": {
       "type": "object",
-      "required": ["name", "cppType", "tsType"],
+      "required": ["name", "irType", "tsType"],
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
           "description": "Variable name available in the trigger lambda (e.g. 'x')."
         },
-        "cppType": {
-          "type": "string",
-          "description": "C++ type of the variable (e.g. 'bool', 'float', 'std::string')."
+        "irType": {
+          "$ref": "#/$defs/IRTypeDescriptor",
+          "description": "Target-agnostic value type. Lowering targets map this to concrete C++ types."
         },
         "tsType": {
           "type": "string",
           "description": "TypeScript type equivalent (e.g. 'boolean', 'number', 'string')."
         }
+      }
+    },
+    "IRTypeDescriptor": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["int", "float", "bool", "string"]
+        },
+        "format": {
+          "type": "string",
+          "enum": ["id_ref", "entity"]
+        },
+        "isArray": { "type": "boolean" }
       }
     }
   }

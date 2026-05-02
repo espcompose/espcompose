@@ -17,7 +17,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { Context, createContext, useContext, withContext } from './useContext';
-import type { IRReactiveNode } from '../reactive-node';
+import type { IRReactiveNode } from '../reactive';
+import type { ExprType } from '../generated/entity-domains.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Binding types
@@ -29,24 +30,24 @@ import type { IRReactiveNode } from '../reactive-node';
  */
 export interface IRBinding {
   readonly kind: 'binding';
-  /** ESPHome ID of the target element (auto-assigned if not present). */
+  /** Auto-assigned (or user-supplied) target element ID. */
   targetId: string;
-  /** Element type for dispatch (e.g. `lvgl_button`, `sensor`, `light`). */
+  /** Semantic widget kind in camelCase (e.g. `'button'`, `'label'`, `'dropdownList'`). */
   targetType: string;
-  /** Snake_case prop name on the target (e.g. `checked`, `text`, `text_color`). */
+  /** Semantic prop name on the target in camelCase (e.g. `'checked'`, `'text'`, `'textColor'`). */
   targetProp: string;
   /** The IRReactiveNode instance that provides the reactive value. */
   expression: IRReactiveNode;
-  /** LVGL part name (snake_case) if the binding targets a sub-part, e.g. `'indicator'`, `'knob'`. */
+  /** Semantic LVGL part name in camelCase (e.g. `'indicator'`, `'knob'`, `'textareaPlaceholder'`). */
   part?: string;
-  /** LVGL state name (snake_case) if the binding targets a state variant, e.g. `'pressed'`, `'disabled'`. */
+  /** Semantic LVGL state name in camelCase (e.g. `'pressed'`, `'disabled'`, `'focusKey'`). */
   state?: string;
 }
 
 /**
  * A component definition (image, font, etc.) for injection into the YAML config.
  */
-export interface IRComponent {
+export interface ComponentRegistration {
   readonly kind: 'component';
   /** ESPHome config section to inject into (e.g. `'image'`, `'font'`). */
   section: string;
@@ -55,6 +56,21 @@ export interface IRComponent {
   /** Full snake_case config object for the component entry. */
   config: Record<string, unknown>;
 }
+
+/**
+ * Discriminated variant describing which sub-import of a HA entity this
+ * registration represents. Mutually exclusive — an entity import is exactly
+ * one of: primary state, a real attribute, or a synthetic facet.
+ *
+ * Attribute and facet variants carry `exprType` so the target can derive the
+ * correct sensor platform from data alone (no hard-coded assumptions).
+ */
+export type HAEntityVariant =
+  | { readonly kind: 'state' }
+  | { readonly kind: 'attribute'; readonly attribute: string; readonly exprType: ExprType }
+  // Facet name is a closed literal union (not `string`) so downstream switch
+  // sites get exhaustiveness checking. Widen to a union when a second facet is added.
+  | { readonly kind: 'facet'; readonly facet: 'stateText'; readonly exprType: ExprType };
 
 /**
  * A Home Assistant entity that needs a sensor import in the YAML config.
@@ -66,17 +82,12 @@ export interface IRHAEntity {
   /** HA domain extracted from entity ID prefix (e.g. `light`, `sensor`). */
   domain: string;
   /**
-   * ESPHome sensor platform type used to import this entity's state.
-   * Determined by domain:
-   * - `light.*`, `switch.*`, `binary_sensor.*` → `binary_sensor`
-   * - `sensor.*`, `number.*` → `sensor`
-   * - `text_sensor.*`, `select.*` → `text_sensor`
+   * Deterministic semantic ID minted by core. The target remaps this to its
+   * own naming convention during emit (e.g. ESPHome `ha_light_kitchen_floods`).
    */
-  sensorType: 'binary_sensor' | 'sensor' | 'text_sensor';
-  /** Auto-generated ESPHome component ID (e.g. `ha_light_kitchen_floods`). */
-  generatedId: string;
-  /** Optional HA entity attribute name (e.g. `brightness`). When set, the sensor imports this attribute rather than the entity state. */
-  attribute?: string;
+  semanticId: string;
+  /** Which sub-import this represents: primary state, a HA attribute, or a synthetic facet. */
+  variant: HAEntityVariant;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -86,7 +97,7 @@ export interface IRHAEntity {
 interface ReactiveScopeFrame {
   bindings: IRBinding[];
   entities: Map<string, IRHAEntity>;
-  components: Map<string, IRComponent>;
+  components: Map<string, ComponentRegistration>;
   reactiveNodes: IRReactiveNode[];
 }
 
@@ -110,13 +121,13 @@ export function registerReactiveBinding(binding: IRBinding): void {
 
 /**
  * Register a Home Assistant entity that needs an auto-generated sensor import.
- * Deduplicates by entityId — multiple calls with the same entity are safe.
+ * Deduplicates by semanticId — multiple calls with the same entity are safe.
  * No-op if called outside a reactive scope.
  */
 export function registerHAEntity(entity: IRHAEntity): void {
   const frame = useContext(reactiveScopeContext);
-  if (frame && !frame.entities.has(entity.generatedId)) {
-    frame.entities.set(entity.generatedId, entity);
+  if (frame && !frame.entities.has(entity.semanticId)) {
+    frame.entities.set(entity.semanticId, entity);
   }
 }
 
@@ -125,7 +136,7 @@ export function registerHAEntity(entity: IRHAEntity): void {
  * final YAML config. Deduplicates by component ID.
  * No-op if called outside a reactive scope.
  */
-export function registerComponent(reg: IRComponent): void {
+export function registerComponent(reg: ComponentRegistration): void {
   const frame = useContext(reactiveScopeContext);
   if (frame && !frame.components.has(reg.id)) {
     frame.components.set(reg.id, reg);
@@ -172,7 +183,7 @@ export interface ReactiveScopeResult<T> {
   result: T;
   bindings: IRBinding[];
   entities: IRHAEntity[];
-  components: IRComponent[];
+  components: ComponentRegistration[];
   reactiveNodes: IRReactiveNode[];
 }
 

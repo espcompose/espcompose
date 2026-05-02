@@ -4,9 +4,9 @@
 
 export type {
   SemanticIR,
-  IRESPHomeData,
-  IRESPComposeData,
-  IRReactiveData,
+  IRReactiveRegistry,
+  IRUIRegistry,
+  IRComponent,
   IRSection,
   IRValue,
   IRScalar,
@@ -19,8 +19,20 @@ export type {
   IRAction,
   IRSecret,
   IRTriggerVar,
+  IRType,
   IRThemeData,
   IRScript,
+  IRScriptParamDecl,
+  IRScalarType,
+  IRScalarFormat,
+  ClosureField,
+  ClosureShape,
+  ClosureInstance,
+  IRSectionRegistry,
+  IREntityRegistry,
+  IRComponentRegistry,
+  IRScriptRegistry,
+  IRThemeRegistry,
 } from './types';
 
 export {
@@ -35,10 +47,24 @@ export {
   irAction,
   irSecret,
   irTriggerVar,
+  irType,
+  brandArray,
+  IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
+  IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
+  IR_ID_REF, IR_ENTITY,
 } from './types';
 
 export { buildSemanticIR } from './build';
-export type { BuildSemanticIRInput } from './build';
+export type { BuildSemanticIRInput, RawIRWidget, RawIRWidgetTree, RawIROverlayTier, RawIROverlayContainer } from './build';
+
+export { serializeIRToJSON } from './serialize-json';
+
+// ── Widget IR (target-neutral) ─────────────────────────────────────────────
+export type {
+  IRWidget,
+  IROverlayContainer,
+  IROverlayTier,
+} from './widget-types';
 
 
 // ── Expression IR ────────────────────────────────────────────────────────────
@@ -50,20 +76,20 @@ export type {
   BuiltinFn,
   StringMethod,
   ArrayMethod,
-  IRExprLiteral,
-  IRExprSignalRead,
-  IRExprMemoRead,
-  IRExprSlot,
-  IRExprThemeRead,
-  IRExprEntityProp,
-  IRExprComponentRead,
-  IRExprTriggerVar,
-  IRExprGlobalRead,
-  IRExprMux,
-  IRExprTableLookup,
-  IRExprNode,
+  IRLiteralExpression,
+  IRSignalReadExpression,
+  IRMemoReadExpression,
+  IRSlotExpression,
+  IRThemeReadExpression,
+  IREntityPropExpression,
+  IRComponentReadExpression,
+  IRTriggerVarExpression,
+  IRGlobalReadExpression,
+  IRMuxExpression,
+  IRTableLookupExpression,
+  IRExpression,
   ExprOpDescriptor,
-  IRExprOp,
+  IROpExpression,
 } from './expr-types';
 
 export {
@@ -81,23 +107,10 @@ export {
   irStringMethod,
   irArrayIndex,
   irArrayMethod,
+  irLiteralExpression,
+  irTriggerVarExpression,
+  inferLiteralExprType,
 } from './expr-builders';
-
-export {
-  operandOf,
-  exprOf,
-  leftOf,
-  rightOf,
-  testOf,
-  consequentOf,
-  alternateOf,
-  argsOf,
-  partsOf,
-  objectOf,
-  methodArgsOf,
-  arrayOf,
-  indexOf,
-} from './expr-accessors';
 
 export { getExprChildren, mapExprChildren } from './expr-walk';
 export { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
@@ -121,29 +134,32 @@ export type {
   IRIfAction,
   IRWhileAction,
   IRRepeatAction,
-  IRScriptExecute,
-  IRScriptWait,
-  IRScriptStop,
-  IRThemeSelect,
-  IRGlobalSet,
-  IRArraySet,
-  IRArrayPush,
-  IRArrayClear,
+  IRScriptExecuteAction,
+  IRScriptWaitAction,
+  IRScriptStopAction,
+  IRThemeSelectAction,
+  IRGlobalSetAction,
+  IRArraySetAction,
+  IRArrayPushAction,
+  IRArrayClearAction,
   IRLambdaAction,
-  IRLambdaSlot,
-  IRPopupShow,
-  IRPopupDismiss,
+  IRLambdaInterpolation,
+  IROverlayShowAction,
+  IROverlayHideAction,
+  IRControllerMethodCallAction,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
-  IRActionParam,
-  IRLiteralParam,
-  IRTriggerVarParam,
-  IRExpressionParam,
-  IRReactiveExprParam,
   IRActionConfig,
   IRActionConfigDict,
   IRActionConfigValue,
+  IRRefAnnotation,
+  IRDuration,
+  IRDurationLiteral,
+  IRDurationUnit,
+  IRTimeout,
+  IRTimeoutNever,
+  IRScriptParamRef,
 } from './action-types';
 
 export {
@@ -165,6 +181,10 @@ export {
   irArrayClear,
   irLambdaCondition,
   irLambdaAction,
-  irPopupShow,
-  irPopupDismiss,
+  irOverlayShow,
+  irOverlayHide,
+  irControllerMethodCall,
+  splitActionKey,
+  parseDurationString,
+  parseTimeoutString,
 } from './action-types';

@@ -6,16 +6,16 @@
  *   - Multiple instances of the same component with different HA entities
  *   - Popup backdrop + container in top_layer (1 set, not duplicated)
  *   - Mux signal + muxed bindings for divergent reactive values
- *   - popup.show() / ctrl.dismiss() action lowering
+ *   - popup.show() / ctrl.hide() action lowering
  *
  * Expected compiler output:
  *   - top_layer with a hidden wrapper obj per popup definition
  *   - Mux signal (sig_popup_<key>_mux) in espcompose_bindings.h
  *   - Muxed reactive bindings for divergent entity values
  *   - show() lambdas setting mux index + unhiding widgets
- *   - dismiss() lambdas hiding widgets
+ *   - hide() lambdas hiding widgets
  */
-import { DisplayRef, useRef, useHAEntity, usePopup, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -24,6 +24,7 @@ import {
   Button,
   Popup,
   UITheme,
+  usePopup,
 } from '@espcompose/ui';
 
 /**
@@ -39,7 +40,7 @@ const LightButton = createLvglWidget(
 
     const popup = usePopup((ctrl) => (
       
-      <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+      <Popup onBackdropPress={() => { ctrl.hide(); }}>
         <Text variant="title" text={label} />
         <Text text={entity.stateText} />
         <HStack>
@@ -51,7 +52,7 @@ const LightButton = createLvglWidget(
           <Button
             text="Close"
             status="secondary"
-            onPress={() => { ctrl.dismiss(); }}
+            onPress={() => { ctrl.hide(); }}
           />
         </HStack>
       </Popup>

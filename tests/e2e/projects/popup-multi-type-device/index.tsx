@@ -15,7 +15,6 @@ import {
   DisplayRef,
   useRef,
   useHAEntity,
-  usePopup,
   createLvglWidget,
   type LightBinding,
   type SwitchBinding,
@@ -30,6 +29,7 @@ import {
   Switch,
   Popup,
   UITheme,
+  usePopup,
 } from '@espcompose/ui';
 
 // ── Component A: light popup ─────────────────────────────────────────────
@@ -41,10 +41,10 @@ type LightControlProps = WidgetProps<{
 
 const LightControl = createLvglWidget<LightControlProps>((props) => {
   const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+    <Popup onBackdropPress={() => { ctrl.hide(); }}>
       <Text text="Light Control" />
       <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
-      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
     </Popup>
   ));
 
@@ -66,10 +66,10 @@ type FanControlProps = WidgetProps<{
 
 const FanControl = createLvglWidget<FanControlProps>((props) => {
   const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+    <Popup onBackdropPress={() => { ctrl.hide(); }}>
       <Text text="Fan Control" />
       <Button text="On/Off" onPress={() => { props.entity.toggle(); }} />
-      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
     </Popup>
   ));
 

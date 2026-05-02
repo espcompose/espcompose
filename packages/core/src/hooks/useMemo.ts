@@ -19,7 +19,7 @@ import {
   IRReactiveNode,
   startTracking,
   stopTracking,
-} from '../reactive-node';
+} from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import { registerReactiveNode } from './useReactiveScope';
 import { assertHookContext } from './useState';

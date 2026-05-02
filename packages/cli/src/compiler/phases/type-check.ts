@@ -7,8 +7,10 @@ import type { PhaseContext } from './types';
  *
  * Runs the TypeScript compiler over the entry file and its transitive imports.
  * Uses the project's own tsconfig.json when found, falling back to sensible
- * JSX defaults. Throws on type errors. Stores the ts.Program on the context
- * for reuse by the transform phase.
+ * JSX defaults. Always injects `customConditions: ['espcompose']` so source-mode
+ * library packages resolve to their `.ts(x)` source via the `espcompose`
+ * export condition. Throws on type errors from app code or from any
+ * registered source-mode library (strict-by-default).
  */
 export async function typeCheckPhase(ctx: PhaseContext): Promise<void> {
   const projectDir = path.dirname(ctx.entryFile);
@@ -39,15 +41,22 @@ export async function typeCheckPhase(ctx: PhaseContext): Promise<void> {
     };
   }
 
+  // Always force the espcompose condition — overrides whatever the project's
+  // tsconfig may have set, so source-mode libraries resolve to their TS source.
+  compilerOptions.customConditions = ['espcompose'];
+
   const program = ts.createProgram([ctx.entryFile], compilerOptions);
   const diagnostics = ts.getPreEmitDiagnostics(program);
 
-  const errors = Array.from(diagnostics).filter(
-    (d) =>
-      d.category === ts.DiagnosticCategory.Error &&
-      d.file !== undefined &&
-      !d.file.fileName.includes('node_modules'),
-  );
+  // Keep diagnostics from app source and source-mode libraries; drop everything
+  // else (declarations from runtime-external packages, lib.d.ts, etc.).
+  const errors = Array.from(diagnostics).filter((d) => {
+    if (d.category !== ts.DiagnosticCategory.Error) return false;
+    if (!d.file) return true;
+    if (!ctx.registry) return !d.file.fileName.includes('node_modules');
+    const klass = ctx.registry.classifyPath(d.file.fileName);
+    return klass === 'app-source' || klass === 'espcompose-source-library';
+  });
 
   if (errors.length > 0) {
     const formatted = errors.map((d) => {

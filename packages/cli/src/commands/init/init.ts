@@ -4,7 +4,6 @@ import Handlebars from 'handlebars';
 
 export interface InitOptions {
   board?: string;
-  library?: boolean;
 }
 
 /**
@@ -33,7 +32,6 @@ function walkDir(dir: string, prefix = ''): string[] {
  */
 export function initProject(name: string, options: InitOptions = {}): void {
   const board = options.board ?? 'esp32dev';
-  const isLibrary = options.library ?? false;
   const targetDir = path.resolve(name);
 
   if (fs.existsSync(targetDir)) {
@@ -45,7 +43,7 @@ export function initProject(name: string, options: InitOptions = {}): void {
 
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const variant = isLibrary ? 'library' : 'device';
+  const variant = 'device';
   // In the compiled bundle __dirname is dist/ (one level from package root);
   // under vitest it is src/commands/init/ (three levels from package root).
   const prodPath = path.resolve(__dirname, '..', 'templates', variant);
@@ -75,13 +73,9 @@ export function initProject(name: string, options: InitOptions = {}): void {
     fs.writeFileSync(outFile, outContent);
   }
 
-  console.log(`✓ Created ${isLibrary ? 'library' : 'project'} "${name}" in ./${name}/\n`);
+  console.log(`✓ Created project "${name}" in ./${name}/\n`);
   console.log('Next steps:');
   console.log(`  cd ${name}`);
   console.log('  npm install');
-  if (isLibrary) {
-    console.log('  npx espcompose build --library');
-  } else {
-    console.log('  npx espcompose transpile');
-  }
+  console.log('  npx espcompose transpile');
 }

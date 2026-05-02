@@ -17,6 +17,29 @@ interface ComposeTarget {
 }
 ```
 
+## Target owns all C++ knowledge
+
+Core (`@espcompose/core`) is C++-free (see the invariant in
+`ir-types.instructions.md`). The target owns every mapping from IR to C++:
+
+- **`irTypeToCpp(v: IRType): string`** — single source of truth for
+  IR scalar → C++ type strings (lives in
+  `packages/esphome-target/src/lowering/value-type-cpp.ts`). Handles `format`
+  (`id_ref` / `entity` → `const char*`) and `isArray`
+  (`std::vector<T>`).
+- **`resolveEntityPropertyCppPath(propertyKey: string): string`** — maps
+  semantic property keys (`'state'`, `'brightness'`, `'position'`) to the
+  C++ member-access expression. Throws on unknown keys.
+- **`LVGL_STYLE_PROP_TABLE`** — full ESPHome→LVGL setter table with
+  `cppType`, `cast`, and `special` fields, lives in
+  `packages/esphome-target/src/lvgl-style-prop-table.ts`. Core only exposes
+  the *names* (`LVGL_REACTIVE_STYLE_PROPS`); the target asserts at module
+  load that its table keys match the core set.
+
+If the target hits a case where the C++ representation cannot be derived from
+`IRType` + a semantic key, raise it as a blocker — never reintroduce a
+C++ string into core.
+
 ## ESPHome Target (`createEsphomeTarget()`)
 
 - Generates `espcompose_bindings.h` — Signal/Memo/Effect/widget binding declarations

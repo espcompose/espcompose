@@ -3,14 +3,14 @@
   "domains": {
     "light": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
       "properties": [
-        { "name": "isOn",       "cppPath": ".state",                            "triggerType": "on_state", "exprType": "bool",   "sourceDomain": "binary_sensor" },
-        { "name": "brightness", "cppPath": ".current_values.get_brightness()",   "triggerType": "on_state", "exprType": "float",  "sourceDomain": "light" },
-        { "name": "stateText",  "cppPath": ".state",                            "triggerType": "on_state", "exprType": "string", "sourceDomain": "text_sensor" }
+        { "name": "isOn",       "propertyKey": "state",                            "triggerType": "on_state", "exprType": "bool",   "sourceDomain": "binary_sensor" },
+        { "name": "brightness", "propertyKey": "brightness",   "triggerType": "on_state", "exprType": "float",  "sourceDomain": "light" },
+        { "name": "stateText",  "propertyKey": "state",                            "triggerType": "on_state", "exprType": "string", "sourceDomain": "text_sensor" }
       ],
       "actions": [
         { "name": "toggle",  "service": "toggle",   "resultState": null },
@@ -21,17 +21,20 @@
         "on_state":    { "variables": [] },
         "on_turn_on":  { "variables": [] },
         "on_turn_off": { "variables": [] }
+      },
+      "componentAccess": {
+        "brightness": ".current_values.get_brightness()"
       }
     },
 
     "switch": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
       "properties": [
-        { "name": "isOn", "cppPath": ".state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
+        { "name": "isOn", "propertyKey": "state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
       ],
       "actions": [
         { "name": "toggle",  "service": "toggle",   "resultState": null },
@@ -39,59 +42,66 @@
         { "name": "turnOff", "service": "turn_off",  "resultState": "off" }
       ],
       "triggers": {
-        "on_state":    { "variables": [{ "name": "x", "cppType": "bool", "tsType": "boolean" }] },
+        "on_state":    { "variables": [{ "name": "x", "irType": { "type": "bool" }, "tsType": "boolean" }] },
         "on_turn_on":  { "variables": [] },
         "on_turn_off": { "variables": [] }
-      }
+      },
+      "componentAccess": {}
     },
 
     "sensor": {
       "sensorPlatform": "sensor",
-      "cppType": "float",
+      "irType": { "type": "float" },
       "defaultState": "0",
       "activeState": null,
       "uiCategory": "sensor",
       "properties": [
-        { "name": "value",     "cppPath": ".state", "triggerType": "on_value", "exprType": "float",  "sourceDomain": "sensor" },
-        { "name": "stateText", "cppPath": ".state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
+        { "name": "value",     "propertyKey": "state", "triggerType": "on_value", "exprType": "float",  "sourceDomain": "sensor" },
+        { "name": "stateText", "propertyKey": "state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
       ],
       "actions": [],
       "triggers": {
-        "on_value":       { "variables": [{ "name": "x", "cppType": "float", "tsType": "number" }] },
-        "on_raw_value":   { "variables": [{ "name": "x", "cppType": "float", "tsType": "number" }] },
-        "on_value_range": { "variables": [{ "name": "x", "cppType": "float", "tsType": "number" }] }
+        "on_value":       { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_raw_value":   { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_value_range": { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] }
+      },
+      "componentAccess": {
+        "state": ".state"
       }
     },
 
     "binary_sensor": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "binary",
       "properties": [
-        { "name": "isOn",      "cppPath": ".state", "triggerType": "on_state", "exprType": "bool",   "sourceDomain": "binary_sensor" },
-        { "name": "stateText", "cppPath": ".state", "triggerType": "on_state", "exprType": "string", "sourceDomain": "text_sensor" }
+        { "name": "isOn",      "propertyKey": "state", "triggerType": "on_state", "exprType": "bool",   "sourceDomain": "binary_sensor" },
+        { "name": "stateText", "propertyKey": "state", "triggerType": "on_state", "exprType": "string", "sourceDomain": "text_sensor" }
       ],
       "actions": [],
       "triggers": {
-        "on_state":        { "variables": [{ "name": "x", "cppType": "bool", "tsType": "boolean" }] },
+        "on_state":        { "variables": [{ "name": "x", "irType": { "type": "bool" }, "tsType": "boolean" }] },
         "on_press":        { "variables": [] },
         "on_release":      { "variables": [] },
         "on_click":        { "variables": [] },
         "on_double_click": { "variables": [] },
         "on_multi_click":  { "variables": [] }
+      },
+      "componentAccess": {
+        "state": ".state"
       }
     },
 
     "fan": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": "on",
       "uiCategory": "toggleable",
       "properties": [
-        { "name": "isOn", "cppPath": ".state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
+        { "name": "isOn", "propertyKey": "state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
       ],
       "actions": [
         { "name": "toggle",  "service": "toggle",   "resultState": null },
@@ -104,17 +114,18 @@
         "on_turn_off":   { "variables": [] },
         "on_speed_set":  { "variables": [] },
         "on_preset_set": { "variables": [] }
-      }
+      },
+      "componentAccess": {}
     },
 
     "cover": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "closed",
       "activeState": "open",
       "uiCategory": "cover",
       "properties": [
-        { "name": "isOpen", "cppPath": ".position", "triggerType": "on_state", "exprType": "float", "sourceDomain": "cover" }
+        { "name": "isOpen", "propertyKey": "position", "triggerType": "on_state", "exprType": "float", "sourceDomain": "cover" }
       ],
       "actions": [
         { "name": "open",  "service": "open",  "resultState": "open" },
@@ -124,59 +135,67 @@
       "triggers": {
         "on_open":   { "variables": [] },
         "on_closed": { "variables": [] }
+      },
+      "componentAccess": {
+        "position": ".position"
       }
     },
 
     "number": {
       "sensorPlatform": "sensor",
-      "cppType": "float",
+      "irType": { "type": "float" },
       "defaultState": "0",
       "activeState": null,
       "uiCategory": "sensor",
       "properties": [
-        { "name": "value", "cppPath": ".state", "triggerType": "on_value", "exprType": "float", "sourceDomain": "sensor" }
+        { "name": "value", "propertyKey": "state", "triggerType": "on_value", "exprType": "float", "sourceDomain": "sensor" }
       ],
       "actions": [],
       "triggers": {
-        "on_value":       { "variables": [{ "name": "x", "cppType": "float", "tsType": "number" }] },
-        "on_value_range": { "variables": [{ "name": "x", "cppType": "float", "tsType": "number" }] }
-      }
+        "on_value":       { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] },
+        "on_value_range": { "variables": [{ "name": "x", "irType": { "type": "float" }, "tsType": "number" }] }
+      },
+      "componentAccess": {}
     },
 
     "select": {
       "sensorPlatform": "text_sensor",
-      "cppType": "std::string",
+      "irType": { "type": "string" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "sensor",
       "properties": [
-        { "name": "stateText", "cppPath": ".state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
+        { "name": "stateText", "propertyKey": "state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
       ],
       "actions": [],
       "triggers": {
-        "on_value": { "variables": [{ "name": "x", "cppType": "std::string", "tsType": "string" }] }
-      }
+        "on_value": { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] }
+      },
+      "componentAccess": {}
     },
 
     "text_sensor": {
       "sensorPlatform": "text_sensor",
-      "cppType": "std::string",
+      "irType": { "type": "string" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "sensor",
       "properties": [
-        { "name": "stateText", "cppPath": ".state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
+        { "name": "stateText", "propertyKey": "state", "triggerType": "on_value", "exprType": "string", "sourceDomain": "text_sensor" }
       ],
       "actions": [],
       "triggers": {
-        "on_value":     { "variables": [{ "name": "x", "cppType": "std::string", "tsType": "string" }] },
-        "on_raw_value": { "variables": [{ "name": "x", "cppType": "std::string", "tsType": "string" }] }
+        "on_value":     { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] },
+        "on_raw_value": { "variables": [{ "name": "x", "irType": { "type": "string" }, "tsType": "string" }] }
+      },
+      "componentAccess": {
+        "state": ".state"
       }
     },
 
     "button": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "",
       "activeState": null,
       "uiCategory": "button",
@@ -184,17 +203,18 @@
       "actions": [
         { "name": "press", "service": "press", "resultState": null }
       ],
-      "triggers": {}
+      "triggers": {},
+      "componentAccess": {}
     },
 
     "lock": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "locked",
       "activeState": "unlocked",
       "uiCategory": "toggleable",
       "properties": [
-        { "name": "isOn", "cppPath": ".state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
+        { "name": "isOn", "propertyKey": "state", "triggerType": "on_state", "exprType": "bool", "sourceDomain": "binary_sensor" }
       ],
       "actions": [
         { "name": "lock",   "service": "lock",   "resultState": "locked" },
@@ -204,12 +224,13 @@
         "on_state":  { "variables": [] },
         "on_lock":   { "variables": [] },
         "on_unlock": { "variables": [] }
-      }
+      },
+      "componentAccess": {}
     },
 
     "climate": {
       "sensorPlatform": "binary_sensor",
-      "cppType": "bool",
+      "irType": { "type": "bool" },
       "defaultState": "off",
       "activeState": null,
       "uiCategory": "sensor",
@@ -218,7 +239,8 @@
       "triggers": {
         "on_state":   { "variables": [] },
         "on_control": { "variables": [] }
-      }
+      },
+      "componentAccess": {}
     }
   }
 }

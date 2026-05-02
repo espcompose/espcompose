@@ -11,7 +11,7 @@
 //   useEffect(() => { void sensor.value; });
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, startTracking, stopTracking } from '../reactive-node';
+import { IRReactiveNode, startTracking, stopTracking } from '../reactive';
 import { registerReactiveNode } from './useReactiveScope';
 import { assertHookContext } from './useState';
 

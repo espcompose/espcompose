@@ -4,6 +4,52 @@ applyTo: "packages/core/src/ir/**"
 ---
 # Semantic IR & Expression IR
 
+## INVARIANT: No C++ in core
+
+`packages/core/src/**` (excluding `generated/`) MUST NOT contain:
+- The substring `cpp` in field names, type names, or variable names.
+- The substrings `std::`, `int{8,16,32,64}_t`, `uint{8,16,32,64}_t`, `const char*`.
+- Any function that produces or consumes C++ type strings.
+- Any literal C++ member-access expressions (e.g. `.current_values.get_brightness()`).
+
+All target lowering (C++ type strings, member-access paths, setter casts) lives
+in target packages such as `@espcompose/esphome-target`. Surface any case where
+core needs C++ knowledge as a blocker — do not silently work around it.
+
+Verify with:
+```
+grep -rE "cpp[A-Z]|std::|int[0-9]+_t|uint[0-9]+_t|const char\*" packages/core/src/
+```
+Hits in `generated/` are tolerated; hits anywhere else are violations.
+
+## `IRType` — canonical type carrier
+
+Whenever an IR construct carries type information about an item it represents,
+it MUST use the `IRType` shape (`packages/core/src/ir/types.ts`):
+
+```ts
+export type IRScalarType   = 'int' | 'float' | 'bool' | 'string';
+export type IRScalarFormat = 'id_ref' | 'entity'; // extensible
+
+export interface IRType {
+  readonly type: IRScalarType;     // base scalar — always present
+  readonly format?: IRScalarFormat; // semantic qualifier (e.g. id reference)
+  readonly isArray?: boolean;       // collection flag
+}
+```
+
+- The field carrying an `IRType` value is named **`irType`** on its
+  parent (e.g. `IRScriptParam.irType`, `ClosureField.irType`,
+  `GlobalDefinition.irType`, `TriggerVariable.irType`,
+  `EntityDomainDescriptor.irType`).
+- `format` replaces the old `ClosureField.kind` flag: `'scalar'` → `format`
+  undefined; `'id_ref'` → `format: 'id_ref'`; `'entity'` → `format: 'entity'`.
+- Targets translate `IRType` to backend types via their own helper
+  (e.g. `irTypeToCpp` in `@espcompose/esphome-target/src/lowering/value-type-cpp.ts`).
+- Entity property access uses a semantic `propertyKey: string`
+  (e.g. `'state'`, `'brightness'`, `'position'`); the target resolves the
+  backend access path (e.g. `resolveEntityPropertyCppPath`).
+
 ## Semantic IR Nodes
 
 After rendering, the config is a typed Semantic IR tree. Every value is wrapped:

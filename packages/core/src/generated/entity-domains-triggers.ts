@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-import type { TriggerSignature } from '../trigger-registry.js';
+import type { TriggerSignature } from '../actions/trigger-registry.js';
 
 /**
  * Entity domain trigger entries, generated from metadata/entity-domains.json.
@@ -15,17 +15,17 @@ export const ENTITY_DOMAIN_TRIGGERS: Readonly<Record<string, Record<string, Trig
     on_turn_off: { variables: [] },
   },
   switch: {
-    on_state: { variables: [{ name: "x", cppType: "bool", tsType: "boolean" }] },
+    on_state: { variables: [{ name: "x", irType: {"kind":"type","type":"bool"}, tsType: "boolean" }] },
     on_turn_on: { variables: [] },
     on_turn_off: { variables: [] },
   },
   sensor: {
-    on_value: { variables: [{ name: "x", cppType: "float", tsType: "number" }] },
-    on_raw_value: { variables: [{ name: "x", cppType: "float", tsType: "number" }] },
-    on_value_range: { variables: [{ name: "x", cppType: "float", tsType: "number" }] },
+    on_value: { variables: [{ name: "x", irType: {"kind":"type","type":"float"}, tsType: "number" }] },
+    on_raw_value: { variables: [{ name: "x", irType: {"kind":"type","type":"float"}, tsType: "number" }] },
+    on_value_range: { variables: [{ name: "x", irType: {"kind":"type","type":"float"}, tsType: "number" }] },
   },
   binary_sensor: {
-    on_state: { variables: [{ name: "x", cppType: "bool", tsType: "boolean" }] },
+    on_state: { variables: [{ name: "x", irType: {"kind":"type","type":"bool"}, tsType: "boolean" }] },
     on_press: { variables: [] },
     on_release: { variables: [] },
     on_click: { variables: [] },
@@ -44,15 +44,15 @@ export const ENTITY_DOMAIN_TRIGGERS: Readonly<Record<string, Record<string, Trig
     on_closed: { variables: [] },
   },
   number: {
-    on_value: { variables: [{ name: "x", cppType: "float", tsType: "number" }] },
-    on_value_range: { variables: [{ name: "x", cppType: "float", tsType: "number" }] },
+    on_value: { variables: [{ name: "x", irType: {"kind":"type","type":"float"}, tsType: "number" }] },
+    on_value_range: { variables: [{ name: "x", irType: {"kind":"type","type":"float"}, tsType: "number" }] },
   },
   select: {
-    on_value: { variables: [{ name: "x", cppType: "std::string", tsType: "string" }] },
+    on_value: { variables: [{ name: "x", irType: {"kind":"type","type":"string"}, tsType: "string" }] },
   },
   text_sensor: {
-    on_value: { variables: [{ name: "x", cppType: "std::string", tsType: "string" }] },
-    on_raw_value: { variables: [{ name: "x", cppType: "std::string", tsType: "string" }] },
+    on_value: { variables: [{ name: "x", irType: {"kind":"type","type":"string"}, tsType: "string" }] },
+    on_raw_value: { variables: [{ name: "x", irType: {"kind":"type","type":"string"}, tsType: "string" }] },
   },
   lock: {
     on_state: { variables: [] },

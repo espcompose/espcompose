@@ -7,8 +7,9 @@
 // without physical hardware.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, IRSection, IRObject, IREntry, IRValue } from '@espcompose/core/internals';
-import { irSection, irScalar, irObject, irEntry } from '@espcompose/core/internals';
+import type { SemanticIR, IRSection, IRObject, IREntry, IRValue, IRUIRegistry } from '@espcompose/core/internals';
+import { irSection, irScalar, irObject, irEntry, brandArray } from '@espcompose/core/internals';
+
 
 export interface HostTransformOptions {
   /** Override SDL display width. */
@@ -44,7 +45,6 @@ const HOST_ALLOWED_SECTIONS = new Set([
   // UI
   'display',       // replaced with SDL
   'touchscreen',   // replaced with SDL
-  'lvgl',
   'font',
   'image',
   'animation',
@@ -133,17 +133,17 @@ function extractDisplayId(displayValue: IRValue): IREntry | undefined {
 }
 
 /**
- * Find `rotation` in the `lvgl` section.
+ * Find `rotation` in the LVGL widget tree.
  * ESPHome 2026.4+ requires rotation in the LVGL config (not the display)
  * when LVGL is active.
  */
-function findLvglRotation(sections: readonly IRSection[]): number | undefined {
-  const lvglSection = sections.find(s => s.key === 'lvgl');
-  if (!lvglSection || lvglSection.value.kind !== 'object') return undefined;
-  const rotEntry = findEntry(lvglSection.value, 'rotation');
-  if (!rotEntry) return undefined;
-  const val = getScalarValue(rotEntry.value);
-  return typeof val === 'number' ? val : undefined;
+function findLvglRotation(ui?: IRUIRegistry): number | undefined {
+  if (!ui) return undefined;
+  const rotation = ui.config.rotation;
+  if (rotation && rotation.kind === 'scalar' && typeof rotation.value === 'number') {
+    return rotation.value;
+  }
+  return undefined;
 }
 
 /**
@@ -220,12 +220,12 @@ function inferDisplayDimensions(
 // strip the `rotation` entry from the LVGL section.
 
 const PORTABLE_DISPLAY_KEYS = new Set([
-  'update_interval',
-  'auto_clear_enabled',
-  'show_test_card',
+  'updateInterval',
+  'autoClearEnabled',
+  'showTestCard',
   'pages',
   'lambda',
-  'on_page_change',
+  'onPageChange',
 ]);
 
 /**
@@ -280,8 +280,8 @@ function buildSdlTouchscreen(): IRObject {
 // ── Logger entry keys unsupported on host ───────────────────────────────
 
 const LOGGER_STRIP_KEYS = new Set([
-  'hardware_uart',
-  'baud_rate',
+  'hardwareUart',
+  'baudRate',
 ]);
 
 /**
@@ -297,16 +297,11 @@ function stripLoggerHardwareEntries(value: IRValue): IRValue {
 }
 
 /**
- * Strip the `rotation` entry from the LVGL section.
- * ESPHome 2026.4+ handles rotation in LVGL, but for SDL host mode we bake
- * the rotation into the SDL window dimensions. Keeping `rotation` in the
- * LVGL config would cause a double-rotation.
+ * Strip `rotation` from a typed `IRUIRegistry`, returning a new registry.
  */
-function stripLvglRotation(value: IRValue): IRValue {
-  if (value.kind !== 'object') return value;
-  const filtered = value.entries.filter(e => e.key !== 'rotation');
-  if (filtered.length === value.entries.length) return value;
-  return irObject(filtered);
+function stripLvglTreeRotation(ui: IRUIRegistry): IRUIRegistry {
+  const { rotation: _rotation, ...rest } = ui.config;
+  return { ...ui, config: rest };
 }
 
 const SIMULATOR_SUFFIX = '-simulator';
@@ -349,7 +344,7 @@ export function transformIRForHost(
   ir: SemanticIR,
   options?: HostTransformOptions,
 ): SemanticIR {
-  const sections = ir.esphome.sections;
+  const sections = [...ir.sections];
   const result: IRSection[] = [];
   let hostSectionInjected = false;
 
@@ -372,7 +367,7 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const lvglRotation = findLvglRotation(sections);
+      const lvglRotation = findLvglRotation(ir.ui);
       const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
@@ -398,12 +393,6 @@ export function transformIRForHost(
       continue;
     }
 
-    // Strip rotation from LVGL — already baked into SDL dimensions
-    if (section.key === 'lvgl') {
-      result.push(irSection('lvgl', stripLvglRotation(section.value)));
-      continue;
-    }
-
     // Pass through all other sections unchanged
     result.push(section);
   }
@@ -416,11 +405,11 @@ export function transformIRForHost(
   }
 
   return {
-    kind: 'semantic_ir',
-    esphome: {
-      ...ir.esphome,
-      sections: result,
-    },
-    espcompose: ir.espcompose,
+    ...ir,
+    sections: brandArray(result, 'section_registry'),
+    // Strip rotation from the typed LVGL tree — already baked into SDL dimensions
+    ui: ir.ui
+      ? stripLvglTreeRotation(ir.ui)
+      : undefined,
   };
 }

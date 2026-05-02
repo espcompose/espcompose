@@ -23,9 +23,11 @@
 import { useContext } from './useContext';
 import { assertHookContext } from './useState';
 import { registerComponent } from './useReactiveScope';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive-node';
-import type { IRDependency, Signal } from '../reactive-node';
+import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
+import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
+import type { IRType } from '../ir/types';
+import { IR_BOOL, IR_BOOL_ARRAY, IR_FLOAT, IR_FLOAT_ARRAY, IR_INT, IR_INT_ARRAY, IR_STRING, IR_STRING_ARRAY } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { throwCompileTimeOnly } from '../errors';
 import {
@@ -33,7 +35,7 @@ import {
   type GlobalHandle,
   globalScopeContext,
   hashGlobalFingerprint,
-  cppTypeToExprType,
+  irTypeToExprType,
   createGlobalHandle,
 } from './global-shared';
 
@@ -42,7 +44,7 @@ import {
 /** Scalar type tokens. */
 export type ScalarGlobalType = 'boolean' | 'integer' | 'float' | 'string';
 
-/** Array type tokens — volatile only, backed by std::vector<T>. */
+/** Array type tokens — volatile only. Lowered to a backend-specific array type. */
 export type ArrayGlobalType = 'boolean[]' | 'integer[]' | 'float[]' | 'string[]';
 
 /** All type tokens accepted by useGlobal(). */
@@ -78,8 +80,9 @@ export interface VolatileGlobalOptions<TK extends GlobalType> {
 /**
  * Handle returned by useGlobal() for array globals.
  *
- * Provides a restricted set of operations that map cleanly to std::vector<T>.
- * Not all TS array methods are supported — only those that compile to C++.
+ * Provides a restricted set of operations that map cleanly to a backend
+ * array container. Not all TS array methods are supported — only those that
+ * a typical backend can lower.
  */
 export interface GlobalArrayHandle<T> {
   readonly [BINDING_BRAND]?: true;
@@ -99,22 +102,23 @@ export interface GlobalArrayHandle<T> {
   readonly id: string;
 }
 
-// ── Token → C++ type mapping (internal) ────────────────────────────────────
+// ── Token → IRType mapping (internal) ────────────────────────────────────────
 
 /**
- * Convert a TS-native GlobalType token to the corresponding C++ type string.
- * Exported from internals for use by compiler scanners.
+ * Convert a TS-native GlobalType token to the corresponding
+ * target-agnostic `IRType`. Exported from internals for use by
+ * compiler scanners.
  */
-export function globalTypeToCpp(token: GlobalType): string {
+export function globalTypeToIRType(token: GlobalType): IRType {
   switch (token) {
-    case 'boolean':    return 'bool';
-    case 'integer':    return 'int';
-    case 'float':      return 'float';
-    case 'string':     return 'std::string';
-    case 'boolean[]':  return 'std::vector<bool>';
-    case 'integer[]':  return 'std::vector<int>';
-    case 'float[]':    return 'std::vector<float>';
-    case 'string[]':   return 'std::vector<std::string>';
+    case 'boolean':    return IR_BOOL;
+    case 'integer':    return IR_INT;
+    case 'float':      return IR_FLOAT;
+    case 'string':     return IR_STRING;
+    case 'boolean[]':  return IR_BOOL_ARRAY;
+    case 'integer[]':  return IR_INT_ARRAY;
+    case 'float[]':    return IR_FLOAT_ARRAY;
+    case 'string[]':   return IR_STRING_ARRAY;
   }
 }
 
@@ -129,7 +133,8 @@ export function isArrayGlobalType(token: string): token is ArrayGlobalType {
  * Declare a volatile (non-retained) ESPHome global variable.
  *
  * Supports both scalar types (`'integer'`, `'float'`, `'boolean'`, `'string'`)
- * and array types (`'integer[]'`, `'float[]'`, etc.) backed by `std::vector<T>`.
+ * and array types (`'integer[]'`, `'float[]'`, etc.) lowered to a backend
+ * array container.
  *
  * For flash-persistent globals, use `useRetainedGlobal()` instead.
  *
@@ -164,9 +169,9 @@ export function useGlobal<TK extends GlobalType>(
     );
   }
 
-  const cppType = globalTypeToCpp(type);
+  const irType = globalTypeToIRType(type);
   const id = hashGlobalFingerprint(fingerprint);
-  const exprType = cppTypeToExprType(cppType);
+  const exprType = irTypeToExprType(irType);
 
   // Detect duplicate keys within the same global scope
   const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition>;
@@ -176,8 +181,9 @@ export function useGlobal<TK extends GlobalType>(
     );
   }
 
-  // Build the ESPHome globals config
-  const config: Record<string, unknown> = { id, type: cppType };
+  // Build the ESPHome globals config. The `irType` is target-agnostic;
+  // the lowering target converts it to the concrete `type:` keyword.
+  const config: Record<string, unknown> = { id, irType };
   if (opts?.initialValue != null) {
     config.initial_value = String(opts.initialValue);
   }
@@ -186,19 +192,19 @@ export function useGlobal<TK extends GlobalType>(
   registerComponent({ kind: 'component', section: 'globals', id, config });
 
   // Register in the global scope context for action compiler symbol lookup
-  scopeMap.set(id, { id, cppType });
+  scopeMap.set(id, { id, irType });
 
   if (isArrayGlobalType(type)) {
-    return createGlobalArrayHandle(id, cppType, exprType);
+    return createGlobalArrayHandle(id, irType, exprType);
   }
-  return createGlobalHandle<InferGlobalTS<TK>>(id, cppType, exprType);
+  return createGlobalHandle<InferGlobalTS<TK>>(id, irType, exprType);
 }
 
 // ── Array handle factory ───────────────────────────────────────────────────
 
 function createGlobalArrayHandle<T>(
   id: string,
-  cppType: string,
+  _irType: IRType,
   exprType: ExprType,
 ): GlobalArrayHandle<T> {
   let cachedNode: IRReactiveNode<T[]> | undefined;
@@ -208,8 +214,6 @@ function createGlobalArrayHandle<T>(
       const dep: IRDependency = {
         kind: 'dependency',
         sourceId: id,
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
         sourceType: 'global',
       };
       cachedNode = new IRReactiveNode<T[]>({
@@ -217,9 +221,7 @@ function createGlobalArrayHandle<T>(
         dependencies: [dep],
         exprType,
         sourceId: id,
-        property: 'value',
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
+        propertyKey: 'value',
       });
     }
     return cachedNode;

@@ -53,12 +53,16 @@ Trigger props (`onPress`, `onRelease`, etc.) accept `TriggerHandler<T>`.
 - Keep target-specific assumptions out of compiler transforms whenever possible;
    lowerers should resolve generic IR semantics.
 
-## Library Compilation
+## Library Resolution (source-mode)
 
-`espcompose build --library` pre-compiles component libraries:
-1. AST transform (same reactive + script transforms)
-2. esbuild bundles to ESM
-3. TypeScript emits `.d.ts` declarations
-4. `__espcompose_format__` version marker injected
+ESPCompose-native libraries are consumed as TypeScript/TSX source via the
+`espcompose` package.json export condition. The CLI:
+1. Discovers libraries by walking `node_modules` for packages with an
+   `exports["."]["espcompose"]` entry pointing at TS/TSX sources.
+2. Type-checks app + library sources together with `customConditions:
+   ['espcompose']`.
+3. Runs the same AST transforms (reactive + script) over library sources as
+   over app sources, writing them under `<buildDir>/node_modules/<pkg>/`.
+4. Bundles via esbuild with `conditions: ['espcompose']`.
 
-Consumer builds validate `LIBRARY_FORMAT_VERSION` matches. Mismatches produce clear errors.
+There is no separate library build step — libraries ship sources only.

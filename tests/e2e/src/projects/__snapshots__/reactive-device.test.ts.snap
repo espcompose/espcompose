@@ -69,9 +69,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -477,9 +475,7 @@ binary_sensor:
   entity_id: switch.space_heater
   trigger_on_initial_state: true
   on_state:
-    - lambda: !lambda "espcompose::sig_ha_switch_space_heater.set(x); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_switch_space_heater.set(x); espcompose::flush();"
 external_components:
   - source:
       type: local

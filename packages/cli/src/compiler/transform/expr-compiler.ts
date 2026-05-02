@@ -12,10 +12,10 @@
  */
 
 import ts from 'typescript';
-import type { IRExprNode } from '@espcompose/core';
-import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType } from '@espcompose/core/internals';
+import type { IRExpression } from '@espcompose/core';
+import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType, DependencySourceType } from '@espcompose/core/internals';
 import {
-  getDomainSensorType, hashGlobalFingerprint, globalTypeToCpp, REACTIVE_PROPERTY_MAP,
+  hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
 } from '@espcompose/core/internals';
@@ -51,32 +51,31 @@ export interface HAEntityInfo {
 }
 
 export interface SignalPropertyInfo {
-  /** C++ signal variable name, e.g. `sig_ha_light_office` */
+  /** Signal identifier, e.g. `sig_ha_light_office` */
   signalName: string;
-  /** C++ type of the signal, e.g. `bool`, `float`, `std::string` */
-  valueType: string;
-  /** Source domain for trigger lookup, e.g. `binary_sensor`, `sensor` */
+  /** Expression type of the signal value, e.g. 'bool', 'float', 'string'. */
+  exprType: ExprType;
+  /** ESPHome platform for trigger lookup, e.g. `binary_sensor`, `sensor` */
   sourceDomain: string;
   /** ESPHome component ID, e.g. `ha_light_office` */
   sourceId: string;
-  /** Trigger type, e.g. `on_state`, `on_value` */
-  triggerType: string;
-  /** Source type: 'ha_entity' or 'theme' */
-  sourceType?: 'ha_entity' | 'theme';
+  /** Source type — always 'ha_entity' for signal properties */
+  sourceType: 'ha_entity';
 }
 
 export interface DependencyInfo {
   signalName: string;
   sourceId: string;
-  triggerType: string;
-  sourceDomain: string;
-  valueType: string;
-  sourceType?: string;
+  sourceDomain?: string;
+  /** Expression type of the dependency's value. */
+  exprType: ExprType;
+  sourceType: DependencySourceType;
 }
 
 export interface GlobalExprInfo {
   globalId: string;
-  cppType: string;
+  /** Target-agnostic type descriptor. The lowering target maps this to a concrete representation. */
+  irType: IRType;
   /** ExprType for the IR node, e.g. 'int', 'float', 'bool', 'string'. */
   exprType: ExprType;
 }
@@ -155,9 +154,9 @@ export function hasReactiveNodeBrand(type: ts.Type): boolean {
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Resolve the C++ signal info for a property access on an HA entity binding.
+ * Resolve signal property info for a property access on an HA entity binding.
  *
- * Property metadata (sourceDomain, triggerType, exprType) is looked up from
+ * Property metadata (sourceDomain, exprType) is looked up from
  * the generated REACTIVE_PROPERTY_MAP. Signal IDs are derived from entity IDs.
  */
 function resolveSignalProperty(
@@ -175,84 +174,83 @@ function resolveSignalProperty(
     const brightnessId = `${sourceId}_brightness`;
     return {
       signalName: `sig_${brightnessId}`,
-      valueType: propConfig.exprType,
+      exprType: propConfig.exprType,
       sourceDomain: propConfig.sourceDomain,
       sourceId: brightnessId,
-      triggerType: propConfig.triggerType,
+      sourceType: 'ha_entity',
     };
   }
 
-  // stateText uses a domain-specific trigger type override
+  // stateText always uses text_sensor regardless of entity domain
   if (propName === 'stateText') {
-    const sensorDomain = getDomainSensorType(entity.domain);
     return {
       signalName: `sig_${sourceId}`,
-      valueType: propConfig.exprType,
-      sourceDomain: sensorDomain,
+      exprType: propConfig.exprType,
+      sourceDomain: propConfig.sourceDomain,
       sourceId,
-      triggerType: sensorDomain === 'sensor' ? 'on_value' : 'on_state',
+      sourceType: 'ha_entity',
     };
   }
 
   return {
     signalName: `sig_${sourceId}`,
-    valueType: propConfig.exprType,
+    exprType: propConfig.exprType,
     sourceDomain: propConfig.sourceDomain,
     sourceId,
-    triggerType: propConfig.triggerType,
+    sourceType: 'ha_entity',
   };
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Script/trigger expression IR compiler (IRExprNode output)
+// Script/trigger expression IR compiler (IRExpression output)
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Compile a script/trigger TS expression to an IRExprNode tree.
+ * Compile a script/trigger TS expression to an IRExpression tree.
  */
 export function translateScriptExprIR(
   node: ts.Expression,
   ctx: ScriptTransformContext,
-): IRExprNode | null {
+): IRExpression | null {
   if (ts.isNumericLiteral(node)) {
-    return { kind: 'literal', value: Number(node.text), type: 'float' };
+    return { kind: 'expr:literal', value: Number(node.text), type: 'float' };
   }
   if (ts.isStringLiteral(node)) {
-    return { kind: 'literal', value: node.text, type: 'string' };
+    return { kind: 'expr:literal', value: node.text, type: 'string' };
   }
   if (node.kind === ts.SyntaxKind.TrueKeyword) {
-    return { kind: 'literal', value: true, type: 'bool' };
+    return { kind: 'expr:literal', value: true, type: 'bool' };
   }
   if (node.kind === ts.SyntaxKind.FalseKeyword) {
-    return { kind: 'literal', value: false, type: 'bool' };
+    return { kind: 'expr:literal', value: false, type: 'bool' };
   }
   if (node.kind === ts.SyntaxKind.NullKeyword) {
-    return { kind: 'literal', value: 0, type: 'int' };
+    return { kind: 'expr:literal', value: 0, type: 'int' };
   }
 
   if (ts.isIdentifier(node)) {
     if (ctx.localVars.has(node.text)) {
-      return { kind: 'trigger_var', name: node.text };
+      return { kind: 'expr:trigger_var', name: node.text };
     }
     return null;
   }
 
   if (ts.isPropertyAccessExpression(node)) {
     if (ts.isIdentifier(node.expression) && node.expression.text === ctx.triggerParamName) {
-      return { kind: 'trigger_var', name: node.name.text };
+      return { kind: 'expr:trigger_var', name: node.name.text };
     }
     // globalHandle.value → global_read
     if (ts.isIdentifier(node.expression) && node.name.text === 'value' && ctx.globalHandlesByName) {
       const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
       if (globalInfo) {
-        return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        return { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
       }
     }
     // arrayHandle.length → array_method 'size'
     if (ts.isIdentifier(node.expression) && node.name.text === 'length' && ctx.globalHandlesByName) {
       const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
       if (globalInfo && isArrayExprType(globalInfo.exprType)) {
-        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
         return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
       }
     }
@@ -313,7 +311,7 @@ export function translateScriptExprIR(
       const method = node.expression.name.text;
       const builtinFn = TS_MATH_TO_BUILTIN[method];
       if (!builtinFn) return null;
-      const args: IRExprNode[] = [];
+      const args: IRExpression[] = [];
       for (const arg of node.arguments) {
         const compiled = translateScriptExprIR(arg, ctx);
         if (!compiled) return null;
@@ -341,7 +339,7 @@ export function translateScriptExprIR(
       if (globalInfo && isArrayExprType(globalInfo.exprType)) {
         const indexArg = translateScriptExprIR(node.arguments[0], ctx);
         if (!indexArg) return null;
-        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
         return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
@@ -350,25 +348,25 @@ export function translateScriptExprIR(
   }
 
   if (ts.isTemplateExpression(node)) {
-    const parts: IRExprNode[] = [];
+    const parts: IRExpression[] = [];
     if (node.head.text) {
-      parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+      parts.push({ kind: 'expr:literal', value: node.head.text, type: 'string' });
     }
     for (const span of node.templateSpans) {
       const compiled = translateScriptExprIR(span.expression, ctx);
       if (!compiled) return null;
       parts.push(irToString(compiled));
       if (span.literal.text) {
-        parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+        parts.push({ kind: 'expr:literal', value: span.literal.text, type: 'string' });
       }
     }
     return parts.length > 0
       ? irConcat(parts)
-      : { kind: 'literal', value: '', type: 'string' };
+      : { kind: 'expr:literal', value: '', type: 'string' };
   }
 
   if (ts.isNoSubstitutionTemplateLiteral(node)) {
-    return { kind: 'literal', value: node.text, type: 'string' };
+    return { kind: 'expr:literal', value: node.text, type: 'string' };
   }
 
   return null;
@@ -569,30 +567,6 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
 // Global handle scanning
 // ────────────────────────────────────────────────────────────────────────────
 
-export function cppTypeToExprType(cppType: string): ExprType {
-  switch (cppType) {
-    case 'int': case 'int32_t': case 'int16_t': case 'int8_t':
-    case 'uint8_t': case 'uint16_t': case 'uint32_t':
-      return 'int';
-    case 'float': case 'double':
-      return 'float';
-    case 'bool':
-      return 'bool';
-    case 'std::string':
-      return 'string';
-    case 'std::vector<int>':
-      return 'int_array';
-    case 'std::vector<float>':
-      return 'float_array';
-    case 'std::vector<bool>':
-      return 'bool_array';
-    case 'std::vector<std::string>':
-      return 'string_array';
-    default:
-      return 'int';
-  }
-}
-
 /**
  * Scan a TS AST node for useGlobal() and useRetainedGlobal() calls,
  * populating a symbol → GlobalExprInfo map.
@@ -620,13 +594,13 @@ export function scanForGlobalHandles(
       if (isCoreExportCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
         const typeArg = init.arguments[0];
         if (ts.isStringLiteral(typeArg)) {
-          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const irType = globalTypeToIRType(typeArg.text as GlobalType);
           const varName = node.name.text;
           const fingerprint = `${varName}_${counter.value++}`;
           const globalId = hashGlobalFingerprint(fingerprint);
           const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
-            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+            globals.set(sym, { globalId, irType, exprType: irTypeToExprType(irType) });
           }
         }
       }
@@ -636,11 +610,11 @@ export function scanForGlobalHandles(
         const typeArg = init.arguments[0];
         const keyArg = init.arguments[1];
         if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-          const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+          const irType = globalTypeToIRType(typeArg.text as GlobalType);
           const globalId = hashGlobalFingerprint(keyArg.text);
           const sym = checker.getSymbolAtLocation(node.name);
           if (sym) {
-            globals.set(sym, { globalId, cppType, exprType: cppTypeToExprType(cppType) });
+            globals.set(sym, { globalId, irType, exprType: irTypeToExprType(irType) });
           }
         }
       }
@@ -650,9 +624,9 @@ export function scanForGlobalHandles(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// ExpressionIR compilation — TypeScript AST → IRExprNode
+// ExpressionIR compilation — TypeScript AST → IRExpression
 //
-// Parallels compileExpr() but produces target-agnostic IRExprNode trees
+// Parallels compileExpr() but produces target-agnostic IRExpression trees
 // instead of C++ strings. Used by Phase B+ of the Expression IR plan.
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -702,14 +676,14 @@ function isPrimitiveType(type: ts.Type): boolean {
 }
 
 export interface ExprIRResult {
-  expr: IRExprNode;
+  expr: IRExpression;
   exprType: ExprType;
   deps: DependencyInfo[];
   slots?: { expr: ts.Expression }[];
 }
 
 /**
- * Compile a TypeScript expression to a target-agnostic IRExprNode tree.
+ * Compile a TypeScript expression to a target-agnostic IRExpression tree.
  * Returns null if the expression contains unsupported patterns.
  */
 export function translateReactiveExprIR(
@@ -737,21 +711,21 @@ export function translateReactiveExprIR(
   return result;
 }
 
-function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNode | null {
+function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExpression | null {
   if (ts.isNumericLiteral(node)) {
-    return { kind: 'literal', value: Number(node.text), type: 'float' };
+    return { kind: 'expr:literal', value: Number(node.text), type: 'float' };
   }
   if (ts.isStringLiteral(node)) {
-    return { kind: 'literal', value: node.text, type: 'string' };
+    return { kind: 'expr:literal', value: node.text, type: 'string' };
   }
   if (node.kind === ts.SyntaxKind.TrueKeyword) {
-    return { kind: 'literal', value: true, type: 'bool' };
+    return { kind: 'expr:literal', value: true, type: 'bool' };
   }
   if (node.kind === ts.SyntaxKind.FalseKeyword) {
-    return { kind: 'literal', value: false, type: 'bool' };
+    return { kind: 'expr:literal', value: false, type: 'bool' };
   }
   if (node.kind === ts.SyntaxKind.NullKeyword) {
-    return { kind: 'literal', value: 0, type: 'int' };
+    return { kind: 'expr:literal', value: 0, type: 'int' };
   }
 
   if (ts.isIdentifier(node)) {
@@ -825,7 +799,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
   }
 
   if (ts.isNoSubstitutionTemplateLiteral(node)) {
-    return { kind: 'literal', value: node.text, type: 'string' };
+    return { kind: 'expr:literal', value: node.text, type: 'string' };
   }
 
   return null;
@@ -834,7 +808,7 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExprNod
 function compilePropertyAccessIR(
   node: ts.PropertyAccessExpression,
   ctx: ExprCompilerContext,
-): IRExprNode | null {
+): IRExpression | null {
   const propName = node.name.text;
 
   if (ts.isIdentifier(node.expression)) {
@@ -846,12 +820,10 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
-        valueType: globalInfo.cppType,
+        exprType: irTypeToExprType(globalInfo.irType),
         sourceType: 'global',
       });
-      return { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      return { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
     }
 
     // Array global handle .length → array_method 'size'
@@ -859,12 +831,10 @@ function compilePropertyAccessIR(
       ctx.dependencies.set(`global_${globalInfo.globalId}`, {
         signalName: `sig_global_${globalInfo.globalId}`,
         sourceId: globalInfo.globalId,
-        triggerType: 'on_value',
-        sourceDomain: 'globals',
-        valueType: globalInfo.cppType,
+        exprType: irTypeToExprType(globalInfo.irType),
         sourceType: 'global',
       });
-      const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
       return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
     }
 
@@ -876,13 +846,11 @@ function compilePropertyAccessIR(
         ctx.dependencies.set(signalInfo.signalName, {
           signalName: signalInfo.signalName,
           sourceId: signalInfo.sourceId,
-          triggerType: signalInfo.triggerType,
           sourceDomain: signalInfo.sourceDomain,
-          valueType: signalInfo.valueType,
+          exprType: signalInfo.exprType,
           sourceType: signalInfo.sourceType,
         });
-        const exprType = valueTypeToExprType(signalInfo.valueType);
-        return { kind: 'entity_prop', entityId: entity.entityId, property: propName, type: exprType };
+        return { kind: 'expr:entity_prop', entityId: entity.entityId, propertyKey: propName, type: signalInfo.exprType };
       }
     }
   }
@@ -909,13 +877,13 @@ function compilePropertyAccessIR(
   return null;
 }
 
-function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): IRExprNode {
+function assignSlotIR(expr: ts.Expression, ctx: ExprCompilerContext): IRExpression {
   const slotIndex = ctx.slots.length;
   ctx.slots.push({ expr, slotIndex });
-  return { kind: 'slot', slotIndex };
+  return { kind: 'expr:slot', slotIndex };
 }
 
-function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): IRExprNode | null {
+function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): IRExpression | null {
   // Math.* calls
   if (ts.isPropertyAccessExpression(node.expression) &&
       ts.isIdentifier(node.expression.expression) &&
@@ -923,7 +891,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
     const method = node.expression.name.text;
     const builtinFn = TS_MATH_TO_BUILTIN[method];
     if (!builtinFn) return null;
-    const args: IRExprNode[] = [];
+    const args: IRExpression[] = [];
     for (const arg of node.arguments) {
       const compiled = compileExprIR(arg, ctx);
       if (compiled === null) return null;
@@ -974,7 +942,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
     if (methodName in STRING_METHOD_SET) {
       const obj = compileExprIR(objectExpr, ctx);
       if (obj === null) return null;
-      const args: IRExprNode[] = [];
+      const args: IRExpression[] = [];
       for (const arg of node.arguments) {
         const compiled = compileExprIR(arg, ctx);
         if (compiled === null) return null;
@@ -991,14 +959,12 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         ctx.dependencies.set(`global_${globalInfo.globalId}`, {
           signalName: `sig_global_${globalInfo.globalId}`,
           sourceId: globalInfo.globalId,
-          triggerType: 'on_value',
-          sourceDomain: 'globals',
-          valueType: globalInfo.cppType,
+          exprType: irTypeToExprType(globalInfo.irType),
           sourceType: 'global',
         });
         const indexArg = compileExprIR(node.arguments[0], ctx);
         if (indexArg === null) return null;
-        const globalRead: IRExprNode = { kind: 'global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
         return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
@@ -1018,10 +984,10 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
 function compileTemplateLiteralIR(
   node: ts.TemplateExpression,
   ctx: ExprCompilerContext,
-): IRExprNode | null {
-  const parts: IRExprNode[] = [];
+): IRExpression | null {
+  const parts: IRExpression[] = [];
   if (node.head.text) {
-    parts.push({ kind: 'literal', value: node.head.text, type: 'string' });
+    parts.push({ kind: 'expr:literal', value: node.head.text, type: 'string' });
   }
 
   for (const span of node.templateSpans) {
@@ -1034,11 +1000,11 @@ function compileTemplateLiteralIR(
     parts.push(isString ? exprIR : irToString(exprIR));
 
     if (span.literal.text) {
-      parts.push({ kind: 'literal', value: span.literal.text, type: 'string' });
+      parts.push({ kind: 'expr:literal', value: span.literal.text, type: 'string' });
     }
   }
 
-  if (parts.length === 0) return { kind: 'literal', value: '', type: 'string' };
+  if (parts.length === 0) return { kind: 'expr:literal', value: '', type: 'string' };
   if (parts.length === 1) return parts[0];
   return irConcat(parts);
 }
@@ -1071,11 +1037,11 @@ function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType 
  * Extract the ExprType from an IR node if it carries one.
  * Handles theme_read, entity_prop, type_cast, ternary, and group nodes.
  */
-function getIRNodeType(node: IRExprNode): ExprType | null {
+function getIRNodeType(node: IRExpression): ExprType | null {
   if ('type' in node && typeof (node as { type?: unknown }).type === 'string') {
     return (node as { type: string }).type as ExprType;
   }
-  if (node.kind === 'op') {
+  if (node.kind === 'expr:op') {
     // Unwrap grouping parentheses
     if (node.op.tag === 'group') {
       return getIRNodeType(node.children[0]);
@@ -1092,11 +1058,4 @@ function getIRNodeType(node: IRExprNode): ExprType | null {
   return null;
 }
 
-/**
- * Cast valueType string to ExprType. Since valueType already uses ExprType
- * values, this is essentially an identity function with type validation.
- */
-function valueTypeToExprType(valueType: string): ExprType {
-  const validTypes = ['bool', 'float', 'int', 'string', 'color', 'font_ptr', 'unknown', 'int_array', 'float_array', 'bool_array', 'string_array'] as const;
-  return validTypes.includes(valueType as ExprType) ? (valueType as ExprType) : 'float';
-}
+

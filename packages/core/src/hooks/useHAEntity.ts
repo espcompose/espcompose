@@ -14,11 +14,11 @@
 // same render pass return a cached binding and register only once.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isIRReactiveNode } from '../reactive-node';
-import type { Signal, IRDependency } from '../reactive-node';
+import { IRReactiveNode, isIRReactiveNode } from '../reactive';
+import type { Signal, IRDependency } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import { registerHAEntity } from './useReactiveScope';
-import { isTracking, trackDependency } from '../reactive-node';
+import { isTracking, trackDependency } from '../reactive';
 import { assertHookContext } from './useState';
 import { throwCompileTimeOnly } from '../errors';
 import type {
@@ -28,18 +28,9 @@ import type {
   SwitchBinding,
   FanBinding,
   CoverBinding,
-  HAEntityBindingMap,
-} from '../ha-bindings';
-import { getDomainSensorType } from '../generated/entity-domains.js';
-
-/**
- * Generate a deterministic ESPHome component ID from an entity ID.
- *
- * `light.kitchen_floods` → `ha_light_kitchen_floods`
- */
-function generateSensorId(entityId: string): string {
-  return `ha_${entityId.replace('.', '_')}`;
-}
+} from '../entity/bindings';
+import type { HAEntityBindingMap } from '../entity/ha-bindings';
+import { classifyHAEntity } from '../entity/ha-classifier';
 
 /**
  * Extract the domain from a HA entity ID.
@@ -94,15 +85,11 @@ function createTrackingProxy<T extends object>(binding: T): T {
 // Entity type inference
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Derive ExprType from entity domain and trigger. */
-function inferEntityExprType(
-  sourceDomain: string,
-  triggerType: string,
-): ExprType {
+/** Derive ExprType from entity sourceDomain alone. */
+function inferEntityExprType(sourceDomain: string): ExprType {
   if (sourceDomain === 'text_sensor') return 'string';
-  if (sourceDomain === 'sensor' && triggerType === 'on_value') return 'float';
-  if (sourceDomain === 'binary_sensor' && triggerType === 'on_state') return 'bool';
-  if (triggerType === 'on_value') return 'float';
+  if (sourceDomain === 'sensor') return 'float';
+  if (sourceDomain === 'binary_sensor') return 'bool';
   return 'bool';
 }
 
@@ -113,18 +100,17 @@ function inferEntityExprType(
 function makeExpressionNode<T>(
   sourceId: string,
   sourceDomain: string,
-  triggerType = 'on_state',
-  property = '.state',
+  property = 'state',
   exprTypeOverride?: ExprType,
   entityId?: string,
   semanticProp?: string,
 ): Signal<T> {
-  const sourceExprType = inferEntityExprType(sourceDomain, triggerType);
+  const sourceExprType = inferEntityExprType(sourceDomain);
   const exprType = exprTypeOverride ?? sourceExprType;
   const dep: IRDependency = {
     kind: 'dependency',
+    sourceType: 'ha_entity',
     sourceId,
-    triggerType,
     sourceDomain,
   };
   const node = new IRReactiveNode<T>({
@@ -132,12 +118,11 @@ function makeExpressionNode<T>(
     dependencies: [dep],
     exprType,
     sourceId,
-    property,
-    triggerType,
+    propertyKey: property,
     sourceDomain,
   });
   if (entityId && semanticProp) {
-    node.exprIR = { kind: 'entity_prop', entityId, property: semanticProp, type: exprType };
+    node.exprIR = { kind: 'expr:entity_prop', entityId, propertyKey: semanticProp, type: exprType };
   }
   return node as unknown as Signal<T>;
 }
@@ -147,17 +132,19 @@ function makeExpressionNode<T>(
 // ────────────────────────────────────────────────────────────────────────────
 
 function createLightBinding(sourceId: string, entityId: string): LightBinding {
-  const brightnessId = `${sourceId}_brightness`;
-  const stateTextId = `${sourceId}_state_text`;
+  const brightnessVariant = { kind: 'attribute' as const, attribute: 'brightness', exprType: 'float' as const };
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+
+  const brightness = classifyHAEntity({ entityId, domain: 'light', variant: brightnessVariant });
+  const stateText = classifyHAEntity({ entityId, domain: 'light', variant: stateTextVariant });
 
   // Register a separate sensor import for the brightness attribute
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: 'sensor',
-    generatedId: brightnessId,
-    attribute: 'brightness',
+    semanticId: brightness.semanticId,
+    variant: brightnessVariant,
   });
 
   // Register a text_sensor import for string state representation
@@ -165,14 +152,14 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
     kind: 'ha_entity',
     entityId,
     domain: 'light',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    semanticId: stateText.semanticId,
+    variant: stateTextVariant,
   });
 
   const binding: LightBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
-    brightness: makeExpressionNode<number>(brightnessId, 'sensor', 'on_value', '.state', undefined, entityId, 'brightness'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
+    brightness: makeExpressionNode<number>(brightness.semanticId, 'sensor', 'state', undefined, entityId, 'brightness'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
 
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
@@ -183,44 +170,46 @@ function createLightBinding(sourceId: string, entityId: string): LightBinding {
 }
 
 function createSensorBinding(sourceId: string, entityId: string): SensorBinding {
-  const stateTextId = `${sourceId}_state_text`;
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+  const stateText = classifyHAEntity({ entityId, domain: 'sensor', variant: stateTextVariant });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'sensor',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    semanticId: stateText.semanticId,
+    variant: stateTextVariant,
   });
 
   return createTrackingProxy({
-    value: makeExpressionNode<number>(sourceId, 'sensor', 'on_value', '.state', undefined, entityId, 'value'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    value: makeExpressionNode<number>(sourceId, 'sensor', 'state', undefined, entityId, 'value'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
 function createBinarySensorBinding(sourceId: string, entityId: string): BinarySensorBinding {
-  const stateTextId = `${sourceId}_state_text`;
+  const stateTextVariant = { kind: 'facet' as const, facet: 'stateText' as const, exprType: 'string' as const };
+  const stateText = classifyHAEntity({ entityId, domain: 'binary_sensor', variant: stateTextVariant });
 
   // Register a text_sensor import for string state representation
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain: 'binary_sensor',
-    sensorType: 'text_sensor',
-    generatedId: stateTextId,
+    semanticId: stateText.semanticId,
+    variant: stateTextVariant,
   });
 
   return createTrackingProxy({
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
-    stateText: makeExpressionNode<string>(stateTextId, 'text_sensor', 'on_value', '.state', 'string', entityId, 'stateText'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
+    stateText: makeExpressionNode<string>(stateText.semanticId, 'text_sensor', 'state', 'string', entityId, 'stateText'),
   });
 }
 
 function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding {
   const binding: SwitchBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -231,7 +220,7 @@ function createSwitchBinding(sourceId: string, entityId: string): SwitchBinding 
 
 function createFanBinding(sourceId: string, entityId: string): FanBinding {
   const binding: FanBinding = {
-    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOn'),
+    isOn: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOn'),
     toggle() { /* no-op */ },
     turnOn() { /* no-op */ },
     turnOff() { /* no-op */ },
@@ -242,7 +231,7 @@ function createFanBinding(sourceId: string, entityId: string): FanBinding {
 
 function createCoverBinding(sourceId: string, entityId: string): CoverBinding {
   const binding: CoverBinding = {
-    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'on_state', '.state', undefined, entityId, 'isOpen'),
+    isOpen: makeExpressionNode<boolean>(sourceId, 'binary_sensor', 'state', undefined, entityId, 'isOpen'),
     open() { /* no-op */ },
     close() { /* no-op */ },
     stop() { /* no-op */ },
@@ -292,16 +281,15 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
   if (cached) return cached;
 
   const domain = options?.domain ?? extractDomain(entityId);
-  const sensorType = getDomainSensorType(domain);
-  const generatedId = generateSensorId(entityId);
+  const { semanticId } = classifyHAEntity({ entityId, domain, variant: { kind: 'state' } });
 
   // Register the entity for auto-import in the YAML output.
   registerHAEntity({
     kind: 'ha_entity',
     entityId,
     domain,
-    sensorType,
-    generatedId,
+    semanticId,
+    variant: { kind: 'state' },
   });
 
   // Create the domain-specific binding.
@@ -309,27 +297,27 @@ export function useHAEntity(entityId: string, options?: { domain?: string }): un
 
   switch (domain) {
     case 'light':
-      binding = createLightBinding(generatedId, entityId);
+      binding = createLightBinding(semanticId, entityId);
       break;
     case 'sensor':
     case 'number':
-      binding = createSensorBinding(generatedId, entityId);
+      binding = createSensorBinding(semanticId, entityId);
       break;
     case 'binary_sensor':
-      binding = createBinarySensorBinding(generatedId, entityId);
+      binding = createBinarySensorBinding(semanticId, entityId);
       break;
     case 'switch':
-      binding = createSwitchBinding(generatedId, entityId);
+      binding = createSwitchBinding(semanticId, entityId);
       break;
     case 'fan':
-      binding = createFanBinding(generatedId, entityId);
+      binding = createFanBinding(semanticId, entityId);
       break;
     case 'cover':
-      binding = createCoverBinding(generatedId, entityId);
+      binding = createCoverBinding(semanticId, entityId);
       break;
     default:
       // Fallback: treat as binary sensor binding.
-      binding = createBinarySensorBinding(generatedId, entityId);
+      binding = createBinarySensorBinding(semanticId, entityId);
       break;
   }
 

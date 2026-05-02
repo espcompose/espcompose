@@ -1,11 +1,21 @@
 import ts from 'typescript';
-import type { IRActionNode, IRActionParam } from '@espcompose/core/internals';
-import { irHAServiceAction, camelToSnake, ENTITY_DOMAINS } from '@espcompose/core/internals';
+import type { IRActionNode, IRExpression } from '@espcompose/core/internals';
+import { irHAServiceAction, irLiteralExpression, ENTITY_DOMAINS } from '@espcompose/core/internals';
+import { camelToSnake } from '@espcompose/esphome-target';
 import { hasBindingBrand, hasRefBrand } from '../../type-brands.js';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
 import type { HAEntityInfo } from '../../expr-compiler.js';
 import { compileActionConfigValue } from '../params.js';
+
+/**
+ * Compiler-local marker for a value that is only known at bundle runtime.
+ * The `__dynamic__` field carries a JS expression text which is spliced into
+ * the bundle source by `serializeWithExpressions` (see script-transformer.ts).
+ * The marker is resolved before the action tree reaches structural analysis
+ * or target lowering — it is intentionally NOT part of the IR types.
+ */
+interface DynamicValueMarker { __dynamic__: string }
 
 // ────────────────────────────────────────────────────────────────────────────
 // HA entity action compilation
@@ -20,7 +30,7 @@ export function compileHAAction(
   const snakeMethod = camelToSnake(methodName);
 
   // entity_id: static literal for known entities, runtime expression for dynamic
-  const data: Record<string, IRActionParam> = {};
+  const data: Record<string, IRExpression> = {};
 
   let action: string;
   if (entity.isDynamic && entity.entityIdExpr) {
@@ -30,7 +40,10 @@ export function compileHAAction(
     const varName = ts.isPropertyAccessExpression(call.expression) && ts.isIdentifier(call.expression.expression)
       ? call.expression.expression.text
       : entity.entityIdExpr;
-    data.entity_id = { kind: 'expression', jsExpression: `${varName}.__entityId__` };
+    // DynamicValueMarker — replaced with raw JS by serializeWithExpressions and
+    // resolved to a concrete string at bundle evaluation time (before lowering).
+    const marker: DynamicValueMarker = { __dynamic__: `${varName}.__entityId__` };
+    data.entity_id = marker as unknown as IRExpression;
     const GENERIC_METHODS = new Set(['toggle', 'turn_on', 'turn_off']);
     action = GENERIC_METHODS.has(snakeMethod)
       ? `homeassistant.${snakeMethod}`
@@ -38,7 +51,7 @@ export function compileHAAction(
   } else {
     // Static entity: use domain-specific action (e.g. light.toggle)
     action = `${entity.domain}.${snakeMethod}`;
-    data.entity_id = { kind: 'literal', value: entity.entityId };
+    data.entity_id = irLiteralExpression(entity.entityId);
   }
 
   // Extract additional data from optional object argument
@@ -57,8 +70,8 @@ export function compileHAAction(
           }
           data[camelToSnake(prop.name.text)] =
             typeof paramValue === 'object' && paramValue !== null
-              ? paramValue as IRActionParam
-              : { kind: 'literal', value: paramValue };
+              ? paramValue as IRExpression
+              : irLiteralExpression(paramValue);
         }
       }
     }

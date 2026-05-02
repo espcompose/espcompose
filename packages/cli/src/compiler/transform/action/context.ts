@@ -1,6 +1,14 @@
 import ts from 'typescript';
-import type { GlobalDefinition } from '@espcompose/core/internals';
+import type { GlobalDefinition, IRScriptParamDecl, IRType } from '@espcompose/core/internals';
 import type { HAEntityInfo } from '../expr-compiler.js';
+
+/** Info about a useScript() declaration visible to the action compiler. */
+export interface ScriptHandleInfo {
+  /** ESPHome script ID. */
+  id: string;
+  /** User-defined parameters from the arrow function signature. */
+  userParams: IRScriptParamDecl[];
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -24,16 +32,33 @@ export interface ActionCompileResult {
    * with local ref identifiers of the same short name.
    */
   refExpressions: Set<string>;
-  /** Set of popup controller variable names that need to be in __refBindings. */
-  popupControllerRefs: Set<string>;
+  /** Set of overlay controller variable names that need to be in __refBindings. */
+  overlayControllerRefs: Set<string>;
+  /**
+   * Set of script-handle variable names referenced via `myScript.execute()` or
+   * `await myScript()`. Surfacing these into __refBindings allows the runtime
+   * to read each handle's `__closureIndex` and patch IRScriptExecute nodes.
+   */
+  scriptHandleRefs: Set<string>;
+  /** Set of controller variable names that need to be in __refBindings. */
+  controllerRefs: Set<string>;
+  /**
+   * Scalar captures: maps captured variable name → IRType.
+   * Populated when the action compiler encounters a non-literal identifier
+   * in a position like `delay(durationMs)` and infers the value type from
+   * the TypeScript type.
+   */
+  scalarCaptures: Map<string, IRType>;
 }
 
 export interface ActionCompilerContext {
   checker: ts.TypeChecker;
   /** Map of declaration symbol → HA entity info (scope-aware). */
   haEntities: Map<ts.Symbol, HAEntityInfo>;
-  /** Map of declaration symbol → script ID (scope-aware). */
-  scriptHandles: Map<ts.Symbol, string>;
+  /** Map of declaration symbol → script handle info (scope-aware). */
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>;
+  /** Names of user-defined script parameters in the current function scope. */
+  scriptParamNames: Set<string>;
   /** Map of declaration symbol → global variable info (scope-aware). */
   globalHandles: Map<ts.Symbol, GlobalDefinition>;
   /** Set of declaration symbols that are component refs. */
@@ -48,8 +73,19 @@ export interface ActionCompilerContext {
   triggerVars: Set<string>;
   /** Set of ref binding keys from property-access expressions. */
   refExpressions: Set<string>;
-  /** Set of popup controller variable names encountered in popup actions. */
-  popupControllerRefs: Set<string>;
+  /** Set of overlay controller variable names encountered in overlay actions. */
+  overlayControllerRefs: Set<string>;
+  /** Set of script-handle variable names referenced (so __refBindings can carry them at runtime). */
+  scriptHandleRefs: Set<string>;
+  /** Set of controller variable names encountered in controller method calls. */
+  controllerRefs: Set<string>;
+  /**
+   * Scalar captures: maps captured variable name → IRType.
+   * Populated when the action compiler encounters a non-literal identifier
+   * in a position like `delay(durationMs)` and infers the value type from
+   * the TypeScript type.
+   */
+  scalarCaptures: Map<string, IRType>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

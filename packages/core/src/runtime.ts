@@ -1,29 +1,48 @@
 import type { EspComposeElement, FunctionComponent } from './types';
-import { useScript, withScriptScope } from './hooks';
+import { useScript, withScriptScope } from './hooks/useScript';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
-import { withPopupScope } from './hooks';
-import { withContext } from './hooks/useContext';
-import type { Context } from './hooks/useContext';
-import { pushHookPath, popHookPath } from './hooks/useState';
+import { withOverlayScope } from './hooks/useOverlay';
+import { withContext, pushHookPath, popHookPath } from './hooks';
+import type { Context } from './hooks';
 
 import {
   Fragment,
   flattenFragments,
   extractElementProps,
-  keysToSnakeCase,
-  stripUndefined,
-  toYamlKey,
+  transformPropKeys,
+  compactObject,
+  transformElementType,
   startSerializationCapture,
   stopSerializationCapture,
   setCurrentSource,
+  clearRefRegistry,
+  getSecrets,
+  clearSecrets,
 } from './serialize';
 import { buildLvglSection, isLvglElement, lvglWidgetToPlain } from './lvgl';
-import { ecCanvasToPlain, isEcCanvasElement } from './ec-canvas-serialize';
-import { clearRefRegistry } from './ref-registry';
-import { getSecrets, clearSecrets } from './secret';
-import { clearThemeRegistry, getThemeRegistry } from './theme/registry';
-import { clearReactiveThemeProxy, clearThemeNodeCache } from './theme/reactive-proxy';
-import { setWireframeEnabled, clearWireframe } from './wireframe';
+import { ecCanvasToPlain, isEcCanvasElement } from './lvgl';
+import type { RawIRWidgetTree } from './ir/build';
+import {
+  clearThemeRegistry,
+  getThemeRegistry,
+  clearReactiveThemeProxy,
+  clearThemeNodeCache,
+} from './lvgl/theme';
+import { setWireframeEnabled, clearWireframe } from './lvgl/style/wireframe';
+
+// ────────────────────────────────────────────────────────────────────────────
+// LVGL widget tree capture
+// ────────────────────────────────────────────────────────────────────────────
+
+let _lvglTrees: RawIRWidgetTree[] = [];
+
+function getLvglTrees(): RawIRWidgetTree[] {
+  return _lvglTrees;
+}
+
+function clearLvglTrees(): void {
+  _lvglTrees = [];
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // JSX factory
@@ -109,15 +128,15 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
       children as EspComposeElement | EspComposeElement[] | undefined
     );
     return {
-      esphome: stripUndefined(keysToSnakeCase(allProps)),
+      esphome: compactObject(transformPropKeys(allProps)),
       ...childSections,
     };
   }
 
-  // LVGL container: children become pages/widgets arrays
+  // LVGL container: collect the widget tree for the IR and exclude from config.
   if (el.type === 'lvgl') {
-    const lvglData = buildLvglSection(el);
-    return { lvgl: Object.keys(lvglData).length > 0 ? lvglData : null };
+    _lvglTrees.push(buildLvglSection(el));
+    return undefined;
   }
 
   // At this point, type must be a string (fragments and function components
@@ -138,8 +157,8 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   const childData = buildChildData(
     children as EspComposeElement | EspComposeElement[] | undefined
   );
-  const data = stripUndefined(keysToSnakeCase({ ...allProps, ...childData }));
-  return { [toYamlKey(type)]: Object.keys(data).length > 0 ? data : null };
+  const data = compactObject(transformPropKeys({ ...allProps, ...childData }));
+  return { [transformElementType(type)]: Object.keys(data).length > 0 ? data : null };
 }
 
 /**
@@ -220,11 +239,10 @@ function mergeContextSections(
 }
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {
-  // LVGL container: delegate to LVGL-specific serialization
+  // LVGL container: collect the widget tree for the UI registry IR.
+  // No config section is emitted — the tree is consumed via ir.ui instead.
   if (child.type === 'lvgl') {
-    const lvglData = buildLvglSection(child);
-    if (!sections['lvgl']) sections['lvgl'] = [];
-    sections['lvgl'].push(Object.keys(lvglData).length > 0 ? lvglData : null);
+    _lvglTrees.push(buildLvglSection(child));
     return;
   }
 
@@ -232,9 +250,9 @@ function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElem
   const childData = buildChildData(
     grandchildren as EspComposeElement | EspComposeElement[] | undefined
   );
-  // Convert camelCase prop keys to snake_case for YAML output.
-  const data = stripUndefined(keysToSnakeCase({ ...allProps, ...childData }));
-  const yamlKey = toYamlKey(child.type as string);
+  // Convert prop keys via the target-supplied shaper for YAML output.
+  const data = compactObject(transformPropKeys({ ...allProps, ...childData }));
+  const yamlKey = transformElementType(child.type as string);
   if (!sections[yamlKey]) sections[yamlKey] = [];
   sections[yamlKey].push(Object.keys(data).length > 0 ? data : null);
 }
@@ -273,7 +291,7 @@ export const ESPCompose = {
   useScript,
   withScriptScope,
   withReactiveScope,
-  withPopupScope,
+  withOverlayScope,
   clearHAEntityCache,
   clearImageCache,
   clearFontCache,
@@ -291,6 +309,9 @@ export const ESPCompose = {
   // Wireframe mode — set by CLI before executing user code.
   setWireframeEnabled,
   clearWireframe,
+  // LVGL widget tree capture — collected during render, drained after.
+  getLvglTrees,
+  clearLvglTrees,
 };
 
 export { createElement, Fragment, render };

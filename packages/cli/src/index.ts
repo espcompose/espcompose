@@ -7,8 +7,8 @@
 
 // Re-export CLI utilities for programmatic use
 export { program } from 'commander';
-export { compile, build, compileToIR, buildLibrary, transpileLibrary } from './compiler/index.js';
-export type { CompileOptions, CompileResult, BuildLibraryOptions, BuildLibraryResult } from './compiler/index.js';
+export { compile, build, compileToIR } from './compiler/index.js';
+export type { CompileOptions, CompileResult } from './compiler/index.js';
 export type { PhaseTiming } from './compiler/phases/index.js';
 export {
   resolveEsphome,

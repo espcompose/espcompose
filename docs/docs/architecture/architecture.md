@@ -104,16 +104,29 @@ Arrow functions on trigger props are compiled into structured action trees:
 
 The action compiler supports native component actions, Home Assistant service calls, delays, conditionals, loops, script execution, and theme selection. Each action becomes a node in the Semantic IR, which the YAML backend serializes to ESPHome action blocks.
 
-## Library Compilation
+## Source-Mode Libraries
 
-Component libraries can be pre-compiled with `espcompose build --library` so consumers don't need the TypeScript source:
+Component libraries are consumed as TypeScript source, not as precompiled artifacts. A library opts in by declaring an `espcompose` export condition in its `package.json`:
 
-1. AST transform runs on library sources (same reactive + script transforms)
-2. esbuild bundles to ESM
-3. TypeScript emits `.d.ts` declarations
-4. A format version marker is injected
+```json
+{
+  "name": "@my-org/my-widgets",
+  "exports": {
+    ".": {
+      "espcompose": "./src/index.ts",
+      "types": "./dist/index.d.ts"
+    }
+  }
+}
+```
 
-At consumer build time, the compiler validates that imported libraries match the current format version. Mismatched versions produce a clear error with rebuild instructions.
+At project build time the CLI:
+
+1. Walks the project's transitive dependencies and registers every package that declares an `espcompose` condition as a source-mode library.
+2. Writes a shim `package.json` for each library under `<buildDir>/node_modules/<pkg>/` so esbuild's normal node resolution finds the transformed copy.
+3. Runs the same AST transforms (reactive, script, JSX) over both app sources and library sources before bundling.
+
+There is no separate library build step and no format-version compatibility check — every consumer build transforms libraries from source against the version of the compiler it has installed.
 
 ## Asset Pipeline
 

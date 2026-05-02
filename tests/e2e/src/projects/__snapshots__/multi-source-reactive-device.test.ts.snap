@@ -14,10 +14,10 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<bool> sig_ha_light_kitchen_floods;
-Signal<float> sig_ha_light_kitchen_floods_brightness;
-Signal<std::string> sig_ha_light_kitchen_floods_state_text;
+Signal<float> sig_ha_light_kitchen_floods_attr_brightness;
+Signal<std::string> sig_ha_light_kitchen_floods_facet_state_text;
 Signal<float> sig_ha_sensor_temp_inside;
-Signal<std::string> sig_ha_sensor_temp_inside_state_text;
+Signal<std::string> sig_ha_sensor_temp_inside_facet_state_text;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
@@ -59,9 +59,7 @@ void bootstrap_runtime() {
     lv_obj_report_style_change(NULL);
   });
 
-  if (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-    rt->request_flush();  // Initial flush to process dirty nodes marked during setup
-  }
+  espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
 
 }  // namespace espcompose"
@@ -424,40 +422,33 @@ binary_sensor:
   entity_id: light.kitchen_floods
   trigger_on_initial_state: true
   on_state:
-    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); if (auto rt =
-        ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-        rt->request_flush(); }"
+    - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods.set(x); espcompose::flush();"
 sensor:
   - platform: homeassistant
-    id: ha_light_kitchen_floods_brightness
+    id: ha_light_kitchen_floods_attr_brightness
     entity_id: light.kitchen_floods
     attribute: brightness
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_brightness.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_attr_brightness.set(x);
+          espcompose::flush();"
   - platform: homeassistant
     id: ha_sensor_temp_inside
     entity_id: sensor.temp_inside
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside.set(x); if (auto rt =
-          ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside.set(x); espcompose::flush();"
 text_sensor:
   - platform: homeassistant
-    id: ha_light_kitchen_floods_state_text
+    id: ha_light_kitchen_floods_facet_state_text
     entity_id: light.kitchen_floods
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_light_kitchen_floods_facet_state_text.set(x\\
+          ); espcompose::flush();"
   - platform: homeassistant
-    id: ha_sensor_temp_inside_state_text
+    id: ha_sensor_temp_inside_facet_state_text
     entity_id: sensor.temp_inside
     on_value:
-      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside_state_text.set(x); if
-          (auto rt = ::espcompose::EspcomposeRuntimeComponent::get_instance()) {
-          rt->request_flush(); }"
+      - lambda: !lambda "espcompose::sig_ha_sensor_temp_inside_facet_state_text.set(x);
+          espcompose::flush();"
 external_components:
   - source:
       type: local

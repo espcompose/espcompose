@@ -4,20 +4,34 @@ import type { PhaseContext } from './types';
 /**
  * Phase 1: Transform
  *
- * Applies TypeScript AST passes to every user source file and writes the
- * transformed output to the build directory, preserving directory structure.
- * Stores the transformed entry file path on the context for the bundle phase.
+ * Applies TypeScript AST passes to every app source file and to every file
+ * belonging to a registered ESPCompose source-mode library, writing the
+ * transformed output to the build directory:
+ *
+ *   - app-source                  → `<buildDir>/app/<rel-to-projectDir>`
+ *   - espcompose-source-library   → `<buildDir>/node_modules/<pkgName>/<rel-to-pkgRoot>`
+ *
+ * The `<buildDir>/node_modules/<pkg>/` layout means esbuild's normal node
+ * resolution finds the transformed copy without any custom resolver plugin.
+ *
+ * Stores the transformed entry path and the original→build path map on the
+ * context for downstream phases (bundle, diagnostics).
  */
 export function transformPhase(ctx: PhaseContext): void {
   if (!ctx.program) {
     throw new Error('Transform phase requires a ts.Program — run type-check first.');
   }
+  if (!ctx.registry) {
+    throw new Error('Transform phase requires a SourceLibraryRegistry — run setup first.');
+  }
+  if (!ctx.pathMap) ctx.pathMap = new Map();
 
   const { entryFile: transformedEntry, diagnostics, filesWritten, filesTransformed } = writeTransformedFiles(
     ctx.program,
     ctx.entryFile,
-    ctx.sourceDir,
     ctx.buildDir,
+    ctx.registry,
+    ctx.pathMap,
   );
 
   if (diagnostics.length > 0) {

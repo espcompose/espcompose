@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
-import type { BuildSemanticIRInput, IRThemeData, ExecuteResult } from '@espcompose/core/internals';
-import { buildSemanticIR, scopeHash } from '@espcompose/core/internals';
+import type { BuildSemanticIRInput, IRThemeData, ExecuteResult, ExprType } from '@espcompose/core/internals';
+import { buildSemanticIR, brandArray, scopeHash, irScalar } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -39,6 +39,7 @@ export function executePhase(ctx: PhaseContext): void {
   cjsSDK.clearThemeRegistry();
   cjsSDK.clearReactiveThemeProxy();
   cjsSDK.clearWireframe();
+  cjsSDK.clearLvglTrees();
 
   // Enable wireframe mode if requested by the CLI.
   if (ctx.wireframe) {
@@ -47,11 +48,11 @@ export function executePhase(ctx: PhaseContext): void {
 
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
-  let collectedPopups: unknown[] = [];
+  let collectedOverlays: unknown[] = [];
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
-      const { result: config, popups } = cjsSDK.withPopupScope(() => {
+      const { result: config, overlays } = cjsSDK.withOverlayScope(() => {
         const mod = _require(bundlePath) as { default?: unknown };
 
         const rootElement = mod.default;
@@ -68,7 +69,7 @@ export function executePhase(ctx: PhaseContext): void {
 
         return rendered;
       });
-      collectedPopups = popups;
+      collectedOverlays = overlays;
       return config;
     });
     collectedScripts = scripts;
@@ -79,6 +80,7 @@ export function executePhase(ctx: PhaseContext): void {
   const serializationCaptures = cjsSDK.stopSerializationCapture();
 
   const themes = extractThemeData(cjsSDK);
+  const lvglTrees = cjsSDK.getLvglTrees();
 
   // ── Build Semantic IR ─────────────────────────────────────────────────
   const ir = serializationCaptures
@@ -91,8 +93,9 @@ export function executePhase(ctx: PhaseContext): void {
         scripts: collectedScripts as BuildSemanticIRInput['scripts'],
         reactiveNodes: reactiveNodes ?? [],
         themes,
+        lvglTrees,
       })
-    : { kind: 'semantic_ir' as const, esphome: { kind: 'esphome_data' as const, sections: [], haEntities: [], components: [], scripts: [] }, espcompose: { kind: 'espcompose_data' as const, reactive: { kind: 'reactive_data' as const, bindings: [], memos: [], effects: [] } } };
+    : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] } };
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };
@@ -103,10 +106,10 @@ export function executePhase(ctx: PhaseContext): void {
     executeResult.secrets = new Map(secretsMap);
   }
 
-  // Stash collected popup definitions for downstream emit phases.
-  if (collectedPopups.length > 0) {
+  // Stash collected overlay definitions for downstream emit phases.
+  if (collectedOverlays.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    executeResult.popups = collectedPopups as any;
+    executeResult.overlays = collectedOverlays as any;
   }
 
   ctx.executeResult = executeResult;
@@ -134,34 +137,34 @@ function extractThemeData(cjsSDK: any): IRThemeData[] | undefined {
     if (themeNames.length === 0) continue;
 
     const signalPaths: string[] = registry.getSignalPaths(scope);
-    const leafData = new Map<string, { values: unknown[]; valueType: string }>();
+    const themeValues = new Map<string, { values: ReturnType<typeof irScalar>[]; exprType: ExprType }>();
 
     for (const signalPath of signalPaths) {
-      const values: unknown[] = [];
-      let valueType = 'int';
+      const values: ReturnType<typeof irScalar>[] = [];
+      let exprType: ExprType = 'int';
       for (const name of themeNames) {
         const themes = registry.getThemes(scope);
         const thm = themes.get(name);
         if (thm) {
           const val = thm.values[signalPath];
           if (val) {
-            values.push(val.value);
-            valueType = val.valueType;
+            values.push(irScalar(val.value as string | number | boolean));
+            exprType = val.exprType as ExprType;
           } else {
-            values.push(0);
+            values.push(irScalar(0));
           }
         }
       }
-      leafData.set(signalPath, { values, valueType });
+      themeValues.set(signalPath, { values, exprType });
     }
 
     result.push({
-      kind: 'theme_data',
+      kind: 'theme_scope',
       scope,
       scopeId: scopeHash(scope),
-      themeNames,
+      names: themeNames,
       defaultIndex: registry.getDefaultIndex(scope),
-      leafData,
+      values: themeValues,
     });
   }
 

@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ESPCompose Semantic IR Viewer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --bg-2: #252526;
+    --bg-3: #2d2d30;
+    --fg: #d4d4d4;
+    --fg-dim: #858585;
+    --fg-mute: #6a6a6a;
+    --border: #3c3c3c;
+    --accent: #0e7490;
+    --accent-2: #38bdf8;
+    --hl: #ffd70044;
+    --flash: #facc15;
+    /* kind palette */
+    --c-container: #6b7280;
+    --c-reactive: #a78bfa;
+    --c-expr: #60a5fa;
+    --c-entity: #34d399;
+    --c-action: #fb923c;
+    --c-ref: #fde047;
+    --c-secret: #f87171;
+    --c-scalar: #94a3b8;
+    --c-default: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--fg);
+    font: 12px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  header h1 {
+    margin: 0; font-size: 13px; font-weight: 600;
+    color: var(--accent-2);
+  }
+  header .badge {
+    background: var(--bg-3); color: var(--fg-dim);
+    padding: 2px 8px; border-radius: 10px; font-size: 11px;
+  }
+  header .spacer { flex: 1; }
+  header button {
+    background: var(--bg-3); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 4px;
+    cursor: pointer; font: inherit;
+  }
+  header button:hover { background: var(--accent); border-color: var(--accent); }
+  header button:disabled { opacity: 0.4; cursor: not-allowed; }
+  header input[type="search"] {
+    background: var(--bg); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 4px 8px; border-radius: 4px;
+    font: inherit; width: 240px;
+  }
+  header input[type="search"]:focus { outline: none; border-color: var(--accent-2); }
+  #filters {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 6px 12px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .chip {
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600;
+    background: var(--bg-3); color: var(--fg-dim);
+    border: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  .chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  main {
+    display: grid; grid-template-columns: 1fr 380px;
+    height: calc(100vh - 90px);
+  }
+  #tree-pane {
+    overflow: auto;
+    padding: 8px 0;
+    border-right: 1px solid var(--border);
+  }
+  #details-pane {
+    overflow: auto;
+    padding: 12px;
+    background: var(--bg-2);
+  }
+  #details-pane h2 {
+    margin: 0 0 8px; font-size: 12px; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  #details-pane pre {
+    margin: 0;
+    background: var(--bg);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  /* tree */
+  .node {
+    padding-left: 14px;
+    position: relative;
+  }
+  .row {
+    display: flex; align-items: baseline; gap: 6px;
+    padding: 1px 12px 1px 0;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .row:hover { background: rgba(255,255,255,0.04); }
+  .row.selected { background: rgba(56,189,248,0.12); border-left-color: var(--accent-2); }
+  .row.flash { animation: flash 1.4s ease-out; }
+  @keyframes flash {
+    0% { background: var(--flash); }
+    100% { background: transparent; }
+  }
+  .row.dim { opacity: 0.32; }
+  .row.match { background: var(--hl); }
+  .caret {
+    display: inline-block; width: 12px;
+    color: var(--fg-mute); font-size: 10px;
+    flex-shrink: 0;
+  }
+  .caret.leaf { visibility: hidden; }
+  .chip-kind {
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: 600;
+    color: #111;
+    background: var(--c-default);
+    flex-shrink: 0;
+  }
+  .label { color: var(--fg); }
+  .key { color: var(--accent-2); }
+  .val-str { color: #ce9178; }
+  .val-num { color: #b5cea8; }
+  .val-bool { color: #569cd6; }
+  .val-null { color: var(--fg-mute); font-style: italic; }
+  .meta { color: var(--fg-dim); }
+  .ref-stub { color: var(--c-ref); cursor: pointer; text-decoration: underline dotted; }
+  .ref-stub:hover { color: #fff; }
+  .jump-btn {
+    margin-left: 6px;
+    background: var(--bg-3); color: var(--fg-dim);
+    border: 1px solid var(--border);
+    padding: 0 5px; border-radius: 3px;
+    font-size: 9px; font-family: inherit;
+    cursor: pointer;
+  }
+  .jump-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .children { /* nested .node elements */ }
+  .children.collapsed { display: none; }
+  .empty { color: var(--fg-mute); font-style: italic; padding: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ESPCompose Semantic IR</h1>
+  <span class="badge" id="node-count">0 nodes</span>
+  <span class="badge" id="ref-count">0 refs</span>
+  <input type="search" id="search" placeholder="Search (kind, key, id, value)…  (press /)" />
+  <button id="back" title="Back" disabled>◀</button>
+  <button id="fwd" title="Forward" disabled>▶</button>
+  <button id="expand-all" title="Expand all">Expand all</button>
+  <button id="collapse-all" title="Collapse all">Collapse all</button>
+  <span class="spacer"></span>
+</header>
+
+<div id="filters" aria-label="Kind filters"></div>
+
+<main>
+  <div id="tree-pane" role="tree" tabindex="0"></div>
+  <aside id="details-pane">
+    <h2>Details</h2>
+    <pre id="details">Click a node to inspect its raw JSON.</pre>
+  </aside>
+</main>
+
+<script id="ir-data" type="application/json">__IR_JSON__</script>
+
+<script>
+'use strict';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Load IR
+// ────────────────────────────────────────────────────────────────────────────
+const RAW = JSON.parse(document.getElementById('ir-data').textContent);
+
+// $id (path string) → object index, built by walking once.
+const ID_INDEX = new Map();
+let REF_COUNT = 0;
+function indexById(node, depth = 0) {
+  if (depth > 10000) return; // hard guard
+  if (!node || typeof node !== 'object') return;
+  if (Array.isArray(node)) { for (const c of node) indexById(c, depth + 1); return; }
+  if ('$ref' in node && Object.keys(node).length === 1) { REF_COUNT++; return; }
+  if (typeof node.$id === 'string') {
+    if (!ID_INDEX.has(node.$id)) ID_INDEX.set(node.$id, node);
+  }
+  for (const k of Object.keys(node)) indexById(node[k], depth + 1);
+}
+indexById(RAW);
+document.getElementById('node-count').textContent = ID_INDEX.size + ' nodes';
+document.getElementById('ref-count').textContent = REF_COUNT + ' refs';
+
+// Canonical DOM row by $id path (first rendered occurrence).
+const DOM_BY_ID = new Map();
+// Stable kind palette mapping.
+const KIND_COLOR = {
+  semantic_ir: 'container', section: 'container', object: 'container',
+  section_registry: 'container', entity_registry: 'container',
+  component_registry: 'container', script_registry: 'container',
+  theme_registry: 'container', reactive_registry: 'container', ui_registry: 'container',
+  array: 'container', entry: 'container', null: 'container',
+  scalar: 'scalar',
+  reactive: 'reactive', dependency: 'reactive', binding: 'reactive',
+  ha_entity: 'entity', component: 'entity', script: 'entity',
+  theme_scope: 'expr', type: 'expr',
+  action: 'action',
+  ref: 'ref', trigger_var: 'ref',
+  secret: 'secret',
+};
+function kindToColor(kind) {
+  if (!kind) return 'default';
+  if (typeof kind === 'string' && kind.startsWith('expr:')) return 'expr';
+  return KIND_COLOR[kind] || 'default';
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Render
+// ────────────────────────────────────────────────────────────────────────────
+
+const COLLECTED_KINDS = new Set();
+
+function summary(node) {
+  if (node === null) return { label: 'null', cls: 'val-null' };
+  if (typeof node !== 'object') {
+    if (typeof node === 'string') return { label: JSON.stringify(node), cls: 'val-str' };
+    if (typeof node === 'number') return { label: String(node), cls: 'val-num' };
+    if (typeof node === 'boolean') return { label: String(node), cls: 'val-bool' };
+    return { label: String(node), cls: 'meta' };
+  }
+  if (Array.isArray(node)) return { label: `[${node.length}]`, cls: 'meta' };
+  if ('$ref' in node) return { label: `→ #${node.$ref}`, cls: 'ref-stub' };
+  const k = node.kind;
+  if (typeof k === 'string' && k.endsWith('_registry')) {
+    const count = Array.isArray(node.items) ? node.items.length : 0;
+    return { label: `[${count}]`, cls: 'meta' };
+  }
+  if (k === 'scalar') {
+    const v = node.value;
+    if (typeof v === 'string') return { label: JSON.stringify(v), cls: 'val-str' };
+    return { label: v === null ? 'null' : String(v), cls: typeof v === 'number' ? 'val-num' : typeof v === 'boolean' ? 'val-bool' : 'meta' };
+  }
+  // entry / section: inline leaf values directly into the label
+  if (k === 'entry' || k === 'section') {
+    const inline = inlineLabel(node.value);
+    if (inline !== null) return { label: `${node.key}: ${inline.label}`, cls: inline.cls };
+    return { label: `${node.key || ''}`, cls: 'key' };
+  }
+  if (k === 'object') return { label: `{${(node.entries || []).length}}`, cls: 'meta' };
+  if (k === 'array') return { label: `[${(node.items || []).length}]`, cls: 'meta' };
+  if (k === 'reactive') {
+    const n = node.node || {};
+    return { label: `${n.kind || 'reactive'} ${n.nodeId || ''} → ${n.exprType || '?'}`, cls: 'meta' };
+  }
+  if (k && typeof k === 'string' && k.startsWith('expr:')) {
+    if (k === 'expr:literal') return { label: `${JSON.stringify(node.value)} :${node.type}`, cls: 'val-str' };
+    if (k === 'expr:entity_prop') return { label: `${node.entityId}.${node.propertyKey} :${node.type}`, cls: 'meta' };
+    if (k === 'expr:theme_read') return { label: `theme[${node.scopeId}].${node.path} :${node.type}`, cls: 'meta' };
+    if (k === 'expr:op') return { label: `op ${node.op?.tag || ''}`, cls: 'meta' };
+    return { label: '', cls: 'meta' };
+  }
+  if (k === 'ha_entity') return { label: node.semanticId || node.entityId || '', cls: 'key' };
+  if (k === 'binding') return { label: `${node.targetId || '?'}:${node.targetProp || '?'}`, cls: 'key' };
+  if (k === 'memo') return { label: node.nodeId || '', cls: 'key' };
+  if (k === 'component' || k === 'script') return { label: node.id || node.name || '', cls: 'key' };
+  if (k === 'dependency') return { label: `${node.sourceType || ''}:${node.sourceId || ''}`, cls: 'meta' };
+  if (k === 'ref') return { label: `→ ${node.id || ''}`, cls: 'ref-stub' };
+  if (k === 'secret') return { label: node.key || '', cls: 'val-str' };
+  if (k === 'trigger_var') return { label: node.name || '', cls: 'key' };
+  if (k === 'null') return { label: 'null', cls: 'val-null' };
+  return { label: '', cls: 'meta' };
+}
+
+// Returns an inline label for leaf-like IR nodes (no meaningful children),
+// or null if the node should be expanded as a subtree.
+function inlineLabel(node) {
+  if (node === null || node === undefined) return { label: 'null', cls: 'val-null' };
+  if (typeof node !== 'object') {
+    if (typeof node === 'string') return { label: JSON.stringify(node), cls: 'val-str' };
+    if (typeof node === 'number') return { label: String(node), cls: 'val-num' };
+    if (typeof node === 'boolean') return { label: String(node), cls: 'val-bool' };
+    return { label: String(node), cls: 'meta' };
+  }
+  if (Array.isArray(node)) return null;
+  if ('$ref' in node && Object.keys(node).length === 1) return { label: `→ #${node.$ref}`, cls: 'ref-stub' };
+  const k = node.kind;
+  if (k === 'scalar') {
+    const v = node.value;
+    if (typeof v === 'string') return { label: JSON.stringify(v), cls: 'val-str' };
+    return { label: v === null ? 'null' : String(v), cls: typeof v === 'number' ? 'val-num' : typeof v === 'boolean' ? 'val-bool' : 'meta' };
+  }
+  if (k === 'null') return { label: 'null', cls: 'val-null' };
+  if (k === 'secret') return { label: `!secret ${node.key || ''}`, cls: 'val-str' };
+  if (k === 'ref') return { label: `→ ${node.id || node.token || ''}`, cls: 'ref-stub' };
+  if (k === 'trigger_var') return { label: `$${node.name || ''}`, cls: 'key' };
+  return null;
+}
+
+// Raw children: structural child slots exactly matching the serializer's
+// child enumeration order. Used for $id path walking in materializePathTo().
+function rawChildrenOf(node) {
+  if (node === null || typeof node !== 'object') return [];
+  if (Array.isArray(node)) return node.map((v, i) => [String(i), v]);
+  if ('$ref' in node && Object.keys(node).length === 1) return [];
+  const out = [];
+  for (const k of Object.keys(node)) {
+    if (k === '$id' || k === 'kind') continue;
+    const v = node[k];
+    if (v === null || v === undefined) continue;
+    if (typeof v === 'object') out.push([k, v]);
+  }
+  return out;
+}
+
+// Flattened children for display. Eliminates verbose wrapper levels:
+// - IRObject (kind:'object') → unwrap entries directly
+// - IRArray (kind:'array') → unwrap items directly
+// - IREntry/IRSection with leaf value → no children (inlined in summary)
+// - IREntry/IRSection with non-leaf value → show value's children directly
+// - Generic objects: hoist IRObject entries, IRArray items, bare array elements
+// - Empty arrays suppressed
+function childrenOf(node) {
+  if (node === null || typeof node !== 'object') return [];
+  if (Array.isArray(node)) return node.map((v, i) => [String(i), v]);
+  if ('$ref' in node && Object.keys(node).length === 1) return [];
+  const k = node.kind;
+
+  // IRObject → flatten: skip entries array wrapper, show each entry directly
+  if (k === 'object' && Array.isArray(node.entries)) {
+    return node.entries.map(e => [e && e.key != null ? e.key : '?', e]);
+  }
+  // IRArray / branded registry → flatten: skip items array wrapper, show items directly
+  if ((k === 'array' || (typeof k === 'string' && k.endsWith('_registry'))) && Array.isArray(node.items) && node.items.length > 0) {
+    return node.items.map((v, i) => [String(i), v]);
+  }
+  // IREntry / IRSection → skip value wrapper
+  if (k === 'entry' || k === 'section') {
+    const val = node.value;
+    // Leaf value → inlined in summary(), no children needed
+    if (inlineLabel(val) !== null) return [];
+    // Non-leaf: show value's children directly (skip 'value:' level)
+    return childrenOf(val);
+  }
+
+  // Generic objects: hoist IRObject wrapper entries into parent.
+  // Bare arrays and IRArray are kept as named child nodes (structural groups).
+  const out = [];
+  for (const key of Object.keys(node)) {
+    if (key === '$id' || key === 'kind') continue;
+    const v = node[key];
+    if (v === null || v === undefined) continue;
+    if (typeof v !== 'object') continue;
+
+    // IRObject child → hoist its entries (pure value envelope)
+    if (v && !Array.isArray(v) && v.kind === 'object' && Array.isArray(v.entries)) {
+      for (const e of v.entries) out.push([e && e.key != null ? e.key : '?', e]);
+      continue;
+    }
+    // Empty bare arrays → suppress noise
+    if (Array.isArray(v) && v.length === 0) continue;
+    out.push([key, v]);
+  }
+  return out;
+}
+
+// Lightweight check: could this node have children worth expanding?
+// Avoids building the full children array — that is deferred to first expand.
+function mightHaveChildren(node) {
+  if (node === null || node === undefined) return false;
+  if (typeof node !== 'object') return false;
+  if (Array.isArray(node)) return node.length > 0;
+  const k = node.kind;
+  if (k === 'scalar' || k === 'null') return false;
+  if (k === 'entry' || k === 'section') return inlineLabel(node.value) === null;
+  if (k === 'object') return (node.entries || []).length > 0;
+  if ((k === 'array' || (typeof k === 'string' && k.endsWith('_registry'))) && Array.isArray(node.items)) return node.items.length > 0;
+  // Generic object — has children if any property is a non-null object.
+  for (const key of Object.keys(node)) {
+    if (key === '$id' || key === 'kind') continue;
+    const v = node[key];
+    if (v !== null && v !== undefined && typeof v === 'object') return true;
+  }
+  return false;
+}
+
+// Render a node row + lazy children container.
+// `expansionPath` is a Set<number> of $ids currently being expanded along
+// this branch — used to break recursion when re-rendering a $ref target inline.
+function renderNode(node, parentKey, expansionPath) {
+  const wrap = document.createElement('div');
+  wrap.className = 'node';
+
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.setAttribute('role', 'treeitem');
+
+  const caret = document.createElement('span');
+  caret.className = 'caret';
+  row.appendChild(caret);
+
+  // Resolve $ref to its target so we render as if it were the original node.
+  const isObj = node && typeof node === 'object' && !Array.isArray(node);
+  const isRef = isObj && '$ref' in node && Object.keys(node).length === 1;
+  let displayNode = node;
+  let danglingRef = false;
+  if (isRef) {
+    const target = ID_INDEX.get(node.$ref);
+    if (target) {
+      displayNode = target;
+    } else {
+      danglingRef = true;
+    }
+    row.dataset.ref = node.$ref;
+  }
+
+  // Attach $id as a tooltip on the row instead of visible text.
+  if (displayNode && typeof displayNode === 'object' && typeof displayNode.$id === 'string') {
+    row.title = '#' + displayNode.$id;
+  }
+
+  // Kind chip — append * for $ref nodes
+  const isDisplayObj = displayNode && typeof displayNode === 'object' && !Array.isArray(displayNode);
+  const kindLabel = danglingRef ? 'ref' : (isDisplayObj ? (displayNode.kind || 'object') : (Array.isArray(displayNode) ? 'array' : typeof displayNode));
+  const chip = document.createElement('span');
+  chip.className = 'chip-kind';
+  chip.textContent = isRef ? kindLabel + '*' : kindLabel;
+  chip.style.background = `var(--c-${kindToColor(kindLabel)})`;
+  if (danglingRef) chip.style.background = 'var(--c-ref)';
+  row.appendChild(chip);
+  COLLECTED_KINDS.add(kindLabel);
+
+  if (parentKey !== null && parentKey !== undefined) {
+    const k = document.createElement('span');
+    k.className = 'key';
+    k.textContent = parentKey + ':';
+    row.appendChild(k);
+  }
+
+  const sum = summary(displayNode);
+  if (sum.label) {
+    const lab = document.createElement('span');
+    lab.className = sum.cls;
+    lab.textContent = sum.label;
+    row.appendChild(lab);
+  }
+
+  wrap.appendChild(row);
+
+  // Lightweight leaf check — avoids building the full children array at
+  // render time.  childrenOf() is deferred to first expansion.
+  const expandable = !danglingRef && mightHaveChildren(displayNode);
+
+  if (!expandable) {
+    caret.classList.add('leaf');
+  } else {
+    caret.textContent = '▶';
+    const childrenEl = document.createElement('div');
+    childrenEl.className = 'children collapsed';
+    wrap.appendChild(childrenEl);
+
+    let rendered = false;
+    const expand = () => {
+      if (!rendered) {
+        rendered = true;
+        // For $ref nodes, check cycle at expansion time.
+        if (isRef && expansionPath.has(node.$ref)) {
+          // Cycle detected — downgrade to leaf.
+          caret.classList.add('leaf');
+          caret.textContent = '';
+          wrap.removeChild(childrenEl);
+          return;
+        }
+        const kids = childrenOf(displayNode);
+        if (kids.length === 0) {
+          caret.classList.add('leaf');
+          caret.textContent = '';
+          wrap.removeChild(childrenEl);
+          return;
+        }
+        const nextPath = new Set(expansionPath);
+        if (displayNode && typeof displayNode === 'object' && typeof displayNode.$id === 'string') {
+          nextPath.add(displayNode.$id);
+        }
+        for (const [ck, cv] of kids) {
+          childrenEl.appendChild(renderNode(cv, ck, nextPath));
+        }
+      }
+      childrenEl.classList.remove('collapsed');
+      caret.textContent = '▼';
+    };
+    const collapse = () => {
+      childrenEl.classList.add('collapsed');
+      caret.textContent = '▶';
+    };
+    const toggle = () => {
+      if (childrenEl.classList.contains('collapsed')) expand(); else collapse();
+    };
+    caret.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+
+    // Cycle stub UX — clicking the row itself also expands (in addition to selecting).
+    row._toggle = toggle;
+    row._expand = expand;
+  }
+
+  // Selection / details
+  row.addEventListener('click', (e) => {
+    selectRow(row, displayNode);
+    if (row._toggle) row._toggle();
+  });
+
+  // Register canonical DOM row for this $id (first occurrence wins).
+  if (isObj && typeof node.$id === 'string' && !DOM_BY_ID.has(node.$id)) {
+    DOM_BY_ID.set(node.$id, row);
+    row.dataset.id = node.$id;
+  }
+
+  return wrap;
+}
+
+const treePane = document.getElementById('tree-pane');
+treePane.appendChild(renderNode(RAW, null, new Set()));
+
+// ────────────────────────────────────────────────────────────────────────────
+// Filters (kind chips)
+// ────────────────────────────────────────────────────────────────────────────
+const filtersEl = document.getElementById('filters');
+const activeKinds = new Set();
+const allKinds = [...COLLECTED_KINDS].sort();
+for (const k of allKinds) {
+  const c = document.createElement('span');
+  c.className = 'chip';
+  c.textContent = k;
+  c.style.background = `var(--c-${kindToColor(k)})`;
+  c.style.color = '#111';
+  c.addEventListener('click', () => {
+    if (activeKinds.has(k)) { activeKinds.delete(k); c.classList.remove('on'); }
+    else { activeKinds.add(k); c.classList.add('on'); }
+    applyKindFilter();
+  });
+  filtersEl.appendChild(c);
+}
+function applyKindFilter() {
+  const rows = treePane.querySelectorAll('.row');
+  if (activeKinds.size === 0) {
+    rows.forEach(r => r.classList.remove('dim'));
+    return;
+  }
+  rows.forEach(r => {
+    const chip = r.querySelector('.chip-kind');
+    const k = chip ? chip.textContent : '';
+    if (activeKinds.has(k)) r.classList.remove('dim');
+    else r.classList.add('dim');
+  });
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Search (with auto-expand path)
+// ────────────────────────────────────────────────────────────────────────────
+const searchEl = document.getElementById('search');
+let searchTimer = null;
+searchEl.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSearch, 120);
+});
+function runSearch() {
+  const q = searchEl.value.trim().toLowerCase();
+  treePane.querySelectorAll('.row.match').forEach(r => r.classList.remove('match'));
+  if (!q) {
+    treePane.querySelectorAll('.row.dim').forEach(r => r.classList.remove('dim'));
+    applyKindFilter();
+    return;
+  }
+  const allRows = [...treePane.querySelectorAll('.row')];
+  const matches = [];
+  for (const r of allRows) {
+    const text = r.textContent.toLowerCase();
+    if (text.includes(q)) matches.push(r);
+  }
+  // Dim non-matches; expand ancestors of matches.
+  allRows.forEach(r => r.classList.add('dim'));
+  for (const r of matches) {
+    r.classList.remove('dim');
+    r.classList.add('match');
+    expandAncestors(r);
+  }
+}
+function expandAncestors(row) {
+  let el = row.parentElement; // .node
+  while (el && el !== treePane) {
+    const sib = el.parentElement;
+    if (sib && sib.classList && sib.classList.contains('children') && sib.classList.contains('collapsed')) {
+      sib.classList.remove('collapsed');
+      const parentRow = sib.previousElementSibling;
+      if (parentRow && parentRow._expand) parentRow._expand();
+    }
+    el = el.parentElement;
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Selection + details panel + history
+// ────────────────────────────────────────────────────────────────────────────
+const detailsEl = document.getElementById('details');
+let SELECTED = null;
+const HISTORY = []; let HIST_IDX = -1;
+const backBtn = document.getElementById('back');
+const fwdBtn = document.getElementById('fwd');
+
+function selectRow(row, node, fromHistory = false) {
+  if (SELECTED) SELECTED.classList.remove('selected');
+  SELECTED = row;
+  row.classList.add('selected');
+  // Render details JSON (resolve $ref to its target shallowly)
+  let preview = node;
+  if (node && typeof node === 'object' && '$ref' in node && Object.keys(node).length === 1) {
+    const t = ID_INDEX.get(node.$ref);
+    preview = t ? { '$ref': node.$ref, '→ resolved': shallow(t) } : node;
+  } else if (node && typeof node === 'object') {
+    preview = shallow(node);
+  }
+  detailsEl.textContent = JSON.stringify(preview, null, 2);
+
+  if (!fromHistory && row.dataset.id) {
+    HISTORY.splice(HIST_IDX + 1);
+    HISTORY.push(row.dataset.id);
+    HIST_IDX = HISTORY.length - 1;
+    updateHistButtons();
+  }
+}
+function shallow(obj) {
+  // Replace nested objects/arrays with summary placeholders for the details view.
+  const out = Array.isArray(obj) ? [] : {};
+  for (const k of Object.keys(obj)) {
+    const v = obj[k];
+    if (v && typeof v === 'object') {
+      if (Array.isArray(v)) out[k] = `[Array(${v.length})]`;
+      else if ('$ref' in v && Object.keys(v).length === 1) out[k] = `→ #${v.$ref}`;
+      else if (typeof v.$id === 'number') out[k] = `{${v.kind || 'object'} #${v.$id}}`;
+      else out[k] = '{...}';
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+// Walk a dotted $id path ("0.1.2") through the JSON data, expanding each
+// ancestor row so it gets lazily rendered. Returns the target row element.
+function materializePathTo(id) {
+  if (typeof id !== 'string' || id.length === 0) return null;
+  const segments = id.split('.');
+  let cur = RAW;
+  // Collect ancestor $ids so we can expand them in order.
+  const idsToExpand = [];
+  if (cur && typeof cur === 'object' && typeof cur.$id === 'string') {
+    idsToExpand.push(cur.$id);
+  }
+  for (let i = 1; i < segments.length; i++) {
+    const kids = rawChildrenOf(cur);
+    const idx = parseInt(segments[i], 10);
+    if (!Number.isFinite(idx) || idx < 0 || idx >= kids.length) return null;
+    cur = kids[idx][1];
+    if (cur && typeof cur === 'object' && !Array.isArray(cur) && typeof cur.$id === 'string') {
+      idsToExpand.push(cur.$id);
+    }
+  }
+  // Expand ancestors in order so lazy rendering materializes the path.
+  for (const aid of idsToExpand) {
+    const row = DOM_BY_ID.get(aid);
+    if (row && row._expand) row._expand();
+  }
+  return DOM_BY_ID.get(id) || null;
+}
+function jumpToId(id) {
+  const row = materializePathTo(id);
+  if (!row) {
+    console.warn('[ir-viewer] jumpToId: cannot resolve path #' + id);
+    return;
+  }
+  expandAncestors(row);
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const node = ID_INDEX.get(id);
+  selectRow(row, node);
+  row.classList.remove('flash');
+  void row.offsetWidth; // restart animation
+  row.classList.add('flash');
+}
+function updateHistButtons() {
+  backBtn.disabled = HIST_IDX <= 0;
+  fwdBtn.disabled = HIST_IDX >= HISTORY.length - 1;
+}
+backBtn.addEventListener('click', () => {
+  if (HIST_IDX <= 0) return;
+  HIST_IDX--;
+  const id = HISTORY[HIST_IDX];
+  const row = materializePathTo(id);
+  if (row) { expandAncestors(row); row.scrollIntoView({ block: 'center' }); selectRow(row, ID_INDEX.get(id), true); }
+  updateHistButtons();
+});
+fwdBtn.addEventListener('click', () => {
+  if (HIST_IDX >= HISTORY.length - 1) return;
+  HIST_IDX++;
+  const id = HISTORY[HIST_IDX];
+  const row = materializePathTo(id);
+  if (row) { expandAncestors(row); row.scrollIntoView({ block: 'center' }); selectRow(row, ID_INDEX.get(id), true); }
+  updateHistButtons();
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Expand/collapse all
+// ────────────────────────────────────────────────────────────────────────────
+document.getElementById('expand-all').addEventListener('click', () => {
+  expandTo(treePane);
+});
+function expandTo(el) {
+  if (!el) return;
+  const children = el.querySelectorAll(':scope > .node > .children.collapsed');
+  children.forEach(c => {
+    const row = c.previousElementSibling;
+    // Skip $ref rows — cycles are handled by manual expansion only.
+    if (row && row.dataset.ref) return;
+    if (row && row._expand) row._expand();
+  });
+  el.querySelectorAll(':scope > .node').forEach(n => expandTo(n.querySelector(':scope > .children')));
+}
+document.getElementById('collapse-all').addEventListener('click', () => {
+  treePane.querySelectorAll('.children').forEach(c => {
+    if (!c.classList.contains('collapsed')) {
+      c.classList.add('collapsed');
+      const row = c.previousElementSibling;
+      if (row) {
+        const caret = row.querySelector('.caret');
+        if (caret && !caret.classList.contains('leaf')) caret.textContent = '▶';
+      }
+    }
+  });
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Keyboard shortcuts
+// ────────────────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchEl) {
+    e.preventDefault(); searchEl.focus();
+  } else if (e.key === 'Escape') {
+    if (document.activeElement === searchEl) {
+      searchEl.value = ''; runSearch(); searchEl.blur();
+    }
+  }
+});
+
+// Auto-expand the root so the user sees something on load.
+const rootRow = treePane.querySelector('.row');
+if (rootRow && rootRow._expand) rootRow._expand();
+
+</script>
+</body>
+</html>

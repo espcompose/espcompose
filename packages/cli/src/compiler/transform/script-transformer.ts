@@ -17,9 +17,17 @@ import {
 import {
   compileActionBody,
 } from './action/index.js';
-import type { ActionCompileResult } from './action/index.js';
+import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, globalTypeToCpp } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+
+/** Stable string key for an IRType — used in dedup signatures. */
+function irTypeKey(vt: IRType): string {
+  let s = vt.type as string;
+  if (vt.format) s += `:${vt.format}`;
+  if (vt.isArray) s += '[]';
+  return s;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -147,10 +155,10 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
 
 /**
  * Scan for `const handle = useScript(...)` patterns
- * and build a map of declaration symbol → script ID.
+ * and build a map of declaration symbol → script info (ID + user params).
  */
-function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, string> {
-  const scriptHandles = new Map<ts.Symbol, string>();
+function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, ScriptHandleInfo> {
+  const scriptHandles = new Map<ts.Symbol, ScriptHandleInfo>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useScript', checker)) {
@@ -159,7 +167,9 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
         const scriptId = varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
         const sym = checker.getSymbolAtLocation(node.name);
         if (sym) {
-          scriptHandles.set(sym, scriptId);
+          // Extract user-defined params from the arrow function argument
+          const userParams = extractScriptUserParams(node.initializer, checker);
+          scriptHandles.set(sym, { id: scriptId, userParams });
         }
       }
     }
@@ -170,8 +180,70 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
 }
 
 /**
+ * Extract user-defined parameters from a `useScript(async (count: number, ...) => { ... })` call.
+ * Maps TS types to ESPHome C++ types: number → float, Int → int, string → string, boolean → bool.
+ */
+function extractScriptUserParams(
+  call: ts.CallExpression,
+  checker: ts.TypeChecker,
+): IRScriptParamDecl[] {
+  if (call.arguments.length < 1) return [];
+  const arg = call.arguments[0];
+  if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return [];
+  if (arg.parameters.length === 0) return [];
+
+  const params: IRScriptParamDecl[] = [];
+  for (const param of arg.parameters) {
+    if (!ts.isIdentifier(param.name)) continue;
+    const name = param.name.text;
+    const irType = inferParamIRType(param, checker);
+    if (irType) {
+      params.push({ kind: 'script_param_decl', name, irType });
+    }
+  }
+  return params;
+}
+
+/**
+ * Infer the target-agnostic value type for a script parameter from its
+ * TypeScript type annotation.
+ *
+ * - `Int` (branded number from @espcompose/core) → { type: 'int' }
+ * - `number` → { type: 'float' }
+ * - `string` → { type: 'string' }
+ * - `boolean` → { type: 'bool' }
+ */
+function inferParamIRType(
+  param: ts.ParameterDeclaration,
+  checker: ts.TypeChecker,
+): IRType | null {
+  const type = checker.getTypeAtLocation(param);
+
+  // Check for Int branded type (number & { __espcompose_int__: true })
+  // First check the intersection structure, then fall back to alias symbol name.
+  if (type.isIntersection()) {
+    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
+    if (hasNumber) {
+      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
+      if (hasIntBrand) return IR_INT;
+    }
+  }
+  // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
+  if (type.aliasSymbol?.name === 'Int') return IR_INT;
+
+  // Plain number
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
+  // String
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
+  // Boolean
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
+
+  return null;
+}
+
+/**
  * Scan for `useGlobal()` and `useRetainedGlobal()` patterns and build a
- * map of declaration symbol → GlobalDefinition { id, cppType }.
+ * map of declaration symbol → GlobalDefinition { id, irType }.
  *
  * Runs on the reactive-transformed AST, so useGlobal() calls already
  * have `__key` injected by the global-key-injector.
@@ -189,13 +261,13 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
         if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
           const typeArg = node.initializer.arguments[0];
           if (ts.isStringLiteral(typeArg)) {
-            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const irType = globalTypeToIRType(typeArg.text as GlobalType);
             const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
             if (fingerprint) {
               const globalId = hashGlobalFingerprint(fingerprint);
               const sym = checker.getSymbolAtLocation(node.name);
               if (sym) {
-                globalHandles.set(sym, { id: globalId, cppType });
+                globalHandles.set(sym, { id: globalId, irType });
               }
             }
           }
@@ -206,11 +278,11 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
           const typeArg = node.initializer.arguments[0];
           const keyArg = node.initializer.arguments[1];
           if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-            const cppType = globalTypeToCpp(typeArg.text as GlobalType);
+            const irType = globalTypeToIRType(typeArg.text as GlobalType);
             const globalId = hashGlobalFingerprint(keyArg.text);
             const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
-              globalHandles.set(sym, { id: globalId, cppType });
+              globalHandles.set(sym, { id: globalId, irType });
             }
           }
         }
@@ -252,7 +324,7 @@ function findAndCompileTriggerHandlers(
   node: ts.Node,
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
-  scriptHandles: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>,
   globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
@@ -328,7 +400,7 @@ function compileArrowsInExpression(
   expr: ts.Expression,
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
-  scriptHandles: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>,
   globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
@@ -364,7 +436,7 @@ function compileAndInjectTriggerHandler(
   callback: ts.ArrowFunction | ts.FunctionExpression,
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
-  scriptHandles: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>,
   globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
@@ -393,8 +465,13 @@ function compileAndInjectTriggerHandler(
   // Collect ref variable names used in the actions (needed for runtime resolution)
   const refNameSet = buildRefNameSet(refSymbols, result);
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
-
-  // Wrap: Object.assign(() => { ... }, { __compiledActions: [...], __refBindings: { ... } })
+  // Script handles referenced via .execute() / await scriptHandle() must be in
+  // __refBindings so the runtime can read each handle's __closureIndex and
+  // patch IRScriptExecute nodes. The action walker can't pick these up by
+  // name (the IR only carries the snake_case scriptId), so add them directly.
+  for (const name of result.scriptHandleRefs) {
+    if (!refNames.includes(name)) refNames.push(name);
+  }
   // Store IRActionNode[] directly - lowering to target format happens in target packages
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
@@ -427,10 +504,26 @@ function compileAndInjectUseScript(
   callback: ts.ArrowFunction | ts.FunctionExpression,
   ctx: TransformContext,
   refSymbols: Set<ts.Symbol>,
-  scriptHandles: Map<ts.Symbol, string>,
+  scriptHandles: Map<ts.Symbol, ScriptHandleInfo>,
   globalHandles: Map<ts.Symbol, GlobalDefinition>,
   edits: SourceEdit[],
 ): void {
+  // Reuse the userParams already extracted by scanForScriptHandles. Look
+  // up the call's parent variable declaration symbol in the scriptHandles
+  // map; fall back to extracting on the fly only for non-declaration uses
+  // (which currently can't occur — useScript must be assigned).
+  let userParams: IRScriptParamDecl[] = [];
+  const parent = callExpr.parent;
+  if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
+    const sym = ctx.checker.getSymbolAtLocation(parent.name);
+    const info = sym ? scriptHandles.get(sym) : undefined;
+    if (info) userParams = info.userParams;
+  }
+  if (userParams.length === 0) {
+    userParams = extractScriptUserParams(callExpr, ctx.checker);
+  }
+  const scriptParamNames = new Set(userParams.map(p => p.name));
+
   const result = compileActionBody(
     callback,
     ctx.checker,
@@ -439,6 +532,7 @@ function compileAndInjectUseScript(
     globalHandles,
     refSymbols,
     ctx.sourceFile.fileName,
+    scriptParamNames,
   );
 
   for (const d of result.diagnostics) {
@@ -454,14 +548,20 @@ function compileAndInjectUseScript(
 
   // Determine script ID from parent variable declaration
   let scriptId = `script_${ctx.functionCounter++}`;
-  const parent = callExpr.parent;
   if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
     scriptId = parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
   }
 
   // Store IRActionNode[] directly - lowering happens in target packages
   const refNameSet = buildRefNameSet(refSymbols, result);
+  // Exclude user param names from ref bindings
+  for (const name of scriptParamNames) {
+    refNameSet.delete(name);
+  }
   const refNames = collectRefNamesFromActions(result.actions, refNameSet);
+  for (const name of result.scriptHandleRefs) {
+    if (!scriptParamNames.has(name) && !refNames.includes(name)) refNames.push(name);
+  }
   const refBindingsEntries = refNames.map(name => {
     if (result.refExpressions.has(name)) {
       return `${JSON.stringify(name)}: ${name}`;
@@ -472,7 +572,29 @@ function compileAndInjectUseScript(
     ? `, __refBindings: { ${refBindingsEntries.join(', ')} }`
     : '';
 
-  const scriptMeta = serializeWithExpressions({ id: scriptId, then: result.actions });
+  // Build script metadata including user params if any
+  const scriptMetaObj: Record<string, unknown> = { id: scriptId, then: result.actions };
+  if (userParams.length > 0) {
+    scriptMetaObj.userParams = userParams;
+  }
+  // Emit scalar captures so the runtime can create closure-table fields.
+  if (result.scalarCaptures.size > 0) {
+    scriptMetaObj.scalarCaptures = Object.fromEntries(result.scalarCaptures);
+  }
+  // Deterministic body hash over compiled actions + binding-name set.
+  // Two `useScript` calls with the same compiled body and the same set of
+  // ref-binding identifier names produce the same `bodyHash`. The runtime
+  // uses this hash (combined with the closure-shape signature) as the
+  // dedup key.
+  const sortedRefNames = [...refNames].sort();
+  const sortedUserParamNames = userParams.map((p) => `${p.name}:${irTypeKey(p.irType)}`).sort();
+  const hashInput = JSON.stringify({
+    actions: result.actions,
+    refs: sortedRefNames,
+    userParams: sortedUserParamNames,
+  });
+  scriptMetaObj.bodyHash = hashFnv1a(hashInput);
+  const scriptMeta = serializeWithExpressions(scriptMetaObj);
 
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();
@@ -499,7 +621,7 @@ function symbolSetToNameSet(symbols: Set<ts.Symbol>): Set<string> {
 }
 
 /**
- * Merge all ref-like sets (symbol refs, property-access refs, popup controller
+ * Merge all ref-like sets (symbol refs, property-access refs, overlay controller
  * refs) into a single set of binding keys for __refBindings injection.
  */
 function buildRefNameSet(
@@ -510,7 +632,18 @@ function buildRefNameSet(
   for (const key of result.refExpressions) {
     refNameSet.add(key);
   }
-  for (const key of result.popupControllerRefs) {
+  for (const key of result.overlayControllerRefs) {
+    refNameSet.add(key);
+  }
+  for (const key of result.scriptHandleRefs) {
+    refNameSet.add(key);
+  }
+  for (const key of result.controllerRefs) {
+    refNameSet.add(key);
+  }
+  // Scalar captures need to be in __refBindings so the runtime can read
+  // their values and create closure-table entries.
+  for (const key of result.scalarCaptures.keys()) {
     refNameSet.add(key);
   }
   return refNameSet;
@@ -528,7 +661,7 @@ function collectRefNamesFromActions(
   const walk = (actionList: IRActionNode[]): void => {
     for (const action of actionList) {
       switch (action.kind) {
-        case 'native': {
+        case 'action:native': {
           const config = action.config;
           if (typeof config === 'string' && refNames.has(config)) {
             names.add(config);
@@ -540,27 +673,38 @@ function collectRefNamesFromActions(
           }
           break;
         }
-        case 'if':
+        case 'action:if':
           walk(action.then);
           if (action.else) walk(action.else);
           break;
-        case 'while':
+        case 'action:while':
           walk(action.then);
           break;
-        case 'repeat':
+        case 'action:repeat':
           walk(action.then);
           break;
-        case 'lambda_action':
+        case 'action:lambda_action':
           for (const slot of action.slots) {
-            if (slot.kind === 'ref' && refNames.has(slot.name)) {
+            if (slot.kind === 'interp:ref' && refNames.has(slot.name)) {
               names.add(slot.name);
             }
           }
           break;
-        case 'popup_show':
-        case 'popup_dismiss':
+        case 'action:overlay_show':
+        case 'action:overlay_hide':
           if ('controllerRef' in action && action.controllerRef) {
             names.add(action.controllerRef);
+          }
+          break;
+        case 'action:controller_method_call':
+          names.add(action.controllerRef);
+          break;
+        case 'action:delay':
+          // If duration is an IRScriptParamRef, its name is a captured
+          // variable that needs to appear in __refBindings.
+          if (typeof action.duration === 'object' && action.duration.kind === 'script_param') {
+            const paramName = action.duration.name;
+            if (refNames.has(paramName)) names.add(paramName);
           }
           break;
       }
@@ -571,20 +715,20 @@ function collectRefNamesFromActions(
 }
 
 /**
- * Serialize a value to a JSON-like string, replacing ExpressionMarker objects
- * with raw JavaScript expressions instead of quoted strings.
+ * Serialize a value to a JSON-like string, replacing DynamicValueMarker
+ * objects with raw JavaScript expressions instead of quoted strings.
  *
- * This is needed because IRExpressionParam values must be emitted as variable
- * references (e.g., `entity.__entityId__`) rather than string literals in the
- * injected source code.
+ * `DynamicValueMarker` is a compiler-local marker (see ./action/calls/ha.ts)
+ * used at positions in the action tree whose value is only known at bundle
+ * runtime — e.g. the `entity_id` of a dynamically-bound HA entity.  The
+ * marker carries a JS expression text (e.g. `entity.__entityId__`) which
+ * must be emitted as raw code in the injected bundle source so that bundle
+ * evaluation can resolve it to a concrete value before the action tree
+ * reaches structural analysis or target lowering.
  */
 function serializeWithExpressions(value: unknown): string {
-  return JSON.stringify(value, (_key, val) => {
-    // IRExpressionParam objects stay as-is through JSON.stringify, then we
-    // post-process the output to replace their JSON representation with raw code.
-    return val;
-  }).replace(
-    /\{"kind":"expression","jsExpression":"([^"]+)"\}/g,
+  return JSON.stringify(value).replace(
+    /\{"__dynamic__":"([^"]+)"\}/g,
     (_match, expr) => expr,
   );
 }

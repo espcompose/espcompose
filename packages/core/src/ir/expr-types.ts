@@ -2,7 +2,7 @@
 // ExpressionIR — Typed expression AST for the ESPCompose compiler.
 //
 // Target-agnostic: no C++, no JS strings. Each backend (esphome-target)
-// lowers IRExprNode trees to its own target code.
+// lowers IRExpression trees to its own target code.
 // ────────────────────────────────────────────────────────────────────────────
 
 // ── Value types ──────────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ export type ExprType =
   | 'string'
   | 'bool'
   | 'color'
-  | 'font_ptr'
+  | 'font_ref'
   | 'int_array'
   | 'float_array'
   | 'string_array'
@@ -62,30 +62,30 @@ export type ArrayMethod =
 
 // ── Expression node types ────────────────────────────────────────────────────
 
-export interface IRExprLiteral {
-  readonly kind: 'literal';
+export interface IRLiteralExpression {
+  readonly kind: 'expr:literal';
   readonly value: string | number | boolean;
   readonly type: ExprType;
 }
 
-export interface IRExprSignalRead {
-  readonly kind: 'signal_read';
+export interface IRSignalReadExpression {
+  readonly kind: 'expr:signal_read';
   /** Index into the SemanticIR reactiveNodes/signal list. */
   readonly signalIndex: number;
 }
 
-export interface IRExprMemoRead {
-  readonly kind: 'memo_read';
+export interface IRMemoReadExpression {
+  readonly kind: 'expr:memo_read';
   readonly memoId: string;
 }
 
-export interface IRExprSlot {
-  readonly kind: 'slot';
+export interface IRSlotExpression {
+  readonly kind: 'expr:slot';
   readonly slotIndex: number;
 }
 
-export interface IRExprThemeRead {
-  readonly kind: 'theme_read';
+export interface IRThemeReadExpression {
+  readonly kind: 'expr:theme_read';
   /** Human-readable scope name (e.g. 'espcompose:ui'). */
   readonly scope: string;
   /** 8-char hex hash of the scope — C++ identifier fragment. */
@@ -94,37 +94,37 @@ export interface IRExprThemeRead {
   readonly type: ExprType;
 }
 
-export interface IRExprEntityProp {
-  readonly kind: 'entity_prop';
+export interface IREntityPropExpression {
+  readonly kind: 'expr:entity_prop';
   readonly entityId: string;
-  readonly property: string;
+  readonly propertyKey: string;
   readonly type: ExprType;
 }
 
 /** Read a reactive global variable's BoundSignal. */
-export interface IRExprGlobalRead {
-  readonly kind: 'global_read';
+export interface IRGlobalReadExpression {
+  readonly kind: 'expr:global_read';
   readonly globalId: string;
   readonly type: ExprType;
 }
 
-export interface IRExprComponentRead {
-  readonly kind: 'component_read';
+export interface IRComponentReadExpression {
+  readonly kind: 'expr:component_read';
   readonly componentId: string;
   readonly sensorIndex: number;
 }
 
 /** Read a trigger variable by name (used in action/script conditions) */
-export interface IRExprTriggerVar {
-  readonly kind: 'trigger_var';
+export interface IRTriggerVarExpression {
+  readonly kind: 'expr:trigger_var';
   readonly name: string;
 }
 
 /**
  * Multiplexed expression — selects one of N case expressions by an index.
  *
- * Used by usePopup() for shared popup widget subtrees: the `index` is read
- * from a mux signal (`Signal<int32_t>`), and each case expression yields the
+ * Used by useOverlay() for shared overlay widget subtrees: the `index` is read
+ * from a mux signal (an integer signal), and each case expression yields the
  * value for one popup instance. Backends lower this to a switch / IIFE.
  *
  * The mux memo's *expression* contains direct reads of per-case sources, but
@@ -132,10 +132,10 @@ export interface IRExprTriggerVar {
  * mux + dirty signals (selective notification) — entity-source reads inside
  * the cases are imperative, not subscribed.
  */
-export interface IRExprMux {
-  readonly kind: 'mux';
-  readonly index: IRExprNode;
-  readonly cases: IRExprNode[];
+export interface IRMuxExpression {
+  readonly kind: 'expr:mux';
+  readonly index: IRExpression;
+  readonly cases: IRExpression[];
   readonly type: ExprType;
 }
 
@@ -147,9 +147,9 @@ export interface IRExprMux {
  * declared in the generated bindings header. The `table` is an opaque
  * identifier resolved by the backend to a C++ array name.
  */
-export interface IRExprTableLookup {
-  readonly kind: 'table_lookup';
-  readonly index: IRExprNode;
+export interface IRTableLookupExpression {
+  readonly kind: 'expr:table_lookup';
+  readonly index: IRExpression;
   readonly table: string;
   readonly elementType: ExprType;
 }
@@ -172,24 +172,24 @@ export type ExprOpDescriptor =
   | { readonly tag: 'array_index'; readonly elementType: ExprType }
   | { readonly tag: 'array_method'; readonly method: ArrayMethod; readonly elementType: ExprType };
 
-export interface IRExprOp {
-  readonly kind: 'op';
+export interface IROpExpression {
+  readonly kind: 'expr:op';
   readonly op: ExprOpDescriptor;
-  readonly children: readonly IRExprNode[];
+  readonly children: readonly IRExpression[];
 }
 
 // ── Union type ───────────────────────────────────────────────────────────────
 
-export type IRExprNode =
-  | IRExprLiteral
-  | IRExprSignalRead
-  | IRExprMemoRead
-  | IRExprSlot
-  | IRExprThemeRead
-  | IRExprEntityProp
-  | IRExprGlobalRead
-  | IRExprComponentRead
-  | IRExprTriggerVar
-  | IRExprMux
-  | IRExprTableLookup
-  | IRExprOp;
+export type IRExpression =
+  | IRLiteralExpression
+  | IRSignalReadExpression
+  | IRMemoReadExpression
+  | IRSlotExpression
+  | IRThemeReadExpression
+  | IREntityPropExpression
+  | IRGlobalReadExpression
+  | IRComponentReadExpression
+  | IRTriggerVarExpression
+  | IRMuxExpression
+  | IRTableLookupExpression
+  | IROpExpression;

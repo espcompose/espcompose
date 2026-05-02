@@ -16,8 +16,8 @@ export {
   createLambdaScalar,
   startSerializationCapture,
   stopSerializationCapture,
-} from './serialize';
-export type { SerializationCaptures } from './serialize';
+} from './serialize/capture';
+export type { SerializationCaptures } from './serialize/capture';
 
 // ── Reactive tracking (internal hook machinery) ────────────────────────────
 export {
@@ -25,33 +25,33 @@ export {
   stopTracking,
   trackDependency,
   isTracking,
-} from './reactive-node';
+} from './reactive/node';
 
 // ── Ref registry (compiler state) ──────────────────────────────────────────
 export {
   registerRefTag,
   getRefTag,
   clearRefRegistry,
-} from './ref-registry';
+} from './serialize/ref-registry';
 
 // ── Secret registry (compiler state) ───────────────────────────────────────
-export { getSecrets, clearSecrets } from './secret';
+export { getSecrets, clearSecrets } from './serialize/secret';
 
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
-} from './theme/registry';
+} from './lvgl/theme/registry';
 export {
   clearReactiveThemeProxy,
   clearThemeNodeCache,
-} from './theme/reactive-proxy';
+} from './lvgl/theme/reactive-proxy';
 export {
-  inferValueType,
-} from './theme/signals';
-export type { ThemeLeaf } from './theme/signals';
+  inferExprType,
+} from './lvgl/theme/signals';
+export type { ThemeLeaf } from './lvgl/theme/signals';
 
 // ── Reactive property map (compiler dispatch tables) ───────────────────────
-export { REACTIVE_PROPERTY_MAP } from './reactive-properties';
+export { REACTIVE_PROPERTY_MAP } from './reactive/properties';
 
 // ── Entity domain metadata (generated from metadata/entity-domains.json) ───
 export {
@@ -59,32 +59,27 @@ export {
   KNOWN_DOMAIN_NAMES,
   getEntityDomain,
   isKnownDomain,
-  getDomainSensorType,
   defaultStateForDomain,
 } from './generated/entity-domains.js';
 export type {
   EntityDomainDescriptor,
-  EntityPropertyDescriptor,
   EntityActionDescriptor,
-  SensorPlatform,
   UICategory,
 } from './generated/entity-domains.js';
 
 // ── Trigger registry (target codegen) ──────────────────────────────────────
-export { TRIGGER_REGISTRY, getTriggerSignature } from './trigger-registry';
-export type { TriggerSignature, TriggerVariable } from './trigger-registry';
+export { TRIGGER_REGISTRY, getTriggerSignature } from './actions/trigger-registry';
+export type { TriggerSignature, TriggerVariable } from './actions/trigger-registry';
 
 // ── Intent registry (eslint validation) ────────────────────────────────────
-export { INTRINSIC_INTENT_REGISTRY } from './intent-registry';
+export { INTRINSIC_INTENT_REGISTRY } from './intents/registry';
 
 // ── LVGL codegen tables (esphome-target) ───────────────────────────────────
 export {
-  LVGL_STYLE_PROP_TABLE,
   LVGL_REACTIVE_STYLE_PROPS,
-  LVGL_PART_FLAGS,
-  LVGL_STATE_FLAGS,
-} from './lvgl-actions';
-export type { LvglStylePropDescriptor } from './lvgl-actions';
+  LVGL_PART_NAMES,
+  LVGL_STATE_NAMES,
+} from './lvgl/widget-tables';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Demoted from public API — still accessible for tooling / target authors
@@ -96,39 +91,45 @@ export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './ta
 // ── Hooks ──────────────────────────────────────────────────────────────────
 export { useEffect } from './hooks/useEffect';
 export type { ScriptHandle } from './hooks/useScript';
+export type { ScriptOptions } from './hooks/useScript';
 
 // ── Global hook internals (used by compiler) ───────────────────────────────
-export { withGlobalScope, hashGlobalFingerprint, cppTypeToExprType } from './hooks/global-shared';
+export { withGlobalScope, hashGlobalFingerprint, hashFnv1a, irTypeToExprType } from './hooks/global-shared';
 export type { GlobalDefinition, GlobalHandle } from './hooks/global-shared';
-export { globalTypeToCpp, isArrayGlobalType } from './hooks/useGlobal';
+export { globalTypeToIRType, isArrayGlobalType } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType } from './hooks/useGlobal';
 export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
-export type { IRHAEntity, IRBinding, IRComponent } from './hooks/useReactiveScope';
-export type { PopupDefinition, PopupInstance, PopupController, CapturedPopupAction } from './hooks/usePopup';
-export { withPopupScope, peekPopupDefinitions } from './hooks/usePopup';
-export { structuralFingerprint, assertPopupStructuralIdentity } from './hooks/popup-fingerprint';
+export type { IRHAEntity, IRBinding, ComponentRegistration, HAEntityVariant } from './hooks/useReactiveScope';
+export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
+export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
+export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
+export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
+
+// ── Capture Protocol ───────────────────────────────────────────────────────
+export type { ClosureDescriptor } from './actions/closure';
+export { registerClosureDescriptor, findClosureDescriptor } from './actions/closure';
 
 // ── Actions ────────────────────────────────────────────────────────────────
-export { waitUntil } from './actions';
+export { waitUntil } from './actions/primitives';
 
 // ── Types (internal-only) ──────────────────────────────────────────────────
 export { RefHandle } from './types';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
-export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './reactive-node';
-export { useReactive, reactiveIsNaN } from './reactive-utils';
-export { validateLibraryFormat, SUPPORTED_FORMAT_VERSIONS } from './__espcompose';
+export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
+export { useReactive, reactiveIsNaN } from './reactive/utils';
 
 // ── Secrets ────────────────────────────────────────────────────────────────
-export { secret, SecretValue, isSecretValue } from './secret';
+export { secret, SecretValue, isSecretValue } from './serialize/secret';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
-export type { FlattenedTheme } from './theme/registry';
-export { createReactiveThemeProxy } from './theme/reactive-proxy';
-export { flattenTheme } from './theme/signals';
-export { scopeHash } from './theme/scope-hash';
+export type { FlattenedTheme } from './lvgl/theme/registry';
+export { createReactiveThemeProxy } from './lvgl/theme/reactive-proxy';
+export { flattenTheme } from './lvgl/theme/signals';
+export { scopeHash } from './lvgl/theme/scope-hash';
 // ── HA binding types ───────────────────────────────────────────────────────
 export type {
   SensorBinding,
@@ -137,7 +138,7 @@ export type {
   FanBinding,
   CoverBinding,
   HAEntityBindingMap,
-} from './ha-bindings';
+} from './entity/ha-bindings';
 
 // ── Reactive property types ────────────────────────────────────────────────
 export type {
@@ -149,50 +150,63 @@ export type {
   FanReactiveProps,
   CoverReactiveProps,
   ReactivePropertyConfig,
-} from './reactive-properties';
+} from './reactive/properties';
 
 // ── Serialize markers ──────────────────────────────────────────────────────
-export { camelToSnake } from './serialize';
-export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
+
+export { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './serialize/markers';
+
+// ── HA entity classifier (core-local, deterministic) ───────────────────────
+export {
+  classifyHAEntity,
+} from './entity/ha-classifier';
+export type {
+  HAEntityClassifyInput,
+  HAEntityClassifyResult,
+} from './entity/ha-classifier';
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
-export { LVGL_UPDATABLE_WIDGETS } from './lvgl-actions';
+export { LVGL_UPDATABLE_WIDGETS } from './lvgl/widget-tables';
 
 // ── Trigger args ───────────────────────────────────────────────────────────
-export { isTriggerVar } from './trigger-args';
+export { isTriggerVar } from './actions/triggers';
 
 // ── Semantic IR ────────────────────────────────────────────────────────────
-export { buildSemanticIR } from './ir/index';
+export { buildSemanticIR, serializeIRToJSON } from './ir/index';
 export {
   irSection, irScalar, irObject, irEntry, irArray, irNull,
-  irReactive, irRef, irAction, irSecret, irTriggerVar,
+  irReactive, irRef, irAction, irSecret, irTriggerVar, irType,
+  brandArray,
+  IR_INT, IR_FLOAT, IR_BOOL, IR_STRING,
+  IR_INT_ARRAY, IR_FLOAT_ARRAY, IR_BOOL_ARRAY, IR_STRING_ARRAY,
+  IR_ID_REF, IR_ENTITY,
 } from './ir/index';
 export type {
-  SemanticIR, IRESPHomeData, IRESPComposeData, IRReactiveData,
-  BuildSemanticIRInput, IRThemeData, IRScript,
+  SemanticIR, IRReactiveRegistry, IRUIRegistry,
+  BuildSemanticIRInput, IRThemeData, IRScript, IRComponent,
+  IRScriptParamDecl, IRScriptParamRef,
+  IRScalarType, IRScalarFormat, IRType,
+  ClosureField, ClosureShape, ClosureInstance,
+  IRSectionRegistry, IREntityRegistry, IRComponentRegistry, IRScriptRegistry, IRThemeRegistry,
   IRSection, IRValue, IRScalar, IRObject, IREntry, IRArray, IRNull,
   IRReactive, IRRef, IRAction, IRSecret, IRTriggerVar,
+  IRWidget, IROverlayContainer, IROverlayTier,
 } from './ir/index';
 export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
-  IRExprLiteral, IRExprSignalRead, IRExprMemoRead,
-  IRExprSlot, IRExprThemeRead,
-  IRExprEntityProp, IRExprComponentRead, IRExprTriggerVar, IRExprGlobalRead,
-  IRExprMux, IRExprTableLookup,
-  IRExprNode,
-  ExprOpDescriptor, IRExprOp,
+  IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
+  IRSlotExpression, IRThemeReadExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IRMuxExpression, IRTableLookupExpression,
+  IRExpression,
+  ExprOpDescriptor, IROpExpression,
 } from './ir/index';
 export {
   irBinary, irUnary, irPostfix, irTernary,
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-} from './ir/index';
-export {
-  operandOf, exprOf, leftOf, rightOf,
-  testOf, consequentOf, alternateOf,
-  argsOf, partsOf, objectOf, methodArgsOf,
-  arrayOf, indexOf,
+  irLiteralExpression, irTriggerVarExpression, inferLiteralExprType,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
@@ -210,13 +224,15 @@ export type {
   IRActionNode,
   IRNativeAction, IRHAServiceAction, IRLoggerAction, IRDelayAction,
   IRWaitUntilAction, IRIfAction, IRWhileAction, IRRepeatAction,
-  IRScriptExecute, IRScriptWait, IRScriptStop, IRThemeSelect, IRGlobalSet,
-  IRArraySet, IRArrayPush, IRArrayClear,
-  IRLambdaAction, IRLambdaSlot,
-  IRPopupShow, IRPopupDismiss,
+  IRScriptExecuteAction, IRScriptWaitAction, IRScriptStopAction, IRThemeSelectAction, IRGlobalSetAction,
+  IRArraySetAction, IRArrayPushAction, IRArrayClearAction,
+  IRLambdaAction, IRLambdaInterpolation,
+  IROverlayShowAction, IROverlayHideAction,
+  IRControllerMethodCallAction,
   IRCondition, IRLambdaCondition, IRNativeCondition,
-  IRActionParam, IRLiteralParam, IRTriggerVarParam, IRExpressionParam, IRReactiveExprParam,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
+  IRRefAnnotation,
+  IRDuration, IRDurationLiteral, IRDurationUnit, IRTimeout, IRTimeoutNever,
 } from './ir/index';
 export {
   irNativeAction, irHAServiceAction, irLoggerAction, irDelayAction,
@@ -225,5 +241,7 @@ export {
   irGlobalSet,
   irArraySet, irArrayPush, irArrayClear,
   irLambdaCondition, irLambdaAction,
-  irPopupShow, irPopupDismiss,
+  irOverlayShow, irOverlayHide,
+  irControllerMethodCall,
+  splitActionKey, parseDurationString, parseTimeoutString,
 } from './ir/index';

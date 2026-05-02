@@ -14,12 +14,14 @@
 import { useContext } from './useContext';
 import { assertHookContext } from './useState';
 import { registerComponent } from './useReactiveScope';
+import type { IRType } from '../ir/types';
+import { IR_BOOL, IR_FLOAT, IR_INT, IR_STRING } from '../ir/types';
 import {
   type GlobalDefinition,
   type GlobalHandle,
   globalScopeContext,
   hashGlobalFingerprint,
-  cppTypeToExprType,
+  irTypeToExprType,
   createGlobalHandle,
 } from './global-shared';
 
@@ -42,14 +44,14 @@ export interface RetainedGlobalOptions<TK extends RetainedGlobalType> {
   maxRestoreDataLength?: TK extends 'string' ? number : never;
 }
 
-// ── Token → C++ type mapping ───────────────────────────────────────────────
+// ── Token → IRType mapping ─────────────────────────────────────────────
 
-function retainedTypeToCpp(token: RetainedGlobalType): string {
+function retainedTypeToIRType(token: RetainedGlobalType): IRType {
   switch (token) {
-    case 'boolean': return 'bool';
-    case 'integer': return 'int';
-    case 'float':   return 'float';
-    case 'string':  return 'std::string';
+    case 'boolean': return IR_BOOL;
+    case 'integer': return IR_INT;
+    case 'float':   return IR_FLOAT;
+    case 'string':  return IR_STRING;
   }
 }
 
@@ -85,9 +87,9 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
     );
   }
 
-  const cppType = retainedTypeToCpp(type);
+  const irType = retainedTypeToIRType(type);
   const id = hashGlobalFingerprint(key);
-  const exprType = cppTypeToExprType(cppType);
+  const exprType = irTypeToExprType(irType);
 
   // Detect duplicate keys within the same global scope
   const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition>;
@@ -97,10 +99,11 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
     );
   }
 
-  // Build the ESPHome globals config
+  // Build the ESPHome globals config. The `irType` is target-agnostic;
+  // the lowering target converts it to the concrete `type:` keyword.
   const config: Record<string, unknown> = {
     id,
-    type: cppType,
+    irType,
     restore_value: true,
   };
   if (opts?.initialValue != null) {
@@ -114,7 +117,7 @@ export function useRetainedGlobal<TK extends RetainedGlobalType>(
   registerComponent({ kind: 'component', section: 'globals', id, config });
 
   // Register in the global scope context for action compiler symbol lookup
-  scopeMap.set(id, { id, cppType });
+  scopeMap.set(id, { id, irType });
 
-  return createGlobalHandle<InferRetainedTS<TK>>(id, cppType, exprType);
+  return createGlobalHandle<InferRetainedTS<TK>>(id, irType, exprType);
 }

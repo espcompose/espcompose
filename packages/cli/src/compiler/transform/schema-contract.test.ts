@@ -19,9 +19,7 @@ import {
   SlottedReactiveSchema,
   CompiledActionsMetaSchema,
   CompiledScriptMetaSchema,
-  LibraryFormatHeaderSchema,
 } from './schemas.js';
-import { LIBRARY_FORMAT_VERSION } from './format-version.js';
 import { irTernary } from '@espcompose/core/internals';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -56,24 +54,23 @@ function extractSlottedMeta(code: string): unknown {
 // functions. The tests validate that this exact format conforms to the schema.
 
 function buildCompiledCallString(exprType: string, deps: Array<{
-  sourceId: string; triggerType: string;
-  sourceDomain: string; sourceType?: string;
-}>, expr: unknown = { kind: 'literal', value: 0, type: 'float' }): string {
+  sourceId: string;
+  sourceDomain?: string; sourceType: string;
+}>, expr: unknown = { kind: 'expr:literal', value: 0, type: 'float' }): string {
   const depsJson = deps.map(d => {
     const parts = [
       `sourceId:${JSON.stringify(d.sourceId)}`,
-      `triggerType:${JSON.stringify(d.triggerType)}`,
-      `sourceDomain:${JSON.stringify(d.sourceDomain)}`,
+      `sourceType:${JSON.stringify(d.sourceType)}`,
     ];
-    if (d.sourceType) {
-      parts.push(`sourceType:${JSON.stringify(d.sourceType)}`);
+    if (d.sourceDomain) {
+      parts.push(`sourceDomain:${JSON.stringify(d.sourceDomain)}`);
     }
     return `{${parts.join(',')}}`;
   });
   return `__espcompose.compiled({type:${JSON.stringify(exprType)},deps:[${depsJson.join(',')}],expr:${JSON.stringify(expr)}})`;
 }
 
-function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'slot', slotIndex: 0 }): string {
+function buildSlottedCallString(exprType: string, slotCount: number, expr: unknown = { kind: 'expr:slot', slotIndex: 0 }): string {
   return `__espcompose.slotted({type:${JSON.stringify(exprType)},slots:${slotCount},expr:${JSON.stringify(expr)}}, signal0) as any`;
 }
 
@@ -86,13 +83,13 @@ describe('Library Format Schema Contract (Producer)', () => {
         'string',
         [{
           sourceId: 'ha_light_office',
-          triggerType: 'on_state',
           sourceDomain: 'binary_sensor',
+          sourceType: 'ha_entity',
         }],
         irTernary(
-          { kind: 'entity_prop', entityId: 'light.office', property: 'isOn', type: 'bool' },
-          { kind: 'literal', value: 'On', type: 'string' },
-          { kind: 'literal', value: 'Off', type: 'string' },
+          { kind: 'expr:entity_prop', entityId: 'light.office', propertyKey: 'isOn', type: 'bool' },
+          { kind: 'expr:literal', value: 'On', type: 'string' },
+          { kind: 'expr:literal', value: 'Off', type: 'string' },
         ),
       );
 
@@ -105,8 +102,8 @@ describe('Library Format Schema Contract (Producer)', () => {
       const code = buildCompiledCallString(
         'float',
         [
-          { sourceId: 'ha_a', triggerType: 'on_value', sourceDomain: 'sensor', sourceType: 'ha_entity' },
-          { sourceId: '__theme__', triggerType: '__theme__', sourceDomain: '__theme__', sourceType: 'theme' },
+          { sourceId: 'ha_a', sourceDomain: 'sensor', sourceType: 'ha_entity' },
+          { sourceId: '__theme__', sourceType: 'theme' },
         ],
       );
 
@@ -136,8 +133,8 @@ describe('Library Format Schema Contract (Producer)', () => {
     it('rejects dependency missing required fields', () => {
       const bad = {
         type: 'int',
-        deps: [{ sourceId: 'id' }], // missing triggerType, sourceDomain
-        expr: { kind: 'literal', value: 0, type: 'int' },
+        deps: [{ sourceId: 'id' }], // missing sourceType
+        expr: { kind: 'expr:literal', value: 0, type: 'int' },
       };
       expect(CompiledReactiveSchema.safeParse(bad).success).toBe(false);
     });
@@ -153,7 +150,7 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
 
     it('rejects metadata missing slots', () => {
-      const bad = { type: 'int', expr: { kind: 'literal', value: 0, type: 'int' } }; // missing slots
+      const bad = { type: 'int', expr: { kind: 'expr:literal', value: 0, type: 'int' } }; // missing slots
       expect(SlottedReactiveSchema.safeParse(bad).success).toBe(false);
     });
   });
@@ -218,31 +215,4 @@ describe('Library Format Schema Contract (Producer)', () => {
     });
   });
 
-  describe('Library format version', () => {
-    it('valid version matches schema', () => {
-      const header = { __espcompose_format__: LIBRARY_FORMAT_VERSION };
-      expect(LibraryFormatHeaderSchema.safeParse(header).success).toBe(true);
-    });
-
-    it('rejects non-integer version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: 1.5 }).success).toBe(false);
-    });
-
-    it('rejects zero version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: 0 }).success).toBe(false);
-    });
-
-    it('rejects string version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({ __espcompose_format__: '1' }).success).toBe(false);
-    });
-
-    it('rejects missing version', () => {
-      expect(LibraryFormatHeaderSchema.safeParse({}).success).toBe(false);
-    });
-
-    it('current LIBRARY_FORMAT_VERSION is a positive integer', () => {
-      expect(Number.isInteger(LIBRARY_FORMAT_VERSION)).toBe(true);
-      expect(LIBRARY_FORMAT_VERSION).toBeGreaterThan(0);
-    });
-  });
 });

@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { IRReactiveNode } from '../reactive-node';
+import { IRReactiveNode } from '../reactive';
 import { RefHandle } from '../types';
-import type { IRBinding, IRHAEntity, IRComponent } from '../hooks/useReactiveScope';
+import type { IRBinding, IRHAEntity, ComponentRegistration } from '../hooks';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import { buildSemanticIR } from './build';
+import { irScalar } from './types';
 import { irTernary } from './expr-builders.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -39,14 +40,14 @@ function makeMemoNode(index: number): IRReactiveNode {
   const node = new IRReactiveNode({
     kind: 'memo',
     dependencies: [
-      { kind: 'dependency', sourceId: 'ha_light_x', triggerType: 'on_state', sourceDomain: 'binary_sensor' },
+      { kind: 'dependency', sourceType: 'ha_entity', sourceId: 'ha_light_x', sourceDomain: 'binary_sensor' },
     ],
     exprType: 'float',
   });
   node.exprIR = irTernary(
-    { kind: 'signal_read', signalIndex: 0 },
-    { kind: 'literal', value: 1.0, type: 'float' },
-    { kind: 'literal', value: 0.0, type: 'float' },
+    { kind: 'expr:signal_read', signalIndex: 0 },
+    { kind: 'expr:literal', value: 1.0, type: 'float' },
+    { kind: 'expr:literal', value: 0.0, type: 'float' },
   );
   void index; // index no longer needed; nodeId is assigned at construction
   return node;
@@ -73,9 +74,9 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    expect(ir.esphome.sections).toHaveLength(2);
-    expect(ir.esphome.sections[0].key).toBe('esphome');
-    expect(ir.esphome.sections[1].key).toBe('wifi');
+    expect(ir.sections).toHaveLength(2);
+    expect(ir.sections[0].key).toBe('esphome');
+    expect(ir.sections[1].key).toBe('wifi');
   });
 
   it('preserves scalar types correctly', () => {
@@ -93,7 +94,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const esphome = ir.esphome.sections[0].value;
+    const esphome = ir.sections[0].value;
     expect(esphome.kind).toBe('object');
     if (esphome.kind === 'object') {
       expect(esphome.entries.find(e => e.key === 'name')?.value).toEqual({ kind: 'scalar', value: 'test' });
@@ -138,7 +139,7 @@ describe('buildSemanticIR', () => {
     });
 
     // Walk to the label text value
-    const lvgl = ir.esphome.sections[0].value;
+    const lvgl = ir.sections[0].value;
     expect(lvgl.kind).toBe('object');
     if (lvgl.kind !== 'object') return;
     const pages = lvgl.entries.find(e => e.key === 'pages')?.value;
@@ -180,7 +181,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const sensor = ir.esphome.sections[0].value;
+    const sensor = ir.sections[0].value;
     if (sensor.kind !== 'object') return;
     const i2cVal = sensor.entries.find(e => e.key === 'i2c_id')?.value;
 
@@ -190,7 +191,7 @@ describe('buildSemanticIR', () => {
   });
 
   it('captures compiled action metadata', () => {
-    const rawActions: IRActionNode[] = [{ kind: 'ha_service', action: 'light.toggle', data: { entity_id: { kind: 'literal', value: 'light.kitchen' } } }];
+    const rawActions: IRActionNode[] = [{ kind: 'action:ha_service', action: 'light.toggle', data: { entity_id: { kind: 'expr:literal', value: 'light.kitchen', type: 'string' } } }];
     const serializedResult = [{ 'homeassistant.service': { service: 'light.toggle', entity_id: 'light.kitchen' } }];
 
     const captures = emptyCaptures();
@@ -214,7 +215,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const lvgl = ir.esphome.sections[0].value;
+    const lvgl = ir.sections[0].value;
     if (lvgl.kind !== 'object') return;
     const widgets = lvgl.entries.find(e => e.key === 'widgets')?.value;
     if (widgets?.kind !== 'array') return;
@@ -249,7 +250,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const wifi = ir.esphome.sections[0].value;
+    const wifi = ir.sections[0].value;
     if (wifi.kind !== 'object') return;
     const pwdVal = wifi.entries.find(e => e.key === 'password')?.value;
 
@@ -278,7 +279,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const sensor = ir.esphome.sections[0].value;
+    const sensor = ir.sections[0].value;
     if (sensor.kind !== 'object') return;
     const val = sensor.entries.find(e => e.key === 'value')?.value;
 
@@ -302,7 +303,7 @@ describe('buildSemanticIR', () => {
       reactiveNodes: [],
     });
 
-    const esphome = ir.esphome.sections[0].value;
+    const esphome = ir.sections[0].value;
     if (esphome.kind !== 'object') return;
     const entry = esphome.entries.find(e => e.key === 'enabled');
     expect(entry?.value).toEqual({ kind: 'scalar', value: 'on', quoted: true });
@@ -313,11 +314,11 @@ describe('buildSemanticIR', () => {
       kind: 'ha_entity',
       entityId: 'light.kitchen',
       domain: 'light',
-      sensorType: 'binary_sensor',
-      generatedId: 'ha_light_kitchen',
+      semanticId: 'ha_entity:light.kitchen',
+      variant: { kind: 'state' },
     };
 
-    const component: IRComponent = {
+    const component: ComponentRegistration = {
       kind: 'component',
       section: 'image',
       id: 'img_1',
@@ -330,22 +331,36 @@ describe('buildSemanticIR', () => {
       bindings: [],
       entities: [entity],
       components: [component],
-      scripts: [{ id: 'script_1', then: [{ kind: 'delay', duration: '500ms' } satisfies IRActionNode] }],
+      scripts: [{ id: 'script_1', then: [{ kind: 'action:delay', duration: { kind: 'duration', value: 500, unit: 'ms' } } satisfies IRActionNode] }],
       reactiveNodes: [],
       themes: [{
-        kind: 'theme_data',
+        kind: 'theme_scope',
         scope: 'test',
         scopeId: 'abcd1234',
-        themeNames: ['light', 'dark'],
+        names: ['light', 'dark'],
         defaultIndex: 0,
-        leafData: new Map([['colors_primary', { values: [0xFF0000, 0x0000FF], valueType: 'int' }]]),
+        values: new Map([['colors_primary', { values: [irScalar(0xFF0000), irScalar(0x0000FF)], exprType: 'int' }]]),
       }],
     });
 
-    expect(ir.esphome.haEntities).toEqual([entity]);
-    expect(ir.esphome.components).toEqual([component]);
-    expect(ir.esphome.scripts).toHaveLength(1);
-    expect(ir.espcompose.themes?.[0].themeNames).toEqual(['light', 'dark']);
+    expect([...ir.entities]).toEqual([entity]);
+    expect([...ir.components]).toEqual([{
+      kind: 'component',
+      section: 'image',
+      id: 'img_1',
+      config: {
+        kind: 'object',
+        entries: [
+          { kind: 'entry', key: 'id', value: { kind: 'scalar', value: 'img_1' } },
+          { kind: 'entry', key: 'file', value: { kind: 'scalar', value: './bg.png' } },
+          { kind: 'entry', key: 'type', value: { kind: 'scalar', value: 'RGB565' } },
+        ],
+      },
+    }]);
+    expect(ir.scripts).toHaveLength(1);
+    expect(ir.entities.kind).toBe('entity_registry');
+    expect(ir.components.kind).toBe('component_registry');
+    expect(ir.themes[0].names).toEqual(['light', 'dark']);
   });
 });
 
