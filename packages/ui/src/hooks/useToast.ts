@@ -11,10 +11,9 @@
  */
 
 import { useOverlay, useLvglVisibility } from '@espcompose/core';
-import type { OverlayFactory, LvglVisibilityController } from '@espcompose/core';
+import type { LvglVisibilityController, EspComposeElement } from '@espcompose/core';
 
-/** Factory function that receives a ToastController and returns JSX. */
-export type ToastFactory = OverlayFactory;
+export type ToastFactory = (ctrl: ToastController) => EspComposeElement | EspComposeElement[];
 
 /**
  * Options for `useToast()`.

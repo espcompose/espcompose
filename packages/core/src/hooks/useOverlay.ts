@@ -30,7 +30,9 @@ import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
+import { irOverlayShow, irOverlayHide } from '../ir/action-types';
 import { generateDeterministicId } from '../id';
+import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
 
 // ── Overlay controller symbols ──────────────────────────────────────────────
 // Symbol-keyed internal fields on OverlayController. Using symbols instead of
@@ -308,5 +310,10 @@ function createOverlayController(templateKey: string, instanceIndex: number, zOr
     [OVERLAY_TEMPLATE_KEY]: templateKey,
     [OVERLAY_INSTANCE_INDEX]: instanceIndex,
     [OVERLAY_Z_ORDER]: zOrder,
+    [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
+      if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
+      if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];
+      return [];
+    },
   } as OverlayController;
 }

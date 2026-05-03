@@ -8,11 +8,11 @@
  */
 
 import { useOverlay, useLvglVisibility } from '@espcompose/core';
-import type { OverlayFactory, LvglVisibilityController } from '@espcompose/core';
+import type { LvglVisibilityController, EspComposeElement } from '@espcompose/core';
 
 export type PopupController = LvglVisibilityController;
 
-export type PopupFactory = OverlayFactory;
+export type PopupFactory = (ctrl: PopupController) => EspComposeElement | EspComposeElement[];
 
 /**
  * Create a popup overlay (z-order 0).

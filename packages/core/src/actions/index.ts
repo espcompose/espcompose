@@ -12,3 +12,5 @@ export type { TriggerSignature, TriggerVariable } from './trigger-registry';
 export { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from './resolve/overlay';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './resolve/controller';
 export { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from './resolve/script-handle';
+export { RESOLVE_METHOD_CALL } from './resolve/symbols';
+export type { MethodCallResolvable } from './resolve/symbols';

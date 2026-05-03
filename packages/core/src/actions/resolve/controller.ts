@@ -10,6 +10,8 @@
 import type { IRActionNode } from '../../ir/action-types';
 import { irScriptExecute } from '../../ir/action-types';
 import type { ScriptHandle } from '../../hooks/useScript';
+import { RESOLVE_METHOD_CALL } from './symbols';
+import type { MethodCallResolvable } from './symbols';
 import { CLOSURE_INDEX } from '../closure/symbols';
 
 /** Shape of a controller's hidden internal fields. */
@@ -19,6 +21,10 @@ interface ControllerInternal {
 
 function isController(v: unknown): v is ControllerInternal {
   return v != null && typeof v === 'object' && '__scripts' in (v as Record<string, unknown>);
+}
+
+function hasMethodCallResolver(v: unknown): v is MethodCallResolvable {
+  return v != null && typeof v === 'object' && RESOLVE_METHOD_CALL in (v as object);
 }
 
 /**
@@ -46,6 +52,13 @@ export function resolveControllerMethodCalls(
             closureIndex: (handle as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX],
           });
         }
+      } else if (hasMethodCallResolver(ctrl)) {
+        // Delegate to the value's own resolution protocol. The returned
+        // actions are domain-specific intermediate IR (e.g. overlay_show)
+        // that subsequent resolver passes finalise.
+        const replacement = ctrl[RESOLVE_METHOD_CALL](action.methodName, action.controllerRef);
+        actions.splice(i, 1, ...replacement);
+        i--; // re-visit newly inserted actions
       }
     } else if (action.kind === 'action:if') {
       resolveControllerMethodCalls(action.then, refBindings);
