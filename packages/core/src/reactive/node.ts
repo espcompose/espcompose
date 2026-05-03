@@ -15,6 +15,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExpression, ExprType } from '../ir/expr-types';
+import { generateId } from '../id';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types
@@ -136,7 +137,7 @@ export class IRReactiveNode<T = unknown> {
     this.sourceId = config.sourceId;
     this.propertyKey = config.propertyKey;
     this.sourceDomain = config.sourceDomain;
-    this.nodeId = `${config.kind}_${Math.random().toString(36).slice(2, 11)}`;
+    this.nodeId = generateId(config.kind);
   }
 
   /** Whether this node has a single dependency. */

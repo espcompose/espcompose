@@ -119,10 +119,10 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
 
   // Ensure mux signals exist for all overlay_show actions in the IR tree.
   // If overlay definitions didn't flow through processOverlayMux(), the action
-  // lambdas still reference espcompose::sig_overlay_<key>_mux — we must
+  // lambdas still reference espcompose::sig_<key>_mux — we must
   // declare the signal so the C++ compiles.
   for (const key of overlayShowKeys) {
-    const muxSigName = `sig_overlay_${key}_mux`;
+    const muxSigName = `sig_${key}_mux`;
     if (!runtimeConfig.signals.some(s => s.name === muxSigName)) {
       runtimeConfig.signals.push({ name: muxSigName, cppType: 'int32_t' });
     }
@@ -195,7 +195,7 @@ function replaceOverlayActionsInIR(
   // With the tier container architecture, the structure is:
   //   top_layer → widgets[]
   //     └─ { obj: { id: "overlay_tier_<zOrder>", widgets: [...] } }
-  //         └─ { obj: { id: "overlay_<templateKey>", widgets: [...] } }
+  //         └─ { obj: { id: "<templateKey>", widgets: [...] } }
   //             └─ popup/toast content with action handlers
   //
   // We need to dig through the tier containers to find the overlay wrappers.

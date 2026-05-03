@@ -477,7 +477,7 @@ lvgl:
     - r_ref1
   rotation: 270
 script:
-  - id: play_click_sound
+  - id: scr_ref9
     then:
       - logger.log: Click sound disabled for testing
 "

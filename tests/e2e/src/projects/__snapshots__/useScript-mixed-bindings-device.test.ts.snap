@@ -13,19 +13,19 @@ using esphome::id;
 using esphome::to_string;
 
 // ── Script closure tables ──
-static decltype(id(r_ref2))* const ec_toggle_lights[] = {
+static decltype(id(r_ref2))* const ec_scr_ref6_lights[] = {
   id(r_ref2),
   id(r_ref3)
 };
-static decltype(id(r_ref4))* const ec_toggle_sws[] = {
+static decltype(id(r_ref4))* const ec_scr_ref6_sws[] = {
   id(r_ref4),
   id(r_ref5)
 };
-struct ToggleClosure {
+struct Scr40296205Closure {
   int light_idx;
   int sw_idx;
 };
-static const ToggleClosure toggle_closures[] = {
+static const Scr40296205Closure scr_ref6_closures[] = {
   { 0, 0 },
   { 1, 1 }
 };
@@ -417,14 +417,14 @@ binary_sensor:
     name: Btn Kitchen
     on_press:
       - script.execute:
-          id: toggle
+          id: scr_ref6
           closure_index: 0
   - platform: gpio
     pin: 13
     name: Btn Bedroom
     on_press:
       - script.execute:
-          id: toggle
+          id: scr_ref6
           closure_index: 1
 external_components:
   - source:
@@ -435,15 +435,16 @@ external_components:
 espcompose:
   flush_budget_us: 2000
 script:
-  - id: toggle
+  - id: scr_ref6
     parameters:
       closure_index: int
     then:
-      - lambda: !lambda "auto& closure = espcompose::toggle_closures[closure_index];
-          (void)closure;
-          ec_toggle_lights[closure.light_idx]->toggle().perform();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref6_closures[closure_index]; (void)closure;
+          ec_scr_ref6_lights[closure.light_idx]->toggle().perform();"
       - delay: 50ms
-      - lambda: !lambda "auto& closure = espcompose::toggle_closures[closure_index];
-          (void)closure; ec_toggle_sws[closure.sw_idx]->toggle();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref6_closures[closure_index]; (void)closure;
+          ec_scr_ref6_sws[closure.sw_idx]->toggle();"
 "
 `;

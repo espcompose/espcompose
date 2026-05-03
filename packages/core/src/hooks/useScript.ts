@@ -28,6 +28,7 @@ import type { ScriptMode, IRScriptParamDecl, IRType, IRScalar, ClosureShape, Clo
 import { irScalar } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
+import { generateId } from '../id';
 import { throwCompileTimeOnly } from '../errors';
 import { findClosureDescriptor } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
@@ -193,7 +194,7 @@ export function useScript<A extends ScriptParamScalar[]>(
   }
 
   // Fallback for bodies without compiled metadata (dev mode / uncompiled)
-  const id = `script_${Math.random().toString(36).slice(2, 9)}`;
+  const id = generateId('scr');
   const scriptDef: ScriptDefinition = { id, mode: opts?.mode, then: [] };
   if (!findInScope(scriptScopeContext, id)) {
     registerInScope(scriptScopeContext, id, { def: scriptDef });

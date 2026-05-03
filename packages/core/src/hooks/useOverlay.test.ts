@@ -68,7 +68,7 @@ describe('useOverlay', () => {
     // The factory is evaluated once per instance — captures per-instance closures.
     expect(evaluations).toBe(4);
     expect(overlays).toHaveLength(1);
-    expect(overlays[0].templateKey).toContain('LightButton');
+    expect(overlays[0].templateKey).toMatch(/^ovrl_/);
     expect(overlays[0].instances).toHaveLength(4);
     expect(overlays[0].instances.map(i => i.index)).toEqual([0, 1, 2, 3]);
   });
@@ -81,10 +81,9 @@ describe('useOverlay', () => {
       callInsideComponent('LightButton', () => { useOverlay({}, () => stub); });
     }));
     expect(overlays).toHaveLength(2);
-    const lightDef = overlays.find(p => p.templateKey.includes('LightButton'));
-    const switchDef = overlays.find(p => p.templateKey.includes('SwitchButton'));
-    expect(lightDef?.instances).toHaveLength(2);
-    expect(switchDef?.instances).toHaveLength(1);
+    // Two distinct definitions — order follows insertion order (LightButton first)
+    expect(overlays[0].instances).toHaveLength(2);
+    expect(overlays[1].instances).toHaveLength(1);
   });
 
   it('returns a controller with templateKey and instanceIndex per call', () => {
@@ -135,9 +134,9 @@ describe('useOverlay', () => {
     expect(overlays[1].instances).toHaveLength(2);
     // Different template keys
     expect(overlays[0].templateKey).not.toBe(overlays[1].templateKey);
-    // Both contain the component name
-    expect(overlays[0].templateKey).toContain('LightSwitch');
-    expect(overlays[1].templateKey).toContain('LightSwitch');
+    // Both start with the ovrl_ prefix
+    expect(overlays[0].templateKey).toMatch(/^ovrl_/);
+    expect(overlays[1].templateKey).toMatch(/^ovrl_/);
   });
 
   it('stores zOrder on definitions from config', () => {
@@ -147,9 +146,8 @@ describe('useOverlay', () => {
       callInsideComponent('ToastWidget', () => { useOverlay({ zOrder: 100 }, () => stub); });
     }));
     expect(overlays).toHaveLength(2);
-    const popupDef = overlays.find(p => p.templateKey.includes('PopupWidget'));
-    const toastDef = overlays.find(p => p.templateKey.includes('ToastWidget'));
-    expect(popupDef?.zOrder).toBe(0);
-    expect(toastDef?.zOrder).toBe(100);
+    // Order follows insertion: PopupWidget first (zOrder: 0), ToastWidget second (zOrder: 100)
+    expect(overlays[0].zOrder).toBe(0);
+    expect(overlays[1].zOrder).toBe(100);
   });
 });

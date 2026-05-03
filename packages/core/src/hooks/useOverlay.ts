@@ -30,6 +30,7 @@ import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
+import { generateDeterministicId } from '../id';
 
 // ── Overlay controller symbols ──────────────────────────────────────────────
 // Symbol-keyed internal fields on OverlayController. Using symbols instead of
@@ -44,14 +45,6 @@ export const OVERLAY_INSTANCE_INDEX: unique symbol = Symbol('overlay.instanceInd
 export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
 /** Script ID for lifecycle-managed show/hide (e.g. toast auto-hide). */
 export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
-
-/**
- * Sanitize a hook-path string for use in C++ identifiers and LVGL widget IDs.
- * Replaces any character that is not alphanumeric or underscore with '_'.
- */
-function sanitizeIdentifier(key: string): string {
-  return key.replace(/[^a-zA-Z0-9_]/g, '_');
-}
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -267,9 +260,10 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
   // Build a unique template key: hook-path + call-site index.
   const templateKey = `${basePath}#${callIndex}`;
 
-  // Sanitize for use in C++ identifiers and LVGL widget IDs.
-  // The raw hook path may contain '/', '(', ')' etc.
-  const safeKey = sanitizeIdentifier(templateKey);
+  // Derive a deterministic, sanitized ID from the hook-path key.
+  // Uses FNV-1a hashing to produce a stable C++-safe identifier with the
+  // 'ovrl_' prefix following the autogen ID convention (r_, rw_, scr_, etc.).
+  const safeKey = generateDeterministicId('ovrl', templateKey);
 
   let def = frame.definitions.get(templateKey);
   if (!def) {

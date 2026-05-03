@@ -329,21 +329,21 @@ binary_sensor:
   name: Button
   on_press:
     - script.execute:
-        id: blink
+        id: scr_ref0
     - script.wait:
-        id: blink
+        id: scr_ref0
   on_release:
     - script.execute:
-        id: start_up
+        id: scr_ref1
     - script.wait:
-        id: start_up
+        id: scr_ref1
 script:
-  - id: blink
+  - id: scr_ref0
     then:
       - logger.log: Starting blink sequence
       - delay: 1000ms
       - logger.log: Blink done
-  - id: start_up
+  - id: scr_ref1
     then:
       - logger.log:
           format: Device booting up

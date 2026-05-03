@@ -17,17 +17,23 @@
 //   // vis.show() / vis.hide() in trigger handlers
 //
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
-// transformed by the ESPCompose CLI). The AST-level script transformer
-// therefore never processes these useScript bodies, so we use
-// `makeSyntheticScript` to inject pre-built IR metadata. Library hooks in
-// packages consumed in source-mode (e.g. @espcompose/ui) can use natural
-// useScript arrow bodies with full scalar-capture support instead.
+// transformed by the ESPCompose CLI's script transformer). Because the CLI
+// depends on core, core sources cannot be fed through the compiler pipeline
+// — a circular dependency. We therefore use `makeSyntheticScript` to inject
+// pre-built IR metadata that mirrors what the script transformer would
+// produce for natural `useScript` arrow bodies.
+//
+// External library hooks (e.g. @espcompose/ui) are compiled via source-mode
+// and DO NOT need this — the script transformer processes them alongside app
+// code, enabling natural `useScript(async () => { ... })` with full
+// scalar-capture support.
 // ────────────────────────────────────────────────────────────────────────────
 
 import { assertHookContext } from './useState';
 import { isRef } from '../types';
 import { useScript } from './useScript';
 import { useController } from './useController';
+import { generateDeterministicId } from '../id';
 import {
   irOverlayShow,
   irOverlayHide,
@@ -92,15 +98,17 @@ interface OverlayControllerInternal {
 // ── Synthetic script builder ────────────────────────────────────────────────
 
 /**
- * Build an arrow function with pre-injected `__compiledScript` metadata.
+ * Build a function with pre-injected `__compiledScript` metadata.
  *
- * Required because this module lives in `@espcompose/core` which is bundled
- * by tsup — not processed by the script transformer. The metadata format
- * matches what the transformer would inject for natural useScript bodies.
+ * Required because `@espcompose/core` is built with tsup, not the ESPCompose
+ * CLI compiler (circular dependency: CLI depends on core). The script
+ * transformer therefore never processes `useScript` bodies in this package.
  *
- * Library hooks in packages consumed in source-mode do NOT
- * need this — they can use natural `useScript(async () => { ... })` bodies
- * and the scalar-capture system handles non-literal arguments.
+ * The injected shape mirrors `CompiledScriptMeta` from `useScript.ts`.
+ * Synthetic scripts only populate the required subset (`id`, `then`); the
+ * optional fields (`bodyHash`, `userParams`, `scalarCaptures`) are omitted
+ * because synthetic scripts have no AST body to hash, no user-defined
+ * parameters, and no scalar closures.
  */
 function makeSyntheticScript(
   id: string,
@@ -166,14 +174,14 @@ function buildOverlayVisibility(
     // Simple show/hide — one script each, no timer.
     const showScript = useScript(
       makeSyntheticScript(
-        `lvgl_vis_show_${templateKey}`,
+        generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
         [irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
       ),
     );
     const hideScript = useScript(
       makeSyntheticScript(
-        `lvgl_vis_hide_${templateKey}`,
+        generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
         [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
       ),
@@ -186,7 +194,7 @@ function buildOverlayVisibility(
   // Show script: show → delay → hide (mode: restart so re-trigger resets timer).
   const showScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_${templateKey}`,
+      generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
       [
         irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
         irDelayAction(duration),
@@ -200,7 +208,7 @@ function buildOverlayVisibility(
   // Hide script: stop the show timer + immediately hide.
   const hideScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_hide_${templateKey}`,
+      generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
       [
         irScriptStop(showScript.id),
         irOverlayHide(templateKey, zOrder, ctrlBindingKey),
@@ -223,7 +231,7 @@ function buildRefVisibility(
   if (autoHide === false) {
     const showScript = useScript(
       makeSyntheticScript(
-        'lvgl_vis_ref_show',
+        generateDeterministicId('scr', 'lvgl_vis_ref_show'),
         [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ])],
@@ -232,7 +240,7 @@ function buildRefVisibility(
     );
     const hideScript = useScript(
       makeSyntheticScript(
-        'lvgl_vis_ref_hide',
+        generateDeterministicId('scr', 'lvgl_vis_ref_hide'),
         [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
         ])],
@@ -248,7 +256,7 @@ function buildRefVisibility(
   // Show script: unhide → delay → hide (mode: restart).
   const showScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_ref_${safeDuration}`,
+      generateDeterministicId('scr', `lvgl_vis_ref_${safeDuration}`),
       [
         irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
           { kind: 'object', key: 'id', bindingName: refBindingKey },
@@ -266,7 +274,7 @@ function buildRefVisibility(
   // Hide script: stop show timer + immediately hide.
   const hideScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_ref_hide_${safeDuration}`,
+      generateDeterministicId('scr', `lvgl_vis_ref_hide_${safeDuration}`),
       [
         irScriptStop(showScript.id),
         irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [

@@ -125,6 +125,9 @@ export { waitUntil } from './actions/primitives';
 // ── Types (internal-only) ──────────────────────────────────────────────────
 export { RefHandle } from './types';
 
+// ── ID generation ──────────────────────────────────────────────────────────
+export { generateId, generateDeterministicId } from './id';
+
 // ── Reactive utilities ─────────────────────────────────────────────────────
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
 export { useReactive, reactiveIsNaN } from './reactive/utils';

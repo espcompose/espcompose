@@ -63,7 +63,7 @@ function deriveSourceSignals(
         names.push(sigName);
       }
     } else if (dep.sourceType === 'overlay_mux') {
-      // Overlay mux dependency — signal name is the sourceId itself (sig_overlay_X_mux)
+      // Overlay mux dependency — signal name is the sourceId itself (sig_ovrl_X_mux)
       const sigName = dep.sourceId;
       if (!names.includes(sigName)) {
         names.push(sigName);

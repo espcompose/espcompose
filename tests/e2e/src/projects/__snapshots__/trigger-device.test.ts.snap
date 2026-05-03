@@ -13,27 +13,27 @@ using esphome::id;
 using esphome::to_string;
 
 // ── Script closure tables ──
-static decltype(id(r_ref1))* const ec_toggle_all_lightRefs[] = {
+static decltype(id(r_ref1))* const ec_scr_ref3_lightRefs[] = {
   id(r_ref1)
 };
-static decltype(id(r_ref2))* const ec_toggle_all_switchRefs[] = {
+static decltype(id(r_ref2))* const ec_scr_ref3_switchRefs[] = {
   id(r_ref2)
 };
-struct ToggleAllClosure {
+struct Scr38bc05ddClosure {
   int lightRef_idx;
   int switchRef_idx;
 };
-static const ToggleAllClosure toggle_all_closures[] = {
+static const Scr38bc05ddClosure scr_ref3_closures[] = {
   { 0, 0 }
 };
 
-static decltype(id(r_ref1))* const ec_dim_light_lightRefs[] = {
+static decltype(id(r_ref1))* const ec_scr_ref4_lightRefs[] = {
   id(r_ref1)
 };
-struct DimLightClosure {
+struct ScrCfbd5396Closure {
   int lightRef_idx;
 };
-static const DimLightClosure dim_light_closures[] = {
+static const ScrCfbd5396Closure scr_ref4_closures[] = {
   { 0 }
 };
 
@@ -412,20 +412,20 @@ binary_sensor:
   name: Button
   on_press:
     - script.execute:
-        id: toggle_all
+        id: scr_ref3
         closure_index: 0
     - script.wait:
-        id: toggle_all
+        id: scr_ref3
   on_release:
     - light.turn_off: r_ref1
     - delay: 100ms
     - switch.turn_off: r_ref2
   on_double_click:
     - script.execute:
-        id: dim_light
+        id: scr_ref4
         closure_index: 0
     - script.wait:
-        id: dim_light
+        id: scr_ref4
 external_components:
   - source:
       type: local
@@ -435,25 +435,25 @@ external_components:
 espcompose:
   flush_budget_us: 2000
 script:
-  - id: toggle_all
+  - id: scr_ref3
     parameters:
       closure_index: int
     then:
-      - lambda: !lambda "auto& closure = espcompose::toggle_all_closures[closure_index];
-          (void)closure;
-          ec_toggle_all_lightRefs[closure.lightRef_idx]->toggle().perform();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref3_closures[closure_index]; (void)closure;
+          ec_scr_ref3_lightRefs[closure.lightRef_idx]->toggle().perform();"
       - delay: 200ms
-      - lambda: !lambda "auto& closure = espcompose::toggle_all_closures[closure_index];
-          (void)closure;
-          ec_toggle_all_switchRefs[closure.switchRef_idx]->toggle();"
-  - id: dim_light
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref3_closures[closure_index]; (void)closure;
+          ec_scr_ref3_switchRefs[closure.switchRef_idx]->toggle();"
+  - id: scr_ref4
     parameters:
       closure_index: int
     then:
-      - lambda: !lambda "auto& closure = espcompose::dim_light_closures[closure_index];
-          (void)closure;
-          ec_dim_light_lightRefs[closure.lightRef_idx]->turn_on().set_brightnes\\
-          s(0.5f).perform();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref4_closures[closure_index]; (void)closure;
+          ec_scr_ref4_lightRefs[closure.lightRef_idx]->turn_on().set_bright\\
+          ness(0.5f).perform();"
       - logger.log: Light dimmed to 50%
 "
 `;

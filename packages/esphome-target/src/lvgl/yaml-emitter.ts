@@ -154,7 +154,7 @@ export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringC
         const widgets = overlay.widgets.map(w => lowerLvglWidget(w, ctx));
         overlayContainerWidgets.push({
           obj: {
-            id: `overlay_${overlay.templateKey}`,
+            id: `${overlay.templateKey}`,
             hidden: true,
             width: '100%',
             height: '100%',

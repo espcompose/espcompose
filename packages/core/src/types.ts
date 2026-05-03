@@ -7,6 +7,7 @@ import { REACTIVE_PROPERTY_MAP } from './reactive/properties';
 import { IRReactiveNode } from './reactive/node';
 import { assertHookContext } from './hooks/useState';
 import { throwCompileTimeOnly } from './errors';
+import { generateId } from './id';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,7 +221,7 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
     // Generate a short, URL-safe, collision-resistant token.
     // Math.random with base-36 gives ~10 chars of entropy —
     // sufficient for a single device config file.
-    this._token = `r_${Math.random().toString(36).slice(2, 11)}`;
+    this._token = generateId('r');
 
     // Return a Proxy that intercepts property access for action methods
     // and reactive property accessors.

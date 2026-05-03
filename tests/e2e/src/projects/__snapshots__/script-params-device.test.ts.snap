@@ -329,45 +329,45 @@ binary_sensor:
     name: Button A
     on_press:
       - script.execute:
-          id: blink_n
+          id: scr_ref0
           count: 5
     on_release:
       - script.execute:
-          id: set_level
+          id: scr_ref1
           level: 10
       - script.wait:
-          id: set_level
+          id: scr_ref1
   - platform: gpio
     pin: 5
     name: Button B
     on_press:
       - script.execute:
-          id: announce
+          id: scr_ref2
           message: hello
     on_release:
       - script.execute:
-          id: configure
+          id: scr_ref3
           brightness: 0.75
           enabled: true
 script:
-  - id: blink_n
+  - id: scr_ref0
     parameters:
       count: float
     then:
       - logger.log: Blinking
       - delay: 1000ms
-  - id: set_level
+  - id: scr_ref1
     parameters:
       level: int
     then:
       - logger.log: Setting level
       - delay: 500ms
-  - id: announce
+  - id: scr_ref2
     parameters:
       message: string
     then:
       - logger.log: Announcing
-  - id: configure
+  - id: scr_ref3
     parameters:
       brightness: float
       enabled: bool
