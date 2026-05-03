@@ -1,19 +1,27 @@
 /**
- * useToast — Toast overlay with optional auto-hide lifecycle.
+ * useToast — Toast overlay with configurable auto-hide, queue, and stacking.
  *
  * Toasts are rendered above popups but below system-critical overlays
- * (z-order tier 100). When `autoHide` is set (default: `'3s'`), the
- * hook generates an internal ESPHome script (`mode: restart`) that
- * sequences show → delay → hide. Re-triggering the same toast resets
- * the timer.
+ * (z-order tier 100). Delegates queue mechanics to `useTransientOverlay()`
+ * from core — this hook owns only the toast-specific defaults.
  *
- * The user focuses on content; the library manages lifecycle.
+ * The factory receives `(ctrl, slotIndex)` so the UI layer controls all
+ * visual positioning. Third-party UI libraries should use
+ * `useTransientOverlay()` directly if they need different defaults.
  */
 
-import { useOverlay, useLvglVisibility } from '@espcompose/core';
-import type { LvglVisibilityController, EspComposeElement } from '@espcompose/core';
+import { useTransientOverlay } from '@espcompose/core';
+import type { OverlayController, VisibilityController, EspComposeElement } from '@espcompose/core';
 
-export type ToastFactory = (ctrl: ToastController) => EspComposeElement | EspComposeElement[];
+/**
+ * Factory for toast content. Receives the overlay controller and a slot
+ * index (0-based) for multi-slot stacking. Use slotIndex to control
+ * vertical offset or other per-slot visual positioning.
+ */
+export type ToastFactory = (
+  ctrl: OverlayController,
+  slotIndex: number,
+) => EspComposeElement | EspComposeElement[];
 
 /**
  * Options for `useToast()`.
@@ -29,6 +37,38 @@ export interface ToastOptions {
    * @default '3s'
    */
   autoHide?: string | number | false;
+
+  /**
+   * Maximum number of toasts visible simultaneously.
+   *
+   * When `> 1`, the factory is called once per slot with a unique
+   * `slotIndex`, allowing the UI to position each slot independently
+   * (e.g., vertical offset for stacked toasts).
+   *
+   * @default 1
+   */
+  maxVisible?: number;
+
+  /**
+   * Behavior when `show()` is called while toast capacity is reached.
+   *
+   * - `'replace'` — replaces the current toast (resets auto-hide timer).
+   *   With `maxVisible > 1`, round-robin replaces the oldest slot.
+   * - `'queue'` — queues the request; plays after the current toast hides.
+   *   Backed by ESPHome script `mode: queued` with `max_runs: queueLength`.
+   * - `'drop'` — silently ignores the request while a toast is active.
+   *
+   * @default 'replace'
+   */
+  overflow?: 'replace' | 'queue' | 'drop';
+
+  /**
+   * Maximum number of queued show requests. Only used when `overflow`
+   * is `'queue'`. Maps to ESPHome `max_runs`.
+   *
+   * @default 1
+   */
+  queueLength?: number;
 }
 
 /**
@@ -38,41 +78,50 @@ export interface ToastOptions {
  * `show()` triggers the lifecycle script (show → delay → hide) and
  * `hide()` stops the script and hides the overlay immediately.
  */
-export type ToastController = LvglVisibilityController;
+export type ToastController = VisibilityController;
 
 /** Default auto-hide duration. */
 const DEFAULT_AUTO_HIDE = '3s';
 
 /**
- * Create a toast overlay (z-order 100) with optional auto-hide.
+ * Create a toast overlay (z-order 100) with optional auto-hide and queue.
  *
- * @param factory  Render callback `(ctrl) => <Toast>…</Toast>`
+ * Delegates to `useTransientOverlay()` from core for queue mechanics. The
+ * UI library controls all visual concerns via the factory callback.
+ *
+ * @param factory  Render callback `(ctrl, slotIndex) => <Toast>…</Toast>`
  * @param opts     Toast options. `autoHide` defaults to `'3s'`.
  * @returns        A `ToastController` with `.show()` / `.hide()`.
  *
  * @example
- * // Auto-hides after 3s (default)
+ * // Auto-hides after 3s (default), replace on re-trigger
  * const toast = useToast(() => (
  *   <Toast><Text text="Saved!" /></Toast>
  * ));
  *
  * @example
- * // Custom timeout
+ * // Queue up to 5 toasts
  * const toast = useToast(() => (
- *   <Toast><Text text="Error!" /></Toast>
- * ), { autoHide: '5s' });
+ *   <Toast><Text text="Queued!" /></Toast>
+ * ), { overflow: 'queue', queueLength: 5 });
  *
  * @example
- * // Manual hide only
- * const toast = useToast(() => (
- *   <Toast><Text text="Loading..." /></Toast>
- * ), { autoHide: false });
+ * // 3 simultaneous toast slots with visual stacking
+ * const toast = useToast((ctrl, slotIndex) => (
+ *   <Toast style={{ marginBottom: slotIndex * 60 }}>
+ *     <Text text="Stacked!" />
+ *   </Toast>
+ * ), { maxVisible: 3 });
  */
 export function useToast(factory: ToastFactory, opts?: ToastOptions): ToastController {
-  const ctrl = useOverlay({ zOrder: 100 }, factory);
-  const autoHide = opts?.autoHide ?? DEFAULT_AUTO_HIDE;
-
-  return useLvglVisibility(ctrl, {
-    autoHide,
-  });
+  return useTransientOverlay(
+    {
+      zOrder: 100,
+      maxVisible: opts?.maxVisible,
+      autoHide: opts?.autoHide ?? DEFAULT_AUTO_HIDE,
+      overflow: opts?.overflow,
+      queueLength: opts?.queueLength,
+    },
+    factory,
+  );
 }

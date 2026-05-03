@@ -119,7 +119,7 @@ export {
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
-export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────

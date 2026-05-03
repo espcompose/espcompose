@@ -44,6 +44,7 @@ import {
 interface ScriptDefinition {
   id: string;
   mode?: ScriptMode;
+  maxRuns?: number;
   userParams?: IRScriptParamDecl[];
   /** Per-script binding name → literal ESPHome ID token. */
   refBindings?: Record<string, string>;
@@ -134,6 +135,11 @@ export type ScriptParamScalar = number | string | boolean;
 export interface ScriptOptions {
   /** Execution mode. Controls behavior when script is re-triggered while already running. */
   mode?: ScriptMode;
+  /**
+   * Maximum concurrent/queued runs. Only meaningful when `mode` is
+   * `'queued'` or `'parallel'`. Omit to use the ESPHome default (0 = unlimited).
+   */
+  maxRuns?: number;
 }
 
 export function useScript<A extends ScriptParamScalar[]>(
@@ -183,6 +189,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const scriptDef: ScriptDefinition = {
       id: varScriptId,
       mode: opts?.mode,
+      maxRuns: opts?.maxRuns,
       userParams: userParams && userParams.length > 0 ? userParams : undefined,
       refBindings: Object.keys(scriptRefBindings).length > 0 ? scriptRefBindings : undefined,
       closureShape: closureShape.fields.length > 0 ? closureShape : undefined,
@@ -195,7 +202,7 @@ export function useScript<A extends ScriptParamScalar[]>(
 
   // Fallback for bodies without compiled metadata (dev mode / uncompiled)
   const id = generateId('scr');
-  const scriptDef: ScriptDefinition = { id, mode: opts?.mode, then: [] };
+  const scriptDef: ScriptDefinition = { id, mode: opts?.mode, maxRuns: opts?.maxRuns, then: [] };
   if (!findInScope(scriptScopeContext, id)) {
     registerInScope(scriptScopeContext, id, { def: scriptDef });
   }

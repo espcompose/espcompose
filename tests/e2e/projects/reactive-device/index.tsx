@@ -5,7 +5,7 @@
  * component's `.value` is bound to an LVGL label widget via Expression<T>,
  * plus using an LVGL button event to control an HA entity.
  */
-import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglContainerWidget } from '@espcompose/core';
 import type { InternalTemperatureSensorRef, EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 interface ActionButtonProps {
@@ -14,7 +14,7 @@ interface ActionButtonProps {
 }
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-const ActionButton = createLvglWidget(
+const ActionButton = createLvglContainerWidget(
   (props: ActionButtonProps) => {
     const { onRelease, children, x, y, width, height } = props;
     return (
@@ -26,7 +26,6 @@ const ActionButton = createLvglWidget(
       </lvgl-button>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 function App() {

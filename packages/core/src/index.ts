@@ -31,7 +31,7 @@ export type {
   Reactive,
   WidgetProps,
   WidgetPropsWithChildren,
-  LvglVisibilityController,
+  VisibilityController,
 } from './types';
 export { useRef, isRef } from './types';
 
@@ -45,7 +45,7 @@ export { createElement, Fragment } from './runtime';
 // Public API — Intent system (explicit re-exports from ./intents/intents)
 // ────────────────────────────────────────────────────────────────────────────
 
-export { LVGL_INTENTS, createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglLayoutWidget } from './intents/intents';
+export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglLayoutWidget } from './intents/intents';
 export type { IntentBrand, IntentComponent, IntentBrandOptions, IntrinsicIntentMeta } from './intents/intents';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -180,8 +180,10 @@ export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from 
 export type { GlobalHandle } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
-export { useLvglVisibility } from './hooks/useLvglVisibility';
-export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export { useTransientOverlay } from './hooks/useTransientOverlay';
+export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
+export { useVisibility } from './hooks/useVisibility';
+export type { VisibilityOptions } from './hooks/useVisibility';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 

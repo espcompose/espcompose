@@ -11,7 +11,7 @@
  *   - Button handler routes through script.execute (when auto-hide
  *     is active) instead of raw overlay_show
  */
-import { DisplayRef, useRef, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, createLvglWidget } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -54,7 +54,6 @@ const ToastDemo = createLvglWidget(
       </VStack>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 function App() {

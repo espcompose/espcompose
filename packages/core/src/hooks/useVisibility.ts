@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────────────────
-// useLvglVisibility — composable show/hide lifecycle for LVGL widgets & overlays
+// useVisibility — composable show/hide lifecycle for LVGL widgets & overlays
 //
 // Wraps an LVGL widget ref or overlay controller with a `show()`/`hide()`
 // lifecycle backed by ESPHome scripts via `useController`.
@@ -9,11 +9,11 @@
 //
 // Designed as a composition primitive:
 //   const ctrl = useOverlay({ zOrder: 100 }, factory);
-//   return useLvglVisibility(ctrl, { autoHide: '3s' });
+//   return useVisibility(ctrl, { autoHide: '3s' });
 //
 // Or with a plain LVGL widget ref:
 //   const ref = useRef<LvglWidgetRef>();
-//   const vis = useLvglVisibility(ref, { autoHide: '5s' });
+//   const vis = useVisibility(ref, { autoHide: '5s' });
 //   // vis.show() / vis.hide() in trigger handlers
 //
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
@@ -49,16 +49,16 @@ import {
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
 } from './useOverlay';
-import type { LvglVisibilityController } from '../types';
+import type { VisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
 import type { Ref } from '../types';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
 /**
- * Options for `useLvglVisibility()`.
+ * Options for `useVisibility()`.
  */
-export interface LvglVisibilityOptions {
+export interface VisibilityOptions {
   /**
    * Duration before the target auto-hides.
    *
@@ -69,6 +69,28 @@ export interface LvglVisibilityOptions {
    * @default false
    */
   autoHide?: string | number | false;
+
+  /**
+   * Script execution mode for the show lifecycle script.
+   *
+   * - `'restart'` — re-triggering resets the auto-hide timer (default when autoHide is set)
+   * - `'queued'`  — each show() call queues a full show→delay→hide cycle
+   * - `'single'`  — ignored while already running (drop behavior)
+   *
+   * Only meaningful when `autoHide` is set. Without autoHide, show/hide are
+   * independent scripts with no mode interaction.
+   *
+   * @default 'restart'
+   */
+  scriptMode?: 'restart' | 'queued' | 'single';
+
+  /**
+   * Maximum queued runs. Only meaningful when `scriptMode` is `'queued'`.
+   * Maps to ESPHome's `max_runs` on the show lifecycle script.
+   *
+   * @default undefined (unlimited)
+   */
+  maxRuns?: number;
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -129,25 +151,25 @@ function makeSyntheticScript(
 /**
  * Attach a show/hide lifecycle to an LVGL widget ref.
  */
-export function useLvglVisibility(
+export function useVisibility(
   target: Ref<__marker_lv_obj_t>,
-  opts?: LvglVisibilityOptions,
-): LvglVisibilityController;
+  opts?: VisibilityOptions,
+): VisibilityController;
 
 /**
  * Attach a show/hide lifecycle to an overlay controller.
  */
-export function useLvglVisibility(
+export function useVisibility(
   target: OverlayController,
-  opts?: LvglVisibilityOptions,
-): LvglVisibilityController;
+  opts?: VisibilityOptions,
+): VisibilityController;
 
 /** Implementation. */
-export function useLvglVisibility(
+export function useVisibility(
   target: Ref<__marker_lv_obj_t> | OverlayController,
-  opts?: LvglVisibilityOptions,
-): LvglVisibilityController {
-  assertHookContext('useLvglVisibility()');
+  opts?: VisibilityOptions,
+): VisibilityController {
+  assertHookContext('useVisibility()');
 
   const autoHide = opts?.autoHide ?? false;
 
@@ -155,7 +177,12 @@ export function useLvglVisibility(
     return buildRefVisibility(target as Ref<__marker_lv_obj_t>, autoHide);
   }
 
-  return buildOverlayVisibility(target as OverlayController, autoHide);
+  return buildOverlayVisibility(
+    target as OverlayController,
+    autoHide,
+    opts?.scriptMode,
+    opts?.maxRuns,
+  );
 }
 
 // ── Overlay path ────────────────────────────────────────────────────────────
@@ -163,7 +190,9 @@ export function useLvglVisibility(
 function buildOverlayVisibility(
   ctrl: OverlayController,
   autoHide: string | number | false,
-): LvglVisibilityController {
+  scriptMode?: 'restart' | 'queued' | 'single',
+  maxRuns?: number,
+): VisibilityController {
   const internal = ctrl as unknown as OverlayControllerInternal;
   const templateKey = internal[OVERLAY_TEMPLATE_KEY];
   const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
@@ -186,12 +215,23 @@ function buildOverlayVisibility(
         { [ctrlBindingKey]: ctrl },
       ),
     );
-    return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
+    return useController<VisibilityController>({ show: showScript, hide: hideScript });
   }
 
   const duration = normalizeDuration(autoHide);
+  const resolvedMode = scriptMode ?? 'restart';
 
-  // Show script: show → delay → hide (mode: restart so re-trigger resets timer).
+  // Show script: show → delay → hide.
+  // mode: restart — re-trigger resets the timer (default).
+  // mode: queued  — each trigger queues a full show→delay→hide cycle.
+  // mode: single  — ignored while already running (drop behavior).
+  const showScriptOpts: { mode: 'restart' | 'queued' | 'single'; maxRuns?: number } = {
+    mode: resolvedMode,
+  };
+  if (resolvedMode === 'queued' && maxRuns != null && maxRuns > 0) {
+    showScriptOpts.maxRuns = maxRuns;
+  }
+
   const showScript = useScript(
     makeSyntheticScript(
       generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
@@ -202,7 +242,7 @@ function buildOverlayVisibility(
       ],
       { [ctrlBindingKey]: ctrl },
     ),
-    { mode: 'restart' },
+    showScriptOpts,
   );
 
   // Hide script: stop the show timer + immediately hide.
@@ -217,7 +257,7 @@ function buildOverlayVisibility(
     ),
   );
 
-  return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
+  return useController<VisibilityController>({ show: showScript, hide: hideScript });
 }
 
 // ── Widget ref path ─────────────────────────────────────────────────────────
@@ -225,7 +265,7 @@ function buildOverlayVisibility(
 function buildRefVisibility(
   ref: Ref<__marker_lv_obj_t>,
   autoHide: string | number | false,
-): LvglVisibilityController {
+): VisibilityController {
   const refBindingKey = 'widget';
 
   if (autoHide === false) {
@@ -247,7 +287,7 @@ function buildRefVisibility(
         { [refBindingKey]: ref },
       ),
     );
-    return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
+    return useController<VisibilityController>({ show: showScript, hide: hideScript });
   }
 
   const duration = normalizeDuration(autoHide);
@@ -285,5 +325,5 @@ function buildRefVisibility(
     ),
   );
 
-  return useController<LvglVisibilityController>({ show: showScript, hide: hideScript });
+  return useController<VisibilityController>({ show: showScript, hide: hideScript });
 }

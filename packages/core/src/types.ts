@@ -130,13 +130,13 @@ export declare const OVERLAY_BRAND: unique symbol;
 export declare const CONTROLLER_BRAND: unique symbol;
 
 /**
- * Controller returned by `useLvglVisibility()`.
+ * Controller returned by `useVisibility()`.
  *
  * Provides `show()` and `hide()` methods that are compile-time markers
  * — the action compiler recognises calls and lowers them to
  * `script_execute` actions at serialization time.
  */
-export interface LvglVisibilityController {
+export interface VisibilityController {
   readonly [BINDING_BRAND]?: true;
   readonly [CONTROLLER_BRAND]?: true;
   /** Show the target (unhide LVGL widget or show overlay). */

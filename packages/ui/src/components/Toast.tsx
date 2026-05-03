@@ -39,7 +39,7 @@ export const Toast = createLvglContainerWidget(
     const theme = UITheme.use();
     const padding = useSpacing(props.padding ?? 'md');
     const radius = useRadius(props.radius ?? 'md');
-    const margin = useSpacing(props.margin ?? 'md');
+    const _margin = useSpacing(props.margin ?? 'md');
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
 
     return (

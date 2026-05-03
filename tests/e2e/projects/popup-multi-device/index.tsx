@@ -22,7 +22,6 @@ import {
   useRef,
   useHAEntity,
   createLvglWidget,
-  LVGL_INTENTS,
   type LightBinding,
   type SwitchBinding,
   type WidgetProps,
