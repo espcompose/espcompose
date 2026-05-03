@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { IRExpression } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
 import type { IRDuration, IRDurationLiteral, IRType } from '@espcompose/core/internals';
 import { IR_INT, IR_FLOAT, IR_STRING, IR_BOOL, parseDurationString } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';

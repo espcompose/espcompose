@@ -11,6 +11,12 @@
  * Do NOT import from this path in user application code.
  */
 
+// ── Runtime (compiler execution) ───────────────────────────────────────────
+export { ESPCompose, createElement, Fragment, render } from './runtime';
+
+// ── Reactive compiler plumbing (injected into user bundles by CLI) ─────────
+export { __espcompose } from './reactive/compiler-plumbing';
+
 // ── Serialization capture (compiler state) ─────────────────────────────────
 export {
   createLambdaScalar,
@@ -40,6 +46,7 @@ export { getSecrets, clearSecrets } from './serialize/secret';
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
+  getThemeRegistry,
 } from './lvgl/theme/registry';
 export {
   clearReactiveThemeProxy,
@@ -129,6 +136,7 @@ export { RefHandle } from './types';
 export { generateId, generateDeterministicId } from './id';
 
 // ── Reactive utilities ─────────────────────────────────────────────────────
+export { IRReactiveNode, isIRReactiveNode } from './reactive/node';
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
 export { useReactive, reactiveIsNaN } from './reactive/utils';
 

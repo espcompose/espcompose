@@ -404,19 +404,21 @@ function processExplicitMemo(
 
 function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEdit[]): void {
   let hasReactiveImport = false;
-  let composeImportDecl: ts.ImportDeclaration | null = null;
+  let internalsImportDecl: ts.ImportDeclaration | null = null;
 
   for (const stmt of sourceFile.statements) {
     if (!ts.isImportDeclaration(stmt)) continue;
     const moduleSpec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(moduleSpec)) continue;
-    if (moduleSpec.text !== '@espcompose/core') continue;
+
+    // __espcompose is exported from @espcompose/core/internals
+    if (moduleSpec.text !== '@espcompose/core/internals') continue;
 
     // Skip type-only imports — `import type { ... }` is erased at runtime,
     // so injecting `__espcompose` there would leave it undefined at bundle time.
     if (stmt.importClause?.isTypeOnly) continue;
 
-    composeImportDecl = stmt;
+    internalsImportDecl = stmt;
 
     const namedBindings = stmt.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
@@ -431,8 +433,8 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   if (hasReactiveImport) return;
 
-  if (composeImportDecl) {
-    const namedBindings = composeImportDecl.importClause?.namedBindings;
+  if (internalsImportDecl) {
+    const namedBindings = internalsImportDecl.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
       const lastElement = namedBindings.elements[namedBindings.elements.length - 1];
       if (lastElement) {
@@ -445,6 +447,6 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   edits.push({
     position: 0,
-    text: `import { __espcompose } from '@espcompose/core';\n`,
+    text: `import { __espcompose } from '@espcompose/core/internals';\n`,
   });
 }

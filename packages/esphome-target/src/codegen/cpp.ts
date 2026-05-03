@@ -7,7 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding } from '@espcompose/core/internals';
-import type { IRReactiveNode } from '@espcompose/core';
+import type { IRReactiveNode } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings.js';
 import type { ReactiveRuntimeConfig } from './bindings.js';

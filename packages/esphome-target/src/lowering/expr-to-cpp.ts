@@ -7,7 +7,7 @@
 
 import type {
   IRExpression,
-} from '@espcompose/core';
+} from '@espcompose/core/internals';
 import type {
   ExprType,
   BuiltinFn,

@@ -12,7 +12,7 @@
  */
 
 import ts from 'typescript';
-import type { IRExpression } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType, DependencySourceType } from '@espcompose/core/internals';
 import {
   hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,

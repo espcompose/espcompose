@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp';
-import type { IRExpression } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
 import { irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irCall } from '@espcompose/core/internals';
 
 function emptyCtx(): CppLoweringContext {

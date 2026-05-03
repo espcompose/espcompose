@@ -13,8 +13,8 @@ import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDe
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
 import type { CppLoweringContext } from '../lowering';
-import type { IRExpression } from '@espcompose/core';
-import { getExprChildren } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
+import { getExprChildren } from '@espcompose/core/internals';
 import type { ExprType, IRType, IRScalar } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 import { irTypeToCpp } from '../lowering';

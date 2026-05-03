@@ -21,7 +21,7 @@ import type { OverlayDefinition } from '@espcompose/core/internals';
 import type { IRExpression, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
-import type { IRReactiveNode } from '@espcompose/core';
+import type { IRReactiveNode } from '@espcompose/core/internals';
 import { analyzeExprStructure, analyzeActionStructure, irBinary } from '@espcompose/core/internals';
 import { mapExprChildren } from '@espcompose/core/internals';
 import type { SignalDecl, TableDecl } from './bindings.js';

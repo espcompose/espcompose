@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import type { IRActionNode } from '@espcompose/core/internals';
-import type { IRExpression } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
 import type { GlobalDefinition } from '@espcompose/core/internals';
 import {
   irGlobalSet,
