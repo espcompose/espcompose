@@ -75,13 +75,17 @@ export function resolveControllerMethodCalls(
  * After resolving controller method calls, the controller objects in
  * refBindings must be removed so they don't corrupt lambda strings during
  * ref resolution (controller.toString() → '[object Object]' would break).
+ *
+ * Removes both standard `useController()` results (`__scripts`) and any
+ * value implementing the `RESOLVE_METHOD_CALL` protocol, so new protocol
+ * implementors are cleaned up automatically without a dedicated clean function.
  */
 export function cleanControllerRefs(
   refBindings: Record<string, unknown>,
 ): void {
   for (const key of Object.keys(refBindings)) {
     const val = refBindings[key];
-    if (isController(val)) {
+    if (isController(val) || hasMethodCallResolver(val)) {
       delete refBindings[key];
     }
   }
