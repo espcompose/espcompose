@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { withScriptScope } from './useScript';
-import { withOverlayScope, useOverlay } from './useOverlay';
+import {
+  withOverlayScope,
+  useOverlay,
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+} from './useOverlay';
 import { pushHookPath, popHookPath, getCurrentHookPath } from './useState';
 
 describe('hook path stack', () => {
@@ -89,8 +94,8 @@ describe('useOverlay', () => {
       for (let i = 0; i < 3; i++) {
         callInsideComponent('Card', () => {
           const ctrl = useOverlay({}, () => stub);
-          const internal = ctrl as unknown as { __templateKey: string; __instanceIndex: number };
-          controllers.push({ key: internal.__templateKey, idx: internal.__instanceIndex });
+          const internal = ctrl as unknown as { [OVERLAY_TEMPLATE_KEY]: string; [OVERLAY_INSTANCE_INDEX]: number };
+          controllers.push({ key: internal[OVERLAY_TEMPLATE_KEY], idx: internal[OVERLAY_INSTANCE_INDEX] });
         });
       }
     }));

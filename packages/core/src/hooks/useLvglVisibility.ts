@@ -38,6 +38,11 @@ import {
 } from '../ir/action-types';
 import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
 import type { OverlayController } from './useOverlay';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+} from './useOverlay';
 import type { LvglVisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
 import type { Ref } from '../types';
@@ -77,11 +82,11 @@ function durationSlug(d: IRDurationLiteral): string {
   return `${d.value}${d.unit}`;
 }
 
-/** Hidden fields on OverlayController, read during the render pass. */
+/** Symbol-keyed fields on OverlayController, read during the render pass. */
 interface OverlayControllerInternal {
-  __templateKey: string;
-  __instanceIndex: number;
-  __zOrder: number;
+  [OVERLAY_TEMPLATE_KEY]: string;
+  [OVERLAY_INSTANCE_INDEX]: number;
+  [OVERLAY_Z_ORDER]: number;
 }
 
 // ── Synthetic script builder ────────────────────────────────────────────────
@@ -152,22 +157,24 @@ function buildOverlayVisibility(
   autoHide: string | number | false,
 ): LvglVisibilityController {
   const internal = ctrl as unknown as OverlayControllerInternal;
-  const { __templateKey, __instanceIndex, __zOrder } = internal;
+  const templateKey = internal[OVERLAY_TEMPLATE_KEY];
+  const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
+  const zOrder = internal[OVERLAY_Z_ORDER];
   const ctrlBindingKey = '__ctrl';
 
   if (autoHide === false) {
     // Simple show/hide — one script each, no timer.
     const showScript = useScript(
       makeSyntheticScript(
-        `lvgl_vis_show_${__templateKey}`,
-        [irOverlayShow(__templateKey, __instanceIndex, __zOrder, ctrlBindingKey)],
+        `lvgl_vis_show_${templateKey}`,
+        [irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
       ),
     );
     const hideScript = useScript(
       makeSyntheticScript(
-        `lvgl_vis_hide_${__templateKey}`,
-        [irOverlayHide(__templateKey, __zOrder, ctrlBindingKey)],
+        `lvgl_vis_hide_${templateKey}`,
+        [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
       ),
     );
@@ -179,11 +186,11 @@ function buildOverlayVisibility(
   // Show script: show → delay → hide (mode: restart so re-trigger resets timer).
   const showScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_${__templateKey}`,
+      `lvgl_vis_${templateKey}`,
       [
-        irOverlayShow(__templateKey, __instanceIndex, __zOrder, ctrlBindingKey),
+        irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
         irDelayAction(duration),
-        irOverlayHide(__templateKey, __zOrder, ctrlBindingKey),
+        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
       ],
       { [ctrlBindingKey]: ctrl },
     ),
@@ -193,10 +200,10 @@ function buildOverlayVisibility(
   // Hide script: stop the show timer + immediately hide.
   const hideScript = useScript(
     makeSyntheticScript(
-      `lvgl_vis_hide_${__templateKey}`,
+      `lvgl_vis_hide_${templateKey}`,
       [
         irScriptStop(showScript.id),
-        irOverlayHide(__templateKey, __zOrder, ctrlBindingKey),
+        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
       ],
       { [ctrlBindingKey]: ctrl },
     ),

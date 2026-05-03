@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import type { ComposeTarget, ExecuteResult } from '@espcompose/core/internals';
+import type { ComposeTarget, ExecuteResult, SemanticIR } from '@espcompose/core/internals';
 import type { PipelineStep, PhaseContext, PhaseTiming } from './phases/types';
 import { setupPhase } from './phases/setup';
 import { typeCheckPhase } from './phases/type-check';
@@ -149,34 +149,17 @@ async function runPipeline(ctx: PhaseContext, steps: PipelineStep[]): Promise<vo
  *   [setup] → [type-check] → [lint] → [transform] → [bundle] → [execute] → [emit] → [teardown]
  */
 export async function compile(options: CompileOptions): Promise<CompileResult> {
-  const { entryFile, projectDir, outDir, target, debug = false, wireframe, dumpIR } = options;
+  const { entryFile, projectDir, outDir, target, debug = false, wireframe, dumpIR: shouldDumpIR } = options;
 
   const sourceDir = path.dirname(entryFile);
   const buildDir = path.join(sourceDir, '.espcompose-build');
   const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
-  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, wireframe, dumpIR, projectDir, outDir, target };
+  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, wireframe, dumpIR: shouldDumpIR, projectDir, outDir, target };
 
   await runPipeline(ctx, compilePipeline);
 
-  if (dumpIR && ctx.executeResult && outDir) {
-    const { serializeIRToJSON } = await import('@espcompose/core/internals');
-    const { json, warnings } = serializeIRToJSON(ctx.executeResult.ir);
-    fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, 'semantic-ir.json'), json, 'utf8');
-
-    // Emit the self-contained HTML viewer alongside the JSON.
-    const viewerTemplate = loadViewerTemplate();
-    if (viewerTemplate) {
-      // Escape any literal "</script>" inside the JSON so it cannot break out
-      // of the embedded <script id="ir-data" type="application/json"> block.
-      const safeJson = json.replace(/<\/script/gi, '<\\/script');
-      const html = viewerTemplate.replace('__IR_JSON__', () => safeJson);
-      fs.writeFileSync(path.join(outDir, 'semantic-ir.html'), html, 'utf8');
-    }
-
-    for (const w of warnings) {
-      console.warn(`⚠ IR dump: ${w}`);
-    }
+  if (shouldDumpIR && ctx.executeResult && outDir) {
+    await dumpIR(ctx.executeResult.ir, outDir);
   }
 
   return { phaseTiming: ctx.phaseTiming ?? [] };
@@ -205,6 +188,28 @@ function loadViewerTemplate(): string | null {
   }
   console.warn(`⚠ IR dump: viewer template not found (tried ${candidates.join(', ')}); skipping HTML emit`);
   return null;
+}
+
+/**
+ * Serialize a {@link SemanticIR} to JSON and write it to `outDir/semantic-ir.json`
+ * along with an optional self-contained HTML viewer (`semantic-ir.html`).
+ */
+export async function dumpIR(ir: SemanticIR, outDir: string): Promise<void> {
+  const { serializeIRToJSON } = await import('@espcompose/core/internals');
+  const { json, warnings } = serializeIRToJSON(ir);
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, 'semantic-ir.json'), json, 'utf8');
+
+  const viewerTemplate = loadViewerTemplate();
+  if (viewerTemplate) {
+    const safeJson = json.replace(/<\/script/gi, '<\\/script');
+    const html = viewerTemplate.replace('__IR_JSON__', () => safeJson);
+    fs.writeFileSync(path.join(outDir, 'semantic-ir.html'), html, 'utf8');
+  }
+
+  for (const w of warnings) {
+    console.warn(`⚠ IR dump: ${w}`);
+  }
 }
 
 /**

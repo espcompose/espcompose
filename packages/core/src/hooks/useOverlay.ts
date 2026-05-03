@@ -31,6 +31,20 @@ import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
 
+// ── Overlay controller symbols ──────────────────────────────────────────────
+// Symbol-keyed internal fields on OverlayController. Using symbols instead of
+// string-prefixed properties keeps these truly invisible to consumers
+// (Object.keys, JSON.stringify) and makes the duck-type guard collision-proof.
+
+/** The sanitized hook-path key identifying the overlay template. */
+export const OVERLAY_TEMPLATE_KEY: unique symbol = Symbol('overlay.templateKey');
+/** Instance index within the template (0, 1, 2, ...). */
+export const OVERLAY_INSTANCE_INDEX: unique symbol = Symbol('overlay.instanceIndex');
+/** Numeric z-order tier for stacking in top_layer. */
+export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
+/** Script ID for lifecycle-managed show/hide (e.g. toast auto-hide). */
+export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
+
 /**
  * Sanitize a hook-path string for use in C++ identifiers and LVGL widget IDs.
  * Replaces any character that is not alphanumeric or underscore with '_'.
@@ -285,11 +299,9 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
  *
  * `show()` and `hide()` throw `throwCompileTimeOnly` at runtime — they are
  * meant to be statically recognised by the action compiler in trigger handler
- * bodies. The `__templateKey`, `__instanceIndex`, and `__zOrder` fields are
- * set on the runtime object (but hidden from the public TS interface) so the
- * deferred ref-binding resolver in `overlay-resolve.ts` can recover the
- * overlay identity and mux index without needing a separate symbol resolution
- * pass.
+ * bodies. The symbol-keyed fields (`OVERLAY_TEMPLATE_KEY`, etc.) carry the
+ * overlay identity so the deferred ref-binding resolver in `overlay-resolve.ts`
+ * can recover the mux index without needing a separate symbol resolution pass.
  */
 function createOverlayController(templateKey: string, instanceIndex: number, zOrder: number): OverlayController {
   return {
@@ -299,8 +311,8 @@ function createOverlayController(templateKey: string, instanceIndex: number, zOr
     hide(): void {
       throwCompileTimeOnly('overlay.hide()', 'Overlay actions');
     },
-    __templateKey: templateKey,
-    __instanceIndex: instanceIndex,
-    __zOrder: zOrder,
+    [OVERLAY_TEMPLATE_KEY]: templateKey,
+    [OVERLAY_INSTANCE_INDEX]: instanceIndex,
+    [OVERLAY_Z_ORDER]: zOrder,
   } as OverlayController;
 }

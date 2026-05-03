@@ -223,7 +223,7 @@ export function serializeValue(v: unknown): unknown {
     // Resolve deferred overlay controller refs (templateKey/instanceIndex)
     resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
     // Patch IRScriptExecute.closureIndex for user-written scriptHandle calls
-    // by reading __closureIndex from the bound ScriptHandle in __refBindings.
+    // by reading CLOSURE_INDEX from the bound ScriptHandle in __refBindings.
     resolveScriptHandleClosureIndex(actions as IRActionNode[], fn.__refBindings);
     // Remove resolved overlay controller objects from refBindings so they don't
     // cause string-replacement damage during lambda ref resolution in the

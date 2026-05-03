@@ -827,7 +827,7 @@ lvgl:
                   id: rw_ref3
               - obj:
                   bg_color: !lambda "return espcompose::thm_333e4663_colors_surfaceAlt.get();"
-                  bg_opa: COVER
+                  bg_opa: 50%
                   pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                   border_width: 0

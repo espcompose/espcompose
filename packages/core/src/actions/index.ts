@@ -1,7 +1,7 @@
 export { delay, logger, lambda } from './primitives';
 export { waitUntil } from './primitives';
 
-export { findClosureDescriptor, registerClosureDescriptor } from './closure';
+export { findClosureDescriptor, registerClosureDescriptor, CLOSURE_INDEX } from './closure';
 export type { ClosureDescriptor, OverlayControllerInternal } from './closure';
 
 export { isTriggerVar, TriggerVar } from './triggers';

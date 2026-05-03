@@ -10,10 +10,11 @@
 import type { IRActionNode } from '../../ir/action-types';
 import { irScriptExecute } from '../../ir/action-types';
 import type { ScriptHandle } from '../../hooks/useScript';
+import { CLOSURE_INDEX } from '../closure/symbols';
 
 /** Shape of a controller's hidden internal fields. */
 interface ControllerInternal {
-  __scripts: Record<string, ScriptHandle & { __closureIndex?: number }>;
+  __scripts: Record<string, ScriptHandle & { [CLOSURE_INDEX]?: number }>;
 }
 
 function isController(v: unknown): v is ControllerInternal {
@@ -42,7 +43,7 @@ export function resolveControllerMethodCalls(
         const handle = ctrl.__scripts[action.methodName];
         if (handle) {
           actions[i] = irScriptExecute(handle.id, {
-            closureIndex: (handle as { __closureIndex?: number }).__closureIndex,
+            closureIndex: (handle as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX],
           });
         }
       }

@@ -31,6 +31,12 @@ import { isRef } from '../types';
 import { throwCompileTimeOnly } from '../errors';
 import { findClosureDescriptor } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
+import { CLOSURE_INDEX } from '../actions';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+} from './useOverlay';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
@@ -225,7 +231,7 @@ function createScriptHandle<A extends ScriptParamScalar[]>(
     execute: { value: handle.execute, enumerable: true },
     stop: { value: handle.stop, enumerable: true },
     isRunning: { get: (): never => throwCompileTimeOnly('script.isRunning', 'Script state accessors'), enumerable: true },
-    __closureIndex: { value: closureIndex, enumerable: false },
+    [CLOSURE_INDEX]: { value: closureIndex, enumerable: false },
   });
 
   return callable as ScriptHandle<A>;
@@ -400,8 +406,7 @@ function resolveScriptActionsCanonical(
   for (const key of Object.keys(cleanBindings)) {
     const val = cleanBindings[key];
     if (val != null && typeof val === 'object') {
-      const obj = val as Record<string, unknown>;
-      if ('__templateKey' in obj || '__visibilityTarget' in obj) {
+      if (OVERLAY_TEMPLATE_KEY in (val as object)) {
         delete cleanBindings[key];
       }
     } else if (typeof val === 'function' && 'id' in (val as object) && 'execute' in (val as object)) {
@@ -450,16 +455,16 @@ function resolveControllerRefsParameterized(
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
         const paramRefs = paramRefMap.get(action.controllerRef);
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
-        action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl.__instanceIndex ?? action.instanceIndex;
+        action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+        action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
+        action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
         delete action.controllerRef;
       }
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
+        action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+        action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
         delete action.controllerRef;
       }
     } else if (action.kind === 'action:if') {

@@ -103,14 +103,21 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, ComponentRegistration, HAEntityVariant } from './hooks/useReactiveScope';
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
-export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
+export {
+  withOverlayScope,
+  peekOverlayDefinitions,
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+  OVERLAY_LIFECYCLE_SCRIPT_ID,
+} from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
 export type { ClosureDescriptor } from './actions/closure';
-export { registerClosureDescriptor, findClosureDescriptor } from './actions/closure';
+export { registerClosureDescriptor, findClosureDescriptor, CLOSURE_INDEX } from './actions/closure';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions/primitives';
