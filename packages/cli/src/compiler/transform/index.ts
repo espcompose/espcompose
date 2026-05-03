@@ -21,6 +21,7 @@ import * as path from 'path';
 import ts from 'typescript';
 import { transformScriptFile, type TransformDiagnostic } from './script-transformer.js';
 import { transformReactiveExpressions } from './reactive-transformer.js';
+import { transformAssetPaths } from './asset-path-transformer.js';
 import type { SourceLibraryRegistry } from '../resolver/index.js';
 
 export type { TransformDiagnostic };
@@ -123,12 +124,31 @@ export function writeTransformedFiles(
     const result = transformScriptFile(scriptInput, scriptProgram);
     diagnostics.push(...result.diagnostics);
 
-    // Use transformed text if it changed, otherwise copy original
-    const outputText = result.sourceText !== reactiveResult.sourceText
+    // Determine text after reactive + script transforms
+    const transformedText = result.sourceText !== reactiveResult.sourceText
       ? result.sourceText
       : reactiveResult.sourceText !== originalText
         ? reactiveResult.sourceText
         : originalText;
+
+    // Pass 3: Rewrite relative file paths in useImage()/useFont() calls
+    // to be relative to sourceDir (the entry file's directory).
+    // Runs last so it doesn't interfere with the reactive/script transforms
+    // which may need a custom TypeScript program with a working type checker.
+    const sourceDir = path.dirname(entryFile);
+    let outputText: string;
+    if (transformedText !== originalText) {
+      const reparsed = ts.createSourceFile(
+        sourceFile.fileName,
+        transformedText,
+        sourceFile.languageVersion,
+        true,
+        ts.ScriptKind.TSX,
+      );
+      outputText = transformAssetPaths(reparsed, sourceDir);
+    } else {
+      outputText = transformAssetPaths(sourceFile, sourceDir);
+    }
 
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, outputText, 'utf8');

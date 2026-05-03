@@ -41,7 +41,7 @@ export const Card = createLvglContainerWidget(
         <lvgl-obj
           style={{
             backgroundColor: bgColor,
-            backgroundOpacity: 'opaque',
+            backgroundOpacity: '50%',
             padding: padding,
             borderRadius: radius,
             borderColor: props.style?.borderColor,
