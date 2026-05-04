@@ -8,7 +8,7 @@
  *     script with max_runs: 3
  *   - overflow: 'drop': generates a single-mode script (drop while active)
  *   - maxVisible: 2: generates two independent overlay definitions
- *     with per-slot stacking via slotIndex
+ *     with compacted stacking
  */
 import { DisplayRef, useRef, createLvglWidget } from '@espcompose/core';
 import {
@@ -16,7 +16,6 @@ import {
   VStack,
   Text,
   Button,
-  Toast,
   UITheme,
   useToast,
 } from '@espcompose/ui';
@@ -25,30 +24,22 @@ const ToastQueueDemo = createLvglWidget(
   () => {
     // Default: overflow 'replace' (restart mode)
     const toastReplace = useToast(() => (
-      <Toast>
-        <Text text="Replace toast" />
-      </Toast>
+      <Text text="Replace toast" />
     ));
 
     // Queued: overflow 'queue' with queueLength: 3
     const toastQueued = useToast(() => (
-      <Toast>
-        <Text text="Queued toast" />
-      </Toast>
+      <Text text="Queued toast" />
     ), { overflow: 'queue', queueLength: 3 });
 
     // Drop: overflow 'drop' (single mode)
     const toastDrop = useToast(() => (
-      <Toast>
-        <Text text="Drop toast" />
-      </Toast>
+      <Text text="Drop toast" />
     ), { overflow: 'drop' });
 
-    // Multi-slot: maxVisible 2 with slotIndex-based offset
-    const toastMulti = useToast((_ctrl, slotIndex) => (
-      <Toast bottomOffset={slotIndex * 60}>
-        <Text text="Multi toast" />
-      </Toast>
+    // Multi-slot: maxVisible 2 with compacted stacking
+    const toastMulti = useToast(() => (
+      <Text text="Multi toast" />
     ), { maxVisible: 2 });
 
     return (

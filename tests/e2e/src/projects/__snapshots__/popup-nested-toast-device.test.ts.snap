@@ -24,6 +24,10 @@ Signal<std::string> sig_ha_light_kitchen_facet_state_text;
 Signal<int32_t> sig_ovrl_6321ad22_mux;
 Signal<int32_t> sig_ovrl_6421aeb5_mux;
 
+// ── BoundSignals (one per reactive global variable) ──
+BoundSignal<std::vector<int>> sig_global_g_c7f7548b(std::vector<int>({0}));
+BoundSignal<std::vector<int>> sig_global_g_8cb49b7e(std::vector<int>({0}));
+
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
 
@@ -148,16 +152,21 @@ static const ScrA6eda146Closure scr_ref27_closures[] = {
 
 
 // ── Memos (derived values) ──
-Memo<float> memo_0([]() -> float {
+Memo<int32_t> memo_0([]() -> int32_t {
+  return 0 + (sig_global_g_c7f7548b.get()[0] != 0 && sig_global_g_8cb49b7e.get()[0] < sig_global_g_8cb49b7e.get()[0] ? 1 : 0);
+});
+
+Memo<float> memo_1([]() -> float {
   return thm_333e4663_sizes_md_paddingX.get() * 2 + 80;
 });
 
 // ── Memo aliases (deduplicated) ──
-auto& memo_1 = memo_0;
 auto& memo_2 = memo_0;
-auto& memo_3 = memo_0;
-auto& memo_4 = memo_0;
-auto& memo_5 = memo_0;
+auto& memo_3 = memo_1;
+auto& memo_4 = memo_1;
+auto& memo_5 = memo_1;
+auto& memo_6 = memo_1;
+auto& memo_7 = memo_1;
 
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
@@ -168,9 +177,17 @@ void bootstrap_runtime() {
   }
   theme_index_333e4663.set(0);
 
+  // ── Bind global BoundSignals to ESPHome global storage ──
+  sig_global_g_c7f7548b.bind(&id(g_c7f7548b));
+  sig_global_g_8cb49b7e.bind(&id(g_8cb49b7e));
+
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* theme_index_333e4663_subs[16];
   theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 16);
+  static NodeBase* sig_global_g_c7f7548b_subs[1];
+  sig_global_g_c7f7548b.set_subscriber_storage(sig_global_g_c7f7548b_subs, 1);
+  static NodeBase* sig_global_g_8cb49b7e_subs[1];
+  sig_global_g_8cb49b7e.set_subscriber_storage(sig_global_g_8cb49b7e_subs, 1);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
@@ -185,8 +202,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_primary_bg.set_subscriber_storage(thm_333e4663_colors_primary_bg_subs, 1);
   static NodeBase* thm_333e4663_radii_md_subs[1];
   thm_333e4663_radii_md.set_subscriber_storage(thm_333e4663_radii_md_subs, 1);
-  static NodeBase* memo_0_subs[1];
-  memo_0.set_subscriber_storage(memo_0_subs, 1);
+  static NodeBase* memo_1_subs[1];
+  memo_1.set_subscriber_storage(memo_1_subs, 1);
   static NodeBase* thm_333e4663_sizes_md_height_subs[1];
   thm_333e4663_sizes_md_height.set_subscriber_storage(thm_333e4663_sizes_md_height_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_bgPressed_subs[1];
@@ -256,7 +273,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_7([]() {
-    auto _src = memo_0.get();
+    auto _src = memo_1.get();
     lv_obj_set_width(&id(rw_ref6), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref8), static_cast<lv_coord_t>(_src));
     lv_obj_set_width(&id(rw_ref14), static_cast<lv_coord_t>(_src));
@@ -349,8 +366,10 @@ void bootstrap_runtime() {
   thm_333e4663_typography_body.wire(thm_333e4663_typography_body_src, 1);
   static NodeBase* thm_333e4663_typography_title_src[] = {&theme_index_333e4663};
   thm_333e4663_typography_title.wire(thm_333e4663_typography_title_src, 1);
-  static NodeBase* memo_0_sources[] = {&thm_333e4663_sizes_md_paddingX};
-  memo_0.wire(memo_0_sources, 1);
+  static NodeBase* memo_0_sources[] = {&sig_global_g_c7f7548b, &sig_global_g_8cb49b7e};
+  memo_0.wire(memo_0_sources, 2);
+  static NodeBase* memo_1_sources[] = {&thm_333e4663_sizes_md_paddingX};
+  memo_1.wire(memo_1_sources, 1);
   static NodeBase* binding_0_sources[] = {&thm_333e4663_colors_textPrimary};
   binding_0.wire(binding_0_sources, 1);
   static NodeBase* binding_1_sources[] = {&thm_333e4663_typography_title};
@@ -363,7 +382,7 @@ void bootstrap_runtime() {
   binding_4.wire(binding_4_sources, 1);
   static NodeBase* binding_6_sources[] = {&thm_333e4663_radii_md};
   binding_6.wire(binding_6_sources, 1);
-  static NodeBase* binding_7_sources[] = {&memo_0};
+  static NodeBase* binding_7_sources[] = {&memo_1};
   binding_7.wire(binding_7_sources, 1);
   static NodeBase* binding_8_sources[] = {&thm_333e4663_sizes_md_height};
   binding_8.wire(binding_8_sources, 1);
@@ -401,6 +420,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&thm_333e4663_typography_body);
   Scheduler::instance().schedule(&thm_333e4663_typography_title);
   Scheduler::instance().schedule(&memo_0);
+  Scheduler::instance().schedule(&memo_1);
   Scheduler::instance().schedule(&binding_0);
   Scheduler::instance().schedule(&binding_1);
   Scheduler::instance().schedule(&binding_2);
@@ -639,11 +659,19 @@ private:
  * BoundSignal points at it. Reads and writes go through the pointer,
  * avoiding value duplication. The pointer is set via bind() during
  * bootstrap_runtime(), after ESPHome's setup has restored preferences.
+ *
+ * Pre-bind safety: BoundSignal owns a local copy of the initial value (passed
+ * via the constructor and matching the ESPHome global's \`initial_value\`) and
+ * \`ptr_\` points to that local copy until bind() retargets it. This makes
+ * \`get()\` safe to call during inline widget construction in main.cpp's setup()
+ * function, which runs before bootstrap_runtime().
  */
 template <typename T>
 class BoundSignal : public NodeBase {
 public:
-  BoundSignal() : NodeBase(0) {}
+  BoundSignal() : NodeBase(0), local_(), ptr_(&local_) {}
+  explicit BoundSignal(T initial)
+      : NodeBase(0), local_(std::move(initial)), ptr_(&local_) {}
 
   void bind(T* p) { ptr_ = p; }
 
@@ -670,7 +698,8 @@ public:
   }
 
 private:
-  T* ptr_{nullptr};
+  T local_;
+  T* ptr_;
 };
 
 template <typename T>
@@ -750,7 +779,7 @@ exports[`popup-nested-toast > popup-nested-toast 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=58
+      - -DESPCOMPOSE_MAX_NODES=61
 esp32:
   board: esp32dev
   framework:
@@ -811,7 +840,7 @@ lvgl:
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   border_width: 0
                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                  width: !lambda "return espcompose::memo_0.get();"
+                  width: !lambda "return espcompose::memo_1.get();"
                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return
@@ -835,7 +864,7 @@ lvgl:
                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                   border_width: 0
                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                  width: !lambda "return espcompose::memo_1.get();"
+                  width: !lambda "return espcompose::memo_3.get();"
                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                   pressed:
                     bg_color: !lambda "return
@@ -937,7 +966,7 @@ lvgl:
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_2.get();"
+                                  width: !lambda "return espcompose::memo_4.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
@@ -960,7 +989,7 @@ lvgl:
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_3.get();"
+                                  width: !lambda "return espcompose::memo_5.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
@@ -1103,6 +1132,16 @@ font:
     file: gfonts://Roboto
     size: 22
     bpp: 4
+globals:
+  - id: g_c7f7548b
+    initial_value: "{0}"
+    type: std::vector<int>
+  - id: g_8cb49b7e
+    initial_value: "{0}"
+    type: std::vector<int>
+  - id: g_2f3cfc14
+    initial_value: "0"
+    type: int
 script:
   - id: scr_ref12
     mode: restart

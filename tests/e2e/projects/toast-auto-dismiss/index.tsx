@@ -17,7 +17,6 @@ import {
   VStack,
   Text,
   Button,
-  Toast,
   UITheme,
   useToast,
 } from '@espcompose/ui';
@@ -26,23 +25,17 @@ const ToastDemo = createLvglWidget(
   () => {
     // Default: auto-hide after 3s
     const toastDefault = useToast(() => (
-      <Toast>
-        <Text text="Default 3s toast" />
-      </Toast>
+      <Text text="Default 3s toast" />
     ));
 
     // Custom: auto-hide after 5s
     const toastCustom = useToast(() => (
-      <Toast>
-        <Text text="Custom 5s toast" />
-      </Toast>
+      <Text text="Custom 5s toast" />
     ), { autoHide: '5s' });
 
     // Manual: no auto-hide
     const toastManual = useToast(() => (
-      <Toast>
-        <Text text="Manual toast" />
-      </Toast>
+      <Text text="Manual toast" />
     ), { autoHide: false });
 
     return (

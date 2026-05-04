@@ -54,7 +54,6 @@ export { SensorText } from './components/SensorText';
 
 // Popup system
 export { Popup } from './components/Popup';
-export { Toast } from './components/Toast';
 
 // Overlay convenience hooks
 export { usePopup } from './hooks/usePopup';

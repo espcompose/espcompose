@@ -173,11 +173,44 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+/** C++ operator precedence (higher number = binds tighter). */
+const BINARY_PRECEDENCE: Record<string, number> = {
+  '=': 2, '+=': 2, '-=': 2, '*=': 2, '/=': 2,
+  '||': 4,
+  '&&': 5,
+  '|': 6,
+  '^': 7,
+  '&': 8,
+  '==': 9, '!=': 9,
+  '<': 10, '>': 10, '<=': 10, '>=': 10,
+  '<<': 11, '>>': 11,
+  '+': 12, '-': 12,
+  '*': 13, '/': 13, '%': 13,
+};
+
+/** Returns true if the child expression needs parentheses when used as an operand of parentOp. */
+function childNeedsParens(child: IRExpression, parentOp: string, isRight: boolean): boolean {
+  if (child.kind !== 'expr:op') return false;
+  const childOp = (child as IROpExpression).op;
+  if (childOp.tag !== 'binary') return false;
+  const parentPrec = BINARY_PRECEDENCE[parentOp] ?? 0;
+  const childPrec = BINARY_PRECEDENCE[childOp.op] ?? 0;
+  if (childPrec < parentPrec) return true;
+  // Right child of non-associative ops with equal precedence needs parens
+  if (isRight && childPrec === parentPrec && (parentOp === '-' || parentOp === '/' || parentOp === '%')) return true;
+  return false;
+}
+
 function opToCpp(node: IROpExpression, ctx: CppLoweringContext): string {
   const { op, children } = node;
   switch (op.tag) {
-    case 'binary':
-      return `${exprToCpp(children[0], ctx)} ${op.op} ${exprToCpp(children[1], ctx)}`;
+    case 'binary': {
+      const left = exprToCpp(children[0], ctx);
+      const right = exprToCpp(children[1], ctx);
+      const lp = childNeedsParens(children[0], op.op, false) ? `(${left})` : left;
+      const rp = childNeedsParens(children[1], op.op, true) ? `(${right})` : right;
+      return `${lp} ${op.op} ${rp}`;
+    }
     case 'unary':
       return `${op.op}${exprToCpp(children[0], ctx)}`;
     case 'postfix':

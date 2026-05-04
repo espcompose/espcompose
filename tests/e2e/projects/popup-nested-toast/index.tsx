@@ -17,7 +17,6 @@ import {
   Text,
   Button,
   Popup,
-  Toast,
   UITheme,
   usePopup,
   useToast,
@@ -32,9 +31,7 @@ const DeviceCard = createLvglWidget(
 
     const popup = usePopup((ctrl) => {
       const toast = useToast(() => (
-        <Toast>
-          <Text text="Toggled!" />
-        </Toast>
+        <Text text="Toggled!" />
       ));
 
       return (

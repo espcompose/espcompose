@@ -22,16 +22,16 @@ function runInComponent<T>(componentName: string, fn: () => T): T {
 function buildWithQueue(config: TransientOverlayConfig) {
   const stub = { type: 'div', props: {}, __source: undefined as never };
   let factoryCallCount = 0;
-  const receivedSlotIndices: number[] = [];
+  const receivedSlotRanks: unknown[] = [];
 
   const { result: scopeResult, scripts } = withScriptScope(() => {
     const reactiveResult = withReactiveScope(() => {
       const globalResult = withGlobalScope(() => {
         const { result, overlays } = withOverlayScope(() => {
           runInComponent('TestComponent', () => {
-            useTransientOverlay(config, (_ctrl, slotIndex) => {
+            useTransientOverlay(config, (_ctrl, context) => {
               factoryCallCount++;
-              receivedSlotIndices.push(slotIndex);
+              receivedSlotRanks.push(context.slotRank);
               return stub;
             });
           });
@@ -47,7 +47,7 @@ function buildWithQueue(config: TransientOverlayConfig) {
   const globals = scopeResult.result.globals;
   const components = scopeResult.components;
 
-  return { overlays, scripts, factoryCallCount, receivedSlotIndices, components, globals };
+  return { overlays, scripts, factoryCallCount, receivedSlotRanks, components, globals };
 }
 
 // ── Tests ───────────────────────────────────────────────────────────────────
@@ -67,9 +67,10 @@ describe('useTransientOverlay', () => {
       expect(overlays[0].instances).toHaveLength(1);
     });
 
-    it('passes slotIndex 0 to the factory', () => {
-      const { receivedSlotIndices } = buildWithQueue({ zOrder: 50 });
-      expect(receivedSlotIndices).toEqual([0]);
+    it('passes slotRank to the factory', () => {
+      const { receivedSlotRanks } = buildWithQueue({ zOrder: 50 });
+      expect(receivedSlotRanks).toHaveLength(1);
+      expect(receivedSlotRanks[0]).toBeDefined();
     });
 
     it('defaults zOrder to 0', () => {
@@ -121,9 +122,10 @@ describe('useTransientOverlay', () => {
       overlays.forEach(o => expect(o.zOrder).toBe(100));
     });
 
-    it('passes sequential slotIndex values to factory', () => {
-      const { receivedSlotIndices } = buildWithQueue({ maxVisible: 3 });
-      expect(receivedSlotIndices).toEqual([0, 1, 2]);
+    it('passes slotRank to each slot factory', () => {
+      const { receivedSlotRanks } = buildWithQueue({ maxVisible: 3 });
+      expect(receivedSlotRanks).toHaveLength(3);
+      receivedSlotRanks.forEach(rank => expect(rank).toBeDefined());
     });
 
     it('each slot gets its own overlay instance', () => {
@@ -139,32 +141,40 @@ describe('useTransientOverlay', () => {
       expect(restartScripts.length).toBeGreaterThanOrEqual(2);
     });
 
-    it('registers a round-robin counter global', () => {
+    it('registers slot state globals (active array, seq array, counter)', () => {
       const { components } = buildWithQueue({ maxVisible: 3, autoHide: '3s' });
       const globalComponents = components.filter(c => c.section === 'globals');
-      expect(globalComponents).toHaveLength(1);
-      expect(globalComponents[0].config).toHaveProperty('initial_value', '0');
+      // 3 globals: slot_active (int[]), slot_seq (int[]), seq_counter (int)
+      expect(globalComponents).toHaveLength(3);
+      const activeGlobal = globalComponents.find(c => (c.config as Record<string, unknown>).initial_value === '{0,0,0}');
+      expect(activeGlobal).toBeDefined();
+      const counterGlobal = globalComponents.find(c =>
+        (c.config as Record<string, unknown>).initial_value === '0' &&
+        !(c.config as Record<string, unknown>).irType?.isArray,
+      );
+      expect(counterGlobal).toBeDefined();
     });
 
     it('creates a coordinator show script', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
-      // Coordinator show script should have an if-action + global_set
+      // Coordinator show script should have an if-action (first-free dispatch)
       const coordScript = scripts.find(s =>
         s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
-        s.then.some((a: IRActionNode) => a.kind === 'action:global_set'),
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
     });
 
     it('creates a coordinator hide script that stops all slots', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
-      // Coordinator hide script should have script_stop + overlay_hide actions
+      // Coordinator hide script should have script_stop + array_set + overlay_hide per slot
       const hideScript = scripts.find(s =>
         s.then.filter((a: IRActionNode) => a.kind === 'action:script_stop').length >= 2 &&
-        s.then.filter((a: IRActionNode) => a.kind === 'action:overlay_hide').length >= 2,
+        s.then.filter((a: IRActionNode) => a.kind === 'action:overlay_hide').length >= 2 &&
+        s.then.filter((a: IRActionNode) => a.kind === 'action:array_set').length >= 2,
       );
       expect(hideScript).toBeDefined();
-      // Also resets counter to 0
+      // Also resets seq counter to 0
       const globalSetActions = hideScript!.then.filter(
         (a: IRActionNode) => a.kind === 'action:global_set',
       );
@@ -237,11 +247,11 @@ describe('useTransientOverlay', () => {
       let ctrl: { show: () => void; hide: () => void } | undefined;
       const stub = { type: 'div', props: {}, __source: undefined as never };
 
-      withScriptScope(() => withOverlayScope(() => {
+      withScriptScope(() => withReactiveScope(() => withGlobalScope(() => withOverlayScope(() => {
         runInComponent('Foo', () => {
           ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
         });
-      }));
+      }))));
 
       expect(ctrl).toBeDefined();
       expect(() => ctrl!.show()).toThrow(/compile-time/);

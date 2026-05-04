@@ -1,7 +1,9 @@
 /**
  * Toast component — lightweight notification overlay.
  *
- * Intended for use inside a `useToast()` factory. Provides:
+ * @internal Used by `useToast()` internally. Not part of the public API.
+ *
+ * Provides:
  *   - A translucent bottom-anchored strip (no full-screen backdrop)
  *   - Suitable for brief, non-blocking messages
  *
@@ -23,16 +25,10 @@ type ToastProps = WidgetPropsWithChildren<{
   /** Horizontal margin from the screen edge. Default: 'md'. */
   margin?: SpacingToken;
   /**
-   * Bottom offset in pixels. Use with `slotIndex` in multi-slot toasts
-   * to stack slots vertically from the bottom of the screen.
+   * Bottom offset in pixels. Used internally by `useToast()` for
+   * compacted multi-slot positioning.
    *
-   * @example
-   * const toast = useToast((ctrl, slotIndex) => (
-   *   <Toast bottomOffset={slotIndex * 60}>
-   *     <Text text="Stacked!" />
-   *   </Toast>
-   * ), { maxVisible: 3 });
-   *
+   * @internal
    * @default 0
    */
   bottomOffset?: number;
@@ -40,13 +36,7 @@ type ToastProps = WidgetPropsWithChildren<{
 
 /**
  * Toast — lightweight bottom-anchored notification container.
- *
- * @example
- * const toast = useToast((ctrl) => (
- *   <Toast>
- *     <Text text="Saved!" />
- *   </Toast>
- * ));
+ * @internal Used by `useToast()`. Not exported publicly.
  */
 export const Toast = createLvglContainerWidget(
   (props: ToastProps) => {

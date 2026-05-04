@@ -41,9 +41,9 @@ import {
   irDelayAction,
   irNativeAction,
   irScriptStop,
-  parseDurationString,
 } from '../ir/action-types';
 import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
+import { normalizeDuration } from './global-shared';
 import type { OverlayController } from './useOverlay';
 import {
   OVERLAY_TEMPLATE_KEY,
@@ -95,17 +95,6 @@ export interface VisibilityOptions {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-
-function normalizeDuration(value: string | number): IRDurationLiteral {
-  if (typeof value === 'number') {
-    return { kind: 'duration', value, unit: 'ms' };
-  }
-  const parsed = parseDurationString(value);
-  if (!parsed) {
-    throw new Error(`[espcompose] Invalid autoHide duration '${value}'. Expected a number of milliseconds, or a duration literal with a unit suffix (ms, s, or min).`);
-  }
-  return parsed;
-}
 
 function durationSlug(d: IRDurationLiteral): string {
   return `${d.value}${d.unit}`;

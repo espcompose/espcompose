@@ -11,6 +11,8 @@ import type { ExprType } from '../ir/expr-types';
 import type { IRType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
+import { parseDurationString } from '../ir/action-types';
+import type { IRDurationLiteral } from '../ir/action-types';
 
 // ── GlobalDefinition ───────────────────────────────────────────────────────
 
@@ -167,4 +169,134 @@ export function createGlobalHandle<T>(
       return Reflect.get(target, prop, receiver);
     },
   }) as unknown as GlobalHandle<T>;
+}
+
+// ── Array handle ───────────────────────────────────────────────────────────
+
+/**
+ * Handle returned by useGlobal() for array globals.
+ *
+ * Provides a restricted set of operations that map cleanly to a backend
+ * array container. Not all TS array methods are supported — only those that
+ * a typical backend can lower.
+ */
+export interface GlobalArrayHandle<T> {
+  readonly [BINDING_BRAND]?: true;
+  /** Reactive read of the whole array. */
+  readonly value: Signal<T[]>;
+  /** Reactive read of the array length. */
+  readonly length: Signal<number>;
+  /** Read element at index. Compile-time marker — the expr compiler handles this. */
+  get(index: number): T;
+  /** Set element at index. Compile-time marker — the action compiler handles this. */
+  set(index: number, value: T): void;
+  /** Append an element. Compile-time marker — the action compiler handles this. */
+  push(value: T): void;
+  /** Remove all elements. Compile-time marker — the action compiler handles this. */
+  clear(): void;
+  /** The auto-generated ESPHome global ID. */
+  readonly id: string;
+}
+
+// ── Array handle factory ───────────────────────────────────────────────────
+
+export function createGlobalArrayHandle<T>(
+  id: string,
+  _irType: IRType,
+  exprType: ExprType,
+): GlobalArrayHandle<T> {
+  let cachedNode: IRReactiveNode<T[]> | undefined;
+
+  function getOrCreateNode(): IRReactiveNode<T[]> {
+    if (!cachedNode) {
+      const dep: IRDependency = {
+        kind: 'dependency',
+        sourceId: id,
+        sourceType: 'global',
+      };
+      cachedNode = new IRReactiveNode<T[]>({
+        kind: 'expression',
+        dependencies: [dep],
+        exprType,
+        sourceId: id,
+        propertyKey: 'value',
+      });
+    }
+    return cachedNode;
+  }
+
+  const handle = {
+    id,
+    get(_index: number): T {
+      throwCompileTimeOnly('globalArray.get()', 'Array accessors');
+    },
+    set(_index: number, _value: T): void {
+      throwCompileTimeOnly('globalArray.set()', 'Array mutations');
+    },
+    push(_value: T): void {
+      throwCompileTimeOnly('globalArray.push()', 'Array mutations');
+    },
+    clear(): void {
+      throwCompileTimeOnly('globalArray.clear()', 'Array mutations');
+    },
+  };
+
+  return new Proxy(handle, {
+    get(target, prop, receiver) {
+      if (prop === 'value') {
+        const node = getOrCreateNode();
+        if (isTracking()) {
+          for (const dep of node.dependencies) {
+            trackDependency(dep);
+          }
+        }
+        return node as unknown as Signal<T[]>;
+      }
+      if (prop === 'length') {
+        const node = getOrCreateNode();
+        if (isTracking()) {
+          for (const dep of node.dependencies) {
+            trackDependency(dep);
+          }
+        }
+        return node as unknown as Signal<number>;
+      }
+      return Reflect.get(target, prop, receiver);
+    },
+  }) as unknown as GlobalArrayHandle<T>;
+}
+
+// ── TransientOverlayContext ────────────────────────────────────────────────
+
+/**
+ * Context provided to transient overlay factories for reactive slot state.
+ *
+ * Exposes only the computed `slotRank` — a reactive value representing
+ * this slot's zero-based position among active peers ordered by show time.
+ * UI libraries multiply rank by a slot height to compute compacted offsets.
+ */
+export interface TransientOverlayContext {
+  /**
+   * This slot's zero-based rank among active peers, ordered by show time.
+   *
+   * Rank 0 = the oldest active slot (shown first), rank 1 = next, etc.
+   * Reactive — updates automatically when any slot shows or hides.
+   */
+  slotRank: Signal<number>;
+}
+
+// ── Duration normalization ─────────────────────────────────────────────────
+
+/**
+ * Normalize a duration value (number in ms or string literal) to an IRDurationLiteral.
+ */
+export function normalizeDuration(value: string | number): IRDurationLiteral {
+  if (typeof value === 'number') {
+    return { kind: 'duration', value, unit: 'ms' };
+  }
+  const parsed = parseDurationString(value);
+  if (!parsed) {
+    throw new Error(`[espcompose] Invalid autoHide duration '${value}'. Expected a number of milliseconds, or a duration literal with a unit suffix (ms, s, or min).`);
+  }
+  return parsed;
 }

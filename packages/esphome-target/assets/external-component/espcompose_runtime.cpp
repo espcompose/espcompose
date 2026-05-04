@@ -4,15 +4,21 @@
 
 namespace espcompose {
 
+// Forward declaration — defined in the project-generated espcompose_bindings.h.
+// We can't include that header here because it lives outside the external-component
+// directory (it's emitted to the project root by the espcompose codegen).
+void bootstrap_runtime();
+
 static const char* TAG = "espcompose_runtime";
 
 // Define the static instance pointer
 EspcomposeRuntimeComponent* EspcomposeRuntimeComponent::instance_ = nullptr;
 
 void EspcomposeRuntimeComponent::setup() {
-  // Reactive graph wiring has already been performed by bootstrap_runtime(),
-  // which __init__.py's to_code() emits into main.cpp before ESPHome calls
-  // setup() on registered components.
+  // Wire the reactive graph here (rather than inline in App.setup()) so that
+  // it runs after all GlobalsComponent instances have been placement-new'd.
+  // BoundSignal::bind() needs the external storage to exist before pointing at it.
+  bootstrap_runtime();
   ESP_LOGI(TAG, "EspcomposeRuntimeComponent setup complete");
 }
 

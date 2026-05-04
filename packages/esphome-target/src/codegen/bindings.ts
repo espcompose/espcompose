@@ -128,6 +128,9 @@ export interface BoundSignalDecl {
   cppType: string;
   /** ESPHome global component ID (used for bind() call). */
   globalId: string;
+  /** Optional initial value literal (matching the ESPHome global's `initial_value`).
+   *  Used to seed BoundSignal's local copy so `get()` is safe before bind(). */
+  initialValue?: string;
 }
 
 /** A compile-time static data table emitted in the bindings header. */
@@ -291,7 +294,15 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   if (config.globalSignals.length > 0) {
     lines.push('// ── BoundSignals (one per reactive global variable) ──');
     for (const gs of config.globalSignals) {
-      lines.push(`BoundSignal<${gs.cppType}> ${gs.name};`);
+      // Seed BoundSignal with the global's initial_value so reads before
+      // bind() (e.g. inline LVGL widget style initializers in main.cpp's
+      // setup() function) return well-defined data instead of dereferencing
+      // a null pointer.
+      if (gs.initialValue !== undefined) {
+        lines.push(`BoundSignal<${gs.cppType}> ${gs.name}(${gs.cppType}(${gs.initialValue}));`);
+      } else {
+        lines.push(`BoundSignal<${gs.cppType}> ${gs.name};`);
+      }
     }
     lines.push('');
   }

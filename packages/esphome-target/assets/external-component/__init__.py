@@ -93,7 +93,7 @@ async def to_code(config):
     )
     await cg.register_component(var, config)
 
-    # Emit call to bootstrap the reactive graph
-    # This function is generated in TypeScript's espcompose_bindings.h
-    # and performs all reactive node wiring and initialization
-    cg.add(cg.RawExpression("espcompose::bootstrap_runtime()"))
+    # Note: bootstrap_runtime() is invoked from EspcomposeRuntimeComponent::setup()
+    # rather than emitted inline here. This ensures it runs *after* ESPHome has
+    # placement-new'd all GlobalsComponent instances, so BoundSignal::bind() can
+    # safely point at the constructed external storage.

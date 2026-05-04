@@ -234,10 +234,16 @@ export function buildRuntimeConfig(
         // Extract IRType directly from the config tree (kind: 'type' node).
         const vtEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'irType');
         const vt: IRType | undefined = vtEntry?.value?.kind === 'type' ? vtEntry.value as IRType : undefined;
+        // Extract initial_value (IRScalar) so the BoundSignal can hold a
+        // local copy that's valid before bind() runs.
+        const ivEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'initial_value');
+        const initialValue: string | undefined =
+          ivEntry?.value?.kind === 'scalar' ? String(ivEntry.value.value) : undefined;
         globalSignals.push({
           name: `sig_global_${comp.id}`,
           cppType: vt ? irTypeToCpp(vt) : 'int',
           globalId: comp.id,
+          ...(initialValue !== undefined ? { initialValue } : {}),
         });
       }
     }
