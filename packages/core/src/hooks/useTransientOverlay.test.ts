@@ -193,7 +193,8 @@ describe('useTransientOverlay', () => {
     it('coordinator uses queued mode for overflow: queue', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'queue', queueLength: 5 });
       const coordScript = scripts.find(s =>
-        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
       expect(coordScript!.mode).toBe('queued');
@@ -203,7 +204,8 @@ describe('useTransientOverlay', () => {
     it('coordinator uses single mode for overflow: drop', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'drop' });
       const coordScript = scripts.find(s =>
-        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
       expect(coordScript!.mode).toBe('single');
@@ -212,7 +214,8 @@ describe('useTransientOverlay', () => {
     it('overflow: replace does NOT include script.wait in dispatch', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'replace' });
       const coordScript = scripts.find(s =>
-        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
       // Walk the if-chain — no script_wait anywhere
@@ -223,7 +226,8 @@ describe('useTransientOverlay', () => {
     it('overflow: queue includes script.wait before dispatch', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'queue' });
       const coordScript = scripts.find(s =>
-        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
       // Walk the if-chain — should have script_wait in branches
@@ -234,11 +238,50 @@ describe('useTransientOverlay', () => {
     it('overflow: drop includes script.wait before dispatch', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'drop' });
       const coordScript = scripts.find(s =>
-        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
       );
       expect(coordScript).toBeDefined();
       const hasWait = JSON.stringify(coordScript!.then).includes('action:script_wait');
       expect(hasWait).toBe(true);
+    });
+
+    it('auto-hide show script resets seq_counter when all slots idle', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
+      // Per-slot show scripts have mode: restart and contain overlay_show + delay
+      const slotShowScripts = scripts.filter(s =>
+        s.mode === 'restart' &&
+        s.then.some((a: IRActionNode) => a.kind === 'action:overlay_show') &&
+        s.then.some((a: IRActionNode) => a.kind === 'action:delay'),
+      );
+      expect(slotShowScripts.length).toBeGreaterThanOrEqual(1);
+      // Each should end with an if-action (all-idle check → reset counter)
+      for (const script of slotShowScripts) {
+        const lastAction = script.then[script.then.length - 1];
+        expect(lastAction.kind).toBe('action:if');
+        // The then-branch should contain a global_set (counter reset)
+        const ifAction = lastAction as { kind: string; then: IRActionNode[] };
+        expect(ifAction.then).toHaveLength(1);
+        expect(ifAction.then[0].kind).toBe('action:global_set');
+      }
+    });
+
+    it('per-slot hide script resets seq_counter when all slots idle', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
+      // Per-slot hide scripts contain script_stop + array_set + overlay_hide + if
+      const slotHideScripts = scripts.filter(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:script_stop') &&
+        s.then.some((a: IRActionNode) => a.kind === 'action:overlay_hide') &&
+        s.then.length === 4, // stop, array_set, overlay_hide, if(reset)
+      );
+      expect(slotHideScripts.length).toBe(2); // one per slot
+      for (const script of slotHideScripts) {
+        const lastAction = script.then[script.then.length - 1];
+        expect(lastAction.kind).toBe('action:if');
+        const ifAction = lastAction as { kind: string; then: IRActionNode[] };
+        expect(ifAction.then).toHaveLength(1);
+        expect(ifAction.then[0].kind).toBe('action:global_set');
+      }
     });
   });
 

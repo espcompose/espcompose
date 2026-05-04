@@ -321,6 +321,7 @@ function buildMultiSlot(
         irArraySet(activeGlobalId, IR_INT_ARRAY, irLiteralExpression(i), irLiteralExpression(0)),
       );
       showActions.push(irOverlayHide(templateKey, slotZOrder, ctrlBindingKey));
+      showActions.push(buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible));
     }
 
     const showScript = useScript(
@@ -333,11 +334,12 @@ function buildMultiSlot(
     );
     slotShowScripts.push(showScript);
 
-    // Hide script: stop show, active[i]=0, overlay_hide
+    // Hide script: stop show, active[i]=0, overlay_hide, reset counter if all idle
     const hideActions: IRActionNode[] = [
       irScriptStop(showScript.id),
       irArraySet(activeGlobalId, IR_INT_ARRAY, irLiteralExpression(i), irLiteralExpression(0)),
       irOverlayHide(templateKey, slotZOrder, ctrlBindingKey),
+      buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible),
     ];
 
     const hideScript = useScript(
@@ -616,6 +618,47 @@ function overflowToScriptMode(overflow: 'replace' | 'queue' | 'drop'): 'restart'
     case 'queue': return 'queued';
     case 'drop': return 'single';
   }
+}
+
+/**
+ * Build an IR action that resets `seq_counter` to 0 when all slots are idle.
+ *
+ * Prevents unbounded counter growth on long-running devices where overlays
+ * are shown/dismissed individually via auto-hide or per-slot hide scripts.
+ */
+function buildAllIdleResetAction(
+  activeGlobalId: string,
+  seqCounterGlobalId: string,
+  slotCount: number,
+): IRActionNode {
+  const activeGlobalRead: IRGlobalReadExpression = {
+    kind: 'expr:global_read',
+    globalId: activeGlobalId,
+    type: 'int_array',
+  };
+
+  // Build: active[0]==0 && active[1]==0 && ... && active[N-1]==0
+  let allIdle: IRExpression = irBinary(
+    '==',
+    irArrayIndex(activeGlobalRead, irLiteralExpression(0), 'int'),
+    irLiteralExpression(0),
+  );
+  for (let i = 1; i < slotCount; i++) {
+    allIdle = irBinary(
+      '&&',
+      allIdle,
+      irBinary(
+        '==',
+        irArrayIndex(activeGlobalRead, irLiteralExpression(i), 'int'),
+        irLiteralExpression(0),
+      ),
+    );
+  }
+
+  return irIfAction(
+    irLambdaCondition(allIdle),
+    [irGlobalSet(seqCounterGlobalId, IR_INT, irLiteralExpression(0))],
+  );
 }
 
 
