@@ -28,7 +28,35 @@
 
 import { assertHookContext } from './useState';
 import { useOverlay } from './useOverlay';
-import { useVisibility } from './useVisibility';
+import { useVisibility, buildOverlayScriptPair } from './useVisibility';
+import type { OverlayScriptPair } from './useVisibility';
+import { useScript } from './useScript';
+import { useController } from './useController';
+import { useContext } from './useContext';
+import { registerComponent } from './useReactiveScope';
+import { generateDeterministicId } from '../id';
+import { CLOSURE_INDEX } from '../actions';
+import {
+  globalScopeContext,
+} from './global-shared';
+import type { GlobalDefinition } from './global-shared';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_Z_ORDER,
+} from './useOverlay';
+import {
+  irIfAction,
+  irGlobalSet,
+  irScriptExecute,
+  irScriptStop,
+  irScriptWait,
+  irOverlayHide,
+  irLambdaCondition,
+} from '../ir/action-types';
+import type { IRActionNode } from '../ir/action-types';
+import { irBinary, irLiteralExpression, irGroup } from '../ir/expr-builders';
+import type { IRGlobalReadExpression } from '../ir/expr-types';
+import { IR_INT } from '../ir/types';
 import type { OverlayController } from './useOverlay';
 import type { VisibilityController, EspComposeElement } from '../types';
 
@@ -156,7 +184,7 @@ export function useTransientOverlay(
     return buildSingleSlot(zOrder, autoHide, overflow, queueLength, factory);
   }
 
-  return buildMultiSlot(zOrder, maxVisible, autoHide, factory);
+  return buildMultiSlot(zOrder, maxVisible, autoHide, overflow, queueLength, factory);
 }
 
 // ── Single-slot path ────────────────────────────────────────────────────────
@@ -183,48 +211,208 @@ function buildSingleSlot(
 // ── Multi-slot path ─────────────────────────────────────────────────────────
 
 /**
- * Multi-slot: pre-allocate N overlay definitions with round-robin show.
+ * Multi-slot: pre-allocate N overlay slots with a round-robin coordinator.
  *
- * Each slot gets its own overlay + auto-hide script (mode: restart).
- * The returned controller's show() cycles through slots in order.
- * When all slots are occupied, the next show replaces the oldest slot
- * (the slot's restart-mode script resets its auto-hide timer).
+ * Each slot gets its own overlay + auto-hide script pair (always mode: restart).
+ * A coordinator script dispatches `show()` calls to the next slot in round-robin
+ * order, backed by an ESPHome global integer counter.
  *
- * Implementation: delegates to useVisibility for slot 0 as the primary
- * controller. For maxVisible > 1, we create N overlay slots. Currently the
- * multi-slot coordinator returns slot 0's controller — the round-robin
- * dispatch via an ESPHome global + if-chain coordinator script is planned
- * for a follow-up iteration. For now, maxVisible > 1 gives N independent
- * overlays where the last slot's controller is returned.
+ * Overflow behavior governs the coordinator script's ESPHome mode:
+ * - replace (restart): immediate round-robin dispatch, no waiting.
+ * - queue (queued, max_runs): `script.wait` blocks until the target slot is
+ *   free. Fills all N slots rapidly, then serializes behind blocking wait.
+ * - drop (single): `script.wait` blocks on next slot. While blocked,
+ *   mode: single drops additional calls.
  *
- * TODO: Implement round-robin coordinator script with global-backed
- * slot allocator signal for full multi-slot dispatch.
+ * The coordinator's hide() stops all slot scripts, hides all overlays, and
+ * resets the global counter to 0.
  */
 function buildMultiSlot(
   zOrder: number,
   maxVisible: number,
   autoHide: string | number | false,
+  overflow: 'replace' | 'queue' | 'drop',
+  queueLength: number,
   factory: TransientOverlayFactory,
 ): TransientOverlayController {
-  // Create N independent overlay slots.
-  const slotCtrls: VisibilityController[] = [];
+  // ── 1. Create N overlay slots with per-slot script pairs ──────────────
+
+  const slotOverlayCtrls: OverlayController[] = [];
+  const slotScriptPairs: OverlayScriptPair[] = [];
+
   for (let i = 0; i < maxVisible; i++) {
-    const slotIndex = i;
     const ctrl = useOverlay(
       { zOrder },
-      (overlayCtrl) => factory(overlayCtrl, slotIndex),
+      (overlayCtrl) => factory(overlayCtrl, i),
     );
-    slotCtrls.push(
-      useVisibility(ctrl, { autoHide, scriptMode: 'restart' }),
-    );
+    slotOverlayCtrls.push(ctrl);
+    slotScriptPairs.push(buildOverlayScriptPair(ctrl, autoHide));
   }
 
-  // For the initial implementation, return slot 0's controller.
-  // The round-robin coordinator will be added in a follow-up.
-  return slotCtrls[0];
+  // ── 2. Register round-robin counter global ────────────────────────────
+
+  // Derive a stable global ID from the first slot's overlay template key.
+  const firstCtrl = slotOverlayCtrls[0] as unknown as { [k: symbol]: unknown };
+  const firstTemplateKey = firstCtrl[OVERLAY_TEMPLATE_KEY as symbol] as string;
+  const globalId = generateDeterministicId('g', `transient_rr_${firstTemplateKey}`);
+
+  // Register in the reactive scope for YAML generation.
+  registerComponent({
+    kind: 'component',
+    section: 'globals',
+    id: globalId,
+    config: { id: globalId, irType: IR_INT, initial_value: '0' },
+  });
+
+  // Register in the global scope context for action compiler symbol lookup.
+  const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition> | undefined;
+  if (scopeMap && !scopeMap.has(globalId)) {
+    scopeMap.set(globalId, { id: globalId, irType: IR_INT });
+  }
+
+  // ── 3. Build coordinator show script ──────────────────────────────────
+
+  const globalRead: IRGlobalReadExpression = {
+    kind: 'expr:global_read',
+    globalId,
+    type: 'int',
+  };
+
+  const needsWait = overflow === 'queue' || overflow === 'drop';
+
+  // Build if-chain: if counter==0 then [wait?, execute slot 0], else if ...
+  const ifChain = buildDispatchIfChain(
+    globalRead,
+    slotScriptPairs,
+    needsWait,
+    maxVisible,
+  );
+
+  // Increment counter: (counter + 1) % maxVisible
+  const incrementAction = irGlobalSet(
+    globalId,
+    IR_INT,
+    irBinary(
+      '%',
+      irGroup(irBinary('+', globalRead, irLiteralExpression(1))),
+      irLiteralExpression(maxVisible),
+    ),
+  );
+
+  const coordinatorShowActions: IRActionNode[] = [ifChain, incrementAction];
+
+  const coordinatorShowMode = overflowToScriptMode(overflow);
+  const coordinatorShowOpts: { mode: 'restart' | 'queued' | 'single'; maxRuns?: number } = {
+    mode: coordinatorShowMode,
+  };
+  if (coordinatorShowMode === 'queued' && queueLength > 0) {
+    coordinatorShowOpts.maxRuns = queueLength;
+  }
+
+  const coordinatorShowScript = useScript(
+    makeSyntheticScript(
+      generateDeterministicId('scr', `transient_coord_show_${firstTemplateKey}`),
+      coordinatorShowActions,
+    ),
+    coordinatorShowOpts,
+  );
+
+  // ── 4. Build coordinator hide script ──────────────────────────────────
+
+  const hideActions: IRActionNode[] = [];
+  for (let i = 0; i < maxVisible; i++) {
+    // Stop the slot's show script (cancels auto-hide timer).
+    hideActions.push(irScriptStop(slotScriptPairs[i].show.id));
+    // Hide the overlay.
+    const slotCtrl = slotOverlayCtrls[i] as unknown as { [k: symbol]: unknown };
+    const templateKey = slotCtrl[OVERLAY_TEMPLATE_KEY as symbol] as string;
+    const slotZOrder = slotCtrl[OVERLAY_Z_ORDER as symbol] as number;
+    hideActions.push(irOverlayHide(templateKey, slotZOrder));
+  }
+  // Reset counter to 0.
+  hideActions.push(irGlobalSet(globalId, IR_INT, irLiteralExpression(0)));
+
+  const coordinatorHideScript = useScript(
+    makeSyntheticScript(
+      generateDeterministicId('scr', `transient_coord_hide_${firstTemplateKey}`),
+      hideActions,
+    ),
+  );
+
+  // ── 5. Return coordinator controller ──────────────────────────────────
+
+  return useController<VisibilityController>({
+    show: coordinatorShowScript,
+    hide: coordinatorHideScript,
+  });
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Build a nested if/else chain that dispatches to the correct slot based
+ * on the global counter value.
+ *
+ * Produces: if(counter==0) [actions] else if(counter==1) [actions] ... else [actions]
+ */
+function buildDispatchIfChain(
+  globalRead: IRGlobalReadExpression,
+  slotScriptPairs: OverlayScriptPair[],
+  needsWait: boolean,
+  maxVisible: number,
+): IRActionNode {
+  // Build from the last slot backward to nest else-chains.
+  function buildBranch(slotIndex: number): IRActionNode[] {
+    const actions: IRActionNode[] = [];
+    const showHandle = slotScriptPairs[slotIndex].show;
+    if (needsWait) {
+      actions.push(irScriptWait(showHandle.id));
+    }
+    const closureIndex = (showHandle as unknown as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX];
+    actions.push(irScriptExecute(showHandle.id, closureIndex !== undefined ? { closureIndex } : undefined));
+    return actions;
+  }
+
+  // Base case: the last slot is the final else branch.
+  let result: IRActionNode = irIfAction(
+    irLambdaCondition(
+      irBinary('==', globalRead, irLiteralExpression(maxVisible - 2)),
+    ),
+    buildBranch(maxVisible - 2),
+    buildBranch(maxVisible - 1),
+  );
+
+  // Build remaining branches from second-to-last back to 0.
+  for (let i = maxVisible - 3; i >= 0; i--) {
+    result = irIfAction(
+      irLambdaCondition(
+        irBinary('==', globalRead, irLiteralExpression(i)),
+      ),
+      buildBranch(i),
+      [result],
+    );
+  }
+
+  return result;
+}
+
+/**
+ * Create a synthetic script function with pre-injected `__compiledScript`
+ * metadata — same pattern as useVisibility's `makeSyntheticScript`.
+ */
+function makeSyntheticScript(
+  id: string,
+  actions: IRActionNode[],
+  refBindings?: Record<string, unknown>,
+) {
+  return Object.assign(
+    () => Promise.resolve(),
+    {
+      __compiledScript: { id, then: actions },
+      ...(refBindings ? { __refBindings: refBindings } : {}),
+    },
+  );
+}
 
 function overflowToScriptMode(overflow: 'replace' | 'queue' | 'drop'): 'restart' | 'queued' | 'single' {
   switch (overflow) {

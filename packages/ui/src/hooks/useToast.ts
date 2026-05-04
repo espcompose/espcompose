@@ -100,18 +100,28 @@ const DEFAULT_AUTO_HIDE = '3s';
  * ));
  *
  * @example
- * // Queue up to 5 toasts
+ * // Queue up to 5 toasts (single-slot, one at a time)
  * const toast = useToast(() => (
  *   <Toast><Text text="Queued!" /></Toast>
  * ), { overflow: 'queue', queueLength: 5 });
  *
  * @example
- * // 3 simultaneous toast slots with visual stacking
- * const toast = useToast((ctrl, slotIndex) => (
- *   <Toast style={{ marginBottom: slotIndex * 60 }}>
+ * // 3 simultaneous toast slots with vertical stacking
+ * // Each slot offsets upward using bottomOffset
+ * const toast = useToast((_ctrl, slotIndex) => (
+ *   <Toast bottomOffset={slotIndex * 60}>
  *     <Text text="Stacked!" />
  *   </Toast>
  * ), { maxVisible: 3 });
+ *
+ * @example
+ * // 3 slots + queue overflow: fills all slots, then queues
+ * // additional calls until a slot frees up
+ * const toast = useToast((_ctrl, slotIndex) => (
+ *   <Toast bottomOffset={slotIndex * 60}>
+ *     <Text text="Queued stack!" />
+ *   </Toast>
+ * ), { maxVisible: 3, overflow: 'queue', queueLength: 10 });
  */
 export function useToast(factory: ToastFactory, opts?: ToastOptions): ToastController {
   return useTransientOverlay(

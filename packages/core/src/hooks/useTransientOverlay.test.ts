@@ -1,9 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { withScriptScope } from './useScript';
 import { withOverlayScope } from './useOverlay';
+import { withReactiveScope } from './useReactiveScope';
+import { withGlobalScope } from './global-shared';
 import { pushHookPath, popHookPath } from './useState';
 import { useTransientOverlay } from './useTransientOverlay';
 import type { TransientOverlayConfig } from './useTransientOverlay';
+import type { IRActionNode } from '../ir/action-types';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -21,20 +24,30 @@ function buildWithQueue(config: TransientOverlayConfig) {
   let factoryCallCount = 0;
   const receivedSlotIndices: number[] = [];
 
-  const { result: { overlays }, scripts } = withScriptScope(() => {
-    const { result, overlays } = withOverlayScope(() => {
-      runInComponent('TestComponent', () => {
-        useTransientOverlay(config, (_ctrl, slotIndex) => {
-          factoryCallCount++;
-          receivedSlotIndices.push(slotIndex);
-          return stub;
+  const { result: scopeResult, scripts } = withScriptScope(() => {
+    const reactiveResult = withReactiveScope(() => {
+      const globalResult = withGlobalScope(() => {
+        const { result, overlays } = withOverlayScope(() => {
+          runInComponent('TestComponent', () => {
+            useTransientOverlay(config, (_ctrl, slotIndex) => {
+              factoryCallCount++;
+              receivedSlotIndices.push(slotIndex);
+              return stub;
+            });
+          });
         });
+        return { result, overlays };
       });
+      return globalResult;
     });
-    return { result, overlays };
+    return reactiveResult;
   });
 
-  return { overlays, scripts, factoryCallCount, receivedSlotIndices };
+  const overlays = scopeResult.result.result.overlays;
+  const globals = scopeResult.result.globals;
+  const components = scopeResult.components;
+
+  return { overlays, scripts, factoryCallCount, receivedSlotIndices, components, globals };
 }
 
 // ── Tests ───────────────────────────────────────────────────────────────────
@@ -119,11 +132,103 @@ describe('useTransientOverlay', () => {
       overlays.forEach(o => expect(o.instances).toHaveLength(1));
     });
 
-    it('creates scripts for each slot with restart mode', () => {
+    it('creates per-slot scripts with restart mode', () => {
       const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
       const restartScripts = scripts.filter(s => s.mode === 'restart');
       // At least 2 restart-mode scripts (one per slot's show lifecycle)
       expect(restartScripts.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('registers a round-robin counter global', () => {
+      const { components } = buildWithQueue({ maxVisible: 3, autoHide: '3s' });
+      const globalComponents = components.filter(c => c.section === 'globals');
+      expect(globalComponents).toHaveLength(1);
+      expect(globalComponents[0].config).toHaveProperty('initial_value', '0');
+    });
+
+    it('creates a coordinator show script', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
+      // Coordinator show script should have an if-action + global_set
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        s.then.some((a: IRActionNode) => a.kind === 'action:global_set'),
+      );
+      expect(coordScript).toBeDefined();
+    });
+
+    it('creates a coordinator hide script that stops all slots', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
+      // Coordinator hide script should have script_stop + overlay_hide actions
+      const hideScript = scripts.find(s =>
+        s.then.filter((a: IRActionNode) => a.kind === 'action:script_stop').length >= 2 &&
+        s.then.filter((a: IRActionNode) => a.kind === 'action:overlay_hide').length >= 2,
+      );
+      expect(hideScript).toBeDefined();
+      // Also resets counter to 0
+      const globalSetActions = hideScript!.then.filter(
+        (a: IRActionNode) => a.kind === 'action:global_set',
+      );
+      expect(globalSetActions).toHaveLength(1);
+    });
+
+    it('coordinator uses restart mode for overflow: replace (default)', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      expect(coordScript!.mode).toBe('restart');
+    });
+
+    it('coordinator uses queued mode for overflow: queue', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'queue', queueLength: 5 });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      expect(coordScript!.mode).toBe('queued');
+      expect(coordScript!.maxRuns).toBe(5);
+    });
+
+    it('coordinator uses single mode for overflow: drop', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'drop' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      expect(coordScript!.mode).toBe('single');
+    });
+
+    it('overflow: replace does NOT include script.wait in dispatch', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'replace' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      // Walk the if-chain — no script_wait anywhere
+      const hasWait = JSON.stringify(coordScript!.then).includes('action:script_wait');
+      expect(hasWait).toBe(false);
+    });
+
+    it('overflow: queue includes script.wait before dispatch', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'queue' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      // Walk the if-chain — should have script_wait in branches
+      const hasWait = JSON.stringify(coordScript!.then).includes('action:script_wait');
+      expect(hasWait).toBe(true);
+    });
+
+    it('overflow: drop includes script.wait before dispatch', () => {
+      const { scripts } = buildWithQueue({ maxVisible: 2, autoHide: '3s', overflow: 'drop' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if'),
+      );
+      expect(coordScript).toBeDefined();
+      const hasWait = JSON.stringify(coordScript!.then).includes('action:script_wait');
+      expect(hasWait).toBe(true);
     });
   });
 

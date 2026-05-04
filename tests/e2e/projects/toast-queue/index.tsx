@@ -46,7 +46,7 @@ const ToastQueueDemo = createLvglWidget(
 
     // Multi-slot: maxVisible 2 with slotIndex-based offset
     const toastMulti = useToast((_ctrl, slotIndex) => (
-      <Toast style={{ top: slotIndex * 60 }}>
+      <Toast bottomOffset={slotIndex * 60}>
         <Text text="Multi toast" />
       </Toast>
     ), { maxVisible: 2 });

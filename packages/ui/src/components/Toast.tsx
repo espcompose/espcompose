@@ -22,6 +22,20 @@ type ToastProps = WidgetPropsWithChildren<{
   radius?: RadiusToken;
   /** Horizontal margin from the screen edge. Default: 'md'. */
   margin?: SpacingToken;
+  /**
+   * Bottom offset in pixels. Use with `slotIndex` in multi-slot toasts
+   * to stack slots vertically from the bottom of the screen.
+   *
+   * @example
+   * const toast = useToast((ctrl, slotIndex) => (
+   *   <Toast bottomOffset={slotIndex * 60}>
+   *     <Text text="Stacked!" />
+   *   </Toast>
+   * ), { maxVisible: 3 });
+   *
+   * @default 0
+   */
+  bottomOffset?: number;
 }>;
 
 /**
@@ -39,8 +53,9 @@ export const Toast = createLvglContainerWidget(
     const theme = UITheme.use();
     const padding = useSpacing(props.padding ?? 'md');
     const radius = useRadius(props.radius ?? 'md');
-    const _margin = useSpacing(props.margin ?? 'md');
+    const margin = useSpacing(props.margin ?? 'md');
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
+    const bottomOffset = props.bottomOffset ?? 0;
 
     return (
       <lvgl-obj
@@ -51,6 +66,7 @@ export const Toast = createLvglContainerWidget(
           backgroundOpacity: 'transparent',
           borderWidth: 0,
           padding: 0,
+          paddingBottom: bottomOffset,
           clickable: false,
         }}
       >
@@ -65,6 +81,7 @@ export const Toast = createLvglContainerWidget(
             width: '90%',
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'bottomCenter',
+            paddingBottom: margin,
             scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',

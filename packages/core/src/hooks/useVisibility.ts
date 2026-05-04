@@ -32,6 +32,7 @@
 import { assertHookContext } from './useState';
 import { isRef } from '../types';
 import { useScript } from './useScript';
+import type { ScriptHandle } from './useScript';
 import { useController } from './useController';
 import { generateDeterministicId } from '../id';
 import {
@@ -187,10 +188,112 @@ export function useVisibility(
 
 // ── Overlay path ────────────────────────────────────────────────────────────
 
+/**
+ * Script pair returned by `buildOverlayScriptPair()`.
+ *
+ * Exposes raw ScriptHandle references so callers (e.g. the multi-slot
+ * coordinator in useTransientOverlay) can compose them into a higher-level
+ * controller or reference their IDs in a coordinator script.
+ */
+export interface OverlayScriptPair {
+  show: ScriptHandle;
+  hide: ScriptHandle;
+}
+
+/**
+ * Build the show/hide script pair for an overlay without wrapping in a
+ * controller. This is the low-level building block used by both
+ * `useVisibility()` (single-slot) and the multi-slot coordinator in
+ * `useTransientOverlay()`.
+ *
+ * - When `autoHide` is false: show = overlay_show, hide = overlay_hide.
+ * - When `autoHide` is set: show = overlay_show → delay → overlay_hide
+ *   (mode: restart), hide = script_stop(show) → overlay_hide.
+ *
+ * The show script is always mode: restart (slot-level timer reset). Higher-level
+ * overflow policy is handled by the coordinator, not here.
+ */
+export function buildOverlayScriptPair(
+  ctrl: OverlayController,
+  autoHide: string | number | false,
+): OverlayScriptPair {
+  const internal = ctrl as unknown as OverlayControllerInternal;
+  const templateKey = internal[OVERLAY_TEMPLATE_KEY];
+  const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
+  const zOrder = internal[OVERLAY_Z_ORDER];
+  const ctrlBindingKey = '__ctrl';
+
+  if (autoHide === false) {
+    const showScript = useScript(
+      makeSyntheticScript(
+        generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
+        [irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
+        { [ctrlBindingKey]: ctrl },
+      ),
+    );
+    const hideScript = useScript(
+      makeSyntheticScript(
+        generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+        [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
+        { [ctrlBindingKey]: ctrl },
+      ),
+    );
+    return { show: showScript, hide: hideScript };
+  }
+
+  const duration = normalizeDuration(autoHide);
+
+  const showScript = useScript(
+    makeSyntheticScript(
+      generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
+      [
+        irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
+        irDelayAction(duration),
+        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+      ],
+      { [ctrlBindingKey]: ctrl },
+    ),
+    { mode: 'restart' },
+  );
+
+  const hideScript = useScript(
+    makeSyntheticScript(
+      generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+      [
+        irScriptStop(showScript.id),
+        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+      ],
+      { [ctrlBindingKey]: ctrl },
+    ),
+  );
+
+  return { show: showScript, hide: hideScript };
+}
+
 function buildOverlayVisibility(
   ctrl: OverlayController,
   autoHide: string | number | false,
   scriptMode?: 'restart' | 'queued' | 'single',
+  maxRuns?: number,
+): VisibilityController {
+  // Single-slot path delegates to the old script mode / maxRuns behavior.
+  // Multi-slot never goes through here — it calls buildOverlayScriptPair directly.
+  if (scriptMode && scriptMode !== 'restart') {
+    return buildOverlayVisibilityWithMode(ctrl, autoHide, scriptMode, maxRuns);
+  }
+
+  const pair = buildOverlayScriptPair(ctrl, autoHide);
+  return useController<VisibilityController>({ show: pair.show, hide: pair.hide });
+}
+
+/**
+ * Single-slot variant with custom script mode (queued/single).
+ * Used by useTransientOverlay's single-slot path for overflow: queue/drop.
+ */
+function buildOverlayVisibilityWithMode(
+  ctrl: OverlayController,
+  autoHide: string | number | false,
+  scriptMode: 'queued' | 'single',
   maxRuns?: number,
 ): VisibilityController {
   const internal = ctrl as unknown as OverlayControllerInternal;
@@ -200,7 +303,7 @@ function buildOverlayVisibility(
   const ctrlBindingKey = '__ctrl';
 
   if (autoHide === false) {
-    // Simple show/hide — one script each, no timer.
+    // No timer — mode doesn't matter, just show/hide.
     const showScript = useScript(
       makeSyntheticScript(
         generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
@@ -219,16 +322,11 @@ function buildOverlayVisibility(
   }
 
   const duration = normalizeDuration(autoHide);
-  const resolvedMode = scriptMode ?? 'restart';
 
-  // Show script: show → delay → hide.
-  // mode: restart — re-trigger resets the timer (default).
-  // mode: queued  — each trigger queues a full show→delay→hide cycle.
-  // mode: single  — ignored while already running (drop behavior).
   const showScriptOpts: { mode: 'restart' | 'queued' | 'single'; maxRuns?: number } = {
-    mode: resolvedMode,
+    mode: scriptMode,
   };
-  if (resolvedMode === 'queued' && maxRuns != null && maxRuns > 0) {
+  if (scriptMode === 'queued' && maxRuns != null && maxRuns > 0) {
     showScriptOpts.maxRuns = maxRuns;
   }
 
@@ -245,7 +343,6 @@ function buildOverlayVisibility(
     showScriptOpts,
   );
 
-  // Hide script: stop the show timer + immediately hide.
   const hideScript = useScript(
     makeSyntheticScript(
       generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
