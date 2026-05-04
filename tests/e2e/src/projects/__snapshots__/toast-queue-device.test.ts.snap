@@ -1418,6 +1418,17 @@ script:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref38_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_6221ab8f), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref38_closures[closure_index]; (void)closure;
+                return id(g_abedd6d3)[0] == 0 && id(g_abedd6d3)[1] == 0;"
+          then:
+            - globals.set:
+                id: g_7ec13038
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref38_closures[closure_index];
+                  (void)closure; return 0;"
   - id: scr_ref39
     parameters:
       closure_index: int
@@ -1431,6 +1442,17 @@ script:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref39_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_6221ab8f), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref39_closures[closure_index]; (void)closure;
+                return id(g_abedd6d3)[0] == 0 && id(g_abedd6d3)[1] == 0;"
+          then:
+            - globals.set:
+                id: g_7ec13038
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref39_closures[closure_index];
+                  (void)closure; return 0;"
   - id: scr_ref40
     mode: restart
     parameters:
@@ -1462,6 +1484,17 @@ script:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref40_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_5f21a6d6), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref40_closures[closure_index]; (void)closure;
+                return id(g_abedd6d3)[0] == 0 && id(g_abedd6d3)[1] == 0;"
+          then:
+            - globals.set:
+                id: g_7ec13038
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref40_closures[closure_index];
+                  (void)closure; return 0;"
   - id: scr_ref41
     parameters:
       closure_index: int
@@ -1475,6 +1508,17 @@ script:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref41_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_5f21a6d6), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref41_closures[closure_index]; (void)closure;
+                return id(g_abedd6d3)[0] == 0 && id(g_abedd6d3)[1] == 0;"
+          then:
+            - globals.set:
+                id: g_7ec13038
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref41_closures[closure_index];
+                  (void)closure; return 0;"
   - id: scr_ref13
     mode: restart
     then:
