@@ -214,19 +214,31 @@ export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
   IRSlotExpression, IRThemeReadExpression,
-  IREntityPropExpression, IRComponentReadExpression, IRTriggerVarExpression, IRGlobalReadExpression,
-  IRMuxExpression, IRTableLookupExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IRMuxExpression, IRTableLookupExpression, IRFunctionExpression,
   IRExpression,
   ExprOpDescriptor, IROpExpression,
+} from './ir/index';
+export type {
+  AssignOp,
+  IRVarDeclStatement, IRAssignStatement, IRIfStatement,
+  IRForRangeStatement, IRWhileStatement, IRReturnStatement,
+  IRStatement, IRStatementBlock,
 } from './ir/index';
 export {
   irBinary, irUnary, irPostfix, irTernary,
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-  irLiteralExpression, irTriggerVarExpression, inferLiteralExprType,
+  irLiteralExpression, irLocalVarExpression, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
+} from './ir/index';
+export {
+  irVarDeclStatement, irAssignStatement, irIfStatement,
+  irForRangeStatement, irWhileStatement, irReturnStatement,
+  irStatementBlock,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
+export { getStatementBlockExpressions } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
 export type {
   ExprStructuralAnalysis,

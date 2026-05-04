@@ -3,7 +3,8 @@
  *
  * Demonstrates the C++ reactive runtime with multi-source bindings:
  *   - useMemo() combining two HA entities into a derived text value
- *   - LVGL label displaying the memo-derived status text
+ *   - useMemo() with a multi-statement block body (IRFunctionExpression)
+ *   - LVGL labels displaying the memo-derived status text
  */
 import { DisplayRef, useRef, useHAEntity, useMemo } from '@espcompose/core';
 
@@ -16,6 +17,20 @@ function App() {
   const status = useMemo(
     () => kitchenLight.isOn && tempSensor.value > 72 ? 'Comfortable' : 'Adjust',
   );
+
+  // Multi-statement memo: exercises IRFunctionExpression with local vars and control flow
+  const detailedStatus = useMemo((): string => {
+    const temp = tempSensor.value;
+    let result = 'Unknown';
+    if (temp > 80) {
+      result = 'Hot';
+    } else if (temp > 60) {
+      result = 'Warm';
+    } else {
+      result = 'Cold';
+    }
+    return result;
+  });
 
   return (
     <esphome name="multi-source-reactive-device" comment="Multi-source reactive runtime demo">
@@ -42,6 +57,12 @@ function App() {
           <lvgl-label
             style={{ left: 10, top: 10 }}
             text={status}
+          />
+
+          {/* Detailed status — bound to multi-statement memo with control flow */}
+          <lvgl-label
+            style={{ left: 10, top: 40 }}
+            text={detailedStatus}
           />
         </lvgl-page>
       </lvgl>

@@ -8,6 +8,7 @@
 import type {
   IRExpression,
 } from '@espcompose/core/internals';
+import { statementBlockToCpp } from './stmt-to-cpp.js';
 import type {
   ExprType,
   BuiltinFn,
@@ -126,6 +127,15 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
 
     case 'expr:trigger_var':
       return node.name;
+
+    case 'expr:local_var':
+      return node.name;
+
+    case 'expr:function': {
+      const retType = exprTypeToCpp(node.returnType);
+      const lines = statementBlockToCpp(node.body, ctx);
+      return `([&]() -> ${retType} { ${lines.join(' ')} })()`;
+    }
 
     case 'expr:mux': {
       const idx = exprToCpp(node.index, ctx);

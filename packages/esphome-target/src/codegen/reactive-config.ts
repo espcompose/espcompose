@@ -12,6 +12,7 @@ import { generateSignalSetLambda, computeMaxNodes } from './bindings.js';
 import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings.js';
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
+import { statementBlockToCpp } from '../lowering/stmt-to-cpp.js';
 import type { CppLoweringContext } from '../lowering';
 import type { IRExpression } from '@espcompose/core/internals';
 import { getExprChildren } from '@espcompose/core/internals';
@@ -307,9 +308,21 @@ export function buildRuntimeConfig(
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
       const exprIR: IRExpression | undefined = node.exprIR;
-      const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
-      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
-      const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
+
+      let cppReturnType: string;
+      let cppExpression: string;
+      let cppBodyLines: string[] | undefined;
+
+      if (exprIR?.kind === 'expr:function') {
+        // Multi-statement memo body
+        cppReturnType = exprTypeToCpp(exprIR.returnType);
+        cppBodyLines = statementBlockToCpp(exprIR.body, cppCtx);
+        cppExpression = cppBodyLines.join(' '); // for signature dedup
+      } else {
+        const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
+        cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
+        cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
+      }
 
       const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
 
@@ -325,6 +338,7 @@ export function buildRuntimeConfig(
           index: thisIdx,
           cppReturnType,
           cppExpression,
+          cppBodyLines,
           sourceSignals,
           canonicalIndex: memoNodeIdToIdx.get(canonical)!,
         });
@@ -336,6 +350,7 @@ export function buildRuntimeConfig(
           index: thisIdx,
           cppReturnType,
           cppExpression,
+          cppBodyLines,
           sourceSignals,
         });
       }
@@ -344,7 +359,8 @@ export function buildRuntimeConfig(
       cppCtx.memoNames.set(node.nodeId, `memo_${memoIdx - 1}`);
     } else if (node.kind === 'effect') {
       const sourceNames = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
-      const cppBody = node.exprIR ? exprToCpp(node.exprIR, cppCtx) : '0 /* no ExprIR */';
+      const effectIR = node.exprIR;
+      const cppBody = effectIR ? exprToCpp(effectIR, cppCtx) : '0 /* no ExprIR */';
       effects.push({
         index: effectIdx++,
         cppBody,

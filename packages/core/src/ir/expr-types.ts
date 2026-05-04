@@ -5,6 +5,8 @@
 // lowers IRExpression trees to its own target code.
 // ────────────────────────────────────────────────────────────────────────────
 
+import type { IRStatementBlock } from './stmt-types.js';
+
 // ── Value types ──────────────────────────────────────────────────────────────
 
 export type ExprType =
@@ -114,6 +116,13 @@ export interface IRComponentReadExpression {
   readonly sensorIndex: number;
 }
 
+/** Read a local variable by name (used in statement block expressions) */
+export interface IRLocalVarExpression {
+  readonly kind: 'expr:local_var';
+  readonly name: string;
+  readonly type: ExprType;
+}
+
 /** Read a trigger variable by name (used in action/script conditions) */
 export interface IRTriggerVarExpression {
   readonly kind: 'expr:trigger_var';
@@ -154,6 +163,21 @@ export interface IRTableLookupExpression {
   readonly elementType: ExprType;
 }
 
+/**
+ * A function expression — an expression computed by executing a statement block.
+ *
+ * Analogous to `ts.ArrowFunction` with a block body: the return type lives on
+ * this expression wrapper, not on the inner `IRStatementBlock` (which is a
+ * pure statement container).
+ *
+ * Backends lower this to an immediately-invoked lambda or equivalent construct.
+ */
+export interface IRFunctionExpression {
+  readonly kind: 'expr:function';
+  readonly body: IRStatementBlock;
+  readonly returnType: ExprType;
+}
+
 // ── Op descriptor (discriminated by tag) ─────────────────────────────────────
 
 export type ExprOpDescriptor =
@@ -189,7 +213,9 @@ export type IRExpression =
   | IREntityPropExpression
   | IRGlobalReadExpression
   | IRComponentReadExpression
+  | IRLocalVarExpression
   | IRTriggerVarExpression
   | IRMuxExpression
   | IRTableLookupExpression
+  | IRFunctionExpression
   | IROpExpression;

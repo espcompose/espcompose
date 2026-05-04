@@ -24,6 +24,21 @@ Memo<std::string> memo_0([]() -> std::string {
   return (sig_ha_light_kitchen_floods.get() && sig_ha_sensor_temp_inside.get() > 72 ? std::string("Comfortable") : std::string("Adjust"));
 });
 
+Memo<std::string> memo_1([]() -> std::string {
+  auto temp = sig_ha_sensor_temp_inside.get();
+  auto result = std::string("Unknown");
+  if (temp > 80) {
+    result = std::string("Hot");
+  } else {
+    if (temp > 60) {
+      result = std::string("Warm");
+    } else {
+      result = std::string("Cold");
+    }
+  }
+  return result;
+});
+
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
   auto runtime = ::espcompose::EspcomposeRuntimeComponent::get_instance();
@@ -34,23 +49,35 @@ void bootstrap_runtime() {
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* sig_ha_light_kitchen_floods_subs[1];
   sig_ha_light_kitchen_floods.set_subscriber_storage(sig_ha_light_kitchen_floods_subs, 1);
-  static NodeBase* sig_ha_sensor_temp_inside_subs[1];
-  sig_ha_sensor_temp_inside.set_subscriber_storage(sig_ha_sensor_temp_inside_subs, 1);
+  static NodeBase* sig_ha_sensor_temp_inside_subs[2];
+  sig_ha_sensor_temp_inside.set_subscriber_storage(sig_ha_sensor_temp_inside_subs, 2);
   static NodeBase* memo_0_subs[1];
   memo_0.set_subscriber_storage(memo_0_subs, 1);
+  static NodeBase* memo_1_subs[1];
+  memo_1.set_subscriber_storage(memo_1_subs, 1);
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
     lv_label_set_text(&id(rw_ref2), memo_0.get().c_str());
   });
 
+  static Effect binding_1([]() {
+    lv_label_set_text(&id(rw_ref3), memo_1.get().c_str());
+  });
+
   static NodeBase* memo_0_sources[] = {&sig_ha_light_kitchen_floods, &sig_ha_sensor_temp_inside};
   memo_0.wire(memo_0_sources, 2);
+  static NodeBase* memo_1_sources[] = {&sig_ha_sensor_temp_inside};
+  memo_1.wire(memo_1_sources, 1);
   static NodeBase* binding_0_sources[] = {&memo_0};
   binding_0.wire(binding_0_sources, 1);
+  static NodeBase* binding_1_sources[] = {&memo_1};
+  binding_1.wire(binding_1_sources, 1);
 
   Scheduler::instance().schedule(&memo_0);
+  Scheduler::instance().schedule(&memo_1);
   Scheduler::instance().schedule(&binding_0);
+  Scheduler::instance().schedule(&binding_1);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -383,7 +410,7 @@ exports[`multi-source-reactive-device > multi-source-reactive-device 1`] = `
     - espcompose_bindings.h
   platformio_options:
     build_flags:
-      - -DESPCOMPOSE_MAX_NODES=23
+      - -DESPCOMPOSE_MAX_NODES=25
 esp32:
   board: esp32dev
   framework:
@@ -416,6 +443,11 @@ lvgl:
             x: 10
             y: 10
             id: rw_ref2
+        - label:
+            text: !lambda "return espcompose::memo_1.get().c_str();"
+            x: 10
+            y: 40
+            id: rw_ref3
 binary_sensor:
   platform: homeassistant
   id: ha_light_kitchen_floods

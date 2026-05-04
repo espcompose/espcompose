@@ -7,6 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExpression } from './expr-types';
+import { getStatementBlockExpressions } from './stmt-walk';
 
 /**
  * Return the direct child `IRExpression`s of a given node.
@@ -21,6 +22,8 @@ export function getExprChildren(node: IRExpression): IRExpression[] {
       return [node.index, ...node.cases];
     case 'expr:table_lookup':
       return [node.index];
+    case 'expr:function':
+      return getStatementBlockExpressions(node.body);
     case 'expr:op':
       return [...node.children];
     // Leaf nodes — no child expressions
@@ -31,6 +34,7 @@ export function getExprChildren(node: IRExpression): IRExpression[] {
     case 'expr:entity_prop':
     case 'expr:global_read':
     case 'expr:component_read':
+    case 'expr:local_var':
     case 'expr:trigger_var':
     case 'expr:slot':
       return [];
@@ -67,7 +71,9 @@ export function mapExprChildren(
     case 'expr:entity_prop':
     case 'expr:global_read':
     case 'expr:component_read':
+    case 'expr:local_var':
     case 'expr:trigger_var':
+    case 'expr:function':
     case 'expr:slot':
       return node;
     default: {

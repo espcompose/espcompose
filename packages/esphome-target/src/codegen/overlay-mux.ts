@@ -80,6 +80,10 @@ function exprFingerprint(expr: IRExpression): string {
       return `CR:${expr.componentId}:${expr.sensorIndex}`;
     case 'expr:trigger_var':
       return `TV:${expr.name}`;
+    case 'expr:local_var':
+      return `LV:${expr.name}`;
+    case 'expr:function':
+      return `FN:${expr.returnType}`;
     case 'expr:op': {
       const attrs = Object.entries(expr.op)
         .filter(([k]) => k !== 'tag')
@@ -235,7 +239,7 @@ export function processOverlayMux(
       // Gather corresponding binding from each instance at the same position
       const perInstanceExprs: IRExpression[] = [];
       let allIdentical = true;
-      const fp0 = binding0.expression.exprIR
+      const fp0 = (binding0.expression.exprIR)
         ? exprFingerprint(binding0.expression.exprIR)
         : '';
 

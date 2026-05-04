@@ -8,6 +8,7 @@
 
 import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core/internals';
+import { getExprChildren } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings.js';
 import type { ReactiveRuntimeConfig } from './bindings.js';
@@ -288,7 +289,7 @@ function collectIRTreeReferences(ir: SemanticIR): {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const node = (val as any).node;
         if (node?.exprIR) {
-          collectThemeReadsFromExpr(node.exprIR, themeRefs);
+          collectThemeReadsFromIR(node.exprIR, themeRefs);
         }
         break;
       }
@@ -336,10 +337,21 @@ function collectIRTreeReferences(ir: SemanticIR): {
 /**
  * Recursively collect `thm_<scopeId>_<path>` names from an IRExpression tree.
  */
+function collectThemeReadsFromIR(ir: IRExpression, refs: Set<string>): void {
+  collectThemeReadsFromExpr(ir, refs);
+}
+
 function collectThemeReadsFromExpr(expr: IRExpression, refs: Set<string>): void {
   if (!expr || typeof expr !== 'object') return;
   if (expr.kind === 'expr:theme_read') {
     refs.add(`thm_${expr.scopeId}_${expr.path}`);
+    return;
+  }
+  // Function expression — descend via getExprChildren (walks statement block)
+  if (expr.kind === 'expr:function') {
+    for (const child of getExprChildren(expr)) {
+      collectThemeReadsFromExpr(child, refs);
+    }
     return;
   }
   // Recurse into composite expression nodes

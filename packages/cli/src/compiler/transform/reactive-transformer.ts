@@ -30,7 +30,9 @@ import {
   type HAEntityInfo,
   type GlobalExprInfo,
   type DependencyInfo,
+  mapTsTypeToExprType,
 } from './expr-compiler.js';
+import { compileStatementBlockIR } from './stmt-compiler.js';
 import { injectGlobalKeys } from './global-key-injector.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -327,11 +329,45 @@ function processExplicitMemo(
   const arg = callExpr.arguments[0];
   if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return;
 
-  // Get the expression body of the arrow function
+  // Get the body — either expression or block
+  const body = ts.isArrowFunction(arg) ? arg.body : arg.body;
+
+  // Block body: try statement compiler for multi-statement bodies
+  if (ts.isBlock(body)) {
+    const isMultiStatement = body.statements.length > 1 ||
+      (body.statements.length === 1 && !ts.isReturnStatement(body.statements[0]));
+
+    if (isMultiStatement) {
+      // Check if the block contains reactive signal references
+      if (!containsSignalNode(body, checker)) return;
+
+      // Derive return type from the TS checker's view of the arrow function
+      const fnType = checker.getTypeAtLocation(arg);
+      const signatures = fnType.getCallSignatures();
+      const returnType = signatures.length > 0
+        ? mapTsTypeToExprType(checker.getReturnTypeOfSignature(signatures[0]))
+        : 'float';
+
+      const stmtResult = compileStatementBlockIR(body, checker, haEntities, globals, returnType);
+      if (stmtResult) {
+        const start = callExpr.getStart(sourceFile);
+        const end = callExpr.getEnd();
+        edits.push({
+          position: start,
+          deleteEnd: end,
+          text: serializeCompiledCall(stmtResult.expr.returnType, stmtResult.deps, stmtResult.expr),
+        });
+        onTransform();
+        return;
+      }
+      // Fall through: if statement compiler fails, try expression path with single return
+    }
+  }
+
+  // Expression body or single-return block body: use expression compiler
   let bodyExpr: ts.Expression | null = null;
   if (ts.isArrowFunction(arg)) {
     if (ts.isBlock(arg.body)) {
-      // Block body: look for single `return expr;` statement
       if (arg.body.statements.length === 1) {
         const stmt = arg.body.statements[0];
         if (ts.isReturnStatement(stmt) && stmt.expression) {

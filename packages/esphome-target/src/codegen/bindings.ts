@@ -40,8 +40,13 @@ export interface MemoDecl {
   index: number;
   /** C++ return type (e.g. `std::string`, `float`, `bool`). */
   cppReturnType: string;
-  /** C++ expression body (from memo-codegen). */
+  /** C++ expression body (from memo-codegen). Single-expression memos only. */
   cppExpression: string;
+  /**
+   * C++ statement lines for multi-statement memo bodies.
+   * When set, the lambda emits these lines instead of `return cppExpression;`.
+   */
+  cppBodyLines?: string[];
   /** Signal names this memo depends on. */
   sourceSignals: string[];
   /**
@@ -368,7 +373,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('// ── Memos (derived values) ──');
     for (const memo of canonicalMemos) {
       lines.push(`Memo<${memo.cppReturnType}> memo_${memo.index}([]() -> ${memo.cppReturnType} {`);
-      lines.push(`  return ${memo.cppExpression};`);
+      if (memo.cppBodyLines && memo.cppBodyLines.length > 0) {
+        for (const bodyLine of memo.cppBodyLines) {
+          lines.push(`  ${bodyLine}`);
+        }
+      } else {
+        lines.push(`  return ${memo.cppExpression};`);
+      }
       lines.push('});');
       lines.push('');
     }
