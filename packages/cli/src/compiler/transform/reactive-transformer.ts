@@ -324,10 +324,28 @@ function processExplicitMemo(
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
 ): void {
-  if (callExpr.arguments.length < 1) return;
+  if (callExpr.arguments.length < 1) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `useMemo() requires a function argument.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
   const arg = callExpr.arguments[0];
-  if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return;
+  if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `useMemo() argument must be an inline arrow function or function expression.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
   // Get the body — either expression or block
   const body = ts.isArrowFunction(arg) ? arg.body : arg.body;
@@ -339,7 +357,15 @@ function processExplicitMemo(
 
     if (isMultiStatement) {
       // Check if the block contains reactive signal references
-      if (!containsSignalNode(body, checker)) return;
+      if (!containsSignalNode(body, checker)) {
+        // No signals — strip useMemo wrapper, replace with IIFE
+        const start = callExpr.getStart(sourceFile);
+        const end = callExpr.getEnd();
+        const bodyText = body.getText(sourceFile);
+        edits.push({ position: start, deleteEnd: end, text: `(() => ${bodyText})()` });
+        onTransform();
+        return;
+      }
 
       // Derive return type from the TS checker's view of the arrow function
       const fnType = checker.getTypeAtLocation(arg);
@@ -360,7 +386,18 @@ function processExplicitMemo(
         onTransform();
         return;
       }
-      // Fall through: if statement compiler fails, try expression path with single return
+      // Statement compiler failed — emit diagnostic immediately.
+      // The expression path below won't help for multi-statement blocks.
+      const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+      diagnostics.push({
+        message: `Cannot compile multi-statement useMemo() body containing reactive signals. ` +
+          `The statement compiler does not support the patterns used in this block. ` +
+          `Simplify the logic or break it into supported constructs (if/else, for, while, return).`,
+        file: sourceFile.fileName,
+        line: line + 1,
+        character: character + 1,
+      });
+      return;
     }
   }
 
@@ -384,10 +421,31 @@ function processExplicitMemo(
     }
   }
 
-  if (!bodyExpr) return;
+  if (!bodyExpr) {
+    // Could not extract a compilable expression from the body.
+    // The useMemo() call cannot survive — emit a diagnostic regardless of
+    // whether signals are present (Phase 0 type-check catches void returns,
+    // but this guard ensures no path through processExplicitMemo is silent).
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `Cannot compile useMemo() body: unable to extract a return expression. ` +
+        `Ensure the arrow function has an expression body or a single return statement.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
   // Check if the body contains reactive signal references
-  if (!containsSignalNode(bodyExpr, checker)) return;
+  if (!containsSignalNode(bodyExpr, checker)) {
+    // No signals — strip useMemo wrapper, inline the body expression
+    const start = callExpr.getStart(sourceFile);
+    const end = callExpr.getEnd();
+    edits.push({ position: start, deleteEnd: end, text: bodyExpr.getText(sourceFile) });
+    onTransform();
+    return;
+  }
 
   // AST-compile the expression body to ExpressionIR
   const ctx: ExprCompilerContext = {

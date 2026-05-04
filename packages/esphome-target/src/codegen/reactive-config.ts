@@ -275,28 +275,6 @@ export function buildRuntimeConfig(
     globalSignalNames.set(gs.globalId, gs.name);
   }
 
-  // ── Validate: detect untransformed reactive nodes ─────────────────────
-  const uncompiledNodes = reactiveNodes.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (n: any) => n.kind === 'memo' && !n.exprIR,
-  );
-  if (uncompiledNodes.length > 0) {
-    const summary = uncompiledNodes.map(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (n: any) => `  - ${n.kind} with ${n.dependencies?.length ?? 0} dependency(ies)`,
-    ).join('\n');
-    throw new Error(
-      `Found ${uncompiledNodes.length} reactive expression(s) that were not compiled.\n` +
-      `This usually means a component library provides reactive JSX but was\n` +
-      `imported from a non-source-mode package (the ESPCompose CLI only\n` +
-      `transforms TypeScript/TSX sources resolved via the "espcompose"\n` +
-      `export condition). Uncompiled nodes:\n` +
-      `${summary}\n\n` +
-      `If you are the library author, ensure your package.json exports map\n` +
-      `includes an "espcompose" condition pointing at your TS/TSX sources.`,
-    );
-  }
-
   // Build memo declarations from IRReactiveNode instances, deduplicating
   // identical memos (same expression + return type + sources).
   const memos: MemoDecl[] = [];

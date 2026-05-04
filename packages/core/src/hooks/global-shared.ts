@@ -5,7 +5,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, withContext } from './useContext';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
+import { IRReactiveNode } from '../reactive';
 import type { IRDependency, Signal } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import type { IRType } from '../ir/types';
@@ -158,13 +158,7 @@ export function createGlobalHandle<T>(
   return new Proxy(handle, {
     get(target, prop, receiver) {
       if (prop === 'value') {
-        const node = getOrCreateNode();
-        if (isTracking()) {
-          for (const dep of node.dependencies) {
-            trackDependency(dep);
-          }
-        }
-        return node as unknown as Signal<T>;
+        return getOrCreateNode() as unknown as Signal<T>;
       }
       return Reflect.get(target, prop, receiver);
     },
@@ -244,22 +238,10 @@ export function createGlobalArrayHandle<T>(
   return new Proxy(handle, {
     get(target, prop, receiver) {
       if (prop === 'value') {
-        const node = getOrCreateNode();
-        if (isTracking()) {
-          for (const dep of node.dependencies) {
-            trackDependency(dep);
-          }
-        }
-        return node as unknown as Signal<T[]>;
+        return getOrCreateNode() as unknown as Signal<T[]>;
       }
       if (prop === 'length') {
-        const node = getOrCreateNode();
-        if (isTracking()) {
-          for (const dep of node.dependencies) {
-            trackDependency(dep);
-          }
-        }
-        return node as unknown as Signal<number>;
+        return getOrCreateNode() as unknown as Signal<number>;
       }
       return Reflect.get(target, prop, receiver);
     },

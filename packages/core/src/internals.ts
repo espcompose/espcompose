@@ -25,14 +25,6 @@ export {
 } from './serialize/capture';
 export type { SerializationCaptures } from './serialize/capture';
 
-// ── Reactive tracking (internal hook machinery) ────────────────────────────
-export {
-  startTracking,
-  stopTracking,
-  trackDependency,
-  isTracking,
-} from './reactive/node';
-
 // ── Ref registry (compiler state) ──────────────────────────────────────────
 export {
   registerRefTag,
@@ -96,7 +88,7 @@ export {
 export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './target';
 
 // ── Hooks ──────────────────────────────────────────────────────────────────
-export { useEffect } from './hooks/useEffect';
+
 export type { ScriptHandle } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 

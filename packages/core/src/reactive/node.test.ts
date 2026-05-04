@@ -2,10 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   IRReactiveNode,
   isIRReactiveNode,
-  startTracking,
-  stopTracking,
-  trackDependency,
-  isTracking,
 } from './node';
 
 describe('IRReactiveNode', () => {
@@ -112,48 +108,6 @@ describe('IRReactiveNode', () => {
       expect(isIRReactiveNode(null)).toBe(false);
       expect(isIRReactiveNode({})).toBe(false);
       expect(isIRReactiveNode('string')).toBe(false);
-    });
-  });
-
-  describe('dependency tracking', () => {
-    it('tracks dependencies between start/stop', () => {
-      startTracking();
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'a', sourceDomain: 'sensor' });
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'b', sourceDomain: 'sensor' });
-      const deps = stopTracking();
-      expect(deps).toHaveLength(2);
-    });
-
-    it('deduplicates by sourceId', () => {
-      startTracking();
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'a', sourceDomain: 'sensor' });
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'a', sourceDomain: 'sensor' });
-      const deps = stopTracking();
-      expect(deps).toHaveLength(1);
-    });
-
-    it('isTracking() reflects state', () => {
-      expect(isTracking()).toBe(false);
-      startTracking();
-      expect(isTracking()).toBe(true);
-      stopTracking();
-      expect(isTracking()).toBe(false);
-    });
-
-    it('supports nested tracking', () => {
-      startTracking();
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'outer', sourceDomain: 'sensor' });
-
-      startTracking();
-      trackDependency({ kind: 'dependency', sourceType: 'ha_entity', sourceId: 'inner', sourceDomain: 'sensor' });
-      const inner = stopTracking();
-
-      const outer = stopTracking();
-
-      expect(inner).toHaveLength(1);
-      expect(inner[0].sourceId).toBe('inner');
-      expect(outer).toHaveLength(1);
-      expect(outer[0].sourceId).toBe('outer');
     });
   });
 });

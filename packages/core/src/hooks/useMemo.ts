@@ -4,24 +4,16 @@
 // Creates a memoized derived value from one or more reactive sources.
 // Must be called inside a function component body (render pass).
 //
-// In the normal build pipeline, the CLI's reactive transformer replaces
-// useMemo() calls with __espcompose.compiled() before this code runs.
-// This runtime fallback handles:
-//   - Pure computations (no reactive deps) — returns the value directly
-//   - Leftover reactive calls not caught by the compiler — creates
-//     a IRReactiveNode with dependency tracking only
+// The CLI's reactive transformer ALWAYS replaces useMemo() calls with
+// __espcompose.compiled() before this code runs. If this function executes
+// and the callback accesses reactive values, the build fails with a
+// diagnostic — runtime dependency tracking has been removed.
 //
 // Usage:
 //   const status = useMemo(() => light.isOn ? 'ON' : 'OFF');
 // ────────────────────────────────────────────────────────────────────────────
 
-import {
-  IRReactiveNode,
-  startTracking,
-  stopTracking,
-} from '../reactive';
-import type { ExprType } from '../ir/expr-types';
-import { registerReactiveNode } from './useReactiveScope';
+import { IRReactiveNode, isIRReactiveNode } from '../reactive';
 import { assertHookContext } from './useState';
 
 /**
@@ -29,36 +21,22 @@ import { assertHookContext } from './useState';
  *
  * Must be called inside a function component body (render pass).
  *
- * In the normal build pipeline, the CLI's reactive transformer replaces
- * useMemo() calls with __espcompose.compiled() before this code runs.
- * This runtime fallback handles:
- *   - Pure computations (no reactive deps) — returns the value directly
- *   - Leftover reactive calls not caught by the compiler — creates
- *     a IRReactiveNode with dependency tracking only
+ * The CLI's reactive transformer replaces useMemo() calls with
+ * __espcompose.compiled() before this code runs. If this function
+ * executes with a callback that accesses reactive values, it means
+ * the compiler failed to transform it — the build will fail.
  */
 export function useMemo<T>(fn: () => T): T | IRReactiveNode<T> {
   assertHookContext('useMemo()');
-  startTracking();
   const value = fn();
-  const deps = stopTracking();
 
-  if (deps.length === 0) {
-    // Pure computation — no reactive dependencies, return as-is
-    return value;
+  // If the callback returned an IRReactiveNode directly (e.g. a signal
+  // passthrough), that's fine — it's already a compiled reactive value.
+  if (isIRReactiveNode(value)) {
+    return value as unknown as IRReactiveNode<T>;
   }
 
-  // Infer ExprType from the JS value
-  let exprType: ExprType | undefined;
-  if (typeof value === 'string') exprType = 'string';
-  else if (typeof value === 'number') exprType = 'float';
-  else if (typeof value === 'boolean') exprType = 'bool';
-
-  const node = new IRReactiveNode<T>({
-    kind: 'memo',
-    dependencies: deps,
-    exprType,
-  });
-
-  registerReactiveNode(node);
-  return node;
+  // Pure computation — no reactive dependencies, return as-is.
+  // This handles cases like useMemo(() => someStaticCalc()).
+  return value;
 }
