@@ -141,14 +141,16 @@ Within the same z-order tier, the most recently shown overlay is brought to the 
 
 ## Popups and toasts
 
-`@espcompose/ui` provides convenience wrappers around `useOverlay()` for common overlay patterns:
+`@espcompose/ui` provides convenience hooks for common overlay patterns:
 
-| Hook | Import | Z-Order | Description |
-|------|--------|---------|-------------|
-| `usePopup(factory)` | `@espcompose/ui` | `0` | Base overlay tier — drawn above normal content but below toasts |
-| `useToast(factory)` | `@espcompose/ui` | `100` | Floats above popups — suited for brief notifications |
+| Hook | Import | Description |
+|------|--------|-------------|
+| `usePopup(factory)` | `@espcompose/ui` | Base overlay (z-order 0) — drawn above normal content but below toasts |
+| [`useToast(factory, opts?)`](./useToast.md) | `@espcompose/ui` | Transient toast overlay (z-order 100) with auto-hide, queue, and multi-slot support |
 
-Both accept just a factory (no config) and return an `OverlayController`.
+`usePopup` is a thin wrapper around `useOverlay()` and returns an `OverlayController`.
+
+`useToast` is built on [`useTransientOverlay()`](./useTransientOverlay.md) and returns a `VisibilityController` with script-backed `show()`/`hide()` lifecycle.
 
 ## Container components
 
