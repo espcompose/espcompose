@@ -7,7 +7,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding } from '@espcompose/core/internals';
-import type { IRReactiveNode } from '@espcompose/core';
+import type { IRReactiveNode } from '@espcompose/core/internals';
+import { getExprChildren } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
 import { generateBindingsHeader } from './bindings.js';
 import type { ReactiveRuntimeConfig } from './bindings.js';
@@ -119,10 +120,10 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
 
   // Ensure mux signals exist for all overlay_show actions in the IR tree.
   // If overlay definitions didn't flow through processOverlayMux(), the action
-  // lambdas still reference espcompose::sig_overlay_<key>_mux — we must
+  // lambdas still reference espcompose::sig_<key>_mux — we must
   // declare the signal so the C++ compiles.
   for (const key of overlayShowKeys) {
-    const muxSigName = `sig_overlay_${key}_mux`;
+    const muxSigName = `sig_${key}_mux`;
     if (!runtimeConfig.signals.some(s => s.name === muxSigName)) {
       runtimeConfig.signals.push({ name: muxSigName, cppType: 'int32_t' });
     }
@@ -195,7 +196,7 @@ function replaceOverlayActionsInIR(
   // With the tier container architecture, the structure is:
   //   top_layer → widgets[]
   //     └─ { obj: { id: "overlay_tier_<zOrder>", widgets: [...] } }
-  //         └─ { obj: { id: "overlay_<templateKey>", widgets: [...] } }
+  //         └─ { obj: { id: "<templateKey>", widgets: [...] } }
   //             └─ popup/toast content with action handlers
   //
   // We need to dig through the tier containers to find the overlay wrappers.
@@ -288,7 +289,7 @@ function collectIRTreeReferences(ir: SemanticIR): {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const node = (val as any).node;
         if (node?.exprIR) {
-          collectThemeReadsFromExpr(node.exprIR, themeRefs);
+          collectThemeReadsFromIR(node.exprIR, themeRefs);
         }
         break;
       }
@@ -336,10 +337,21 @@ function collectIRTreeReferences(ir: SemanticIR): {
 /**
  * Recursively collect `thm_<scopeId>_<path>` names from an IRExpression tree.
  */
+function collectThemeReadsFromIR(ir: IRExpression, refs: Set<string>): void {
+  collectThemeReadsFromExpr(ir, refs);
+}
+
 function collectThemeReadsFromExpr(expr: IRExpression, refs: Set<string>): void {
   if (!expr || typeof expr !== 'object') return;
   if (expr.kind === 'expr:theme_read') {
     refs.add(`thm_${expr.scopeId}_${expr.path}`);
+    return;
+  }
+  // Function expression — descend via getExprChildren (walks statement block)
+  if (expr.kind === 'expr:function') {
+    for (const child of getExprChildren(expr)) {
+      collectThemeReadsFromExpr(child, refs);
+    }
     return;
   }
   // Recurse into composite expression nodes

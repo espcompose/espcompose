@@ -14,11 +14,10 @@
 // same render pass return a cached binding and register only once.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isIRReactiveNode } from '../reactive';
+import { IRReactiveNode } from '../reactive';
 import type { Signal, IRDependency } from '../reactive';
 import type { ExprType } from '../ir/expr-types';
 import { registerHAEntity } from './useReactiveScope';
-import { isTracking, trackDependency } from '../reactive';
 import { assertHookContext } from './useState';
 import { throwCompileTimeOnly } from '../errors';
 import type {
@@ -54,29 +53,18 @@ export function clearHAEntityCache(): void {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Tracking proxy — intercept reactive property reads during memo/effect
+// Tracking proxy — intercept reactive property reads
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Wrap a binding object in a Proxy that intercepts reads of IRReactiveNode-valued
- * properties. When dependency tracking is active (inside useMemo/useEffect),
- * the proxy calls trackDependency() and recordAccess() so the dependency
- * graph and C++ codegen substitution table are populated automatically.
+ * properties. This ensures that property access returns the IRReactiveNode
+ * instances directly — the AST compiler handles dependency extraction statically.
  */
 function createTrackingProxy<T extends object>(binding: T): T {
   return new Proxy(binding, {
     get(target, prop, receiver) {
-      const val = Reflect.get(target, prop, receiver);
-
-      // Only intercept IRReactiveNode-valued properties when tracking
-      if (isIRReactiveNode(val) && typeof prop === 'string' && isTracking()) {
-        // Record dependency for the reactive graph
-        for (const dep of val.dependencies) {
-          trackDependency(dep);
-        }
-      }
-
-      return val;
+      return Reflect.get(target, prop, receiver);
     },
   });
 }

@@ -174,6 +174,14 @@ function walkLockstep(
       return first;
     }
 
+    case 'expr:local_var': {
+      const typed = nodes as readonly (typeof first)[];
+      for (let i = 1; i < typed.length; i++) {
+        if (typed[i].name !== first.name) return null;
+      }
+      return first;
+    }
+
     case 'expr:slot': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {
@@ -182,11 +190,12 @@ function walkLockstep(
       return first;
     }
 
-    // ── Mux / table_lookup — structural nodes that may themselves appear
+    // ── Mux / table_lookup / function — structural nodes that may themselves appear
     //    inside expressions being compared. Treat them as divergent since
     //    optimising already-muxed trees would be nested mux-over-mux. ───
     case 'expr:mux':
     case 'expr:table_lookup':
+    case 'expr:function':
       return null;
 
     // ── Generic op node — compare tag + scalar attrs, walk children ────

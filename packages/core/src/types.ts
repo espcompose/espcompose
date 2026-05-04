@@ -7,6 +7,7 @@ import { REACTIVE_PROPERTY_MAP } from './reactive/properties';
 import { IRReactiveNode } from './reactive/node';
 import { assertHookContext } from './hooks/useState';
 import { throwCompileTimeOnly } from './errors';
+import { generateId } from './id';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -129,13 +130,13 @@ export declare const OVERLAY_BRAND: unique symbol;
 export declare const CONTROLLER_BRAND: unique symbol;
 
 /**
- * Controller returned by `useLvglVisibility()`.
+ * Controller returned by `useVisibility()`.
  *
  * Provides `show()` and `hide()` methods that are compile-time markers
  * — the action compiler recognises calls and lowers them to
  * `script_execute` actions at serialization time.
  */
-export interface LvglVisibilityController {
+export interface VisibilityController {
   readonly [BINDING_BRAND]?: true;
   readonly [CONTROLLER_BRAND]?: true;
   /** Show the target (unhide LVGL widget or show overlay). */
@@ -220,7 +221,7 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
     // Generate a short, URL-safe, collision-resistant token.
     // Math.random with base-36 gives ~10 chars of entropy —
     // sufficient for a single device config file.
-    this._token = `r_${Math.random().toString(36).slice(2, 11)}`;
+    this._token = generateId('r');
 
     // Return a Proxy that intercepts property access for action methods
     // and reactive property accessors.

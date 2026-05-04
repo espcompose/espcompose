@@ -21,7 +21,7 @@ import type { OverlayDefinition } from '@espcompose/core/internals';
 import type { IRExpression, ExprType } from '@espcompose/core/internals';
 import type { IRActionNode, IRCondition } from '@espcompose/core/internals';
 import type { IRBinding } from '@espcompose/core/internals';
-import type { IRReactiveNode } from '@espcompose/core';
+import type { IRReactiveNode } from '@espcompose/core/internals';
 import { analyzeExprStructure, analyzeActionStructure, irBinary } from '@espcompose/core/internals';
 import { mapExprChildren } from '@espcompose/core/internals';
 import type { SignalDecl, TableDecl } from './bindings.js';
@@ -80,6 +80,10 @@ function exprFingerprint(expr: IRExpression): string {
       return `CR:${expr.componentId}:${expr.sensorIndex}`;
     case 'expr:trigger_var':
       return `TV:${expr.name}`;
+    case 'expr:local_var':
+      return `LV:${expr.name}`;
+    case 'expr:function':
+      return `FN:${expr.returnType}`;
     case 'expr:op': {
       const attrs = Object.entries(expr.op)
         .filter(([k]) => k !== 'tag')
@@ -204,7 +208,7 @@ export function processOverlayMux(
     if (def.instances.length === 0) continue;
 
     // Create mux signal for this overlay template
-    const muxSignalName = `sig_overlay_${def.templateKey}_mux`;
+    const muxSignalName = `sig_${def.templateKey}_mux`;
     const muxSignalIndex = nextSignalIndex++;
     muxSignals.push({ name: muxSignalName, cppType: 'int32_t' });
     muxSignalIndices.set(muxSignalIndex, muxSignalName);
@@ -235,7 +239,7 @@ export function processOverlayMux(
       // Gather corresponding binding from each instance at the same position
       const perInstanceExprs: IRExpression[] = [];
       let allIdentical = true;
-      const fp0 = binding0.expression.exprIR
+      const fp0 = (binding0.expression.exprIR)
         ? exprFingerprint(binding0.expression.exprIR)
         : '';
 
@@ -268,7 +272,7 @@ export function processOverlayMux(
           for (const hole of structural.holes) {
             if (hole.holeKind === 'literal') {
               // Create a static data table for these literal values
-              const tableName = `tbl_overlay_${def.templateKey}_${tables.length}`;
+              const tableName = `tbl_${def.templateKey}_${tables.length}`;
               const cppType = exprTypeToCpp(hole.type);
               const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
               tables.push({
@@ -371,7 +375,7 @@ export function processOverlayMux(
                 const paramKey = hole.paramPath.replace(/^data\./, '');
                 if (!(paramKey in newData)) continue;
 
-                const tableName = `tbl_overlay_${def.templateKey}_act_${tables.length}`;
+                const tableName = `tbl_${def.templateKey}_act_${tables.length}`;
                 const cppType = exprTypeToCpp(hole.type);
                 const cppArrayElemType = cppType === 'std::string' ? 'const char*' : cppType;
                 tables.push({

@@ -6,7 +6,7 @@
 // IR, which is resolved to `script_execute` at serialization time.
 //
 // Usage:
-//   const ctrl = useController<LvglVisibilityController>({
+//   const ctrl = useController<VisibilityController>({
 //     show: showScript,
 //     hide: hideScript,
 //   });

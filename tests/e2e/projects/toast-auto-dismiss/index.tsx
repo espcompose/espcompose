@@ -11,13 +11,12 @@
  *   - Button handler routes through script.execute (when auto-hide
  *     is active) instead of raw overlay_show
  */
-import { DisplayRef, useRef, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, createLvglWidget } from '@espcompose/core';
 import {
   Screen,
   VStack,
   Text,
   Button,
-  Toast,
   UITheme,
   useToast,
 } from '@espcompose/ui';
@@ -26,23 +25,17 @@ const ToastDemo = createLvglWidget(
   () => {
     // Default: auto-hide after 3s
     const toastDefault = useToast(() => (
-      <Toast>
-        <Text text="Default 3s toast" />
-      </Toast>
+      <Text text="Default 3s toast" />
     ));
 
     // Custom: auto-hide after 5s
     const toastCustom = useToast(() => (
-      <Toast>
-        <Text text="Custom 5s toast" />
-      </Toast>
+      <Text text="Custom 5s toast" />
     ), { autoHide: '5s' });
 
     // Manual: no auto-hide
     const toastManual = useToast(() => (
-      <Toast>
-        <Text text="Manual toast" />
-      </Toast>
+      <Text text="Manual toast" />
     ), { autoHide: false });
 
     return (
@@ -54,7 +47,6 @@ const ToastDemo = createLvglWidget(
       </VStack>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 function App() {

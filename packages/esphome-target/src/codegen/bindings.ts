@@ -40,8 +40,13 @@ export interface MemoDecl {
   index: number;
   /** C++ return type (e.g. `std::string`, `float`, `bool`). */
   cppReturnType: string;
-  /** C++ expression body (from memo-codegen). */
+  /** C++ expression body (from memo-codegen). Single-expression memos only. */
   cppExpression: string;
+  /**
+   * C++ statement lines for multi-statement memo bodies.
+   * When set, the lambda emits these lines instead of `return cppExpression;`.
+   */
+  cppBodyLines?: string[];
   /** Signal names this memo depends on. */
   sourceSignals: string[];
   /**
@@ -123,6 +128,9 @@ export interface BoundSignalDecl {
   cppType: string;
   /** ESPHome global component ID (used for bind() call). */
   globalId: string;
+  /** Optional initial value literal (matching the ESPHome global's `initial_value`).
+   *  Used to seed BoundSignal's local copy so `get()` is safe before bind(). */
+  initialValue?: string;
 }
 
 /** A compile-time static data table emitted in the bindings header. */
@@ -286,7 +294,15 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   if (config.globalSignals.length > 0) {
     lines.push('// ── BoundSignals (one per reactive global variable) ──');
     for (const gs of config.globalSignals) {
-      lines.push(`BoundSignal<${gs.cppType}> ${gs.name};`);
+      // Seed BoundSignal with the global's initial_value so reads before
+      // bind() (e.g. inline LVGL widget style initializers in main.cpp's
+      // setup() function) return well-defined data instead of dereferencing
+      // a null pointer.
+      if (gs.initialValue !== undefined) {
+        lines.push(`BoundSignal<${gs.cppType}> ${gs.name}(${gs.cppType}(${gs.initialValue}));`);
+      } else {
+        lines.push(`BoundSignal<${gs.cppType}> ${gs.name};`);
+      }
     }
     lines.push('');
   }
@@ -368,7 +384,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('// ── Memos (derived values) ──');
     for (const memo of canonicalMemos) {
       lines.push(`Memo<${memo.cppReturnType}> memo_${memo.index}([]() -> ${memo.cppReturnType} {`);
-      lines.push(`  return ${memo.cppExpression};`);
+      if (memo.cppBodyLines && memo.cppBodyLines.length > 0) {
+        for (const bodyLine of memo.cppBodyLines) {
+          lines.push(`  ${bodyLine}`);
+        }
+      } else {
+        lines.push(`  return ${memo.cppExpression};`);
+      }
       lines.push('});');
       lines.push('');
     }

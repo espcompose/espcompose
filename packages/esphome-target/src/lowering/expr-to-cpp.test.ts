@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { exprToCpp, type CppLoweringContext } from './expr-to-cpp';
-import type { IRExpression } from '@espcompose/core';
-import { irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irCall } from '@espcompose/core/internals';
+import type { IRExpression } from '@espcompose/core/internals';
+import { irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irCall, irBinary } from '@espcompose/core/internals';
 
 function emptyCtx(): CppLoweringContext {
   return {
@@ -334,5 +334,53 @@ describe('expr:table_lookup', () => {
       ],
     };
     expect(exprToCpp(node, ctx)).toContain('switch (popup_mux.get())');
+  });
+});
+
+// ─── binary precedence ────────────────────────────────────────────────────────
+
+describe('binary precedence', () => {
+  const lit = (v: number): IRExpression => ({ kind: 'expr:literal', value: v, type: 'int' });
+
+  it('wraps addition in parens when child of multiplication', () => {
+    // (a + b) * c  →  should produce "(1 + 2) * 3"
+    const node = irBinary('*', irBinary('+', lit(1), lit(2)), lit(3));
+    expect(exprToCpp(node, emptyCtx())).toBe('(1 + 2) * 3');
+  });
+
+  it('wraps subtraction in parens when child of multiplication', () => {
+    const node = irBinary('*', lit(3), irBinary('-', lit(4), lit(1)));
+    expect(exprToCpp(node, emptyCtx())).toBe('3 * (4 - 1)');
+  });
+
+  it('does not wrap multiplication child of addition', () => {
+    // a + b * c  →  "1 + 2 * 3" (correct precedence)
+    const node = irBinary('+', lit(1), irBinary('*', lit(2), lit(3)));
+    expect(exprToCpp(node, emptyCtx())).toBe('1 + 2 * 3');
+  });
+
+  it('does not wrap same-precedence left-associative chain', () => {
+    // (a + b) + c  →  "1 + 2 + 3" (left-associative, no parens needed)
+    const node = irBinary('+', irBinary('+', lit(1), lit(2)), lit(3));
+    expect(exprToCpp(node, emptyCtx())).toBe('1 + 2 + 3');
+  });
+
+  it('wraps right child of subtraction with equal precedence', () => {
+    // a - (b + c)  →  "1 - (2 + 3)"
+    const node = irBinary('-', lit(1), irBinary('+', lit(2), lit(3)));
+    expect(exprToCpp(node, emptyCtx())).toBe('1 - (2 + 3)');
+  });
+
+  it('wraps right child of division with equal precedence', () => {
+    // a / (b * c)  →  "6 / (2 * 3)"
+    const node = irBinary('/', lit(6), irBinary('*', lit(2), lit(3)));
+    expect(exprToCpp(node, emptyCtx())).toBe('6 / (2 * 3)');
+  });
+
+  it('wraps logical OR inside AND', () => {
+    const a: IRExpression = { kind: 'expr:literal', value: true, type: 'bool' };
+    const b: IRExpression = { kind: 'expr:literal', value: false, type: 'bool' };
+    const node = irBinary('&&', irBinary('||', a, b), a);
+    expect(exprToCpp(node, emptyCtx())).toBe('(true || false) && true');
   });
 });

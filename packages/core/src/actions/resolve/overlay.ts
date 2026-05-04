@@ -7,21 +7,28 @@
 // literal values).  These helpers resolve them from `__refBindings` at
 // serialization time.
 //
-// When a controller has `__lifecycleScriptId` (set by useToast auto-hide),
+// When a controller has `OVERLAY_LIFECYCLE_SCRIPT_ID` (set by useToast auto-hide),
 // `overlay_show` is replaced with `script_execute` and `overlay_hide`
 // is replaced with `[script_stop, overlay_hide]`.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRActionNode } from '../../ir/action-types';
 import { irScriptExecute, irScriptStop, irOverlayHide } from '../../ir/action-types';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+  OVERLAY_LIFECYCLE_SCRIPT_ID,
+} from '../../hooks/useOverlay';
+import { CLOSURE_INDEX } from '../closure/symbols';
 
-/** Shape of an OverlayController's hidden internal fields. */
+/** Shape of an OverlayController's hidden symbol-keyed internal fields. */
 interface OverlayControllerInternal {
-  __templateKey?: string;
-  __instanceIndex?: number;
-  __zOrder?: number;
-  __lifecycleScriptId?: string;
-  __closureIndex?: number;
+  [OVERLAY_TEMPLATE_KEY]?: string;
+  [OVERLAY_INSTANCE_INDEX]?: number;
+  [OVERLAY_Z_ORDER]?: number;
+  [OVERLAY_LIFECYCLE_SCRIPT_ID]?: string;
+  [CLOSURE_INDEX]?: number;
 }
 
 /**
@@ -31,7 +38,7 @@ interface OverlayControllerInternal {
  * actual `templateKey`/`instanceIndex`/`zOrder` values from the bound
  * OverlayController objects in `refBindings`.
  *
- * When the controller carries `__lifecycleScriptId` (toast auto-hide):
+ * When the controller carries `OVERLAY_LIFECYCLE_SCRIPT_ID` (toast auto-hide):
  * - `overlay_show` → `script_execute` (the lifecycle script handles show + delay + hide)
  * - `overlay_hide` → `[script_stop, overlay_hide]` (stop timer + immediate hide)
  */
@@ -45,37 +52,37 @@ export function resolveOverlayControllerRefs(
     if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
-        if (ctrl.__lifecycleScriptId) {
+        if (ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]) {
           // Replace overlay_show with script_execute — the lifecycle script
           // handles show → delay → hide.
-          actions[i] = irScriptExecute(ctrl.__lifecycleScriptId, {
-            closureIndex: ctrl.__closureIndex,
+          actions[i] = irScriptExecute(ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID], {
+            closureIndex: ctrl[CLOSURE_INDEX],
           });
         } else {
-          action.templateKey = ctrl.__templateKey ?? action.templateKey;
-          action.instanceIndex = ctrl.__instanceIndex ?? action.instanceIndex;
-          action.zOrder = ctrl.__zOrder ?? action.zOrder;
+          action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+          action.instanceIndex = ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
+          action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
           delete action.controllerRef;
         }
       }
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
-        if (ctrl.__lifecycleScriptId) {
+        if (ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]) {
           // Replace overlay_hide with [script_stop, overlay_hide]:
           // stop any running auto-hide timer, then immediately hide.
           const resolvedHide = irOverlayHide(
-            ctrl.__templateKey ?? action.templateKey,
-            ctrl.__zOrder ?? action.zOrder,
+            ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey,
+            ctrl[OVERLAY_Z_ORDER] ?? action.zOrder,
           );
           actions.splice(i, 1,
-            irScriptStop(ctrl.__lifecycleScriptId),
+            irScriptStop(ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]),
             resolvedHide,
           );
           i++; // skip the newly inserted overlay_hide
         } else {
-          action.templateKey = ctrl.__templateKey ?? action.templateKey;
-          action.zOrder = ctrl.__zOrder ?? action.zOrder;
+          action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+          action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
           delete action.controllerRef;
         }
       }
@@ -101,7 +108,7 @@ export function cleanOverlayControllerRefs(
 ): void {
   for (const key of Object.keys(refBindings)) {
     const val = refBindings[key];
-    if (val != null && typeof val === 'object' && '__templateKey' in (val as Record<string, unknown>)) {
+    if (val != null && typeof val === 'object' && OVERLAY_TEMPLATE_KEY in (val as object)) {
       delete refBindings[key];
     }
   }

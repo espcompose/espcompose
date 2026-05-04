@@ -255,7 +255,7 @@ export interface IROverlayHideAction {
   zOrder: number;
   /**
    * Controller variable name — when present, templateKey is resolved at
-   * runtime from __refBindings[controllerRef].__templateKey.
+   * runtime from __refBindings[controllerRef][OVERLAY_TEMPLATE_KEY].
    */
   controllerRef?: string;
 }

@@ -11,10 +11,9 @@
  */
 
 // ────────────────────────────────────────────────────────────────────────────
-// Public API — Core types & JSX runtime
+// Public API — Core types
 // ────────────────────────────────────────────────────────────────────────────
 
-export * from './runtime';
 export type {
   FunctionComponent,
   EspComposeElement,
@@ -32,22 +31,131 @@ export type {
   Reactive,
   WidgetProps,
   WidgetPropsWithChildren,
+  VisibilityController,
 } from './types';
-export { BINDING_BRAND, THEME_BRAND, OVERLAY_BRAND, CONTROLLER_BRAND, useRef, isRef } from './types';
-export type { LvglVisibilityController } from './types';
-export * from './intents/intents';
+export { useRef, isRef } from './types';
 
-// Re-export the generated barrel: JSX.IntrinsicElements augmentations,
-// component-prop interfaces & marker phantom-types.
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Runtime (createElement escape-hatch for untyped components)
+// ────────────────────────────────────────────────────────────────────────────
+
+export { createElement, Fragment } from './runtime';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Intent system (explicit re-exports from ./intents/intents)
+// ────────────────────────────────────────────────────────────────────────────
+
+export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglLayoutWidget } from './intents/intents';
+export type { IntentBrand, IntentComponent, IntentBrandOptions, IntrinsicIntentMeta } from './intents/intents';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Generated component types & JSX augmentations
+//
+// This is the single wildcard exception: the generated barrel is a
+// machine-produced explicit enumeration of 200+ component modules, each
+// containing JSX `declare global` augmentations that must be visible.
+// ────────────────────────────────────────────────────────────────────────────
+
 export * from './generated/index';
 
-// Hand-curated top-level aliases for commonly used component refs.
-export * from './component-aliases';
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Component ref aliases (hand-curated)
+// ────────────────────────────────────────────────────────────────────────────
 
-// Hand-authored ec-canvas intrinsic element types.
-// The wildcard re-export ensures TypeScript processes the `declare global`
-// augmentation that adds ec-* elements to JSX.IntrinsicElements.
-export * from './lvgl/canvas/types';
+export type {
+  AlarmControlPanelRef,
+  BinarySensorRef,
+  ButtonRef,
+  ClimateRef,
+  CoverRef,
+  DateRef,
+  DatetimeRef,
+  EventRef,
+  FanRef,
+  LightOutputRef,
+  LightStateRef,
+  LockRef,
+  MediaPlayerRef,
+  NumberRef,
+  SelectRef,
+  SensorRef,
+  SwitchRef,
+  TextRef,
+  TextSensorRef,
+  TimeRef,
+  UpdateEntityRef,
+  ValveRef,
+  AnimationRef,
+  DisplayRef,
+  FontRef,
+  ImageRef,
+  LvglComponentRef,
+  TouchscreenRef,
+  LvglWidgetRef,
+  LvglStyleRef,
+  LvglPageRef,
+  LvglAnimimgRef,
+  LvglArcRef,
+  LvglBarRef,
+  LvglButtonRef,
+  LvglButtonMatrixRef,
+  LvglCanvasRef,
+  LvglCheckboxRef,
+  LvglDropdownRef,
+  LvglDropdownListRef,
+  LvglImageRef,
+  LvglKeyboardRef,
+  LvglLabelRef,
+  LvglLedRef,
+  LvglLineRef,
+  LvglMeterRef,
+  LvglRollerRef,
+  LvglSliderRef,
+  LvglSpinboxRef,
+  LvglSpinnerRef,
+  LvglSwitchRef,
+  LvglTabviewRef,
+  LvglTextareaRef,
+  LvglTileviewRef,
+  LvglTileviewTileRef,
+  BinaryOutputRef,
+  FloatOutputRef,
+  LEDCOutputRef,
+  I2SAudioComponentRef,
+  SpeakerRef,
+  I2CBusRef,
+  SPIComponentRef,
+  UARTComponentRef,
+  WiFiComponentRef,
+  GPIOSwitchRef,
+  InternalTemperatureSensorRef,
+  IntervalTriggerRef,
+  OutputSwitchRef,
+  ScriptRef,
+  StepperRef,
+  RealTimeClockRef,
+} from './component-aliases';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Canvas intrinsic element types
+//
+// Side-effect import ensures `declare global` augmentation for ec-* elements
+// is processed by TypeScript.
+// ────────────────────────────────────────────────────────────────────────────
+
+import './lvgl/canvas/types';
+export type {
+  EcRectProps,
+  EcLineProps,
+  EcArcProps,
+  EcPolygonProps,
+  EcTextProps,
+  EcImageProps,
+  EcCanvasBackgroundProps,
+  EcCanvasContentProps,
+  EcCanvasOverlayProps,
+  EcCanvasProps,
+} from './lvgl/canvas/types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Hooks
@@ -69,11 +177,13 @@ export { useGlobal } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, VolatileGlobalOptions, GlobalArrayHandle } from './hooks/useGlobal';
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
-export type { GlobalHandle } from './hooks/global-shared';
+export type { GlobalHandle, TransientOverlayContext } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
-export { useLvglVisibility } from './hooks/useLvglVisibility';
-export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export { useTransientOverlay } from './hooks/useTransientOverlay';
+export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
+export { useVisibility } from './hooks/useVisibility';
+export type { VisibilityOptions } from './hooks/useVisibility';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 
@@ -93,29 +203,17 @@ export { secret } from './serialize/secret';
 // Public API — Reactive utilities
 // ────────────────────────────────────────────────────────────────────────────
 
-// __espcompose — compiler-internal reactive plumbing (injected into user bundles by CLI)
-export { __espcompose } from './reactive/compiler-plumbing';
 export { useReactive, useReactiveMap } from './reactive/utils';
+export type { Signal } from './reactive/node';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Theme
 // ────────────────────────────────────────────────────────────────────────────
 
-// createTheme — typed theme handle factory
 export { createTheme } from './lvgl/theme/create-theme';
 export type { ThemeHandle, ThemeProviderProps } from './lvgl/theme/create-theme';
-
-// Theme — registry (internal, re-exported for compiler phases)
-export { getThemeRegistry } from './lvgl/theme/registry';
-
-// Theme — scope hashing (internal, re-exported for compiler phases)
-export { scopeHash } from './lvgl/theme/scope-hash';
-
-// Theme — font tokens
-export { FONT_TOKEN_BRAND, createFontToken, isFontToken } from './lvgl/theme/font-token';
+export { createFontToken, isFontToken } from './lvgl/theme/font-token';
 export type { FontToken, FontBpp } from './lvgl/theme/font-token';
-
-// Theme — hex color type
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
 
@@ -134,10 +232,7 @@ export { isWireframeEnabled, setWireframeEnabled, clearWireframe, WIREFRAME_COLO
 export type { WidgetCategory } from './lvgl/style/wireframe';
 
 // ────────────────────────────────────────────────────────────────────────────
-// Public API — Used by theme resolvers
+// Public API — Reactive IR (used by widget libraries)
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { IRExpression } from './ir/index';
-export { getExprChildren, mapExprChildren } from './ir/index';
-export { IRReactiveNode, isIRReactiveNode } from './reactive/node';
-export type { Signal } from './reactive/node';
+export { isIRReactiveNode } from './reactive/node';

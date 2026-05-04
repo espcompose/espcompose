@@ -26,6 +26,7 @@ import type { IRActionNode } from '../ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { generateId } from '../id';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
   extractElementProps,
@@ -187,7 +188,7 @@ function detectAndRegisterReactiveProps(
   if (reactiveProps.length > 0) {
     let widgetId = typeof data.id === 'string' ? data.id : undefined;
     if (!widgetId) {
-      widgetId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+      widgetId = generateId('rw');
       data.id = widgetId;
     }
 
@@ -307,7 +308,7 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
       if (isIRReactiveNode(layout[key])) {
         let widgetId = typeof data.id === 'string' ? data.id : undefined;
         if (!widgetId) {
-          widgetId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+          widgetId = generateId('rw');
           data.id = widgetId;
         }
         registerReactiveBinding({
@@ -430,7 +431,7 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
       if (isIRReactiveNode(layout[key])) {
         let pageId = typeof pageData.id === 'string' ? pageData.id : undefined;
         if (!pageId) {
-          pageId = `rw_${Math.random().toString(36).slice(2, 11)}`;
+          pageId = generateId('rw');
           pageData.id = pageId;
         }
         registerReactiveBinding({

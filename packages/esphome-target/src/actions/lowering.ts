@@ -574,8 +574,8 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       // Set the mux signal to this instance's index, show the overlay
       // wrapper, move it to the foreground within its tier container,
       // and flush the reactive graph so bindings update.
-      const muxSig = `sig_overlay_${action.templateKey}_mux`;
-      const overlayId = `overlay_${action.templateKey}`;
+      const muxSig = `sig_${action.templateKey}_mux`;
+      const overlayId = `${action.templateKey}`;
       // instanceIndex may be a literal number or a script parameter reference.
       const indexExpr = typeof action.instanceIndex === 'number'
         ? String(action.instanceIndex)
@@ -589,7 +589,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
 
     case 'action:overlay_hide': {
       // Hide the overlay wrapper — not muxed, same widget across all instances.
-      const overlayId = `overlay_${action.templateKey}`;
+      const overlayId = `${action.templateKey}`;
       return { lambda: lambdaMarker(
         `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN);`
       )};

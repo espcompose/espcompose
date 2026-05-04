@@ -11,6 +11,12 @@
  * Do NOT import from this path in user application code.
  */
 
+// ── Runtime (compiler execution) ───────────────────────────────────────────
+export { ESPCompose, createElement, Fragment, render } from './runtime';
+
+// ── Reactive compiler plumbing (injected into user bundles by CLI) ─────────
+export { __espcompose } from './reactive/compiler-plumbing';
+
 // ── Serialization capture (compiler state) ─────────────────────────────────
 export {
   createLambdaScalar,
@@ -18,14 +24,6 @@ export {
   stopSerializationCapture,
 } from './serialize/capture';
 export type { SerializationCaptures } from './serialize/capture';
-
-// ── Reactive tracking (internal hook machinery) ────────────────────────────
-export {
-  startTracking,
-  stopTracking,
-  trackDependency,
-  isTracking,
-} from './reactive/node';
 
 // ── Ref registry (compiler state) ──────────────────────────────────────────
 export {
@@ -40,6 +38,7 @@ export { getSecrets, clearSecrets } from './serialize/secret';
 // ── Theme internals (compiler state + C++ codegen) ─────────────────────────
 export {
   clearThemeRegistry,
+  getThemeRegistry,
 } from './lvgl/theme/registry';
 export {
   clearReactiveThemeProxy,
@@ -89,7 +88,7 @@ export {
 export type { ComposeTarget, ExecuteResult, EmitRequest, EmitResult } from './target';
 
 // ── Hooks ──────────────────────────────────────────────────────────────────
-export { useEffect } from './hooks/useEffect';
+
 export type { ScriptHandle } from './hooks/useScript';
 export type { ScriptOptions } from './hooks/useScript';
 
@@ -103,14 +102,21 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, ComponentRegistration, HAEntityVariant } from './hooks/useReactiveScope';
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
-export { withOverlayScope, peekOverlayDefinitions } from './hooks/useOverlay';
+export {
+  withOverlayScope,
+  peekOverlayDefinitions,
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+  OVERLAY_LIFECYCLE_SCRIPT_ID,
+} from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
-export type { LvglVisibilityOptions } from './hooks/useLvglVisibility';
+export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
 export type { ClosureDescriptor } from './actions/closure';
-export { registerClosureDescriptor, findClosureDescriptor } from './actions/closure';
+export { registerClosureDescriptor, findClosureDescriptor, CLOSURE_INDEX } from './actions/closure';
 
 // ── Actions ────────────────────────────────────────────────────────────────
 export { waitUntil } from './actions/primitives';
@@ -118,7 +124,11 @@ export { waitUntil } from './actions/primitives';
 // ── Types (internal-only) ──────────────────────────────────────────────────
 export { RefHandle } from './types';
 
+// ── ID generation ──────────────────────────────────────────────────────────
+export { generateId, generateDeterministicId } from './id';
+
 // ── Reactive utilities ─────────────────────────────────────────────────────
+export { IRReactiveNode, isIRReactiveNode } from './reactive/node';
 export type { IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig, DependencySourceType } from './reactive/node';
 export { useReactive, reactiveIsNaN } from './reactive/utils';
 
@@ -196,19 +206,31 @@ export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
   IRSlotExpression, IRThemeReadExpression,
-  IREntityPropExpression, IRComponentReadExpression, IRTriggerVarExpression, IRGlobalReadExpression,
-  IRMuxExpression, IRTableLookupExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IRMuxExpression, IRTableLookupExpression, IRFunctionExpression,
   IRExpression,
   ExprOpDescriptor, IROpExpression,
+} from './ir/index';
+export type {
+  AssignOp,
+  IRVarDeclStatement, IRAssignStatement, IRIfStatement,
+  IRForRangeStatement, IRWhileStatement, IRReturnStatement,
+  IRStatement, IRStatementBlock,
 } from './ir/index';
 export {
   irBinary, irUnary, irPostfix, irTernary,
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-  irLiteralExpression, irTriggerVarExpression, inferLiteralExprType,
+  irLiteralExpression, irLocalVarExpression, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
+} from './ir/index';
+export {
+  irVarDeclStatement, irAssignStatement, irIfStatement,
+  irForRangeStatement, irWhileStatement, irReturnStatement,
+  irStatementBlock,
 } from './ir/index';
 export { getExprChildren, mapExprChildren } from './ir/index';
+export { getStatementBlockExpressions } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
 export type {
   ExprStructuralAnalysis,

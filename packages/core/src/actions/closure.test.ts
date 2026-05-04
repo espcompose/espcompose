@@ -6,6 +6,11 @@ import {
   identityDescriptor,
 } from './closure';
 import { IR_ID_REF, IR_INT } from '../ir/types';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+} from '../hooks/useOverlay';
 
 // ── Mock helpers ────────────────────────────────────────────────────────────
 
@@ -13,9 +18,9 @@ function makeOverlayCtrl(templateKey: string, instanceIndex: number, zOrder = 0)
   return {
     show() { /* noop */ },
     hide() { /* noop */ },
-    __templateKey: templateKey,
-    __instanceIndex: instanceIndex,
-    __zOrder: zOrder,
+    [OVERLAY_TEMPLATE_KEY]: templateKey,
+    [OVERLAY_INSTANCE_INDEX]: instanceIndex,
+    [OVERLAY_Z_ORDER]: zOrder,
   };
 }
 

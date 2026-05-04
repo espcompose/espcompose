@@ -563,6 +563,7 @@ export function lowerToYamlConfig(
       return {
         id: s.id,
         ...(s.mode && s.mode !== 'single' ? { mode: s.mode } : {}),
+        ...(s.maxRuns != null && s.maxRuns > 0 ? { max_runs: s.maxRuns } : {}),
         ...(hasParams ? { parameters: params } : {}),
         then: restored as unknown[],
       };

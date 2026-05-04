@@ -1,7 +1,9 @@
 /**
  * Toast component — lightweight notification overlay.
  *
- * Intended for use inside a `useToast()` factory. Provides:
+ * @internal Used by `useToast()` internally. Not part of the public API.
+ *
+ * Provides:
  *   - A translucent bottom-anchored strip (no full-screen backdrop)
  *   - Suitable for brief, non-blocking messages
  *
@@ -22,17 +24,19 @@ type ToastProps = WidgetPropsWithChildren<{
   radius?: RadiusToken;
   /** Horizontal margin from the screen edge. Default: 'md'. */
   margin?: SpacingToken;
+  /**
+   * Bottom offset in pixels. Used internally by `useToast()` for
+   * compacted multi-slot positioning.
+   *
+   * @internal
+   * @default 0
+   */
+  bottomOffset?: number;
 }>;
 
 /**
  * Toast — lightweight bottom-anchored notification container.
- *
- * @example
- * const toast = useToast((ctrl) => (
- *   <Toast>
- *     <Text text="Saved!" />
- *   </Toast>
- * ));
+ * @internal Used by `useToast()`. Not exported publicly.
  */
 export const Toast = createLvglContainerWidget(
   (props: ToastProps) => {
@@ -41,6 +45,7 @@ export const Toast = createLvglContainerWidget(
     const radius = useRadius(props.radius ?? 'md');
     const margin = useSpacing(props.margin ?? 'md');
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
+    const bottomOffset = props.bottomOffset ?? 0;
 
     return (
       <lvgl-obj
@@ -51,6 +56,7 @@ export const Toast = createLvglContainerWidget(
           backgroundOpacity: 'transparent',
           borderWidth: 0,
           padding: 0,
+          paddingBottom: bottomOffset,
           clickable: false,
         }}
       >
@@ -65,6 +71,7 @@ export const Toast = createLvglContainerWidget(
             width: '90%',
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'bottomCenter',
+            paddingBottom: margin,
             scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',

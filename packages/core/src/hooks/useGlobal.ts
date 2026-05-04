@@ -23,21 +23,20 @@
 import { useContext } from './useContext';
 import { assertHookContext } from './useState';
 import { registerComponent } from './useReactiveScope';
-import { IRReactiveNode, isTracking, trackDependency } from '../reactive';
-import type { IRDependency, Signal } from '../reactive';
-import type { ExprType } from '../ir/expr-types';
 import type { IRType } from '../ir/types';
 import { IR_BOOL, IR_BOOL_ARRAY, IR_FLOAT, IR_FLOAT_ARRAY, IR_INT, IR_INT_ARRAY, IR_STRING, IR_STRING_ARRAY } from '../ir/types';
-import type { BINDING_BRAND } from '../types';
-import { throwCompileTimeOnly } from '../errors';
 import {
   type GlobalDefinition,
   type GlobalHandle,
+  type GlobalArrayHandle,
   globalScopeContext,
   hashGlobalFingerprint,
   irTypeToExprType,
   createGlobalHandle,
+  createGlobalArrayHandle,
 } from './global-shared';
+
+export type { GlobalArrayHandle } from './global-shared';
 
 // ── Public type tokens ─────────────────────────────────────────────────────
 
@@ -73,33 +72,6 @@ export interface VolatileGlobalOptions<TK extends GlobalType> {
   initialValue?: InferGlobalTS<TK>;
   /** @internal Compiler-injected key for volatile globals. Do not set manually. */
   __key?: string;
-}
-
-// ── Array handle ───────────────────────────────────────────────────────────
-
-/**
- * Handle returned by useGlobal() for array globals.
- *
- * Provides a restricted set of operations that map cleanly to a backend
- * array container. Not all TS array methods are supported — only those that
- * a typical backend can lower.
- */
-export interface GlobalArrayHandle<T> {
-  readonly [BINDING_BRAND]?: true;
-  /** Reactive read of the whole array. */
-  readonly value: Signal<T[]>;
-  /** Reactive read of the array length. */
-  readonly length: Signal<number>;
-  /** Read element at index. Compile-time marker — the expr compiler handles this. */
-  get(index: number): T;
-  /** Set element at index. Compile-time marker — the action compiler handles this. */
-  set(index: number, value: T): void;
-  /** Append an element. Compile-time marker — the action compiler handles this. */
-  push(value: T): void;
-  /** Remove all elements. Compile-time marker — the action compiler handles this. */
-  clear(): void;
-  /** The auto-generated ESPHome global ID. */
-  readonly id: string;
 }
 
 // ── Token → IRType mapping (internal) ────────────────────────────────────────
@@ -198,72 +170,4 @@ export function useGlobal<TK extends GlobalType>(
     return createGlobalArrayHandle(id, irType, exprType);
   }
   return createGlobalHandle<InferGlobalTS<TK>>(id, irType, exprType);
-}
-
-// ── Array handle factory ───────────────────────────────────────────────────
-
-function createGlobalArrayHandle<T>(
-  id: string,
-  _irType: IRType,
-  exprType: ExprType,
-): GlobalArrayHandle<T> {
-  let cachedNode: IRReactiveNode<T[]> | undefined;
-
-  function getOrCreateNode(): IRReactiveNode<T[]> {
-    if (!cachedNode) {
-      const dep: IRDependency = {
-        kind: 'dependency',
-        sourceId: id,
-        sourceType: 'global',
-      };
-      cachedNode = new IRReactiveNode<T[]>({
-        kind: 'expression',
-        dependencies: [dep],
-        exprType,
-        sourceId: id,
-        propertyKey: 'value',
-      });
-    }
-    return cachedNode;
-  }
-
-  const handle = {
-    id,
-    get(_index: number): T {
-      throwCompileTimeOnly('globalArray.get()', 'Array accessors');
-    },
-    set(_index: number, _value: T): void {
-      throwCompileTimeOnly('globalArray.set()', 'Array mutations');
-    },
-    push(_value: T): void {
-      throwCompileTimeOnly('globalArray.push()', 'Array mutations');
-    },
-    clear(): void {
-      throwCompileTimeOnly('globalArray.clear()', 'Array mutations');
-    },
-  };
-
-  return new Proxy(handle, {
-    get(target, prop, receiver) {
-      if (prop === 'value') {
-        const node = getOrCreateNode();
-        if (isTracking()) {
-          for (const dep of node.dependencies) {
-            trackDependency(dep);
-          }
-        }
-        return node as unknown as Signal<T[]>;
-      }
-      if (prop === 'length') {
-        const node = getOrCreateNode();
-        if (isTracking()) {
-          for (const dep of node.dependencies) {
-            trackDependency(dep);
-          }
-        }
-        return node as unknown as Signal<number>;
-      }
-      return Reflect.get(target, prop, receiver);
-    },
-  }) as unknown as GlobalArrayHandle<T>;
 }

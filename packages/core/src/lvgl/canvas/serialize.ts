@@ -28,6 +28,7 @@ import {
   setCurrentSource,
   compactObject,
 } from '../../serialize/capture';
+import { generateId } from '../../id';
 import { expandCssStyle } from '../style/mapping';
 import type { RawIRWidget } from '../../ir/build';
 import { lvglWidgetToPlain, isLvglElement } from '../serialize';
@@ -218,7 +219,7 @@ export function ecCanvasToPlain(el: EspComposeElement): RawIRWidget {
   // Auto-assign ID (needed for reactive and draw function bindings)
   let canvasId = typeof data.id === 'string' ? data.id : undefined;
   if (!canvasId) {
-    canvasId = `ec_${Math.random().toString(36).slice(2, 11)}`;
+    canvasId = generateId('ec');
     data.id = canvasId;
   }
 

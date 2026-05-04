@@ -30,14 +30,23 @@ import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
+import { irOverlayShow, irOverlayHide } from '../ir/action-types';
+import { generateDeterministicId } from '../id';
+import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
 
-/**
- * Sanitize a hook-path string for use in C++ identifiers and LVGL widget IDs.
- * Replaces any character that is not alphanumeric or underscore with '_'.
- */
-function sanitizeIdentifier(key: string): string {
-  return key.replace(/[^a-zA-Z0-9_]/g, '_');
-}
+// ── Overlay controller symbols ──────────────────────────────────────────────
+// Symbol-keyed internal fields on OverlayController. Using symbols instead of
+// string-prefixed properties keeps these truly invisible to consumers
+// (Object.keys, JSON.stringify) and makes the duck-type guard collision-proof.
+
+/** The sanitized hook-path key identifying the overlay template. */
+export const OVERLAY_TEMPLATE_KEY: unique symbol = Symbol('overlay.templateKey');
+/** Instance index within the template (0, 1, 2, ...). */
+export const OVERLAY_INSTANCE_INDEX: unique symbol = Symbol('overlay.instanceIndex');
+/** Numeric z-order tier for stacking in top_layer. */
+export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
+/** Script ID for lifecycle-managed show/hide (e.g. toast auto-hide). */
+export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -253,9 +262,10 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
   // Build a unique template key: hook-path + call-site index.
   const templateKey = `${basePath}#${callIndex}`;
 
-  // Sanitize for use in C++ identifiers and LVGL widget IDs.
-  // The raw hook path may contain '/', '(', ')' etc.
-  const safeKey = sanitizeIdentifier(templateKey);
+  // Derive a deterministic, sanitized ID from the hook-path key.
+  // Uses FNV-1a hashing to produce a stable C++-safe identifier with the
+  // 'ovrl_' prefix following the autogen ID convention (r_, rw_, scr_, etc.).
+  const safeKey = generateDeterministicId('ovrl', templateKey);
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
@@ -285,11 +295,9 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
  *
  * `show()` and `hide()` throw `throwCompileTimeOnly` at runtime — they are
  * meant to be statically recognised by the action compiler in trigger handler
- * bodies. The `__templateKey`, `__instanceIndex`, and `__zOrder` fields are
- * set on the runtime object (but hidden from the public TS interface) so the
- * deferred ref-binding resolver in `overlay-resolve.ts` can recover the
- * overlay identity and mux index without needing a separate symbol resolution
- * pass.
+ * bodies. The symbol-keyed fields (`OVERLAY_TEMPLATE_KEY`, etc.) carry the
+ * overlay identity so the deferred ref-binding resolver in `overlay-resolve.ts`
+ * can recover the mux index without needing a separate symbol resolution pass.
  */
 function createOverlayController(templateKey: string, instanceIndex: number, zOrder: number): OverlayController {
   return {
@@ -299,8 +307,13 @@ function createOverlayController(templateKey: string, instanceIndex: number, zOr
     hide(): void {
       throwCompileTimeOnly('overlay.hide()', 'Overlay actions');
     },
-    __templateKey: templateKey,
-    __instanceIndex: instanceIndex,
-    __zOrder: zOrder,
+    [OVERLAY_TEMPLATE_KEY]: templateKey,
+    [OVERLAY_INSTANCE_INDEX]: instanceIndex,
+    [OVERLAY_Z_ORDER]: zOrder,
+    [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
+      if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
+      if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];
+      return [];
+    },
   } as OverlayController;
 }

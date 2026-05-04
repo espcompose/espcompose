@@ -7,7 +7,6 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { IRReactiveNode, isIRReactiveNode } from './node';
-import { useMemo } from '../hooks';
 import { __espcompose } from './compiler-plumbing';
 import { irCall } from '../ir/expr-builders';
 import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from '../types';
@@ -16,10 +15,10 @@ import type { CssStyleProps } from '../lvgl/style';
 // ── Reactive<T>: the reactive prop type alias ─────────────────────────────
 
 /**
- * A prop value that can be static, a reactive node, or a reactive function.
+ * A prop value that can be static or a reactive node.
  * Component authors use this to declare which props support reactive binding.
  */
-export type Reactive<T> = T | (() => T) | IRReactiveNode<T>;
+export type Reactive<T> = T | IRReactiveNode<T>;
 
 // ── WidgetProps<T>: mapped type for design-system widget props ─────────────
 
@@ -74,18 +73,14 @@ export type WidgetPropsWithChildren<T = {}, Skip extends keyof T = never> = Widg
 // ── useReactive ────────────────────────────────────────────────────────────
 
 /**
- * Normalize a prop value that may be static, reactive node, or reactive function.
+ * Normalize a prop value that may be static or a reactive node.
  *
- * - `IRReactiveNode<T>` → pass through (already tracked)
- * - `() => T` → evaluate with dependency tracking → IRReactiveNode or literal
+ * - `IRReactiveNode<T>` → pass through (already compiled)
  * - `T` → literal (no reactivity)
  */
 export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
   if (isIRReactiveNode(prop)) {
     return prop as IRReactiveNode<T>;
-  }
-  if (typeof prop === 'function') {
-    return useMemo(prop as () => T);
   }
   return prop as T;
 }
@@ -110,7 +105,7 @@ export function useReactiveMap<T, R>(
 ): R {
   const resolved = useReactive(prop);
   if (isIRReactiveNode(resolved)) {
-    return useMemo(() => fn((resolved as IRReactiveNode<T>).get())) as R;
+    return fn((resolved as IRReactiveNode<T>).get()) as R;
   }
   return fn(resolved as T);
 }
@@ -127,7 +122,8 @@ export function useReactiveMap<T, R>(
  * value={useMemo(() => reactiveIsNaN(light.brightness).get() ? 0 : light.brightness.get())}
  */
 export function reactiveIsNaN(node: IRReactiveNode<number>): IRReactiveNode<boolean> {
-  const sourceIR = node.exprIR ?? { kind: 'expr:literal' as const, value: 0, type: 'float' as const };
+  const rawIR = node.exprIR;
+  const sourceIR = rawIR ?? { kind: 'expr:literal' as const, value: 0, type: 'float' as const };
   return __espcompose.derivedMemo<boolean>({
     exprType: 'bool',
     dependencies: node.dependencies,

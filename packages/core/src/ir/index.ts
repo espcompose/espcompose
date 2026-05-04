@@ -83,14 +83,39 @@ export type {
   IRThemeReadExpression,
   IREntityPropExpression,
   IRComponentReadExpression,
+  IRLocalVarExpression,
   IRTriggerVarExpression,
   IRGlobalReadExpression,
   IRMuxExpression,
   IRTableLookupExpression,
+  IRFunctionExpression,
   IRExpression,
   ExprOpDescriptor,
   IROpExpression,
 } from './expr-types';
+
+// ── Statement IR ─────────────────────────────────────────────────────────────
+export type {
+  AssignOp,
+  IRVarDeclStatement,
+  IRAssignStatement,
+  IRIfStatement,
+  IRForRangeStatement,
+  IRWhileStatement,
+  IRReturnStatement,
+  IRStatement,
+  IRStatementBlock,
+} from './stmt-types';
+
+export {
+  irVarDeclStatement,
+  irAssignStatement,
+  irIfStatement,
+  irForRangeStatement,
+  irWhileStatement,
+  irReturnStatement,
+  irStatementBlock,
+} from './stmt-builders';
 
 export {
   irBinary,
@@ -108,11 +133,14 @@ export {
   irArrayIndex,
   irArrayMethod,
   irLiteralExpression,
+  irLocalVarExpression,
+  irFunctionExpression,
   irTriggerVarExpression,
   inferLiteralExprType,
 } from './expr-builders';
 
 export { getExprChildren, mapExprChildren } from './expr-walk';
+export { getStatementBlockExpressions } from './stmt-walk';
 export { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
 export type {
   ExprStructuralAnalysis,

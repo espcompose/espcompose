@@ -7,7 +7,7 @@
  *   - Reactive state passthrough: text={entity.stateText}
  *   - Action compilation with dynamic entity: entity.toggle()
  */
-import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglContainerWidget, createLvglWidget } from '@espcompose/core';
 import type { EspComposeElement, TriggerHandler } from '@espcompose/core';
 
 interface ActionButtonProps {
@@ -16,7 +16,7 @@ interface ActionButtonProps {
 }
 
 /** Thin wrapper that adds typed trigger props to <lvgl-button>. */
-const ActionButton = createLvglWidget(
+const ActionButton = createLvglContainerWidget(
   (props: ActionButtonProps) => {
     const { onRelease, children, x, y, width, height } = props;
     return (
@@ -28,7 +28,6 @@ const ActionButton = createLvglWidget(
       </lvgl-button>
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 interface HALightControlProps {

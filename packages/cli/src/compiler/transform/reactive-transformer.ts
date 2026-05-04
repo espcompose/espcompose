@@ -30,7 +30,9 @@ import {
   type HAEntityInfo,
   type GlobalExprInfo,
   type DependencyInfo,
+  mapTsTypeToExprType,
 } from './expr-compiler.js';
+import { compileStatementBlockIR } from './stmt-compiler.js';
 import { injectGlobalKeys } from './global-key-injector.js';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -322,16 +324,87 @@ function processExplicitMemo(
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
 ): void {
-  if (callExpr.arguments.length < 1) return;
+  if (callExpr.arguments.length < 1) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `useMemo() requires a function argument.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
   const arg = callExpr.arguments[0];
-  if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return;
+  if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) {
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `useMemo() argument must be an inline arrow function or function expression.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
-  // Get the expression body of the arrow function
+  // Get the body — either expression or block
+  const body = ts.isArrowFunction(arg) ? arg.body : arg.body;
+
+  // Block body: try statement compiler for multi-statement bodies
+  if (ts.isBlock(body)) {
+    const isMultiStatement = body.statements.length > 1 ||
+      (body.statements.length === 1 && !ts.isReturnStatement(body.statements[0]));
+
+    if (isMultiStatement) {
+      // Check if the block contains reactive signal references
+      if (!containsSignalNode(body, checker)) {
+        // No signals — strip useMemo wrapper, replace with IIFE
+        const start = callExpr.getStart(sourceFile);
+        const end = callExpr.getEnd();
+        const bodyText = body.getText(sourceFile);
+        edits.push({ position: start, deleteEnd: end, text: `(() => ${bodyText})()` });
+        onTransform();
+        return;
+      }
+
+      // Derive return type from the TS checker's view of the arrow function
+      const fnType = checker.getTypeAtLocation(arg);
+      const signatures = fnType.getCallSignatures();
+      const returnType = signatures.length > 0
+        ? mapTsTypeToExprType(checker.getReturnTypeOfSignature(signatures[0]))
+        : 'float';
+
+      const stmtResult = compileStatementBlockIR(body, checker, haEntities, globals, returnType);
+      if (stmtResult) {
+        const start = callExpr.getStart(sourceFile);
+        const end = callExpr.getEnd();
+        edits.push({
+          position: start,
+          deleteEnd: end,
+          text: serializeCompiledCall(stmtResult.expr.returnType, stmtResult.deps, stmtResult.expr),
+        });
+        onTransform();
+        return;
+      }
+      // Statement compiler failed — emit diagnostic immediately.
+      // The expression path below won't help for multi-statement blocks.
+      const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+      diagnostics.push({
+        message: `Cannot compile multi-statement useMemo() body containing reactive signals. ` +
+          `The statement compiler does not support the patterns used in this block. ` +
+          `Simplify the logic or break it into supported constructs (if/else, for, while, return).`,
+        file: sourceFile.fileName,
+        line: line + 1,
+        character: character + 1,
+      });
+      return;
+    }
+  }
+
+  // Expression body or single-return block body: use expression compiler
   let bodyExpr: ts.Expression | null = null;
   if (ts.isArrowFunction(arg)) {
     if (ts.isBlock(arg.body)) {
-      // Block body: look for single `return expr;` statement
       if (arg.body.statements.length === 1) {
         const stmt = arg.body.statements[0];
         if (ts.isReturnStatement(stmt) && stmt.expression) {
@@ -348,10 +421,31 @@ function processExplicitMemo(
     }
   }
 
-  if (!bodyExpr) return;
+  if (!bodyExpr) {
+    // Could not extract a compilable expression from the body.
+    // The useMemo() call cannot survive — emit a diagnostic regardless of
+    // whether signals are present (Phase 0 type-check catches void returns,
+    // but this guard ensures no path through processExplicitMemo is silent).
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(callExpr.getStart(sourceFile));
+    diagnostics.push({
+      message: `Cannot compile useMemo() body: unable to extract a return expression. ` +
+        `Ensure the arrow function has an expression body or a single return statement.`,
+      file: sourceFile.fileName,
+      line: line + 1,
+      character: character + 1,
+    });
+    return;
+  }
 
   // Check if the body contains reactive signal references
-  if (!containsSignalNode(bodyExpr, checker)) return;
+  if (!containsSignalNode(bodyExpr, checker)) {
+    // No signals — strip useMemo wrapper, inline the body expression
+    const start = callExpr.getStart(sourceFile);
+    const end = callExpr.getEnd();
+    edits.push({ position: start, deleteEnd: end, text: bodyExpr.getText(sourceFile) });
+    onTransform();
+    return;
+  }
 
   // AST-compile the expression body to ExpressionIR
   const ctx: ExprCompilerContext = {
@@ -404,19 +498,21 @@ function processExplicitMemo(
 
 function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEdit[]): void {
   let hasReactiveImport = false;
-  let composeImportDecl: ts.ImportDeclaration | null = null;
+  let internalsImportDecl: ts.ImportDeclaration | null = null;
 
   for (const stmt of sourceFile.statements) {
     if (!ts.isImportDeclaration(stmt)) continue;
     const moduleSpec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(moduleSpec)) continue;
-    if (moduleSpec.text !== '@espcompose/core') continue;
+
+    // __espcompose is exported from @espcompose/core/internals
+    if (moduleSpec.text !== '@espcompose/core/internals') continue;
 
     // Skip type-only imports — `import type { ... }` is erased at runtime,
     // so injecting `__espcompose` there would leave it undefined at bundle time.
     if (stmt.importClause?.isTypeOnly) continue;
 
-    composeImportDecl = stmt;
+    internalsImportDecl = stmt;
 
     const namedBindings = stmt.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
@@ -431,8 +527,8 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   if (hasReactiveImport) return;
 
-  if (composeImportDecl) {
-    const namedBindings = composeImportDecl.importClause?.namedBindings;
+  if (internalsImportDecl) {
+    const namedBindings = internalsImportDecl.importClause?.namedBindings;
     if (namedBindings && ts.isNamedImports(namedBindings)) {
       const lastElement = namedBindings.elements[namedBindings.elements.length - 1];
       if (lastElement) {
@@ -445,6 +541,6 @@ function injectReactiveImportIfNeeded(sourceFile: ts.SourceFile, edits: SourceEd
 
   edits.push({
     position: 0,
-    text: `import { __espcompose } from '@espcompose/core';\n`,
+    text: `import { __espcompose } from '@espcompose/core/internals';\n`,
   });
 }

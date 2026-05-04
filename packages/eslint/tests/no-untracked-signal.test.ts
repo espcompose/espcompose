@@ -30,13 +30,6 @@ describe('no-untracked-signal', () => {
         `,
       },
       {
-        name: 'Signal inside useEffect',
-        code: `
-          const light = useHAEntity('light.office');
-          useEffect(() => { console.log(light.isOn); });
-        `,
-      },
-      {
         name: 'non-signal property access (actions like toggle)',
         code: `
           const light = useHAEntity('light.office');
@@ -138,16 +131,6 @@ describe('no-untracked-signal', () => {
           declare const height: Signal<number>;
           declare const override: number | undefined;
           const h = override ?? height;
-        `,
-      },
-      {
-        name: 'Signal inside useEffect — type-aware',
-        filename: 'test.tsx',
-        code: `
-          import type { Signal } from '@espcompose/core';
-          import { useEffect } from '@espcompose/core';
-          declare const temp: Signal<number>;
-          useEffect(() => { console.log(temp > 72); });
         `,
       },
       {

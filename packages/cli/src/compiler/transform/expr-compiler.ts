@@ -12,7 +12,7 @@
  */
 
 import ts from 'typescript';
-import type { IRExpression } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
 import type { ExprType, BuiltinFn, BinaryOp, UnaryOp, PostfixOp, StringMethod, GlobalType, IRType, DependencySourceType } from '@espcompose/core/internals';
 import {
   hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,
@@ -94,6 +94,11 @@ export interface ExprCompilerContext {
    * as a runtime argument to __espcompose.slotted().
    */
   slots: { expr: ts.Expression; slotIndex: number }[];
+  /**
+   * Local variables declared in statement blocks.
+   * When set, identifiers matching a key resolve to `expr:local_var` instead of slots.
+   */
+  localVars?: Map<ts.Symbol, { name: string; type: ExprType }>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -711,7 +716,7 @@ export function translateReactiveExprIR(
   return result;
 }
 
-function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExpression | null {
+export function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExpression | null {
   if (ts.isNumericLiteral(node)) {
     return { kind: 'expr:literal', value: Number(node.text), type: 'float' };
   }
@@ -729,6 +734,14 @@ function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IRExpress
   }
 
   if (ts.isIdentifier(node)) {
+    // Local variable resolution (statement blocks)
+    if (ctx.localVars) {
+      const sym = ctx.checker.getSymbolAtLocation(node);
+      const localVar = sym ? ctx.localVars.get(sym) : undefined;
+      if (localVar) {
+        return { kind: 'expr:local_var', name: localVar.name, type: localVar.type };
+      }
+    }
     const type = ctx.checker.getTypeAtLocation(node);
     if (hasSignalBrand(type)) {
       return assignSlotIR(node, ctx);
@@ -1009,9 +1022,16 @@ function compileTemplateLiteralIR(
   return irConcat(parts);
 }
 
-function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType {
+export function inferExprType(node: ts.Expression, ctx: ExprCompilerContext): ExprType {
   const type = ctx.checker.getTypeAtLocation(node);
+  return mapTsTypeToExprType(type);
+}
 
+/**
+ * Map a TypeScript type object to the closest ExprType.
+ * Exported for use by callers that have a ts.Type directly (e.g. function return types).
+ */
+export function mapTsTypeToExprType(type: ts.Type): ExprType {
   if (type.flags & ts.TypeFlags.StringLike) return 'string';
   if (type.flags & ts.TypeFlags.NumberLike) return 'float';
   if (type.flags & ts.TypeFlags.BooleanLike) return 'bool';

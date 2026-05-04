@@ -2,19 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { buildRuntimeConfig } from './reactive-config.js';
 
 describe('buildRuntimeConfig', () => {
-  it('throws when reactiveNodes contain uncompiled markers (no exprIR)', () => {
-    const uncompiledNode = {
-      kind: 'memo',
-      exprType: 'float',
-      dependencies: [{ sourceId: 'ha_light_office', sourceDomain: 'binary_sensor', sourceType: 'ha_entity' }],
-      // No exprIR — this is the uncompiled marker
-    };
-
-    expect(() =>
-      buildRuntimeConfig([uncompiledNode], [], []),
-    ).toThrow('reactive expression(s) that were not compiled');
-  });
-
   it('does not throw for effect nodes without exprIR', () => {
     // Effects don't require exprIR — they're side-effect nodes
     const effectNode = {

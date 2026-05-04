@@ -56,15 +56,6 @@ ruleTester.run('no-hook-outside-component', rule, {
         }
       `,
     },
-    {
-      name: 'useEffect inside function component',
-      code: `
-        function App() {
-          useEffect(() => { void light.isOn; });
-          return <div />;
-        }
-      `,
-    },
   ],
   invalid: [
     {

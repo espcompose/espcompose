@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean --external @espcompose/core --external yaml",
+    "build": "tsup src/index.ts --format esm --clean --external @espcompose/core --external yaml && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "clean": "rimraf dist",

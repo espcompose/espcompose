@@ -15,7 +15,7 @@
  *   - show() lambdas setting mux index + unhiding widgets
  *   - hide() lambdas hiding widgets
  */
-import { DisplayRef, useRef, useHAEntity, createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget } from '@espcompose/core';
 import {
   Screen,
   VStack,
@@ -65,7 +65,6 @@ const LightButton = createLvglWidget(
       />
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 function App() {

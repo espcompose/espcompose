@@ -5,7 +5,7 @@
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglWidget, LVGL_INTENTS } from '@espcompose/core';
+import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import type { SpacingToken } from '../theme/types';
 import { UITheme } from '../theme/theme';
@@ -30,7 +30,7 @@ type ScreenProps = WidgetPropsWithChildren<{
  *   </VStack>
  * </Screen>
  */
-export const Screen = createLvglWidget(
+export const Screen = createLvglContainerWidget(
   (props: ScreenProps) => {
     const padding = props.padding != null ? useSpacing(props.padding) : undefined;
     const theme = UITheme.use();
@@ -40,17 +40,16 @@ export const Screen = createLvglWidget(
       <lvgl-page
         skip={props.skip}
         style={{
+          ...props.style,
           backgroundColor: bgColor,
-          backgroundOpacity: 'opaque',
+          backgroundOpacity: props.style?.backgroundOpacity ?? 'opaque',
           borderWidth: props.style?.borderWidth ?? 0,
-          ...(props.style?.borderColor != null ? { borderColor: props.style.borderColor } : {}),
           ...(padding != null ? { padding: padding } : {}),
-          scrollbarMode: 'off',
+          scrollbarMode: props.style?.scrollbarMode ?? 'off',
         }}
       >
         {props.children}
       </lvgl-page>
     );
-  },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
+  }
 );

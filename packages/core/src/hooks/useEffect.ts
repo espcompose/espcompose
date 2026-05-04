@@ -1,39 +1,20 @@
 // ────────────────────────────────────────────────────────────────────────────
-// useEffect — reactive side-effect hook
+// useEffect — REMOVED
 //
-// Registers a side-effect that runs when reactive sources change.
-// Must be called inside a function component body (render pass).
+// useEffect relied on runtime dependency tracking (startTracking/stopTracking)
+// which is fundamentally unsound for conditional expressions. The hook had
+// zero users and no compiler support. It has been removed.
 //
-// During lowering, the callback's reactive dependencies become an Effect
-// node in the C++ reactive runtime.
-//
-// Usage:
-//   useEffect(() => { void sensor.value; });
+// If you need reactive side-effects, use the reactive transformer's compiled
+// expression system or file a feature request for compiler-supported effects.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, startTracking, stopTracking } from '../reactive';
-import { registerReactiveNode } from './useReactiveScope';
-import { assertHookContext } from './useState';
+import { throwCompileTimeOnly } from '../errors';
 
 /**
- * Register a side-effect that runs when reactive sources change.
- *
- * Must be called inside a function component body (render pass).
- * The callback is executed once to capture dependencies. During lowering,
- * it becomes an Effect node in the C++ reactive runtime.
+ * @deprecated useEffect has been removed. It relied on runtime dependency
+ * tracking which is fundamentally unsound for conditional expressions.
  */
-export function useEffect(fn: () => void): void {
-  assertHookContext('useEffect()');
-  startTracking();
-  fn();
-  const deps = stopTracking();
-
-  if (deps.length > 0) {
-    const node = new IRReactiveNode<void>({
-      kind: 'effect',
-      dependencies: deps,
-    });
-
-    registerReactiveNode(node);
-  }
+export function useEffect(_fn: () => void): void {
+  throwCompileTimeOnly('useEffect()', 'Reactive effects');
 }

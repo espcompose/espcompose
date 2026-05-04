@@ -14,7 +14,7 @@
 // compiler can wire the memo to the theme signal.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { IRReactiveNode, isTracking, trackDependency } from '../../reactive/node';
+import { IRReactiveNode } from '../../reactive/node';
 import type { IRDependency } from '../../reactive/node';
 import { getThemeRegistry } from './registry';
 import { scopeHash } from './scope-hash';
@@ -104,11 +104,6 @@ function getOrCreateLeafNode(
     });
     node.exprIR = { kind: 'expr:theme_read', scope, scopeId, path, type: exprType };
     nodeCache.set(cacheKey, node);
-  }
-
-  // Track the dependency if inside useMemo() / useEffect()
-  if (isTracking()) {
-    trackDependency(node.dependencies[0]);
   }
 
   return node;

@@ -1,10 +1,6 @@
 export {
   IRReactiveNode,
   isIRReactiveNode,
-  startTracking,
-  stopTracking,
-  trackDependency,
-  isTracking,
 } from './node';
 export type { Signal, IRReactiveNodeKind, IRDependency, IRReactiveNodeConfig } from './node';
 

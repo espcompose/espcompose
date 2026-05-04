@@ -10,14 +10,13 @@
  *   - Pressing the toggle button inside the popup triggers the entity
  *     toggle AND shows the toast
  */
-import { DisplayRef, useRef, useHAEntity, createLvglWidget, delay, LVGL_INTENTS } from '@espcompose/core';
+import { DisplayRef, useRef, useHAEntity, createLvglWidget, delay } from '@espcompose/core';
 import {
   Screen,
   VStack,
   Text,
   Button,
   Popup,
-  Toast,
   UITheme,
   usePopup,
   useToast,
@@ -32,9 +31,7 @@ const DeviceCard = createLvglWidget(
 
     const popup = usePopup((ctrl) => {
       const toast = useToast(() => (
-        <Toast>
-          <Text text="Toggled!" />
-        </Toast>
+        <Text text="Toggled!" />
       ));
 
       return (
@@ -64,7 +61,6 @@ const DeviceCard = createLvglWidget(
       />
     );
   },
-  { allowedChildIntents: [LVGL_INTENTS.WIDGET] as const },
 );
 
 function App() {

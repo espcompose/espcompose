@@ -13,11 +13,6 @@ describe('reactive-utils', () => {
   });
 
   describe('useReactive()', () => {
-    it('evaluates function props', () => {
-      const result = useReactive(() => 'hello');
-      expect(result).toBe('hello');
-    });
-
     it('passes through static values', () => {
       const result = useReactive(42);
       expect(result).toBe(42);

@@ -19,7 +19,7 @@ import {
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, generateId, generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
 function irTypeKey(vt: IRType): string {
@@ -163,8 +163,8 @@ function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useScript', checker)) {
         const varName = node.name.text;
-        // Use the variable name as the script ID (snake_case)
-        const scriptId = varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+        // Use the variable name as the script ID (snake_case, scr_ prefix)
+        const scriptId = generateDeterministicId('scr', varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase());
         const sym = checker.getSymbolAtLocation(node.name);
         if (sym) {
           // Extract user-defined params from the arrow function argument
@@ -547,9 +547,9 @@ function compileAndInjectUseScript(
   if (result.diagnostics.length > 0) return;
 
   // Determine script ID from parent variable declaration
-  let scriptId = `script_${ctx.functionCounter++}`;
+  let scriptId = generateId('scr');
   if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
-    scriptId = parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+    scriptId = generateDeterministicId('scr', parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase());
   }
 
   // Store IRActionNode[] directly - lowering happens in target packages

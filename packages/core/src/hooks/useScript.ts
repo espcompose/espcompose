@@ -28,15 +28,23 @@ import type { ScriptMode, IRScriptParamDecl, IRType, IRScalar, ClosureShape, Clo
 import { irScalar } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
+import { generateId } from '../id';
 import { throwCompileTimeOnly } from '../errors';
 import { findClosureDescriptor } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
+import { CLOSURE_INDEX } from '../actions';
+import {
+  OVERLAY_TEMPLATE_KEY,
+  OVERLAY_INSTANCE_INDEX,
+  OVERLAY_Z_ORDER,
+} from './useOverlay';
 
 // ── Script-scope types & context ───────────────────────────────────────────
 
 interface ScriptDefinition {
   id: string;
   mode?: ScriptMode;
+  maxRuns?: number;
   userParams?: IRScriptParamDecl[];
   /** Per-script binding name → literal ESPHome ID token. */
   refBindings?: Record<string, string>;
@@ -127,6 +135,11 @@ export type ScriptParamScalar = number | string | boolean;
 export interface ScriptOptions {
   /** Execution mode. Controls behavior when script is re-triggered while already running. */
   mode?: ScriptMode;
+  /**
+   * Maximum concurrent/queued runs. Only meaningful when `mode` is
+   * `'queued'` or `'parallel'`. Omit to use the ESPHome default (0 = unlimited).
+   */
+  maxRuns?: number;
 }
 
 export function useScript<A extends ScriptParamScalar[]>(
@@ -176,6 +189,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const scriptDef: ScriptDefinition = {
       id: varScriptId,
       mode: opts?.mode,
+      maxRuns: opts?.maxRuns,
       userParams: userParams && userParams.length > 0 ? userParams : undefined,
       refBindings: Object.keys(scriptRefBindings).length > 0 ? scriptRefBindings : undefined,
       closureShape: closureShape.fields.length > 0 ? closureShape : undefined,
@@ -187,8 +201,8 @@ export function useScript<A extends ScriptParamScalar[]>(
   }
 
   // Fallback for bodies without compiled metadata (dev mode / uncompiled)
-  const id = `script_${Math.random().toString(36).slice(2, 9)}`;
-  const scriptDef: ScriptDefinition = { id, mode: opts?.mode, then: [] };
+  const id = generateId('scr');
+  const scriptDef: ScriptDefinition = { id, mode: opts?.mode, maxRuns: opts?.maxRuns, then: [] };
   if (!findInScope(scriptScopeContext, id)) {
     registerInScope(scriptScopeContext, id, { def: scriptDef });
   }
@@ -225,7 +239,7 @@ function createScriptHandle<A extends ScriptParamScalar[]>(
     execute: { value: handle.execute, enumerable: true },
     stop: { value: handle.stop, enumerable: true },
     isRunning: { get: (): never => throwCompileTimeOnly('script.isRunning', 'Script state accessors'), enumerable: true },
-    __closureIndex: { value: closureIndex, enumerable: false },
+    [CLOSURE_INDEX]: { value: closureIndex, enumerable: false },
   });
 
   return callable as ScriptHandle<A>;
@@ -400,8 +414,7 @@ function resolveScriptActionsCanonical(
   for (const key of Object.keys(cleanBindings)) {
     const val = cleanBindings[key];
     if (val != null && typeof val === 'object') {
-      const obj = val as Record<string, unknown>;
-      if ('__templateKey' in obj || '__visibilityTarget' in obj) {
+      if (OVERLAY_TEMPLATE_KEY in (val as object)) {
         delete cleanBindings[key];
       }
     } else if (typeof val === 'function' && 'id' in (val as object) && 'execute' in (val as object)) {
@@ -450,16 +463,16 @@ function resolveControllerRefsParameterized(
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
         const paramRefs = paramRefMap.get(action.controllerRef);
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
-        action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl.__instanceIndex ?? action.instanceIndex;
+        action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+        action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
+        action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
         delete action.controllerRef;
       }
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
-        action.templateKey = ctrl.__templateKey ?? action.templateKey;
-        action.zOrder = ctrl.__zOrder ?? action.zOrder;
+        action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
+        action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
         delete action.controllerRef;
       }
     } else if (action.kind === 'action:if') {

@@ -15,6 +15,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRExpression, ExprType } from '../ir/expr-types';
+import { generateId } from '../id';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Dependency types
@@ -136,7 +137,7 @@ export class IRReactiveNode<T = unknown> {
     this.sourceId = config.sourceId;
     this.propertyKey = config.propertyKey;
     this.sourceDomain = config.sourceDomain;
-    this.nodeId = `${config.kind}_${Math.random().toString(36).slice(2, 11)}`;
+    this.nodeId = generateId(config.kind);
   }
 
   /** Whether this node has a single dependency. */
@@ -201,34 +202,7 @@ export function isIRReactiveNode(val: unknown): val is IRReactiveNode {
   return val instanceof IRReactiveNode;
 }
 
-// ── Dependency tracking ────────────────────────────────────────────────────
-
-/** Module-level stack for tracking reactive dependencies during render. */
-const trackingStack: IRDependency[][] = [];
-
-/** Start tracking reactive dependencies. */
-export function startTracking(): void {
-  trackingStack.push([]);
-}
-
-/** Stop tracking and return the collected dependencies. */
-export function stopTracking(): IRDependency[] {
-  return trackingStack.pop() ?? [];
-}
-
-/** Record a dependency during tracking. */
-export function trackDependency(dep: IRDependency): void {
-  if (trackingStack.length === 0) return;
-  const frame = trackingStack[trackingStack.length - 1];
-  // Deduplicate by sourceId + themePath (theme deps may share a scope sourceId
-  // but address different leaves within it; non-theme deps have undefined paths
-  // and collapse to one per sourceId).
-  if (!frame.some(d => d.sourceId === dep.sourceId && d.themePath === dep.themePath)) {
-    frame.push(dep);
-  }
-}
-
-/** Whether dependency tracking is active. */
-export function isTracking(): boolean {
-  return trackingStack.length > 0;
-}
+// ── Dependency tracking (REMOVED) ──────────────────────────────────────────
+// Runtime dependency tracking via startTracking/stopTracking has been removed.
+// The AST compiler now handles all reactive dependency analysis statically.
+// The tracking stack was fundamentally unsound for conditional expressions.

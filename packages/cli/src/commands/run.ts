@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import type { Command } from 'commander';
 import { resolvePaths, transpileProject, extractPassthroughArgs, printMetrics, withErrorHandler } from '../utils';
 
@@ -15,6 +16,7 @@ export function registerRunCommand(program: Command) {
     .option('--metrics', 'Print compiler phase timing breakdown after transpile')
     .option('--host', 'Target the ESPHome host platform with SDL2 display instead of physical hardware')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
+    .option('--dump-ir', 'Write semantic-ir.json debug dump to the output directory')
     .option('--width <px>', 'Override SDL display width (only with --host)', parseInt)
     .option('--height <px>', 'Override SDL display height (only with --host)', parseInt)
     .action(withErrorHandler('Run', async (projectDir?: string, opts?: {
@@ -22,6 +24,7 @@ export function registerRunCommand(program: Command) {
       metrics?: boolean;
       host?: boolean;
       wireframe?: boolean;
+      dumpIr?: boolean;
       width?: number;
       height?: number;
     }) => {
@@ -42,7 +45,6 @@ export function registerRunCommand(program: Command) {
         });
 
         // Resolve sourceDir from package.json main field (matches compile pipeline)
-        const fs = await import('fs');
         const pkgPath = path.join(resolvedDir, 'package.json');
         const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) as { main?: string };
         const sourceDir = pkg.main
@@ -50,6 +52,12 @@ export function registerRunCommand(program: Command) {
           : resolvedDir;
 
         const outDir = path.join(resolvedDir, '.espcompose');
+
+        if (opts?.dumpIr) {
+          const { dumpIR } = await import('../compiler');
+          await dumpIR(hostIR, outDir);
+        }
+
         const target = createEsphomeTarget();
         await target.emit({
           ...executeResult,
@@ -65,7 +73,7 @@ export function registerRunCommand(program: Command) {
       } else {
         // Standard mode: transpile → run on device
         const { build } = await import('../compiler');
-        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr });
         if (opts?.metrics) printMetrics(result);
         console.log('Running esphome run…');
         await esphomeRun(yamlPath, extraArgs);

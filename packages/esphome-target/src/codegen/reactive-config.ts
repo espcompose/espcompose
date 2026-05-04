@@ -12,9 +12,10 @@ import { generateSignalSetLambda, computeMaxNodes } from './bindings.js';
 import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings.js';
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
+import { statementBlockToCpp } from '../lowering/stmt-to-cpp.js';
 import type { CppLoweringContext } from '../lowering';
-import type { IRExpression } from '@espcompose/core';
-import { getExprChildren } from '@espcompose/core';
+import type { IRExpression } from '@espcompose/core/internals';
+import { getExprChildren } from '@espcompose/core/internals';
 import type { ExprType, IRType, IRScalar } from '@espcompose/core/internals';
 import { getEntityDomain } from '@espcompose/core/internals';
 import { irTypeToCpp } from '../lowering';
@@ -63,7 +64,7 @@ function deriveSourceSignals(
         names.push(sigName);
       }
     } else if (dep.sourceType === 'overlay_mux') {
-      // Overlay mux dependency — signal name is the sourceId itself (sig_overlay_X_mux)
+      // Overlay mux dependency — signal name is the sourceId itself (sig_ovrl_X_mux)
       const sigName = dep.sourceId;
       if (!names.includes(sigName)) {
         names.push(sigName);
@@ -233,10 +234,16 @@ export function buildRuntimeConfig(
         // Extract IRType directly from the config tree (kind: 'type' node).
         const vtEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'irType');
         const vt: IRType | undefined = vtEntry?.value?.kind === 'type' ? vtEntry.value as IRType : undefined;
+        // Extract initial_value (IRScalar) so the BoundSignal can hold a
+        // local copy that's valid before bind() runs.
+        const ivEntry = comp.config?.entries?.find((e: { key: string }) => e.key === 'initial_value');
+        const initialValue: string | undefined =
+          ivEntry?.value?.kind === 'scalar' ? String(ivEntry.value.value) : undefined;
         globalSignals.push({
           name: `sig_global_${comp.id}`,
           cppType: vt ? irTypeToCpp(vt) : 'int',
           globalId: comp.id,
+          ...(initialValue !== undefined ? { initialValue } : {}),
         });
       }
     }
@@ -268,28 +275,6 @@ export function buildRuntimeConfig(
     globalSignalNames.set(gs.globalId, gs.name);
   }
 
-  // ── Validate: detect untransformed reactive nodes ─────────────────────
-  const uncompiledNodes = reactiveNodes.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (n: any) => n.kind === 'memo' && !n.exprIR,
-  );
-  if (uncompiledNodes.length > 0) {
-    const summary = uncompiledNodes.map(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (n: any) => `  - ${n.kind} with ${n.dependencies?.length ?? 0} dependency(ies)`,
-    ).join('\n');
-    throw new Error(
-      `Found ${uncompiledNodes.length} reactive expression(s) that were not compiled.\n` +
-      `This usually means a component library provides reactive JSX but was\n` +
-      `imported from a non-source-mode package (the ESPCompose CLI only\n` +
-      `transforms TypeScript/TSX sources resolved via the "espcompose"\n` +
-      `export condition). Uncompiled nodes:\n` +
-      `${summary}\n\n` +
-      `If you are the library author, ensure your package.json exports map\n` +
-      `includes an "espcompose" condition pointing at your TS/TSX sources.`,
-    );
-  }
-
   // Build memo declarations from IRReactiveNode instances, deduplicating
   // identical memos (same expression + return type + sources).
   const memos: MemoDecl[] = [];
@@ -307,9 +292,21 @@ export function buildRuntimeConfig(
   for (const node of reactiveNodes) {
     if (node.kind === 'memo') {
       const exprIR: IRExpression | undefined = node.exprIR;
-      const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
-      const cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
-      const cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
+
+      let cppReturnType: string;
+      let cppExpression: string;
+      let cppBodyLines: string[] | undefined;
+
+      if (exprIR?.kind === 'expr:function') {
+        // Multi-statement memo body
+        cppReturnType = exprTypeToCpp(exprIR.returnType);
+        cppBodyLines = statementBlockToCpp(exprIR.body, cppCtx);
+        cppExpression = cppBodyLines.join(' '); // for signature dedup
+      } else {
+        const irType = exprIR && 'type' in exprIR ? (exprIR as { type?: string }).type as ExprType | undefined : undefined;
+        cppReturnType = node.exprType ? exprTypeToCpp(node.exprType) : (irType ? exprTypeToCpp(irType) : 'float');
+        cppExpression = exprIR ? exprToCpp(exprIR, cppCtx) : '/* no ExprIR */';
+      }
 
       const sourceSignals = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
 
@@ -325,6 +322,7 @@ export function buildRuntimeConfig(
           index: thisIdx,
           cppReturnType,
           cppExpression,
+          cppBodyLines,
           sourceSignals,
           canonicalIndex: memoNodeIdToIdx.get(canonical)!,
         });
@@ -336,6 +334,7 @@ export function buildRuntimeConfig(
           index: thisIdx,
           cppReturnType,
           cppExpression,
+          cppBodyLines,
           sourceSignals,
         });
       }
@@ -344,7 +343,8 @@ export function buildRuntimeConfig(
       cppCtx.memoNames.set(node.nodeId, `memo_${memoIdx - 1}`);
     } else if (node.kind === 'effect') {
       const sourceNames = deriveSourceSignals(node, signalMap, themeVarNames, globalSignalNames);
-      const cppBody = node.exprIR ? exprToCpp(node.exprIR, cppCtx) : '0 /* no ExprIR */';
+      const effectIR = node.exprIR;
+      const cppBody = effectIR ? exprToCpp(effectIR, cppCtx) : '0 /* no ExprIR */';
       effects.push({
         index: effectIdx++,
         cppBody,

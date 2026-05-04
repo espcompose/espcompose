@@ -2,6 +2,8 @@ import type {
   IROpExpression,
   IRExpression,
   IRLiteralExpression,
+  IRLocalVarExpression,
+  IRFunctionExpression,
   IRTriggerVarExpression,
   BinaryOp,
   UnaryOp,
@@ -11,6 +13,7 @@ import type {
   StringMethod,
   ArrayMethod,
 } from './expr-types.js';
+import type { IRStatementBlock } from './stmt-types.js';
 
 /** Infer the ExprType of a JS literal value. Integers vs floats are distinguished. */
 export function inferLiteralExprType(value: string | number | boolean): ExprType {
@@ -27,6 +30,16 @@ export function irLiteralExpression(value: string | number | boolean, type?: Exp
 /** Construct an IRTriggerVarExpression for a trigger/script local variable name. */
 export function irTriggerVarExpression(name: string): IRTriggerVarExpression {
   return { kind: 'expr:trigger_var', name };
+}
+
+/** Construct an IRLocalVarExpression for a statement-block local variable. */
+export function irLocalVarExpression(name: string, type: ExprType): IRLocalVarExpression {
+  return { kind: 'expr:local_var', name, type };
+}
+
+/** Construct an IRFunctionExpression wrapping a statement block with a return type. */
+export function irFunctionExpression(body: IRStatementBlock, returnType: ExprType): IRFunctionExpression {
+  return { kind: 'expr:function', body, returnType };
 }
 
 // ── Builder functions ────────────────────────────────────────────────────────

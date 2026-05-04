@@ -208,11 +208,19 @@ private:
  * BoundSignal points at it. Reads and writes go through the pointer,
  * avoiding value duplication. The pointer is set via bind() during
  * bootstrap_runtime(), after ESPHome's setup has restored preferences.
+ *
+ * Pre-bind safety: BoundSignal owns a local copy of the initial value (passed
+ * via the constructor and matching the ESPHome global's \`initial_value\`) and
+ * \`ptr_\` points to that local copy until bind() retargets it. This makes
+ * \`get()\` safe to call during inline widget construction in main.cpp's setup()
+ * function, which runs before bootstrap_runtime().
  */
 template <typename T>
 class BoundSignal : public NodeBase {
 public:
-  BoundSignal() : NodeBase(0) {}
+  BoundSignal() : NodeBase(0), local_(), ptr_(&local_) {}
+  explicit BoundSignal(T initial)
+      : NodeBase(0), local_(std::move(initial)), ptr_(&local_) {}
 
   void bind(T* p) { ptr_ = p; }
 
@@ -239,7 +247,8 @@ public:
   }
 
 private:
-  T* ptr_{nullptr};
+  T local_;
+  T* ptr_;
 };
 
 template <typename T>
@@ -329,21 +338,21 @@ binary_sensor:
   name: Button
   on_press:
     - script.execute:
-        id: blink
+        id: scr_ref0
     - script.wait:
-        id: blink
+        id: scr_ref0
   on_release:
     - script.execute:
-        id: start_up
+        id: scr_ref1
     - script.wait:
-        id: start_up
+        id: scr_ref1
 script:
-  - id: blink
+  - id: scr_ref0
     then:
       - logger.log: Starting blink sequence
       - delay: 1000ms
       - logger.log: Blink done
-  - id: start_up
+  - id: scr_ref1
     then:
       - logger.log:
           format: Device booting up

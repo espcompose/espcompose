@@ -117,6 +117,11 @@ export interface IRScript {
   id: string;
   /** Execution mode. Omit for ESPHome default ('single'). */
   mode?: ScriptMode;
+  /**
+   * Maximum concurrent/queued runs. Only meaningful when `mode` is
+   * `'queued'` or `'parallel'`. Omit to use the ESPHome default (0 = unlimited).
+   */
+  maxRuns?: number;
   /** User-defined parameters from the script's arrow function signature. */
   userParams?: IRScriptParamDecl[];
   /**

@@ -208,11 +208,19 @@ private:
  * BoundSignal points at it. Reads and writes go through the pointer,
  * avoiding value duplication. The pointer is set via bind() during
  * bootstrap_runtime(), after ESPHome's setup has restored preferences.
+ *
+ * Pre-bind safety: BoundSignal owns a local copy of the initial value (passed
+ * via the constructor and matching the ESPHome global's \`initial_value\`) and
+ * \`ptr_\` points to that local copy until bind() retargets it. This makes
+ * \`get()\` safe to call during inline widget construction in main.cpp's setup()
+ * function, which runs before bootstrap_runtime().
  */
 template <typename T>
 class BoundSignal : public NodeBase {
 public:
-  BoundSignal() : NodeBase(0) {}
+  BoundSignal() : NodeBase(0), local_(), ptr_(&local_) {}
+  explicit BoundSignal(T initial)
+      : NodeBase(0), local_(std::move(initial)), ptr_(&local_) {}
 
   void bind(T* p) { ptr_ = p; }
 
@@ -239,7 +247,8 @@ public:
   }
 
 private:
-  T* ptr_{nullptr};
+  T local_;
+  T* ptr_;
 };
 
 template <typename T>
@@ -329,45 +338,45 @@ binary_sensor:
     name: Button A
     on_press:
       - script.execute:
-          id: blink_n
+          id: scr_ref0
           count: 5
     on_release:
       - script.execute:
-          id: set_level
+          id: scr_ref1
           level: 10
       - script.wait:
-          id: set_level
+          id: scr_ref1
   - platform: gpio
     pin: 5
     name: Button B
     on_press:
       - script.execute:
-          id: announce
+          id: scr_ref2
           message: hello
     on_release:
       - script.execute:
-          id: configure
+          id: scr_ref3
           brightness: 0.75
           enabled: true
 script:
-  - id: blink_n
+  - id: scr_ref0
     parameters:
       count: float
     then:
       - logger.log: Blinking
       - delay: 1000ms
-  - id: set_level
+  - id: scr_ref1
     parameters:
       level: int
     then:
       - logger.log: Setting level
       - delay: 500ms
-  - id: announce
+  - id: scr_ref2
     parameters:
       message: string
     then:
       - logger.log: Announcing
-  - id: configure
+  - id: scr_ref3
     parameters:
       brightness: float
       enabled: bool

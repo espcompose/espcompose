@@ -29,8 +29,10 @@ class EspcomposeRuntimeComponent : public esphome::Component {
   }
 
   /// setup() is called once during initialization by ESPHome framework.
-  /// Reactive graph wiring happens in bootstrap_runtime() which is emitted
-  /// by __init__.py's to_code() into main.cpp before setup() runs.
+  /// It invokes bootstrap_runtime() (defined in the generated bindings.h)
+  /// to wire the reactive graph. Running here — rather than inline in
+  /// App.setup() — guarantees that all GlobalsComponent instances have been
+  /// placement-new'd before BoundSignal::bind() points at their storage.
   void setup() override;
 
   /// loop() is called at each ESPHome main loop iteration

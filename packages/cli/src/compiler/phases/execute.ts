@@ -28,7 +28,7 @@ export function executePhase(ctx: PhaseContext): void {
   // statically-imported ESM copy and the user bundle's CJS copy would have
   // separate state and never communicate.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cjsSDK = (_require('@espcompose/core') as any).ESPCompose;
+  const cjsSDK = (_require('@espcompose/core/internals') as any).ESPCompose;
 
   // Clear all compiler state for a fresh render pass.
   cjsSDK.clearHAEntityCache();
