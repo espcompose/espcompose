@@ -19,6 +19,7 @@ Signal<int32_t> sig_ovrl_5739621e_mux;
 Signal<int32_t> sig_ovrl_5b2f470b_mux;
 
 // ── BoundSignals (one per reactive global variable) ──
+BoundSignal<std::string> sig_global_g_d4dff62d;
 BoundSignal<std::vector<int>> sig_global_g_a9281787(std::vector<int>({0}));
 BoundSignal<std::vector<int>> sig_global_g_18e8c612(std::vector<int>({0}));
 
@@ -66,7 +67,7 @@ Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref22).get_lv_font(), id(r_ref22).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref23).get_lv_font(), id(r_ref23).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
@@ -96,12 +97,12 @@ Memo<int32_t> thm_333e4663_spacing_sm([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref22).get_lv_font(), id(r_ref22).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref23).get_lv_font(), id(r_ref23).get_lv_font()};
   return thm_333e4663_typography_body_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref20).get_lv_font(), id(r_ref20).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref21).get_lv_font(), id(r_ref21).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
@@ -129,7 +130,7 @@ static const ScrCa5e1106Closure scr_ref5_closures[] = {
 struct Scr7716e7d3Closure {
   int __ctrl_instance_index;
 };
-static const Scr7716e7d3Closure scr_ref27_closures[] = {
+static const Scr7716e7d3Closure scr_ref28_closures[] = {
   { 0 },
   { 1 }
 };
@@ -137,7 +138,7 @@ static const Scr7716e7d3Closure scr_ref27_closures[] = {
 struct Scr584a68b5Closure {
   int __ctrl_instance_index;
 };
-static const Scr584a68b5Closure scr_ref28_closures[] = {
+static const Scr584a68b5Closure scr_ref29_closures[] = {
   { 0 },
   { 1 }
 };
@@ -145,7 +146,7 @@ static const Scr584a68b5Closure scr_ref28_closures[] = {
 struct ScrB42ac400Closure {
   int __ctrl_instance_index;
 };
-static const ScrB42ac400Closure scr_ref29_closures[] = {
+static const ScrB42ac400Closure scr_ref30_closures[] = {
   { 0 },
   { 1 }
 };
@@ -160,13 +161,18 @@ Memo<int32_t> memo_2([]() -> int32_t {
   return 0 + (espcompose::sig_global_g_a9281787.get()[0] != 0 && espcompose::sig_global_g_18e8c612.get()[0] < espcompose::sig_global_g_18e8c612.get()[0] ? 1 : 0);
 });
 
+Memo<float> memo_3([]() -> float {
+  return (0 + (espcompose::sig_global_g_a9281787.get()[0] != 0 && espcompose::sig_global_g_18e8c612.get()[0] < espcompose::sig_global_g_18e8c612.get()[0] ? 1 : 0)) * 64;
+});
+
 // ── Memo aliases (deduplicated) ──
 auto& memo_1 = memo_0;
-auto& memo_3 = memo_0;
 auto& memo_4 = memo_0;
-auto& memo_5 = memo_2;
-auto& memo_6 = memo_0;
-auto& memo_7 = memo_0;
+auto& memo_5 = memo_0;
+auto& memo_6 = memo_2;
+auto& memo_7 = memo_3;
+auto& memo_8 = memo_0;
+auto& memo_9 = memo_0;
 
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
@@ -178,6 +184,7 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Bind global BoundSignals to ESPHome global storage ──
+  sig_global_g_d4dff62d.bind(&id(g_d4dff62d));
   sig_global_g_a9281787.bind(&id(g_a9281787));
   sig_global_g_18e8c612.bind(&id(g_18e8c612));
 
@@ -186,10 +193,10 @@ void bootstrap_runtime() {
   theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 16);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
-  static NodeBase* sig_global_g_a9281787_subs[1];
-  sig_global_g_a9281787.set_subscriber_storage(sig_global_g_a9281787_subs, 1);
-  static NodeBase* sig_global_g_18e8c612_subs[1];
-  sig_global_g_18e8c612.set_subscriber_storage(sig_global_g_18e8c612_subs, 1);
+  static NodeBase* sig_global_g_a9281787_subs[2];
+  sig_global_g_a9281787.set_subscriber_storage(sig_global_g_a9281787_subs, 2);
+  static NodeBase* sig_global_g_18e8c612_subs[2];
+  sig_global_g_18e8c612.set_subscriber_storage(sig_global_g_18e8c612_subs, 2);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
   thm_333e4663_colors_textPrimary.set_subscriber_storage(thm_333e4663_colors_textPrimary_subs, 1);
   static NodeBase* thm_333e4663_typography_title_subs[1];
@@ -220,15 +227,19 @@ void bootstrap_runtime() {
   thm_333e4663_colors_surface.set_subscriber_storage(thm_333e4663_colors_surface_subs, 1);
   static NodeBase* thm_333e4663_radii_lg_subs[1];
   thm_333e4663_radii_lg.set_subscriber_storage(thm_333e4663_radii_lg_subs, 1);
+  static NodeBase* sig_global_g_d4dff62d_subs[1];
+  sig_global_g_d4dff62d.set_subscriber_storage(sig_global_g_d4dff62d_subs, 1);
   static NodeBase* thm_333e4663_spacing_sm_subs[1];
   thm_333e4663_spacing_sm.set_subscriber_storage(thm_333e4663_spacing_sm_subs, 1);
+  static NodeBase* memo_3_subs[1];
+  memo_3.set_subscriber_storage(memo_3_subs, 1);
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
     auto _src = thm_333e4663_colors_textPrimary.get();
     lv_obj_set_style_text_color(&id(rw_ref4), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_text_color(&id(rw_ref11), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref19), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref20), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_1([]() {
@@ -269,7 +280,7 @@ void bootstrap_runtime() {
     lv_obj_set_style_radius(&id(rw_ref8), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref14), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref16), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_radius(&id(rw_ref18), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref19), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_7([]() {
@@ -300,8 +311,8 @@ void bootstrap_runtime() {
     auto _src = thm_333e4663_spacing_md.get();
     lv_obj_set_style_pad_row(&id(rw_ref3), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_pad_row(&id(rw_ref10), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(&id(rw_ref18), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(&id(rw_ref18), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(&id(rw_ref18), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(&id(rw_ref18), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
-    lv_obj_set_style_pad_bottom(&id(rw_ref18), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(&id(rw_ref19), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(&id(rw_ref19), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(&id(rw_ref19), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(&id(rw_ref19), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
+    lv_obj_set_style_pad_bottom(&id(rw_ref19), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_19([]() {
@@ -317,21 +328,29 @@ void bootstrap_runtime() {
   static Effect binding_22([]() {
     auto _src = thm_333e4663_typography_body.get();
     lv_obj_set_style_text_font(&id(rw_ref11), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref19), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref20), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_40([]() {
     auto _src = thm_333e4663_colors_surface.get();
     lv_obj_set_style_bg_color(&id(rw_ref10), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(&id(rw_ref18), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(rw_ref19), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_41([]() {
     lv_obj_set_style_radius(&id(rw_ref10), static_cast<lv_coord_t>(thm_333e4663_radii_lg.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_45([]() {
-    lv_obj_set_style_pad_column(&id(rw_ref18), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+  static Effect binding_43([]() {
+    lv_label_set_text(&id(rw_ref20), sig_global_g_d4dff62d.get().c_str());
+  });
+
+  static Effect binding_46([]() {
+    lv_obj_set_style_pad_column(&id(rw_ref19), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+  });
+
+  static Effect binding_51([]() {
+    lv_obj_set_style_pad_bottom(&id(rw_ref18), static_cast<lv_coord_t>(memo_3.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};
@@ -370,6 +389,8 @@ void bootstrap_runtime() {
   memo_0.wire(memo_0_sources, 1);
   static NodeBase* memo_2_sources[] = {&sig_global_g_a9281787, &sig_global_g_18e8c612};
   memo_2.wire(memo_2_sources, 2);
+  static NodeBase* memo_3_sources[] = {&sig_global_g_a9281787, &sig_global_g_18e8c612};
+  memo_3.wire(memo_3_sources, 2);
   static NodeBase* binding_0_sources[] = {&thm_333e4663_colors_textPrimary};
   binding_0.wire(binding_0_sources, 1);
   static NodeBase* binding_1_sources[] = {&thm_333e4663_typography_title};
@@ -400,8 +421,12 @@ void bootstrap_runtime() {
   binding_40.wire(binding_40_sources, 1);
   static NodeBase* binding_41_sources[] = {&thm_333e4663_radii_lg};
   binding_41.wire(binding_41_sources, 1);
-  static NodeBase* binding_45_sources[] = {&thm_333e4663_spacing_sm};
-  binding_45.wire(binding_45_sources, 1);
+  static NodeBase* binding_43_sources[] = {&sig_global_g_d4dff62d};
+  binding_43.wire(binding_43_sources, 1);
+  static NodeBase* binding_46_sources[] = {&thm_333e4663_spacing_sm};
+  binding_46.wire(binding_46_sources, 1);
+  static NodeBase* binding_51_sources[] = {&memo_3};
+  binding_51.wire(binding_51_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
@@ -421,6 +446,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&thm_333e4663_typography_title);
   Scheduler::instance().schedule(&memo_0);
   Scheduler::instance().schedule(&memo_2);
+  Scheduler::instance().schedule(&memo_3);
   Scheduler::instance().schedule(&binding_0);
   Scheduler::instance().schedule(&binding_1);
   Scheduler::instance().schedule(&binding_2);
@@ -436,7 +462,9 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_22);
   Scheduler::instance().schedule(&binding_40);
   Scheduler::instance().schedule(&binding_41);
-  Scheduler::instance().schedule(&binding_45);
+  Scheduler::instance().schedule(&binding_43);
+  Scheduler::instance().schedule(&binding_46);
+  Scheduler::instance().schedule(&binding_51);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -779,7 +807,7 @@ exports[`popup-nested-toast > popup-nested-toast 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=55
+      - -DESPCOMPOSE_MAX_NODES=59
 esp32:
   board: esp32dev
   framework:
@@ -950,7 +978,7 @@ lvgl:
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_3.get();"
+                                  width: !lambda "return espcompose::memo_4.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
@@ -973,7 +1001,7 @@ lvgl:
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   border_width: 0
                                   radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_4.get();"
+                                  width: !lambda "return espcompose::memo_5.get();"
                                   height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
                                   pressed:
                                     bg_color: !lambda "return
@@ -1014,8 +1042,9 @@ lvgl:
                       bg_opa: TRANSP
                       border_width: 0
                       pad_all: 0
-                      pad_bottom: 0
+                      pad_bottom: !lambda "return espcompose::memo_3.get();"
                       clickable: false
+                      id: rw_ref18
                       widgets:
                         - obj:
                             bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
@@ -1032,11 +1061,12 @@ lvgl:
                               type: flex
                               flex_flow: ROW
                               pad_column: 0
-                            id: rw_ref18
+                            id: rw_ref19
                             widgets:
                               - label:
+                                  text: !lambda "return espcompose::sig_global_g_d4dff62d.get();"
                                   text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                  id: rw_ref19
+                                  id: rw_ref20
 external_components:
   - source:
       type: local
@@ -1046,31 +1076,31 @@ external_components:
 espcompose:
   flush_budget_us: 2000
 font:
-  - id: r_ref20
+  - id: r_ref21
     file: gfonts://Roboto
     size: 28
     bpp: 4
-  - id: r_ref21
+  - id: r_ref22
     file: gfonts://Roboto
     size: 20
     bpp: 4
-  - id: r_ref22
+  - id: r_ref23
     file: gfonts://Roboto
     size: 16
     bpp: 4
-  - id: r_ref23
+  - id: r_ref24
     file: gfonts://Roboto
     size: 12
     bpp: 4
-  - id: r_ref24
+  - id: r_ref25
     file: gfonts://Roboto
     size: 14
     bpp: 4
-  - id: r_ref25
+  - id: r_ref26
     file: gfonts://Roboto
     size: 18
     bpp: 4
-  - id: r_ref26
+  - id: r_ref27
     file: gfonts://Roboto
     size: 22
     bpp: 4
@@ -1096,67 +1126,41 @@ script:
           espcompose::sig_ovrl_5739621e_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_5739621e),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5739621e));"
-  - id: scr_ref27
+  - id: scr_ref28
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref27_closures[closure_index]; (void)closure;
+          espcompose::scr_ref28_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
-  - id: scr_ref28
+  - id: scr_ref29
     mode: restart
     parameters:
       closure_index: int
       msg: string
     then:
-      - globals.set:
-          id: g_d4dff62d
-          value: !lambda "auto& closure =
-            espcompose::scr_ref28_closures[closure_index]; (void)closure;
-            return msg;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
+          espcompose::scr_ref29_closures[closure_index]; (void)closure;
+          espcompose::sig_global_g_d4dff62d.set(msg); espcompose::flush();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref29_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_a9281787.get_mut()[0] = 1;
           espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
+          espcompose::scr_ref29_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_18e8c612.get_mut()[0] = id(g_727c5ec0);
           espcompose::sig_global_g_18e8c612.notify(); espcompose::flush();"
       - globals.set:
           id: g_727c5ec0
           value: !lambda "auto& closure =
-            espcompose::scr_ref28_closures[closure_index]; (void)closure;
+            espcompose::scr_ref29_closures[closure_index]; (void)closure;
             return id(g_727c5ec0) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
+          espcompose::scr_ref29_closures[closure_index]; (void)closure;
           espcompose::sig_ovrl_5b2f470b_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_5b2f470b),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5b2f470b));"
       - delay: 3s
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
-          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"
-      - if:
-          condition:
-            - lambda: !lambda "auto& closure =
-                espcompose::scr_ref28_closures[closure_index]; (void)closure;
-                return id(g_a9281787)[0] == 0;"
-          then:
-            - globals.set:
-                id: g_727c5ec0
-                value: !lambda "auto& closure =
-                  espcompose::scr_ref28_closures[closure_index];
-                  (void)closure; return 0;"
-  - id: scr_ref29
-    parameters:
-      closure_index: int
-    then:
-      - script.stop:
-          id: scr_ref28
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
@@ -1175,6 +1179,30 @@ script:
                 value: !lambda "auto& closure =
                   espcompose::scr_ref29_closures[closure_index];
                   (void)closure; return 0;"
+  - id: scr_ref30
+    parameters:
+      closure_index: int
+    then:
+      - script.stop:
+          id: scr_ref29
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref30_closures[closure_index]; (void)closure;
+          espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
+          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref30_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref30_closures[closure_index]; (void)closure;
+                return id(g_a9281787)[0] == 0;"
+          then:
+            - globals.set:
+                id: g_727c5ec0
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref30_closures[closure_index];
+                  (void)closure; return 0;"
   - id: scr_ref12
     mode: restart
     parameters:
@@ -1185,13 +1213,13 @@ script:
             - lambda: !lambda "return true;"
           then:
             - script.execute:
-                id: scr_ref28
+                id: scr_ref29
                 closure_index: 0
                 msg: !lambda "return msg;"
   - id: scr_ref13
     then:
       - script.stop:
-          id: scr_ref28
+          id: scr_ref29
       - lambda: !lambda "espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
           espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
       - lambda: !lambda "lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"

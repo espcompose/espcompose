@@ -39,6 +39,38 @@ import type { RawIRWidget, RawIRWidgetTree, RawIROverlayContainer, RawIROverlayT
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
 
+// ── Context propagation across intrinsic boundaries ───────────────────────
+// When a <context> element wraps intrinsic LVGL elements (e.g. <lvgl-page>),
+// the context is only active during resolveLvglChildren.  When those intrinsics
+// later have THEIR children resolved in buildLvglWidgetIR/buildLvglPageIR,
+// the context has been popped.  To fix this we annotate resolved intrinsic
+// elements with a snapshot of the active context frames and re-establish them
+// when processing the intrinsic's children.
+
+interface ContextFrame { ctx: Context<unknown>; value: unknown }
+
+const INHERITED_CONTEXTS = Symbol('inheritedContexts');
+
+/** Module-scoped stack tracking active context frames during resolution. */
+const activeContextFrames: ContextFrame[] = [];
+
+/**
+ * Execute `fn` with all inherited context frames from `frames` restored on
+ * both the real context stack and the tracking stack.
+ */
+function withInheritedContexts<R>(frames: ContextFrame[], fn: () => R): R {
+  if (frames.length === 0) return fn();
+  const [first, ...rest] = frames;
+  activeContextFrames.push(first);
+  return withContext(first.ctx, first.value, () => {
+    try {
+      return withInheritedContexts(rest, fn);
+    } finally {
+      activeContextFrames.pop();
+    }
+  });
+}
+
 /** Convert an `lvgl-*` JSX tag to its semantic camelCase widget kind. */
 function lvglElementKind(tag: string): string {
   // 'lvgl-dropdown-list' → 'dropdownList'
@@ -106,15 +138,29 @@ function resolveLvglChildren(
       }
       resolved.push(...resolveLvglChildren(rendered));
     } else if (el.type === 'context') {
-      // Context provider intrinsic: push context and recurse into children
+      // Context provider intrinsic: push context and recurse into children.
+      // Also maintain the tracking stack so nested intrinsic elements get
+      // annotated with the full set of active context frames.
       const { context: ctx, value, children: ctxChildren } = el.props as {
         context: Context<unknown>; value: unknown;
         children?: EspComposeElement | EspComposeElement[];
       };
+      const frame: ContextFrame = { ctx, value };
+      activeContextFrames.push(frame);
       const inner = withContext(ctx, value, () => resolveLvglChildren(ctxChildren));
+      activeContextFrames.pop();
       resolved.push(...inner);
     } else {
-      resolved.push(el);
+      // Intrinsic element (lvgl-*, lvgl-page, ec-canvas-*, etc.).
+      // If there are active context frames, annotate the element so that
+      // when its children are resolved later (in buildLvglWidgetIR /
+      // buildLvglPageIR), we can re-establish those contexts.
+      if (activeContextFrames.length > 0) {
+        const annotated = { ...el, [INHERITED_CONTEXTS]: [...activeContextFrames] };
+        resolved.push(annotated as EspComposeElement);
+      } else {
+        resolved.push(el);
+      }
     }
   }
   return resolved;
@@ -240,6 +286,10 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
+  // Restore inherited context frames so that resolveLvglChildren on this
+  // widget's children sees the same context scope as the original resolution.
+  const inherited = (el as unknown as Record<symbol, unknown>)[INHERITED_CONTEXTS] as ContextFrame[] | undefined;
+
   // Capture compiled action metadata from trigger handler props when inside
   // overlay widget serialization.  Trigger handlers are function values with
   // `__compiledActions` attached by the action compiler.
@@ -272,7 +322,9 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
     }
   }
 
-  const widgetChildren = resolveLvglChildren(children);
+  const widgetChildren = inherited
+    ? withInheritedContexts(inherited, () => resolveLvglChildren(children))
+    : resolveLvglChildren(children);
   const childNodes: RawIRWidget[] = widgetChildren
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): RawIRWidget =>
@@ -412,7 +464,14 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
 function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
   setCurrentSource(child.__source);
   const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
-  const pageResolved = resolveLvglChildren(pageChildren);
+
+  // Restore inherited context frames so function components inside this page
+  // (resolved below) see context providers that wrapped the page element.
+  const inherited = (child as unknown as Record<symbol, unknown>)[INHERITED_CONTEXTS] as ContextFrame[] | undefined;
+
+  const pageResolved = inherited
+    ? withInheritedContexts(inherited, () => resolveLvglChildren(pageChildren))
+    : resolveLvglChildren(pageChildren);
   const pageChildIR: RawIRWidget[] = pageResolved
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): RawIRWidget =>

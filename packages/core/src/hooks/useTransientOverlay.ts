@@ -260,7 +260,12 @@ function buildSlotOverlay(
         slotStateGlobals = createSlotStateGlobals(templateKey, maxVisible);
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
-      return factory(overlayCtrl, { slotRank, paramsProxy });
+      // Spread paramsProxy fields onto ctx so user-declared params (e.g.
+      // `ctx.msg`) resolve to their reactive Signal at runtime, matching the
+      // type signature `TransientOverlayContext & P`. Without this spread,
+      // `ctx.msg` would be `undefined` whenever the static reactive
+      // transformer doesn't pre-compile the JSX expression.
+      return factory(overlayCtrl, { slotRank, paramsProxy, ...(paramsProxy ?? {}) });
     };
     forwardControllerParamMeta(factory, wrapperFactory);
 

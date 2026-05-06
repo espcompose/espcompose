@@ -56,6 +56,15 @@ export interface ToastProviderProps {
    */
   queueLength?: number;
 
+  /**
+   * Per-slot vertical offset in pixels used when `maxVisible > 1`.
+   * Each active toast at slot rank `r` is shifted up by `r * slotHeight`
+   * so multiple toasts stack from the bottom of the screen.
+   *
+   * @default 64
+   */
+  slotHeight?: number;
+
   /** Child elements that can access `useToast()`. */
   children?: EspComposeElement | EspComposeElement[];
 }
@@ -85,13 +94,18 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
     maxVisible = 1,
     overflow,
     queueLength,
+    slotHeight = 64,
     children,
   } = props;
 
   const ctrl = useTransientOverlay(
     { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
     (overlayCtrl: unknown, ctx: TransientOverlayContext & { msg: Signal<string> }) => {
-      return <ToastWidget><Text text={ctx.msg} /></ToastWidget>;
+      return (
+        <ToastWidget bottomOffset={ctx.slotRank * slotHeight}>
+          <Text text={ctx.msg} />
+        </ToastWidget>
+      );
     },
   ) as unknown as ToastController;
 
