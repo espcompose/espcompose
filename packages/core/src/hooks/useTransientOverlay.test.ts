@@ -84,6 +84,23 @@ describe('useTransientOverlay', () => {
       expect(scripts.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('uses slot state globals even with one visible slot', () => {
+      const { components } = buildWithQueue({ autoHide: '3s' });
+      const globalComponents = components.filter(c => c.section === 'globals');
+      expect(globalComponents).toHaveLength(3);
+      expect(globalComponents.some(c => (c.config as Record<string, unknown>).initial_value === '{0}')).toBe(true);
+      expect(globalComponents.some(c => (c.config as Record<string, unknown>).initial_value === '0')).toBe(true);
+    });
+
+    it('creates a coordinator show script even with one visible slot', () => {
+      const { scripts } = buildWithQueue({ autoHide: '3s' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
+      );
+      expect(coordScript).toBeDefined();
+    });
+
     it('uses restart mode by default (overflow: replace)', () => {
       const { scripts } = buildWithQueue({ autoHide: '3s', overflow: 'replace' });
       // The show script should be mode: restart
@@ -150,7 +167,7 @@ describe('useTransientOverlay', () => {
       expect(activeGlobal).toBeDefined();
       const counterGlobal = globalComponents.find(c =>
         (c.config as Record<string, unknown>).initial_value === '0' &&
-        !(c.config as Record<string, unknown>).irType?.isArray,
+        !((c.config as Record<string, unknown>).irType as { isArray?: boolean } | undefined)?.isArray,
       );
       expect(counterGlobal).toBeDefined();
     });

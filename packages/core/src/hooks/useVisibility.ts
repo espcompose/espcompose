@@ -4,8 +4,9 @@
 // Wraps an LVGL widget ref or overlay controller with a `show()`/`hide()`
 // lifecycle backed by ESPHome scripts via `useController`.
 //
-// When `autoHide` is set, the `show` script sequences show → delay → hide
-// with `mode: restart` so re-triggering resets the timer.
+// When `autoHide` is set, the `show` script sequences show → delay → hide.
+// `scriptMode` controls what happens when show is triggered while the
+// lifecycle is already running.
 //
 // Designed as a composition primitive:
 //   const ctrl = useOverlay({ zOrder: 100 }, factory);
@@ -32,29 +33,23 @@
 import { assertHookContext } from './useState';
 import { isRef } from '../types';
 import { defineSyntheticScript } from './useScript';
-import type { ScriptHandle } from './useScript';
 import { useController } from './useController';
 import { generateDeterministicId } from '../id';
 import {
-  irOverlayShow,
-  irOverlayHide,
   irDelayAction,
   irNativeAction,
   irScriptStop,
-  irGlobalSet,
 } from '../ir/action-types';
-import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
-import type { IRType } from '../ir/types';
-import { irTriggerVarExpression } from '../ir/expr-builders';
+import type { IRDurationLiteral } from '../ir/action-types';
 import { normalizeDuration } from './global-shared';
-import type { ScriptParamGlobalDecl } from './global-shared';
 import type { OverlayController } from './useOverlay';
 import {
-  OVERLAY_TEMPLATE_KEY,
-  OVERLAY_INSTANCE_INDEX,
-  OVERLAY_Z_ORDER,
-  OVERLAY_CONTROLLER_PARAMS,
-} from './useOverlay';
+  buildControllerParamPlan,
+  buildOverlayLifecycleScripts,
+  readOverlayControllerInternal,
+  scriptOptionsForMode,
+} from './overlay-lifecycle';
+export type { OverlayScriptPair } from './overlay-lifecycle';
 import type { VisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
 import type { Ref } from '../types';
@@ -105,14 +100,6 @@ function durationSlug(d: IRDurationLiteral): string {
   return `${d.value}${d.unit}`;
 }
 
-/** Symbol-keyed fields on OverlayController, read during the render pass. */
-interface OverlayControllerInternal {
-  [OVERLAY_TEMPLATE_KEY]: string;
-  [OVERLAY_INSTANCE_INDEX]: number;
-  [OVERLAY_Z_ORDER]: number;
-  [OVERLAY_CONTROLLER_PARAMS]?: ScriptParamGlobalDecl[];
-}
-
 // ── Hook ────────────────────────────────────────────────────────────────────
 
 /**
@@ -155,92 +142,22 @@ export function useVisibility(
 // ── Overlay path ────────────────────────────────────────────────────────────
 
 /**
- * Script pair returned by `buildOverlayScriptPair()`.
- *
- * Exposes raw ScriptHandle references so callers (e.g. the multi-slot
- * coordinator in useTransientOverlay) can compose them into a higher-level
- * controller or reference their IDs in a coordinator script.
- */
-export interface OverlayScriptPair {
-  show: ScriptHandle;
-  hide: ScriptHandle;
-}
-
-/**
  * Build the show/hide script pair for an overlay without wrapping in a
- * controller. This is the low-level building block used by both
- * `useVisibility()` (single-slot) and the multi-slot coordinator in
- * `useTransientOverlay()`.
+ * controller. This is the low-level building block used by `useVisibility()`
+ * and other lifecycle orchestration hooks.
  *
  * - When `autoHide` is false: show = overlay_show, hide = overlay_hide.
  * - When `autoHide` is set: show = overlay_show → delay → overlay_hide
  *   (mode: restart), hide = script_stop(show) → overlay_hide.
  *
- * The show script is always mode: restart (slot-level timer reset). Higher-level
- * overflow policy is handled by the coordinator, not here.
+ * The show script uses restart mode by default. Callers with more specialized
+ * orchestration can use the shared lifecycle helper directly.
  */
 export function buildOverlayScriptPair(
   ctrl: OverlayController<unknown>,
   autoHide: string | number | false,
-): OverlayScriptPair {
-  const internal = ctrl as unknown as OverlayControllerInternal;
-  const templateKey = internal[OVERLAY_TEMPLATE_KEY];
-  const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
-  const zOrder = internal[OVERLAY_Z_ORDER];
-  const controllerParams = internal[OVERLAY_CONTROLLER_PARAMS];
-  const ctrlBindingKey = '__ctrl';
-
-  // Build userParams and global-set prefix actions from overlay params.
-  const userParamDecls: Array<{ name: string; irType: IRType }> = [];
-  const globalSetActions: IRActionNode[] = [];
-  if (controllerParams && controllerParams.length > 0) {
-    for (const p of controllerParams) {
-      userParamDecls.push({ name: p.name, irType: p.irType });
-      globalSetActions.push(irGlobalSet(p.globalId, p.irType, irTriggerVarExpression(p.name)));
-    }
-  }
-  const hasParams = userParamDecls.length > 0;
-
-  if (autoHide === false) {
-    const showScript = defineSyntheticScript({
-      id: generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-      actions: [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
-      refBindings: { [ctrlBindingKey]: ctrl },
-      userParams: hasParams ? userParamDecls : undefined,
-    });
-    const hideScript = defineSyntheticScript({
-      id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-      actions: [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
-      refBindings: { [ctrlBindingKey]: ctrl },
-    });
-    return { show: showScript, hide: hideScript };
-  }
-
-  const duration = normalizeDuration(autoHide);
-
-  const showScript = defineSyntheticScript({
-    id: generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
-    actions: [
-      ...globalSetActions,
-      irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
-      irDelayAction(duration),
-      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-    ],
-    refBindings: { [ctrlBindingKey]: ctrl },
-    userParams: hasParams ? userParamDecls : undefined,
-    opts: { mode: 'restart' },
-  });
-
-  const hideScript = defineSyntheticScript({
-    id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-    actions: [
-      irScriptStop(showScript.id),
-      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-    ],
-    refBindings: { [ctrlBindingKey]: ctrl },
-  });
-
-  return { show: showScript, hide: hideScript };
+): ReturnType<typeof buildOverlayLifecycleScripts> {
+  return buildOverlayScriptPairWithMode(ctrl, autoHide, 'restart');
 }
 
 function buildOverlayVisibility(
@@ -249,92 +166,39 @@ function buildOverlayVisibility(
   scriptMode?: 'restart' | 'queued' | 'single',
   maxRuns?: number,
 ): VisibilityController {
-  // Single-slot path delegates to the old script mode / maxRuns behavior.
-  // Multi-slot never goes through here — it calls buildOverlayScriptPair directly.
-  if (scriptMode && scriptMode !== 'restart') {
-    return buildOverlayVisibilityWithMode(ctrl, autoHide, scriptMode, maxRuns);
-  }
-
-  const pair = buildOverlayScriptPair(ctrl, autoHide);
+  const pair = buildOverlayScriptPairWithMode(
+    ctrl,
+    autoHide,
+    scriptMode ?? 'restart',
+    maxRuns,
+  );
   return useController<VisibilityController>({ show: pair.show, hide: pair.hide });
 }
 
-/**
- * Single-slot variant with custom script mode (queued/single).
- * Used by useTransientOverlay's single-slot path for overflow: queue/drop.
- */
-function buildOverlayVisibilityWithMode(
-  ctrl: OverlayController,
+function buildOverlayScriptPairWithMode(
+  ctrl: OverlayController<unknown>,
   autoHide: string | number | false,
-  scriptMode: 'queued' | 'single',
+  scriptMode: 'restart' | 'queued' | 'single',
   maxRuns?: number,
-): VisibilityController {
-  const internal = ctrl as unknown as OverlayControllerInternal;
-  const templateKey = internal[OVERLAY_TEMPLATE_KEY];
-  const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
-  const zOrder = internal[OVERLAY_Z_ORDER];
-  const controllerParams = internal[OVERLAY_CONTROLLER_PARAMS];
-  const ctrlBindingKey = '__ctrl';
+): ReturnType<typeof buildOverlayLifecycleScripts> {
+  const internal = readOverlayControllerInternal(ctrl);
+  const params = buildControllerParamPlan(internal.controllerParams);
 
-  // Build userParams and global-set prefix actions from overlay params.
-  const userParamDecls: Array<{ name: string; irType: IRType }> = [];
-  const globalSetActions: IRActionNode[] = [];
-  if (controllerParams && controllerParams.length > 0) {
-    for (const p of controllerParams) {
-      userParamDecls.push({ name: p.name, irType: p.irType });
-      globalSetActions.push(irGlobalSet(p.globalId, p.irType, irTriggerVarExpression(p.name)));
-    }
-  }
-  const hasParams = userParamDecls.length > 0;
-
-  if (autoHide === false) {
-    // No timer — mode doesn't matter, just show/hide.
-    const showScript = defineSyntheticScript({
-      id: generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-      actions: [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
-      refBindings: { [ctrlBindingKey]: ctrl },
-      userParams: hasParams ? userParamDecls : undefined,
-    });
-    const hideScript = defineSyntheticScript({
-      id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-      actions: [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
-      refBindings: { [ctrlBindingKey]: ctrl },
-    });
-    return useController<VisibilityController>({ show: showScript, hide: hideScript });
-  }
-
-  const duration = normalizeDuration(autoHide);
-
-  const showScriptOpts: { mode: 'restart' | 'queued' | 'single'; maxRuns?: number } = {
-    mode: scriptMode,
-  };
-  if (scriptMode === 'queued' && maxRuns != null && maxRuns > 0) {
-    showScriptOpts.maxRuns = maxRuns;
-  }
-
-  const showScript = defineSyntheticScript({
-    id: generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
-    actions: [
-      ...globalSetActions,
-      irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
-      irDelayAction(duration),
-      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-    ],
-    refBindings: { [ctrlBindingKey]: ctrl },
-    userParams: hasParams ? userParamDecls : undefined,
-    opts: showScriptOpts,
+  return buildOverlayLifecycleScripts(ctrl, {
+    autoHide,
+    showIdSeed: autoHide === false
+      ? `lvgl_vis_show_${internal.templateKey}`
+      : `lvgl_vis_${internal.templateKey}`,
+    hideIdSeed: `lvgl_vis_hide_${internal.templateKey}`,
+    userParams: params.userParams,
+    showPrefixActions: params.globalSetActions,
+    showScriptOptions: autoHide === false
+      ? undefined
+      : scriptOptionsForMode(scriptMode, maxRuns),
+    hidePrefixActions: autoHide === false
+      ? undefined
+      : (showScript) => [irScriptStop(showScript.id)],
   });
-
-  const hideScript = defineSyntheticScript({
-    id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-    actions: [
-      irScriptStop(showScript.id),
-      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-    ],
-    refBindings: { [ctrlBindingKey]: ctrl },
-  });
-
-  return useController<VisibilityController>({ show: showScript, hide: hideScript });
 }
 
 // ── Widget ref path ─────────────────────────────────────────────────────────

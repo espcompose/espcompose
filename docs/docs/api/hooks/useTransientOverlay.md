@@ -5,7 +5,7 @@ sidebar_position: 11
 
 # useTransientOverlay
 
-A queue/slot mechanic primitive for transient overlay lifecycles — toasts, notifications, snackbars, and similar time-limited UI. Composes `useOverlay()` + `useVisibility()` to provide configurable queuing, slot allocation, and overflow behavior.
+A queue/slot mechanic primitive for transient overlay lifecycles — toasts, notifications, snackbars, and similar time-limited UI. Composes `useOverlay()` with internal lifecycle scripts to provide configurable queuing, slot allocation, and overflow behavior.
 
 Any UI library can build toast/notification overlays on top of this hook without reinventing queue mechanics. For most toast use cases, prefer the higher-level [`useToast()`](./useToast.md) from `@espcompose/ui`.
 
@@ -113,19 +113,17 @@ const queued = useTransientOverlay(
 
 ## How it works
 
-**Single-slot** (`maxVisible: 1`):
-1. One overlay is created via `useOverlay()`
-2. A visibility controller wraps it with the chosen script mode:
-   - `overflow: 'replace'` → script `mode: restart`
-   - `overflow: 'queue'` → script `mode: queued` with `max_runs: queueLength`
-   - `overflow: 'drop'` → script `mode: single`
-3. When `autoHide` is set, the show script sequences: show → delay → hide
+`useTransientOverlay()` always uses the same slot/coordinator model, including when `maxVisible` is `1`:
 
-**Multi-slot** (`maxVisible > 1`):
-1. N overlays are pre-allocated, each with its own auto-hide script (`mode: restart`)
-2. A coordinator show script dispatches to the next free slot using round-robin allocation
-3. Slot state is tracked via ESPHome globals: active flags, sequence numbers, and a sequence counter
-4. A reactive `slotRank` memo computes each slot's visual position based on active slots with lower sequence numbers
+1. N overlays are pre-allocated via `useOverlay()` (`N = maxVisible`)
+2. Each slot gets its own lifecycle scripts (`mode: restart`) for show, optional auto-hide, and hide
+3. A coordinator show script dispatches to the first inactive slot
+4. The coordinator's script mode implements overflow behavior:
+  - `overflow: 'replace'` → script `mode: restart`
+  - `overflow: 'queue'` → script `mode: queued` with `max_runs: queueLength`
+  - `overflow: 'drop'` → script `mode: single`
+5. Slot state is tracked via ESPHome globals: active flags, sequence numbers, and a sequence counter
+6. A reactive `slotRank` memo computes each slot's visual position based on active slots with lower sequence numbers
 
 ## Rules
 
