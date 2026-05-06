@@ -24,14 +24,15 @@
 //   - overflow: 'drop'    → script mode: single
 //
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
-// transformed by the ESPCompose CLI). Synthetic scripts are used for
-// lifecycle management (same pattern as useVisibility).
+// transformed by the ESPCompose CLI). `defineSyntheticScript` is used for
+// lifecycle scripts (same pattern as useVisibility).
 // ────────────────────────────────────────────────────────────────────────────
 
 import { assertHookContext } from './useState';
 import { useOverlay } from './useOverlay';
 import type { OverlayScriptPair } from './useVisibility';
-import { useScript } from './useScript';
+import { defineSyntheticScript } from './useScript';
+import type { ScriptHandle } from './useScript';
 import { useController } from './useController';
 import { useContext } from './useContext';
 import { registerComponent } from './useReactiveScope';
@@ -66,6 +67,7 @@ import type { IRActionNode } from '../ir/action-types';
 import { irBinary, irLiteralExpression, irArrayIndex, irTernary, irTriggerVarExpression } from '../ir/expr-builders';
 import type { IRExpression, IRGlobalReadExpression } from '../ir/expr-types';
 import { IR_INT, IR_INT_ARRAY } from '../ir/types';
+import type { IRType } from '../ir/types';
 import type { OverlayController } from './useOverlay';
 import type { VisibilityController, EspComposeElement } from '../types';
 import { __espcompose } from '../reactive/compiler-plumbing';
@@ -231,7 +233,7 @@ function buildSlotOverlay(
   const controllerParams = readControllerParamMeta(factory);
 
   // Build userParams and global-set prefix actions for per-slot show scripts.
-  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const userParamDecls: Array<{ name: string; irType: IRType }> = [];
   const globalSetActions: IRActionNode[] = [];
   if (controllerParams && controllerParams.length > 0) {
     for (const p of controllerParams) {
@@ -273,9 +275,8 @@ function buildSlotOverlay(
 
   // ── 2. Build per-slot show/hide scripts with slot state actions ────────
 
-  type ScriptHandleRef = ReturnType<typeof useScript>;
-  const slotShowScripts: ScriptHandleRef[] = [];
-  const slotHideScripts: ScriptHandleRef[] = [];
+  const slotShowScripts: ScriptHandle[] = [];
+  const slotHideScripts: ScriptHandle[] = [];
 
   const seqCounterRead: IRGlobalReadExpression = {
     kind: 'expr:global_read',
@@ -309,15 +310,13 @@ function buildSlotOverlay(
       showActions.push(buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible));
     }
 
-    const showScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `transient_slot_show_${templateKey}`),
-        showActions,
-        { [ctrlBindingKey]: slotOverlayCtrls[i] },
-        hasParams ? userParamDecls : undefined,
-      ),
-      { mode: 'restart' },
-    );
+    const showScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `transient_slot_show_${templateKey}`),
+      actions: showActions,
+      refBindings: { [ctrlBindingKey]: slotOverlayCtrls[i] },
+      userParams: hasParams ? userParamDecls : undefined,
+      opts: { mode: 'restart' },
+    });
     slotShowScripts.push(showScript);
 
     // Hide script: stop show, active[i]=0, overlay_hide, reset counter if all idle
@@ -328,13 +327,11 @@ function buildSlotOverlay(
       buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible),
     ];
 
-    const hideScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `transient_slot_hide_${templateKey}`),
-        hideActions,
-        { [ctrlBindingKey]: slotOverlayCtrls[i] },
-      ),
-    );
+    const hideScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `transient_slot_hide_${templateKey}`),
+      actions: hideActions,
+      refBindings: { [ctrlBindingKey]: slotOverlayCtrls[i] },
+    });
     slotHideScripts.push(hideScript);
   }
 
@@ -369,15 +366,12 @@ function buildSlotOverlay(
   const firstCtrl = slotOverlayCtrls[0] as unknown as { [k: symbol]: unknown };
   const firstTemplateKey = firstCtrl[OVERLAY_TEMPLATE_KEY as symbol] as string;
 
-  const coordinatorShowScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `transient_coord_show_${firstTemplateKey}`),
-      coordinatorShowActions,
-      undefined,
-      hasParams ? userParamDecls : undefined,
-    ),
-    coordinatorShowOpts,
-  );
+  const coordinatorShowScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `transient_coord_show_${firstTemplateKey}`),
+    actions: coordinatorShowActions,
+    userParams: hasParams ? userParamDecls : undefined,
+    opts: coordinatorShowOpts,
+  });
 
   // ── 4. Build coordinator hide script ──────────────────────────────────
 
@@ -396,12 +390,10 @@ function buildSlotOverlay(
   // Reset counter to 0.
   hideActions.push(irGlobalSet(seqCounterGlobalId, IR_INT, irLiteralExpression(0)));
 
-  const coordinatorHideScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `transient_coord_hide_${firstTemplateKey}`),
-      hideActions,
-    ),
-  );
+  const coordinatorHideScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `transient_coord_hide_${firstTemplateKey}`),
+    actions: hideActions,
+  });
 
   // ── 5. Return coordinator controller ──────────────────────────────────
 
@@ -525,7 +517,7 @@ function buildFirstFreeDispatchChain(
   slotScriptPairs: OverlayScriptPair[],
   needsWait: boolean,
   maxVisible: number,
-  userParamDecls?: Array<{ name: string; irType: unknown }>,
+  userParamDecls?: Array<{ name: string; irType: IRType }>,
 ): IRActionNode {
   // Build forwarded userArgs for script.execute calls (pass-through from coordinator params).
   const forwardedArgs = userParamDecls && userParamDecls.length > 0
@@ -600,29 +592,6 @@ function buildFirstFreeDispatchChain(
   }
 
   return result;
-}
-
-/**
- * Create a synthetic script function with pre-injected `__compiledScript`
- * metadata — same pattern as useVisibility's `makeSyntheticScript`.
- */
-function makeSyntheticScript(
-  id: string,
-  actions: IRActionNode[],
-  refBindings?: Record<string, unknown>,
-  userParams?: Array<{ name: string; irType: unknown }>,
-) {
-  return Object.assign(
-    () => Promise.resolve(),
-    {
-      __compiledScript: {
-        id,
-        then: actions,
-        ...(userParams && userParams.length > 0 ? { userParams } : {}),
-      },
-      ...(refBindings ? { __refBindings: refBindings } : {}),
-    },
-  );
 }
 
 function overflowToScriptMode(overflow: 'replace' | 'queue' | 'drop'): 'restart' | 'queued' | 'single' {

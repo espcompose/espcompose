@@ -19,8 +19,8 @@
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
 // transformed by the ESPCompose CLI's script transformer). Because the CLI
 // depends on core, core sources cannot be fed through the compiler pipeline
-// — a circular dependency. We therefore use `makeSyntheticScript` to inject
-// pre-built IR metadata that mirrors what the script transformer would
+// — a circular dependency. We therefore use `defineSyntheticScript` to register
+// pre-built IR action bodies that mirror what the script transformer would
 // produce for natural `useScript` arrow bodies.
 //
 // External library hooks (e.g. @espcompose/ui) are compiled via source-mode
@@ -31,7 +31,7 @@
 
 import { assertHookContext } from './useState';
 import { isRef } from '../types';
-import { useScript } from './useScript';
+import { defineSyntheticScript } from './useScript';
 import type { ScriptHandle } from './useScript';
 import { useController } from './useController';
 import { generateDeterministicId } from '../id';
@@ -44,6 +44,7 @@ import {
   irGlobalSet,
 } from '../ir/action-types';
 import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
+import type { IRType } from '../ir/types';
 import { irTriggerVarExpression } from '../ir/expr-builders';
 import { normalizeDuration } from './global-shared';
 import type { ScriptParamGlobalDecl } from './global-shared';
@@ -110,40 +111,6 @@ interface OverlayControllerInternal {
   [OVERLAY_INSTANCE_INDEX]: number;
   [OVERLAY_Z_ORDER]: number;
   [OVERLAY_CONTROLLER_PARAMS]?: ScriptParamGlobalDecl[];
-}
-
-// ── Synthetic script builder ────────────────────────────────────────────────
-
-/**
- * Build a function with pre-injected `__compiledScript` metadata.
- *
- * Required because `@espcompose/core` is built with tsup, not the ESPCompose
- * CLI compiler (circular dependency: CLI depends on core). The script
- * transformer therefore never processes `useScript` bodies in this package.
- *
- * The injected shape mirrors `CompiledScriptMeta` from `useScript.ts`.
- * Synthetic scripts only populate the required subset (`id`, `then`); the
- * optional fields (`bodyHash`, `userParams`, `scalarCaptures`) are omitted
- * because synthetic scripts have no AST body to hash, no user-defined
- * parameters, and no scalar closures.
- */
-function makeSyntheticScript(
-  id: string,
-  actions: IRActionNode[],
-  refBindings?: Record<string, unknown>,
-  userParams?: Array<{ name: string; irType: unknown }>,
-) {
-  return Object.assign(
-    () => Promise.resolve(),
-    {
-      __compiledScript: {
-        id,
-        then: actions,
-        ...(userParams && userParams.length > 0 ? { userParams } : {}),
-      },
-      ...(refBindings ? { __refBindings: refBindings } : {}),
-    },
-  );
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
@@ -224,7 +191,7 @@ export function buildOverlayScriptPair(
   const ctrlBindingKey = '__ctrl';
 
   // Build userParams and global-set prefix actions from overlay params.
-  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const userParamDecls: Array<{ name: string; irType: IRType }> = [];
   const globalSetActions: IRActionNode[] = [];
   if (controllerParams && controllerParams.length > 0) {
     for (const p of controllerParams) {
@@ -235,51 +202,43 @@ export function buildOverlayScriptPair(
   const hasParams = userParamDecls.length > 0;
 
   if (autoHide === false) {
-    const showScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-        [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
-        { [ctrlBindingKey]: ctrl },
-        hasParams ? userParamDecls : undefined,
-      ),
-    );
-    const hideScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-        [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
-        { [ctrlBindingKey]: ctrl },
-      ),
-    );
+    const showScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
+      actions: [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
+      refBindings: { [ctrlBindingKey]: ctrl },
+      userParams: hasParams ? userParamDecls : undefined,
+    });
+    const hideScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+      actions: [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
+      refBindings: { [ctrlBindingKey]: ctrl },
+    });
     return { show: showScript, hide: hideScript };
   }
 
   const duration = normalizeDuration(autoHide);
 
-  const showScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
-      [
-        ...globalSetActions,
-        irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
-        irDelayAction(duration),
-        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-      ],
-      { [ctrlBindingKey]: ctrl },
-      hasParams ? userParamDecls : undefined,
-    ),
-    { mode: 'restart' },
-  );
+  const showScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
+    actions: [
+      ...globalSetActions,
+      irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
+      irDelayAction(duration),
+      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+    ],
+    refBindings: { [ctrlBindingKey]: ctrl },
+    userParams: hasParams ? userParamDecls : undefined,
+    opts: { mode: 'restart' },
+  });
 
-  const hideScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-      [
-        irScriptStop(showScript.id),
-        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-      ],
-      { [ctrlBindingKey]: ctrl },
-    ),
-  );
+  const hideScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+    actions: [
+      irScriptStop(showScript.id),
+      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+    ],
+    refBindings: { [ctrlBindingKey]: ctrl },
+  });
 
   return { show: showScript, hide: hideScript };
 }
@@ -318,7 +277,7 @@ function buildOverlayVisibilityWithMode(
   const ctrlBindingKey = '__ctrl';
 
   // Build userParams and global-set prefix actions from overlay params.
-  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const userParamDecls: Array<{ name: string; irType: IRType }> = [];
   const globalSetActions: IRActionNode[] = [];
   if (controllerParams && controllerParams.length > 0) {
     for (const p of controllerParams) {
@@ -330,21 +289,17 @@ function buildOverlayVisibilityWithMode(
 
   if (autoHide === false) {
     // No timer — mode doesn't matter, just show/hide.
-    const showScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-        [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
-        { [ctrlBindingKey]: ctrl },
-        hasParams ? userParamDecls : undefined,
-      ),
-    );
-    const hideScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-        [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
-        { [ctrlBindingKey]: ctrl },
-      ),
-    );
+    const showScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
+      actions: [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
+      refBindings: { [ctrlBindingKey]: ctrl },
+      userParams: hasParams ? userParamDecls : undefined,
+    });
+    const hideScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+      actions: [irOverlayHide(templateKey, zOrder, ctrlBindingKey)],
+      refBindings: { [ctrlBindingKey]: ctrl },
+    });
     return useController<VisibilityController>({ show: showScript, hide: hideScript });
   }
 
@@ -357,31 +312,27 @@ function buildOverlayVisibilityWithMode(
     showScriptOpts.maxRuns = maxRuns;
   }
 
-  const showScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
-      [
-        ...globalSetActions,
-        irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
-        irDelayAction(duration),
-        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-      ],
-      { [ctrlBindingKey]: ctrl },
-      hasParams ? userParamDecls : undefined,
-    ),
-    showScriptOpts,
-  );
+  const showScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
+    actions: [
+      ...globalSetActions,
+      irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
+      irDelayAction(duration),
+      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+    ],
+    refBindings: { [ctrlBindingKey]: ctrl },
+    userParams: hasParams ? userParamDecls : undefined,
+    opts: showScriptOpts,
+  });
 
-  const hideScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
-      [
-        irScriptStop(showScript.id),
-        irOverlayHide(templateKey, zOrder, ctrlBindingKey),
-      ],
-      { [ctrlBindingKey]: ctrl },
-    ),
-  );
+  const hideScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_hide_${templateKey}`),
+    actions: [
+      irScriptStop(showScript.id),
+      irOverlayHide(templateKey, zOrder, ctrlBindingKey),
+    ],
+    refBindings: { [ctrlBindingKey]: ctrl },
+  });
 
   return useController<VisibilityController>({ show: showScript, hide: hideScript });
 }
@@ -395,24 +346,20 @@ function buildRefVisibility(
   const refBindingKey = 'widget';
 
   if (autoHide === false) {
-    const showScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', 'lvgl_vis_ref_show'),
-        [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
-          { kind: 'object', key: 'id', bindingName: refBindingKey },
-        ])],
-        { [refBindingKey]: ref },
-      ),
-    );
-    const hideScript = useScript(
-      makeSyntheticScript(
-        generateDeterministicId('scr', 'lvgl_vis_ref_hide'),
-        [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
-          { kind: 'object', key: 'id', bindingName: refBindingKey },
-        ])],
-        { [refBindingKey]: ref },
-      ),
-    );
+    const showScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', 'lvgl_vis_ref_show'),
+      actions: [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
+        { kind: 'object', key: 'id', bindingName: refBindingKey },
+      ])],
+      refBindings: { [refBindingKey]: ref },
+    });
+    const hideScript = defineSyntheticScript({
+      id: generateDeterministicId('scr', 'lvgl_vis_ref_hide'),
+      actions: [irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
+        { kind: 'object', key: 'id', bindingName: refBindingKey },
+      ])],
+      refBindings: { [refBindingKey]: ref },
+    });
     return useController<VisibilityController>({ show: showScript, hide: hideScript });
   }
 
@@ -420,36 +367,32 @@ function buildRefVisibility(
   const safeDuration = durationSlug(duration);
 
   // Show script: unhide → delay → hide (mode: restart).
-  const showScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_ref_${safeDuration}`),
-      [
-        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
-          { kind: 'object', key: 'id', bindingName: refBindingKey },
-        ]),
-        irDelayAction(duration),
-        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
-          { kind: 'object', key: 'id', bindingName: refBindingKey },
-        ]),
-      ],
-      { [refBindingKey]: ref },
-    ),
-    { mode: 'restart' },
-  );
+  const showScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_ref_${safeDuration}`),
+    actions: [
+      irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: false }, [
+        { kind: 'object', key: 'id', bindingName: refBindingKey },
+      ]),
+      irDelayAction(duration),
+      irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
+        { kind: 'object', key: 'id', bindingName: refBindingKey },
+      ]),
+    ],
+    refBindings: { [refBindingKey]: ref },
+    opts: { mode: 'restart' },
+  });
 
   // Hide script: stop show timer + immediately hide.
-  const hideScript = useScript(
-    makeSyntheticScript(
-      generateDeterministicId('scr', `lvgl_vis_ref_hide_${safeDuration}`),
-      [
-        irScriptStop(showScript.id),
-        irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
-          { kind: 'object', key: 'id', bindingName: refBindingKey },
-        ]),
-      ],
-      { [refBindingKey]: ref },
-    ),
-  );
+  const hideScript = defineSyntheticScript({
+    id: generateDeterministicId('scr', `lvgl_vis_ref_hide_${safeDuration}`),
+    actions: [
+      irScriptStop(showScript.id),
+      irNativeAction('lvgl', 'widget.update', { id: refBindingKey, hidden: true }, [
+        { kind: 'object', key: 'id', bindingName: refBindingKey },
+      ]),
+    ],
+    refBindings: { [refBindingKey]: ref },
+  });
 
   return useController<VisibilityController>({ show: showScript, hide: hideScript });
 }
