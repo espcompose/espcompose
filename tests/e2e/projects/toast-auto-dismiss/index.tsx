@@ -1,7 +1,7 @@
 /**
  * E2E project: toast-auto-dismiss
  *
- * Validates the useToast() auto-hide lifecycle:
+ * Validates the Toast.Provider auto-hide lifecycle:
  *
  *   - Default auto-hide (3s): generates a restart-mode script that
  *     sequences overlay_show → delay 3s → overlay_hide
@@ -15,35 +15,37 @@ import { DisplayRef, useRef, createLvglWidget } from '@espcompose/core';
 import {
   Screen,
   VStack,
-  Text,
   Button,
   UITheme,
+  Toast,
   useToast,
 } from '@espcompose/ui';
 
-const ToastDemo = createLvglWidget(
+const DefaultToastConsumer = createLvglWidget(
   () => {
-    // Default: auto-hide after 3s
-    const toastDefault = useToast(() => (
-      <Text text="Default 3s toast" />
-    ));
+    const toast = useToast();
+    return (
+      <Button text="Show Default" onPress={() => { toast.show({ msg: 'Default 3s toast' }); }} />
+    );
+  },
+);
 
-    // Custom: auto-hide after 5s
-    const toastCustom = useToast(() => (
-      <Text text="Custom 5s toast" />
-    ), { autoHide: '5s' });
+const CustomToastConsumer = createLvglWidget(
+  () => {
+    const toast = useToast();
+    return (
+      <Button text="Show Custom" onPress={() => { toast.show({ msg: 'Custom 5s toast' }); }} />
+    );
+  },
+);
 
-    // Manual: no auto-hide
-    const toastManual = useToast(() => (
-      <Text text="Manual toast" />
-    ), { autoHide: false });
-
+const ManualToastConsumer = createLvglWidget(
+  () => {
+    const toast = useToast();
     return (
       <VStack gap="md">
-        <Button text="Show Default" onPress={() => { toastDefault.show(); }} />
-        <Button text="Show Custom" onPress={() => { toastCustom.show(); }} />
-        <Button text="Show Manual" onPress={() => { toastManual.show(); }} />
-        <Button text="Dismiss Manual" onPress={() => { toastManual.hide(); }} />
+        <Button text="Show Manual" onPress={() => { toast.show({ msg: 'Manual toast' }); }} />
+        <Button text="Dismiss Manual" onPress={() => { toast.hide(); }} />
       </VStack>
     );
   },
@@ -75,7 +77,17 @@ function App() {
       <lvgl displays={[displayRef]}>
         <UITheme.Provider default="dark">
           <Screen padding="lg">
-            <ToastDemo />
+            <VStack gap="md">
+              <Toast.Provider autoHide="3s">
+                <DefaultToastConsumer />
+              </Toast.Provider>
+              <Toast.Provider autoHide="5s">
+                <CustomToastConsumer />
+              </Toast.Provider>
+              <Toast.Provider autoHide={false}>
+                <ManualToastConsumer />
+              </Toast.Provider>
+            </VStack>
           </Screen>
         </UITheme.Provider>
       </lvgl>

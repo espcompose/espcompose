@@ -19,7 +19,7 @@ import type { Context } from '../hooks';
 import type { LvglComponentRef } from '../component-aliases';
 import { isIRReactiveNode } from '../reactive';
 import type { IRReactiveNode } from '../reactive';
-import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath } from '../hooks';
+import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath, registerComponent } from '../hooks';
 import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
@@ -471,56 +471,75 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
  * widget tree.
  */
 function collectOverlayTiers(): RawIROverlayTier[] {
-  const overlays = peekOverlayDefinitions();
+  // Iterate by re-fetching definitions each pass: rendering an overlay's
+  // factory may itself invoke useOverlay() (e.g. Toast.Provider nested
+  // inside a usePopup() factory), registering new overlays mid-iteration.
+  // We process overlays in registration order until no new ones appear.
+  let overlays = peekOverlayDefinitions();
   if (overlays.length === 0) return [];
 
   const tierMap = new Map<number, RawIROverlayContainer[]>();
-  for (const def of overlays) {
-    assertOverlayStructuralIdentity(def.templateKey, def.instances);
+  const processed = new Set<string>();
+  while (overlays.some(d => !processed.has(d.templateKey))) {
+    for (const def of overlays) {
+      if (processed.has(def.templateKey)) continue;
+      processed.add(def.templateKey);
+      assertOverlayStructuralIdentity(def.templateKey, def.instances);
 
-    let tierEntries = tierMap.get(def.zOrder);
-    if (!tierEntries) {
-      tierEntries = [];
-      tierMap.set(def.zOrder, tierEntries);
-    }
+      let tierEntries = tierMap.get(def.zOrder);
+      if (!tierEntries) {
+        tierEntries = [];
+        tierMap.set(def.zOrder, tierEntries);
+      }
 
-    for (const instance of def.instances) {
-      const rendered = instance.rendered;
-      if (rendered == null) continue;
+      for (const instance of def.instances) {
+        const rendered = instance.rendered;
+        if (rendered == null) continue;
 
-      const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
+        const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
 
-      // Serialize inside an isolated reactive scope to capture bindings
-      // without polluting the top-level scope.
-      // Activate overlay action capture to collect trigger handler metadata
-      // via context-scoped capture list.
-      const actionCapture: CapturedOverlayAction[] = [];
-      const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
-        withReactiveScope(() => {
-          const resolved = resolveLvglChildren(renderedArr);
-          const widgetIR: RawIRWidget[] = [];
-          for (const ch of resolved) {
-            if (isLvglElement(ch.type)) {
-              widgetIR.push(buildLvglWidgetIR(ch));
-            } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
-              widgetIR.push(ecCanvasToPlain(ch));
+        // Serialize inside an isolated reactive scope to capture bindings
+        // without polluting the top-level scope.
+        // Activate overlay action capture to collect trigger handler metadata
+        // via context-scoped capture list.
+        const actionCapture: CapturedOverlayAction[] = [];
+        const { bindings, reactiveNodes, components } = withContext(overlayActionCaptureContext, actionCapture, () =>
+          withReactiveScope(() => {
+            const resolved = resolveLvglChildren(renderedArr);
+            const widgetIR: RawIRWidget[] = [];
+            for (const ch of resolved) {
+              if (isLvglElement(ch.type)) {
+                widgetIR.push(buildLvglWidgetIR(ch));
+              } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
+                widgetIR.push(ecCanvasToPlain(ch));
+              }
             }
-          }
-          // Only emit instance 0's widgets into the tier container; others
-          // contribute only their captured bindings/actions for the mux pass.
-          if (instance.index === 0) {
-            tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
-          }
-          return null;
-        }),
-      );
-      const capturedActions = actionCapture;
+            // Only emit instance 0's widgets into the tier container; others
+            // contribute only their captured bindings/actions for the mux pass.
+            if (instance.index === 0) {
+              tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
+            }
+            return null;
+          }),
+        );
+        const capturedActions = actionCapture;
 
-      // Store captured per-instance data for Phase 6 codegen.
-      (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
-      (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
-      (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
+        // Propagate component registrations (e.g. globals registered by
+        // useTransientOverlay inside a nested overlay factory) back to the
+        // outer reactive scope. Otherwise globals declared by Toast.Provider
+        // nested inside a usePopup() factory would be lost.
+        for (const comp of components) {
+          registerComponent(comp);
+        }
+
+        // Store captured per-instance data for Phase 6 codegen.
+        (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
+        (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
+        (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
+      }
     }
+    // Re-fetch in case nested factories registered additional overlays.
+    overlays = peekOverlayDefinitions();
   }
 
   return Array.from(tierMap.entries())

@@ -17,7 +17,7 @@ BoundSignal<std::vector<int>> sig_global_g_4b763005;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return std::string("Items: ") + std::to_string(static_cast<int>(sig_global_g_4b763005.get().size()));
+  return std::string("Items: ") + std::to_string(static_cast<int>(espcompose::sig_global_g_4b763005.get().size()));
 });
 
 // ── Bootstrap: wire dependency graph ──

@@ -120,7 +120,7 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
       if (ctx.actionContext) {
         return `id(${node.globalId})`;
       }
-      return `sig_global_${node.globalId}.get()`;
+      return `espcompose::sig_global_${node.globalId}.get()`;
 
     case 'expr:component_read':
       return `id(${node.componentId}).state`;

@@ -483,9 +483,11 @@ export interface IRControllerMethodCallAction {
   controllerRef: string;
   /** Method name on the controller (e.g. 'show', 'hide'). */
   methodName: string;
+  /** Named arguments passed to the method (e.g. parameterized show). */
+  args?: Record<string, IRExpression>;
 }
 
-export function irControllerMethodCall(controllerRef: string, methodName: string): IRControllerMethodCallAction {
-  return { kind: 'action:controller_method_call', controllerRef, methodName };
+export function irControllerMethodCall(controllerRef: string, methodName: string, args?: Record<string, IRExpression>): IRControllerMethodCallAction {
+  return { kind: 'action:controller_method_call', controllerRef, methodName, ...(args && { args }) };
 }
 

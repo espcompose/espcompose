@@ -23,6 +23,24 @@ export interface GlobalDefinition {
   irType: IRType;
 }
 
+// ── ScriptParamGlobalDecl ──────────────────────────────────────────────────
+
+/**
+ * Declaration for a single script parameter backed by an ESPHome global.
+ *
+ * Each field maps to an ESPHome global variable. The calling script receives
+ * user params and writes them to globals before executing its body. The
+ * reactive bindings read from those globals via `global_read`.
+ */
+export interface ScriptParamGlobalDecl {
+  /** Field name (e.g. 'message'). */
+  readonly name: string;
+  /** Target-agnostic type descriptor. */
+  readonly irType: IRType;
+  /** Auto-generated ESPHome global ID backing this param. */
+  readonly globalId: string;
+}
+
 // ── GlobalHandle ───────────────────────────────────────────────────────────
 
 /**
@@ -265,6 +283,15 @@ export interface TransientOverlayContext {
    * Reactive — updates automatically when any slot shows or hides.
    */
   slotRank: Signal<number>;
+
+  /**
+   * Params proxy for parameterized overlay factories.
+   *
+   * When `__scriptParamGlobals` metadata is present on the factory, this object
+   * provides Signal-typed fields backed by the corresponding globals.
+   * Callers (e.g. useToast) forward this as the `params` argument.
+   */
+  paramsProxy?: Record<string, unknown>;
 }
 
 // ── Duration normalization ─────────────────────────────────────────────────
@@ -281,4 +308,41 @@ export function normalizeDuration(value: string | number): IRDurationLiteral {
     throw new Error(`[espcompose] Invalid autoHide duration '${value}'. Expected a number of milliseconds, or a duration literal with a unit suffix (ms, s, or min).`);
   }
   return parsed;
+}
+
+// ── Controller param metadata forwarding ──────────────────────────────────────────
+
+/**
+ * Internal key used by the compiler to attach controller param global
+ * declarations onto factory functions. This key is opaque to consumers —
+ * use `forwardControllerParamMeta` to transfer it between factories.
+ */
+const FACTORY_META_KEY = '__scriptParamGlobals';
+
+/**
+ * Transfer compiler-injected controller param metadata from one factory to another.
+ *
+ * When a higher-level hook (e.g. `useToast`) wraps the user's factory in
+ * its own function, the compiler-injected metadata must follow so that
+ * `useTransientOverlay` can detect and register param globals.
+ *
+ * This utility is the ONLY sanctioned way to forward that metadata.
+ * Consuming code should never reference the internal key directly.
+ */
+export function forwardControllerParamMeta(source: unknown, target: unknown): void {
+  const meta = (source as Record<string, unknown>)[FACTORY_META_KEY];
+  if (meta) {
+    (target as Record<string, unknown>)[FACTORY_META_KEY] = meta;
+  }
+}
+
+/**
+ * Read compiler-injected controller param global declarations from a factory.
+ *
+ * Used internally by `useTransientOverlay` to detect param globals.
+ * Returns undefined if no metadata is present.
+ */
+export function readControllerParamMeta(factory: unknown): ScriptParamGlobalDecl[] | undefined {
+  const meta = (factory as Record<string, unknown>)[FACTORY_META_KEY];
+  return meta as ScriptParamGlobalDecl[] | undefined;
 }

@@ -178,14 +178,17 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, Vola
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
 export type { GlobalHandle, TransientOverlayContext } from './hooks/global-shared';
+export { forwardControllerParamMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
-export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
+export type { OverlayController, OverlayFactory, OverlayConfig, ScriptParamGlobalDecl } from './hooks/useOverlay';
 export { useTransientOverlay } from './hooks/useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
 export { useVisibility } from './hooks/useVisibility';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
+export { createContext, useContext } from './hooks/useContext';
+export type { Context } from './hooks/useContext';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions

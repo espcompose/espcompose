@@ -49,6 +49,7 @@ export function resolveControllerMethodCalls(
         const handle = ctrl.__scripts[action.methodName];
         if (handle) {
           actions[i] = irScriptExecute(handle.id, {
+            userArgs: action.args,
             closureIndex: (handle as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX],
           });
         }

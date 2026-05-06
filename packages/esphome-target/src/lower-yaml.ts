@@ -139,6 +139,12 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
       return `return 0;`;
     }
 
+    // Global-backed expression — read from the BoundSignal wrapping the global
+    if (node.dependencies?.[0]?.sourceType === 'global') {
+      const globalId = node.dependencies[0].sourceId;
+      return `return espcompose::sig_global_${globalId}.get();`;
+    }
+
     // HA entity expression — read directly from the ESPHome component
     if (node.sourceId && node.propertyKey) {
       if (!node.sourceDomain) {

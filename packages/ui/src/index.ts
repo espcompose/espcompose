@@ -58,5 +58,7 @@ export { Popup } from './components/Popup';
 // Overlay convenience hooks
 export { usePopup } from './hooks/usePopup';
 export type { PopupController, PopupFactory } from './hooks/usePopup';
-export { useToast } from './hooks/useToast';
-export type { ToastFactory, ToastController, ToastOptions } from './hooks/useToast';
+
+// Toast system
+export { Toast, useToast } from './providers/Toast';
+export type { ToastController, ToastProviderProps } from './providers/Toast';

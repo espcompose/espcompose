@@ -76,6 +76,9 @@ export function transformScriptFile(
 
   findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, globalHandles, edits);
 
+  // Pass 3: Inject __scriptParamGlobals metadata onto controller param factory callbacks
+  injectControllerParamsMeta(sourceFile, checker, edits);
+
   // Apply edits in reverse position order so indices stay valid
   let text = sourceFile.getFullText();
   for (const edit of edits.sort((a, b) => b.position - a.position)) {
@@ -731,4 +734,131 @@ function serializeWithExpressions(value: unknown): string {
     /\{"__dynamic__":"([^"]+)"\}/g,
     (_match, expr) => expr,
   );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Script param globals metadata injection
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Scan for useTransientOverlay<P>(...) calls whose factory callback has a
+ * second parameter (the params proxy). Injects `__scriptParamGlobals` metadata
+ * onto the factory function so the runtime hook can allocate matching globals
+ * and wire the show script.
+ *
+ * Injection pattern:
+ *   useTransientOverlay(config, Object.assign((ctrl, params) => ..., { __scriptParamGlobals: [...] }))
+ */
+function injectControllerParamsMeta(
+  sourceFile: ts.SourceFile,
+  checker: ts.TypeChecker,
+  edits: SourceEdit[],
+): void {
+  const walk = (node: ts.Node): void => {
+    if (ts.isCallExpression(node) && isControllerParamHook(node, checker)) {
+      const factoryArg = findFactoryArg(node);
+      if (factoryArg && factoryArg.parameters.length >= 2) {
+        const paramsParam = factoryArg.parameters[1];
+        if (ts.isIdentifier(paramsParam.name)) {
+          const paramFields = extractControllerParamDeclsFromType(paramsParam, node, checker);
+          if (paramFields.length > 0) {
+            // Wrap factory in Object.assign(factory, { __scriptParamGlobals: [...] })
+            const factoryStart = factoryArg.getStart(sourceFile);
+            const factoryEnd = factoryArg.getEnd();
+            const meta = JSON.stringify(paramFields);
+            edits.push({ position: factoryStart, text: 'Object.assign(' });
+            edits.push({ position: factoryEnd, text: `, { __scriptParamGlobals: ${meta} })` });
+          }
+        }
+      }
+    }
+    ts.forEachChild(node, walk);
+  };
+  walk(sourceFile);
+}
+
+function isControllerParamHook(call: ts.CallExpression, checker: ts.TypeChecker): boolean {
+  const callee = call.expression;
+  if (!ts.isIdentifier(callee)) return false;
+  const sym = checker.getSymbolAtLocation(callee);
+  if (!sym) return false;
+  const resolved = sym.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(sym) : sym;
+  const name = resolved.name;
+  if (name !== 'useTransientOverlay' && name !== 'useOverlay') return false;
+  const declarations = resolved.getDeclarations();
+  if (!declarations) return false;
+  return declarations.some(d => {
+    const fileName = d.getSourceFile().fileName;
+    return fileName.includes('@espcompose/core') || fileName.includes('packages/core/');
+  });
+}
+
+function findFactoryArg(call: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | null {
+  for (const arg of call.arguments) {
+    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+      return arg;
+    }
+  }
+  return null;
+}
+
+/**
+ * Extract controller param field declarations from the factory's params type.
+ * Returns an array of { name, globalId, irType } for each field.
+ */
+function extractControllerParamDeclsFromType(
+  paramsParam: ts.ParameterDeclaration,
+  call: ts.CallExpression,
+  checker: ts.TypeChecker,
+): Array<{ name: string; globalId: string; irType: IRType }> {
+  const paramsType = checker.getTypeAtLocation(paramsParam);
+  const fields: Array<{ name: string; globalId: string; irType: IRType }> = [];
+
+  // Derive base key from the variable hosting this call
+  let varName = 'overlay';
+  const parent = call.parent;
+  if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
+    varName = parent.name.text;
+  }
+
+  for (const prop of paramsType.getProperties()) {
+    const propName = prop.name;
+    // Skip framework-internal fields from TransientOverlayContext
+    if (propName === 'slotRank' || propName === 'paramsProxy') continue;
+    const propType = checker.getTypeOfSymbolAtLocation(prop, paramsParam);
+    const irType = inferOverlayFieldIRType(propType, checker);
+    if (!irType) continue;
+    const globalId = generateDeterministicId('g', `${varName}_${propName}`);
+    fields.push({ name: propName, globalId, irType });
+  }
+
+  return fields;
+}
+
+/**
+ * Infer IRType for an overlay param field type.
+ * Unwraps Signal<T> wrappers and maps to int/float/string/bool.
+ */
+function inferOverlayFieldIRType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
+  if (depth > 5) return null;
+  // Unwrap Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
+  if (type.isIntersection()) {
+    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
+    if (hasNumber) {
+      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
+      if (hasIntBrand) return IR_INT;
+    }
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
+      if (t.flags & ts.TypeFlags.String) return IR_STRING;
+      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
+    }
+  }
+  if (type.aliasSymbol?.name === 'Int') return IR_INT;
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
+  const baseConstraint = checker.getBaseConstraintOfType(type);
+  if (baseConstraint && baseConstraint !== type) return inferOverlayFieldIRType(baseConstraint, checker, depth + 1);
+  return null;
 }

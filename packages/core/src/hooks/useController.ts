@@ -21,11 +21,13 @@ import type { BINDING_BRAND, CONTROLLER_BRAND } from '../types';
 // ── Types ───────────────────────────────────────────────────────────────────
 
 /**
- * Maps each `() => void` method on `T` to a `ScriptHandle`.
- * Only methods with no parameters and void return are eligible.
+ * Maps each method on `T` to a `ScriptHandle`.
+ * Only methods returning void are eligible (both parameterized and
+ * non-parameterized). Brand properties are excluded.
  */
 export type ControllerScriptMap<T> = {
-  [K in keyof T as T[K] extends () => void ? K : never]: ScriptHandle;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [K in keyof T as T[K] extends (...args: any[]) => void ? K : never]: ScriptHandle;
 };
 
 /**

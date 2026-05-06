@@ -18,6 +18,7 @@ import {
   hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
+  generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL,
 } from '@espcompose/core/internals';
 import { isCoreExportCall } from './type-brands.js';
 
@@ -99,6 +100,18 @@ export interface ExprCompilerContext {
    * When set, identifiers matching a key resolve to `expr:local_var` instead of slots.
    */
   localVars?: Map<ts.Symbol, { name: string; type: ExprType }>;
+  /**
+   * Controller param proxy objects. Maps the `params` symbol (function parameter
+   * of a controller factory) to per-field global info. Access patterns like
+   * `params.message` resolve to `global_read(globalId)`.
+   */
+  controllerParams?: Map<ts.Symbol, ControllerParamFields>;
+}
+
+/** Per-controller-params-variable field map. */
+export interface ControllerParamFields {
+  /** Maps field name (e.g. 'message') → global info backing that field. */
+  fields: Map<string, GlobalExprInfo>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -629,6 +642,155 @@ export function scanForGlobalHandles(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Controller param scanner
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Scan for `useTransientOverlay<P>(...)` patterns and extract the `params`
+ * function parameter symbol → field-to-global map.
+ *
+ * Detects:
+ *   const ctrl = useTransientOverlay<MyParams>({...}, (ctrl, params) => ...)
+ *
+ * For each property of the type parameter P, generates a deterministic
+ * global ID and maps the `params` parameter symbol to its fields.
+ */
+export function scanForControllerParams(
+  node: ts.Node,
+  controllerParams: Map<ts.Symbol, ControllerParamFields>,
+  checker: ts.TypeChecker,
+): void {
+  if (ts.isCallExpression(node)) {
+    const hookName = isControllerParamHookCall(node, checker);
+    if (hookName) {
+      extractControllerParamFields(node, controllerParams, checker, hookName);
+    }
+  }
+  ts.forEachChild(node, child => scanForControllerParams(child, controllerParams, checker));
+}
+
+/**
+ * Check if a call is a parameterized controller hook (useTransientOverlay).
+ */
+function isControllerParamHookCall(call: ts.CallExpression, checker: ts.TypeChecker): string | false {
+  const callee = call.expression;
+  if (!ts.isIdentifier(callee)) return false;
+
+  const sym = checker.getSymbolAtLocation(callee);
+  if (!sym) return false;
+
+  const resolved = sym.flags & ts.SymbolFlags.Alias
+    ? checker.getAliasedSymbol(sym)
+    : sym;
+
+  const name = resolved.name;
+  if (name !== 'useTransientOverlay' && name !== 'useOverlay') return false;
+
+  // Check source: must be from @espcompose/core
+  const declarations = resolved.getDeclarations();
+  if (!declarations) return false;
+  const fromCore = declarations.some(d => {
+    const fileName = d.getSourceFile().fileName;
+    return fileName.includes('@espcompose/core') ||
+           fileName.includes('packages/core/');
+  });
+  return fromCore ? name : false;
+}
+
+/**
+ * Extract controller param fields from a `useTransientOverlay` or `useOverlay` call.
+ *
+ * Finds the factory callback argument, checks for a 2nd parameter (params),
+ * reads its type's properties, and maps each to a deterministic global ID.
+ */
+function extractControllerParamFields(
+  call: ts.CallExpression,
+  controllerParams: Map<ts.Symbol, ControllerParamFields>,
+  checker: ts.TypeChecker,
+  hookName: string,
+): void {
+  // Find the factory argument — it's an arrow/function with (ctrl, params) signature.
+  let factoryArg: ts.Expression | undefined;
+  for (const arg of call.arguments) {
+    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+      factoryArg = arg;
+      break;
+    }
+  }
+  if (!factoryArg || (!ts.isArrowFunction(factoryArg) && !ts.isFunctionExpression(factoryArg))) return;
+  if (factoryArg.parameters.length < 2) return; // No params parameter
+
+  const paramsParam = factoryArg.parameters[1];
+  if (!ts.isIdentifier(paramsParam.name)) return;
+
+  const paramsSym = checker.getSymbolAtLocation(paramsParam.name);
+  if (!paramsSym) return;
+
+  // Get the type of the params parameter and extract property fields.
+  const paramsType = checker.getTypeAtLocation(paramsParam);
+  const fields = new Map<string, GlobalExprInfo>();
+
+  // Derive a base key from the variable declaration hosting this call.
+  // e.g. `const ctrl = useTransientOverlay<P>({...}, factory)` → varName = 'ctrl'
+  let varName = 'controller';
+  const parent = call.parent;
+  if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
+    varName = parent.name.text;
+  }
+
+  for (const prop of paramsType.getProperties()) {
+    const propName = prop.name;
+    // Skip framework-internal fields from TransientOverlayContext (only for useTransientOverlay)
+    if (hookName === 'useTransientOverlay' && (propName === 'slotRank' || propName === 'paramsProxy')) continue;
+    const propType = checker.getTypeOfSymbolAtLocation(prop, paramsParam);
+    const irType = inferControllerParamIRType(propType, checker);
+    if (!irType) continue;
+
+    // Deterministic global ID: g_<varName>_<fieldName> hashed
+    const globalId = generateDeterministicId('g', `${varName}_${propName}`);
+    fields.set(propName, { globalId, irType, exprType: irTypeToExprType(irType) });
+  }
+
+  if (fields.size > 0) {
+    controllerParams.set(paramsSym, { fields });
+  }
+}
+
+/**
+ * Infer IRType from a TypeScript type for controller param fields.
+ * Supports: number (float), Int (int), string, boolean.
+ * Unwraps Signal<T> wrappers since params are typed as reactive signals.
+ */
+function inferControllerParamIRType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
+  if (depth > 5) return null;
+  // Unwrap Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
+  if (type.isIntersection()) {
+    // Check for Int brand first
+    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
+    if (hasNumber) {
+      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
+      if (hasIntBrand) return IR_INT;
+    }
+    // Try stripping the Signal brand and inferring from the remaining type
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
+      if (t.flags & ts.TypeFlags.String) return IR_STRING;
+      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
+    }
+  }
+  if (type.aliasSymbol?.name === 'Int') return IR_INT;
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
+
+  // Try resolving via checker for complex mapped types
+  const baseConstraint = checker.getBaseConstraintOfType(type);
+  if (baseConstraint && baseConstraint !== type) return inferControllerParamIRType(baseConstraint, checker, depth + 1);
+
+  return null;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // ExpressionIR compilation — TypeScript AST → IRExpression
 //
 // Parallels compileExpr() but produces target-agnostic IRExpression trees
@@ -826,6 +988,23 @@ function compilePropertyAccessIR(
 
   if (ts.isIdentifier(node.expression)) {
     const sym = ctx.checker.getSymbolAtLocation(node.expression);
+
+    // Controller param access → global_read (params.fieldName)
+    if (sym && ctx.controllerParams) {
+      const paramFields = ctx.controllerParams.get(sym);
+      if (paramFields) {
+        const fieldInfo = paramFields.fields.get(propName);
+        if (fieldInfo) {
+          ctx.dependencies.set(`global_${fieldInfo.globalId}`, {
+            signalName: `sig_global_${fieldInfo.globalId}`,
+            sourceId: fieldInfo.globalId,
+            exprType: fieldInfo.exprType,
+            sourceType: 'global',
+          });
+          return { kind: 'expr:global_read', globalId: fieldInfo.globalId, type: fieldInfo.exprType };
+        }
+      }
+    }
 
     // Global handle .value access → global_read
     const globalInfo = sym ? ctx.globals.get(sym) : undefined;

@@ -412,6 +412,13 @@ export function buildRuntimeConfig(
       const leafExprType = leafData?.exprType as ExprType | undefined;
       cppType = leafExprType ? exprTypeToCpp(leafExprType) : (expr.exprType ? exprTypeToCpp(expr.exprType) : 'int32_t');
       sourceNames = [sigName];
+    } else if (expr.dependencies?.[0]?.sourceType === 'global') {
+      // Global-sourced binding: read directly from the BoundSignal
+      const globalId = expr.dependencies[0].sourceId;
+      const sigName = globalSignalNames.get(globalId) ?? `sig_global_${globalId}`;
+      valueExpr = `${sigName}.get()`;
+      cppType = expr.exprType ? exprTypeToCpp(expr.exprType) : 'std::string';
+      sourceNames = [sigName];
     } else {
       // Single-source binding: read directly from signal
       const sigName = `sig_${expr.sourceId}`;

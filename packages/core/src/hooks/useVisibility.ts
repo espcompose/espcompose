@@ -41,14 +41,18 @@ import {
   irDelayAction,
   irNativeAction,
   irScriptStop,
+  irGlobalSet,
 } from '../ir/action-types';
 import type { IRActionNode, IRDurationLiteral } from '../ir/action-types';
+import { irTriggerVarExpression } from '../ir/expr-builders';
 import { normalizeDuration } from './global-shared';
+import type { ScriptParamGlobalDecl } from './global-shared';
 import type { OverlayController } from './useOverlay';
 import {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
+  OVERLAY_CONTROLLER_PARAMS,
 } from './useOverlay';
 import type { VisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
@@ -105,6 +109,7 @@ interface OverlayControllerInternal {
   [OVERLAY_TEMPLATE_KEY]: string;
   [OVERLAY_INSTANCE_INDEX]: number;
   [OVERLAY_Z_ORDER]: number;
+  [OVERLAY_CONTROLLER_PARAMS]?: ScriptParamGlobalDecl[];
 }
 
 // ── Synthetic script builder ────────────────────────────────────────────────
@@ -126,11 +131,16 @@ function makeSyntheticScript(
   id: string,
   actions: IRActionNode[],
   refBindings?: Record<string, unknown>,
+  userParams?: Array<{ name: string; irType: unknown }>,
 ) {
   return Object.assign(
     () => Promise.resolve(),
     {
-      __compiledScript: { id, then: actions },
+      __compiledScript: {
+        id,
+        then: actions,
+        ...(userParams && userParams.length > 0 ? { userParams } : {}),
+      },
       ...(refBindings ? { __refBindings: refBindings } : {}),
     },
   );
@@ -149,14 +159,14 @@ export function useVisibility(
 /**
  * Attach a show/hide lifecycle to an overlay controller.
  */
-export function useVisibility(
-  target: OverlayController,
+export function useVisibility<P = void>(
+  target: OverlayController<P>,
   opts?: VisibilityOptions,
-): VisibilityController;
+): VisibilityController<P>;
 
 /** Implementation. */
 export function useVisibility(
-  target: Ref<__marker_lv_obj_t> | OverlayController,
+  target: Ref<__marker_lv_obj_t> | OverlayController<unknown>,
   opts?: VisibilityOptions,
 ): VisibilityController {
   assertHookContext('useVisibility()');
@@ -168,7 +178,7 @@ export function useVisibility(
   }
 
   return buildOverlayVisibility(
-    target as OverlayController,
+    target as OverlayController<unknown>,
     autoHide,
     opts?.scriptMode,
     opts?.maxRuns,
@@ -203,21 +213,34 @@ export interface OverlayScriptPair {
  * overflow policy is handled by the coordinator, not here.
  */
 export function buildOverlayScriptPair(
-  ctrl: OverlayController,
+  ctrl: OverlayController<unknown>,
   autoHide: string | number | false,
 ): OverlayScriptPair {
   const internal = ctrl as unknown as OverlayControllerInternal;
   const templateKey = internal[OVERLAY_TEMPLATE_KEY];
   const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
   const zOrder = internal[OVERLAY_Z_ORDER];
+  const controllerParams = internal[OVERLAY_CONTROLLER_PARAMS];
   const ctrlBindingKey = '__ctrl';
+
+  // Build userParams and global-set prefix actions from overlay params.
+  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const globalSetActions: IRActionNode[] = [];
+  if (controllerParams && controllerParams.length > 0) {
+    for (const p of controllerParams) {
+      userParamDecls.push({ name: p.name, irType: p.irType });
+      globalSetActions.push(irGlobalSet(p.globalId, p.irType, irTriggerVarExpression(p.name)));
+    }
+  }
+  const hasParams = userParamDecls.length > 0;
 
   if (autoHide === false) {
     const showScript = useScript(
       makeSyntheticScript(
         generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-        [irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
+        [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
+        hasParams ? userParamDecls : undefined,
       ),
     );
     const hideScript = useScript(
@@ -236,11 +259,13 @@ export function buildOverlayScriptPair(
     makeSyntheticScript(
       generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
       [
+        ...globalSetActions,
         irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
         irDelayAction(duration),
         irOverlayHide(templateKey, zOrder, ctrlBindingKey),
       ],
       { [ctrlBindingKey]: ctrl },
+      hasParams ? userParamDecls : undefined,
     ),
     { mode: 'restart' },
   );
@@ -260,7 +285,7 @@ export function buildOverlayScriptPair(
 }
 
 function buildOverlayVisibility(
-  ctrl: OverlayController,
+  ctrl: OverlayController<unknown>,
   autoHide: string | number | false,
   scriptMode?: 'restart' | 'queued' | 'single',
   maxRuns?: number,
@@ -289,15 +314,28 @@ function buildOverlayVisibilityWithMode(
   const templateKey = internal[OVERLAY_TEMPLATE_KEY];
   const instanceIndex = internal[OVERLAY_INSTANCE_INDEX];
   const zOrder = internal[OVERLAY_Z_ORDER];
+  const controllerParams = internal[OVERLAY_CONTROLLER_PARAMS];
   const ctrlBindingKey = '__ctrl';
+
+  // Build userParams and global-set prefix actions from overlay params.
+  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const globalSetActions: IRActionNode[] = [];
+  if (controllerParams && controllerParams.length > 0) {
+    for (const p of controllerParams) {
+      userParamDecls.push({ name: p.name, irType: p.irType });
+      globalSetActions.push(irGlobalSet(p.globalId, p.irType, irTriggerVarExpression(p.name)));
+    }
+  }
+  const hasParams = userParamDecls.length > 0;
 
   if (autoHide === false) {
     // No timer — mode doesn't matter, just show/hide.
     const showScript = useScript(
       makeSyntheticScript(
         generateDeterministicId('scr', `lvgl_vis_show_${templateKey}`),
-        [irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
+        [...globalSetActions, irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey)],
         { [ctrlBindingKey]: ctrl },
+        hasParams ? userParamDecls : undefined,
       ),
     );
     const hideScript = useScript(
@@ -323,11 +361,13 @@ function buildOverlayVisibilityWithMode(
     makeSyntheticScript(
       generateDeterministicId('scr', `lvgl_vis_${templateKey}`),
       [
+        ...globalSetActions,
         irOverlayShow(templateKey, instanceIndex, zOrder, ctrlBindingKey),
         irDelayAction(duration),
         irOverlayHide(templateKey, zOrder, ctrlBindingKey),
       ],
       { [ctrlBindingKey]: ctrl },
+      hasParams ? userParamDecls : undefined,
     ),
     showScriptOpts,
   );

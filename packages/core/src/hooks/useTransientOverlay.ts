@@ -1,25 +1,27 @@
 // ────────────────────────────────────────────────────────────────────────────
 // useTransientOverlay — queue/slot mechanic primitive for overlay lifecycles
 //
-// Composes useOverlay() + useVisibility() to provide configurable
-// queuing, slot allocation, and overflow behavior.
+// Composes useOverlay() to provide configurable queuing, slot allocation,
+// and overflow behavior.
 //
 // Any UI library (1st or 3rd party) can build toast/notification/snackbar
 // overlays on top of this hook without reinventing queue mechanics. The
-// factory receives a slotIndex so the UI layer controls all visual
+// factory receives a slotRank so the UI layer controls all visual
 // positioning and stacking.
 //
-// Single-slot (maxVisible: 1):
-//   - One overlay + one visibility controller
+// Architecture: pre-allocates N overlay slots (default N=1). Each slot gets
+// its own show/hide script pair. A coordinator script dispatches `show()`
+// calls to the first inactive slot using a first-free dispatch chain.
+//
+// Slot state globals:
+//   - `g_slot_active_<key>`: integer[] — per-slot active flag (0/1)
+//   - `g_slot_seq_<key>`: integer[] — per-slot sequence number
+//   - `g_seq_counter_<key>`: integer — monotonic counter
+//
+// Overflow behavior governs the coordinator script's ESPHome mode:
 //   - overflow: 'replace' → script mode: restart
 //   - overflow: 'queue'   → script mode: queued, max_runs: queueLength
 //   - overflow: 'drop'    → script mode: single
-//
-// Multi-slot (maxVisible > 1):
-//   - N overlays, each with its own auto-hide script (mode: restart)
-//   - Round-robin slot allocator backed by an ESPHome global
-//   - Coordinator show script dispatches to the next slot
-//   - overflow: 'replace' → round-robin wraps (replaces oldest)
 //
 // NOTE: This hook lives in @espcompose/core, which is built with tsup (not
 // transformed by the ESPCompose CLI). Synthetic scripts are used for
@@ -28,7 +30,6 @@
 
 import { assertHookContext } from './useState';
 import { useOverlay } from './useOverlay';
-import { useVisibility } from './useVisibility';
 import type { OverlayScriptPair } from './useVisibility';
 import { useScript } from './useScript';
 import { useController } from './useController';
@@ -39,6 +40,8 @@ import { CLOSURE_INDEX } from '../actions';
 import {
   globalScopeContext,
   normalizeDuration,
+  readControllerParamMeta,
+  forwardControllerParamMeta,
 } from './global-shared';
 import type { GlobalDefinition, TransientOverlayContext } from './global-shared';
 import {
@@ -46,6 +49,7 @@ import {
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
 } from './useOverlay';
+import type { OverlayFactory } from './useOverlay';
 import {
   irIfAction,
   irGlobalSet,
@@ -59,12 +63,13 @@ import {
   irLambdaCondition,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
-import { irBinary, irLiteralExpression, irArrayIndex, irTernary } from '../ir/expr-builders';
+import { irBinary, irLiteralExpression, irArrayIndex, irTernary, irTriggerVarExpression } from '../ir/expr-builders';
 import type { IRExpression, IRGlobalReadExpression } from '../ir/expr-types';
 import { IR_INT, IR_INT_ARRAY } from '../ir/types';
 import type { OverlayController } from './useOverlay';
 import type { VisibilityController, EspComposeElement } from '../types';
 import { __espcompose } from '../reactive/compiler-plumbing';
+
 import type { IRDependency, Signal } from '../reactive';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -130,9 +135,9 @@ export interface TransientOverlayConfig {
  * Factory for the overlay queue. Receives the overlay controller and a
  * TransientOverlayContext containing slot state for reactive compaction.
  */
-export type TransientOverlayFactory = (
+export type TransientOverlayFactory<P extends Record<string, unknown> = Record<string, never>> = (
   ctrl: OverlayController,
-  context: TransientOverlayContext,
+  context: TransientOverlayContext & P,
 ) => EspComposeElement | EspComposeElement[];
 
 /**
@@ -172,9 +177,9 @@ export type TransientOverlayController = VisibilityController;
  *   ),
  * );
  */
-export function useTransientOverlay(
+export function useTransientOverlay<P extends Record<string, unknown> = Record<string, never>>(
   config: TransientOverlayConfig,
-  factory: TransientOverlayFactory,
+  factory: TransientOverlayFactory<P>,
 ): TransientOverlayController {
   assertHookContext('useTransientOverlay()');
 
@@ -186,58 +191,17 @@ export function useTransientOverlay(
     queueLength = 1,
   } = config;
 
-  if (maxVisible <= 1) {
-    return buildSingleSlot(zOrder, autoHide, overflow, queueLength, factory);
-  }
-
-  return buildMultiSlot(zOrder, maxVisible, autoHide, overflow, queueLength, factory);
+  return buildSlotOverlay(zOrder, maxVisible, autoHide, overflow, queueLength, factory as TransientOverlayFactory<Record<string, unknown>>);
 }
 
-// ── Single-slot path ────────────────────────────────────────────────────────
-
-function buildSingleSlot(
-  zOrder: number,
-  autoHide: string | number | false,
-  overflow: 'replace' | 'queue' | 'drop',
-  queueLength: number,
-  factory: TransientOverlayFactory,
-): TransientOverlayController {
-  // Create slot state globals for consistent TransientOverlayContext API.
-  // We derive a stable key from the overlay after creating it.
-  let overlayContext: TransientOverlayContext | undefined;
-
-  const ctrl = useOverlay(
-    { zOrder },
-    (overlayCtrl) => {
-      // Get template key from overlay ctrl to derive global IDs.
-      const templateKey = (overlayCtrl as unknown as { [k: symbol]: unknown })[OVERLAY_TEMPLATE_KEY as symbol] as string;
-      const { activeGlobalId, seqGlobalId } = createSlotStateGlobals(templateKey, 1);
-      const slotRank = buildSlotRankMemo(0, 1, activeGlobalId, seqGlobalId);
-      overlayContext = { slotRank };
-      return factory(overlayCtrl, overlayContext);
-    },
-  );
-
-  // Map overflow policy → ESPHome script mode + maxRuns.
-  const scriptMode = overflowToScriptMode(overflow);
-  const maxRuns = overflow === 'queue' ? queueLength : undefined;
-
-  return useVisibility(ctrl, { autoHide, scriptMode, maxRuns });
-}
-
-// ── Multi-slot path ─────────────────────────────────────────────────────────
+// ── Slot allocation & coordination ──────────────────────────────────────────
 
 /**
- * Multi-slot: pre-allocate N overlay slots with first-free allocation.
+ * Pre-allocate N overlay slots with first-free allocation.
  *
- * Each slot gets its own overlay + auto-hide script pair (always mode: restart).
+ * Each slot gets its own overlay + show/hide script pair (always mode: restart).
  * A coordinator script dispatches `show()` calls to the first inactive slot,
  * backed by per-slot active/seq array globals and a monotonic counter.
- *
- * Slot state globals:
- * - `g_slot_active_<key>`: integer[] — per-slot active flag (0/1)
- * - `g_slot_seq_<key>`: integer[] — per-slot sequence number
- * - `g_seq_counter_<key>`: integer — monotonic counter
  *
  * The per-slot show script sets active[i]=1, seq[i]=counter++, then shows.
  * The per-slot hide script sets active[i]=0, then hides.
@@ -253,34 +217,54 @@ function buildSingleSlot(
  * The coordinator's hide() stops all slot scripts, hides all overlays, and
  * resets the array globals.
  */
-function buildMultiSlot(
+function buildSlotOverlay(
   zOrder: number,
   maxVisible: number,
   autoHide: string | number | false,
   overflow: 'replace' | 'queue' | 'drop',
   queueLength: number,
-  factory: TransientOverlayFactory,
+  factory: TransientOverlayFactory<Record<string, unknown>>,
 ): TransientOverlayController {
+  // Read controller param declarations — needed for building per-slot show
+  // script userParamDecls/globalSetActions. Global registration and proxy
+  // building is handled by useOverlay via forwarded metadata.
+  const controllerParams = readControllerParamMeta(factory);
+
+  // Build userParams and global-set prefix actions for per-slot show scripts.
+  const userParamDecls: Array<{ name: string; irType: unknown }> = [];
+  const globalSetActions: IRActionNode[] = [];
+  if (controllerParams && controllerParams.length > 0) {
+    for (const p of controllerParams) {
+      userParamDecls.push({ name: p.name, irType: p.irType });
+      globalSetActions.push(irGlobalSet(p.globalId, p.irType, irTriggerVarExpression(p.name)));
+    }
+  }
+  const hasParams = userParamDecls.length > 0;
+
   // ── 1. Create N overlay slots ─────────────────────────────────────────
 
-  const slotOverlayCtrls: OverlayController[] = [];
+  const slotOverlayCtrls: OverlayController<Record<string, unknown>>[] = [];
 
   // We need the template key before creating overlays to generate globals.
   let slotStateGlobals: ReturnType<typeof createSlotStateGlobals> | undefined;
 
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
+    // Forward meta so useOverlay handles global registration + proxy building.
+    const wrapperFactory = (overlayCtrl: OverlayController, paramsProxy?: Record<string, unknown>) => {
+      // On first slot, create shared slot state globals.
+      if (!slotStateGlobals) {
+        const templateKey = (overlayCtrl as unknown as { [k: symbol]: unknown })[OVERLAY_TEMPLATE_KEY as symbol] as string;
+        slotStateGlobals = createSlotStateGlobals(templateKey, maxVisible);
+      }
+      const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
+      return factory(overlayCtrl, { slotRank, paramsProxy });
+    };
+    forwardControllerParamMeta(factory, wrapperFactory);
+
     const ctrl = useOverlay(
       { zOrder },
-      (overlayCtrl) => {
-        // On first slot, create shared slot state globals.
-        if (!slotStateGlobals) {
-          const templateKey = (overlayCtrl as unknown as { [k: symbol]: unknown })[OVERLAY_TEMPLATE_KEY as symbol] as string;
-          slotStateGlobals = createSlotStateGlobals(templateKey, maxVisible);
-        }
-        const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
-        return factory(overlayCtrl, { slotRank });
-      },
+      wrapperFactory as OverlayFactory<Record<string, unknown>>,
     );
     slotOverlayCtrls.push(ctrl);
   }
@@ -308,6 +292,7 @@ function buildMultiSlot(
 
     // Show script: set active[i]=1, seq[i]=counter, counter++, overlay_show, [delay, overlay_hide]
     const showActions: IRActionNode[] = [
+      ...globalSetActions,
       irArraySet(activeGlobalId, IR_INT_ARRAY, irLiteralExpression(i), irLiteralExpression(1)),
       irArraySet(seqGlobalId, IR_INT_ARRAY, irLiteralExpression(i), seqCounterRead),
       irGlobalSet(seqCounterGlobalId, IR_INT, irBinary('+', seqCounterRead, irLiteralExpression(1))),
@@ -329,6 +314,7 @@ function buildMultiSlot(
         generateDeterministicId('scr', `transient_slot_show_${templateKey}`),
         showActions,
         { [ctrlBindingKey]: slotOverlayCtrls[i] },
+        hasParams ? userParamDecls : undefined,
       ),
       { mode: 'restart' },
     );
@@ -367,6 +353,7 @@ function buildMultiSlot(
     slotScriptPairs,
     needsWait,
     maxVisible,
+    hasParams ? userParamDecls : undefined,
   );
 
   const coordinatorShowActions: IRActionNode[] = [ifChain];
@@ -386,6 +373,8 @@ function buildMultiSlot(
     makeSyntheticScript(
       generateDeterministicId('scr', `transient_coord_show_${firstTemplateKey}`),
       coordinatorShowActions,
+      undefined,
+      hasParams ? userParamDecls : undefined,
     ),
     coordinatorShowOpts,
   );
@@ -427,7 +416,6 @@ function buildMultiSlot(
 /**
  * Create shared slot state globals (active array, seq array, seq counter).
  *
- * Used by both single-slot and multi-slot paths for a consistent API.
  * Registers the globals in both the reactive scope (YAML generation) and
  * the global scope context (action compiler symbol lookup).
  */
@@ -537,7 +525,13 @@ function buildFirstFreeDispatchChain(
   slotScriptPairs: OverlayScriptPair[],
   needsWait: boolean,
   maxVisible: number,
+  userParamDecls?: Array<{ name: string; irType: unknown }>,
 ): IRActionNode {
+  // Build forwarded userArgs for script.execute calls (pass-through from coordinator params).
+  const forwardedArgs = userParamDecls && userParamDecls.length > 0
+    ? Object.fromEntries(userParamDecls.map(p => [p.name, irTriggerVarExpression(p.name)]))
+    : undefined;
+
   function buildBranch(slotIndex: number): IRActionNode[] {
     const actions: IRActionNode[] = [];
     const showHandle = slotScriptPairs[slotIndex].show;
@@ -545,7 +539,10 @@ function buildFirstFreeDispatchChain(
       actions.push(irScriptWait(showHandle.id));
     }
     const closureIndex = (showHandle as unknown as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX];
-    actions.push(irScriptExecute(showHandle.id, closureIndex !== undefined ? { closureIndex } : undefined));
+    actions.push(irScriptExecute(showHandle.id, {
+      ...(closureIndex !== undefined ? { closureIndex } : {}),
+      ...(forwardedArgs ? { userArgs: forwardedArgs } : {}),
+    }));
     return actions;
   }
 
@@ -558,6 +555,17 @@ function buildFirstFreeDispatchChain(
 
   function activeAtIndex(index: number) {
     return irArrayIndex(activeGlobalRead, irLiteralExpression(index), 'int');
+  }
+
+  // Base case: 1 slot → unconditionally dispatch to slot 0
+  if (maxVisible === 1) {
+    const actions = buildBranch(0);
+    // Wrap in a trivially-true if to satisfy the single IRActionNode return.
+    // The ESPHome serializer optimizes this away.
+    return irIfAction(
+      irLambdaCondition(irLiteralExpression(true)),
+      actions,
+    );
   }
 
   // Base case: 2 slots → if active[0]==0 then slot 0, else slot 1
@@ -602,11 +610,16 @@ function makeSyntheticScript(
   id: string,
   actions: IRActionNode[],
   refBindings?: Record<string, unknown>,
+  userParams?: Array<{ name: string; irType: unknown }>,
 ) {
   return Object.assign(
     () => Promise.resolve(),
     {
-      __compiledScript: { id, then: actions },
+      __compiledScript: {
+        id,
+        then: actions,
+        ...(userParams && userParams.length > 0 ? { userParams } : {}),
+      },
       ...(refBindings ? { __refBindings: refBindings } : {}),
     },
   );
