@@ -223,7 +223,7 @@ export {
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-  irLiteralExpression, irLocalVarExpression, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
+  irLiteralExpression, irLocalVarExpression, irGlobalRead, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
 } from './ir/index';
 export {
   irVarDeclStatement, irAssignStatement, irIfStatement,

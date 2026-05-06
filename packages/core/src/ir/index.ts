@@ -134,6 +134,7 @@ export {
   irArrayMethod,
   irLiteralExpression,
   irLocalVarExpression,
+  irGlobalRead,
   irFunctionExpression,
   irTriggerVarExpression,
   inferLiteralExprType,

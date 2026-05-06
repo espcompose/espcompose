@@ -62,8 +62,8 @@ import {
   irLambdaCondition,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
-import { irBinary, irLiteralExpression, irArrayIndex, irTernary, irTriggerVarExpression } from '../ir/expr-builders';
-import type { IRExpression, IRGlobalReadExpression } from '../ir/expr-types';
+import { irBinary, irLiteralExpression, irArrayIndex, irTernary, irTriggerVarExpression, irGlobalRead } from '../ir/expr-builders';
+import type { IRExpression } from '../ir/expr-types';
 import { IR_INT, IR_INT_ARRAY } from '../ir/types';
 import type { IRType } from '../ir/types';
 import type { OverlayController } from './useOverlay';
@@ -298,11 +298,7 @@ function buildSlotOverlay(
   const slotShowScripts: ScriptHandle[] = [];
   const slotHideScripts: ScriptHandle[] = [];
 
-  const seqCounterRead: IRGlobalReadExpression = {
-    kind: 'expr:global_read',
-    globalId: seqCounterGlobalId,
-    type: 'int',
-  };
+  const seqCounterRead = irGlobalRead(seqCounterGlobalId, 'int');
 
   for (let i = 0; i < maxVisible; i++) {
     const internal = readOverlayControllerInternal(slotOverlayCtrls[i]);
@@ -471,16 +467,8 @@ function buildSlotRankMemo(
   activeGlobalId: string,
   seqGlobalId: string,
 ): Signal<number> {
-  const activeRead: IRGlobalReadExpression = {
-    kind: 'expr:global_read',
-    globalId: activeGlobalId,
-    type: 'int_array',
-  };
-  const seqRead: IRGlobalReadExpression = {
-    kind: 'expr:global_read',
-    globalId: seqGlobalId,
-    type: 'int_array',
-  };
+  const activeRead = irGlobalRead(activeGlobalId, 'int_array');
+  const seqRead = irGlobalRead(seqGlobalId, 'int_array');
 
   // seq[mySlot] — the sequence number of this slot
   const mySeq = irArrayIndex(seqRead, irLiteralExpression(slotIndex), 'int');
@@ -542,11 +530,7 @@ function buildFirstFreeDispatchChain(
   }
 
   // Read active[i] — global_read of the array, then array_index op.
-  const activeGlobalRead: IRGlobalReadExpression = {
-    kind: 'expr:global_read',
-    globalId: activeGlobalId,
-    type: 'int_array',
-  };
+  const activeGlobalRead = irGlobalRead(activeGlobalId, 'int_array');
 
   function activeAtIndex(index: number) {
     return irArrayIndex(activeGlobalRead, irLiteralExpression(index), 'int');
@@ -616,11 +600,7 @@ function buildAllIdleResetAction(
   seqCounterGlobalId: string,
   slotCount: number,
 ): IRActionNode {
-  const activeGlobalRead: IRGlobalReadExpression = {
-    kind: 'expr:global_read',
-    globalId: activeGlobalId,
-    type: 'int_array',
-  };
+  const activeGlobalRead = irGlobalRead(activeGlobalId, 'int_array');
 
   // Build: active[0]==0 && active[1]==0 && ... && active[N-1]==0
   let allIdle: IRExpression = irBinary(

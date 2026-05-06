@@ -12,6 +12,7 @@
 import ts from 'typescript';
 import {
   scanForHAEntities as scanForHAEntitiesShared,
+  detectGlobalHookCall,
   type HAEntityInfo,
 } from './expr-compiler.js';
 import {
@@ -19,7 +20,7 @@ import {
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
 import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, generateId, generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, hashGlobalFingerprint, hashFnv1a, generateId, generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
 function irTypeKey(vt: IRType): string {
@@ -208,40 +209,53 @@ function extractScriptUserParams(
 }
 
 /**
- * Infer the target-agnostic value type for a script parameter from its
- * TypeScript type annotation.
+ * Infer the target-agnostic value type for a TypeScript type.
  *
+ * Handles:
  * - `Int` (branded number from @espcompose/core) → { type: 'int' }
  * - `number` → { type: 'float' }
  * - `string` → { type: 'string' }
  * - `boolean` → { type: 'bool' }
+ * - Intersection types (unwraps Signal<T> wrappers and Int brands)
+ * - Base constraint recursion for generic type parameters
  */
-function inferParamIRType(
-  param: ts.ParameterDeclaration,
-  checker: ts.TypeChecker,
-): IRType | null {
-  const type = checker.getTypeAtLocation(param);
+function inferIRTypeFromTsType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
+  if (depth > 5) return null;
 
   // Check for Int branded type (number & { __espcompose_int__: true })
-  // First check the intersection structure, then fall back to alias symbol name.
+  // Also unwraps Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
   if (type.isIntersection()) {
     const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
     if (hasNumber) {
       const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
       if (hasIntBrand) return IR_INT;
     }
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
+      if (t.flags & ts.TypeFlags.String) return IR_STRING;
+      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
+    }
   }
   // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
   if (type.aliasSymbol?.name === 'Int') return IR_INT;
 
-  // Plain number
+  // Plain primitives
   if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  // String
   if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  // Boolean
   if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
 
+  // Recurse into base constraint for generic type parameters
+  const baseConstraint = checker.getBaseConstraintOfType(type);
+  if (baseConstraint && baseConstraint !== type) return inferIRTypeFromTsType(baseConstraint, checker, depth + 1);
+
   return null;
+}
+
+function inferParamIRType(
+  param: ts.ParameterDeclaration,
+  checker: ts.TypeChecker,
+): IRType | null {
+  return inferIRTypeFromTsType(checker.getTypeAtLocation(param), checker);
 }
 
 /**
@@ -260,32 +274,16 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer)) {
-        // ── useGlobal('type', { __key: '...' }) — volatile ────────
-        if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
-          const typeArg = node.initializer.arguments[0];
-          if (ts.isStringLiteral(typeArg)) {
-            const irType = globalTypeToIRType(typeArg.text as GlobalType);
-            const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
-            if (fingerprint) {
-              const globalId = hashGlobalFingerprint(fingerprint);
-              const sym = checker.getSymbolAtLocation(node.name);
-              if (sym) {
-                globalHandles.set(sym, { id: globalId, irType });
-              }
-            }
-          }
-        }
-
-        // ── useRetainedGlobal('type', 'key', opts?) — retained ───
-        if (isCoreExportCall(node.initializer, 'useRetainedGlobal', checker) && node.initializer.arguments.length >= 2) {
-          const typeArg = node.initializer.arguments[0];
-          const keyArg = node.initializer.arguments[1];
-          if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-            const irType = globalTypeToIRType(typeArg.text as GlobalType);
-            const globalId = hashGlobalFingerprint(keyArg.text);
+        const info = detectGlobalHookCall(node.initializer, checker);
+        if (info) {
+          const fingerprint = info.kind === 'retained'
+            ? info.retainedKey!
+            : extractKeyFromOpts(node.initializer.arguments[1]);
+          if (fingerprint) {
+            const globalId = hashGlobalFingerprint(fingerprint);
             const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
-              globalHandles.set(sym, { id: globalId, irType });
+              globalHandles.set(sym, { id: globalId, irType: info.irType });
             }
           }
         }
@@ -841,28 +839,9 @@ function extractOverlayPayloadDeclsFromType(
 
 /**
  * Infer IRType for an overlay param field type.
- * Unwraps Signal<T> wrappers and maps to int/float/string/bool.
+ * Delegates to inferIRTypeFromTsType which handles Signal<T> unwrapping,
+ * Int brands, and base constraint recursion.
  */
-function inferOverlayFieldIRType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
-  if (depth > 5) return null;
-  // Unwrap Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
-  if (type.isIntersection()) {
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
-    if (hasNumber) {
-      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return IR_INT;
-    }
-    for (const t of type.types) {
-      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
-      if (t.flags & ts.TypeFlags.String) return IR_STRING;
-      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
-    }
-  }
-  if (type.aliasSymbol?.name === 'Int') return IR_INT;
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
-  const baseConstraint = checker.getBaseConstraintOfType(type);
-  if (baseConstraint && baseConstraint !== type) return inferOverlayFieldIRType(baseConstraint, checker, depth + 1);
-  return null;
+function inferOverlayFieldIRType(type: ts.Type, checker: ts.TypeChecker): IRType | null {
+  return inferIRTypeFromTsType(type, checker);
 }
