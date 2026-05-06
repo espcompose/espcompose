@@ -26,11 +26,9 @@ import {
   translateReactiveExprIR,
   scanForHAEntities,
   scanForGlobalHandles,
-  scanForControllerParams,
   type ExprCompilerContext,
   type HAEntityInfo,
   type GlobalExprInfo,
-  type ControllerParamFields,
   type DependencyInfo,
   mapTsTypeToExprType,
 } from './expr-compiler.js';
@@ -68,16 +66,12 @@ export function transformReactiveExpressions(
   const globals = new Map<ts.Symbol, GlobalExprInfo>();
   scanForGlobalHandles(sourceFile, globals, checker);
 
-  // Pass 0b: Scan for controller param access (useToast<P>, useTransientOverlay<P>)
-  const controllerParams = new Map<ts.Symbol, ControllerParamFields>();
-  scanForControllerParams(sourceFile, controllerParams, checker);
-
   // Pass 0.5: Inject __key into non-retained useGlobal() calls
   injectGlobalKeys(sourceFile, checker, edits, diagnostics);
 
   const onTransform = () => { transformCount++; };
 
-  walkNode(sourceFile, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform);
+  walkNode(sourceFile, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
 
   // If transforms were applied, ensure '__espcompose' is importable
   if (transformCount > 0) {
@@ -207,7 +201,6 @@ function walkNode(
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   globals: Map<ts.Symbol, GlobalExprInfo>,
-  controllerParams: Map<ts.Symbol, ControllerParamFields>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
@@ -217,18 +210,18 @@ function walkNode(
     const jsxExpr = node.initializer;
     const expr = jsxExpr.expression;
     if (expr) {
-      processJsxAttributeExpression(expr, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform);
+      processJsxAttributeExpression(expr, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     }
   }
 
   // Process explicit useMemo() calls anywhere in the file (not just JSX)
   if (ts.isCallExpression(node) && isMemoCall(node, checker)) {
-    processExplicitMemo(node, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform);
+    processExplicitMemo(node, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     return; // Don't recurse into children — we've handled this node
   }
 
   ts.forEachChild(node, child => {
-    walkNode(child, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform);
+    walkNode(child, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
   });
 }
 
@@ -238,7 +231,6 @@ function processJsxAttributeExpression(
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   globals: Map<ts.Symbol, GlobalExprInfo>,
-  controllerParams: Map<ts.Symbol, ControllerParamFields>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
@@ -248,7 +240,7 @@ function processJsxAttributeExpression(
 
   // useMemo() in JSX — AST-compile it
   if (isMemoCall(expr, checker)) {
-    processExplicitMemo(expr, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform);
+    processExplicitMemo(expr, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     return;
   }
 
@@ -261,7 +253,7 @@ function processJsxAttributeExpression(
     for (const prop of expr.properties) {
       if (ts.isPropertyAssignment(prop) && prop.initializer) {
         processJsxAttributeExpression(
-          prop.initializer, sourceFile, checker, haEntities, globals, controllerParams, edits, diagnostics, onTransform,
+          prop.initializer, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform,
         );
       }
     }
@@ -278,7 +270,6 @@ function processJsxAttributeExpression(
     globals,
     dependencies: new Map(),
     slots: [],
-    controllerParams: controllerParams.size > 0 ? controllerParams : undefined,
   };
 
   const irResult = translateReactiveExprIR(expr, ctx);
@@ -329,7 +320,6 @@ function processExplicitMemo(
   checker: ts.TypeChecker,
   haEntities: Map<ts.Symbol, HAEntityInfo>,
   globals: Map<ts.Symbol, GlobalExprInfo>,
-  controllerParams: Map<ts.Symbol, ControllerParamFields>,
   edits: SourceEdit[],
   diagnostics: TransformDiagnostic[],
   onTransform: () => void,
@@ -464,7 +454,6 @@ function processExplicitMemo(
     globals,
     dependencies: new Map(),
     slots: [],
-    controllerParams: controllerParams.size > 0 ? controllerParams : undefined,
   };
 
   const irResult = translateReactiveExprIR(bodyExpr, ctx);

@@ -108,7 +108,7 @@ export {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
-  OVERLAY_CONTROLLER_PARAMS,
+  OVERLAY_PAYLOAD_GLOBALS,
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';

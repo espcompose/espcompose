@@ -11,10 +11,10 @@ import type { IRType, ScriptMode } from '../ir/types';
 import type { ScriptHandle, ScriptOptions } from './useScript';
 import { defineSyntheticScript } from './useScript';
 import { normalizeDuration } from './global-shared';
-import type { ScriptParamGlobalDecl } from './global-shared';
+import type { OverlayPayloadGlobalDecl } from './global-shared';
 import type { OverlayController } from './useOverlay';
 import {
-  OVERLAY_CONTROLLER_PARAMS,
+  OVERLAY_PAYLOAD_GLOBALS,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_Z_ORDER,
@@ -29,10 +29,10 @@ export interface OverlayControllerInternalInfo {
   templateKey: string;
   instanceIndex: number;
   zOrder: number;
-  controllerParams?: ScriptParamGlobalDecl[];
+  payloadDecls?: OverlayPayloadGlobalDecl[];
 }
 
-export interface ControllerParamPlan {
+export interface OverlayPayloadPlan {
   userParamDecls: Array<{ name: string; irType: IRType }>;
   globalSetActions: IRActionNode[];
   hasParams: boolean;
@@ -43,7 +43,7 @@ interface OverlayControllerInternalShape {
   [OVERLAY_TEMPLATE_KEY]: string;
   [OVERLAY_INSTANCE_INDEX]: number;
   [OVERLAY_Z_ORDER]: number;
-  [OVERLAY_CONTROLLER_PARAMS]?: ScriptParamGlobalDecl[];
+  [OVERLAY_PAYLOAD_GLOBALS]?: OverlayPayloadGlobalDecl[];
 }
 
 export function readOverlayControllerInternal(
@@ -54,18 +54,18 @@ export function readOverlayControllerInternal(
     templateKey: internal[OVERLAY_TEMPLATE_KEY],
     instanceIndex: internal[OVERLAY_INSTANCE_INDEX],
     zOrder: internal[OVERLAY_Z_ORDER],
-    controllerParams: internal[OVERLAY_CONTROLLER_PARAMS],
+    payloadDecls: internal[OVERLAY_PAYLOAD_GLOBALS],
   };
 }
 
-export function buildControllerParamPlan(
-  controllerParams?: readonly ScriptParamGlobalDecl[],
-): ControllerParamPlan {
+export function buildOverlayPayloadPlan(
+  payloadDecls?: readonly OverlayPayloadGlobalDecl[],
+): OverlayPayloadPlan {
   const userParamDecls: Array<{ name: string; irType: IRType }> = [];
   const globalSetActions: IRActionNode[] = [];
 
-  if (controllerParams && controllerParams.length > 0) {
-    for (const param of controllerParams) {
+  if (payloadDecls && payloadDecls.length > 0) {
+    for (const param of payloadDecls) {
       userParamDecls.push({ name: param.name, irType: param.irType });
       globalSetActions.push(
         irGlobalSet(param.globalId, param.irType, irTriggerVarExpression(param.name)),

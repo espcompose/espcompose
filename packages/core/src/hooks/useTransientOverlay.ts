@@ -39,14 +39,14 @@ import { generateDeterministicId } from '../id';
 import { CLOSURE_INDEX } from '../actions';
 import {
   globalScopeContext,
-  readControllerParamMeta,
-  setControllerParamMeta,
-  forwardControllerParamMeta,
+  readOverlayPayloadMeta,
+  setOverlayPayloadMeta,
+  forwardOverlayPayloadMeta,
 } from './global-shared';
-import type { GlobalDefinition, ScriptParamGlobalDecl, TransientOverlayContext } from './global-shared';
+import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext } from './global-shared';
 import type { OverlayFactory } from './useOverlay';
 import {
-  buildControllerParamPlan,
+  buildOverlayPayloadPlan,
   buildOverlayLifecycleScripts,
   readOverlayControllerInternal,
 } from './overlay-lifecycle';
@@ -227,27 +227,27 @@ function buildSlotOverlay(
   queueLength: number,
   factory: TransientOverlayFactory<Record<string, unknown>>,
 ): TransientOverlayController {
-  // Read controller param declarations — needed for building per-slot show
+  // Read overlay payload declarations — needed for building per-slot show
   // script userParamDecls/globalSetActions. Global registration and proxy
   // building is handled by useOverlay via forwarded metadata.
-  const controllerParams = readControllerParamMeta(factory);
+  const payloadDecls = readOverlayPayloadMeta(factory);
   // Coordinator script declares the user-facing param signature (names + types).
   // The actual param-global writes happen per-slot using slot-specific
   // globalIds so each slot's reactive bindings read its own storage.
-  const coordinatorParamPlan = buildControllerParamPlan(controllerParams);
+  const coordinatorParamPlan = buildOverlayPayloadPlan(payloadDecls);
 
-  // Build per-slot param decls: each slot gets its own backing globalIds so
+  // Build per-slot payload decls: each slot gets its own backing globalIds so
   // reactive bindings inside each slot's factory subtree read independent
   // storage. Without this, all slots' bindings would share one global and
   // the latest show() would visually overwrite earlier slots.
-  const perSlotControllerParams: (ScriptParamGlobalDecl[] | undefined)[] = [];
+  const perSlotPayloadDecls: (OverlayPayloadGlobalDecl[] | undefined)[] = [];
   for (let i = 0; i < maxVisible; i++) {
-    if (!controllerParams || controllerParams.length === 0) {
-      perSlotControllerParams.push(undefined);
+    if (!payloadDecls || payloadDecls.length === 0) {
+      perSlotPayloadDecls.push(undefined);
       continue;
     }
-    perSlotControllerParams.push(
-      controllerParams.map(p => ({
+    perSlotPayloadDecls.push(
+      payloadDecls.map(p => ({
         name: p.name,
         irType: p.irType,
         globalId: maxVisible > 1 ? `${p.globalId}_s${i}` : p.globalId,
@@ -275,13 +275,13 @@ function buildSlotOverlay(
       const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
       return factory(overlayCtrl, { slotRank, payload });
     };
-    const slotParams = perSlotControllerParams[i];
-    if (slotParams) {
+    const slotPayload = perSlotPayloadDecls[i];
+    if (slotPayload) {
       // Override (don't forward) so useOverlay registers per-slot globalIds
       // and binds the factory's reactive proxies to this slot's storage.
-      setControllerParamMeta(wrapperFactory, slotParams);
+      setOverlayPayloadMeta(wrapperFactory, slotPayload);
     } else {
-      forwardControllerParamMeta(factory, wrapperFactory);
+      forwardOverlayPayloadMeta(factory, wrapperFactory);
     }
 
     const ctrl = useOverlay(
@@ -306,9 +306,9 @@ function buildSlotOverlay(
 
   for (let i = 0; i < maxVisible; i++) {
     const internal = readOverlayControllerInternal(slotOverlayCtrls[i]);
-    // Per-slot param plan: writes to this slot's own backing globals so
+    // Per-slot payload plan: writes to this slot's own backing globals so
     // each slot's reactive bindings stay independent.
-    const slotParamPlan = buildControllerParamPlan(perSlotControllerParams[i]);
+    const slotParamPlan = buildOverlayPayloadPlan(perSlotPayloadDecls[i]);
 
     const pair = buildOverlayLifecycleScripts(slotOverlayCtrls[i], {
       autoHide,

@@ -76,8 +76,8 @@ export function transformScriptFile(
 
   findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, globalHandles, edits);
 
-  // Pass 3: Inject __scriptParamGlobals metadata onto controller param factory callbacks
-  injectControllerParamsMeta(sourceFile, checker, edits);
+  // Pass 3: Inject __overlayPayloadGlobals metadata onto overlay factory callbacks
+  injectOverlayPayloadMeta(sourceFile, checker, edits);
 
   // Apply edits in reverse position order so indices stay valid
   let text = sourceFile.getFullText();
@@ -737,37 +737,37 @@ function serializeWithExpressions(value: unknown): string {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Script param globals metadata injection
+// Overlay payload globals metadata injection
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Scan for useTransientOverlay<P>(...) calls whose factory callback has a
- * second parameter (the params proxy). Injects `__scriptParamGlobals` metadata
+ * second parameter (the params proxy). Injects `__overlayPayloadGlobals` metadata
  * onto the factory function so the runtime hook can allocate matching globals
  * and wire the show script.
  *
  * Injection pattern:
- *   useTransientOverlay(config, Object.assign((ctrl, params) => ..., { __scriptParamGlobals: [...] }))
+ *   useTransientOverlay(config, Object.assign((ctrl, params) => ..., { __overlayPayloadGlobals: [...] }))
  */
-function injectControllerParamsMeta(
+function injectOverlayPayloadMeta(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker,
   edits: SourceEdit[],
 ): void {
   const walk = (node: ts.Node): void => {
-    if (ts.isCallExpression(node) && isControllerParamHook(node, checker)) {
+    if (ts.isCallExpression(node) && isOverlayPayloadHook(node, checker)) {
       const factoryArg = findFactoryArg(node);
       if (factoryArg && factoryArg.parameters.length >= 2) {
         const paramsParam = factoryArg.parameters[1];
         if (ts.isIdentifier(paramsParam.name)) {
-          const paramFields = extractControllerParamDeclsFromType(paramsParam, node, checker);
+          const paramFields = extractOverlayPayloadDeclsFromType(paramsParam, node, checker);
           if (paramFields.length > 0) {
-            // Wrap factory in Object.assign(factory, { __scriptParamGlobals: [...] })
+            // Wrap factory in Object.assign(factory, { __overlayPayloadGlobals: [...] })
             const factoryStart = factoryArg.getStart(sourceFile);
             const factoryEnd = factoryArg.getEnd();
             const meta = JSON.stringify(paramFields);
             edits.push({ position: factoryStart, text: 'Object.assign(' });
-            edits.push({ position: factoryEnd, text: `, { __scriptParamGlobals: ${meta} })` });
+            edits.push({ position: factoryEnd, text: `, { __overlayPayloadGlobals: ${meta} })` });
           }
         }
       }
@@ -777,7 +777,7 @@ function injectControllerParamsMeta(
   walk(sourceFile);
 }
 
-function isControllerParamHook(call: ts.CallExpression, checker: ts.TypeChecker): boolean {
+function isOverlayPayloadHook(call: ts.CallExpression, checker: ts.TypeChecker): boolean {
   const callee = call.expression;
   if (!ts.isIdentifier(callee)) return false;
   const sym = checker.getSymbolAtLocation(callee);
@@ -803,10 +803,10 @@ function findFactoryArg(call: ts.CallExpression): ts.ArrowFunction | ts.Function
 }
 
 /**
- * Extract controller param field declarations from the factory's `ctx.payload`
+ * Extract overlay payload field declarations from the factory's `ctx.payload`
  * type. Returns an array of { name, globalId, irType } for each field.
  */
-function extractControllerParamDeclsFromType(
+function extractOverlayPayloadDeclsFromType(
   paramsParam: ts.ParameterDeclaration,
   call: ts.CallExpression,
   checker: ts.TypeChecker,

@@ -36,9 +36,9 @@ import type { IRActionNode } from '../ir/action-types';
 import {
   globalScopeContext,
   irTypeToExprType,
-  readControllerParamMeta,
+  readOverlayPayloadMeta,
 } from './global-shared';
-import type { ScriptParamGlobalDecl, GlobalDefinition } from './global-shared';
+import type { OverlayPayloadGlobalDecl, GlobalDefinition } from './global-shared';
 import { irOverlayShow, irOverlayHide } from '../ir/action-types';
 import { generateDeterministicId } from '../id';
 import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
@@ -56,8 +56,8 @@ export const OVERLAY_INSTANCE_INDEX: unique symbol = Symbol('overlay.instanceInd
 export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
 /** Script ID for lifecycle-managed show/hide (e.g. toast auto-hide). */
 export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
-/** Controller param declarations (ScriptParamGlobalDecl[]). Symbol-keyed so useVisibility can read them. */
-export const OVERLAY_CONTROLLER_PARAMS: unique symbol = Symbol('overlay.controllerParams');
+/** Overlay payload declarations (OverlayPayloadGlobalDecl[]). Symbol-keyed so useVisibility can read them. */
+export const OVERLAY_PAYLOAD_GLOBALS: unique symbol = Symbol('overlay.payloadGlobals');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -157,10 +157,10 @@ export interface OverlayConfig {
   zOrder?: number;
 }
 
-// ── Script param global declarations ────────────────────────────────────────
+// ── Overlay payload global declarations ──────────────────────────────────────
 
 // Re-export from canonical location for backward compatibility.
-export type { ScriptParamGlobalDecl } from './global-shared';
+export type { OverlayPayloadGlobalDecl } from './global-shared';
 
 // ── Scope frame ─────────────────────────────────────────────────────────────
 
@@ -303,16 +303,16 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
     frame.definitions.set(templateKey, def);
   }
 
-  // ── Controller param handling ──────────────────────────────────────────
-  // Read compiler-injected __scriptParamGlobals metadata, register globals,
+  // ── Overlay payload handling ──────────────────────────────────────────
+  // Read compiler-injected __overlayPayloadGlobals metadata, register globals,
   // and build reactive proxies for the factory's params parameter.
-  const controllerParams = readControllerParamMeta(factory);
+  const payloadDecls = readOverlayPayloadMeta(factory);
   let paramsProxy: Record<string, unknown> | undefined;
 
-  if (controllerParams && controllerParams.length > 0) {
+  if (payloadDecls && payloadDecls.length > 0) {
     const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition> | undefined;
     if (scopeMap) {
-      for (const p of controllerParams) {
+      for (const p of payloadDecls) {
         if (!scopeMap.has(p.globalId)) {
           scopeMap.set(p.globalId, { id: p.globalId, irType: p.irType });
           registerComponent({
@@ -326,7 +326,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
     }
 
     paramsProxy = {};
-    for (const p of controllerParams) {
+    for (const p of payloadDecls) {
       const dep: IRDependency = { kind: 'dependency', sourceId: p.globalId, sourceType: 'global' };
       paramsProxy[p.name] = new IRReactiveNodeImpl({
         kind: 'expression',
@@ -339,7 +339,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
   }
 
   const instanceIndex = def.instances.length;
-  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, controllerParams);
+  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, payloadDecls);
 
   // Evaluate the factory — captures this instance's unique closures
   // (entity bindings, compiled action handlers, useMemo() expressions).
@@ -370,7 +370,7 @@ function createOverlayController<P>(
   templateKey: string,
   instanceIndex: number,
   zOrder: number,
-  controllerParams?: ScriptParamGlobalDecl[],
+  payloadDecls?: OverlayPayloadGlobalDecl[],
 ): OverlayController<P> {
   return {
     show(): void {
@@ -382,7 +382,7 @@ function createOverlayController<P>(
     [OVERLAY_TEMPLATE_KEY]: templateKey,
     [OVERLAY_INSTANCE_INDEX]: instanceIndex,
     [OVERLAY_Z_ORDER]: zOrder,
-    [OVERLAY_CONTROLLER_PARAMS]: controllerParams,
+    [OVERLAY_PAYLOAD_GLOBALS]: payloadDecls,
     [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
       if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
       if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];

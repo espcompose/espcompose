@@ -44,7 +44,7 @@ import type { IRDurationLiteral } from '../ir/action-types';
 import { normalizeDuration } from './global-shared';
 import type { OverlayController } from './useOverlay';
 import {
-  buildControllerParamPlan,
+  buildOverlayPayloadPlan,
   buildOverlayLifecycleScripts,
   readOverlayControllerInternal,
   scriptOptionsForMode,
@@ -182,7 +182,7 @@ function buildOverlayScriptPairWithMode(
   maxRuns?: number,
 ): ReturnType<typeof buildOverlayLifecycleScripts> {
   const internal = readOverlayControllerInternal(ctrl);
-  const params = buildControllerParamPlan(internal.controllerParams);
+  const params = buildOverlayPayloadPlan(internal.payloadDecls);
 
   return buildOverlayLifecycleScripts(ctrl, {
     autoHide,
