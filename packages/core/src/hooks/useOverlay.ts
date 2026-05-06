@@ -248,7 +248,7 @@ export type OverlayFactory<P = void> = P extends void
  * get their own unique overlay definition.
  *
  * When parameterized (`P` is not void), `useOverlay` reads compiler-injected
- * `__scriptParamGlobals` metadata from the factory, registers backing globals,
+ * `__overlayPayloadGlobals` metadata from the factory, registers backing globals,
  * builds a reactive params proxy, and attaches the param declarations to the
  * controller so downstream hooks (e.g. `useVisibility`) can wire show scripts.
  *

@@ -109,7 +109,7 @@ function compileOverlayShowParams(
                      ts.isStringLiteral(prop.name) ? prop.name.text : null;
     if (!propName) continue;
 
-    // Derive globalId using same algorithm as extractControllerParamFields.
+    // Derive globalId using same algorithm as extractOverlayPayloadDeclsFromType.
     const globalId = generateDeterministicId('g', `${controllerRef}_${propName}`);
 
     // Infer IRType from the P type's property.
