@@ -700,16 +700,17 @@ function isControllerParamHookCall(call: ts.CallExpression, checker: ts.TypeChec
 /**
  * Extract controller param fields from a `useTransientOverlay` or `useOverlay` call.
  *
- * Finds the factory callback argument, checks for a 2nd parameter (params),
- * reads its type's properties, and maps each to a deterministic global ID.
+ * Finds the factory callback argument, checks for a 2nd parameter (`ctx`),
+ * locates its `payload` property type, and maps each member of `payload` to a
+ * deterministic global ID.
  */
 function extractControllerParamFields(
   call: ts.CallExpression,
   controllerParams: Map<ts.Symbol, ControllerParamFields>,
   checker: ts.TypeChecker,
-  hookName: string,
+  _hookName: string,
 ): void {
-  // Find the factory argument — it's an arrow/function with (ctrl, params) signature.
+  // Find the factory argument — it's an arrow/function with (ctrl, ctx) signature.
   let factoryArg: ts.Expression | undefined;
   for (const arg of call.arguments) {
     if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
@@ -718,7 +719,7 @@ function extractControllerParamFields(
     }
   }
   if (!factoryArg || (!ts.isArrowFunction(factoryArg) && !ts.isFunctionExpression(factoryArg))) return;
-  if (factoryArg.parameters.length < 2) return; // No params parameter
+  if (factoryArg.parameters.length < 2) return; // No ctx parameter
 
   const paramsParam = factoryArg.parameters[1];
   if (!ts.isIdentifier(paramsParam.name)) return;
@@ -726,8 +727,14 @@ function extractControllerParamFields(
   const paramsSym = checker.getSymbolAtLocation(paramsParam.name);
   if (!paramsSym) return;
 
-  // Get the type of the params parameter and extract property fields.
-  const paramsType = checker.getTypeAtLocation(paramsParam);
+  // Resolve the `payload` property on the ctx type. User-declared payload
+  // fields live under `ctx.payload.<field>` for both useOverlay and
+  // useTransientOverlay.
+  const ctxType = checker.getTypeAtLocation(paramsParam);
+  const payloadProp = ctxType.getProperty('payload');
+  if (!payloadProp) return;
+  const payloadType = checker.getTypeOfSymbolAtLocation(payloadProp, paramsParam);
+
   const fields = new Map<string, GlobalExprInfo>();
 
   // Derive a base key from the variable declaration hosting this call.
@@ -738,10 +745,8 @@ function extractControllerParamFields(
     varName = parent.name.text;
   }
 
-  for (const prop of paramsType.getProperties()) {
+  for (const prop of payloadType.getProperties()) {
     const propName = prop.name;
-    // Skip framework-internal fields from TransientOverlayContext (only for useTransientOverlay)
-    if (hookName === 'useTransientOverlay' && (propName === 'slotRank' || propName === 'paramsProxy')) continue;
     const propType = checker.getTypeOfSymbolAtLocation(prop, paramsParam);
     const irType = inferControllerParamIRType(propType, checker);
     if (!irType) continue;
@@ -986,12 +991,19 @@ function compilePropertyAccessIR(
 ): IRExpression | null {
   const propName = node.name.text;
 
-  if (ts.isIdentifier(node.expression)) {
-    const sym = ctx.checker.getSymbolAtLocation(node.expression);
-
-    // Controller param access → global_read (params.fieldName)
-    if (sym && ctx.controllerParams) {
-      const paramFields = ctx.controllerParams.get(sym);
+  // Controller param access → global_read (ctx.payload.fieldName).
+  // For both useOverlay and useTransientOverlay, user-declared payload fields
+  // live under `ctx.payload.<field>`. The registered controllerParams map key
+  // is the ctx symbol; we resolve it via the inner `.payload` access.
+  if (
+    ctx.controllerParams &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    node.expression.name.text === 'payload' &&
+    ts.isIdentifier(node.expression.expression)
+  ) {
+    const ctxSym = ctx.checker.getSymbolAtLocation(node.expression.expression);
+    if (ctxSym) {
+      const paramFields = ctx.controllerParams.get(ctxSym);
       if (paramFields) {
         const fieldInfo = paramFields.fields.get(propName);
         if (fieldInfo) {
@@ -1005,6 +1017,10 @@ function compilePropertyAccessIR(
         }
       }
     }
+  }
+
+  if (ts.isIdentifier(node.expression)) {
+    const sym = ctx.checker.getSymbolAtLocation(node.expression);
 
     // Global handle .value access → global_read
     const globalInfo = sym ? ctx.globals.get(sym) : undefined;

@@ -283,15 +283,6 @@ export interface TransientOverlayContext {
    * Reactive — updates automatically when any slot shows or hides.
    */
   slotRank: Signal<number>;
-
-  /**
-   * Params proxy for parameterized overlay factories.
-   *
-   * When `__scriptParamGlobals` metadata is present on the factory, this object
-   * provides Signal-typed fields backed by the corresponding globals.
-   * Callers (e.g. useToast) forward this as the `params` argument.
-   */
-  paramsProxy?: Record<string, unknown>;
 }
 
 // ── Duration normalization ─────────────────────────────────────────────────
@@ -345,4 +336,15 @@ export function forwardControllerParamMeta(source: unknown, target: unknown): vo
 export function readControllerParamMeta(factory: unknown): ScriptParamGlobalDecl[] | undefined {
   const meta = (factory as Record<string, unknown>)[FACTORY_META_KEY];
   return meta as ScriptParamGlobalDecl[] | undefined;
+}
+
+/**
+ * Attach controller param metadata directly onto a wrapper factory.
+ *
+ * Use this when a higher-level hook needs to override the param declarations
+ * (e.g. `useTransientOverlay` substituting per-slot global IDs) rather than
+ * forwarding the source factory's metadata verbatim.
+ */
+export function setControllerParamMeta(target: unknown, meta: readonly ScriptParamGlobalDecl[]): void {
+  (target as Record<string, unknown>)[FACTORY_META_KEY] = meta;
 }

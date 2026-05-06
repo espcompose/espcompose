@@ -803,16 +803,22 @@ function findFactoryArg(call: ts.CallExpression): ts.ArrowFunction | ts.Function
 }
 
 /**
- * Extract controller param field declarations from the factory's params type.
- * Returns an array of { name, globalId, irType } for each field.
+ * Extract controller param field declarations from the factory's `ctx.payload`
+ * type. Returns an array of { name, globalId, irType } for each field.
  */
 function extractControllerParamDeclsFromType(
   paramsParam: ts.ParameterDeclaration,
   call: ts.CallExpression,
   checker: ts.TypeChecker,
 ): Array<{ name: string; globalId: string; irType: IRType }> {
-  const paramsType = checker.getTypeAtLocation(paramsParam);
+  const ctxType = checker.getTypeAtLocation(paramsParam);
   const fields: Array<{ name: string; globalId: string; irType: IRType }> = [];
+
+  // User-declared payload fields live under `ctx.payload.<field>` for both
+  // useOverlay and useTransientOverlay.
+  const payloadProp = ctxType.getProperty('payload');
+  if (!payloadProp) return fields;
+  const payloadType = checker.getTypeOfSymbolAtLocation(payloadProp, paramsParam);
 
   // Derive base key from the variable hosting this call
   let varName = 'overlay';
@@ -821,10 +827,8 @@ function extractControllerParamDeclsFromType(
     varName = parent.name.text;
   }
 
-  for (const prop of paramsType.getProperties()) {
+  for (const prop of payloadType.getProperties()) {
     const propName = prop.name;
-    // Skip framework-internal fields from TransientOverlayContext
-    if (propName === 'slotRank' || propName === 'paramsProxy') continue;
     const propType = checker.getTypeOfSymbolAtLocation(prop, paramsParam);
     const irType = inferOverlayFieldIRType(propType, checker);
     if (!irType) continue;

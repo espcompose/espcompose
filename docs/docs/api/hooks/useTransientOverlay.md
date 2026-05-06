@@ -45,15 +45,15 @@ const ctrl = useTransientOverlay(config, factory): TransientOverlayController;
 ### TransientOverlayFactory
 
 ```typescript
-type TransientOverlayFactory = (
+type TransientOverlayFactory<P = {}> = (
   ctrl: OverlayController,
-  context: TransientOverlayContext,
+  context: TransientOverlayContext & { payload: P },
 ) => EspComposeElement | EspComposeElement[];
 ```
 
 The factory receives:
 - `ctrl` — standard overlay controller with `show()`/`hide()` markers
-- `context` — slot state for reactive positioning (e.g. `slotRank` for compacted stacking)
+- `context` — slot state for reactive positioning (e.g. `context.slotRank` for compacted stacking) plus `context.payload`, which exposes the user-declared payload fields typed by `P` (each field backed by a reactive global)
 
 ### TransientOverlayController
 
@@ -109,6 +109,26 @@ const queued = useTransientOverlay(
 
 // Each show() call queues; up to 5 pending requests
 <Button text="Show" onPress={() => { queued.show(); }} />
+```
+
+## Parameterized payload
+
+Pass per-`show()` data to the factory by parameterizing the hook with a payload type. Fields on `ctx.payload` are backed by reactive globals, so referencing them inside JSX automatically wires up reactive updates:
+
+```tsx
+type ToastPayload = { msg: string };
+
+const toast = useTransientOverlay<ToastPayload>(
+  { zOrder: 100, autoHide: '3s' },
+  (ctrl, ctx) => (
+    <MyToast>
+      <Text text={ctx.payload.msg} />
+    </MyToast>
+  ),
+);
+
+// Caller passes the payload at show time:
+<Button text="Save" onPress={() => { toast.show({ msg: 'Saved!' }); }} />
 ```
 
 ## How it works

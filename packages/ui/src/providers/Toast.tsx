@@ -11,9 +11,8 @@
  * `useTransientOverlay`.
  */
 
-import type { EspComposeElement, VisibilityController, Signal } from '@espcompose/core';
+import type { EspComposeElement, VisibilityController } from '@espcompose/core';
 import { createElement, useTransientOverlay, createContext, useContext, createLvglWidget } from '@espcompose/core';
-import type { TransientOverlayContext } from '@espcompose/core';
 import { Toast as ToastWidget } from '../components/Toast';
 import { Text } from '../components/Text';
 
@@ -23,6 +22,8 @@ import { Text } from '../components/Text';
 
 /** Controller returned by `useToast()`. */
 export type ToastController = VisibilityController<{ msg: string }>;
+
+type ToastPayload = { msg: string };
 
 export interface ToastProviderProps {
   /**
@@ -98,12 +99,12 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
     children,
   } = props;
 
-  const ctrl = useTransientOverlay(
+  const ctrl = useTransientOverlay<ToastPayload>(
     { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
-    (overlayCtrl: unknown, ctx: TransientOverlayContext & { msg: Signal<string> }) => {
+    (_ctrl, ctx) => {
       return (
         <ToastWidget bottomOffset={ctx.slotRank * slotHeight}>
-          <Text text={ctx.msg} />
+          <Text text={ctx.payload.msg} />
         </ToastWidget>
       );
     },

@@ -40,9 +40,10 @@ import { CLOSURE_INDEX } from '../actions';
 import {
   globalScopeContext,
   readControllerParamMeta,
+  setControllerParamMeta,
   forwardControllerParamMeta,
 } from './global-shared';
-import type { GlobalDefinition, TransientOverlayContext } from './global-shared';
+import type { GlobalDefinition, ScriptParamGlobalDecl, TransientOverlayContext } from './global-shared';
 import type { OverlayFactory } from './useOverlay';
 import {
   buildControllerParamPlan,
@@ -131,11 +132,14 @@ export interface TransientOverlayConfig {
 
 /**
  * Factory for the overlay queue. Receives the overlay controller and a
- * TransientOverlayContext containing slot state for reactive compaction.
+ * `TransientOverlayContext` containing slot state for reactive compaction.
+ *
+ * User-declared payload fields (typed by `P`) are exposed under `ctx.payload`,
+ * so factories read them as `ctx.payload.<fieldName>`.
  */
 export type TransientOverlayFactory<P extends Record<string, unknown> = Record<string, never>> = (
   ctrl: OverlayController,
-  context: TransientOverlayContext & P,
+  context: TransientOverlayContext & { payload: P },
 ) => EspComposeElement | EspComposeElement[];
 
 /**
@@ -227,7 +231,29 @@ function buildSlotOverlay(
   // script userParamDecls/globalSetActions. Global registration and proxy
   // building is handled by useOverlay via forwarded metadata.
   const controllerParams = readControllerParamMeta(factory);
-  const paramPlan = buildControllerParamPlan(controllerParams);
+  // Coordinator script declares the user-facing param signature (names + types).
+  // The actual param-global writes happen per-slot using slot-specific
+  // globalIds so each slot's reactive bindings read its own storage.
+  const coordinatorParamPlan = buildControllerParamPlan(controllerParams);
+
+  // Build per-slot param decls: each slot gets its own backing globalIds so
+  // reactive bindings inside each slot's factory subtree read independent
+  // storage. Without this, all slots' bindings would share one global and
+  // the latest show() would visually overwrite earlier slots.
+  const perSlotControllerParams: (ScriptParamGlobalDecl[] | undefined)[] = [];
+  for (let i = 0; i < maxVisible; i++) {
+    if (!controllerParams || controllerParams.length === 0) {
+      perSlotControllerParams.push(undefined);
+      continue;
+    }
+    perSlotControllerParams.push(
+      controllerParams.map(p => ({
+        name: p.name,
+        irType: p.irType,
+        globalId: maxVisible > 1 ? `${p.globalId}_s${i}` : p.globalId,
+      })),
+    );
+  }
 
   // ── 1. Create N overlay slots ─────────────────────────────────────────
 
@@ -239,21 +265,24 @@ function buildSlotOverlay(
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
     // Forward meta so useOverlay handles global registration + proxy building.
-    const wrapperFactory = (overlayCtrl: OverlayController, paramsProxy?: Record<string, unknown>) => {
+    const wrapperFactory = (overlayCtrl: OverlayController, ctx?: { payload: Record<string, unknown> }) => {
       // On first slot, create shared slot state globals.
       if (!slotStateGlobals) {
         const { templateKey } = readOverlayControllerInternal(overlayCtrl);
         slotStateGlobals = createSlotStateGlobals(templateKey, maxVisible);
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
-      // Spread paramsProxy fields onto ctx so user-declared params (e.g.
-      // `ctx.msg`) resolve to their reactive Signal at runtime, matching the
-      // type signature `TransientOverlayContext & P`. Without this spread,
-      // `ctx.msg` would be `undefined` whenever the static reactive
-      // transformer doesn't pre-compile the JSX expression.
-      return factory(overlayCtrl, { slotRank, paramsProxy, ...(paramsProxy ?? {}) });
+      const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
+      return factory(overlayCtrl, { slotRank, payload });
     };
-    forwardControllerParamMeta(factory, wrapperFactory);
+    const slotParams = perSlotControllerParams[i];
+    if (slotParams) {
+      // Override (don't forward) so useOverlay registers per-slot globalIds
+      // and binds the factory's reactive proxies to this slot's storage.
+      setControllerParamMeta(wrapperFactory, slotParams);
+    } else {
+      forwardControllerParamMeta(factory, wrapperFactory);
+    }
 
     const ctrl = useOverlay(
       { zOrder },
@@ -277,15 +306,18 @@ function buildSlotOverlay(
 
   for (let i = 0; i < maxVisible; i++) {
     const internal = readOverlayControllerInternal(slotOverlayCtrls[i]);
+    // Per-slot param plan: writes to this slot's own backing globals so
+    // each slot's reactive bindings stay independent.
+    const slotParamPlan = buildControllerParamPlan(perSlotControllerParams[i]);
 
     const pair = buildOverlayLifecycleScripts(slotOverlayCtrls[i], {
       autoHide,
       showIdSeed: `transient_slot_show_${internal.templateKey}`,
       hideIdSeed: `transient_slot_hide_${internal.templateKey}`,
-      userParams: paramPlan.userParams,
+      userParams: slotParamPlan.userParams,
       showScriptOptions: { mode: 'restart' },
       showPrefixActions: [
-        ...paramPlan.globalSetActions,
+        ...slotParamPlan.globalSetActions,
         irArraySet(activeGlobalId, IR_INT_ARRAY, irLiteralExpression(i), irLiteralExpression(1)),
         irArraySet(seqGlobalId, IR_INT_ARRAY, irLiteralExpression(i), seqCounterRead),
         irGlobalSet(seqCounterGlobalId, IR_INT, irBinary('+', seqCounterRead, irLiteralExpression(1))),
@@ -324,7 +356,7 @@ function buildSlotOverlay(
     slotScriptPairs,
     needsWait,
     maxVisible,
-    paramPlan.userParams,
+    coordinatorParamPlan.userParams,
   );
 
   const coordinatorShowActions: IRActionNode[] = [ifChain];
@@ -342,7 +374,7 @@ function buildSlotOverlay(
   const coordinatorShowScript = defineSyntheticScript({
     id: generateDeterministicId('scr', `transient_coord_show_${firstTemplateKey}`),
     actions: coordinatorShowActions,
-    userParams: paramPlan.userParams,
+    userParams: coordinatorParamPlan.userParams,
     opts: coordinatorShowOpts,
   });
 

@@ -4,7 +4,7 @@
  * Validates the parameterized Toast.Provider + useToast() feature:
  *
  *   - Toast.Provider uses useTransientOverlay<{msg: string}> internally
- *   - The factory's params.msg field is compiled to a global_read expression
+ *   - The factory reads `ctx.payload.msg` which is compiled to a global_read expression
  *   - show() requires passing { msg: string }
  *   - Show script receives userParams declarations and prepends irGlobalSet actions
  *   - The script_execute action forwards userArgs to the script

@@ -220,12 +220,13 @@ export function peekOverlayDefinitions(): OverlayDefinition[] {
  * inside trigger handlers without forward-reference issues.
  *
  * When the overlay is parameterized (`P` is not void), a second argument
- * provides reactive proxies for each field of `P`. These are backed by
- * globals so `params.fieldName` compiles to `global_read`.
+ * (`ctx`) is provided whose `payload` field exposes reactive proxies for
+ * each field of `P`. These are backed by globals so `ctx.payload.fieldName`
+ * compiles to `global_read`.
  */
 export type OverlayFactory<P = void> = P extends void
   ? (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[]
-  : (ctrl: OverlayController<P>, params: P) => EspComposeElement | EspComposeElement[];
+  : (ctrl: OverlayController<P>, ctx: { payload: P }) => EspComposeElement | EspComposeElement[];
 
 // ── Hook call counter ───────────────────────────────────────────────────────
 // Disambiguates multiple useOverlay() calls within the same component.
@@ -345,7 +346,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
   // Even though only instance #0's widget subtree is emitted, every
   // instance must evaluate so the compiler captures its data.
   const rendered = paramsProxy
-    ? (factory as (ctrl: OverlayController<P>, params: unknown) => EspComposeElement | EspComposeElement[])(ctrl, paramsProxy)
+    ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
     : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl);
 
   def.instances.push({ index: instanceIndex, rendered });
