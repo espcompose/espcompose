@@ -9,6 +9,18 @@
  */
 
 import ts from 'typescript';
+import { type IRType, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Shared types
+// ────────────────────────────────────────────────────────────────────────────
+
+/** A positional source text edit: insert at `position`, or replace `[position, deleteEnd)`. */
+export interface SourceEdit {
+  position: number;
+  deleteEnd?: number;
+  text: string;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Internals
@@ -234,4 +246,57 @@ export function isRefType(checker: ts.TypeChecker, symbol: ts.Symbol): boolean {
   // Structural brand check — works for destructured props where alias is lost.
   // Ref<T> always carries a REF_BRAND unique symbol property.
   return hasRefBrand(type);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// IRType inference from TypeScript types
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Infer an IRType from a TypeScript type.
+ *
+ * Handles:
+ * - Int branded types (number & { __espcompose_int__: true })
+ * - Signal<T> intersection unwrapping
+ * - Plain primitives (number, string, boolean)
+ * - Base constraint recursion for generic type parameters
+ *
+ * Returns null if the type cannot be mapped to an IRType.
+ * Throws if constraint recursion exceeds safe depth (indicates a TS type bug).
+ */
+export function inferIRTypeFromTsType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
+  if (depth > 5) {
+    throw new Error(
+      `inferIRTypeFromTsType: base constraint recursion exceeded depth 5. ` +
+      `This likely indicates an unexpected circular type constraint.`,
+    );
+  }
+
+  // Check for Int branded type (number & { __espcompose_int__: true })
+  // Also unwraps Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
+  if (type.isIntersection()) {
+    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
+    if (hasNumber) {
+      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
+      if (hasIntBrand) return IR_INT;
+    }
+    for (const t of type.types) {
+      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
+      if (t.flags & ts.TypeFlags.String) return IR_STRING;
+      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
+    }
+  }
+  // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
+  if (type.aliasSymbol?.name === 'Int') return IR_INT;
+
+  // Plain primitives
+  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
+  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
+  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
+
+  // Recurse into base constraint for generic type parameters
+  const baseConstraint = checker.getBaseConstraintOfType(type);
+  if (baseConstraint && baseConstraint !== type) return inferIRTypeFromTsType(baseConstraint, checker, depth + 1);
+
+  return null;
 }

@@ -20,7 +20,7 @@
 
 import ts from 'typescript';
 import type { TransformOutput, TransformDiagnostic } from './script-transformer.js';
-import { isCoreExportCall } from './type-brands.js';
+import { isCoreExportCall, type SourceEdit } from './type-brands.js';
 import {
   hasSignalBrand,
   translateReactiveExprIR,
@@ -34,16 +34,11 @@ import {
 } from './expr-compiler.js';
 import { compileStatementBlockIR } from './stmt-compiler.js';
 import { injectGlobalKeys } from './global-key-injector.js';
+import { injectOverlayPayloadMeta } from './overlay-payload-injector.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
 // ────────────────────────────────────────────────────────────────────────────
-
-interface SourceEdit {
-  position: number;
-  deleteEnd?: number;
-  text: string;
-}
 
 /**
  * Transform a TypeScript source file: compile reactive JSX attribute
@@ -68,6 +63,9 @@ export function transformReactiveExpressions(
 
   // Pass 0.5: Inject __key into non-retained useGlobal() calls
   injectGlobalKeys(sourceFile, checker, edits, diagnostics);
+
+  // Pass 0.75: Inject __overlayPayloadGlobals onto overlay factory callbacks
+  injectOverlayPayloadMeta(sourceFile, checker, edits);
 
   const onTransform = () => { transformCount++; };
 

@@ -7,12 +7,8 @@ import {
   irLiteralExpression,
   irTriggerVarExpression,
   generateDeterministicId,
-  IR_INT,
-  IR_FLOAT,
-  IR_STRING,
-  IR_BOOL,
 } from '@espcompose/core/internals';
-import { hasOverlayBrand } from '../../type-brands.js';
+import { hasOverlayBrand, inferIRTypeFromTsType } from '../../type-brands.js';
 import { translateScriptExprIR } from '../../expr-compiler.js';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
@@ -168,27 +164,4 @@ function inferIRTypeFromSymbol(sym: ts.Symbol, location: ts.Node, checker: ts.Ty
 function inferIRTypeFromExpression(expr: ts.Expression, checker: ts.TypeChecker): IRType | null {
   const type = checker.getTypeAtLocation(expr);
   return inferIRTypeFromTsType(type, checker);
-}
-
-function inferIRTypeFromTsType(type: ts.Type, checker: ts.TypeChecker): IRType | null {
-  if (type.isIntersection()) {
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
-    if (hasNumber) {
-      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return IR_INT;
-    }
-    for (const t of type.types) {
-      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
-      if (t.flags & ts.TypeFlags.String) return IR_STRING;
-      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
-    }
-  }
-  if (type.aliasSymbol?.name === 'Int') return IR_INT;
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
-
-  const baseConstraint = checker.getBaseConstraintOfType(type);
-  if (baseConstraint && baseConstraint !== type) return inferIRTypeFromTsType(baseConstraint, checker);
-  return null;
 }

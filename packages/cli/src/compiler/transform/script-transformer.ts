@@ -19,8 +19,8 @@ import {
   compileActionBody,
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
-import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, hashGlobalFingerprint, hashFnv1a, generateId, generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { isRefType, isCoreExportCall, inferIRTypeFromTsType } from './type-brands.js';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, hashGlobalFingerprint, hashFnv1a, generateId, generateDeterministicId } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
 function irTypeKey(vt: IRType): string {
@@ -77,9 +77,6 @@ export function transformScriptFile(
 
   findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, globalHandles, edits);
 
-  // Pass 3: Inject __overlayPayloadGlobals metadata onto overlay factory callbacks
-  injectOverlayPayloadMeta(sourceFile, checker, edits);
-
   // Apply edits in reverse position order so indices stay valid
   let text = sourceFile.getFullText();
   for (const edit of edits.sort((a, b) => b.position - a.position)) {
@@ -93,10 +90,7 @@ export function transformScriptFile(
 // Internal types
 // ────────────────────────────────────────────────────────────────────────────
 
-interface SourceEdit {
-  position: number;
-  text: string;
-}
+import type { SourceEdit } from './type-brands.js';
 
 interface TransformContext {
   checker: ts.TypeChecker;
@@ -206,49 +200,6 @@ function extractScriptUserParams(
     }
   }
   return params;
-}
-
-/**
- * Infer the target-agnostic value type for a TypeScript type.
- *
- * Handles:
- * - `Int` (branded number from @espcompose/core) → { type: 'int' }
- * - `number` → { type: 'float' }
- * - `string` → { type: 'string' }
- * - `boolean` → { type: 'bool' }
- * - Intersection types (unwraps Signal<T> wrappers and Int brands)
- * - Base constraint recursion for generic type parameters
- */
-function inferIRTypeFromTsType(type: ts.Type, checker: ts.TypeChecker, depth = 0): IRType | null {
-  if (depth > 5) return null;
-
-  // Check for Int branded type (number & { __espcompose_int__: true })
-  // Also unwraps Signal<T> intersection: T & { [SIGNAL_BRAND]: true }
-  if (type.isIntersection()) {
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
-    if (hasNumber) {
-      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return IR_INT;
-    }
-    for (const t of type.types) {
-      if (t.flags & ts.TypeFlags.Number) return IR_FLOAT;
-      if (t.flags & ts.TypeFlags.String) return IR_STRING;
-      if (t.flags & ts.TypeFlags.Boolean) return IR_BOOL;
-    }
-  }
-  // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return IR_INT;
-
-  // Plain primitives
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
-
-  // Recurse into base constraint for generic type parameters
-  const baseConstraint = checker.getBaseConstraintOfType(type);
-  if (baseConstraint && baseConstraint !== type) return inferIRTypeFromTsType(baseConstraint, checker, depth + 1);
-
-  return null;
 }
 
 function inferParamIRType(
@@ -732,116 +683,4 @@ function serializeWithExpressions(value: unknown): string {
     /\{"__dynamic__":"([^"]+)"\}/g,
     (_match, expr) => expr,
   );
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Overlay payload globals metadata injection
-// ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Scan for useTransientOverlay<P>(...) calls whose factory callback has a
- * second parameter (the params proxy). Injects `__overlayPayloadGlobals` metadata
- * onto the factory function so the runtime hook can allocate matching globals
- * and wire the show script.
- *
- * Injection pattern:
- *   useTransientOverlay(config, Object.assign((ctrl, params) => ..., { __overlayPayloadGlobals: [...] }))
- */
-function injectOverlayPayloadMeta(
-  sourceFile: ts.SourceFile,
-  checker: ts.TypeChecker,
-  edits: SourceEdit[],
-): void {
-  const walk = (node: ts.Node): void => {
-    if (ts.isCallExpression(node) && isOverlayPayloadHook(node, checker)) {
-      const factoryArg = findFactoryArg(node);
-      if (factoryArg && factoryArg.parameters.length >= 2) {
-        const paramsParam = factoryArg.parameters[1];
-        if (ts.isIdentifier(paramsParam.name)) {
-          const paramFields = extractOverlayPayloadDeclsFromType(paramsParam, node, checker);
-          if (paramFields.length > 0) {
-            // Wrap factory in Object.assign(factory, { __overlayPayloadGlobals: [...] })
-            const factoryStart = factoryArg.getStart(sourceFile);
-            const factoryEnd = factoryArg.getEnd();
-            const meta = JSON.stringify(paramFields);
-            edits.push({ position: factoryStart, text: 'Object.assign(' });
-            edits.push({ position: factoryEnd, text: `, { __overlayPayloadGlobals: ${meta} })` });
-          }
-        }
-      }
-    }
-    ts.forEachChild(node, walk);
-  };
-  walk(sourceFile);
-}
-
-function isOverlayPayloadHook(call: ts.CallExpression, checker: ts.TypeChecker): boolean {
-  const callee = call.expression;
-  if (!ts.isIdentifier(callee)) return false;
-  const sym = checker.getSymbolAtLocation(callee);
-  if (!sym) return false;
-  const resolved = sym.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(sym) : sym;
-  const name = resolved.name;
-  if (name !== 'useTransientOverlay' && name !== 'useOverlay') return false;
-  const declarations = resolved.getDeclarations();
-  if (!declarations) return false;
-  return declarations.some(d => {
-    const fileName = d.getSourceFile().fileName;
-    return fileName.includes('@espcompose/core') || fileName.includes('packages/core/');
-  });
-}
-
-function findFactoryArg(call: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | null {
-  for (const arg of call.arguments) {
-    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
-      return arg;
-    }
-  }
-  return null;
-}
-
-/**
- * Extract overlay payload field declarations from the factory's `ctx.payload`
- * type. Returns an array of { name, globalId, irType } for each field.
- */
-function extractOverlayPayloadDeclsFromType(
-  paramsParam: ts.ParameterDeclaration,
-  call: ts.CallExpression,
-  checker: ts.TypeChecker,
-): Array<{ name: string; globalId: string; irType: IRType }> {
-  const ctxType = checker.getTypeAtLocation(paramsParam);
-  const fields: Array<{ name: string; globalId: string; irType: IRType }> = [];
-
-  // User-declared payload fields live under `ctx.payload.<field>` for both
-  // useOverlay and useTransientOverlay.
-  const payloadProp = ctxType.getProperty('payload');
-  if (!payloadProp) return fields;
-  const payloadType = checker.getTypeOfSymbolAtLocation(payloadProp, paramsParam);
-
-  // Derive base key from the variable hosting this call
-  let varName = 'overlay';
-  const parent = call.parent;
-  if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
-    varName = parent.name.text;
-  }
-
-  for (const prop of payloadType.getProperties()) {
-    const propName = prop.name;
-    const propType = checker.getTypeOfSymbolAtLocation(prop, paramsParam);
-    const irType = inferOverlayFieldIRType(propType, checker);
-    if (!irType) continue;
-    const globalId = generateDeterministicId('g', `${varName}_${propName}`);
-    fields.push({ name: propName, globalId, irType });
-  }
-
-  return fields;
-}
-
-/**
- * Infer IRType for an overlay param field type.
- * Delegates to inferIRTypeFromTsType which handles Signal<T> unwrapping,
- * Int brands, and base constraint recursion.
- */
-function inferOverlayFieldIRType(type: ts.Type, checker: ts.TypeChecker): IRType | null {
-  return inferIRTypeFromTsType(type, checker);
 }

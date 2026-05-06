@@ -11,14 +11,8 @@
  */
 
 import ts from 'typescript';
-import { isCoreExportCall } from './type-brands.js';
+import { isCoreExportCall, type SourceEdit } from './type-brands.js';
 import type { TransformDiagnostic } from './script-transformer.js';
-
-interface SourceEdit {
-  position: number;
-  deleteEnd?: number;
-  text: string;
-}
 
 /**
  * Walk the AST looking for `useGlobal()` and `useRetainedGlobal()` calls.

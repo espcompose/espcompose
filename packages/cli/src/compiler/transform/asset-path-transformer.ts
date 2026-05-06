@@ -17,12 +17,7 @@
 
 import * as path from 'path';
 import ts from 'typescript';
-
-interface SourceEdit {
-  position: number;
-  deleteEnd: number;
-  text: string;
-}
+import type { SourceEdit } from './type-brands.js';
 
 /**
  * Non-filesystem references that should be left as-is.
