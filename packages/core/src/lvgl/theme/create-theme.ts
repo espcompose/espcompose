@@ -20,7 +20,7 @@ import { createElement, Fragment } from '../../runtime';
 import { registerTheme, getThemeRegistry } from './registry';
 import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 import { useTheme } from './reactive-proxy';
-import { createLvglWidget, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
+import { createLvglContextProvider, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
 import { throwCompileTimeOnly } from '../../errors';
 
 // ── Public types ───────────────────────────────────────────────────────────
@@ -191,9 +191,8 @@ export function createTheme<
     return createElement(Fragment, { children });
   }
 
-  const Provider = createLvglWidget(
+  const Provider = createLvglContextProvider(
     ProviderImpl as (props: ThemeProviderProps<string>) => EspComposeElement,
-    { allowedChildIntents: undefined, contextTransparent: true as const },
   );
 
   // ── Handle object ───────────────────────────────────────────────────

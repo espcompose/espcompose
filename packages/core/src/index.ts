@@ -45,7 +45,7 @@ export { createElement, Fragment } from './runtime';
 // Public API — Intent system (explicit re-exports from ./intents/intents)
 // ────────────────────────────────────────────────────────────────────────────
 
-export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglLayoutWidget } from './intents/intents';
+export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglContextProvider, createLvglLayoutWidget } from './intents/intents';
 export type { IntentBrand, IntentComponent, IntentBrandOptions, IntrinsicIntentMeta } from './intents/intents';
 
 // ────────────────────────────────────────────────────────────────────────────

@@ -16,12 +16,12 @@ using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
 Signal<int32_t> sig_ovrl_5739621e_mux;
-Signal<int32_t> sig_ovrl_5b2f470b_mux;
+Signal<int32_t> sig_ovrl_47e40420_mux;
 
 // ── BoundSignals (one per reactive global variable) ──
 BoundSignal<std::string> sig_global_g_d4dff62d;
-BoundSignal<std::vector<int>> sig_global_g_a9281787(std::vector<int>({0}));
-BoundSignal<std::vector<int>> sig_global_g_18e8c612(std::vector<int>({0}));
+BoundSignal<std::vector<int>> sig_global_g_480ee495(std::vector<int>({0}));
+BoundSignal<std::vector<int>> sig_global_g_722709fc(std::vector<int>({0}));
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -135,18 +135,18 @@ static const Scr7716e7d3Closure scr_ref28_closures[] = {
   { 1 }
 };
 
-struct Scr584a68b5Closure {
+struct Scr9b094ea7Closure {
   int __ctrl_instance_index;
 };
-static const Scr584a68b5Closure scr_ref29_closures[] = {
+static const Scr9b094ea7Closure scr_ref29_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct ScrB42ac400Closure {
+struct Scr979cbffeClosure {
   int __ctrl_instance_index;
 };
-static const ScrB42ac400Closure scr_ref30_closures[] = {
+static const Scr979cbffeClosure scr_ref30_closures[] = {
   { 0 },
   { 1 }
 };
@@ -158,11 +158,11 @@ Memo<float> memo_0([]() -> float {
 });
 
 Memo<int32_t> memo_2([]() -> int32_t {
-  return 0 + (espcompose::sig_global_g_a9281787.get()[0] != 0 && espcompose::sig_global_g_18e8c612.get()[0] < espcompose::sig_global_g_18e8c612.get()[0] ? 1 : 0);
+  return 0 + (espcompose::sig_global_g_480ee495.get()[0] != 0 && espcompose::sig_global_g_722709fc.get()[0] < espcompose::sig_global_g_722709fc.get()[0] ? 1 : 0);
 });
 
 Memo<float> memo_3([]() -> float {
-  return (0 + (espcompose::sig_global_g_a9281787.get()[0] != 0 && espcompose::sig_global_g_18e8c612.get()[0] < espcompose::sig_global_g_18e8c612.get()[0] ? 1 : 0)) * 64;
+  return (0 + (espcompose::sig_global_g_480ee495.get()[0] != 0 && espcompose::sig_global_g_722709fc.get()[0] < espcompose::sig_global_g_722709fc.get()[0] ? 1 : 0)) * 64;
 });
 
 // ── Memo aliases (deduplicated) ──
@@ -185,18 +185,18 @@ void bootstrap_runtime() {
 
   // ── Bind global BoundSignals to ESPHome global storage ──
   sig_global_g_d4dff62d.bind(&id(g_d4dff62d));
-  sig_global_g_a9281787.bind(&id(g_a9281787));
-  sig_global_g_18e8c612.bind(&id(g_18e8c612));
+  sig_global_g_480ee495.bind(&id(g_480ee495));
+  sig_global_g_722709fc.bind(&id(g_722709fc));
 
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* theme_index_333e4663_subs[16];
   theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 16);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
-  static NodeBase* sig_global_g_a9281787_subs[2];
-  sig_global_g_a9281787.set_subscriber_storage(sig_global_g_a9281787_subs, 2);
-  static NodeBase* sig_global_g_18e8c612_subs[2];
-  sig_global_g_18e8c612.set_subscriber_storage(sig_global_g_18e8c612_subs, 2);
+  static NodeBase* sig_global_g_480ee495_subs[2];
+  sig_global_g_480ee495.set_subscriber_storage(sig_global_g_480ee495_subs, 2);
+  static NodeBase* sig_global_g_722709fc_subs[2];
+  sig_global_g_722709fc.set_subscriber_storage(sig_global_g_722709fc_subs, 2);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
   thm_333e4663_colors_textPrimary.set_subscriber_storage(thm_333e4663_colors_textPrimary_subs, 1);
   static NodeBase* thm_333e4663_typography_title_subs[1];
@@ -387,9 +387,9 @@ void bootstrap_runtime() {
   thm_333e4663_typography_title.wire(thm_333e4663_typography_title_src, 1);
   static NodeBase* memo_0_sources[] = {&thm_333e4663_sizes_md_paddingX};
   memo_0.wire(memo_0_sources, 1);
-  static NodeBase* memo_2_sources[] = {&sig_global_g_a9281787, &sig_global_g_18e8c612};
+  static NodeBase* memo_2_sources[] = {&sig_global_g_480ee495, &sig_global_g_722709fc};
   memo_2.wire(memo_2_sources, 2);
-  static NodeBase* memo_3_sources[] = {&sig_global_g_a9281787, &sig_global_g_18e8c612};
+  static NodeBase* memo_3_sources[] = {&sig_global_g_480ee495, &sig_global_g_722709fc};
   memo_3.wire(memo_3_sources, 2);
   static NodeBase* binding_0_sources[] = {&thm_333e4663_colors_textPrimary};
   binding_0.wire(binding_0_sources, 1);
@@ -1026,7 +1026,7 @@ lvgl:
           clickable: false
           widgets:
             - obj:
-                id: ovrl_5b2f470b
+                id: ovrl_47e40420
                 hidden: true
                 width: 100%
                 height: 100%
@@ -1107,13 +1107,13 @@ font:
 globals:
   - id: g_d4dff62d
     type: std::string
-  - id: g_a9281787
+  - id: g_480ee495
     initial_value: "{0}"
     type: std::vector<int>
-  - id: g_18e8c612
+  - id: g_722709fc
     initial_value: "{0}"
     type: std::vector<int>
-  - id: g_727c5ec0
+  - id: g_29def1be
     initial_value: "0"
     type: int
 script:
@@ -1144,38 +1144,38 @@ script:
           espcompose::sig_global_g_d4dff62d.set(msg); espcompose::flush();"
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_a9281787.get_mut()[0] = 1;
-          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
+          espcompose::sig_global_g_480ee495.get_mut()[0] = 1;
+          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_18e8c612.get_mut()[0] = id(g_727c5ec0);
-          espcompose::sig_global_g_18e8c612.notify(); espcompose::flush();"
+          espcompose::sig_global_g_722709fc.get_mut()[0] = id(g_29def1be);
+          espcompose::sig_global_g_722709fc.notify(); espcompose::flush();"
       - globals.set:
-          id: g_727c5ec0
+          id: g_29def1be
           value: !lambda "auto& closure =
             espcompose::scr_ref29_closures[closure_index]; (void)closure;
-            return id(g_727c5ec0) + 1;"
+            return id(g_29def1be) + 1;"
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_5b2f470b_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_5b2f470b),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5b2f470b));"
+          espcompose::sig_ovrl_47e40420_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_47e40420),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_47e40420));"
       - delay: 3s
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
-          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
+          espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
+          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"
       - if:
           condition:
             - lambda: !lambda "auto& closure =
                 espcompose::scr_ref29_closures[closure_index]; (void)closure;
-                return id(g_a9281787)[0] == 0;"
+                return id(g_480ee495)[0] == 0;"
           then:
             - globals.set:
-                id: g_727c5ec0
+                id: g_29def1be
                 value: !lambda "auto& closure =
                   espcompose::scr_ref29_closures[closure_index];
                   (void)closure; return 0;"
@@ -1187,19 +1187,19 @@ script:
           id: scr_ref29
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref30_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
-          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
+          espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
+          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref30_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"
       - if:
           condition:
             - lambda: !lambda "auto& closure =
                 espcompose::scr_ref30_closures[closure_index]; (void)closure;
-                return id(g_a9281787)[0] == 0;"
+                return id(g_480ee495)[0] == 0;"
           then:
             - globals.set:
-                id: g_727c5ec0
+                id: g_29def1be
                 value: !lambda "auto& closure =
                   espcompose::scr_ref30_closures[closure_index];
                   (void)closure; return 0;"
@@ -1220,11 +1220,11 @@ script:
     then:
       - script.stop:
           id: scr_ref29
-      - lambda: !lambda "espcompose::sig_global_g_a9281787.get_mut()[0] = 0;
-          espcompose::sig_global_g_a9281787.notify(); espcompose::flush();"
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_5b2f470b), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
+          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
+      - lambda: !lambda "lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"
       - globals.set:
-          id: g_727c5ec0
+          id: g_29def1be
           value: !lambda "return 0;"
 "
 `;

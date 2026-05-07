@@ -252,6 +252,26 @@ export function createLvglContainerWidget<P>(
 }
 
 /**
+ * Create a context-only provider that lives in the LVGL widget tree.
+ *
+ * The component participates in the widget tree (intent: `lvgl:widget`)
+ * and is fully transparent: it accepts any children, passes context through,
+ * and produces no visual output — no wireframe, no ref.
+ *
+ * Use this for providers like `Toast.Provider` or `UITheme.Provider`
+ * that inject context/state but render no LVGL widget of their own.
+ */
+export function createLvglContextProvider<P>(
+  component: FunctionComponent<P>,
+): IntentComponent<P, readonly [typeof LVGL_INTENTS.WIDGET], undefined, undefined, true> {
+  return createComponent(component, {
+    intents: [LVGL_INTENTS.WIDGET] as const,
+    allowedChildIntents: undefined,
+    contextTransparent: true as const,
+  });
+}
+
+/**
  * Create a paired layout parent + child, returning both as a tuple.
  *
  * The parent is a container widget that only accepts children matching

@@ -6,6 +6,7 @@ export {
   createComponent,
   createLvglWidget,
   createLvglContainerWidget,
+  createLvglContextProvider,
   createLvglLayoutWidget,
 } from './intents';
 export type { IntentComponent, IntrinsicIntentMeta, LVGL_INTENTS } from './intents';

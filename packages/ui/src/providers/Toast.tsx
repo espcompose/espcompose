@@ -12,7 +12,7 @@
  */
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
-import { createElement, useTransientOverlay, createContext, useContext, createLvglWidget } from '@espcompose/core';
+import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider } from '@espcompose/core';
 import { Toast as ToastWidget } from '../components/Toast';
 import { Text } from '../components/Text';
 
@@ -149,8 +149,5 @@ export function useToast(): ToastController {
  * </Toast.Provider>
  */
 export const Toast = {
-  Provider: createLvglWidget(ToastProvider, {
-    allowedChildIntents: undefined,
-    contextTransparent: true as const,
-  }),
+  Provider: createLvglContextProvider(ToastProvider),
 };
