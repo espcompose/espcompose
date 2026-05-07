@@ -11,7 +11,28 @@
  */
 
 
-import type { FontToken, HexColor } from '@espcompose/core';
+import type { FontToken, HexColor, ThemeSettings } from '@espcompose/core';
+import type { DensityLevel } from './adaptive';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Theme settings (provider → factory)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Settings passed to UI theme factory functions via the Provider.
+ *
+ * Extends the core display settings with UI-specific fields.
+ * App authors provide these on `<UITheme.Provider settings={...}>`.
+ */
+export interface UIThemeSettings extends ThemeSettings {
+  /** Density preference — controls spacing/sizing scale. */
+  density?: DensityLevel;
+}
+
+/**
+ * A theme factory function — receives settings and returns a ThemeDefinition.
+ */
+export type ThemeFactory = (settings: UIThemeSettings) => ThemeDefinition;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Token types

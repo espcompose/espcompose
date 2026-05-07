@@ -26,7 +26,13 @@ export type {
   RadiusToken,
   StatusToken,
   TextVariant,
+  UIThemeSettings,
+  ThemeFactory,
 } from './theme/types';
+
+// Adaptive helpers (UI layer)
+export { adaptiveDensity } from './theme/adaptive';
+export type { DensityLevel } from './theme/adaptive';
 
 // Components
 export { Screen } from './components/Screen';

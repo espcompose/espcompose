@@ -123,7 +123,7 @@ Memo<int32_t> thm_333e4663_spacing_lg([]() -> int32_t {
   return thm_333e4663_spacing_lg_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {12, 12};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
@@ -167,7 +167,7 @@ static const ScrEbe65a7fClosure scr_ref7_closures[] = {
 struct ScrA6eda146Closure {
   int __ctrl_instance_index;
 };
-static const ScrA6eda146Closure scr_ref42_closures[] = {
+static const ScrA6eda146Closure scr_ref41_closures[] = {
   { 0 },
   { 1 }
 };
@@ -183,7 +183,7 @@ static const ScrCa5e1106Closure scr_ref16_closures[] = {
 struct Scr7716e7d3Closure {
   int __ctrl_instance_index;
 };
-static const Scr7716e7d3Closure scr_ref43_closures[] = {
+static const Scr7716e7d3Closure scr_ref42_closures[] = {
   { 0 },
   { 1 }
 };
@@ -1578,7 +1578,7 @@ espcompose:
 font:
   - id: r_ref35
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref36
     file: gfonts://Roboto
@@ -1600,10 +1600,6 @@ font:
     file: gfonts://Roboto
     size: 18
     bpp: 4
-  - id: r_ref41
-    file: gfonts://Roboto
-    size: 22
-    bpp: 4
 script:
   - id: scr_ref7
     parameters:
@@ -1614,12 +1610,12 @@ script:
           espcompose::sig_ovrl_6321ad22_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_6321ad22),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_6321ad22));"
-  - id: scr_ref42
+  - id: scr_ref41
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref42_closures[closure_index]; (void)closure;
+          espcompose::scr_ref41_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
   - id: scr_ref16
     parameters:
@@ -1630,12 +1626,12 @@ script:
           espcompose::sig_ovrl_5739621e_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_5739621e),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5739621e));"
-  - id: scr_ref43
+  - id: scr_ref42
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref43_closures[closure_index]; (void)closure;
+          espcompose::scr_ref42_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

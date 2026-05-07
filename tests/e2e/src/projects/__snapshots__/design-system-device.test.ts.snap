@@ -107,7 +107,7 @@ Memo<int32_t> thm_333e4663_spacing_lg([]() -> int32_t {
   return thm_333e4663_spacing_lg_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {12, 12};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
@@ -1021,7 +1021,7 @@ espcompose:
 font:
   - id: r_ref15
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref16
     file: gfonts://Roboto
@@ -1042,10 +1042,6 @@ font:
   - id: r_ref20
     file: gfonts://Roboto
     size: 18
-    bpp: 4
-  - id: r_ref21
-    file: gfonts://Roboto
-    size: 22
     bpp: 4
 "
 `;

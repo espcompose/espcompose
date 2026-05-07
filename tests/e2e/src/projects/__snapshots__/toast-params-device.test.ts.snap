@@ -80,7 +80,7 @@ Memo<int32_t> thm_333e4663_spacing_lg([]() -> int32_t {
   return thm_333e4663_spacing_lg_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {12, 12};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
@@ -105,14 +105,14 @@ void select_theme_333e4663(const char* name) {
 struct Scr9b094ea7Closure {
   int __ctrl_instance_index;
 };
-static const Scr9b094ea7Closure scr_ref21_closures[] = {
+static const Scr9b094ea7Closure scr_ref20_closures[] = {
   { 0 }
 };
 
 struct Scr979cbffeClosure {
   int __ctrl_instance_index;
 };
-static const Scr979cbffeClosure scr_ref22_closures[] = {
+static const Scr979cbffeClosure scr_ref21_closures[] = {
   { 0 }
 };
 
@@ -908,7 +908,7 @@ espcompose:
 font:
   - id: r_ref14
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref15
     file: gfonts://Roboto
@@ -930,10 +930,6 @@ font:
     file: gfonts://Roboto
     size: 18
     bpp: 4
-  - id: r_ref20
-    file: gfonts://Roboto
-    size: 22
-    bpp: 4
 globals:
   - id: g_d4dff62d
     type: std::string
@@ -947,34 +943,58 @@ globals:
     initial_value: "0"
     type: int
 script:
-  - id: scr_ref21
+  - id: scr_ref20
     mode: restart
     parameters:
       closure_index: int
       msg: string
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref21_closures[closure_index]; (void)closure;
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_d4dff62d.set(msg); espcompose::flush();"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref21_closures[closure_index]; (void)closure;
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_480ee495.get_mut()[0] = 1;
           espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref21_closures[closure_index]; (void)closure;
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_722709fc.get_mut()[0] = id(g_29def1be);
           espcompose::sig_global_g_722709fc.notify(); espcompose::flush();"
       - globals.set:
           id: g_29def1be
           value: !lambda "auto& closure =
-            espcompose::scr_ref21_closures[closure_index]; (void)closure;
+            espcompose::scr_ref20_closures[closure_index]; (void)closure;
             return id(g_29def1be) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref21_closures[closure_index]; (void)closure;
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
           espcompose::sig_ovrl_47e40420_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_47e40420),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_47e40420));"
       - delay: 3s
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
+          espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
+          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref20_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"
+      - if:
+          condition:
+            - lambda: !lambda "auto& closure =
+                espcompose::scr_ref20_closures[closure_index]; (void)closure;
+                return id(g_480ee495)[0] == 0;"
+          then:
+            - globals.set:
+                id: g_29def1be
+                value: !lambda "auto& closure =
+                  espcompose::scr_ref20_closures[closure_index];
+                  (void)closure; return 0;"
+  - id: scr_ref21
+    parameters:
+      closure_index: int
+    then:
+      - script.stop:
+          id: scr_ref20
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref21_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
@@ -993,30 +1013,6 @@ script:
                 value: !lambda "auto& closure =
                   espcompose::scr_ref21_closures[closure_index];
                   (void)closure; return 0;"
-  - id: scr_ref22
-    parameters:
-      closure_index: int
-    then:
-      - script.stop:
-          id: scr_ref21
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref22_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
-          espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref22_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"
-      - if:
-          condition:
-            - lambda: !lambda "auto& closure =
-                espcompose::scr_ref22_closures[closure_index]; (void)closure;
-                return id(g_480ee495)[0] == 0;"
-          then:
-            - globals.set:
-                id: g_29def1be
-                value: !lambda "auto& closure =
-                  espcompose::scr_ref22_closures[closure_index];
-                  (void)closure; return 0;"
   - id: scr_ref4
     mode: restart
     parameters:
@@ -1027,13 +1023,13 @@ script:
             - lambda: !lambda "return true;"
           then:
             - script.execute:
-                id: scr_ref21
+                id: scr_ref20
                 closure_index: 0
                 msg: !lambda "return msg;"
-  - id: scr_ref23
+  - id: scr_ref22
     then:
       - script.stop:
-          id: scr_ref21
+          id: scr_ref20
       - lambda: !lambda "espcompose::sig_global_g_480ee495.get_mut()[0] = 0;
           espcompose::sig_global_g_480ee495.notify(); espcompose::flush();"
       - lambda: !lambda "lv_obj_add_flag(id(ovrl_47e40420), LV_OBJ_FLAG_HIDDEN);"

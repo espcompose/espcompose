@@ -917,7 +917,7 @@ espcompose:
 font:
   - id: r_ref10
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref11
     file: gfonts://Roboto
@@ -938,10 +938,6 @@ font:
   - id: r_ref15
     file: gfonts://Roboto
     size: 18
-    bpp: 4
-  - id: r_ref16
-    file: gfonts://Roboto
-    size: 22
     bpp: 4
 "
 `;

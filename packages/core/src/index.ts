@@ -221,6 +221,26 @@ export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
 
 // ────────────────────────────────────────────────────────────────────────────
+// Public API — Display environment & adaptive helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+export {
+  classifyDisplay,
+  resolveThemeSettings,
+  adaptiveScreen,
+  adaptiveInput,
+  adaptiveShape,
+} from './lvgl/display';
+export type {
+  DisplayOrientation,
+  DisplayShape,
+  DisplayInput,
+  DisplayClass,
+  ThemeSettings,
+  ResolvedThemeSettings,
+} from './lvgl/display';
+
+// ────────────────────────────────────────────────────────────────────────────
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
