@@ -187,6 +187,7 @@ export { useVisibility } from './hooks/useVisibility';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
+export { useAttachedTrigger } from './hooks/useAttachedTrigger';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 

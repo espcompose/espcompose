@@ -217,3 +217,7 @@ export {
   parseDurationString,
   parseTimeoutString,
 } from './action-types';
+
+// ── Component Contributions ──────────────────────────────────────────────────
+export type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+export { applyContributions } from './apply-contributions';

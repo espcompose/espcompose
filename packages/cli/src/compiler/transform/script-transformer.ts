@@ -297,6 +297,15 @@ function findAndCompileTriggerHandlers(
     }
   }
 
+  // useAttachedTrigger(ref, 'event', () => { ... })
+  if (ts.isCallExpression(node) && isCoreExportCall(node, 'useAttachedTrigger', ctx.checker) &&
+      node.arguments.length >= 3) {
+    const arg = node.arguments[2];
+    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+      compileAndInjectTriggerHandler(arg, ctx, refSymbols, scriptHandles, globalHandles, edits);
+    }
+  }
+
   // Variable initializer containing arrow functions typed as TriggerHandler:
   //   const handler = () => { binding.toggle(); }
   //   const handler = props.onPress ?? (() => { binding.toggle(); })

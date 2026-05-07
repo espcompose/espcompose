@@ -49,28 +49,33 @@ export function executePhase(ctx: PhaseContext): void {
   // Wrap the bundle load and render in both a script scope and a reactive scope.
   let collectedScripts: unknown[] = [];
   let collectedOverlays: unknown[] = [];
+  let collectedContributions: unknown[] = [];
   cjsSDK.startSerializationCapture();
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
-      const { result: config, overlays } = cjsSDK.withOverlayScope(() => {
-        const mod = _require(bundlePath) as { default?: unknown };
+      const { result: overlayResult, overlays } = cjsSDK.withOverlayScope(() => {
+        const { result: config, contributions } = cjsSDK.withContributionScope(() => {
+          const mod = _require(bundlePath) as { default?: unknown };
 
-        const rootElement = mod.default;
+          const rootElement = mod.default;
 
-        if (rootElement == null) {
-          throw new Error(
-            `Entry module does not have a default export. ` +
-              `Make sure your TSX file exports a default ESPCompose element tree.`
-          );
-        }
+          if (rootElement == null) {
+            throw new Error(
+              `Entry module does not have a default export. ` +
+                `Make sure your TSX file exports a default ESPCompose element tree.`
+            );
+          }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
 
-        return rendered;
+          return rendered;
+        });
+        collectedContributions = contributions;
+        return config;
       });
       collectedOverlays = overlays;
-      return config;
+      return overlayResult;
     });
     collectedScripts = scripts;
 
@@ -94,6 +99,7 @@ export function executePhase(ctx: PhaseContext): void {
         reactiveNodes: reactiveNodes ?? [],
         themes,
         lvglTrees,
+        contributions: collectedContributions as BuildSemanticIRInput['contributions'],
       })
     : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] } };
 
@@ -110,6 +116,12 @@ export function executePhase(ctx: PhaseContext): void {
   if (collectedOverlays.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     executeResult.overlays = collectedOverlays as any;
+  }
+
+  // Stash collected component contributions for the IR merge pass.
+  if (collectedContributions.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    executeResult.contributions = collectedContributions as any;
   }
 
   ctx.executeResult = executeResult;

@@ -18,6 +18,8 @@ import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
+import type { ComponentContribution } from './contribution-types';
+import { applyContributions } from './apply-contributions';
 import type {
   SemanticIR,
   IRSection,
@@ -272,6 +274,12 @@ export interface BuildSemanticIRInput {
    * through `configValueToIR()` inside `buildSemanticIR()`.
    */
   lvglTrees?: RawIRWidgetTree[];
+
+  /**
+   * Component contributions collected during render (useAttachedTrigger).
+   * Applied to the IR tree after construction via applyContributions().
+   */
+  contributions?: ComponentContribution[];
 }
 
 /** Pre-resolution widget tree shape (props are `Record<string, unknown>`). */
@@ -334,7 +342,7 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
     config: convertObject(c.config, ctx),
   }));
 
-  return {
+  const ir: SemanticIR = {
     kind: 'semantic_ir' as const,
     sections: brandArray(sections, 'section_registry'),
     entities: brandArray(input.entities, 'entity_registry'),
@@ -352,4 +360,11 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
     },
     ui: resolvedLvglTree,
   };
+
+  // Apply component contributions (useAttachedTrigger) to the IR tree.
+  if (input.contributions && input.contributions.length > 0) {
+    applyContributions(ir, input.contributions);
+  }
+
+  return ir;
 }

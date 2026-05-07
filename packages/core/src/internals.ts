@@ -115,6 +115,12 @@ export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
 
+// ── Contribution scope (compiler state) ────────────────────────────────────
+export { withContributionScope, registerContribution } from './hooks/useContributionScope';
+export type { ContributionScopeResult } from './hooks/useContributionScope';
+export type { ComponentContribution, AttachTriggerContribution } from './ir/contribution-types';
+export { applyContributions } from './ir/apply-contributions';
+
 // ── Capture Protocol ───────────────────────────────────────────────────────
 export type { ClosureDescriptor } from './actions/closure';
 export { registerClosureDescriptor, findClosureDescriptor, CLOSURE_INDEX } from './actions/closure';

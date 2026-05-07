@@ -8,6 +8,7 @@
 
 import type { SemanticIR } from './ir/index';
 import type { OverlayDefinition } from './hooks/useOverlay';
+import type { ComponentContribution } from './ir/contribution-types';
 
 /**
  * Output of the execute phase (Phase 3).
@@ -24,6 +25,8 @@ export interface ExecuteResult {
   secrets?: ReadonlyMap<string, string>;
   /** Overlay definitions collected during render (useOverlay). */
   overlays?: OverlayDefinition[];
+  /** Component contributions collected during render (useAttachedTrigger). */
+  contributions?: ComponentContribution[];
 }
 
 /**

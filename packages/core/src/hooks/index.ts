@@ -26,3 +26,6 @@ export type { OverlayController, OverlayFactory, OverlayConfig, OverlayDefinitio
 export { useTransientOverlay } from './useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './useTransientOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './overlay-fingerprint';
+export { useAttachedTrigger } from './useAttachedTrigger';
+export { withContributionScope, registerContribution } from './useContributionScope';
+export type { ContributionScopeResult } from './useContributionScope';
