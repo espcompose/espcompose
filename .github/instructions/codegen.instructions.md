@@ -12,7 +12,7 @@ ESPHome publishes JSON schemas at schema.esphome.io. The codegen pipeline
 fetches the schema for the target ESPHome version (from root `package.json`
 `esphome.version`) and generates TypeScript types into `packages/core/src/generated/`.
 
-Run with: `pnpm --filter @espcompose/core codegen`
+Run with: `pnpm codegen`
 
 ## What Gets Generated
 

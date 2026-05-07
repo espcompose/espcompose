@@ -21,10 +21,14 @@ Run with: `pnpm --filter espcompose-e2e test`
 ## Key Test Projects by Feature Area
 
 - **Basic**: `sensor-device` (consolidated: covers infrastructure, DHT/GPIO/ADC sensors, variable embedding, API encryption)
-- **Scripts & Actions**: `device-script-device`, `action-tree-device`, `trigger-device`, `trigger-variable-device`
+- **Scripts & Actions**: `device-script-device`, `action-tree-device`, `trigger-device`, `trigger-variable-device`, `script-params-device`, `lambda-action-device`, `useScript-mixed-bindings-device`, `useScript-multi-ref-device`
 - **Reactive**: `reactive-device`, `auto-reactive-device`, `multi-source-reactive-device`
 - **HA Integration**: `ha-binding-device`, `ha-dynamic-device`
 - **Theme & UI**: `design-system-device`, `reactive-theme-device`, `style-device`, `boot-screen-device`
+- **LVGL**: `lvgl-device`, `lvgl-widget-ref-device`, `widget-ref-device`, `use-lvgl-hook-device`, `canvas-device`
+- **Overlays (Popups & Toasts)**: `popup-device`, `popup-multi-device`, `popup-multi-type-device`, `popup-nested-toast`, `toast-across-pages`, `toast-auto-dismiss`, `toast-params`, `toast-queue`
+- **Refs & Actions**: `prop-ref-action-device`
+- **Globals**: `globals-device`, `globals-array-device`
 - **Assets**: `image-font-device`
 - **Complex**: `dashboard-device`, `fancy-light-cascade-device`
-- **Other**: `project-device`, `device-script-device`, `secret-device`
+- **Other**: `project-device`, `secret-device`

@@ -18,7 +18,6 @@ applyTo: "packages/cli/src/compiler/**"
      tree IR. Injects compiled metadata via `Object.assign`.
    Transformed files write to `.espcompose-build/`. With `--debug`, output is human-readable.
 4. **Phase 2 — Bundle** — esbuild bundles to CJS (`@espcompose/core` kept external).
-   Validates `LIBRARY_FORMAT_VERSION` of imported libraries (see `format-version.ts`).
 5. **Phase 3 — Execute & Render** — `require()` the bundle in Node. SDK's `render()`
    walks JSX recursively → **Semantic IR** (target-agnostic typed tree).
 6. **Phase 4 — Target Emit** — Delegates to `ComposeTarget.emit()`.

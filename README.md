@@ -7,7 +7,7 @@
 <div align="center">
 
 [![Discord chat](https://img.shields.io/discord/1484903209461088309)](https://discord.gg/JjKTDUQW) 
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/espcompose/espcompose/release.yml)](https://github.com/xmlguy74/espcompose/releases)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/espcompose/espcompose/release.yml)](https://github.com/espcompose/espcompose/releases)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/espcompose/espcompose?filename=%2Fpackages%2Fcore%2Fpackage.json)
 
 
@@ -45,7 +45,7 @@ There is no JavaScript runtime on the device. ESPHome Compose is purely a build-
 
 ```bash
 # Clone the repository
-git clone https://github.com/xmlguy74/espcompose.git
+git clone https://github.com/espcompose/espcompose.git
 cd espcompose
 
 # Install dependencies
@@ -194,11 +194,13 @@ espcompose <command> [projectDir] [-- esphome-args]
 
 | Command | Description |
 |---------|-------------|
+| `init <name>` | Create a new project |
 | `transpile [dir]` | Transpile TSX → YAML (no ESPHome dependency needed) |
 | `config [dir]` | Transpile + validate via `esphome config` |
 | `build [dir]` | Transpile + compile firmware via `esphome compile` |
 | `run [dir]` | Transpile + compile + upload via `esphome run` |
 | `logs [dir]` | Transpile + stream serial logs via `esphome logs` |
+| `upgrade` | Upgrade `@espcompose/*` dependencies to latest versions |
 
 Pass extra flags to ESPHome after `--`:
 
@@ -212,10 +214,14 @@ Output is written to `<projectDir>/.espcompose/esphome.yaml`.
 
 ```
 packages/
-  core/        @espcompose/core           Core SDK, JSX runtime, hooks, generated types
-  cli/         @espcompose/cli       CLI binary, compiler pipeline, AST transforms, ESPHome wrappers
-  eslint/      @espcompose/eslint    ESLint plugin
-  e2e/         (private)                  End-to-end snapshot tests
+  core/             @espcompose/core       Core SDK, JSX runtime, hooks, generated types
+  cli/              @espcompose/cli        CLI binary, compiler pipeline, AST transforms
+  eslint/           @espcompose/eslint     ESLint plugin
+  esphome-codegen/  (private)              Schema-driven code generation from ESPHome JSON schemas
+  esphome-target/   (private)              ESPHome backend — YAML generation, C++ reactive runtime
+  ui/               @espcompose/ui         LVGL design system components and theme system
+tests/
+  e2e/              (private)              End-to-end snapshot tests
 ```
 
 ## Development
@@ -240,9 +246,11 @@ pnpm lint
 ## How the Compiler Works
 
 1. **Type-check** — The TypeScript compiler validates the entry file and its imports
-2. **Transform** — A TypeScript AST transformer resolves `useScript()` calls into named ESPHome `script:` entries and converts trigger props into ESPHome action arrays
-3. **Bundle** — esbuild bundles the transformed source into a single CommonJS module (`@espcompose/core` is kept external)
-4. **Execute & Emit** — The bundle is loaded in a script scope, the JSX tree is rendered to a plain object graph, and YAML is serialized to disk
+2. **Lint** — ESLint with custom ESPCompose rules catches JSX correctness issues
+3. **Transform** — Two AST transformers extract reactive expressions into expression IR and compile trigger/script bodies into action trees
+4. **Bundle** — esbuild bundles the transformed source into a single CommonJS module (`@espcompose/core` is kept external)
+5. **Execute & Render** — The bundle is loaded in Node; the JSX tree is rendered to a Semantic IR (target-agnostic typed tree)
+6. **Target Emit** — The Semantic IR is passed to a target backend that generates ESPHome YAML, C++ headers, and assets
 
 ## Contributing
 

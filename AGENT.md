@@ -29,7 +29,7 @@ pnpm workspace monorepo (Node.js ≥22) managed by Turborepo:
 pnpm install                              # Install all dependencies
 pnpm build                                # Build all packages (Turborepo)
 pnpm test                                 # Run all tests (vitest, per-package)
-pnpm --filter @espcompose/core codegen    # Regenerate types from ESPHome schemas
+pnpm codegen                              # Regenerate types from ESPHome schemas
 pnpm --filter espcompose-e2e test         # Run E2E snapshot tests
 ```
 
@@ -43,6 +43,7 @@ pnpm --filter espcompose-e2e test         # Run E2E snapshot tests
 | `espcompose build [dir] [-- args]` | Transpile + compile firmware via `esphome compile` |
 | `espcompose run [dir] [-- args]` | Transpile + compile + upload via `esphome run` (`--host` for local SDL2 preview) |
 | `espcompose logs [dir] [-- args]` | Transpile + open serial monitor |
+| `espcompose upgrade` | Upgrade `@espcompose/*` dependencies to latest versions |
 
 Output is written to `<projectDir>/.espcompose/esphome.yaml`. Commands
 except `transpile` require `esphome` on PATH. Extra flags
