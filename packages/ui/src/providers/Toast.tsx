@@ -12,8 +12,9 @@
  */
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
-import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider } from '@espcompose/core';
-import { Toast as ToastWidget } from '../components/Toast';
+import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings } from '@espcompose/core';
+import { BottomToast as ToastWidget } from '../components/Toast';
+import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -66,6 +67,20 @@ export interface ToastProviderProps {
    */
   slotHeight?: number;
 
+  /**
+   * Toast layout variant.
+   *
+   * - `'bottom'` — full-width banner anchored to the bottom of the screen.
+   *   Best for compact/medium displays.
+   * - `'topRight'` — fixed-width card anchored to the top-right corner.
+   *   Best for large/panel displays (Windows-notification style).
+   *
+   * When omitted, auto-selected based on display class from the nearest
+   * `UITheme.Provider`'s settings: `large`/`panel` → `'topRight'`,
+   * everything else → `'bottom'`.
+   */
+  variant?: 'bottom' | 'topRight';
+
   /** Child elements that can access `useToast()`. */
   children?: EspComposeElement | EspComposeElement[];
 }
@@ -96,12 +111,27 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
     overflow,
     queueLength,
     slotHeight = 64,
+    variant: variantProp,
     children,
   } = props;
+
+  // Resolve variant from display class when not explicitly provided.
+  // useThemeSettings() returns the resolved settings from the nearest
+  // UITheme.Provider — already computed, no resolution needed here.
+  const settings = useThemeSettings();
+  const variant: 'bottom' | 'topRight' = variantProp
+    ?? (settings?.class === 'large' || settings?.class === 'panel' ? 'topRight' : 'bottom');
 
   const ctrl = useTransientOverlay<ToastPayload>(
     { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
     (_ctrl, ctx) => {
+      if (variant === 'topRight') {
+        return (
+          <TopRightToast topOffset={ctx.slotRank * slotHeight}>
+            <Text text={ctx.payload.msg} />
+          </TopRightToast>
+        );
+      }
       return (
         <ToastWidget bottomOffset={ctx.slotRank * slotHeight}>
           <Text text={ctx.payload.msg} />

@@ -1,11 +1,13 @@
 /**
- * Toast component — lightweight notification overlay.
+ * TopRightToast component — card-style notification positioned top-right.
  *
- * @internal Used by `useToast()` internally. Not part of the public API.
+ * @internal Used by `Toast.Provider` when variant is 'topRight'.
+ * Not part of the public API.
  *
  * Provides:
- *   - A translucent bottom-anchored strip (no full-screen backdrop)
- *   - Suitable for brief, non-blocking messages
+ *   - A fixed-width card anchored to the top-right corner
+ *   - Suitable for larger displays (desktop/panel-style notifications)
+ *   - Slots stack downward from the top-right corner
  *
  * The framework wraps overlay content in a hidden wrapper widget
  * with a deterministic ID for show/hide action targeting.
@@ -17,35 +19,36 @@ import { useSpacing, useRadius } from '../hooks';
 import { UITheme } from '../theme/theme';
 import type { SpacingToken, RadiusToken } from '../theme/types';
 
-type ToastProps = WidgetPropsWithChildren<{
-  /** Padding inside the toast container. Default: 'md'. */
+type TopRightToastProps = WidgetPropsWithChildren<{
+  /** Padding inside the toast card. Default: 'md'. */
   padding?: SpacingToken;
-  /** Corner radius of the toast. Default: 'md'. */
+  /** Corner radius of the toast card. Default: 'md'. */
   radius?: RadiusToken;
-  /** Horizontal margin from the screen edge. Default: 'md'. */
+  /** Margin from the top/right screen edges. Default: 'md'. */
   margin?: SpacingToken;
   /**
-   * Bottom offset in pixels. Used internally by `useToast()` for
-   * compacted multi-slot positioning.
+   * Top offset in pixels. Used internally by `Toast.Provider` for
+   * multi-slot downward stacking.
    *
    * @internal
    * @default 0
    */
-  bottomOffset?: number;
+  topOffset?: number;
 }>;
 
 /**
- * Toast — lightweight bottom-anchored notification container.
- * @internal Used by `useToast()`. Not exported publicly.
+ * TopRightToast — fixed-width card anchored top-right.
+ * @internal Used by `Toast.Provider`. Not exported publicly.
  */
-export const BottomToast = createLvglContainerWidget(
-  (props: ToastProps) => {
+export const TopRightToast = createLvglContainerWidget(
+  (props: TopRightToastProps) => {
     const theme = UITheme.use();
     const padding = useSpacing(props.padding ?? 'md');
     const radius = useRadius(props.radius ?? 'md');
     const margin = useSpacing(props.margin ?? 'md');
     const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
-    const bottomOffset = props.bottomOffset ?? 0;
+    const borderColor = theme?.colors?.border;
+    const topOffset = props.topOffset ?? 0;
 
     return (
       <lvgl-obj
@@ -56,22 +59,23 @@ export const BottomToast = createLvglContainerWidget(
           backgroundOpacity: 'transparent',
           borderWidth: 0,
           padding: 0,
-          paddingBottom: bottomOffset,
+          paddingTop: topOffset,
+          paddingRight: margin,
           clickable: false,
         }}
       >
-        {/* Bottom-anchored toast container */}
+        {/* Top-right anchored toast card */}
         <lvgl-obj
           style={{
             backgroundColor: bgColor,
-            backgroundOpacity: '90%',
+            backgroundOpacity: '100%',
             borderRadius: radius,
-            borderWidth: props.style?.borderWidth ?? 0,
+            borderWidth: 1,
+            borderColor: borderColor,
             padding: padding,
-            width: '90%',
+            width: 280,
             height: props.style?.height ?? 'fit-content',
-            placeSelf: 'bottomCenter',
-            paddingBottom: margin,
+            placeSelf: 'topRight',
             scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',

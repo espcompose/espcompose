@@ -29,4 +29,4 @@ export { SensorText } from './SensorText';
 
 // Popup system
 export { Popup } from './Popup';
-export { Toast } from './Toast';
+export { BottomToast } from './Toast';

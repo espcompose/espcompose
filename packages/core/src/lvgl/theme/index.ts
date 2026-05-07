@@ -24,5 +24,8 @@ export type { FontToken, FontBpp } from './font-token';
 export { isHexColor } from './hex-color';
 export type { HexColor } from './hex-color';
 
+// Settings context (useThemeSettings hook)
+export { useThemeSettings } from './settings-context';
+
 // Font resolver (internal — used by createTheme Provider)
 export { collectThemeFonts, substituteThemeFonts } from './font-resolver';

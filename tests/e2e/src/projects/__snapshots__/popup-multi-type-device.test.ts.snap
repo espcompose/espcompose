@@ -27,8 +27,8 @@ Signal<std::string> sig_ha_light_ceiling_fan_facet_state_text;
 Signal<bool> sig_ha_light_desk_fan;
 Signal<float> sig_ha_light_desk_fan_attr_brightness;
 Signal<std::string> sig_ha_light_desk_fan_facet_state_text;
-Signal<int32_t> sig_ovrl_6321ad22_mux;
 Signal<int32_t> sig_ovrl_5739621e_mux;
+Signal<int32_t> sig_ovrl_e6932e1b_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -145,37 +145,21 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_6321ad22_act_0[] = {
+static const char* tbl_ovrl_5739621e_act_0[] = {
   "light.bedroom",
   "light.kitchen"
 };
 
-static const char* tbl_ovrl_5739621e_act_1[] = {
+static const char* tbl_ovrl_e6932e1b_act_1[] = {
   "light.ceiling_fan",
   "light.desk_fan"
 };
 
 // ── Script closure tables ──
-struct ScrEbe65a7fClosure {
-  int __ctrl_instance_index;
-};
-static const ScrEbe65a7fClosure scr_ref7_closures[] = {
-  { 0 },
-  { 1 }
-};
-
-struct ScrA6eda146Closure {
-  int __ctrl_instance_index;
-};
-static const ScrA6eda146Closure scr_ref41_closures[] = {
-  { 0 },
-  { 1 }
-};
-
 struct ScrCa5e1106Closure {
   int __ctrl_instance_index;
 };
-static const ScrCa5e1106Closure scr_ref16_closures[] = {
+static const ScrCa5e1106Closure scr_ref7_closures[] = {
   { 0 },
   { 1 }
 };
@@ -183,7 +167,23 @@ static const ScrCa5e1106Closure scr_ref16_closures[] = {
 struct Scr7716e7d3Closure {
   int __ctrl_instance_index;
 };
-static const Scr7716e7d3Closure scr_ref42_closures[] = {
+static const Scr7716e7d3Closure scr_ref41_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+struct ScrE6f5daa9Closure {
+  int __ctrl_instance_index;
+};
+static const ScrE6f5daa9Closure scr_ref16_closures[] = {
+  { 0 },
+  { 1 }
+};
+
+struct ScrB0cd5cdcClosure {
+  int __ctrl_instance_index;
+};
+static const ScrB0cd5cdcClosure scr_ref42_closures[] = {
   { 0 },
   { 1 }
 };
@@ -1303,7 +1303,7 @@ lvgl:
           clickable: false
           widgets:
             - obj:
-                id: ovrl_6321ad22
+                id: ovrl_5739621e
                 hidden: true
                 width: 100%
                 height: 100%
@@ -1314,7 +1314,7 @@ lvgl:
                 widgets:
                   - obj:
                       on_press:
-                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
                       width: 100%
                       height: 100%
                       bg_color: "0x000000"
@@ -1350,8 +1350,8 @@ lvgl:
                                           entity_id: "{{ entity_id_expr }}"
                                         variables:
                                           entity_id_expr: !lambda "return
-                                            espcompose::tbl_ovrl_6321ad22_act_0[espcompose::\\
-                                            sig_ovrl_6321ad22_mux.get()];"
+                                            espcompose::tbl_ovrl_5739621e_act_0[espcompose::\\
+                                            sig_ovrl_5739621e_mux.get()];"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1374,7 +1374,7 @@ lvgl:
                                         id: rw_ref26
                               - button:
                                   on_press:
-                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1396,7 +1396,7 @@ lvgl:
                                         align: CENTER
                                         id: rw_ref28
             - obj:
-                id: ovrl_5739621e
+                id: ovrl_e6932e1b
                 hidden: true
                 width: 100%
                 height: 100%
@@ -1407,7 +1407,7 @@ lvgl:
                 widgets:
                   - obj:
                       on_press:
-                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
+                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
                       width: 100%
                       height: 100%
                       bg_color: "0x000000"
@@ -1443,8 +1443,8 @@ lvgl:
                                           entity_id: "{{ entity_id_expr }}"
                                         variables:
                                           entity_id_expr: !lambda "return
-                                            espcompose::tbl_ovrl_5739621e_act_1[espcompose::\\
-                                            sig_ovrl_5739621e_mux.get()];"
+                                            espcompose::tbl_ovrl_e6932e1b_act_1[espcompose::\\
+                                            sig_ovrl_e6932e1b_mux.get()];"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1467,7 +1467,7 @@ lvgl:
                                         id: rw_ref32
                               - button:
                                   on_press:
-                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
+                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1607,31 +1607,31 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref7_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_6321ad22_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_6321ad22),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_6321ad22));"
+          espcompose::sig_ovrl_5739621e_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_5739621e),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5739621e));"
   - id: scr_ref41
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref41_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
   - id: scr_ref16
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref16_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_5739621e_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_5739621e),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5739621e));"
+          espcompose::sig_ovrl_e6932e1b_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_e6932e1b),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_e6932e1b));"
   - id: scr_ref42
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref42_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

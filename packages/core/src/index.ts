@@ -219,6 +219,7 @@ export { createFontToken, isFontToken } from './lvgl/theme/font-token';
 export type { FontToken, FontBpp } from './lvgl/theme/font-token';
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
+export { useThemeSettings } from './lvgl/theme/settings-context';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Display environment & adaptive helpers

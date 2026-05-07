@@ -27,6 +27,9 @@ import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 import { useTheme } from './reactive-proxy';
 import { createLvglContextProvider, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
 import { throwCompileTimeOnly } from '../../errors';
+import { ThemeSettingsCtx } from './settings-context';
+import { resolveThemeSettings } from '../display';
+import type { ThemeSettings } from '../display';
 
 // ── Internal helpers ───────────────────────────────────────────────────────
 
@@ -259,6 +262,14 @@ export function createTheme<
         ? props.children
         : [props.children]
       : [];
+
+    // When settings are provided, push the resolved display settings into
+    // context so descendants (e.g. Toast.Provider) can read display class
+    // without re-resolving or prop-drilling.
+    if (props.settings) {
+      const resolvedSettings = resolveThemeSettings(props.settings as ThemeSettings);
+      return createElement('context', { context: ThemeSettingsCtx, value: resolvedSettings }, ...children);
+    }
 
     return createElement(Fragment, { children });
   }

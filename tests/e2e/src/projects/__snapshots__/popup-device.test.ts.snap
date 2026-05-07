@@ -21,7 +21,7 @@ Signal<std::string> sig_ha_light_bedroom_facet_state_text;
 Signal<bool> sig_ha_light_kitchen;
 Signal<float> sig_ha_light_kitchen_attr_brightness;
 Signal<std::string> sig_ha_light_kitchen_facet_state_text;
-Signal<int32_t> sig_ovrl_6321ad22_mux;
+Signal<int32_t> sig_ovrl_5739621e_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -123,24 +123,24 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_6321ad22_act_0[] = {
+static const char* tbl_ovrl_5739621e_act_0[] = {
   "light.bedroom",
   "light.kitchen"
 };
 
 // ── Script closure tables ──
-struct ScrEbe65a7fClosure {
+struct ScrCa5e1106Closure {
   int __ctrl_instance_index;
 };
-static const ScrEbe65a7fClosure scr_ref5_closures[] = {
+static const ScrCa5e1106Closure scr_ref5_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct ScrA6eda146Closure {
+struct Scr7716e7d3Closure {
   int __ctrl_instance_index;
 };
-static const ScrA6eda146Closure scr_ref23_closures[] = {
+static const Scr7716e7d3Closure scr_ref23_closures[] = {
   { 0 },
   { 1 }
 };
@@ -200,8 +200,8 @@ void bootstrap_runtime() {
   sig_ha_light_bedroom_facet_state_text.set_subscriber_storage(sig_ha_light_bedroom_facet_state_text_subs, 1);
   static NodeBase* sig_ha_light_kitchen_facet_state_text_subs[1];
   sig_ha_light_kitchen_facet_state_text.set_subscriber_storage(sig_ha_light_kitchen_facet_state_text_subs, 1);
-  static NodeBase* sig_ovrl_6321ad22_mux_subs[1];
-  sig_ovrl_6321ad22_mux.set_subscriber_storage(sig_ovrl_6321ad22_mux_subs, 1);
+  static NodeBase* sig_ovrl_5739621e_mux_subs[1];
+  sig_ovrl_5739621e_mux.set_subscriber_storage(sig_ovrl_5739621e_mux_subs, 1);
   static NodeBase* thm_333e4663_typography_body_subs[1];
   thm_333e4663_typography_body.set_subscriber_storage(thm_333e4663_typography_body_subs, 1);
   static NodeBase* thm_333e4663_colors_secondary_text_subs[1];
@@ -302,7 +302,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_23([]() {
-    lv_label_set_text(&id(rw_ref12), ([&]() -> std::string { switch (sig_ovrl_6321ad22_mux.get()) { case 0: return sig_ha_light_bedroom_facet_state_text.get(); case 1: return sig_ha_light_kitchen_facet_state_text.get(); default: return std::string{}; } })().c_str());
+    lv_label_set_text(&id(rw_ref12), ([&]() -> std::string { switch (sig_ovrl_5739621e_mux.get()) { case 0: return sig_ha_light_bedroom_facet_state_text.get(); case 1: return sig_ha_light_kitchen_facet_state_text.get(); default: return std::string{}; } })().c_str());
   });
 
   static Effect binding_25([]() {
@@ -393,7 +393,7 @@ void bootstrap_runtime() {
   binding_19.wire(binding_19_sources, 1);
   static NodeBase* binding_20_sources[] = {&thm_333e4663_spacing_lg};
   binding_20.wire(binding_20_sources, 1);
-  static NodeBase* binding_23_sources[] = {&sig_ovrl_6321ad22_mux, &sig_ha_light_bedroom_facet_state_text, &sig_ha_light_kitchen_facet_state_text};
+  static NodeBase* binding_23_sources[] = {&sig_ovrl_5739621e_mux, &sig_ha_light_bedroom_facet_state_text, &sig_ha_light_kitchen_facet_state_text};
   binding_23.wire(binding_23_sources, 3);
   static NodeBase* binding_25_sources[] = {&thm_333e4663_typography_body};
   binding_25.wire(binding_25_sources, 1);
@@ -899,7 +899,7 @@ lvgl:
           clickable: false
           widgets:
             - obj:
-                id: ovrl_6321ad22
+                id: ovrl_5739621e
                 hidden: true
                 width: 100%
                 height: 100%
@@ -910,7 +910,7 @@ lvgl:
                 widgets:
                   - obj:
                       on_press:
-                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
                       width: 100%
                       height: 100%
                       bg_color: "0x000000"
@@ -960,8 +960,8 @@ lvgl:
                                                 entity_id: "{{ entity_id_expr }}"
                                               variables:
                                                 entity_id_expr: !lambda "return
-                                                  espcompose::tbl_ovrl_6321ad22_act_0[espcompose::\\
-                                                  sig_ovrl_6321ad22_mux.get()];"
+                                                  espcompose::tbl_ovrl_5739621e_act_0[espcompose::\\
+                                                  sig_ovrl_5739621e_mux.get()];"
                                         bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                         bg_opa: COVER
                                         border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -984,7 +984,7 @@ lvgl:
                                               id: rw_ref14
                                     - button:
                                         on_press:
-                                          - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+                                          - lambda: !lambda "lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
                                         bg_color: !lambda "return espcompose::thm_333e4663_colors_secondary_bg.get();"
                                         bg_opa: COVER
                                         border_color: !lambda "return
@@ -1090,15 +1090,15 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref5_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_6321ad22_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_6321ad22),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_6321ad22));"
+          espcompose::sig_ovrl_5739621e_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_5739621e),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_5739621e));"
   - id: scr_ref23
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref23_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_5739621e), LV_OBJ_FLAG_HIDDEN);"
 "
 `;
