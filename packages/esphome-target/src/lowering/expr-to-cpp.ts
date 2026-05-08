@@ -9,6 +9,7 @@ import type {
   IRExpression,
 } from '@espcompose/core/internals';
 import { statementBlockToCpp } from './stmt-to-cpp.js';
+import { toCppId } from './value-type-cpp.js';
 import type {
   ExprType,
   BuiltinFn,
@@ -113,7 +114,7 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
     case 'expr:entity_prop': {
       const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (!compId) throw new Error(`Unknown entity: ${node.entityId}`);
-      return `sig_${compId}.get()`;
+      return `sig_${toCppId(compId)}.get()`;
     }
 
     case 'expr:global_read':

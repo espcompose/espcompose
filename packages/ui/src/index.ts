@@ -61,6 +61,8 @@ export type { PageNavProps, PageNavItem } from './components/PageNav';
 
 // Binding-driven components
 export { SensorText } from './components/SensorText';
+export { HALightButton } from './components/HALightButton';
+export type { HALightButtonProps } from './components/HALightButton';
 
 // Popup system
 export { Popup } from './components/Popup';

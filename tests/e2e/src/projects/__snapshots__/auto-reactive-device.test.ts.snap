@@ -46,6 +46,8 @@ void bootstrap_runtime() {
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* sig_ha_light_office_subs[3];
   sig_ha_light_office.set_subscriber_storage(sig_ha_light_office_subs, 3);
+  static NodeBase* sig_ha_light_office_attr_brightness_subs[1];
+  sig_ha_light_office_attr_brightness.set_subscriber_storage(sig_ha_light_office_attr_brightness_subs, 1);
   static NodeBase* sig_ha_sensor_temp_inside_subs[1];
   sig_ha_sensor_temp_inside.set_subscriber_storage(sig_ha_sensor_temp_inside_subs, 1);
   static NodeBase* sig_ha_light_office_facet_state_text_subs[1];
@@ -84,6 +86,8 @@ void bootstrap_runtime() {
   memo_0.wire(memo_0_sources, 1);
   static NodeBase* memo_1_sources[] = {&sig_ha_light_office};
   memo_1.wire(memo_1_sources, 1);
+  static NodeBase* memo_2_sources[] = {&sig_ha_light_office_attr_brightness};
+  memo_2.wire(memo_2_sources, 1);
   static NodeBase* memo_3_sources[] = {&sig_ha_light_office, &sig_ha_sensor_temp_inside};
   memo_3.wire(memo_3_sources, 2);
   static NodeBase* binding_0_sources[] = {&sig_ha_light_office_facet_state_text};

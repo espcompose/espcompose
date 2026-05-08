@@ -13,11 +13,11 @@ using esphome::id;
 using esphome::to_string;
 
 // ── BoundSignals (one per reactive global variable) ──
-BoundSignal<int> sig_global_g_2b7a548a(int(0));
+BoundSignal<int> sig_global_g_ref1(int(0));
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return std::string("Count: ") + std::to_string(espcompose::sig_global_g_2b7a548a.get());
+  return std::string("Count: ") + std::to_string(espcompose::sig_global_g_ref1.get());
 });
 
 // ── Bootstrap: wire dependency graph ──
@@ -28,20 +28,20 @@ void bootstrap_runtime() {
     return;
   }
   // ── Bind global BoundSignals to ESPHome global storage ──
-  sig_global_g_2b7a548a.bind(&id(g_2b7a548a));
+  sig_global_g_ref1.bind(&id(g_ref1));
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* sig_global_g_2b7a548a_subs[1];
-  sig_global_g_2b7a548a.set_subscriber_storage(sig_global_g_2b7a548a_subs, 1);
+  static NodeBase* sig_global_g_ref1_subs[1];
+  sig_global_g_ref1.set_subscriber_storage(sig_global_g_ref1_subs, 1);
   static NodeBase* memo_0_subs[1];
   memo_0.set_subscriber_storage(memo_0_subs, 1);
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
-    lv_label_set_text(&id(rw_ref2), memo_0.get().c_str());
+    lv_label_set_text(&id(rw_ref3), memo_0.get().c_str());
   });
 
-  static NodeBase* memo_0_sources[] = {&sig_global_g_2b7a548a};
+  static NodeBase* memo_0_sources[] = {&sig_global_g_ref1};
   memo_0.wire(memo_0_sources, 1);
   static NodeBase* binding_0_sources[] = {&memo_0};
   binding_0.wire(binding_0_sources, 1);
@@ -415,17 +415,17 @@ binary_sensor:
   pin: 4
   name: Button
   on_press:
-    - lambda: !lambda "espcompose::sig_global_g_2b7a548a.set(42); espcompose::flush();"
+    - lambda: !lambda "espcompose::sig_global_g_ref1.set(42); espcompose::flush();"
     - logger.log: Counter set to 42
 lvgl:
-  - id: r_ref1
+  - id: r_ref2
     displays:
       - r_ref0
     pages:
       - widgets:
           - label:
               text: !lambda "return espcompose::memo_0.get().c_str();"
-              id: rw_ref2
+              id: rw_ref3
 external_components:
   - source:
       type: local
@@ -435,7 +435,7 @@ external_components:
 espcompose:
   flush_budget_us: 2000
 globals:
-  - id: g_2b7a548a
+  - id: g_ref1
     restore_value: true
     initial_value: "0"
     type: int
