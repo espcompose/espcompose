@@ -124,6 +124,7 @@ const toast = useToast(() => <Text text="Queued stack!" />, {
 
 ## Rules
 
+- Must be called inside an `<lvgl>` tree — toasts render in the LVGL instance's `top_layer`
 - Must be called inside a function component body (created with `createLvglWidget`)
 - `show()` and `hide()` can only be used inside trigger handlers (`onPress`, `onChange`, etc.) or `useScript()` bodies
 - The factory must return consistent widget structure across all invocations

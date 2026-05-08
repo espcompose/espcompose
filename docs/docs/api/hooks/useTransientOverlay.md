@@ -147,6 +147,7 @@ const toast = useTransientOverlay<ToastPayload>(
 
 ## Rules
 
+- Must be called inside an `<lvgl>` tree — overlays are scoped to a specific LVGL instance's `top_layer`
 - Must be called inside a function component body
 - `show()` and `hide()` can only be used inside trigger handlers or `useScript()` bodies
 - When `maxVisible > 1`, the factory must produce a consistent widget structure across all slots
