@@ -14,11 +14,11 @@
 // compiled action metadata and registers it as a ComponentContribution.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { Ref } from '../types';
 import type { TriggerHandler } from '../types';
 import type { IRActionNode } from '../ir/action-types';
 import { assertHookContext, getCurrentHookPath } from './useState';
 import { registerContribution } from './useContributionScope';
+import { resolveRefBindingsInActions } from '../serialize';
 
 /**
  * Attach compiled trigger actions to a widget identified by `targetRef`.
@@ -35,7 +35,7 @@ import { registerContribution } from './useContributionScope';
  * @param handler    Compiled trigger handler arrow function
  */
 export function useAttachedTrigger<T = void>(
-  targetRef: Ref<unknown>,
+  targetRef: { toString(): string },
   event: string,
   handler: TriggerHandler<T>,
 ): void {
@@ -60,11 +60,17 @@ export function useAttachedTrigger<T = void>(
 
   const sourceId = getCurrentHookPath();
 
+  // Resolve bindings: replace ref name strings with tokens and
+  // expr:closure_read nodes with concrete literal values.
+  const resolvedActions = fn.__refBindings
+    ? resolveRefBindingsInActions(fn.__compiledActions, fn.__refBindings) as IRActionNode[]
+    : fn.__compiledActions;
+
   registerContribution({
     kind: 'attach-trigger',
     targetRef: String(targetRef),
     event,
-    actions: fn.__compiledActions,
+    actions: resolvedActions,
     sourceId,
   });
 }

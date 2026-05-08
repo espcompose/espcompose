@@ -164,6 +164,9 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
     case 'expr:op':
       return opToCpp(node, ctx);
 
+    case 'expr:closure_read':
+      return `closure.${node.name}`;
+
     default: {
       const _exhaustive: never = node;
       throw new Error(`Unknown IRExpression kind: ${(_exhaustive as { kind: string }).kind}`);

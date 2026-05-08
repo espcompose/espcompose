@@ -55,6 +55,10 @@ export { Dropdown } from './components/Dropdown';
 export type { DropdownProps } from './components/Dropdown';
 export type { StyleProps, ButtonVariant } from './components/shared-types';
 
+// Navigation
+export { PageNav } from './components/PageNav';
+export type { PageNavProps, PageNavItem } from './components/PageNav';
+
 // Binding-driven components
 export { SensorText } from './components/SensorText';
 

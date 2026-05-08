@@ -18,9 +18,9 @@ import {
   hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
-  irGlobalRead,
+  irGlobalRead, irClosureRead,
 } from '@espcompose/core/internals';
-import { isCoreExportCall } from './type-brands.js';
+import { isCoreExportCall, inferIRTypeFromTsType } from './type-brands.js';
 
 // ── Array type helpers ───────────────────────────────────────────────────────
 
@@ -37,6 +37,8 @@ function arrayElementType(t: ExprType): ExprType {
     default: return 'int';
   }
 }
+
+
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -113,6 +115,10 @@ export interface ScriptTransformContext {
   localVars: Set<string>;
   /** Map of variable name → global definition for resolving globalHandle.value reads. */
   globalHandlesByName?: Map<string, GlobalExprInfo>;
+  /** TypeScript checker — required for closure capture inference. */
+  checker?: ts.TypeChecker;
+  /** Scalar captures accumulator — when provided, unrecognized primitive identifiers are captured. */
+  scalarCaptures?: Map<string, import('@espcompose/core/internals').IRType>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -237,6 +243,17 @@ export function translateScriptExprIR(
   if (ts.isIdentifier(node)) {
     if (ctx.localVars.has(node.text)) {
       return { kind: 'expr:trigger_var', name: node.text };
+    }
+    // Closure capture: if checker + scalarCaptures provided, try to capture
+    // outer-scope identifiers with primitive types.
+    if (ctx.checker && ctx.scalarCaptures) {
+      const type = ctx.checker.getTypeAtLocation(node);
+      const irType = inferIRTypeFromTsType(type, ctx.checker);
+      if (irType) {
+        const name = node.text;
+        ctx.scalarCaptures.set(name, irType);
+        return irClosureRead(name, irTypeToExprType(irType));
+      }
     }
     return null;
   }

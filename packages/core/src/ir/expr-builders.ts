@@ -4,6 +4,7 @@ import type {
   IRLiteralExpression,
   IRLocalVarExpression,
   IRGlobalReadExpression,
+  IRClosureReadExpression,
   IRFunctionExpression,
   IRTriggerVarExpression,
   BinaryOp,
@@ -41,6 +42,11 @@ export function irLocalVarExpression(name: string, type: ExprType): IRLocalVarEx
 /** Construct an IRGlobalReadExpression for reading a global variable. */
 export function irGlobalRead(globalId: string, type: ExprType): IRGlobalReadExpression {
   return { kind: 'expr:global_read', globalId, type };
+}
+
+/** Construct an IRClosureReadExpression for a closure-captured variable. */
+export function irClosureRead(name: string, type: ExprType): IRClosureReadExpression {
+  return { kind: 'expr:closure_read', name, type };
 }
 
 /** Construct an IRFunctionExpression wrapping a statement block with a return type. */

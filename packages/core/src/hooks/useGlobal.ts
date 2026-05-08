@@ -147,9 +147,19 @@ export function useGlobal<TK extends GlobalType>(
 
   // Detect duplicate keys within the same global scope
   const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition>;
-  if (scopeMap.has(id)) {
+  const existing = scopeMap.get(id);
+  if (existing) {
+    // Same key + same type → idempotent (reusable library components share the global)
+    if (existing.irType === irType) {
+      if (isArrayGlobalType(type)) {
+        return createGlobalArrayHandle(id, irType, exprType);
+      }
+      return createGlobalHandle<InferGlobalTS<TK>>(id, irType, exprType);
+    }
     throw new Error(
-      `Duplicate useGlobal() key "${fingerprint}" — each global must have a unique key.`,
+      `Duplicate useGlobal() key "${fingerprint}" with conflicting type `
+      + `(existing: ${existing.irType}, new: ${irType}). `
+      + `Each global key must map to a single type.`,
     );
   }
 

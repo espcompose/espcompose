@@ -15,7 +15,7 @@ using esphome::id;
 using esphome::to_string;
 
 // ── Signals (one per HA entity source) ──
-Signal<int32_t> sig_ovrl_e6932e1b_mux;
+Signal<int32_t> sig_ovrl_f6e79a65_mux;
 Signal<int32_t> sig_ovrl_47e40420_mux;
 
 // ── BoundSignals (one per reactive global variable) ──
@@ -113,24 +113,24 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_e6932e1b_act_0[] = {
+static const char* tbl_ovrl_f6e79a65_act_0[] = {
   "light.bedroom",
   "light.kitchen"
 };
 
 // ── Script closure tables ──
-struct ScrE6f5daa9Closure {
+struct Scr7f8272b7Closure {
   int __ctrl_instance_index;
 };
-static const ScrE6f5daa9Closure scr_ref5_closures[] = {
+static const Scr7f8272b7Closure scr_ref5_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct ScrB0cd5cdcClosure {
+struct Scr4028847aClosure {
   int __ctrl_instance_index;
 };
-static const ScrB0cd5cdcClosure scr_ref27_closures[] = {
+static const Scr4028847aClosure scr_ref27_closures[] = {
   { 0 },
   { 1 }
 };
@@ -918,7 +918,7 @@ lvgl:
           clickable: false
           widgets:
             - obj:
-                id: ovrl_e6932e1b
+                id: ovrl_f6e79a65
                 hidden: true
                 width: 100%
                 height: 100%
@@ -929,7 +929,7 @@ lvgl:
                 widgets:
                   - obj:
                       on_press:
-                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
+                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_f6e79a65), LV_OBJ_FLAG_HIDDEN);"
                       width: 100%
                       height: 100%
                       bg_color: "0x000000"
@@ -965,8 +965,8 @@ lvgl:
                                           entity_id: "{{ entity_id_expr }}"
                                         variables:
                                           entity_id_expr: !lambda "return
-                                            espcompose::tbl_ovrl_e6932e1b_act_0[espcompose::\\
-                                            sig_ovrl_e6932e1b_mux.get()];"
+                                            espcompose::tbl_ovrl_f6e79a65_act_0[espcompose::\\
+                                            sig_ovrl_f6e79a65_mux.get()];"
                                     - script.execute:
                                         id: scr_ref12
                                         msg: Toggled!
@@ -995,7 +995,7 @@ lvgl:
                                         id: rw_ref15
                               - button:
                                   on_press:
-                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
+                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_f6e79a65), LV_OBJ_FLAG_HIDDEN);"
                                   bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                   bg_opa: COVER
                                   border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
@@ -1119,16 +1119,16 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref5_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_e6932e1b_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_e6932e1b),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_e6932e1b));"
+          espcompose::sig_ovrl_f6e79a65_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_f6e79a65),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_f6e79a65));"
   - id: scr_ref27
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref27_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_e6932e1b), LV_OBJ_FLAG_HIDDEN);"
+          lv_obj_add_flag(id(ovrl_f6e79a65), LV_OBJ_FLAG_HIDDEN);"
   - id: scr_ref28
     mode: restart
     parameters:

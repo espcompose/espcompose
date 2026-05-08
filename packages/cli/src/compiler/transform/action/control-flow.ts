@@ -35,6 +35,8 @@ export function buildScriptCtxWithGlobals(ctx: ActionCompilerContext): ScriptTra
     triggerParamName: ctx.triggerParamName,
     localVars: new Set(),
     globalHandlesByName,
+    checker: ctx.checker,
+    scalarCaptures: ctx.scalarCaptures,
   };
 }
 

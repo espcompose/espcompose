@@ -9,7 +9,6 @@
  */
 
 import { createTheme } from '@espcompose/core';
-import type { UIThemeSettings } from './types';
 import { darkTheme } from './dark';
 import { lightTheme } from './light';
 

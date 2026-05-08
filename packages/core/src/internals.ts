@@ -213,7 +213,7 @@ export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
   IRSlotExpression, IRThemeReadExpression,
-  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRClosureReadExpression, IRGlobalReadExpression,
   IRMuxExpression, IRTableLookupExpression, IRFunctionExpression,
   IRExpression,
   ExprOpDescriptor, IROpExpression,
@@ -229,7 +229,7 @@ export {
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-  irLiteralExpression, irLocalVarExpression, irGlobalRead, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
+  irLiteralExpression, irLocalVarExpression, irGlobalRead, irClosureRead, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
 } from './ir/index';
 export {
   irVarDeclStatement, irAssignStatement, irIfStatement,

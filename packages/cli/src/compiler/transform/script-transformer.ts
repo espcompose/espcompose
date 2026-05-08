@@ -433,6 +433,13 @@ function compileAndInjectTriggerHandler(
   for (const name of result.scriptHandleRefs) {
     if (!refNames.includes(name)) refNames.push(name);
   }
+  // Scalar captures (e.g. loop indices captured into expr:closure_read nodes)
+  // must be in __refBindings so the runtime can substitute them with literal
+  // values. The action walker only inspects action node fields, not expression
+  // trees, so add capture names directly.
+  for (const name of result.scalarCaptures.keys()) {
+    if (!refNames.includes(name)) refNames.push(name);
+  }
   // Store IRActionNode[] directly - lowering to target format happens in target packages
   const arrowStart = callback.getStart();
   const arrowEnd = callback.getEnd();

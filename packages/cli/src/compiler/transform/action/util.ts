@@ -1,8 +1,9 @@
 import ts from 'typescript';
 import type { IRExpression } from '@espcompose/core/internals';
-import type { IRDuration, IRDurationLiteral, IRType } from '@espcompose/core/internals';
-import { IR_INT, IR_FLOAT, IR_STRING, IR_BOOL, parseDurationString } from '@espcompose/core/internals';
+import type { IRDuration, IRDurationLiteral } from '@espcompose/core/internals';
+import { parseDurationString } from '@espcompose/core/internals';
 import type { ActionCompilerContext } from './context.js';
+import { inferIRTypeFromTsType } from '../type-brands.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -56,31 +57,6 @@ export function extractReturnExpr(block: ts.Block): ts.Expression | null {
 // Scalar-capture aware duration extraction
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Map from TypeScript type to a target-agnostic IRType. */
-function inferScriptParamIRType(
-  type: ts.Type,
-): IRType | null {
-  // Check for Int branded type (number & { __espcompose_int__: true })
-  if (type.isIntersection()) {
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
-    if (hasNumber) {
-      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return IR_INT;
-    }
-  }
-  // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return IR_INT;
-
-  // Plain number
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  // String
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  // Boolean
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
-
-  return null;
-}
-
 /**
  * Extended duration argument extraction that also handles identifier
  * references. For identifiers, infers the C++ type from the TypeScript
@@ -100,7 +76,7 @@ export function extractDurationArgOrParamRef(
   // Handle identifier references — infer value type from TS.
   if (ts.isIdentifier(node)) {
     const type = ctx.checker.getTypeAtLocation(node);
-    const irType = inferScriptParamIRType(type);
+    const irType = inferIRTypeFromTsType(type, ctx.checker);
     if (!irType) return null;
 
     const name = node.text;

@@ -36,6 +36,7 @@ export function getExprChildren(node: IRExpression): IRExpression[] {
     case 'expr:component_read':
     case 'expr:local_var':
     case 'expr:trigger_var':
+    case 'expr:closure_read':
     case 'expr:slot':
       return [];
     default: {
@@ -73,6 +74,7 @@ export function mapExprChildren(
     case 'expr:component_read':
     case 'expr:local_var':
     case 'expr:trigger_var':
+    case 'expr:closure_read':
     case 'expr:function':
     case 'expr:slot':
       return node;
