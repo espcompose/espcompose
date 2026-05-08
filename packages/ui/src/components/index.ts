@@ -24,9 +24,13 @@ export { Dropdown } from './Dropdown';
 export type { DropdownProps } from './Dropdown';
 export type { StyleProps, ButtonVariant } from './shared-types';
 
+// Navigation
+export { PageNav } from './PageNav';
+export type { PageNavProps, PageNavItem } from './PageNav';
+
 // Binding-driven components
 export { SensorText } from './SensorText';
 
 // Popup system
 export { Popup } from './Popup';
-export { Toast } from './Toast';
+export { BottomToast } from './Toast';

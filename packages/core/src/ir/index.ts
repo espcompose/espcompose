@@ -85,6 +85,7 @@ export type {
   IRComponentReadExpression,
   IRLocalVarExpression,
   IRTriggerVarExpression,
+  IRClosureReadExpression,
   IRGlobalReadExpression,
   IRMuxExpression,
   IRTableLookupExpression,
@@ -134,6 +135,8 @@ export {
   irArrayMethod,
   irLiteralExpression,
   irLocalVarExpression,
+  irGlobalRead,
+  irClosureRead,
   irFunctionExpression,
   irTriggerVarExpression,
   inferLiteralExprType,
@@ -216,3 +219,7 @@ export {
   parseDurationString,
   parseTimeoutString,
 } from './action-types';
+
+// ── Component Contributions ──────────────────────────────────────────────────
+export type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+export { applyContributions } from './apply-contributions';

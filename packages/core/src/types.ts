@@ -130,17 +130,20 @@ export declare const OVERLAY_BRAND: unique symbol;
 export declare const CONTROLLER_BRAND: unique symbol;
 
 /**
- * Controller returned by `useVisibility()`.
+ * Controller returned by `useVisibility()` or `useTransientOverlay()`.
  *
  * Provides `show()` and `hide()` methods that are compile-time markers
  * — the action compiler recognises calls and lowers them to
  * `script_execute` actions at serialization time.
+ *
+ * When `P` is provided, `show()` requires a params object whose fields
+ * are forwarded to the backing script as named args.
  */
-export interface VisibilityController {
+export interface VisibilityController<P = void> {
   readonly [BINDING_BRAND]?: true;
   readonly [CONTROLLER_BRAND]?: true;
-  /** Show the target (unhide LVGL widget or show overlay). */
-  show(): void;
+  /** Show the target. When parameterized, requires a params object. */
+  show(...args: P extends void ? [] : [params: P]): void;
   /** Hide the target (hide LVGL widget or overlay). */
   hide(): void;
 }

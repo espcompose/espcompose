@@ -5,7 +5,7 @@ sidebar_position: 11
 
 # useTransientOverlay
 
-A queue/slot mechanic primitive for transient overlay lifecycles — toasts, notifications, snackbars, and similar time-limited UI. Composes `useOverlay()` + `useVisibility()` to provide configurable queuing, slot allocation, and overflow behavior.
+A queue/slot mechanic primitive for transient overlay lifecycles — toasts, notifications, snackbars, and similar time-limited UI. Composes `useOverlay()` with internal lifecycle scripts to provide configurable queuing, slot allocation, and overflow behavior.
 
 Any UI library can build toast/notification overlays on top of this hook without reinventing queue mechanics. For most toast use cases, prefer the higher-level [`useToast()`](./useToast.md) from `@espcompose/ui`.
 
@@ -45,15 +45,15 @@ const ctrl = useTransientOverlay(config, factory): TransientOverlayController;
 ### TransientOverlayFactory
 
 ```typescript
-type TransientOverlayFactory = (
+type TransientOverlayFactory<P = {}> = (
   ctrl: OverlayController,
-  context: TransientOverlayContext,
+  context: TransientOverlayContext & { payload: P },
 ) => EspComposeElement | EspComposeElement[];
 ```
 
 The factory receives:
 - `ctrl` — standard overlay controller with `show()`/`hide()` markers
-- `context` — slot state for reactive positioning (e.g. `slotRank` for compacted stacking)
+- `context` — slot state for reactive positioning (e.g. `context.slotRank` for compacted stacking) plus `context.payload`, which exposes the user-declared payload fields typed by `P` (each field backed by a reactive global)
 
 ### TransientOverlayController
 
@@ -111,24 +111,43 @@ const queued = useTransientOverlay(
 <Button text="Show" onPress={() => { queued.show(); }} />
 ```
 
+## Parameterized payload
+
+Pass per-`show()` data to the factory by parameterizing the hook with a payload type. Fields on `ctx.payload` are backed by reactive globals, so referencing them inside JSX automatically wires up reactive updates:
+
+```tsx
+type ToastPayload = { msg: string };
+
+const toast = useTransientOverlay<ToastPayload>(
+  { zOrder: 100, autoHide: '3s' },
+  (ctrl, ctx) => (
+    <MyToast>
+      <Text text={ctx.payload.msg} />
+    </MyToast>
+  ),
+);
+
+// Caller passes the payload at show time:
+<Button text="Save" onPress={() => { toast.show({ msg: 'Saved!' }); }} />
+```
+
 ## How it works
 
-**Single-slot** (`maxVisible: 1`):
-1. One overlay is created via `useOverlay()`
-2. A visibility controller wraps it with the chosen script mode:
-   - `overflow: 'replace'` → script `mode: restart`
-   - `overflow: 'queue'` → script `mode: queued` with `max_runs: queueLength`
-   - `overflow: 'drop'` → script `mode: single`
-3. When `autoHide` is set, the show script sequences: show → delay → hide
+`useTransientOverlay()` always uses the same slot/coordinator model, including when `maxVisible` is `1`:
 
-**Multi-slot** (`maxVisible > 1`):
-1. N overlays are pre-allocated, each with its own auto-hide script (`mode: restart`)
-2. A coordinator show script dispatches to the next free slot using round-robin allocation
-3. Slot state is tracked via ESPHome globals: active flags, sequence numbers, and a sequence counter
-4. A reactive `slotRank` memo computes each slot's visual position based on active slots with lower sequence numbers
+1. N overlays are pre-allocated via `useOverlay()` (`N = maxVisible`)
+2. Each slot gets its own lifecycle scripts (`mode: restart`) for show, optional auto-hide, and hide
+3. A coordinator show script dispatches to the first inactive slot
+4. The coordinator's script mode implements overflow behavior:
+  - `overflow: 'replace'` → script `mode: restart`
+  - `overflow: 'queue'` → script `mode: queued` with `max_runs: queueLength`
+  - `overflow: 'drop'` → script `mode: single`
+5. Slot state is tracked via ESPHome globals: active flags, sequence numbers, and a sequence counter
+6. A reactive `slotRank` memo computes each slot's visual position based on active slots with lower sequence numbers
 
 ## Rules
 
+- Must be called inside an `<lvgl>` tree — overlays are scoped to a specific LVGL instance's `top_layer`
 - Must be called inside a function component body
 - `show()` and `hide()` can only be used inside trigger handlers or `useScript()` bodies
 - When `maxVisible > 1`, the factory must produce a consistent widget structure across all slots

@@ -35,19 +35,21 @@ export interface PaintPrimitive {
 
 /**
  * Walk the SemanticIR and extract ec_canvas paint scene data.
- * Uses the typed `IRUIRegistry` on `ir.ui` when available,
+ * Uses the typed `IRUIRegistry` entries on `ir.uis` when available,
  * falling back to the generic sections walk for backward compatibility.
  */
 export function extractPaintScenesFromIR(ir: SemanticIR): EcCanvasPaintScene[] {
   const scenes: EcCanvasPaintScene[] = [];
 
-  // Prefer typed LVGL widget tree on the IR
-  if (ir.ui) {
-    walkIRWidgets(ir.ui.pages, scenes);
-    walkIRWidgets(ir.ui.widgets, scenes);
-    for (const tier of ir.ui.overlays) {
-      for (const overlay of tier.overlays) {
-        walkIRWidgets(overlay.widgets, scenes);
+  // Prefer typed LVGL widget trees on the IR
+  if (ir.uis.length > 0) {
+    for (const ui of ir.uis) {
+      walkIRWidgets(ui.pages, scenes);
+      walkIRWidgets(ui.widgets, scenes);
+      for (const tier of ui.overlays) {
+        for (const overlay of tier.overlays) {
+          walkIRWidgets(overlay.widgets, scenes);
+        }
       }
     }
     return scenes;
@@ -207,20 +209,25 @@ export function transformEcCanvasWidgets(config: Record<string, unknown>): void 
   const lvgl = config.lvgl;
   if (!lvgl || typeof lvgl !== 'object') return;
 
-  const lvglObj = lvgl as Record<string, unknown>;
+  // lvgl may be an array (multi-LVGL) or a single object
+  const lvglInstances: Record<string, unknown>[] = Array.isArray(lvgl)
+    ? lvgl as Record<string, unknown>[]
+    : [lvgl as Record<string, unknown>];
 
-  // Walk pages
-  if (Array.isArray(lvglObj.pages)) {
-    for (const page of lvglObj.pages) {
-      if (page && typeof page === 'object' && 'widgets' in page) {
-        transformWidgetsArray((page as Record<string, unknown>).widgets as unknown[]);
+  for (const lvglObj of lvglInstances) {
+    // Walk pages
+    if (Array.isArray(lvglObj.pages)) {
+      for (const page of lvglObj.pages) {
+        if (page && typeof page === 'object' && 'widgets' in page) {
+          transformWidgetsArray((page as Record<string, unknown>).widgets as unknown[]);
+        }
       }
     }
-  }
 
-  // Walk top-level widgets
-  if (Array.isArray(lvglObj.widgets)) {
-    transformWidgetsArray(lvglObj.widgets as unknown[]);
+    // Walk top-level widgets
+    if (Array.isArray(lvglObj.widgets)) {
+      transformWidgetsArray(lvglObj.widgets as unknown[]);
+    }
   }
 }
 
@@ -282,25 +289,31 @@ export function injectEcCanvasDrawActions(
 
   const lvgl = config.lvgl;
   if (!lvgl || typeof lvgl !== 'object') return;
-  const lvglObj = lvgl as Record<string, unknown>;
+
+  // lvgl may be an array (multi-LVGL) or a single object
+  const lvglInstances: Record<string, unknown>[] = Array.isArray(lvgl)
+    ? lvgl as Record<string, unknown>[]
+    : [lvgl as Record<string, unknown>];
 
   const sceneById = new Map<string, EcCanvasPaintScene>();
   for (const scene of scenes) {
     sceneById.set(scene.canvasId, scene);
   }
 
-  // Walk pages
-  if (Array.isArray(lvglObj.pages)) {
-    for (const page of lvglObj.pages) {
-      if (page && typeof page === 'object' && 'widgets' in page) {
-        injectDrawActionsIntoWidgets((page as Record<string, unknown>).widgets as unknown[], sceneById);
+  for (const lvglObj of lvglInstances) {
+    // Walk pages
+    if (Array.isArray(lvglObj.pages)) {
+      for (const page of lvglObj.pages) {
+        if (page && typeof page === 'object' && 'widgets' in page) {
+          injectDrawActionsIntoWidgets((page as Record<string, unknown>).widgets as unknown[], sceneById);
+        }
       }
     }
-  }
 
-  // Walk top-level widgets
-  if (Array.isArray(lvglObj.widgets)) {
-    injectDrawActionsIntoWidgets(lvglObj.widgets as unknown[], sceneById);
+    // Walk top-level widgets
+    if (Array.isArray(lvglObj.widgets)) {
+      injectDrawActionsIntoWidgets(lvglObj.widgets as unknown[], sceneById);
+    }
   }
 }
 

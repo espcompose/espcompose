@@ -108,11 +108,18 @@ export {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
+  OVERLAY_PAYLOAD_GLOBALS,
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from './hooks/useOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
+
+// ── Contribution scope (compiler state) ────────────────────────────────────
+export { withContributionScope, registerContribution } from './hooks/useContributionScope';
+export type { ContributionScopeResult } from './hooks/useContributionScope';
+export type { ComponentContribution, AttachTriggerContribution } from './ir/contribution-types';
+export { applyContributions } from './ir/apply-contributions';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
 export type { ClosureDescriptor } from './actions/closure';
@@ -206,7 +213,7 @@ export type {
   ExprType, BinaryOp, UnaryOp, PostfixOp, BuiltinFn, StringMethod, ArrayMethod,
   IRLiteralExpression, IRSignalReadExpression, IRMemoReadExpression,
   IRSlotExpression, IRThemeReadExpression,
-  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRGlobalReadExpression,
+  IREntityPropExpression, IRComponentReadExpression, IRLocalVarExpression, IRTriggerVarExpression, IRClosureReadExpression, IRGlobalReadExpression,
   IRMuxExpression, IRTableLookupExpression, IRFunctionExpression,
   IRExpression,
   ExprOpDescriptor, IROpExpression,
@@ -222,7 +229,7 @@ export {
   irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce,
   irStringMethod, irArrayIndex, irArrayMethod,
-  irLiteralExpression, irLocalVarExpression, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
+  irLiteralExpression, irLocalVarExpression, irGlobalRead, irClosureRead, irFunctionExpression, irTriggerVarExpression, inferLiteralExprType,
 } from './ir/index';
 export {
   irVarDeclStatement, irAssignStatement, irIfStatement,

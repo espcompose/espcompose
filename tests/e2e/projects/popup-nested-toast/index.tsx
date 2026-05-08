@@ -1,7 +1,7 @@
 /**
  * E2E project: popup-nested-toast
  *
- * Validates nested overlay hooks — useToast() inside a usePopup() factory.
+ * Validates nested overlay hooks — Toast.Provider inside a usePopup() factory.
  *
  * Expected behaviour:
  *   - Both popup and toast overlay definitions are emitted into top_layer
@@ -19,40 +19,49 @@ import {
   Popup,
   UITheme,
   usePopup,
+  Toast,
   useToast,
 } from '@espcompose/ui';
+
+/**
+ * PopupContent — rendered inside the popup; uses toast from context.
+ */
+const PopupContent = createLvglWidget(
+  ({ entityId, label, onClose }: { entityId: string; label: string; onClose: () => void }) => {
+    const entity = useHAEntity(entityId, { domain: 'light' });
+    const toast = useToast();
+
+    return (
+      <Popup onBackdropPress={onClose}>
+        <Text text={label} />
+        <Button
+          text="Toggle"
+          onPress={async () => {
+            entity.toggle();
+            toast.show({ msg: 'Toggled!' });
+            await delay(2000);
+            toast.hide();
+          }}
+        />
+        <Button
+          text="Close"
+          onPress={onClose}
+        />
+      </Popup>
+    );
+  },
+);
 
 /**
  * DeviceCard — a button that opens a popup containing a nested toast trigger.
  */
 const DeviceCard = createLvglWidget(
   ({ entityId, label }: { entityId: string; label: string }) => {
-    const entity = useHAEntity(entityId, { domain: 'light' });
-
-    const popup = usePopup((ctrl) => {
-      const toast = useToast(() => (
-        <Text text="Toggled!" />
-      ));
-
-      return (
-        <Popup onBackdropPress={() => { ctrl.hide(); }}>
-          <Text text={label} />
-          <Button
-            text="Toggle"
-            onPress={async () => {
-              entity.toggle();
-              toast.show();
-              await delay(2000);
-              toast.hide();
-            }}
-          />
-          <Button
-            text="Close"
-            onPress={() => { ctrl.hide(); }}
-          />
-        </Popup>
-      );
-    });
+    const popup = usePopup((ctrl) => (
+      <Toast.Provider>
+        <PopupContent entityId={entityId} label={label} onClose={() => { ctrl.hide(); }} />
+      </Toast.Provider>
+    ));
 
     return (
       <Button

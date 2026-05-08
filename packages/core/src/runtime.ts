@@ -2,6 +2,7 @@ import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks/useScript';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
 import { withOverlayScope } from './hooks/useOverlay';
+import { withContributionScope } from './hooks/useContributionScope';
 import { withContext, pushHookPath, popHookPath } from './hooks';
 import type { Context } from './hooks';
 
@@ -240,7 +241,7 @@ function mergeContextSections(
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {
   // LVGL container: collect the widget tree for the UI registry IR.
-  // No config section is emitted — the tree is consumed via ir.ui instead.
+  // No config section is emitted — the tree is consumed via ir.uis instead.
   if (child.type === 'lvgl') {
     _lvglTrees.push(buildLvglSection(child));
     return;
@@ -292,6 +293,7 @@ export const ESPCompose = {
   withScriptScope,
   withReactiveScope,
   withOverlayScope,
+  withContributionScope,
   clearHAEntityCache,
   clearImageCache,
   clearFontCache,

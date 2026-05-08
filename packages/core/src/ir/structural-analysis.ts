@@ -182,6 +182,14 @@ function walkLockstep(
       return first;
     }
 
+    case 'expr:closure_read': {
+      const typed = nodes as readonly (typeof first)[];
+      for (let i = 1; i < typed.length; i++) {
+        if (typed[i].name !== first.name || typed[i].type !== first.type) return null;
+      }
+      return first;
+    }
+
     case 'expr:slot': {
       const typed = nodes as readonly (typeof first)[];
       for (let i = 1; i < typed.length; i++) {

@@ -10,6 +10,8 @@ import { isTriggerVar } from '../actions';
 import type { TriggerVar } from '../actions';
 import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './markers';
 import type { IRActionNode } from '../ir/action-types';
+import type { IRClosureReadExpression } from '../ir/expr-types';
+import { irLiteralExpression } from '../ir/expr-builders';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
@@ -91,8 +93,12 @@ function hasCompiledActions(v: unknown): v is CompiledActionFunction {
 }
 
 /**
- * Resolve ref variable names to their runtime tokens in compiled actions.
- * Replaces ref variable name strings with actual ref tokens (e.g. 'r_abc123').
+ * Resolve ref variable names and closure captures in compiled actions.
+ *
+ * - Ref bindings: string values matching a key in `bindings` where the value
+ *   is a Ref are replaced with the ref's token (String(ref)).
+ * - Closure captures: `expr:closure_read` nodes are replaced with
+ *   `expr:literal` nodes using the captured JS value from `bindings`.
  */
 export function resolveRefBindingsInActions(
   actions: unknown[],
@@ -118,6 +124,16 @@ function resolveRefBindingsInValue(
   }
   if (typeof value === 'object') {
     const obj = value as Record<string, unknown>;
+    // Handle expr:closure_read → resolve to literal
+    if (obj.kind === 'expr:closure_read') {
+      const closureNode = obj as unknown as IRClosureReadExpression;
+      const capturedValue = refBindings[closureNode.name];
+      if (capturedValue !== undefined && isPrimitive(capturedValue)) {
+        return irLiteralExpression(capturedValue, closureNode.type);
+      }
+      // Fallback: leave as-is (will be handled by target via closure struct)
+      return obj;
+    }
     const result: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(obj)) {
       // refSlots carry binding-name metadata for the closure-rewrite pass.
@@ -135,6 +151,11 @@ function resolveRefBindingsInValue(
     return result;
   }
   return value;
+}
+
+function isPrimitive(v: unknown): v is string | number | boolean {
+  const t = typeof v;
+  return t === 'string' || t === 'number' || t === 'boolean';
 }
 
 // ────────────────────────────────────────────────────────────────────────────

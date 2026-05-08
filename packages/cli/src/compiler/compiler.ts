@@ -52,7 +52,7 @@ const compilePipeline: PipelineStep[] = [
   teardownPhase,
 ];
 
-/** IR-only pipeline: setup → [type-check + lint] → transform → bundle → execute → teardown. */
+/** IR-only pipeline: setup → [type-check + lint] → transform → bundle → execute → validate → teardown. */
 const irPipeline: PipelineStep[] = [
   setupPhase,
   [typeCheckPhase, lintPhase],

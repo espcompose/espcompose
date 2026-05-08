@@ -26,7 +26,13 @@ export type {
   RadiusToken,
   StatusToken,
   TextVariant,
+  UIThemeSettings,
+  ThemeFactory,
 } from './theme/types';
+
+// Adaptive helpers (UI layer)
+export { adaptiveDensity } from './theme/adaptive';
+export type { DensityLevel } from './theme/adaptive';
 
 // Components
 export { Screen } from './components/Screen';
@@ -49,6 +55,10 @@ export { Dropdown } from './components/Dropdown';
 export type { DropdownProps } from './components/Dropdown';
 export type { StyleProps, ButtonVariant } from './components/shared-types';
 
+// Navigation
+export { PageNav } from './components/PageNav';
+export type { PageNavProps, PageNavItem } from './components/PageNav';
+
 // Binding-driven components
 export { SensorText } from './components/SensorText';
 
@@ -58,5 +68,7 @@ export { Popup } from './components/Popup';
 // Overlay convenience hooks
 export { usePopup } from './hooks/usePopup';
 export type { PopupController, PopupFactory } from './hooks/usePopup';
-export { useToast } from './hooks/useToast';
-export type { ToastFactory, ToastController, ToastOptions } from './hooks/useToast';
+
+// Toast system
+export { Toast, useToast } from './providers/Toast';
+export type { ToastController, ToastProviderProps } from './providers/Toast';

@@ -24,12 +24,22 @@
 
 import { createContext, useContext, withContext } from './useContext';
 import { assertHookContext, getCurrentHookPath, getHookPathGeneration } from './useState';
+import { registerComponent } from './useReactiveScope';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND, OVERLAY_BRAND } from '../types';
 import type { EspComposeElement } from '../types';
 import type { IRBinding } from './useReactiveScope';
 import type { IRReactiveNode } from '../reactive';
+import { IRReactiveNode as IRReactiveNodeImpl } from '../reactive/node';
+import type { IRDependency } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
+import { useLvgl } from './useLvgl';
+import {
+  globalScopeContext,
+  irTypeToExprType,
+  readOverlayPayloadMeta,
+} from './global-shared';
+import type { OverlayPayloadGlobalDecl, GlobalDefinition } from './global-shared';
 import { irOverlayShow, irOverlayHide } from '../ir/action-types';
 import { generateDeterministicId } from '../id';
 import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
@@ -47,6 +57,8 @@ export const OVERLAY_INSTANCE_INDEX: unique symbol = Symbol('overlay.instanceInd
 export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
 /** Script ID for lifecycle-managed show/hide (e.g. toast auto-hide). */
 export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
+/** Overlay payload declarations (OverlayPayloadGlobalDecl[]). Symbol-keyed so useVisibility can read them. */
+export const OVERLAY_PAYLOAD_GLOBALS: unique symbol = Symbol('overlay.payloadGlobals');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -59,14 +71,16 @@ export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecy
  *
  * - `show()` sets the overlay's mux index to this instance, unhides the
  *   shared widget subtree, and brings it to the front within its z-order tier.
+ *   When parameterized (`P` is not void), requires a params object whose fields
+ *   are written to backing globals before showing.
  * - `hide()` hides the shared widget subtree (not muxed — the same
  *   widgets across all instances).
  */
-export interface OverlayController {
+export interface OverlayController<P = void> {
   readonly [BINDING_BRAND]?: true;
   readonly [OVERLAY_BRAND]?: true;
-  /** Show this instance's overlay. */
-  show(): void;
+  /** Show this instance's overlay. When parameterized, requires a params object. */
+  show(...args: P extends void ? [] : [params: P]): void;
   /** Hide the overlay. Safe to call from any trigger handler in any instance. */
   hide(): void;
 }
@@ -127,6 +141,8 @@ export interface CapturedOverlayAction {
 export interface OverlayDefinition {
   /** Dedup key derived from the hook-path stack at the call site. */
   readonly templateKey: string;
+  /** Ref token of the owning `<lvgl>` element. Used to scope overlays per-tree. */
+  readonly lvgl: string;
   /** Numeric z-order tier for stacking in top_layer. */
   readonly zOrder: number;
   /** Per-instance records, accumulated across all callers. */
@@ -143,6 +159,11 @@ export interface OverlayConfig {
    */
   zOrder?: number;
 }
+
+// ── Overlay payload global declarations ──────────────────────────────────────
+
+// Re-export from canonical location for backward compatibility.
+export type { OverlayPayloadGlobalDecl } from './global-shared';
 
 // ── Scope frame ─────────────────────────────────────────────────────────────
 
@@ -183,14 +204,16 @@ export function withOverlayScope<T>(fn: () => T): OverlayScopeResult<T> {
 /**
  * Read the overlay definitions registered in the currently-active scope.
  *
- * Used by the LVGL serializer (`buildLvglSection`) to emit the overlay widget
- * subtrees into `top_layer` after children resolution completes. Returns an
- * empty array if no overlay scope is active.
+ * When `lvgl` is provided, only overlays belonging to that `<lvgl>`
+ * tree are returned. When omitted, all definitions are returned (used by
+ * the execute phase to collect the flat list for downstream codegen).
  */
-export function peekOverlayDefinitions(): OverlayDefinition[] {
+export function peekOverlayDefinitions(lvgl?: string): OverlayDefinition[] {
   const frame = useContext(overlayScopeContext);
   if (!frame) return [];
-  return Array.from(frame.definitions.values());
+  const all = Array.from(frame.definitions.values());
+  if (lvgl == null) return all;
+  return all.filter(d => d.lvgl === lvgl);
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
@@ -200,8 +223,15 @@ export function peekOverlayDefinitions(): OverlayDefinition[] {
  *
  * Receives the `OverlayController` so user code can call `ctrl.hide()`
  * inside trigger handlers without forward-reference issues.
+ *
+ * When the overlay is parameterized (`P` is not void), a second argument
+ * (`ctx`) is provided whose `payload` field exposes reactive proxies for
+ * each field of `P`. These are backed by globals so `ctx.payload.fieldName`
+ * compiles to `global_read`.
  */
-export type OverlayFactory = (ctrl: OverlayController) => EspComposeElement | EspComposeElement[];
+export type OverlayFactory<P = void> = P extends void
+  ? (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[]
+  : (ctrl: OverlayController<P>, ctx: { payload: P }) => EspComposeElement | EspComposeElement[];
 
 // ── Hook call counter ───────────────────────────────────────────────────────
 // Disambiguates multiple useOverlay() calls within the same component.
@@ -222,14 +252,22 @@ export type OverlayFactory = (ctrl: OverlayController) => EspComposeElement | Es
  * call index so that multiple `useOverlay()` calls in the same component each
  * get their own unique overlay definition.
  *
+ * When parameterized (`P` is not void), `useOverlay` reads compiler-injected
+ * `__overlayPayloadGlobals` metadata from the factory, registers backing globals,
+ * builds a reactive params proxy, and attaches the param declarations to the
+ * controller so downstream hooks (e.g. `useVisibility`) can wire show scripts.
+ *
  * @param config - Overlay configuration. `zOrder` controls stacking tier
  *   (default `0`). Higher values render above lower values.
  * @param factory - Factory producing the overlay's JSX widget subtree.
  */
-export function useOverlay(config: OverlayConfig, factory: OverlayFactory): OverlayController {
+export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFactory<P>): OverlayController<P> {
   assertHookContext('useOverlay()');
 
   const zOrder = config.zOrder ?? 0;
+
+  // Require an enclosing <lvgl> context — overlays are lvgl-scoped.
+  const lvglId = String(useLvgl());
 
   const basePath = getCurrentHookPath();
   if (!basePath) {
@@ -269,18 +307,55 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, zOrder, instances: [] };
+    def = { templateKey: safeKey, lvgl: lvglId, zOrder, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 
+  // ── Overlay payload handling ──────────────────────────────────────────
+  // Read compiler-injected __overlayPayloadGlobals metadata, register globals,
+  // and build reactive proxies for the factory's params parameter.
+  const payloadDecls = readOverlayPayloadMeta(factory);
+  let paramsProxy: Record<string, unknown> | undefined;
+
+  if (payloadDecls && payloadDecls.length > 0) {
+    const scopeMap = useContext(globalScopeContext) as Map<string, GlobalDefinition> | undefined;
+    if (scopeMap) {
+      for (const p of payloadDecls) {
+        if (!scopeMap.has(p.globalId)) {
+          scopeMap.set(p.globalId, { id: p.globalId, irType: p.irType });
+          registerComponent({
+            kind: 'component',
+            section: 'globals',
+            id: p.globalId,
+            config: { id: p.globalId, irType: p.irType },
+          });
+        }
+      }
+    }
+
+    paramsProxy = {};
+    for (const p of payloadDecls) {
+      const dep: IRDependency = { kind: 'dependency', sourceId: p.globalId, sourceType: 'global' };
+      paramsProxy[p.name] = new IRReactiveNodeImpl({
+        kind: 'expression',
+        dependencies: [dep],
+        exprType: irTypeToExprType(p.irType),
+        sourceId: p.globalId,
+        propertyKey: 'value',
+      });
+    }
+  }
+
   const instanceIndex = def.instances.length;
-  const ctrl: OverlayController = createOverlayController(safeKey, instanceIndex, zOrder);
+  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, payloadDecls);
 
   // Evaluate the factory — captures this instance's unique closures
   // (entity bindings, compiled action handlers, useMemo() expressions).
   // Even though only instance #0's widget subtree is emitted, every
   // instance must evaluate so the compiler captures its data.
-  const rendered = factory(ctrl);
+  const rendered = paramsProxy
+    ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
+    : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl);
 
   def.instances.push({ index: instanceIndex, rendered });
 
@@ -299,7 +374,12 @@ export function useOverlay(config: OverlayConfig, factory: OverlayFactory): Over
  * overlay identity so the deferred ref-binding resolver in `overlay-resolve.ts`
  * can recover the mux index without needing a separate symbol resolution pass.
  */
-function createOverlayController(templateKey: string, instanceIndex: number, zOrder: number): OverlayController {
+function createOverlayController<P>(
+  templateKey: string,
+  instanceIndex: number,
+  zOrder: number,
+  payloadDecls?: OverlayPayloadGlobalDecl[],
+): OverlayController<P> {
   return {
     show(): void {
       throwCompileTimeOnly('overlay.show()', 'Overlay actions');
@@ -310,10 +390,11 @@ function createOverlayController(templateKey: string, instanceIndex: number, zOr
     [OVERLAY_TEMPLATE_KEY]: templateKey,
     [OVERLAY_INSTANCE_INDEX]: instanceIndex,
     [OVERLAY_Z_ORDER]: zOrder,
+    [OVERLAY_PAYLOAD_GLOBALS]: payloadDecls,
     [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
       if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
       if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];
       return [];
     },
-  } as OverlayController;
+  } as OverlayController<P>;
 }

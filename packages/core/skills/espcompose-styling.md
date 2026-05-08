@@ -226,9 +226,9 @@ const MyExtended = UITheme.extend({
   `expandCssStyle()` handles the mapping at compile time.
 - **State/part nesting is structural.** States go inside parts, not the other way
   around: `indicator: { pressed: { ... } }` — not `pressed: { indicator: { ... } }`.
-- **Theme proxy is lazy.** `useTheme()` returns a proxy — only leaf access creates
+- **Theme proxy is lazy.** `handle.use()` returns a proxy — only leaf access creates
   reactive nodes. Intermediate paths (e.g. `theme.colors`) return nested proxies.
-- **`createStyles` must be called in render pass.** It calls `useTheme()` internally,
-  so it follows the same hook rules.
+- **`handle.use()` must be called in render pass.** It follows the same hook rules
+  as other hooks — call it inside a function component body, not conditionally.
 - **All style properties accept `Reactive<T>`.** You can bind any style prop to a
   reactive value (ref property, memo, theme leaf).

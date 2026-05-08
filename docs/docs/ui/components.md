@@ -260,6 +260,62 @@ Loading spinner with theme-driven colors.
 
 ---
 
+## Overlay Components
+
+### Popup
+
+Modal overlay with a semi-transparent backdrop and centered container. Used via the `usePopup()` hook.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `padding` | `SpacingToken` | `'lg'` | Inner padding |
+| `radius` | `RadiusToken` | `'lg'` | Container border radius |
+| `gap` | `SpacingToken` | `'md'` | Gap between children |
+| `backdropOpacity` | `number` | `50` | Backdrop opacity (0–100) |
+| `onBackdropPress` | `TriggerHandler` | — | Called when backdrop is tapped |
+
+```tsx
+import { usePopup, Popup, Text, Button } from '@espcompose/ui';
+
+function App() {
+  const popup = usePopup((ctrl) => (
+    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+      <Text text="Are you sure?" />
+      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
+    </Popup>
+  ));
+
+  return <Button text="Open" onPress={() => { popup.show(); }} />;
+}
+```
+
+### Toast.Provider / useToast
+
+Lightweight bottom-anchored notification system. Wrap content in `<Toast.Provider>` and trigger toasts with `useToast()`.
+
+| Provider Prop | Type | Default | Description |
+|---------------|------|---------|-------------|
+| `autoHide` | `string \| number \| false` | `'3s'` | Auto-dismiss duration |
+| `maxVisible` | `number` | `1` | Max simultaneous toasts |
+| `overflow` | `'replace' \| 'queue' \| 'drop'` | `'replace'` | Behavior at capacity |
+| `slotHeight` | `number` | `64` | Vertical offset per stacked toast |
+
+```tsx
+import { Toast, useToast, Button } from '@espcompose/ui';
+
+function Page() {
+  const toast = useToast();
+  return <Button text="Save" onPress={() => { toast.show({ msg: 'Saved!' }); }} />;
+}
+
+// In your layout:
+<Toast.Provider autoHide="3s" maxVisible={2}>
+  <Page />
+</Toast.Provider>
+```
+
+---
+
 ## Design Token Types
 
 These token types are shared across all components:

@@ -278,8 +278,10 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 | `handle.use()` | Access reactive theme token values |
 | `useRef<T>()` | Create a typed cross-component reference |
 | `useScript(fn)` | Define a named ESPHome script from an async arrow function |
-| `useImage(path)` | Register an image asset |
-| `useFont(config)` | Register a font asset |
+| `useImage(props)` | Register an image asset |
+| `useFont(props)` | Register a font asset |
+| `usePopup(factory)` | Create a modal popup overlay; returns a controller with `.show()` / `.dismiss()` |
+| `useToast()` | Access the nearest `Toast.Provider` controller; call `.show({ msg })` to trigger |
 
 ---
 
@@ -318,6 +320,15 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 | Component | Description | Key Props |
 |-----------|-------------|-----------|
 | `SensorText` | Text display from a sensor binding | `binding`, `text`, `variant`, `color` |
+
+### Overlays
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `Popup` | Modal overlay with backdrop | `padding`, `radius`, `gap`, `backdropOpacity`, `onBackdropPress` |
+| `Toast.Provider` | Bottom-anchored notification system | `autoHide`, `maxVisible`, `overflow`, `slotHeight` |
+
+Hooks: `usePopup(factory)` returns a controller with `.show()` / `.dismiss()`. `useToast()` returns a controller with `.show({ msg })` / `.hide()`.
 
 ---
 

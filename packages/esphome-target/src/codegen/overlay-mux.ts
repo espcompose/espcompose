@@ -82,6 +82,8 @@ function exprFingerprint(expr: IRExpression): string {
       return `TV:${expr.name}`;
     case 'expr:local_var':
       return `LV:${expr.name}`;
+    case 'expr:closure_read':
+      return `CL:${expr.name}:${expr.type}`;
     case 'expr:function':
       return `FN:${expr.returnType}`;
     case 'expr:op': {

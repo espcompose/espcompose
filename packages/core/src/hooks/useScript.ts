@@ -245,6 +245,47 @@ function createScriptHandle<A extends ScriptParamScalar[]>(
   return callable as ScriptHandle<A>;
 }
 
+// ── Synthetic script registration (internal) ─────────────────────────────
+
+/**
+ * Internal helper for core hooks (`useVisibility`, `useTransientOverlay`)
+ * to register a script whose action body is built directly in IR rather
+ * than compiled from a TS arrow function source.
+ *
+ * `@espcompose/core` is built with tsup (not the ESPCompose CLI script
+ * transformer), so its own `useScript()` calls cannot be processed by the
+ * AST transformer. This helper synthesizes the same `__compiledScript` /
+ * `__refBindings` metadata shape the transformer would produce, then routes
+ * through the normal `useScript()` registration path so closure-table dedup,
+ * scope registration, and handle creation all behave identically.
+ *
+ * Not part of the public API. 3rd-party hooks should use natural
+ * `useScript(async (...) => …)` and let the CLI transformer process them.
+ *
+ * @internal
+ */
+export function defineSyntheticScript(args: {
+  id: string;
+  actions: IRActionNode[];
+  refBindings?: Record<string, unknown>;
+  userParams?: Array<{ name: string; irType: IRType }>;
+  opts?: ScriptOptions;
+}): ScriptHandle {
+  const { id, actions, refBindings, userParams, opts } = args;
+  const fn = Object.assign(
+    () => Promise.resolve(),
+    {
+      __compiledScript: {
+        id,
+        then: actions,
+        ...(userParams && userParams.length > 0 ? { userParams } : {}),
+      },
+      ...(refBindings ? { __refBindings: refBindings } : {}),
+    },
+  );
+  return useScript(fn as never, opts);
+}
+
 // ── Closure-shape classification ─────────────────────────────────────────
 
 /**

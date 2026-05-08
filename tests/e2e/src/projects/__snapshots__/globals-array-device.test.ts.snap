@@ -17,7 +17,7 @@ BoundSignal<std::vector<int>> sig_global_g_4b763005;
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return std::string("Items: ") + std::to_string(static_cast<int>(sig_global_g_4b763005.get().size()));
+  return std::string("Items: ") + std::to_string(static_cast<int>(espcompose::sig_global_g_4b763005.get().size()));
 });
 
 // ── Bootstrap: wire dependency graph ──
@@ -433,14 +433,14 @@ binary_sensor:
           espcompose::sig_global_g_4b763005.notify(); espcompose::flush();"
       - logger.log: Cleared array
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return espcompose::memo_0.get().c_str();"
-            id: rw_ref2
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - label:
+              text: !lambda "return espcompose::memo_0.get().c_str();"
+              id: rw_ref2
 external_components:
   - source:
       type: local

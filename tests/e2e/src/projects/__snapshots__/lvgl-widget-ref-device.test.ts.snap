@@ -345,28 +345,28 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - slider:
-            id: r_ref2
-            min_value: 0
-            max_value: 255
-            on_press:
-              - lvgl.widget.update:
-                  id: r_ref2
-                  knob:
-                    pad_all: 8
-            on_release:
-              - lvgl.widget.update:
-                  id: r_ref2
-                  knob:
-                    pad_all: 4
-        - button:
-            id: r_ref3
-            on_click:
-              - lvgl.widget.redraw: r_ref3
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - slider:
+              id: r_ref2
+              min_value: 0
+              max_value: 255
+              on_press:
+                - lvgl.widget.update:
+                    id: r_ref2
+                    knob:
+                      pad_all: 8
+              on_release:
+                - lvgl.widget.update:
+                    id: r_ref2
+                    knob:
+                      pad_all: 4
+          - button:
+              id: r_ref3
+              on_click:
+                - lvgl.widget.redraw: r_ref3
 "
 `;

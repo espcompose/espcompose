@@ -189,6 +189,7 @@ A translucent bottom-anchored strip for brief, non-blocking messages.
 
 ## Rules
 
+- Must be called inside an `<lvgl>` tree — overlays are scoped to a specific LVGL instance's `top_layer`
 - Must be called inside a function component body (created with `createLvglWidget`)
 - All instances of the same component must produce structurally identical overlay trees — the compiler validates this and will error if the tree shapes differ
 - `show()` and `hide()` are compile-time markers — they can only be used inside trigger handlers (`onPress`, `onChange`, etc.) or `useScript()` bodies

@@ -18,6 +18,8 @@ import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
+import type { ComponentContribution } from './contribution-types';
+import { applyContributions } from './apply-contributions';
 import type {
   SemanticIR,
   IRSection,
@@ -222,6 +224,7 @@ function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROve
 function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRUIRegistry {
   return {
     kind: 'ui_registry' as const,
+    lvgl: tree.lvgl,
     config: resolveWidgetProps(tree.props, ctx),
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
@@ -272,6 +275,12 @@ export interface BuildSemanticIRInput {
    * through `configValueToIR()` inside `buildSemanticIR()`.
    */
   lvglTrees?: RawIRWidgetTree[];
+
+  /**
+   * Component contributions collected during render (useAttachedTrigger).
+   * Applied to the IR tree after construction via applyContributions().
+   */
+  contributions?: ComponentContribution[];
 }
 
 /** Pre-resolution widget tree shape (props are `Record<string, unknown>`). */
@@ -284,6 +293,8 @@ export interface RawIRWidget {
 
 /** Pre-resolution widget tree shape (props are `Record<string, unknown>`). */
 export interface RawIRWidgetTree {
+  /** Ref token of the originating `<lvgl>` element. */
+  readonly lvgl: string;
   readonly props: Record<string, unknown>;
   readonly pages: RawIRWidget[];
   readonly widgets: RawIRWidget[];
@@ -322,9 +333,7 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
   );
 
   // Resolve LVGL widget tree props through the same capture-based pipeline
-  const resolvedLvglTree = input.lvglTrees?.[0]
-    ? resolveWidgetTree(input.lvglTrees[0], ctx)
-    : undefined;
+  const resolvedLvglTrees = (input.lvglTrees ?? []).map(t => resolveWidgetTree(t, ctx));
 
   // Resolve component configs — wrap raw values in IRValue
   const resolvedComponents: IRComponent[] = input.components.map(c => ({
@@ -334,7 +343,7 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
     config: convertObject(c.config, ctx),
   }));
 
-  return {
+  const ir: SemanticIR = {
     kind: 'semantic_ir' as const,
     sections: brandArray(sections, 'section_registry'),
     entities: brandArray(input.entities, 'entity_registry'),
@@ -350,6 +359,13 @@ export function buildSemanticIR(input: BuildSemanticIRInput): SemanticIR {
       memos: input.reactiveNodes.filter(n => n.kind === 'memo'),
       effects: input.reactiveNodes.filter(n => n.kind === 'effect'),
     },
-    ui: resolvedLvglTree,
+    uis: resolvedLvglTrees,
   };
+
+  // Apply component contributions (useAttachedTrigger) to the IR tree.
+  if (input.contributions && input.contributions.length > 0) {
+    applyContributions(ir, input.contributions);
+  }
+
+  return ir;
 }

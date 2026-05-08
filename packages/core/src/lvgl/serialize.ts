@@ -19,7 +19,7 @@ import type { Context } from '../hooks';
 import type { LvglComponentRef } from '../component-aliases';
 import { isIRReactiveNode } from '../reactive';
 import type { IRReactiveNode } from '../reactive';
-import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath } from '../hooks';
+import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath, registerComponent } from '../hooks';
 import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
@@ -38,6 +38,38 @@ import { expandCssStyle } from './style';
 import type { RawIRWidget, RawIRWidgetTree, RawIROverlayContainer, RawIROverlayTier } from '../ir/build';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
+
+// ── Context propagation across intrinsic boundaries ───────────────────────
+// When a <context> element wraps intrinsic LVGL elements (e.g. <lvgl-page>),
+// the context is only active during resolveLvglChildren.  When those intrinsics
+// later have THEIR children resolved in buildLvglWidgetIR/buildLvglPageIR,
+// the context has been popped.  To fix this we annotate resolved intrinsic
+// elements with a snapshot of the active context frames and re-establish them
+// when processing the intrinsic's children.
+
+interface ContextFrame { ctx: Context<unknown>; value: unknown }
+
+const INHERITED_CONTEXTS = Symbol('inheritedContexts');
+
+/** Module-scoped stack tracking active context frames during resolution. */
+const activeContextFrames: ContextFrame[] = [];
+
+/**
+ * Execute `fn` with all inherited context frames from `frames` restored on
+ * both the real context stack and the tracking stack.
+ */
+function withInheritedContexts<R>(frames: ContextFrame[], fn: () => R): R {
+  if (frames.length === 0) return fn();
+  const [first, ...rest] = frames;
+  activeContextFrames.push(first);
+  return withContext(first.ctx, first.value, () => {
+    try {
+      return withInheritedContexts(rest, fn);
+    } finally {
+      activeContextFrames.pop();
+    }
+  });
+}
 
 /** Convert an `lvgl-*` JSX tag to its semantic camelCase widget kind. */
 function lvglElementKind(tag: string): string {
@@ -106,15 +138,29 @@ function resolveLvglChildren(
       }
       resolved.push(...resolveLvglChildren(rendered));
     } else if (el.type === 'context') {
-      // Context provider intrinsic: push context and recurse into children
+      // Context provider intrinsic: push context and recurse into children.
+      // Also maintain the tracking stack so nested intrinsic elements get
+      // annotated with the full set of active context frames.
       const { context: ctx, value, children: ctxChildren } = el.props as {
         context: Context<unknown>; value: unknown;
         children?: EspComposeElement | EspComposeElement[];
       };
+      const frame: ContextFrame = { ctx, value };
+      activeContextFrames.push(frame);
       const inner = withContext(ctx, value, () => resolveLvglChildren(ctxChildren));
+      activeContextFrames.pop();
       resolved.push(...inner);
     } else {
-      resolved.push(el);
+      // Intrinsic element (lvgl-*, lvgl-page, ec-canvas-*, etc.).
+      // If there are active context frames, annotate the element so that
+      // when its children are resolved later (in buildLvglWidgetIR /
+      // buildLvglPageIR), we can re-establish those contexts.
+      if (activeContextFrames.length > 0) {
+        const annotated = { ...el, [INHERITED_CONTEXTS]: [...activeContextFrames] };
+        resolved.push(annotated as EspComposeElement);
+      } else {
+        resolved.push(el);
+      }
     }
   }
   return resolved;
@@ -240,6 +286,10 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
   setCurrentSource(el.__source);
   const { allProps, children } = extractElementProps(el);
 
+  // Restore inherited context frames so that resolveLvglChildren on this
+  // widget's children sees the same context scope as the original resolution.
+  const inherited = (el as unknown as Record<symbol, unknown>)[INHERITED_CONTEXTS] as ContextFrame[] | undefined;
+
   // Capture compiled action metadata from trigger handler props when inside
   // overlay widget serialization.  Trigger handlers are function values with
   // `__compiledActions` attached by the action compiler.
@@ -272,7 +322,9 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
     }
   }
 
-  const widgetChildren = resolveLvglChildren(children);
+  const widgetChildren = inherited
+    ? withInheritedContexts(inherited, () => resolveLvglChildren(children))
+    : resolveLvglChildren(children);
   const childNodes: RawIRWidget[] = widgetChildren
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): RawIRWidget =>
@@ -387,13 +439,14 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
       }
     }
 
-    const overlayTiers = collectOverlayTiers();
+    const overlayTiers = collectOverlayTiers(String(lvglRef));
 
     // Pre-serialize tree-level lvgl props (camelCase keys preserved). The
     // target's emitter performs snake_case key conversion when lowering.
     const serializedTreeProps = serializeValuesPreservingKeys(allProps);
 
     return {
+      lvgl: String(lvglRef),
       props: serializedTreeProps,
       pages,
       widgets: topWidgets,
@@ -412,7 +465,14 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
 function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
   setCurrentSource(child.__source);
   const { allProps: pageProps, children: pageChildren } = extractElementProps(child);
-  const pageResolved = resolveLvglChildren(pageChildren);
+
+  // Restore inherited context frames so function components inside this page
+  // (resolved below) see context providers that wrapped the page element.
+  const inherited = (child as unknown as Record<symbol, unknown>)[INHERITED_CONTEXTS] as ContextFrame[] | undefined;
+
+  const pageResolved = inherited
+    ? withInheritedContexts(inherited, () => resolveLvglChildren(pageChildren))
+    : resolveLvglChildren(pageChildren);
   const pageChildIR: RawIRWidget[] = pageResolved
     .filter((c) => isLvglElement(c.type) || (typeof c.type === 'string' && isEcCanvasElement(c.type)))
     .map((c): RawIRWidget =>
@@ -470,57 +530,76 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
  * `OverlayInstance` for the codegen mux pass and are not emitted into the
  * widget tree.
  */
-function collectOverlayTiers(): RawIROverlayTier[] {
-  const overlays = peekOverlayDefinitions();
+function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
+  // Iterate by re-fetching definitions each pass: rendering an overlay's
+  // factory may itself invoke useOverlay() (e.g. Toast.Provider nested
+  // inside a usePopup() factory), registering new overlays mid-iteration.
+  // We process overlays in registration order until no new ones appear.
+  let overlays = peekOverlayDefinitions(lvgl);
   if (overlays.length === 0) return [];
 
   const tierMap = new Map<number, RawIROverlayContainer[]>();
-  for (const def of overlays) {
-    assertOverlayStructuralIdentity(def.templateKey, def.instances);
+  const processed = new Set<string>();
+  while (overlays.some(d => !processed.has(d.templateKey))) {
+    for (const def of overlays) {
+      if (processed.has(def.templateKey)) continue;
+      processed.add(def.templateKey);
+      assertOverlayStructuralIdentity(def.templateKey, def.instances);
 
-    let tierEntries = tierMap.get(def.zOrder);
-    if (!tierEntries) {
-      tierEntries = [];
-      tierMap.set(def.zOrder, tierEntries);
-    }
+      let tierEntries = tierMap.get(def.zOrder);
+      if (!tierEntries) {
+        tierEntries = [];
+        tierMap.set(def.zOrder, tierEntries);
+      }
 
-    for (const instance of def.instances) {
-      const rendered = instance.rendered;
-      if (rendered == null) continue;
+      for (const instance of def.instances) {
+        const rendered = instance.rendered;
+        if (rendered == null) continue;
 
-      const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
+        const renderedArr = Array.isArray(rendered) ? rendered : [rendered];
 
-      // Serialize inside an isolated reactive scope to capture bindings
-      // without polluting the top-level scope.
-      // Activate overlay action capture to collect trigger handler metadata
-      // via context-scoped capture list.
-      const actionCapture: CapturedOverlayAction[] = [];
-      const { bindings, reactiveNodes } = withContext(overlayActionCaptureContext, actionCapture, () =>
-        withReactiveScope(() => {
-          const resolved = resolveLvglChildren(renderedArr);
-          const widgetIR: RawIRWidget[] = [];
-          for (const ch of resolved) {
-            if (isLvglElement(ch.type)) {
-              widgetIR.push(buildLvglWidgetIR(ch));
-            } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
-              widgetIR.push(ecCanvasToPlain(ch));
+        // Serialize inside an isolated reactive scope to capture bindings
+        // without polluting the top-level scope.
+        // Activate overlay action capture to collect trigger handler metadata
+        // via context-scoped capture list.
+        const actionCapture: CapturedOverlayAction[] = [];
+        const { bindings, reactiveNodes, components } = withContext(overlayActionCaptureContext, actionCapture, () =>
+          withReactiveScope(() => {
+            const resolved = resolveLvglChildren(renderedArr);
+            const widgetIR: RawIRWidget[] = [];
+            for (const ch of resolved) {
+              if (isLvglElement(ch.type)) {
+                widgetIR.push(buildLvglWidgetIR(ch));
+              } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
+                widgetIR.push(ecCanvasToPlain(ch));
+              }
             }
-          }
-          // Only emit instance 0's widgets into the tier container; others
-          // contribute only their captured bindings/actions for the mux pass.
-          if (instance.index === 0) {
-            tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
-          }
-          return null;
-        }),
-      );
-      const capturedActions = actionCapture;
+            // Only emit instance 0's widgets into the tier container; others
+            // contribute only their captured bindings/actions for the mux pass.
+            if (instance.index === 0) {
+              tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
+            }
+            return null;
+          }),
+        );
+        const capturedActions = actionCapture;
 
-      // Store captured per-instance data for Phase 6 codegen.
-      (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
-      (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
-      (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
+        // Propagate component registrations (e.g. globals registered by
+        // useTransientOverlay inside a nested overlay factory) back to the
+        // outer reactive scope. Otherwise globals declared by Toast.Provider
+        // nested inside a usePopup() factory would be lost.
+        for (const comp of components) {
+          registerComponent(comp);
+        }
+
+        // Store captured per-instance data for Phase 6 codegen.
+        (instance as { capturedBindings?: unknown }).capturedBindings = bindings;
+        (instance as { capturedReactiveNodes?: unknown }).capturedReactiveNodes = reactiveNodes;
+        (instance as { capturedActions?: unknown }).capturedActions = capturedActions;
+      }
     }
+    // Re-fetch in case nested factories registered additional overlays.
+    overlays = peekOverlayDefinitions(lvgl);
   }
 
   return Array.from(tierMap.entries())

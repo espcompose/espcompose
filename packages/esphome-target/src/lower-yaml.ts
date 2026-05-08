@@ -139,6 +139,12 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
       return `return 0;`;
     }
 
+    // Global-backed expression — read from the BoundSignal wrapping the global
+    if (node.dependencies?.[0]?.sourceType === 'global') {
+      const globalId = node.dependencies[0].sourceId;
+      return `return espcompose::sig_global_${globalId}.get();`;
+    }
+
     // HA entity expression — read directly from the ESPHome component
     if (node.sourceId && node.propertyKey) {
       if (!node.sourceDomain) {
@@ -426,9 +432,9 @@ export function lowerToYamlConfig(
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
 
   // ── Lower typed LVGL widget tree to YAML section ─────────────────────
-  // The IR now carries a first-class `IRWidgetTree` on `esphome.lvglTree`
+  // The IR now carries first-class `IRUIRegistry` entries on `ir.uis`
   // instead of embedding pre-lowered YAML in the generic sections array.
-  if (ir.ui) {
+  if (ir.uis.length > 0) {
     // Build reactive node lookup map (nodeId → reactive node instance)
     const reactiveNodeMap = new Map<string, unknown>();
     for (const node of reactiveNodes) {
@@ -481,14 +487,16 @@ export function lowerToYamlConfig(
       },
     };
 
-    // Apply overlay mux action replacements to the LVGL tree's overlay tiers.
-    // This mirrors replaceOverlayActionsInIR but operates on the IRWidgetTree
-    // structure (action arrays in widget props) instead of the generic sections.
+    // Apply overlay mux action replacements to each LVGL tree's overlay tiers.
     if (cppResult?.muxedActions) {
-      replaceOverlayActionsInLvglTree(ir.ui, cppResult.muxedActions);
+      for (const ui of ir.uis) {
+        replaceOverlayActionsInLvglTree(ui, cppResult.muxedActions);
+      }
     }
 
-    loweredConfig['lvgl'] = lowerLvglWidgetTree(ir.ui, lvglValueCtx);
+    // Emit lvgl as a list — ESPHome accepts both object and list forms.
+    // Using a list uniformly supports multi-display configurations.
+    loweredConfig['lvgl'] = ir.uis.map(ui => lowerLvglWidgetTree(ui, lvglValueCtx));
   }
 
   let finalConfig: Record<string, unknown>;

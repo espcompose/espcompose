@@ -346,19 +346,19 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - button:
-            x: 10
-            y: 10
-            width: 120
-            height: 50
-            widgets:
-              - label:
-                  text: Click me
-                  align: CENTER
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - button:
+              x: 10
+              y: 10
+              width: 120
+              height: 50
+              widgets:
+                - label:
+                    text: Click me
+                    align: CENTER
 "
 `;

@@ -23,6 +23,24 @@ export interface GlobalDefinition {
   irType: IRType;
 }
 
+// ── OverlayPayloadGlobalDecl ────────────────────────────────────────────────────
+
+/**
+ * Declaration for a single overlay payload field backed by an ESPHome global.
+ *
+ * Each field maps to an ESPHome global variable. The calling script receives
+ * user params and writes them to globals before executing its body. The
+ * reactive bindings read from those globals via `global_read`.
+ */
+export interface OverlayPayloadGlobalDecl {
+  /** Field name (e.g. 'message'). */
+  readonly name: string;
+  /** Target-agnostic type descriptor. */
+  readonly irType: IRType;
+  /** Auto-generated ESPHome global ID backing this param. */
+  readonly globalId: string;
+}
+
 // ── GlobalHandle ───────────────────────────────────────────────────────────
 
 /**
@@ -281,4 +299,52 @@ export function normalizeDuration(value: string | number): IRDurationLiteral {
     throw new Error(`[espcompose] Invalid autoHide duration '${value}'. Expected a number of milliseconds, or a duration literal with a unit suffix (ms, s, or min).`);
   }
   return parsed;
+}
+
+// ── Overlay payload metadata forwarding ──────────────────────────────────────────
+
+/**
+ * Internal key used by the compiler to attach overlay payload global
+ * declarations onto factory functions. This key is opaque to consumers —
+ * use `forwardOverlayPayloadMeta` to transfer it between factories.
+ */
+const FACTORY_META_KEY = '__overlayPayloadGlobals';
+
+/**
+ * Transfer compiler-injected overlay payload metadata from one factory to another.
+ *
+ * When a higher-level hook (e.g. `useToast`) wraps the user's factory in
+ * its own function, the compiler-injected metadata must follow so that
+ * `useTransientOverlay` can detect and register payload globals.
+ *
+ * This utility is the ONLY sanctioned way to forward that metadata.
+ * Consuming code should never reference the internal key directly.
+ */
+export function forwardOverlayPayloadMeta(source: unknown, target: unknown): void {
+  const meta = (source as Record<string, unknown>)[FACTORY_META_KEY];
+  if (meta) {
+    (target as Record<string, unknown>)[FACTORY_META_KEY] = meta;
+  }
+}
+
+/**
+ * Read compiler-injected overlay payload global declarations from a factory.
+ *
+ * Used internally by `useTransientOverlay` to detect payload globals.
+ * Returns undefined if no metadata is present.
+ */
+export function readOverlayPayloadMeta(factory: unknown): OverlayPayloadGlobalDecl[] | undefined {
+  const meta = (factory as Record<string, unknown>)[FACTORY_META_KEY];
+  return meta as OverlayPayloadGlobalDecl[] | undefined;
+}
+
+/**
+ * Attach overlay payload metadata directly onto a wrapper factory.
+ *
+ * Use this when a higher-level hook needs to override the payload declarations
+ * (e.g. `useTransientOverlay` substituting per-slot global IDs) rather than
+ * forwarding the source factory's metadata verbatim.
+ */
+export function setOverlayPayloadMeta(target: unknown, meta: readonly OverlayPayloadGlobalDecl[]): void {
+  (target as Record<string, unknown>)[FACTORY_META_KEY] = meta;
 }

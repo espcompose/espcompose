@@ -38,7 +38,7 @@ type ToastProps = WidgetPropsWithChildren<{
  * Toast — lightweight bottom-anchored notification container.
  * @internal Used by `useToast()`. Not exported publicly.
  */
-export const Toast = createLvglContainerWidget(
+export const BottomToast = createLvglContainerWidget(
   (props: ToastProps) => {
     const theme = UITheme.use();
     const padding = useSpacing(props.padding ?? 'md');

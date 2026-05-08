@@ -20,13 +20,14 @@ function makeIR(
       memos: [],
       effects: [],
     },
-    ui,
+    uis: ui ? [ui] : [],
   };
 }
 
 function makeUI(rotation?: number): IRUIRegistry {
   return {
     kind: 'ui_registry',
+    lvgl: 'r_test_lvgl',
     config: {
       displays: irArray([irRef('r_disp')]),
       ...(rotation != null ? { rotation: irScalar(rotation) } : {}),
@@ -159,9 +160,9 @@ describe('transformIRForHost', () => {
     expect(obj.entries.find(e => e.key === 'csPin')).toBeUndefined();
     expect(obj.entries.find(e => e.key === 'dcPin')).toBeUndefined();
     // rotation stripped from lvglTree (baked into SDL dimensions)
-    expect(result.ui?.config.rotation).toBeUndefined();
+    expect(result.uis[0]?.config.rotation).toBeUndefined();
     // other lvglTree props preserved
-    expect(result.ui?.config.displays).toBeDefined();
+    expect(result.uis[0]?.config.displays).toBeDefined();
   });
 
   it('swaps dimensions for 90° LVGL rotation', () => {
@@ -322,8 +323,8 @@ describe('transformIRForHost', () => {
 
     const result = transformIRForHost(ir);
     // Tree is rebuilt (config spread) but rotation remains absent
-    expect(result.ui?.config.rotation).toBeUndefined();
-    expect(result.ui?.config.displays).toBeDefined();
+    expect(result.uis[0]?.config.rotation).toBeUndefined();
+    expect(result.uis[0]?.config.displays).toBeDefined();
   });
 
   it('injects host section even when no device platform exists', () => {

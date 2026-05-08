@@ -7,7 +7,7 @@ sidebar_position: 10
 
 Wraps an overlay controller or LVGL widget ref with a script-backed show/hide lifecycle. When `autoHide` is configured, the show script automatically sequences: show → delay → hide.
 
-This is a composition primitive — it is used internally by [`useTransientOverlay()`](./useTransientOverlay.md) and can be used directly for custom visibility patterns.
+This is a composition primitive for direct overlay or widget visibility lifecycles. Transient overlays use the same internal lifecycle helpers together with their own slot/coordinator orchestration.
 
 ## Signature
 

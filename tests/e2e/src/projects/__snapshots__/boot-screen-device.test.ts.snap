@@ -482,62 +482,62 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - skip: true
-      bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
-      bg_opa: COVER
-      border_width: 0
-      scrollbar_mode: 'OFF'
-      id: rw_ref2
-      widgets:
-        - obj:
-            width: 100%
-            height: SIZE_CONTENT
-            bg_opa: TRANSP
-            border_width: 0
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
-              flex_align_main: CENTER
-            widgets:
-              - image:
-                  src: r_ref3
-              - label:
-                  text: Booting...
-                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                  id: rw_ref4
-              - bar:
-                  value: 50
-                  width: 150
-                  height: 10
-              - label:
-                  text: Waiting for Home Assistant...
-                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                  id: rw_ref5
-    - bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
-      bg_opa: COVER
-      border_width: 0
-      scrollbar_mode: 'OFF'
-      id: rw_ref6
-      widgets:
-        - obj:
-            width: 100%
-            height: SIZE_CONTENT
-            bg_opa: TRANSP
-            border_width: 0
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
-            widgets:
-              - label:
-                  text: Connected!
-                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                  id: rw_ref7
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - skip: true
+        bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
+        bg_opa: COVER
+        border_width: 0
+        scrollbar_mode: 'OFF'
+        id: rw_ref2
+        widgets:
+          - obj:
+              width: 100%
+              height: SIZE_CONTENT
+              bg_opa: TRANSP
+              border_width: 0
+              scrollbar_mode: 'OFF'
+              layout:
+                type: flex
+                flex_flow: COLUMN
+                flex_align_main: CENTER
+              widgets:
+                - image:
+                    src: r_ref3
+                - label:
+                    text: Booting...
+                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                    id: rw_ref4
+                - bar:
+                    value: 50
+                    width: 150
+                    height: 10
+                - label:
+                    text: Waiting for Home Assistant...
+                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                    id: rw_ref5
+      - bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
+        bg_opa: COVER
+        border_width: 0
+        scrollbar_mode: 'OFF'
+        id: rw_ref6
+        widgets:
+          - obj:
+              width: 100%
+              height: SIZE_CONTENT
+              bg_opa: TRANSP
+              border_width: 0
+              scrollbar_mode: 'OFF'
+              layout:
+                type: flex
+                flex_flow: COLUMN
+              widgets:
+                - label:
+                    text: Connected!
+                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                    id: rw_ref7
 external_components:
   - source:
       type: local
@@ -555,7 +555,7 @@ image:
 font:
   - id: r_ref8
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref9
     file: gfonts://Roboto
@@ -576,10 +576,6 @@ font:
   - id: r_ref13
     file: gfonts://Roboto
     size: 18
-    bpp: 4
-  - id: r_ref14
-    file: gfonts://Roboto
-    size: 22
     bpp: 4
 "
 `;

@@ -17,7 +17,7 @@ BoundSignal<int> sig_global_g_2b7a548a(int(0));
 
 // ── Memos (derived values) ──
 Memo<std::string> memo_0([]() -> std::string {
-  return std::string("Count: ") + std::to_string(sig_global_g_2b7a548a.get());
+  return std::string("Count: ") + std::to_string(espcompose::sig_global_g_2b7a548a.get());
 });
 
 // ── Bootstrap: wire dependency graph ──
@@ -418,14 +418,14 @@ binary_sensor:
     - lambda: !lambda "espcompose::sig_global_g_2b7a548a.set(42); espcompose::flush();"
     - logger.log: Counter set to 42
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return espcompose::memo_0.get().c_str();"
-            id: rw_ref2
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - label:
+              text: !lambda "return espcompose::memo_0.get().c_str();"
+              id: rw_ref2
 external_components:
   - source:
       type: local

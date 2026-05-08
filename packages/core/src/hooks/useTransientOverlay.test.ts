@@ -7,8 +7,13 @@ import { pushHookPath, popHookPath } from './useState';
 import { useTransientOverlay } from './useTransientOverlay';
 import type { TransientOverlayConfig } from './useTransientOverlay';
 import type { IRActionNode } from '../ir/action-types';
+import { LvglContext } from './useLvgl';
+import { withContext } from './useContext';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
+const mockLvglRef = { toString: () => 'r_test_lvgl' } as any;
 
 function runInComponent<T>(componentName: string, fn: () => T): T {
   pushHookPath(componentName);
@@ -28,11 +33,13 @@ function buildWithQueue(config: TransientOverlayConfig) {
     const reactiveResult = withReactiveScope(() => {
       const globalResult = withGlobalScope(() => {
         const { result, overlays } = withOverlayScope(() => {
-          runInComponent('TestComponent', () => {
-            useTransientOverlay(config, (_ctrl, context) => {
-              factoryCallCount++;
-              receivedSlotRanks.push(context.slotRank);
-              return stub;
+          return withContext(LvglContext, mockLvglRef, () => {
+            runInComponent('TestComponent', () => {
+              useTransientOverlay(config, (_ctrl, context) => {
+                factoryCallCount++;
+                receivedSlotRanks.push(context.slotRank);
+                return stub;
+              });
             });
           });
         });
@@ -82,6 +89,23 @@ describe('useTransientOverlay', () => {
       const { scripts } = buildWithQueue({ autoHide: '3s' });
       // Should produce at least 2 scripts: show (with autoHide) + hide
       expect(scripts.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('uses slot state globals even with one visible slot', () => {
+      const { components } = buildWithQueue({ autoHide: '3s' });
+      const globalComponents = components.filter(c => c.section === 'globals');
+      expect(globalComponents).toHaveLength(3);
+      expect(globalComponents.some(c => (c.config as Record<string, unknown>).initial_value === '{0}')).toBe(true);
+      expect(globalComponents.some(c => (c.config as Record<string, unknown>).initial_value === '0')).toBe(true);
+    });
+
+    it('creates a coordinator show script even with one visible slot', () => {
+      const { scripts } = buildWithQueue({ autoHide: '3s' });
+      const coordScript = scripts.find(s =>
+        s.then.some((a: IRActionNode) => a.kind === 'action:if') &&
+        !s.then.some((a: IRActionNode) => a.kind === 'action:array_set'),
+      );
+      expect(coordScript).toBeDefined();
     });
 
     it('uses restart mode by default (overflow: replace)', () => {
@@ -150,7 +174,7 @@ describe('useTransientOverlay', () => {
       expect(activeGlobal).toBeDefined();
       const counterGlobal = globalComponents.find(c =>
         (c.config as Record<string, unknown>).initial_value === '0' &&
-        !(c.config as Record<string, unknown>).irType?.isArray,
+        !((c.config as Record<string, unknown>).irType as { isArray?: boolean } | undefined)?.isArray,
       );
       expect(counterGlobal).toBeDefined();
     });
@@ -291,8 +315,10 @@ describe('useTransientOverlay', () => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
 
       withScriptScope(() => withReactiveScope(() => withGlobalScope(() => withOverlayScope(() => {
-        runInComponent('Foo', () => {
-          ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
+        withContext(LvglContext, mockLvglRef, () => {
+          runInComponent('Foo', () => {
+            ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
+          });
         });
       }))));
 

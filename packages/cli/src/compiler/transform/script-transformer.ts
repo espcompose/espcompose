@@ -12,14 +12,15 @@
 import ts from 'typescript';
 import {
   scanForHAEntities as scanForHAEntitiesShared,
+  detectGlobalHookCall,
   type HAEntityInfo,
 } from './expr-compiler.js';
 import {
   compileActionBody,
 } from './action/index.js';
 import type { ActionCompileResult, ScriptHandleInfo } from './action/index.js';
-import { isRefType, isCoreExportCall } from './type-brands.js';
-import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, type GlobalType, hashGlobalFingerprint, hashFnv1a, globalTypeToIRType, generateId, generateDeterministicId, IR_INT, IR_FLOAT, IR_STRING, IR_BOOL } from '@espcompose/core/internals';
+import { isRefType, isCoreExportCall, inferIRTypeFromTsType } from './type-brands.js';
+import { type IRActionNode, type IRScriptParamDecl, type IRType, type GlobalDefinition, hashGlobalFingerprint, hashFnv1a, generateId, generateDeterministicId } from '@espcompose/core/internals';
 
 /** Stable string key for an IRType — used in dedup signatures. */
 function irTypeKey(vt: IRType): string {
@@ -89,10 +90,7 @@ export function transformScriptFile(
 // Internal types
 // ────────────────────────────────────────────────────────────────────────────
 
-interface SourceEdit {
-  position: number;
-  text: string;
-}
+import type { SourceEdit } from './type-brands.js';
 
 interface TransformContext {
   checker: ts.TypeChecker;
@@ -204,41 +202,11 @@ function extractScriptUserParams(
   return params;
 }
 
-/**
- * Infer the target-agnostic value type for a script parameter from its
- * TypeScript type annotation.
- *
- * - `Int` (branded number from @espcompose/core) → { type: 'int' }
- * - `number` → { type: 'float' }
- * - `string` → { type: 'string' }
- * - `boolean` → { type: 'bool' }
- */
 function inferParamIRType(
   param: ts.ParameterDeclaration,
   checker: ts.TypeChecker,
 ): IRType | null {
-  const type = checker.getTypeAtLocation(param);
-
-  // Check for Int branded type (number & { __espcompose_int__: true })
-  // First check the intersection structure, then fall back to alias symbol name.
-  if (type.isIntersection()) {
-    const hasNumber = type.types.some(t => t.flags & ts.TypeFlags.Number);
-    if (hasNumber) {
-      const hasIntBrand = type.types.some(t => t.getProperty('__espcompose_int__') != null);
-      if (hasIntBrand) return IR_INT;
-    }
-  }
-  // Also check via the type alias symbol (handles cases where TS optimizes the intersection)
-  if (type.aliasSymbol?.name === 'Int') return IR_INT;
-
-  // Plain number
-  if (type.flags & ts.TypeFlags.Number || type.flags & ts.TypeFlags.NumberLiteral) return IR_FLOAT;
-  // String
-  if (type.flags & ts.TypeFlags.String || type.flags & ts.TypeFlags.StringLiteral) return IR_STRING;
-  // Boolean
-  if (type.flags & ts.TypeFlags.Boolean || type.flags & ts.TypeFlags.BooleanLiteral) return IR_BOOL;
-
-  return null;
+  return inferIRTypeFromTsType(checker.getTypeAtLocation(param), checker);
 }
 
 /**
@@ -257,32 +225,16 @@ function scanForGlobalHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer)) {
-        // ── useGlobal('type', { __key: '...' }) — volatile ────────
-        if (isCoreExportCall(node.initializer, 'useGlobal', checker) && node.initializer.arguments.length >= 1) {
-          const typeArg = node.initializer.arguments[0];
-          if (ts.isStringLiteral(typeArg)) {
-            const irType = globalTypeToIRType(typeArg.text as GlobalType);
-            const fingerprint = extractKeyFromOpts(node.initializer.arguments[1]);
-            if (fingerprint) {
-              const globalId = hashGlobalFingerprint(fingerprint);
-              const sym = checker.getSymbolAtLocation(node.name);
-              if (sym) {
-                globalHandles.set(sym, { id: globalId, irType });
-              }
-            }
-          }
-        }
-
-        // ── useRetainedGlobal('type', 'key', opts?) — retained ───
-        if (isCoreExportCall(node.initializer, 'useRetainedGlobal', checker) && node.initializer.arguments.length >= 2) {
-          const typeArg = node.initializer.arguments[0];
-          const keyArg = node.initializer.arguments[1];
-          if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-            const irType = globalTypeToIRType(typeArg.text as GlobalType);
-            const globalId = hashGlobalFingerprint(keyArg.text);
+        const info = detectGlobalHookCall(node.initializer, checker);
+        if (info) {
+          const fingerprint = info.kind === 'retained'
+            ? info.retainedKey!
+            : extractKeyFromOpts(node.initializer.arguments[1]);
+          if (fingerprint) {
+            const globalId = hashGlobalFingerprint(fingerprint);
             const sym = checker.getSymbolAtLocation(node.name);
             if (sym) {
-              globalHandles.set(sym, { id: globalId, irType });
+              globalHandles.set(sym, { id: globalId, irType: info.irType });
             }
           }
         }
@@ -342,6 +294,15 @@ function findAndCompileTriggerHandlers(
     const arg = node.arguments[0];
     if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
       compileAndInjectUseScript(node, arg, ctx, refSymbols, scriptHandles, globalHandles, edits);
+    }
+  }
+
+  // useAttachedTrigger(ref, 'event', () => { ... })
+  if (ts.isCallExpression(node) && isCoreExportCall(node, 'useAttachedTrigger', ctx.checker) &&
+      node.arguments.length >= 3) {
+    const arg = node.arguments[2];
+    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+      compileAndInjectTriggerHandler(arg, ctx, refSymbols, scriptHandles, globalHandles, edits);
     }
   }
 
@@ -470,6 +431,13 @@ function compileAndInjectTriggerHandler(
   // patch IRScriptExecute nodes. The action walker can't pick these up by
   // name (the IR only carries the snake_case scriptId), so add them directly.
   for (const name of result.scriptHandleRefs) {
+    if (!refNames.includes(name)) refNames.push(name);
+  }
+  // Scalar captures (e.g. loop indices captured into expr:closure_read nodes)
+  // must be in __refBindings so the runtime can substitute them with literal
+  // values. The action walker only inspects action node fields, not expression
+  // trees, so add capture names directly.
+  for (const name of result.scalarCaptures.keys()) {
     if (!refNames.includes(name)) refNames.push(name);
   }
   // Store IRActionNode[] directly - lowering to target format happens in target packages

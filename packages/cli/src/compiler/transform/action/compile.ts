@@ -14,7 +14,6 @@ import {
   irWaitUntilAction,
   irScriptExecute,
   irScriptWait,
-  irControllerMethodCall,
   parseTimeoutString,
 } from '@espcompose/core/internals';
 import type { GlobalDefinition } from '@espcompose/core/internals';
@@ -27,6 +26,7 @@ import { isCoreExportCall, isCoreExportTaggedTemplate, hasControllerBrand } from
 import { compileConditionExpr, compileIf, compileWhile, compileFor } from './control-flow.js';
 import { compileActionCall } from './calls/router.js';
 import { compileLambdaTaggedTemplate } from './calls/lambda.js';
+import { compileControllerMethodCall } from './calls/controller.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -256,11 +256,7 @@ function compileAwait(
       const objType = ctx.checker.getTypeAtLocation(objExpr);
       if (hasControllerBrand(objType)) {
         const methodName = inner.expression.name.text;
-        const controllerRef = objExpr.getText().trim();
-        if (controllerRef) {
-          ctx.controllerRefs.add(controllerRef);
-          return [irControllerMethodCall(controllerRef, methodName)];
-        }
+        return compileControllerMethodCall(inner, objExpr, objType, methodName, ctx);
       }
     }
   }

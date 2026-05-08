@@ -367,7 +367,7 @@ export function transformIRForHost(
 
     // Replace display with SDL
     if (section.key === 'display') {
-      const lvglRotation = findLvglRotation(ir.ui);
+      const lvglRotation = findLvglRotation(ir.uis[0]);
       const inferred = inferDisplayDimensions(section.value, lvglRotation);
       const width = options?.width ?? inferred.width;
       const height = options?.height ?? inferred.height;
@@ -407,9 +407,7 @@ export function transformIRForHost(
   return {
     ...ir,
     sections: brandArray(result, 'section_registry'),
-    // Strip rotation from the typed LVGL tree — already baked into SDL dimensions
-    ui: ir.ui
-      ? stripLvglTreeRotation(ir.ui)
-      : undefined,
+    // Strip rotation from the typed LVGL trees — already baked into SDL dimensions
+    uis: ir.uis.map(u => stripLvglTreeRotation(u)),
   };
 }

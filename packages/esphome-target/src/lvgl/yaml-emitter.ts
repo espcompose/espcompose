@@ -141,6 +141,9 @@ function lowerLvglPage(page: IRWidget, ctx?: LvglValueLoweringContext): Record<s
  */
 export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringContext): Record<string, unknown> {
   const serialized = lowerWidgetProps(tree.config, ctx);
+  // Always emit an `id` for the lvgl component.
+  // Required for multi-instance lvgl; harmless for single-instance.
+  serialized.id = tree.lvgl;
   const pagesYaml = tree.pages.map(p => lowerLvglPage(p, ctx));
   const widgetsYaml = tree.widgets.map(w => lowerLvglWidget(w, ctx));
   if (pagesYaml.length > 0) serialized.pages = pagesYaml;

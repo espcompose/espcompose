@@ -1,9 +1,18 @@
 import ts from 'typescript';
-import type { IRActionNode } from '@espcompose/core/internals';
-import { irOverlayShow, irOverlayHide } from '@espcompose/core/internals';
-import { hasOverlayBrand } from '../../type-brands.js';
+import type { IRActionNode, IRType } from '@espcompose/core/internals';
+import {
+  irOverlayShow,
+  irOverlayHide,
+  irGlobalSet,
+  irLiteralExpression,
+  irTriggerVarExpression,
+  generateDeterministicId,
+} from '@espcompose/core/internals';
+import { hasOverlayBrand, inferIRTypeFromTsType } from '../../type-brands.js';
+import { translateScriptExprIR } from '../../expr-compiler.js';
 import type { ActionCompilerContext } from '../context.js';
 import { emitError } from '../context.js';
+import { buildScriptCtxWithGlobals } from '../control-flow.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Overlay action compilation
@@ -30,6 +39,9 @@ export function isOverlayActionCall(
  * serializer resolves it from `__refBindings` (the ref-slot pattern) to
  * recover the runtime `templateKey`, `instanceIndex`, and `zOrder`.
  *
+ * When the overlay is parameterized and `show(params)` is called with an
+ * object literal, emits `irGlobalSet` for each field before the show action.
+ *
  * Caller (`router.ts`) guarantees `methodName` is `'show'` or `'hide'` via
  * `isOverlayActionCall`.
  */
@@ -50,9 +62,106 @@ export function compileOverlayAction(
   ctx.overlayControllerRefs.add(controllerRef);
 
   switch (methodName) {
-    case 'show':
-      return [irOverlayShow('', -1, 0, controllerRef)];
+    case 'show': {
+      const globalSetActions = compileOverlayShowParams(call, controllerRef, _objType, ctx);
+      return [...globalSetActions, irOverlayShow('', -1, 0, controllerRef)];
+    }
     case 'hide':
       return [irOverlayHide('', 0, controllerRef)];
   }
+}
+
+/**
+ * Compile params from `ctrl.show({ field: value })` to irGlobalSet actions.
+ *
+ * Extracts the generic type param `P` from `OverlayController<P>`, iterates
+ * the object literal's properties, and emits a global-set per field using the
+ * same deterministic ID convention as the expr-compiler's param extraction.
+ */
+function compileOverlayShowParams(
+  call: ts.CallExpression,
+  controllerRef: string,
+  objType: ts.Type,
+  ctx: ActionCompilerContext,
+): IRActionNode[] {
+  if (call.arguments.length === 0) return [];
+  const arg = call.arguments[0];
+  if (!ts.isObjectLiteralExpression(arg)) return [];
+
+  // Extract the type parameter P from OverlayController<P>.
+  // The type alias resolution gives us the generic type arguments.
+  const typeArgs = (objType as ts.TypeReference).typeArguments;
+  if (!typeArgs || typeArgs.length === 0) return [];
+  const paramsType = typeArgs[0];
+
+  // Void or undefined means non-parameterized.
+  if (paramsType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined)) return [];
+
+  const actions: IRActionNode[] = [];
+
+  for (const prop of arg.properties) {
+    if (!ts.isPropertyAssignment(prop)) continue;
+    const propName = ts.isIdentifier(prop.name) ? prop.name.text :
+                     ts.isStringLiteral(prop.name) ? prop.name.text : null;
+    if (!propName) continue;
+
+    // Derive globalId using same algorithm as extractOverlayPayloadDeclsFromType.
+    const globalId = generateDeterministicId('g', `${controllerRef}_${propName}`);
+
+    // Infer IRType from the P type's property.
+    const propSymbol = paramsType.getProperty(propName);
+    const irType = propSymbol
+      ? inferIRTypeFromSymbol(propSymbol, prop, ctx.checker)
+      : inferIRTypeFromExpression(prop.initializer, ctx.checker);
+    if (!irType) continue;
+
+    // Compile the value expression.
+    const valueNode = prop.initializer;
+
+    // Try literal first.
+    if (ts.isNumericLiteral(valueNode)) {
+      actions.push(irGlobalSet(globalId, irType, irLiteralExpression(Number(valueNode.text))));
+      continue;
+    }
+    if (ts.isStringLiteral(valueNode) || ts.isNoSubstitutionTemplateLiteral(valueNode)) {
+      actions.push(irGlobalSet(globalId, irType, irLiteralExpression(valueNode.text)));
+      continue;
+    }
+    if (valueNode.kind === ts.SyntaxKind.TrueKeyword) {
+      actions.push(irGlobalSet(globalId, irType, irLiteralExpression(true)));
+      continue;
+    }
+    if (valueNode.kind === ts.SyntaxKind.FalseKeyword) {
+      actions.push(irGlobalSet(globalId, irType, irLiteralExpression(false)));
+      continue;
+    }
+
+    // Try trigger variable: args.field
+    if (ts.isPropertyAccessExpression(valueNode) && ts.isIdentifier(valueNode.expression) &&
+        valueNode.expression.text === ctx.triggerParamName) {
+      const varName = valueNode.name.text;
+      ctx.triggerVars.add(varName);
+      actions.push(irGlobalSet(globalId, irType, irTriggerVarExpression(varName)));
+      continue;
+    }
+
+    // Try compiling as a reactive expression.
+    const scriptCtx = buildScriptCtxWithGlobals(ctx);
+    const exprIR = translateScriptExprIR(valueNode, scriptCtx);
+    if (exprIR !== null) {
+      actions.push(irGlobalSet(globalId, irType, exprIR));
+    }
+  }
+
+  return actions;
+}
+
+function inferIRTypeFromSymbol(sym: ts.Symbol, location: ts.Node, checker: ts.TypeChecker): IRType | null {
+  const type = checker.getTypeOfSymbolAtLocation(sym, location);
+  return inferIRTypeFromTsType(type, checker);
+}
+
+function inferIRTypeFromExpression(expr: ts.Expression, checker: ts.TypeChecker): IRType | null {
+  const type = checker.getTypeAtLocation(expr);
+  return inferIRTypeFromTsType(type, checker);
 }

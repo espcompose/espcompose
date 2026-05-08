@@ -120,7 +120,7 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
       if (ctx.actionContext) {
         return `id(${node.globalId})`;
       }
-      return `sig_global_${node.globalId}.get()`;
+      return `espcompose::sig_global_${node.globalId}.get()`;
 
     case 'expr:component_read':
       return `id(${node.componentId}).state`;
@@ -163,6 +163,9 @@ export function exprToCpp(node: IRExpression, ctx: CppLoweringContext): string {
 
     case 'expr:op':
       return opToCpp(node, ctx);
+
+    case 'expr:closure_read':
+      return `closure.${node.name}`;
 
     default: {
       const _exhaustive: never = node;

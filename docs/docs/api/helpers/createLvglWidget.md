@@ -134,4 +134,5 @@ type ImageProps = WidgetProps<{
 |---------|----------|--------------------|----|
 | `createLvglWidget` | No (by default) | No | Leaf controls: buttons, labels, sliders |
 | `createLvglContainerWidget` | Yes (WIDGET) | Yes | Containers: cards, panels, groups |
+| `createLvglContextProvider` | Any | Yes | Non-visual providers: Toast, Theme |
 | `createLvglLayoutWidget` | Slot-restricted | Yes | Paired layouts: Row/Col, Grid/GridItem |

@@ -13,6 +13,11 @@
 // argument.  TypeScript preserves this in `.d.ts` files, so the compiler
 // can extract the scope string from the handle's type across library
 // boundaries without needing to scan for the call site.
+//
+// Themes may be plain objects or factory functions `(settings: S) => T`.
+// When any theme is a factory, the Provider accepts an optional `settings`
+// prop.  If omitted, factories receive `undefined` and must apply their
+// own defaults (e.g. via default parameters).
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { EspComposeElement, BINDING_BRAND, THEME_BRAND } from '../../types';
@@ -20,20 +25,41 @@ import { createElement, Fragment } from '../../runtime';
 import { registerTheme, getThemeRegistry } from './registry';
 import { collectThemeFonts, substituteThemeFonts } from './font-resolver';
 import { useTheme } from './reactive-proxy';
-import { createLvglWidget, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
+import { createLvglContextProvider, type IntentComponent, type LVGL_INTENTS } from '../../intents/intents';
 import { throwCompileTimeOnly } from '../../errors';
+import { ThemeSettingsCtx } from './settings-context';
+import { resolveThemeSettings } from '../display';
+import type { ThemeSettings } from '../display';
+
+// ── Internal helpers ───────────────────────────────────────────────────────
+
+/** A theme entry is either a plain object or a factory function. */
+type ThemeEntry<T extends object, S> = T | ((settings: S) => T);
+
+/** Resolve a single theme entry given settings (may be undefined). */
+function resolveEntry<T extends object, S>(
+  entry: ThemeEntry<T, S>,
+  settings: S | undefined,
+): T {
+  return typeof entry === 'function'
+    ? (entry as (settings: S | undefined) => T)(settings)
+    : entry;
+}
 
 // ── Public types ───────────────────────────────────────────────────────────
 
 /**
- * Props for the auto-generated Provider component on a theme handle.
+ * Props for the theme Provider component.
  *
- * The `scope` and `themes` are pre-bound by `createTheme()` — only
- * `default` and `children` are exposed to consumers.
+ * When themes are factory functions, `settings` may be provided to
+ * customise the resolved theme.  If omitted, factories receive
+ * `undefined` and should apply their own defaults.
  */
-export interface ThemeProviderProps<Names extends string> {
+export interface ThemeProviderProps<Names extends string, S = void> {
   /** Name of the default (initial) theme. Defaults to the first registered theme. */
   default?: Names;
+  /** Display/environment settings passed to theme factory functions. */
+  settings?: S;
   /** Child elements. */
   children?: EspComposeElement | EspComposeElement[];
 }
@@ -47,11 +73,13 @@ export interface ThemeProviderProps<Names extends string> {
  * @typeParam T     — the theme object shape
  * @typeParam Names — union of registered theme name literals
  * @typeParam Scope — the scope string literal type (e.g. `'espcompose:ui'`)
+ * @typeParam S     — settings type for factory themes (void when plain objects)
  */
 export interface ThemeHandle<
   T extends object,
   Names extends string,
   Scope extends string = string,
+  S = void,
 > {
   /** The raw scope string (typed as the literal for compiler extraction). */
   readonly scope: Scope;
@@ -90,7 +118,9 @@ export interface ThemeHandle<
    * of theme names.  The parent themes are preserved; new themes are
    * added (or override existing names).
    *
-   * @param themes  — additional theme name → theme object entries
+   * New themes may be plain objects or factory functions matching `S`.
+   *
+   * @param themes  — additional theme name → theme object or factory entries
    * @param options — optional override for the default theme
    *
    * @example
@@ -101,19 +131,19 @@ export interface ThemeHandle<
    * ```
    */
   extend<N extends string>(
-    themes: Record<N, T>,
+    themes: Record<N, ThemeEntry<T, S>>,
     options?: { default?: Names | N },
-  ): ThemeHandle<T, Names | N, Scope>;
+  ): ThemeHandle<T, Names | N, Scope, S>;
 
   /**
    * Pre-bound theme Provider component.
    *
-   * Renders children and registers the handle's themes into the global
-   * theme registry.  Only `default` and `children` props are exposed —
-   * `scope` and `themes` are pre-bound from `createTheme()`.
+   * When themes are plain objects, only `default` and `children` are exposed.
+   * When themes include factory functions, an optional `settings` prop is
+   * also available.
    */
   Provider: IntentComponent<
-    ThemeProviderProps<Names>,
+    ThemeProviderProps<Names, S>,
     readonly [typeof LVGL_INTENTS.WIDGET],
     undefined,
     undefined,
@@ -121,14 +151,40 @@ export interface ThemeHandle<
   >;
 }
 
-// ── Factory ────────────────────────────────────────────────────────────────
+// ── Factory overloads ──────────────────────────────────────────────────────
 
 /**
- * Create a typed theme handle.
+ * Create a typed theme handle with factory-based themes.
  *
- * @param scope   — scope identifier string (e.g. `'espcompose:ui'`, `'lcars'`)
- * @param themes  — map of theme name → theme object
- * @param options — optional: specify the default theme name
+ * Theme factories receive a `settings` argument from the Provider at
+ * render time and return a plain theme object.
+ *
+ * @example
+ * ```ts
+ * export const UITheme = createTheme('espcompose:ui', {
+ *   dark: (settings: UIThemeSettings) => ({ name: 'Dark', ... }),
+ *   light: (settings: UIThemeSettings) => ({ name: 'Light', ... }),
+ * });
+ *
+ * // In JSX — settings is optional (factories handle undefined with defaults):
+ * <UITheme.Provider settings={{ width: 480, height: 320 }} default="dark">
+ *   <App />
+ * </UITheme.Provider>
+ * ```
+ */
+export function createTheme<
+  T extends object,
+  Names extends string,
+  Scope extends string,
+  S,
+>(
+  scope: Scope,
+  themes: Record<Names, (settings: S) => T>,
+  options?: { default?: Names },
+): ThemeHandle<T, Names, Scope, S>;
+
+/**
+ * Create a typed theme handle with plain theme objects.
  *
  * @example
  * ```ts
@@ -139,7 +195,7 @@ export interface ThemeHandle<
  *
  * // In JSX:
  * <UITheme.Provider default="dark">
- *   <Button onPress={() => { UITheme.select('light'); }} />
+ *   <App />
  * </UITheme.Provider>
  * ```
  */
@@ -151,27 +207,46 @@ export function createTheme<
   scope: Scope,
   themes: Record<Names, T>,
   options?: { default?: Names },
-): ThemeHandle<T, Names, Scope> {
+): ThemeHandle<T, Names, Scope>;
+
+// ── Implementation ─────────────────────────────────────────────────────────
+
+export function createTheme<
+  T extends object,
+  Names extends string,
+  Scope extends string,
+  S = void,
+>(
+  scope: Scope,
+  themes: Record<Names, ThemeEntry<T, S>>,
+  options?: { default?: Names },
+): ThemeHandle<T, Names, Scope, S> {
   const defaultName = options?.default;
 
   // ── Provider component ──────────────────────────────────────────────
 
-  function ProviderImpl(props: ThemeProviderProps<Names>): EspComposeElement {
+  function ProviderImpl(
+    props: ThemeProviderProps<Names, S>,
+  ): EspComposeElement {
     const registry = getThemeRegistry();
 
-    // Register font assets across all themes
-    const fontRefs = collectThemeFonts(
-      themes as unknown as Record<string, Record<string, unknown>>,
-    );
+    // Resolve theme entries — call factories with settings, pass objects through
+    const resolved: Record<string, Record<string, unknown>> = {};
+    for (const [name, entry] of Object.entries(themes)) {
+      resolved[name] = resolveEntry(
+        entry as ThemeEntry<T, S>,
+        props.settings,
+      ) as Record<string, unknown>;
+    }
+
+    // Register font assets across all resolved themes
+    const fontRefs = collectThemeFonts(resolved);
 
     // Register all themes (with FontToken → Ref<FontRef> substitution)
-    for (const [name, themeObj] of Object.entries(themes)) {
+    for (const [name, themeObj] of Object.entries(resolved)) {
       if (!registry.getThemes(scope).has(name)) {
-        const resolved = substituteThemeFonts(
-          themeObj as Record<string, unknown>,
-          fontRefs,
-        );
-        registerTheme(scope, name, resolved);
+        const substituted = substituteThemeFonts(themeObj, fontRefs);
+        registerTheme(scope, name, substituted);
       }
     }
 
@@ -188,17 +263,26 @@ export function createTheme<
         : [props.children]
       : [];
 
+    // When settings are provided, push the resolved display settings into
+    // context so descendants (e.g. Toast.Provider) can read display class
+    // without re-resolving or prop-drilling.
+    if (props.settings) {
+      const resolvedSettings = resolveThemeSettings(props.settings as ThemeSettings);
+      return createElement('context', { context: ThemeSettingsCtx, value: resolvedSettings }, ...children);
+    }
+
     return createElement(Fragment, { children });
   }
 
-  const Provider = createLvglWidget(
-    ProviderImpl as (props: ThemeProviderProps<string>) => EspComposeElement,
-    { allowedChildIntents: undefined, contextTransparent: true as const },
+  const Provider = createLvglContextProvider(
+    ProviderImpl as (
+      props: ThemeProviderProps<string, S>,
+    ) => EspComposeElement,
   );
 
   // ── Handle object ───────────────────────────────────────────────────
 
-  const handle: ThemeHandle<T, Names, Scope> = {
+  const handle: ThemeHandle<T, Names, Scope, S> = {
     scope,
 
     select(_name: Names): void {
@@ -210,20 +294,23 @@ export function createTheme<
     },
 
     extend<N extends string>(
-      newThemes: Record<N, T>,
+      newThemes: Record<N, ThemeEntry<T, S>>,
       extendOptions?: { default?: Names | N },
-    ): ThemeHandle<T, Names | N, Scope> {
-      const merged = { ...themes, ...newThemes } as Record<Names | N, T>;
+    ): ThemeHandle<T, Names | N, Scope, S> {
+      const merged = { ...themes, ...newThemes } as Record<
+        Names | N,
+        ThemeEntry<T, S>
+      >;
       const mergedDefault = extendOptions?.default ?? defaultName;
-      return createTheme<T, Names | N, Scope>(
+      return createTheme<T, Names | N, Scope, S>(
         scope,
-        merged,
+        merged as Record<Names | N, (settings: S) => T>,
         mergedDefault ? { default: mergedDefault } : undefined,
       );
     },
 
     Provider: Provider as unknown as IntentComponent<
-      ThemeProviderProps<Names>,
+      ThemeProviderProps<Names, S>,
       readonly [typeof LVGL_INTENTS.WIDGET],
       undefined,
       undefined,

@@ -1,5 +1,5 @@
 ---
-description: "Use when working on base-level UI design system components (Label, Button, Slider, Switch, Checkbox, etc.) or theme styling for UI components."
+description: "Use when working on base-level UI design system components (Text, Button, Slider, Switch, Dropdown, Card, etc.) or theme styling for UI components."
 applyTo:
   - "packages/ui/src/components/**"
   - "packages/ui/src/theme/**"

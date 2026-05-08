@@ -130,6 +130,21 @@ export interface IRTriggerVarExpression {
 }
 
 /**
+ * Read a closure-captured variable by name.
+ *
+ * Produced by the action compiler when a handler references an outer-scope
+ * variable with a primitive type (e.g. a loop index). The contribution path
+ * resolves these to `expr:literal` nodes at registration time (the JS value
+ * is captured in `__refBindings`). The script path lowers them via the
+ * closure-table struct (`closure.<name>` in C++).
+ */
+export interface IRClosureReadExpression {
+  readonly kind: 'expr:closure_read';
+  readonly name: string;
+  readonly type: ExprType;
+}
+
+/**
  * Multiplexed expression — selects one of N case expressions by an index.
  *
  * Used by useOverlay() for shared overlay widget subtrees: the `index` is read
@@ -215,6 +230,7 @@ export type IRExpression =
   | IRComponentReadExpression
   | IRLocalVarExpression
   | IRTriggerVarExpression
+  | IRClosureReadExpression
   | IRMuxExpression
   | IRTableLookupExpression
   | IRFunctionExpression

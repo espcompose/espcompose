@@ -45,7 +45,7 @@ export { createElement, Fragment } from './runtime';
 // Public API — Intent system (explicit re-exports from ./intents/intents)
 // ────────────────────────────────────────────────────────────────────────────
 
-export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglLayoutWidget } from './intents/intents';
+export { createComponent, createEspHomeComponent, createLvglWidget, createLvglContainerWidget, createLvglContextProvider, createLvglLayoutWidget } from './intents/intents';
 export type { IntentBrand, IntentComponent, IntentBrandOptions, IntrinsicIntentMeta } from './intents/intents';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -178,14 +178,18 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, Vola
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
 export type { GlobalHandle, TransientOverlayContext } from './hooks/global-shared';
+export { forwardOverlayPayloadMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
-export type { OverlayController, OverlayFactory, OverlayConfig } from './hooks/useOverlay';
+export type { OverlayController, OverlayFactory, OverlayConfig, OverlayPayloadGlobalDecl } from './hooks/useOverlay';
 export { useTransientOverlay } from './hooks/useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
 export { useVisibility } from './hooks/useVisibility';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
+export { useAttachedTrigger } from './hooks/useAttachedTrigger';
+export { createContext, useContext } from './hooks/useContext';
+export type { Context } from './hooks/useContext';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Actions
@@ -216,6 +220,27 @@ export { createFontToken, isFontToken } from './lvgl/theme/font-token';
 export type { FontToken, FontBpp } from './lvgl/theme/font-token';
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
+export { useThemeSettings } from './lvgl/theme/settings-context';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Public API — Display environment & adaptive helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+export {
+  classifyDisplay,
+  resolveThemeSettings,
+  adaptiveScreen,
+  adaptiveInput,
+  adaptiveShape,
+} from './lvgl/display';
+export type {
+  DisplayOrientation,
+  DisplayShape,
+  DisplayInput,
+  DisplayClass,
+  ThemeSettings,
+  ResolvedThemeSettings,
+} from './lvgl/display';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — CSS-like Style System

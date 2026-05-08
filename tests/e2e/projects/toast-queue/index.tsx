@@ -1,7 +1,7 @@
 /**
  * E2E project: toast-queue
  *
- * Validates the useToast() queue and overflow behaviors:
+ * Validates the Toast.Provider queue and overflow behaviors:
  *
  *   - overflow: 'replace' (default): generates a restart-mode script
  *   - overflow: 'queue' with queueLength: 3: generates a queued-mode
@@ -14,42 +14,37 @@ import { DisplayRef, useRef, createLvglWidget } from '@espcompose/core';
 import {
   Screen,
   VStack,
-  Text,
   Button,
   UITheme,
+  Toast,
   useToast,
 } from '@espcompose/ui';
 
-const ToastQueueDemo = createLvglWidget(
+const ReplaceConsumer = createLvglWidget(
   () => {
-    // Default: overflow 'replace' (restart mode)
-    const toastReplace = useToast(() => (
-      <Text text="Replace toast" />
-    ));
+    const toast = useToast();
+    return <Button text="Show Replace" onPress={() => { toast.show({ msg: 'Replace toast' }); }} />;
+  },
+);
 
-    // Queued: overflow 'queue' with queueLength: 3
-    const toastQueued = useToast(() => (
-      <Text text="Queued toast" />
-    ), { overflow: 'queue', queueLength: 3 });
+const QueuedConsumer = createLvglWidget(
+  () => {
+    const toast = useToast();
+    return <Button text="Show Queued" onPress={() => { toast.show({ msg: 'Queued toast' }); }} />;
+  },
+);
 
-    // Drop: overflow 'drop' (single mode)
-    const toastDrop = useToast(() => (
-      <Text text="Drop toast" />
-    ), { overflow: 'drop' });
+const DropConsumer = createLvglWidget(
+  () => {
+    const toast = useToast();
+    return <Button text="Show Drop" onPress={() => { toast.show({ msg: 'Drop toast' }); }} />;
+  },
+);
 
-    // Multi-slot: maxVisible 2 with compacted stacking
-    const toastMulti = useToast(() => (
-      <Text text="Multi toast" />
-    ), { maxVisible: 2 });
-
-    return (
-      <VStack gap="md">
-        <Button text="Show Replace" onPress={() => { toastReplace.show(); }} />
-        <Button text="Show Queued" onPress={() => { toastQueued.show(); }} />
-        <Button text="Show Drop" onPress={() => { toastDrop.show(); }} />
-        <Button text="Show Multi" onPress={() => { toastMulti.show(); }} />
-      </VStack>
-    );
+const MultiConsumer = createLvglWidget(
+  () => {
+    const toast = useToast();
+    return <Button text="Show Multi" onPress={() => { toast.show({ msg: 'Multi toast' }); }} />;
   },
 );
 
@@ -79,7 +74,20 @@ function App() {
       <lvgl displays={[displayRef]}>
         <UITheme.Provider default="dark">
           <Screen padding="lg">
-            <ToastQueueDemo />
+            <VStack gap="md">
+              <Toast.Provider>
+                <ReplaceConsumer />
+              </Toast.Provider>
+              <Toast.Provider overflow="queue" queueLength={3}>
+                <QueuedConsumer />
+              </Toast.Provider>
+              <Toast.Provider overflow="drop">
+                <DropConsumer />
+              </Toast.Provider>
+              <Toast.Provider maxVisible={2}>
+                <MultiConsumer />
+              </Toast.Provider>
+            </VStack>
           </Screen>
         </UITheme.Provider>
       </lvgl>

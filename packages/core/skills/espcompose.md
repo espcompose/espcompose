@@ -105,13 +105,13 @@ const kitchenLight = useHAEntity('light.kitchen_floods');
 Multiple calls with the same `entityId` in one render pass return the same
 cached binding (deduplication).
 
-### `useImage(path)` / `useFont(path)`
+### `useImage(props)` / `useFont(props)`
 
 Import and register image/font assets. Returns a ref to use in style props.
 
 ```tsx
-const icon = useImage('./assets/icon.png');
-const roboto = useFont('./assets/Roboto.ttf');
+const icon = useImage({ file: './assets/icon.png', type: 'RGB565' });
+const roboto = useFont({ file: 'gfonts://Roboto', size: 20 });
 ```
 
 ---

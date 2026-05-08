@@ -39,7 +39,7 @@ Signal<std::string> sig_ha_light_deck_facet_state_text;
 Signal<bool> sig_ha_light_garage;
 Signal<float> sig_ha_light_garage_attr_brightness;
 Signal<std::string> sig_ha_light_garage_facet_state_text;
-Signal<int32_t> sig_ovrl_6321ad22_mux;
+Signal<int32_t> sig_ovrl_98836858_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -134,7 +134,7 @@ Memo<int32_t> thm_333e4663_spacing_lg([]() -> int32_t {
   return thm_333e4663_spacing_lg_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_spacing_md_vals[] = {16, 16};
+static const int32_t thm_333e4663_spacing_md_vals[] = {12, 12};
 Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
   return thm_333e4663_spacing_md_vals[theme_index_333e4663.get()];
 });
@@ -156,7 +156,7 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_6321ad22_act_0[] = {
+static const char* tbl_ovrl_98836858_act_0[] = {
   "light.kitchen_floods",
   "light.kitchen_island",
   "light.living_room",
@@ -168,10 +168,10 @@ static const char* tbl_ovrl_6321ad22_act_0[] = {
 };
 
 // ── Script closure tables ──
-struct ScrEbe65a7fClosure {
+struct Scr15b3b637Closure {
   int __ctrl_instance_index;
 };
-static const ScrEbe65a7fClosure scr_ref7_closures[] = {
+static const Scr15b3b637Closure scr_ref7_closures[] = {
   { 0 },
   { 1 },
   { 2 },
@@ -182,10 +182,10 @@ static const ScrEbe65a7fClosure scr_ref7_closures[] = {
   { 7 }
 };
 
-struct ScrA6eda146Closure {
+struct ScrAf5f0a86Closure {
   int __ctrl_instance_index;
 };
-static const ScrA6eda146Closure scr_ref51_closures[] = {
+static const ScrAf5f0a86Closure scr_ref50_closures[] = {
   { 0 },
   { 1 },
   { 2 },
@@ -1071,689 +1071,689 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
-      bg_opa: COVER
-      border_width: 0
-      pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
-      scrollbar_mode: 'OFF'
-      id: rw_ref2
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
+        bg_opa: COVER
+        border_width: 0
+        pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
+        scrollbar_mode: 'OFF'
+        id: rw_ref2
+        widgets:
+          - obj:
+              width: 100%
+              height: SIZE_CONTENT
+              bg_opa: TRANSP
+              border_width: 0
+              scrollbar_mode: 'OFF'
+              layout:
+                type: flex
+                flex_flow: COLUMN
+                pad_row: 0
+              id: rw_ref3
+              widgets:
+                - label:
+                    text: Lights
+                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                    id: rw_ref4
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Kitchen Floods
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref5
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_kitchen_floods).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.kitchen_floods
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref6
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 0
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_0.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref8
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref9
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Kitchen Island
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref10
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_kitchen_island).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.kitchen_island
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref11
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 1
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_1.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref12
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref13
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Living Room
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref14
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_living_room).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.living_room
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref15
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 2
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_2.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref16
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref17
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Dining Room
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref18
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_dining_room).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.dining_room
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref19
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 3
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_3.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref20
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref21
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Bedroom
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref22
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_bedroom).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.bedroom
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref23
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 4
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_4.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref24
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref25
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Office
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref26
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_office).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.office
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref27
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 5
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_5.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref28
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref29
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Deck Lights
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref30
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_deck).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.deck
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref31
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 6
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_6.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref32
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref33
+                - obj:
+                    width: 100%
+                    height: SIZE_CONTENT
+                    bg_opa: TRANSP
+                    border_width: 0
+                    scrollbar_mode: 'OFF'
+                    layout:
+                      type: flex
+                      flex_flow: ROW
+                      flex_align_main: SPACE_BETWEEN
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - label:
+                          text: Garage Lights
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                          id: rw_ref34
+                      - switch:
+                          state:
+                            checked: !lambda "return id(ha_light_garage).state;"
+                          on_change:
+                            - homeassistant.action:
+                                action: homeassistant.toggle
+                                data:
+                                  entity_id: light.garage
+                          width: 50
+                          height: 26
+                          radius: CIRCLE
+                          bg_opa: TRANSP
+                          border_width: 0
+                          indicator:
+                            radius: CIRCLE
+                            border_width: 0
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
+                            checked:
+                              bg_color: !lambda "return
+                                espcompose::thm_333e4663_parts_switch_indicator.get();"
+                          knob:
+                            pad_all: -2
+                            radius: CIRCLE
+                            bg_opa: COVER
+                            bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
+                          id: rw_ref35
+                      - button:
+                          on_press:
+                            - script.execute:
+                                id: scr_ref7
+                                closure_index: 7
+                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          bg_opa: COVER
+                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          border_width: 0
+                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                          width: !lambda "return espcompose::memo_7.get();"
+                          height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
+                          pressed:
+                            bg_color: !lambda "return
+                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                              );"
+                            bg_opa: COVER
+                          id: rw_ref36
+                          widgets:
+                            - label:
+                                text: …
+                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                text_align: CENTER
+                                align: CENTER
+                                id: rw_ref37
+    top_layer:
       widgets:
         - obj:
+            id: overlay_tier_0
             width: 100%
-            height: SIZE_CONTENT
+            height: 100%
             bg_opa: TRANSP
             border_width: 0
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
-              pad_row: 0
-            id: rw_ref3
+            pad_all: 0
+            clickable: false
             widgets:
-              - label:
-                  text: Lights
-                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                  id: rw_ref4
               - obj:
+                  id: ovrl_98836858
+                  hidden: true
                   width: 100%
-                  height: SIZE_CONTENT
+                  height: 100%
                   bg_opa: TRANSP
                   border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
+                  pad_all: 0
+                  clickable: false
                   widgets:
-                    - label:
-                        text: Kitchen Floods
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref5
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_kitchen_floods).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.kitchen_floods
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref6
-                    - button:
+                    - obj:
                         on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 0
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                          - lambda: !lambda "lv_obj_add_flag(id(ovrl_98836858), LV_OBJ_FLAG_HIDDEN);"
+                        width: 100%
+                        height: 100%
+                        bg_color: "0x000000"
+                        bg_opa: 50%
                         border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_0.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref8
+                        pad_all: 0
                         widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
+                          - obj:
+                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                              bg_opa: COVER
+                              radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
+                              border_width: 0
+                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                              width: 90%
+                              height: SIZE_CONTENT
                               align: CENTER
-                              id: rw_ref9
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Kitchen Island
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref10
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_kitchen_island).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.kitchen_island
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref11
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 1
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_1.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref12
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref13
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Living Room
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref14
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_living_room).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.living_room
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref15
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 2
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_2.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref16
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref17
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Dining Room
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref18
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_dining_room).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.dining_room
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref19
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 3
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_3.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref20
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref21
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Bedroom
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref22
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_bedroom).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.bedroom
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref23
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 4
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_4.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref24
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref25
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Office
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref26
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_office).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.office
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref27
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 5
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_5.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref28
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref29
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Deck Lights
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref30
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_deck).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.deck
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref31
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 6
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_6.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref32
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref33
-              - obj:
-                  width: 100%
-                  height: SIZE_CONTENT
-                  bg_opa: TRANSP
-                  border_width: 0
-                  scrollbar_mode: 'OFF'
-                  layout:
-                    type: flex
-                    flex_flow: ROW
-                    flex_align_main: SPACE_BETWEEN
-                    flex_align_cross: CENTER
-                    flex_align_track: CENTER
-                  widgets:
-                    - label:
-                        text: Garage Lights
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                        id: rw_ref34
-                    - switch:
-                        state:
-                          checked: !lambda "return id(ha_light_garage).state;"
-                        on_change:
-                          - homeassistant.action:
-                              action: homeassistant.toggle
-                              data:
-                                entity_id: light.garage
-                        width: 50
-                        height: 26
-                        radius: CIRCLE
-                        bg_opa: TRANSP
-                        border_width: 0
-                        indicator:
-                          radius: CIRCLE
-                          border_width: 0
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_rail.get();"
-                          checked:
-                            bg_color: !lambda "return
-                              espcompose::thm_333e4663_parts_switch_indicator.get();"
-                        knob:
-                          pad_all: -2
-                          radius: CIRCLE
-                          bg_opa: COVER
-                          bg_color: !lambda "return espcompose::thm_333e4663_parts_switch_knob.get();"
-                        id: rw_ref35
-                    - button:
-                        on_press:
-                          - script.execute:
-                              id: scr_ref7
-                              closure_index: 7
-                        bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        bg_opa: COVER
-                        border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                        border_width: 0
-                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                        width: !lambda "return espcompose::memo_7.get();"
-                        height: !lambda "return espcompose::thm_333e4663_sizes_xs_height.get();"
-                        pressed:
-                          bg_color: !lambda "return
-                            espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                            );"
-                          bg_opa: COVER
-                        id: rw_ref36
-                        widgets:
-                          - label:
-                              text: …
-                              text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                              text_align: CENTER
-                              align: CENTER
-                              id: rw_ref37
-  top_layer:
-    widgets:
-      - obj:
-          id: overlay_tier_0
-          width: 100%
-          height: 100%
-          bg_opa: TRANSP
-          border_width: 0
-          pad_all: 0
-          clickable: false
-          widgets:
-            - obj:
-                id: ovrl_6321ad22
-                hidden: true
-                width: 100%
-                height: 100%
-                bg_opa: TRANSP
-                border_width: 0
-                pad_all: 0
-                clickable: false
-                widgets:
-                  - obj:
-                      on_press:
-                        - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
-                      width: 100%
-                      height: 100%
-                      bg_color: "0x000000"
-                      bg_opa: 50%
-                      border_width: 0
-                      pad_all: 0
-                      widgets:
-                        - obj:
-                            bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                            bg_opa: COVER
-                            radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
-                            border_width: 0
-                            pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
-                            width: 90%
-                            height: SIZE_CONTENT
-                            align: CENTER
-                            scrollbar_mode: 'OFF'
-                            layout:
-                              type: flex
-                              flex_flow: COLUMN
-                              pad_row: 0
-                            id: rw_ref38
-                            widgets:
-                              - label:
-                                  text: Control
-                                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                  id: rw_ref39
-                              - button:
-                                  on_press:
-                                    - homeassistant.action:
-                                        action: homeassistant.toggle
-                                        data_template:
-                                          entity_id: "{{ entity_id_expr }}"
-                                        variables:
-                                          entity_id_expr: !lambda "return
-                                            espcompose::tbl_ovrl_6321ad22_act_0[espcompose::\\
-                                            sig_ovrl_6321ad22_mux.get()];"
-                                  bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                  bg_opa: COVER
-                                  border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                  border_width: 0
-                                  radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_8.get();"
-                                  height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                  pressed:
-                                    bg_color: !lambda "return
-                                      espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                      );"
+                              scrollbar_mode: 'OFF'
+                              layout:
+                                type: flex
+                                flex_flow: COLUMN
+                                pad_row: 0
+                              id: rw_ref38
+                              widgets:
+                                - label:
+                                    text: Control
+                                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                    id: rw_ref39
+                                - button:
+                                    on_press:
+                                      - homeassistant.action:
+                                          action: homeassistant.toggle
+                                          data_template:
+                                            entity_id: "{{ entity_id_expr }}"
+                                          variables:
+                                            entity_id_expr: !lambda "return
+                                              espcompose::tbl_ovrl_98836858_act_0[espcompose::\\
+                                              sig_ovrl_98836858_mux.get()];"
+                                    bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                     bg_opa: COVER
-                                  id: rw_ref40
-                                  widgets:
-                                    - label:
-                                        text: Toggle
-                                        text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                        text_align: CENTER
-                                        align: CENTER
-                                        id: rw_ref41
-                              - button:
-                                  on_press:
-                                    - lambda: !lambda "lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
-                                  bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                  bg_opa: COVER
-                                  border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                  border_width: 0
-                                  radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                  width: !lambda "return espcompose::memo_9.get();"
-                                  height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                  pressed:
-                                    bg_color: !lambda "return
-                                      espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                      );"
+                                    border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                    border_width: 0
+                                    radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                    width: !lambda "return espcompose::memo_8.get();"
+                                    height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                    pressed:
+                                      bg_color: !lambda "return
+                                        espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                        );"
+                                      bg_opa: COVER
+                                    id: rw_ref40
+                                    widgets:
+                                      - label:
+                                          text: Toggle
+                                          text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                          text_align: CENTER
+                                          align: CENTER
+                                          id: rw_ref41
+                                - button:
+                                    on_press:
+                                      - lambda: !lambda "lv_obj_add_flag(id(ovrl_98836858), LV_OBJ_FLAG_HIDDEN);"
+                                    bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                     bg_opa: COVER
-                                  id: rw_ref42
-                                  widgets:
-                                    - label:
-                                        text: Close
-                                        text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                        text_align: CENTER
-                                        align: CENTER
-                                        id: rw_ref43
+                                    border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                    border_width: 0
+                                    radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                    width: !lambda "return espcompose::memo_9.get();"
+                                    height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                    pressed:
+                                      bg_color: !lambda "return
+                                        espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                        );"
+                                      bg_opa: COVER
+                                    id: rw_ref42
+                                    widgets:
+                                      - label:
+                                          text: Close
+                                          text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                          text_align: CENTER
+                                          align: CENTER
+                                          id: rw_ref43
 binary_sensor:
   - platform: homeassistant
     id: ha_light_kitchen_floods
@@ -1920,7 +1920,7 @@ espcompose:
 font:
   - id: r_ref44
     file: gfonts://Roboto
-    size: 28
+    size: 22
     bpp: 4
   - id: r_ref45
     file: gfonts://Roboto
@@ -1942,10 +1942,6 @@ font:
     file: gfonts://Roboto
     size: 18
     bpp: 4
-  - id: r_ref50
-    file: gfonts://Roboto
-    size: 22
-    bpp: 4
 script:
   - id: scr_ref7
     parameters:
@@ -1953,15 +1949,15 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref7_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_6321ad22_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_6321ad22),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_6321ad22));"
-  - id: scr_ref51
+          espcompose::sig_ovrl_98836858_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); lv_obj_clear_flag(id(ovrl_98836858),
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_98836858));"
+  - id: scr_ref50
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref51_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_6321ad22), LV_OBJ_FLAG_HIDDEN);"
+          espcompose::scr_ref50_closures[closure_index]; (void)closure;
+          lv_obj_add_flag(id(ovrl_98836858), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

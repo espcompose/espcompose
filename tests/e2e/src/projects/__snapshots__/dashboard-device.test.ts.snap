@@ -481,10 +481,10 @@ binary_sensor:
     entity_id: binary_sensor.living_room_motion_sensor_motion_detection
     trigger_on_initial_state: true
 lvgl:
-  id: r_ref8
-  displays:
-    - r_ref1
-  rotation: 270
+  - id: r_ref8
+    displays:
+      - r_ref1
+    rotation: 270
 script:
   - id: scr_ref9
     then:

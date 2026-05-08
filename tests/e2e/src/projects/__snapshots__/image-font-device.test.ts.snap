@@ -345,38 +345,38 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - image:
-            src: r_ref2
-            x: 10
-            y: 10
-        - image:
-            src: r_ref2
-            x: 50
-            y: 10
-        - image:
-            src: r_ref3
-            x: 90
-            y: 10
-        - label:
-            text: Small
-            x: 10
-            y: 60
-            text_font: r_ref4
-        - label:
-            text: Also small
-            x: 10
-            y: 90
-            text_font: r_ref4
-        - label:
-            text: Large
-            x: 10
-            y: 120
-            text_font: r_ref5
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - image:
+              src: r_ref2
+              x: 10
+              y: 10
+          - image:
+              src: r_ref2
+              x: 50
+              y: 10
+          - image:
+              src: r_ref3
+              x: 90
+              y: 10
+          - label:
+              text: Small
+              x: 10
+              y: 60
+              text_font: r_ref4
+          - label:
+              text: Also small
+              x: 10
+              y: 90
+              text_font: r_ref4
+          - label:
+              text: Large
+              x: 10
+              y: 120
+              text_font: r_ref5
 image:
   - id: r_ref2
     file: assets/icon-5e4d533f.png

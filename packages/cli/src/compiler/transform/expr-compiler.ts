@@ -18,8 +18,9 @@ import {
   hashGlobalFingerprint, globalTypeToIRType, irTypeToExprType, REACTIVE_PROPERTY_MAP,
   irBinary, irUnary, irPostfix, irTernary, irCall, irConcat, irToString, irGroup,
   irTypeCast, irFormatString, irNullCoalesce, irStringMethod, irArrayIndex, irArrayMethod,
+  irGlobalRead, irClosureRead,
 } from '@espcompose/core/internals';
-import { isCoreExportCall } from './type-brands.js';
+import { isCoreExportCall, inferIRTypeFromTsType } from './type-brands.js';
 
 // ── Array type helpers ───────────────────────────────────────────────────────
 
@@ -36,6 +37,8 @@ function arrayElementType(t: ExprType): ExprType {
     default: return 'int';
   }
 }
+
+
 
 // ────────────────────────────────────────────────────────────────────────────
 // Context types
@@ -112,6 +115,10 @@ export interface ScriptTransformContext {
   localVars: Set<string>;
   /** Map of variable name → global definition for resolving globalHandle.value reads. */
   globalHandlesByName?: Map<string, GlobalExprInfo>;
+  /** TypeScript checker — required for closure capture inference. */
+  checker?: ts.TypeChecker;
+  /** Scalar captures accumulator — when provided, unrecognized primitive identifiers are captured. */
+  scalarCaptures?: Map<string, import('@espcompose/core/internals').IRType>;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -237,6 +244,17 @@ export function translateScriptExprIR(
     if (ctx.localVars.has(node.text)) {
       return { kind: 'expr:trigger_var', name: node.text };
     }
+    // Closure capture: if checker + scalarCaptures provided, try to capture
+    // outer-scope identifiers with primitive types.
+    if (ctx.checker && ctx.scalarCaptures) {
+      const type = ctx.checker.getTypeAtLocation(node);
+      const irType = inferIRTypeFromTsType(type, ctx.checker);
+      if (irType) {
+        const name = node.text;
+        ctx.scalarCaptures.set(name, irType);
+        return irClosureRead(name, irTypeToExprType(irType));
+      }
+    }
     return null;
   }
 
@@ -248,14 +266,14 @@ export function translateScriptExprIR(
     if (ts.isIdentifier(node.expression) && node.name.text === 'value' && ctx.globalHandlesByName) {
       const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
       if (globalInfo) {
-        return { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        return irGlobalRead(globalInfo.globalId, globalInfo.exprType);
       }
     }
     // arrayHandle.length → array_method 'size'
     if (ts.isIdentifier(node.expression) && node.name.text === 'length' && ctx.globalHandlesByName) {
       const globalInfo = ctx.globalHandlesByName.get(node.expression.text);
       if (globalInfo && isArrayExprType(globalInfo.exprType)) {
-        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead = irGlobalRead(globalInfo.globalId, globalInfo.exprType);
         return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
       }
     }
@@ -344,7 +362,7 @@ export function translateScriptExprIR(
       if (globalInfo && isArrayExprType(globalInfo.exprType)) {
         const indexArg = translateScriptExprIR(node.arguments[0], ctx);
         if (!indexArg) return null;
-        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead = irGlobalRead(globalInfo.globalId, globalInfo.exprType);
         return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
@@ -573,6 +591,58 @@ function inferDomainFromType(expr: ts.Expression, checker: ts.TypeChecker): stri
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Result of detecting a useGlobal() or useRetainedGlobal() call.
+ * Contains the type information but NOT the globalId — callers derive that
+ * using their own key strategy (counter-based or injected __key).
+ */
+export interface GlobalHookCallInfo {
+  /** Whether this is a volatile (useGlobal) or retained (useRetainedGlobal) global. */
+  kind: 'volatile' | 'retained';
+  /** The target-agnostic IR type derived from the first argument. */
+  irType: IRType;
+  /** For retained globals, the key string literal from arg 2. */
+  retainedKey?: string;
+}
+
+/**
+ * Detect whether a call expression is a useGlobal() or useRetainedGlobal()
+ * call and extract its type information.
+ *
+ * Returns null if the call is not a recognized global hook or if the
+ * required arguments are not string literals.
+ */
+export function detectGlobalHookCall(
+  call: ts.CallExpression,
+  checker: ts.TypeChecker,
+): GlobalHookCallInfo | null {
+  // ── useGlobal('type', opts?) — volatile ────────────────────
+  if (isCoreExportCall(call, 'useGlobal', checker) && call.arguments.length >= 1) {
+    const typeArg = call.arguments[0];
+    if (ts.isStringLiteral(typeArg)) {
+      return {
+        kind: 'volatile',
+        irType: globalTypeToIRType(typeArg.text as GlobalType),
+      };
+    }
+  }
+
+  // ── useRetainedGlobal('type', 'key', opts?) — retained ────
+  if (isCoreExportCall(call, 'useRetainedGlobal', checker) && call.arguments.length >= 2) {
+    const typeArg = call.arguments[0];
+    const keyArg = call.arguments[1];
+    if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
+      return {
+        kind: 'retained',
+        irType: globalTypeToIRType(typeArg.text as GlobalType),
+        retainedKey: keyArg.text,
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
  * Scan a TS AST node for useGlobal() and useRetainedGlobal() calls,
  * populating a symbol → GlobalExprInfo map.
  *
@@ -595,32 +665,15 @@ export function scanForGlobalHandles(
   if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
     const init = node.initializer;
     if (ts.isCallExpression(init)) {
-      // ── useGlobal('type', opts?) — volatile ────────────────────
-      if (isCoreExportCall(init, 'useGlobal', checker) && init.arguments.length >= 1) {
-        const typeArg = init.arguments[0];
-        if (ts.isStringLiteral(typeArg)) {
-          const irType = globalTypeToIRType(typeArg.text as GlobalType);
-          const varName = node.name.text;
-          const fingerprint = `${varName}_${counter.value++}`;
-          const globalId = hashGlobalFingerprint(fingerprint);
-          const sym = checker.getSymbolAtLocation(node.name);
-          if (sym) {
-            globals.set(sym, { globalId, irType, exprType: irTypeToExprType(irType) });
-          }
-        }
-      }
-
-      // ── useRetainedGlobal('type', 'key', opts?) — retained ────
-      if (isCoreExportCall(init, 'useRetainedGlobal', checker) && init.arguments.length >= 2) {
-        const typeArg = init.arguments[0];
-        const keyArg = init.arguments[1];
-        if (ts.isStringLiteral(typeArg) && ts.isStringLiteral(keyArg)) {
-          const irType = globalTypeToIRType(typeArg.text as GlobalType);
-          const globalId = hashGlobalFingerprint(keyArg.text);
-          const sym = checker.getSymbolAtLocation(node.name);
-          if (sym) {
-            globals.set(sym, { globalId, irType, exprType: irTypeToExprType(irType) });
-          }
+      const info = detectGlobalHookCall(init, checker);
+      if (info) {
+        const fingerprint = info.kind === 'retained'
+          ? info.retainedKey!
+          : `${node.name.text}_${counter.value++}`;
+        const globalId = hashGlobalFingerprint(fingerprint);
+        const sym = checker.getSymbolAtLocation(node.name);
+        if (sym) {
+          globals.set(sym, { globalId, irType: info.irType, exprType: irTypeToExprType(info.irType) });
         }
       }
     }
@@ -836,7 +889,7 @@ function compilePropertyAccessIR(
         exprType: irTypeToExprType(globalInfo.irType),
         sourceType: 'global',
       });
-      return { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      return irGlobalRead(globalInfo.globalId, globalInfo.exprType);
     }
 
     // Array global handle .length → array_method 'size'
@@ -847,7 +900,7 @@ function compilePropertyAccessIR(
         exprType: irTypeToExprType(globalInfo.irType),
         sourceType: 'global',
       });
-      const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+      const globalRead = irGlobalRead(globalInfo.globalId, globalInfo.exprType);
       return irArrayMethod('size', globalRead, [], arrayElementType(globalInfo.exprType));
     }
 
@@ -977,7 +1030,7 @@ function compileCallExprIR(node: ts.CallExpression, ctx: ExprCompilerContext): I
         });
         const indexArg = compileExprIR(node.arguments[0], ctx);
         if (indexArg === null) return null;
-        const globalRead: IRExpression = { kind: 'expr:global_read', globalId: globalInfo.globalId, type: globalInfo.exprType };
+        const globalRead = irGlobalRead(globalInfo.globalId, globalInfo.exprType);
         return irArrayIndex(globalRead, indexArg, arrayElementType(globalInfo.exprType));
       }
     }
