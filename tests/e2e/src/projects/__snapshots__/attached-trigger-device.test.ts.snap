@@ -345,30 +345,30 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - id: r_ref2
-      on_load:
-        - logger.log: "PageTracker: page loaded"
-        - logger.log: "PageLogger: loaded"
-      widgets:
-        - label:
-            text: Page 1
-    - id: r_ref3
-      on_load:
-        - logger.log: "User: page 2 loaded"
-        - logger.log: "PageTracker: page loaded"
-      widgets:
-        - label:
-            text: Page 2
-    - widgets:
-        - label:
-            text: "Tab: home"
-        - label:
-            text: "Tab: settings"
-        - label:
-            text: Logger active
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - id: r_ref2
+        on_load:
+          - logger.log: "PageTracker: page loaded"
+          - logger.log: "PageLogger: loaded"
+        widgets:
+          - label:
+              text: Page 1
+      - id: r_ref3
+        on_load:
+          - logger.log: "User: page 2 loaded"
+          - logger.log: "PageTracker: page loaded"
+        widgets:
+          - label:
+              text: Page 2
+      - widgets:
+          - label:
+              text: "Tab: home"
+          - label:
+              text: "Tab: settings"
+          - label:
+              text: Logger active
 "
 `;

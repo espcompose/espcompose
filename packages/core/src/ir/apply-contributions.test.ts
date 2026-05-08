@@ -29,6 +29,7 @@ function makeWidget(id: string | undefined, props: Record<string, unknown> = {})
 function makeIR(pages: IRWidget[], widgets: IRWidget[] = []): SemanticIR {
   const ui: IRUIRegistry = {
     kind: 'ui_registry',
+    lvgl: 'r_test_lvgl',
     config: {},
     pages,
     widgets,
@@ -42,7 +43,7 @@ function makeIR(pages: IRWidget[], widgets: IRWidget[] = []): SemanticIR {
     scripts: brandArray([], 'script_registry'),
     themes: brandArray([], 'theme_registry'),
     reactives: { kind: 'reactive_registry', bindings: [], memos: [], effects: [] },
-    ui,
+    uis: [ui],
   };
 }
 
@@ -58,6 +59,7 @@ function makeSectionIR(...sectionValues: { key: string; value: ReturnType<typeof
     scripts: brandArray([], 'script_registry'),
     themes: brandArray([], 'theme_registry'),
     reactives: { kind: 'reactive_registry', bindings: [], memos: [], effects: [] },
+    uis: [],
   };
 }
 
@@ -155,6 +157,7 @@ describe('applyContributions', () => {
       scripts: brandArray([], 'script_registry'),
       themes: brandArray([], 'theme_registry'),
       reactives: { kind: 'reactive_registry', bindings: [], memos: [], effects: [] },
+      uis: [],
     };
 
     // Should not throw — no targets to match, so silently skipped

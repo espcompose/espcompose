@@ -439,13 +439,14 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
       }
     }
 
-    const overlayTiers = collectOverlayTiers();
+    const overlayTiers = collectOverlayTiers(String(lvglRef));
 
     // Pre-serialize tree-level lvgl props (camelCase keys preserved). The
     // target's emitter performs snake_case key conversion when lowering.
     const serializedTreeProps = serializeValuesPreservingKeys(allProps);
 
     return {
+      lvgl: String(lvglRef),
       props: serializedTreeProps,
       pages,
       widgets: topWidgets,
@@ -529,12 +530,12 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
  * `OverlayInstance` for the codegen mux pass and are not emitted into the
  * widget tree.
  */
-function collectOverlayTiers(): RawIROverlayTier[] {
+function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   // Iterate by re-fetching definitions each pass: rendering an overlay's
   // factory may itself invoke useOverlay() (e.g. Toast.Provider nested
   // inside a usePopup() factory), registering new overlays mid-iteration.
   // We process overlays in registration order until no new ones appear.
-  let overlays = peekOverlayDefinitions();
+  let overlays = peekOverlayDefinitions(lvgl);
   if (overlays.length === 0) return [];
 
   const tierMap = new Map<number, RawIROverlayContainer[]>();
@@ -598,7 +599,7 @@ function collectOverlayTiers(): RawIROverlayTier[] {
       }
     }
     // Re-fetch in case nested factories registered additional overlays.
-    overlays = peekOverlayDefinitions();
+    overlays = peekOverlayDefinitions(lvgl);
   }
 
   return Array.from(tierMap.entries())

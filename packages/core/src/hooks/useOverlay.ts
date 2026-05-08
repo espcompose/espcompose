@@ -33,6 +33,7 @@ import type { IRReactiveNode } from '../reactive';
 import { IRReactiveNode as IRReactiveNodeImpl } from '../reactive/node';
 import type { IRDependency } from '../reactive';
 import type { IRActionNode } from '../ir/action-types';
+import { useLvgl } from './useLvgl';
 import {
   globalScopeContext,
   irTypeToExprType,
@@ -140,6 +141,8 @@ export interface CapturedOverlayAction {
 export interface OverlayDefinition {
   /** Dedup key derived from the hook-path stack at the call site. */
   readonly templateKey: string;
+  /** Ref token of the owning `<lvgl>` element. Used to scope overlays per-tree. */
+  readonly lvgl: string;
   /** Numeric z-order tier for stacking in top_layer. */
   readonly zOrder: number;
   /** Per-instance records, accumulated across all callers. */
@@ -201,14 +204,16 @@ export function withOverlayScope<T>(fn: () => T): OverlayScopeResult<T> {
 /**
  * Read the overlay definitions registered in the currently-active scope.
  *
- * Used by the LVGL serializer (`buildLvglSection`) to emit the overlay widget
- * subtrees into `top_layer` after children resolution completes. Returns an
- * empty array if no overlay scope is active.
+ * When `lvgl` is provided, only overlays belonging to that `<lvgl>`
+ * tree are returned. When omitted, all definitions are returned (used by
+ * the execute phase to collect the flat list for downstream codegen).
  */
-export function peekOverlayDefinitions(): OverlayDefinition[] {
+export function peekOverlayDefinitions(lvgl?: string): OverlayDefinition[] {
   const frame = useContext(overlayScopeContext);
   if (!frame) return [];
-  return Array.from(frame.definitions.values());
+  const all = Array.from(frame.definitions.values());
+  if (lvgl == null) return all;
+  return all.filter(d => d.lvgl === lvgl);
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
@@ -261,6 +266,9 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
 
   const zOrder = config.zOrder ?? 0;
 
+  // Require an enclosing <lvgl> context — overlays are lvgl-scoped.
+  const lvglId = String(useLvgl());
+
   const basePath = getCurrentHookPath();
   if (!basePath) {
     throw new Error(
@@ -299,7 +307,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, zOrder, instances: [] };
+    def = { templateKey: safeKey, lvgl: lvglId, zOrder, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 

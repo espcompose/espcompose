@@ -7,8 +7,13 @@ import { pushHookPath, popHookPath } from './useState';
 import { useTransientOverlay } from './useTransientOverlay';
 import type { TransientOverlayConfig } from './useTransientOverlay';
 import type { IRActionNode } from '../ir/action-types';
+import { LvglContext } from './useLvgl';
+import { withContext } from './useContext';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
+const mockLvglRef = { toString: () => 'r_test_lvgl' } as any;
 
 function runInComponent<T>(componentName: string, fn: () => T): T {
   pushHookPath(componentName);
@@ -28,11 +33,13 @@ function buildWithQueue(config: TransientOverlayConfig) {
     const reactiveResult = withReactiveScope(() => {
       const globalResult = withGlobalScope(() => {
         const { result, overlays } = withOverlayScope(() => {
-          runInComponent('TestComponent', () => {
-            useTransientOverlay(config, (_ctrl, context) => {
-              factoryCallCount++;
-              receivedSlotRanks.push(context.slotRank);
-              return stub;
+          return withContext(LvglContext, mockLvglRef, () => {
+            runInComponent('TestComponent', () => {
+              useTransientOverlay(config, (_ctrl, context) => {
+                factoryCallCount++;
+                receivedSlotRanks.push(context.slotRank);
+                return stub;
+              });
             });
           });
         });
@@ -308,8 +315,10 @@ describe('useTransientOverlay', () => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
 
       withScriptScope(() => withReactiveScope(() => withGlobalScope(() => withOverlayScope(() => {
-        runInComponent('Foo', () => {
-          ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
+        withContext(LvglContext, mockLvglRef, () => {
+          runInComponent('Foo', () => {
+            ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
+          });
         });
       }))));
 

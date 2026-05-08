@@ -429,55 +429,55 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref2
-  displays:
-    - r_ref1
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return id(r_ref0).state;"
-            x: 10
-            y: 10
-            id: rw_ref3
-        - button:
-            on_release:
-              - homeassistant.action:
-                  action: switch.toggle
-                  data:
-                    entity_id: switch.space_heater
-            x: 10
-            y: 50
-            width: 120
-            height: 50
-            widgets:
-              - label:
-                  text: Heater
-                  align: CENTER
-        - slider:
-            x: 10
-            y: 120
-            width: 200
-            indicator:
-              bg_opa: !lambda "return espcompose::memo_0.get().c_str();"
-            id: rw_ref4
-        - button:
-            x: 10
-            y: 160
-            pressed:
-              bg_opa: !lambda "return espcompose::memo_1.get().c_str();"
-            id: rw_ref5
-            widgets:
-              - label:
-                  text: Styled
-                  align: CENTER
-        - slider:
-            x: 10
-            y: 210
-            width: 200
-            indicator:
+  - id: r_ref2
+    displays:
+      - r_ref1
+    pages:
+      - widgets:
+          - label:
+              text: !lambda "return id(r_ref0).state;"
+              x: 10
+              y: 10
+              id: rw_ref3
+          - button:
+              on_release:
+                - homeassistant.action:
+                    action: switch.toggle
+                    data:
+                      entity_id: switch.space_heater
+              x: 10
+              y: 50
+              width: 120
+              height: 50
+              widgets:
+                - label:
+                    text: Heater
+                    align: CENTER
+          - slider:
+              x: 10
+              y: 120
+              width: 200
+              indicator:
+                bg_opa: !lambda "return espcompose::memo_0.get().c_str();"
+              id: rw_ref4
+          - button:
+              x: 10
+              y: 160
               pressed:
-                bg_opa: !lambda "return espcompose::memo_2.get().c_str();"
-            id: rw_ref6
+                bg_opa: !lambda "return espcompose::memo_1.get().c_str();"
+              id: rw_ref5
+              widgets:
+                - label:
+                    text: Styled
+                    align: CENTER
+          - slider:
+              x: 10
+              y: 210
+              width: 200
+              indicator:
+                pressed:
+                  bg_opa: !lambda "return espcompose::memo_2.get().c_str();"
+              id: rw_ref6
 binary_sensor:
   platform: homeassistant
   id: ha_switch_space_heater

@@ -442,21 +442,21 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return espcompose::memo_0.get().c_str();"
-            x: 10
-            y: 10
-            id: rw_ref2
-        - label:
-            text: !lambda "return espcompose::memo_1.get().c_str();"
-            x: 10
-            y: 40
-            id: rw_ref3
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - label:
+              text: !lambda "return espcompose::memo_0.get().c_str();"
+              x: 10
+              y: 10
+              id: rw_ref2
+          - label:
+              text: !lambda "return espcompose::memo_1.get().c_str();"
+              x: 10
+              y: 40
+              id: rw_ref3
 binary_sensor:
   platform: homeassistant
   id: ha_light_kitchen_floods

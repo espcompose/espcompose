@@ -101,7 +101,7 @@ export function executePhase(ctx: PhaseContext): void {
         lvglTrees,
         contributions: collectedContributions as BuildSemanticIRInput['contributions'],
       })
-    : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] } };
+    : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] }, uis: [] };
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };

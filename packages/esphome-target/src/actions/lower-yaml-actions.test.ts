@@ -11,6 +11,7 @@ function makeIR(sections: Array<{ key: string; value: IRValue }>): SemanticIR {
     components: brandArray([], 'component_registry'),
     scripts: brandArray([], 'script_registry'),
     themes: brandArray([], 'theme_registry'),
+    uis: [],
     reactives: {
       kind: 'reactive_registry',
       bindings: [],

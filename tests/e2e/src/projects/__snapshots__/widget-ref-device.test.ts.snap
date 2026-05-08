@@ -602,53 +602,54 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - id: r_ref2
-      bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
-      bg_opa: COVER
-      border_width: 0
-      pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
-      scrollbar_mode: 'OFF'
-      widgets:
-        - obj:
-            width: 100%
-            height: SIZE_CONTENT
-            bg_opa: TRANSP
-            border_width: 0
-            scrollbar_mode: 'OFF'
-            layout:
-              type: flex
-              flex_flow: COLUMN
-            widgets:
-              - label:
-                  text: Ref Forwarding
-                  text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                  id: rw_ref3
-              - button:
-                  on_press:
-                    - lvgl.page.next: {}
-                  bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                  bg_opa: COVER
-                  border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                  border_width: 0
-                  radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                  width: !lambda "return espcompose::memo_0.get();"
-                  height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                  pressed:
-                    bg_color: !lambda "return
-                      espcompose::thm_333e4663_colors_primary_bgPressed.get();"
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - id: r_ref2
+        bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
+        bg_opa: COVER
+        border_width: 0
+        pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
+        scrollbar_mode: 'OFF'
+        widgets:
+          - obj:
+              width: 100%
+              height: SIZE_CONTENT
+              bg_opa: TRANSP
+              border_width: 0
+              scrollbar_mode: 'OFF'
+              layout:
+                type: flex
+                flex_flow: COLUMN
+              widgets:
+                - label:
+                    text: Ref Forwarding
+                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                    id: rw_ref3
+                - button:
+                    on_press:
+                      - lvgl.page.next: {}
+                    bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                     bg_opa: COVER
-                  id: rw_ref4
-                  widgets:
-                    - label:
-                        text: Next
-                        text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                        text_align: CENTER
-                        align: CENTER
-                        id: rw_ref5
+                    border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                    border_width: 0
+                    radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                    width: !lambda "return espcompose::memo_0.get();"
+                    height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                    pressed:
+                      bg_color: !lambda "return
+                        espcompose::thm_333e4663_colors_primary_bgPressed.get()\\
+                        ;"
+                      bg_opa: COVER
+                    id: rw_ref4
+                    widgets:
+                      - label:
+                          text: Next
+                          text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                          text_align: CENTER
+                          align: CENTER
+                          id: rw_ref5
 external_components:
   - source:
       type: local

@@ -401,30 +401,30 @@ display:
   dc_pin: 27
   reset_pin: 33
 lvgl:
-  id: r_ref1
-  displays:
-    - r_ref0
-  pages:
-    - widgets:
-        - label:
-            text: !lambda "return id(ha_light_office_main_facet_state_text).state;"
-            x: 10
-            y: 10
-            id: rw_ref2
-        - button:
-            on_release:
-              - homeassistant.action:
-                  action: homeassistant.toggle
-                  data:
-                    entity_id: light.office_main
-            x: 10
-            y: 40
-            width: 120
-            height: 50
-            widgets:
-              - label:
-                  text: Office
-                  align: CENTER
+  - id: r_ref1
+    displays:
+      - r_ref0
+    pages:
+      - widgets:
+          - label:
+              text: !lambda "return id(ha_light_office_main_facet_state_text).state;"
+              x: 10
+              y: 10
+              id: rw_ref2
+          - button:
+              on_release:
+                - homeassistant.action:
+                    action: homeassistant.toggle
+                    data:
+                      entity_id: light.office_main
+              x: 10
+              y: 40
+              width: 120
+              height: 50
+              widgets:
+                - label:
+                    text: Office
+                    align: CENTER
 binary_sensor:
   platform: homeassistant
   id: ha_light_office_main

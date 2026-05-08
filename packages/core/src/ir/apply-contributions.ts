@@ -128,12 +128,13 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
  * Collect all widgets by ID as contribution targets.
  */
 function collectWidgetTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
-  if (!ir.ui) return;
-  collectWidgetsRecursive(ir.ui.pages, map);
-  collectWidgetsRecursive(ir.ui.widgets, map);
-  for (const tier of ir.ui.overlays) {
-    for (const overlay of tier.overlays) {
-      collectWidgetsRecursive(overlay.widgets, map);
+  for (const ui of ir.uis) {
+    collectWidgetsRecursive(ui.pages, map);
+    collectWidgetsRecursive(ui.widgets, map);
+    for (const tier of ui.overlays) {
+      for (const overlay of tier.overlays) {
+        collectWidgetsRecursive(overlay.widgets, map);
+      }
     }
   }
 }

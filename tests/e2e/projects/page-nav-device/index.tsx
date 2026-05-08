@@ -14,9 +14,30 @@
  * - Overlay-hosted nav: a single PageNav lives in top_layer and is shown on
  *   each page's onLoad so it persists across page transitions.
  */
-import { useRef, useOverlay, useAttachedTrigger } from '@espcompose/core';
-import type { DisplayRef } from '@espcompose/core';
+import { useRef, useOverlay, useAttachedTrigger, createLvglWidget } from '@espcompose/core';
+import type { DisplayRef, Ref } from '@espcompose/core';
 import { Screen, Text, VStack, PageNav, UITheme } from '@espcompose/ui';
+
+/**
+ * NavHost — lives inside the <lvgl> tree so useOverlay() has access to
+ * the LvglContext.  Renders a persistent PageNav into the overlay tier.
+ */
+const NavHost = createLvglWidget(
+  ({ pages }: { pages: { id: string; label: string; page: Ref }[] }) => {
+    const nav = useOverlay({ zOrder: 0 }, () => (
+      <PageNav items={pages} />
+    ));
+
+    // Show the overlay on each page's onLoad so it re-asserts visibility
+    // after any page transition.
+    for (const item of pages) {
+      useAttachedTrigger(item.page, 'onLoad', () => { nav.show(); });
+    }
+
+    // NavHost itself renders nothing — its output lives in the overlay.
+    return <></>;
+  },
+);
 
 function App() {
   const displayRef = useRef<DisplayRef>();
@@ -29,18 +50,6 @@ function App() {
     { id: 'settings', label: 'Settings', page: settingsPage },
     { id: 'about', label: 'About', page: aboutPage },
   ];
-
-  // Single PageNav rendered into the overlay tier (LVGL top_layer).
-  // It persists across page switches — no per-Screen duplication needed.
-  const nav = useOverlay({ zOrder: 0 }, () => (
-    <PageNav items={navItems} />
-  ));
-
-  // Show the overlay on each page's onLoad so it re-asserts visibility
-  // after any page transition.
-  useAttachedTrigger(homePage, 'onLoad', () => { nav.show(); });
-  useAttachedTrigger(settingsPage, 'onLoad', () => { nav.show(); });
-  useAttachedTrigger(aboutPage, 'onLoad', () => { nav.show(); });
 
   return (
     <esphome name="page-nav-device" comment="PageNav E2E test">
@@ -62,6 +71,8 @@ function App() {
 
       <lvgl displays={[displayRef]}>
         <UITheme.Provider>
+          <NavHost pages={navItems} />
+
           <Screen ref={homePage} padding="md">
             <VStack>
               <Text variant="title" text="Home" />

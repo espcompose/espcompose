@@ -247,6 +247,8 @@ export interface IRReactiveRegistry {
  */
 export interface IRUIRegistry {
   readonly kind: 'ui_registry';
+  /** Ref token of the originating `<lvgl>` element. Used to correlate overlays, actions, and displays. */
+  readonly lvgl: string;
   /** Top-level lvgl section config (camelCase) — all values are typed `IRValue` nodes. */
   readonly config: Record<string, IRValue>;
   /** `<lvgl-page>` subtrees. */
@@ -293,8 +295,8 @@ export interface SemanticIR {
   /** Reactive bindings, memos, and effects */
   reactives: IRReactiveRegistry;
 
-  /** UI widget tree (undefined when no `<lvgl>` element present) */
-  ui?: IRUIRegistry;
+  /** UI widget trees — one per `<lvgl>` element. Empty array when no `<lvgl>` is present. */
+  uis: IRUIRegistry[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────

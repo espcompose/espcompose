@@ -241,7 +241,7 @@ function mergeContextSections(
 
 function mergeSection(sections: Record<string, unknown[]>, child: EspComposeElement) {
   // LVGL container: collect the widget tree for the UI registry IR.
-  // No config section is emitted — the tree is consumed via ir.ui instead.
+  // No config section is emitted — the tree is consumed via ir.uis instead.
   if (child.type === 'lvgl') {
     _lvglTrees.push(buildLvglSection(child));
     return;
