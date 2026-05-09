@@ -2,13 +2,13 @@
  * E2E project: popup-multi-type-device
  *
  * Validates that TWO DIFFERENT component types each defining their own
- * usePopup() produce distinct popup template keys.  This is the exact
+ * useDialog() produce distinct dialog template keys.  This is the exact
  * scenario that would collide when anonymous components share the same
  * wireframe name.
  *
  * Both LightControl and FanControl are anonymous arrow functions passed to
  * createLvglWidget.  The wireframe counter must assign each a unique
- * identity so the two popup definitions produce separate LVGL top_layer
+ * identity so the two dialog definitions produce separate LVGL top_layer
  * widgets and mux signals.
  */
 import {
@@ -27,9 +27,8 @@ import {
   Text,
   Button,
   Switch,
-  Popup,
   UITheme,
-  usePopup,
+  useDialog,
 } from '@espcompose/ui';
 
 // ── Component A: light popup ─────────────────────────────────────────────
@@ -40,19 +39,19 @@ type LightControlProps = WidgetProps<{
 }>;
 
 const LightControl = createLvglWidget<LightControlProps>((props) => {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
+  const dialog = useDialog((ctrl) => (
+    <>
       <Text text="Light Control" />
       <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
       <Button text="Close" onPress={() => { ctrl.hide(); }} />
-    </Popup>
+    </>
   ));
 
   return (
     <HStack align="spaceBetween" crossAlign="center">
       <Text text={props.text} />
       <Switch value={props.entity.isOn} onChange={() => { props.entity.toggle(); }} />
-      <Button text="…" size="xs" onPress={() => { popup.show(); }} />
+      <Button text="…" size="xs" onPress={() => { dialog.show(); }} />
     </HStack>
   );
 });
@@ -65,19 +64,19 @@ type FanControlProps = WidgetProps<{
 }>;
 
 const FanControl = createLvglWidget<FanControlProps>((props) => {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
+  const dialog = useDialog((ctrl) => (
+    <>
       <Text text="Fan Control" />
       <Button text="On/Off" onPress={() => { props.entity.toggle(); }} />
       <Button text="Close" onPress={() => { ctrl.hide(); }} />
-    </Popup>
+    </>
   ));
 
   return (
     <HStack align="spaceBetween" crossAlign="center">
       <Text text={props.text} />
       <Switch value={props.entity.isOn} onChange={() => { props.entity.toggle(); }} />
-      <Button text="…" size="xs" onPress={() => { popup.show(); }} />
+      <Button text="…" size="xs" onPress={() => { dialog.show(); }} />
     </HStack>
   );
 });

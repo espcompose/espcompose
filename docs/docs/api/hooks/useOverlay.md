@@ -43,19 +43,24 @@ The returned controller exposes two methods — both are compile-time markers th
 
 ```tsx
 import { useOverlay, useHAEntity, createLvglWidget } from '@espcompose/core';
-import { Button, Text, Popup } from '@espcompose/ui';
+import { Button, Text, VStack } from '@espcompose/ui';
 
 const LightButton = createLvglWidget(
   ({ entityId, label }: { entityId: string; label: string }) => {
     const entity = useHAEntity(entityId, { domain: 'light' });
 
     const overlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-      <Popup onBackdropPress={() => { ctrl.hide(); }}>
-        <Text variant="title" text={label} />
-        <Text text={entity.stateText} />
-        <Button text="Toggle" onPress={() => { entity.toggle(); }} />
-        <Button text="Close" onPress={() => { ctrl.hide(); }} />
-      </Popup>
+      <lvgl-obj
+        onPress={() => { ctrl.hide(); }}
+        style={{ width: '100%', height: '100%', backgroundColor: '#000000', backgroundOpacity: '50%' }}
+      >
+        <lvgl-obj style={{ placeSelf: 'center', width: '90%', height: 'fit-content' }}>
+          <Text variant="title" text={label} />
+          <Text text={entity.stateText} />
+          <Button text="Toggle" onPress={() => { entity.toggle(); }} />
+          <Button text="Close" onPress={() => { ctrl.hide(); }} />
+        </lvgl-obj>
+      </lvgl-obj>
     ));
 
     return (
@@ -94,18 +99,22 @@ You can call `useOverlay()` more than once in the same component. Each call prod
 ```tsx
 const DeviceControl = createLvglWidget(({ entity }) => {
   const infoOverlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
-      <Text text={entity.stateText} />
-      <Button text="Close" onPress={() => { ctrl.hide(); }} />
-    </Popup>
+    <lvgl-obj onPress={() => { ctrl.hide(); }} style={{ width: '100%', height: '100%', backgroundColor: '#000000', backgroundOpacity: '50%' }}>
+      <lvgl-obj style={{ placeSelf: 'center', width: '90%', height: 'fit-content' }}>
+        <Text text={entity.stateText} />
+        <Button text="Close" onPress={() => { ctrl.hide(); }} />
+      </lvgl-obj>
+    </lvgl-obj>
   ));
 
   const confirmOverlay = useOverlay({ zOrder: 0 }, (ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
-      <Text text="Are you sure?" />
-      <Button text="Yes" onPress={() => { entity.toggle(); ctrl.hide(); }} />
-      <Button text="Cancel" onPress={() => { ctrl.hide(); }} />
-    </Popup>
+    <lvgl-obj onPress={() => { ctrl.hide(); }} style={{ width: '100%', height: '100%', backgroundColor: '#000000', backgroundOpacity: '50%' }}>
+      <lvgl-obj style={{ placeSelf: 'center', width: '90%', height: 'fit-content' }}>
+        <Text text="Are you sure?" />
+        <Button text="Yes" onPress={() => { entity.toggle(); ctrl.hide(); }} />
+        <Button text="Cancel" onPress={() => { ctrl.hide(); }} />
+      </lvgl-obj>
+    </lvgl-obj>
   ));
 
   return (

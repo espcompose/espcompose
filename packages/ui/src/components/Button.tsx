@@ -78,8 +78,8 @@ function useButtonVariant(
  *   <Text color="danger">Delete</Text>
  * </Button>
  */
-export const Button = createLvglWidget<ButtonProps>(
-  (props) => {
+export const Button = createLvglWidget(
+  (props: ButtonProps) => {
     const dims = useSize(props.size ?? 'md');
     const sc = useStatus(props.status ?? 'primary');
     const rd = useRadius('md');
@@ -125,4 +125,5 @@ export const Button = createLvglWidget<ButtonProps>(
         </lvgl-button>
     );
   },
+  { allowedChildIntents: ['lvgl:widget'] as const },
 );

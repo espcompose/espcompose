@@ -616,6 +616,7 @@ lvgl:
           - obj:
               width: 100%
               height: SIZE_CONTENT
+              clickable: false
               bg_opa: TRANSP
               border_width: 0
               scrollbar_mode: 'OFF'
@@ -663,25 +664,73 @@ font:
     file: gfonts://Roboto
     size: 22
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
   - id: r_ref7
     file: gfonts://Roboto
     size: 20
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
   - id: r_ref8
     file: gfonts://Roboto
     size: 16
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
   - id: r_ref9
     file: gfonts://Roboto
     size: 12
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
   - id: r_ref10
     file: gfonts://Roboto
     size: 14
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
   - id: r_ref11
     file: gfonts://Roboto
     size: 18
     bpp: 4
+    extras:
+      - file: https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf
+        glyphs:
+          - 󰅖
+          - 󰌵
+          - 󰌶
+          - 󰠟
+          - 󰠜
 "
 `;

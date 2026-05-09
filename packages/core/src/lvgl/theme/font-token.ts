@@ -17,6 +17,24 @@ export const FONT_TOKEN_BRAND: unique symbol = Symbol('FontToken');
 /** Anti-aliasing bit depth for font rendering. */
 export type FontBpp = '1' | '2' | '4' | '8';
 
+/** Extra font file merged into a FontToken for additional glyphs. */
+export interface FontTokenExtras {
+  /** Font file path or URL for the extra glyphs. */
+  file: string;
+  /** Glyph codepoints to include from this file. */
+  glyphs: string[];
+}
+
+/** Optional fields for {@link createFontToken}. */
+export interface FontTokenOptions {
+  /** Anti-aliasing bit depth. Defaults to '4'. */
+  bpp?: FontBpp;
+  /** Additional individual glyphs to include in the font. */
+  glyphs?: string[];
+  /** Extra font files merged in for additional glyph ranges (e.g. icon fonts). */
+  extras?: FontTokenExtras[];
+}
+
 /**
  * A font asset descriptor stored in theme objects.
  *
@@ -30,11 +48,22 @@ export interface FontToken {
   size: number;
   /** Anti-aliasing bit depth (1 = none, 2 = basic, 4 = good, 8 = best). Defaults to '4'. */
   bpp: FontBpp;
+  /** Additional individual glyphs to include. */
+  glyphs?: string[];
+  /** Extra font files merged in for additional glyph ranges. */
+  extras?: FontTokenExtras[];
 }
 
 /** Create a branded FontToken. */
-export function createFontToken(file: string, size: number, bpp: FontBpp = '4'): FontToken {
-  return { [FONT_TOKEN_BRAND]: true as const, file, size, bpp };
+export function createFontToken(file: string, size: number, options?: FontTokenOptions): FontToken {
+  return {
+    [FONT_TOKEN_BRAND]: true as const,
+    file,
+    size,
+    bpp: options?.bpp ?? '4',
+    ...(options?.glyphs ? { glyphs: options.glyphs } : {}),
+    ...(options?.extras ? { extras: options.extras } : {}),
+  };
 }
 
 /** Type guard: is the value a branded FontToken? */

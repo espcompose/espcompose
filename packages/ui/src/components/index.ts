@@ -33,6 +33,4 @@ export { SensorText } from './SensorText';
 export { HALightButton } from './HALightButton';
 export type { HALightButtonProps } from './HALightButton';
 
-// Popup system
-export { Popup } from './Popup';
 export { BottomToast } from './Toast';

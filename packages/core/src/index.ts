@@ -219,7 +219,7 @@ export type { Signal } from './reactive/node';
 export { createTheme } from './lvgl/theme/create-theme';
 export type { ThemeHandle, ThemeProviderProps } from './lvgl/theme/create-theme';
 export { createFontToken, isFontToken } from './lvgl/theme/font-token';
-export type { FontToken, FontBpp } from './lvgl/theme/font-token';
+export type { FontToken, FontBpp, FontTokenExtras, FontTokenOptions } from './lvgl/theme/font-token';
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
 export { useThemeSettings } from './lvgl/theme/settings-context';
@@ -248,7 +248,7 @@ export type {
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage } from './lvgl/style/types';
+export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage, OpacityValue } from './lvgl/style/types';
 export { expandCssStyle } from './lvgl/style/mapping';
 
 // ────────────────────────────────────────────────────────────────────────────

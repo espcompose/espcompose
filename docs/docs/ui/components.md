@@ -262,30 +262,31 @@ Loading spinner with theme-driven colors.
 
 ## Overlay Components
 
-### Popup
+### Dialog (useDialog)
 
-Modal overlay with a semi-transparent backdrop and centered container. Used via the `usePopup()` hook.
+Modal overlay with a semi-transparent backdrop and themed centered container. The `useDialog()` hook bakes in the backdrop and container structure — you only provide the dialog content. Tapping the backdrop automatically dismisses the dialog.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
 | `padding` | `SpacingToken` | `'lg'` | Inner padding |
 | `radius` | `RadiusToken` | `'lg'` | Container border radius |
 | `gap` | `SpacingToken` | `'md'` | Gap between children |
 | `backdropOpacity` | `number` | `50` | Backdrop opacity (0–100) |
-| `onBackdropPress` | `TriggerHandler` | — | Called when backdrop is tapped |
+| `width` | `string` | `'90%'` | Container width |
+| `height` | `string` | `'fit-content'` | Container height |
 
 ```tsx
-import { usePopup, Popup, Text, Button } from '@espcompose/ui';
+import { useDialog, Text, Button } from '@espcompose/ui';
 
 function App() {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.dismiss(); }}>
+  const dialog = useDialog((ctrl) => (
+    <>
       <Text text="Are you sure?" />
-      <Button text="Close" onPress={() => { ctrl.dismiss(); }} />
-    </Popup>
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
+    </>
   ));
 
-  return <Button text="Open" onPress={() => { popup.show(); }} />;
+  return <Button text="Open" onPress={() => { dialog.show(); }} />;
 }
 ```
 

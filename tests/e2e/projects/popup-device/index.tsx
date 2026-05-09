@@ -1,15 +1,15 @@
 /**
  * E2E project: popup-device
  *
- * Validates the popup system end-to-end:
- *   - usePopup() with shared widget subtree deduplication
+ * Validates the dialog system end-to-end:
+ *   - useDialog() with shared widget subtree deduplication
  *   - Multiple instances of the same component with different HA entities
- *   - Popup backdrop + container in top_layer (1 set, not duplicated)
+ *   - Dialog backdrop + container in top_layer (1 set, not duplicated)
  *   - Mux signal + muxed bindings for divergent reactive values
- *   - popup.show() / ctrl.hide() action lowering
+ *   - dialog.show() / ctrl.hide() action lowering
  *
  * Expected compiler output:
- *   - top_layer with a hidden wrapper obj per popup definition
+ *   - top_layer with a hidden wrapper obj per dialog definition
  *   - Mux signal (sig_popup_<key>_mux) in espcompose_bindings.h
  *   - Muxed reactive bindings for divergent entity values
  *   - show() lambdas setting mux index + unhiding widgets
@@ -22,9 +22,8 @@ import {
   HStack,
   Text,
   Button,
-  Popup,
   UITheme,
-  usePopup,
+  useDialog,
 } from '@espcompose/ui';
 
 /**
@@ -38,9 +37,8 @@ const LightButton = createLvglWidget(
   ({ entityId, label }: { entityId: string; label: string }) => {
     const entity = useHAEntity(entityId, { domain: 'light' });
 
-    const popup = usePopup((ctrl) => (
-      
-      <Popup onBackdropPress={() => { ctrl.hide(); }}>
+    const dialog = useDialog((ctrl) => (
+      <>
         <Text variant="title" text={label} />
         <Text text={entity.stateText} />
         <HStack>
@@ -55,13 +53,13 @@ const LightButton = createLvglWidget(
             onPress={() => { ctrl.hide(); }}
           />
         </HStack>
-      </Popup>
+      </>
     ));
 
     return (
       <Button
         text={label}
-        onPress={() => { popup.show(); }}
+        onPress={() => { dialog.show(); }}
       />
     );
   },

@@ -1,14 +1,14 @@
 /**
- * Popup.Provider — context-based popup stacking.
+ * Dialog.Provider — context-based dialog stacking.
  *
- * Wraps `withVisibilityStack()` from core to provide nested popup support.
- * Without this provider, `usePopup()` falls back to depth-1 behavior
+ * Wraps `withVisibilityStack()` from core to provide nested dialog support.
+ * Without this provider, `useDialog()` falls back to depth-1 behavior
  * (no stacking, fully backward compatible).
  *
  * @example
- * <Popup.Provider maxDepth={3}>
+ * <Dialog.Provider maxDepth={3}>
  *   <MyApp />
- * </Popup.Provider>
+ * </Dialog.Provider>
  */
 
 import type { EspComposeElement } from '@espcompose/core';
@@ -18,16 +18,16 @@ import { withVisibilityStack, createLvglContextProvider } from '@espcompose/core
 // Types
 // ────────────────────────────────────────────────────────────────────────────
 
-export interface PopupProviderProps {
+export interface DialogProviderProps {
   /**
-   * Maximum popup stack depth. When exceeded, additional `show()` calls
+   * Maximum dialog stack depth. When exceeded, additional `show()` calls
    * log a warning and are ignored.
    *
    * @default 1
    */
   maxDepth?: number;
 
-  /** Child elements that can use `usePopup()` with stacking. */
+  /** Child elements that can use `useDialog()` with stacking. */
   children?: EspComposeElement | EspComposeElement[];
 }
 
@@ -35,9 +35,9 @@ export interface PopupProviderProps {
 // Provider
 // ────────────────────────────────────────────────────────────────────────────
 
-function PopupProvider(props: PopupProviderProps): EspComposeElement {
+function DialogProvider(props: DialogProviderProps): EspComposeElement {
   const { maxDepth = 1, children } = props;
   return withVisibilityStack({ maxDepth, zOrder: 0 }, children);
 }
 
-export const PopupProviderComponent = createLvglContextProvider(PopupProvider);
+export const DialogProviderComponent = createLvglContextProvider(DialogProvider);

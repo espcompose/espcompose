@@ -1,17 +1,17 @@
 /**
  * E2E project: popup-stacked-device
  *
- * Validates the visibility stack system (`<Popup.Provider maxDepth={3}>`).
+ * Validates the visibility stack system (`<Dialog.Provider maxDepth={3}>`).
  *
- * This test uses two different popup-bearing component types (LightPopup
+ * This test uses two different dialog-bearing component types (LightPopup
  * and FanPopup) with multiple instances of each, wrapped in a
- * Popup.Provider. This exercises:
+ * Dialog.Provider. This exercises:
  *   - Stack globals (depth, template[], instance[])
  *   - Per-template show/hide scripts with overflow guard
  *   - Same-template restore (mux swap)
  *   - Cross-template restore via shared coordinator script
  *   - Per-template re-show helper scripts (parameterized inst)
- *   - Backward-compatible `usePopup` integration
+ *   - Backward-compatible `useDialog` integration
  */
 import {
   DisplayRef,
@@ -27,10 +27,10 @@ import {
   HStack,
   Text,
   Button,
-  Popup,
+  Dialog,
   UITheme,
   Slider,
-  usePopup,
+  useDialog,
 } from '@espcompose/ui';
 
 // ── Component A: light popup ─────────────────────────────────────────────
@@ -41,26 +41,24 @@ type LightPopupProps = WidgetProps<{
 }>;
 
 const LightPopup = createLvglWidget<LightPopupProps>((props) => {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
-      <VStack gap="md" style={{ width: '100%' }}>
-        <Text variant="subtitle" text={props.label} />
-        <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
-        <Slider
-          min={0}
-          max={255}
-          value={props.entity.brightness}
-          onChange={(args) => { props.entity.turnOn({ brightness: args.x }); }}
-        />
-        <Button text="Close" onPress={() => { ctrl.hide(); }} />
-      </VStack>
-    </Popup>
+  const dialog = useDialog((ctrl) => (
+    <VStack gap="md" style={{ width: '100%' }}>
+      <Text variant="subtitle" text={props.label} />
+      <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
+      <Slider
+        min={0}
+        max={255}
+        value={props.entity.brightness}
+        onChange={(args) => { props.entity.turnOn({ brightness: args.x }); }}
+      />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
+    </VStack>
   ));
 
   return (
     <Button
       text={props.label}
-      onPress={() => { popup.show(); }}
+      onPress={() => { dialog.show(); }}
     />
   );
 });
@@ -73,20 +71,18 @@ type FanPopupProps = WidgetProps<{
 }>;
 
 const FanPopup = createLvglWidget<FanPopupProps>((props) => {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
-      <VStack gap="md" style={{ width: '100%' }}>
-        <Text variant="subtitle" text={props.label} />
-        <Button text="On/Off" onPress={() => { props.entity.toggle(); }} />
-        <Button text="Close" onPress={() => { ctrl.hide(); }} />
-      </VStack>
-    </Popup>
+  const dialog = useDialog((ctrl) => (
+    <VStack gap="md" style={{ width: '100%' }}>
+      <Text variant="subtitle" text={props.label} />
+      <Button text="On/Off" onPress={() => { props.entity.toggle(); }} />
+      <Button text="Close" onPress={() => { ctrl.hide(); }} />
+    </VStack>
   ));
 
   return (
     <Button
       text={props.label}
-      onPress={() => { popup.show(); }}
+      onPress={() => { dialog.show(); }}
     />
   );
 });
@@ -123,7 +119,7 @@ function App() {
 
       <lvgl displays={[displayRef]}>
         <UITheme.Provider default="dark">
-          <Popup.Provider maxDepth={3}>
+          <Dialog.Provider maxDepth={3}>
             <Screen padding="md">
               <VStack gap="md">
                 <Text variant="title" text="Stacked Popups" />
@@ -133,7 +129,7 @@ function App() {
                 <FanPopup label="Desk Fan" entity={fan2} />
               </VStack>
             </Screen>
-          </Popup.Provider>
+          </Dialog.Provider>
         </UITheme.Provider>
       </lvgl>
     </esphome>

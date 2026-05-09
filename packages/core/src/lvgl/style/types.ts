@@ -23,7 +23,7 @@ type NumericString = `${number}`;
 /** Percentage string: '50%', '100%', etc. */
 export type Percentage = `${number}%`;
 /** Opacity value: named alias, numeric string, or percentage. */
-type OpacityValue = 'transparent' | 'opaque' | Percentage | NumericString;
+export type OpacityValue = 'transparent' | 'opaque' | Percentage | NumericString;
 /** Size value: number, named keyword, or percentage string. */
 export type SizeValue = number | 'fit-content' | Percentage;
 

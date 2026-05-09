@@ -387,6 +387,11 @@ export function translateScriptExprIR(
     return { kind: 'expr:literal', value: node.text, type: 'string' };
   }
 
+  // Type assertions (`x as T`, `<T>x`) are type-only — unwrap to inner expression.
+  if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) {
+    return translateScriptExprIR(node.expression, ctx);
+  }
+
   return null;
 }
 
@@ -861,6 +866,11 @@ export function compileExprIR(node: ts.Expression, ctx: ExprCompilerContext): IR
 
   if (ts.isNoSubstitutionTemplateLiteral(node)) {
     return { kind: 'expr:literal', value: node.text, type: 'string' };
+  }
+
+  // Type assertions (`x as T`, `<T>x`) are type-only — unwrap to inner expression.
+  if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) {
+    return compileExprIR(node.expression, ctx);
   }
 
   return null;

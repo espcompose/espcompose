@@ -54,6 +54,7 @@ function buildSpaceElement(props: SpaceProps): EspComposeElement {
           ...props.style,
           width: props.style?.width ?? '100%',
           height: props.style?.height ?? 'fit-content',
+          clickable: props.style?.clickable ?? false,
           padding: padding,
           backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
           borderWidth: props.style?.borderWidth ?? 0,

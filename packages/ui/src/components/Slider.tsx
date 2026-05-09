@@ -21,6 +21,8 @@ export type SliderProps = WidgetProps<{
   min?: number;
   /** Maximum value. Default: 100. */
   max?: number;
+  /** Slider orientation. Default: 'horizontal'. */
+  orientation?: 'horizontal' | 'vertical';
 }>;
 
 /**
@@ -38,15 +40,17 @@ export type SliderProps = WidgetProps<{
 export const Slider = createLvglWidget<SliderProps>(
   (props) => {
     const theme = UITheme.use();
+    const vertical = props.orientation === 'vertical';
 
     return (
       <lvgl-obj style={{
-        width: '100%',
-        height: 27,
-        paddingTop: 4,
-        paddingBottom: 4,
-        paddingLeft: 11,
-        paddingRight: 9,        
+        width: vertical ? 27 : '100%',
+        height: vertical ? 'fit-content' : 27,
+        paddingTop: vertical ? 9 : 4,
+        paddingBottom: vertical ? 11 : 4,
+        paddingLeft: vertical ? 4 : 11,
+        paddingRight: vertical ? 4 : 9,
+        ...props.style,
       }}>
         <lvgl-slider
           minValue={props.min}
@@ -75,7 +79,6 @@ export const Slider = createLvglWidget<SliderProps>(
               backgroundOpacity: 'opaque',
               backgroundColor: theme?.parts?.slider?.knob,
             },
-            ...props.style,
           }}
         />
       </lvgl-obj>
