@@ -65,7 +65,10 @@ export { HALightButton } from './components/HALightButton';
 export type { HALightButtonProps } from './components/HALightButton';
 
 // Popup system
-export { Popup } from './components/Popup';
+import { Popup as PopupComponent } from './components/Popup';
+import { PopupProviderComponent } from './providers/Popup';
+export const Popup = Object.assign(PopupComponent, { Provider: PopupProviderComponent });
+export type { PopupProviderProps } from './providers/Popup';
 
 // Overlay convenience hooks
 export { usePopup } from './hooks/usePopup';

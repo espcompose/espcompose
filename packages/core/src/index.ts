@@ -185,6 +185,8 @@ export { useTransientOverlay } from './hooks/useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
 export { useVisibility } from './hooks/useVisibility';
 export type { VisibilityOptions } from './hooks/useVisibility';
+export { useVisibilityStack, withVisibilityStack } from './hooks/useVisibilityStack';
+export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVisibilityStack';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';

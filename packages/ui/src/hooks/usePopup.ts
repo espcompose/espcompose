@@ -5,9 +5,14 @@
  * but below toasts and notifications. This hook is API-compatible with
  * the original `usePopup()` from earlier releases — existing call-sites
  * can switch to the @espcompose/ui import with no other changes.
+ *
+ * When used inside a `<Popup.Provider maxDepth={N}>`, popups participate
+ * in the visibility stack — showing a new popup saves the current one,
+ * and dismissing restores it. Without a provider, behaves as depth-1
+ * (simple show/hide, no stacking).
  */
 
-import { useOverlay, useVisibility } from '@espcompose/core';
+import { useOverlay, useVisibility, useVisibilityStack } from '@espcompose/core';
 import type { VisibilityController, EspComposeElement } from '@espcompose/core';
 
 export type PopupController = VisibilityController;
@@ -21,5 +26,11 @@ export type PopupFactory = (ctrl: PopupController) => EspComposeElement | EspCom
  * @returns        A `VisibilityController` with `.show()` / `.hide()`.
  */
 export function usePopup(factory: PopupFactory): PopupController {
-  return useVisibility(useOverlay({ zOrder: 0 }, factory));
+  const stack = useVisibilityStack();
+  const ctrl = useOverlay({ zOrder: 0 }, factory);
+
+  if (stack) {
+    return stack.register(ctrl);
+  }
+  return useVisibility(ctrl);
 }
