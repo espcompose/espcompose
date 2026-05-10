@@ -13,15 +13,15 @@ using esphome::id;
 using esphome::to_string;
 
 // ── Animation exec callbacks & static variables ──
-static void anim_8aab7374_exec_cb(void* var, int32_t v) {
+static void anim_ref5_exec_cb(void* var, int32_t v) {
   lv_obj_set_style_opa((lv_obj_t*)var, static_cast<lv_opa_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
 }
-static lv_anim_t anim_8aab7374;
+static lv_anim_t anim_ref5;
 
-static void anim_517882a1_exec_cb(void* var, int32_t v) {
+static void anim_ref4_exec_cb(void* var, int32_t v) {
   lv_obj_set_style_opa((lv_obj_t*)var, static_cast<lv_opa_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
 }
-static lv_anim_t anim_517882a1;
+static lv_anim_t anim_ref4;
 
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
@@ -42,21 +42,21 @@ void bootstrap_runtime() {
   });
 
   // ── Initialize LVGL animations ──
-  lv_anim_init(&anim_8aab7374);
-  lv_anim_set_var(&anim_8aab7374, (void*)&id(r_ref2));
-  lv_anim_set_exec_cb(&anim_8aab7374, anim_8aab7374_exec_cb);
-  lv_anim_set_values(&anim_8aab7374, 0, 255);
-  lv_anim_set_time(&anim_8aab7374, 500);
-  lv_anim_set_path_cb(&anim_8aab7374, lv_anim_path_ease_in_out);
-  lv_anim_start(&anim_8aab7374);
-  lv_anim_init(&anim_517882a1);
-  lv_anim_set_var(&anim_517882a1, (void*)&id(r_ref3));
-  lv_anim_set_exec_cb(&anim_517882a1, anim_517882a1_exec_cb);
-  lv_anim_set_values(&anim_517882a1, 80, 255);
-  lv_anim_set_time(&anim_517882a1, 1000);
-  lv_anim_set_path_cb(&anim_517882a1, lv_anim_path_ease_in_out);
-  lv_anim_set_repeat_count(&anim_517882a1, LV_ANIM_REPEAT_INFINITE);
-  lv_anim_set_playback_time(&anim_517882a1, 1000);
+  lv_anim_init(&anim_ref5);
+  lv_anim_set_var(&anim_ref5, (void*)&id(r_ref2));
+  lv_anim_set_exec_cb(&anim_ref5, anim_ref5_exec_cb);
+  lv_anim_set_values(&anim_ref5, 0, 255);
+  lv_anim_set_time(&anim_ref5, 500);
+  lv_anim_set_path_cb(&anim_ref5, lv_anim_path_ease_in_out);
+  lv_anim_start(&anim_ref5);
+  lv_anim_init(&anim_ref4);
+  lv_anim_set_var(&anim_ref4, (void*)&id(r_ref3));
+  lv_anim_set_exec_cb(&anim_ref4, anim_ref4_exec_cb);
+  lv_anim_set_values(&anim_ref4, 80, 255);
+  lv_anim_set_time(&anim_ref4, 1000);
+  lv_anim_set_path_cb(&anim_ref4, lv_anim_path_ease_in_out);
+  lv_anim_set_repeat_count(&anim_ref4, LV_ANIM_REPEAT_INFINITE);
+  lv_anim_set_playback_time(&anim_ref4, 1000);
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -433,10 +433,10 @@ lvgl:
                     align: CENTER
           - button:
               on_press:
-                - lambda: !lambda "lv_anim_start(&espcompose::anim_517882a1);"
+                - lambda: !lambda "lv_anim_start(&espcompose::anim_ref4);"
                 - logger.log: Pulse started
               on_long_press:
-                - lambda: !lambda "lv_anim_custom_del(&espcompose::anim_517882a1, nullptr);"
+                - lambda: !lambda "lv_anim_custom_del(&espcompose::anim_ref4, nullptr);"
                 - logger.log: Pulse stopped
               width: 100
               height: 40
