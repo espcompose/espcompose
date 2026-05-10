@@ -7,9 +7,8 @@ import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
 import type { SpacingToken, RadiusToken } from '../theme/types';
 import { Surface } from './Surface';
-import { Glass } from './Glass';
 
-type CardProps = WidgetPropsWithChildren<{
+type DialogProps = WidgetPropsWithChildren<{
   /** Padding inside the card. Default: 'md'. */
   padding?: SpacingToken;
   /** Corner radius. Default: 'md'. */
@@ -27,22 +26,18 @@ type CardProps = WidgetPropsWithChildren<{
  *   <Slider min={0} max={255} />
  * </Card>
  */
-export const Card = createLvglContainerWidget(
-  (props: CardProps) => {
+export const Dialog = createLvglContainerWidget(
+  (props: DialogProps) => {
     const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
     const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
 
     return (
-      <Glass
+      <Surface
         style={{
           ...props.style,
           padding,
           borderRadius: radius,
-          borderWidth: 1,
-          borderOpacity: '10%',
-          borderColor: '#EEEEEE',
-          shadowSpread: 0,
           width: props.style?.width ?? '100%',
           height: props.style?.height ?? 'fit-content',
           scrollbarMode: 'off',
@@ -52,7 +47,7 @@ export const Card = createLvglContainerWidget(
         }}
       >
         {props.children}
-      </Glass>
+      </Surface>
     );
   },
 );

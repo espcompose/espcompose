@@ -54,6 +54,7 @@ const GRID_CELL_ALIGN_VALUES = makeIdentity('start', 'center', 'end', 'stretch')
 const DISPLAY_VALUES = makeIdentity('flex', 'grid');
 const PLACE_SELF_VALUES = makeIdentity('center', 'topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'leftCenter', 'rightCenter');
 const SCROLLBAR_MODE_VALUES = makeIdentity('off', 'on', 'active', 'auto');
+const BLUR_QUALITY_VALUES = makeIdentity('auto', 'speed', 'precision');
 
 // ── CSS → LVGL mapping table ───────────────────────────────────────────────
 
@@ -147,6 +148,11 @@ const _cssToLvglMap = {
   backgroundImageTint:           { kind: 'direct', lvglProp: 'bgImageRecolor' },
   backgroundImageTintOpacity:    { kind: 'transform', lvglProp: 'bgImageRecolorOpa', valueMap: OPACITY_VALUES },
   backgroundRepeat:              { kind: 'transform', lvglProp: 'bgImageTiled', valueMap: { repeat: true, 'no-repeat': false } },
+
+  // ── Blur ───────────────────────────────────────────────────────────────
+  backdropBlur:            { kind: 'direct', lvglProp: 'blurBackdrop' },
+  blurQuality:             { kind: 'transform', lvglProp: 'blurQuality', valueMap: BLUR_QUALITY_VALUES },
+  blurRadius:              { kind: 'direct', lvglProp: 'blurRadius' },
 
   // ── Border extras ─────────────────────────────────────────────────────
   borderDrawOrder:       { kind: 'transform', lvglProp: 'borderPost', valueMap: { 'after-children': true, 'before-children': false } },

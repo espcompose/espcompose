@@ -15,17 +15,12 @@
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
 import { createLvglContainerWidget } from '@espcompose/core';
-import { useSpacing, useRadius } from '../hooks';
+import { useSpacing } from '../hooks';
 import { UITheme } from '../theme/theme';
-import type { SpacingToken, RadiusToken } from '../theme/types';
+import { Surface } from './Surface';
+import { Glass } from './Glass';
 
 type TopRightToastProps = WidgetPropsWithChildren<{
-  /** Padding inside the toast card. Default: 'md'. */
-  padding?: SpacingToken;
-  /** Corner radius of the toast card. Default: 'md'. */
-  radius?: RadiusToken;
-  /** Margin from the top/right screen edges. Default: 'md'. */
-  margin?: SpacingToken;
   /**
    * Top offset in pixels. Used internally by `Toast.Provider` for
    * multi-slot downward stacking.
@@ -43,11 +38,8 @@ type TopRightToastProps = WidgetPropsWithChildren<{
 export const TopRightToast = createLvglContainerWidget(
   (props: TopRightToastProps) => {
     const theme = UITheme.use();
-    const padding = useSpacing(props.padding ?? 'md');
-    const radius = useRadius(props.radius ?? 'md');
-    const margin = useSpacing(props.margin ?? 'md');
-    const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
     const borderColor = theme?.colors?.border;
+    const margin = theme?.spacing.md;
     const topOffset = props.topOffset ?? 0;
 
     return (
@@ -60,30 +52,25 @@ export const TopRightToast = createLvglContainerWidget(
           borderWidth: 0,
           padding: 0,
           paddingTop: topOffset,
-          paddingRight: margin,
           clickable: false,
         }}
       >
         {/* Top-right anchored toast card */}
-        <lvgl-obj
+        <Glass
           style={{
-            backgroundColor: bgColor,
-            backgroundOpacity: '100%',
-            borderRadius: radius,
             borderWidth: 1,
             borderColor: borderColor,
-            padding: padding,
             width: 280,
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'topRight',
-            scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
+            padding: margin,
           }}
         >
           {props.children}
-        </lvgl-obj>
+        </Glass>
       </lvgl-obj>
     );
   },

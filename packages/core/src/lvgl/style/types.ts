@@ -176,6 +176,14 @@ export interface CssAliasProps {
   /** Whether to tile the background image. Maps to `bgImageTiled`. */
   backgroundRepeat?: Reactive<'repeat' | 'no-repeat'>;
 
+  // ── Blur ───────────────────────────────────────────────────────────────
+  /** Enable backdrop blur. Maps to `blurBackdrop`. */
+  backdropBlur?: Reactive<boolean>;
+  /** Blur quality setting. Maps to `blurQuality`. */
+  blurQuality?: Reactive<'auto' | 'speed' | 'precision'>;
+  /** Blur radius in pixels. Maps to `blurRadius`. */
+  blurRadius?: Reactive<number>;
+
   // ── Border extras ─────────────────────────────────────────────────────
   /** Render border before or after children. Maps to `borderPost`. */
   borderDrawOrder?: Reactive<'before-children' | 'after-children'>;

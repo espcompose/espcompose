@@ -15,14 +15,16 @@
  */
 
 import { useOverlay, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
-import type { VisibilityController, EspComposeElement, SizeValue, OpacityValue } from '@espcompose/core';
+import type { VisibilityController, EspComposeElement, SizeValue } from '@espcompose/core';
 import { useSpacing } from './useSpacing';
-import { useRadius } from './useRadius';
 import { UITheme } from '../theme/theme';
 import { Text } from '../components/Text';
 import { HStack } from '../components/Space';
+import { Card } from '../components/Card';
 import { mdiGlyphs } from '../theme/fonts';
-import type { SpacingToken, RadiusToken } from '../theme/types';
+import type { SpacingToken } from '../theme/types';
+import { Backdrop } from '../components';
+import { Dialog } from '../components/Dialog';
 
 export type DialogController = VisibilityController;
 
@@ -35,12 +37,6 @@ export interface DialogOptions {
   hideTitleBar?: boolean;
   /** Padding inside the container. Default: 'lg'. */
   padding?: SpacingToken;
-  /** Corner radius of the container. Default: 'lg'. */
-  radius?: RadiusToken;
-  /** Gap between children inside the container. Default: 'md'. */
-  gap?: SpacingToken;
-  /** Backdrop opacity. Default: '50%'. */
-  backdropOpacity?: OpacityValue;
   /** Width of the dialog container. Default: adaptive by display class. */
   width?: SizeValue;
   /** Height of the dialog container. Default: 'fit-content'. */
@@ -72,11 +68,6 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
 
   const ctrl = useOverlay({ zOrder: 0 }, (overlayCtrl) => {
     const theme = UITheme.use();
-    const padding = useSpacing(options?.padding ?? 'lg');
-    const radius = useRadius(options?.radius ?? 'lg');
-    const gap = useSpacing(options?.gap ?? 'md');
-    const bgColor = theme?.colors?.surface;
-    const backdropOpacity = options?.backdropOpacity ?? '50%';
     const settings = useThemeSettings();
     const width = options?.width ?? adaptiveScreen(settings ?? {}, {
       micro: '95%' as SizeValue,
@@ -130,7 +121,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
           scrollbarMode: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          rowGap: gap,
+          rowGap: useSpacing('md'),
         }}
       >
         {bodyChildren}
@@ -142,36 +133,32 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
       : [scrollRegion];
 
     return (
-      <lvgl-obj
+      <Backdrop
         onPress={() => { overlayCtrl.hide(); }}
         style={{
           width: '100%',
           height: '100%',
-          backgroundColor: '#000000',
-          backgroundOpacity: backdropOpacity,
           borderWidth: 0,
           padding: 0,
         }}
       >
-        <lvgl-obj
+        <Dialog
+          padding={options?.padding ?? 'lg'}
           style={{
-            backgroundColor: bgColor,
-            backgroundOpacity: 'opaque',
-            borderRadius: radius,
-            borderWidth: 0,
-            padding: padding,
             width: width,
             height: height,
             placeSelf: 'center',
-            scrollbarMode: 'off',
-            display: 'flex',
-            flexDirection: 'column',
-            rowGap: gap,
+            shadowColor: '#000000',
+            shadowOpacity: '25%',
+            shadowOffsetX: 6,
+            shadowOffsetY: 6,
+            shadowWidth: 6,
+            shadowSpread: 0,
           }}
         >
           {containerChildren}
-        </lvgl-obj>
-      </lvgl-obj>
+        </Dialog>
+      </Backdrop>
     );
   });
 

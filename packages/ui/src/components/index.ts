@@ -12,6 +12,8 @@ export type { TrackSize } from './Grid';
 export { Text } from './Text';
 export { Button } from './Button';
 export { Card } from './Card';
+export { Surface } from './Surface';
+export type { SurfaceProps } from './Surface';
 export { Image } from './Image';
 export type { ImageProps } from './Image';
 export { Spinner } from './Spinner';
@@ -33,4 +35,10 @@ export { SensorText } from './SensorText';
 export { HALightButton } from './HALightButton';
 export type { HALightButtonProps } from './HALightButton';
 
-export { BottomToast } from './Toast';
+export { BottomToast } from './BottomToast';
+
+export { Backdrop } from './Backdrop';
+export type { BackdropProps } from './Backdrop';
+
+export { Glass } from './Glass';
+export type { GlassProps } from './Glass';

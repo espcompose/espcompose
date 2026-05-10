@@ -13,17 +13,11 @@
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
 import { createLvglContainerWidget } from '@espcompose/core';
-import { useSpacing, useRadius } from '../hooks';
-import { UITheme } from '../theme/theme';
-import type { SpacingToken, RadiusToken } from '../theme/types';
+import { useSpacing } from '../hooks';
+import { Surface } from './Surface';
+import { Glass } from './Glass';
 
 type ToastProps = WidgetPropsWithChildren<{
-  /** Padding inside the toast container. Default: 'md'. */
-  padding?: SpacingToken;
-  /** Corner radius of the toast. Default: 'md'. */
-  radius?: RadiusToken;
-  /** Horizontal margin from the screen edge. Default: 'md'. */
-  margin?: SpacingToken;
   /**
    * Bottom offset in pixels. Used internally by `useToast()` for
    * compacted multi-slot positioning.
@@ -40,11 +34,6 @@ type ToastProps = WidgetPropsWithChildren<{
  */
 export const BottomToast = createLvglContainerWidget(
   (props: ToastProps) => {
-    const theme = UITheme.use();
-    const padding = useSpacing(props.padding ?? 'md');
-    const radius = useRadius(props.radius ?? 'md');
-    const margin = useSpacing(props.margin ?? 'md');
-    const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
     const bottomOffset = props.bottomOffset ?? 0;
 
     return (
@@ -61,25 +50,19 @@ export const BottomToast = createLvglContainerWidget(
         }}
       >
         {/* Bottom-anchored toast container */}
-        <lvgl-obj
+        <Glass
           style={{
-            backgroundColor: bgColor,
-            backgroundOpacity: '90%',
-            borderRadius: radius,
             borderWidth: props.style?.borderWidth ?? 0,
-            padding: padding,
             width: '90%',
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'bottomCenter',
-            paddingBottom: margin,
-            scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
           }}
         >
           {props.children}
-        </lvgl-obj>
+        </Glass>
       </lvgl-obj>
     );
   },

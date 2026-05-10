@@ -13,7 +13,7 @@
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
 import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings } from '@espcompose/core';
-import { BottomToast as ToastWidget } from '../components/Toast';
+import { BottomToast as ToastWidget } from '../components/BottomToast';
 import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
 
