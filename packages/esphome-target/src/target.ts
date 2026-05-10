@@ -12,8 +12,9 @@ import yaml from 'yaml';
 import type { ComposeTarget, EmitRequest, EmitResult, OverlayDefinition, IRBinding, IRReactiveNode } from '@espcompose/core/internals';
 import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen';
+import { generateBindingsHeader } from './codegen/bindings.js';
 import { resolveAssets } from './assets.js';
-import { extractPaintScenesFromIR, injectEcCanvasDrawActions } from './lvgl';
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerAnimationToCpp } from './lvgl';
 import { buildEntityIdMap } from './ha-entity-classifier.js';
 
 export function createEsphomeTarget(): ComposeTarget {
@@ -61,9 +62,45 @@ export function createEsphomeTarget(): ComposeTarget {
     // separate translation unit that cannot see the widget ID globals declared
     // in main.cpp.  Using esphome.includes: places the header into main.cpp's
     // compilation context where all id() references resolve correctly.
+
+    // ── Lower animations to C++ ────────────────────────────────────────
+    // Animation exec_cb functions and static lv_anim_t variables are emitted
+    // at file scope in bindings.h. Init code (lv_anim_init, lv_anim_set_*)
+    // is emitted inside bootstrap_runtime() so it runs after LVGL widgets
+    // are created.
+    const seenAnimIds = new Set<string>();
+    const animationDecls: import('./codegen/bindings.js').AnimationDecl[] = [];
+    for (const ui of ir.uis) {
+      for (const anim of ui.animations) {
+        if (seenAnimIds.has(anim.animationId)) continue;
+        seenAnimIds.add(anim.animationId);
+        const widgetAccessor = `(void*)&id(${anim.targetRef})`;
+        const { execCallback, varDeclaration, initCode } = lowerAnimationToCpp(anim, widgetAccessor);
+        animationDecls.push({ execCallback, varDeclaration, initCode });
+      }
+    }
+
     if (cppResult) {
+      // Inject animation declarations into the runtime config and regenerate.
+      if (animationDecls.length > 0) {
+        cppResult.runtimeConfig.animations = animationDecls;
+        cppResult.bindingsHeaderContent = generateBindingsHeader(cppResult.runtimeConfig);
+      }
       const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
       fs.writeFileSync(bindingsPath, cppResult.bindingsHeaderContent, 'utf8');
+      files.push(bindingsPath);
+    } else if (animationDecls.length > 0) {
+      // No reactive content but we have animations — build a minimal config.
+      const minimalConfig: import('./codegen/bindings.js').ReactiveRuntimeConfig = {
+        signals: [],
+        globalSignals: [],
+        memos: [],
+        effects: [],
+        widgetBindings: [],
+        animations: animationDecls,
+      };
+      const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
+      fs.writeFileSync(bindingsPath, generateBindingsHeader(minimalConfig), 'utf8');
       files.push(bindingsPath);
     }
 

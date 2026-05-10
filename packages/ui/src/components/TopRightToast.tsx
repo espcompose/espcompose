@@ -13,7 +13,7 @@
  * with a deterministic ID for show/hide action targeting.
  */
 
-import type { WidgetPropsWithChildren } from '@espcompose/core';
+import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
 import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { UITheme } from '../theme/theme';
@@ -29,6 +29,13 @@ type TopRightToastProps = WidgetPropsWithChildren<{
    * @default 0
    */
   topOffset?: number;
+
+  /**
+   * Ref forwarded to the inner Glass card for animation targeting.
+   *
+   * @internal
+   */
+  cardRef?: Ref;
 }>;
 
 /**
@@ -57,6 +64,7 @@ export const TopRightToast = createLvglContainerWidget(
       >
         {/* Top-right anchored toast card */}
         <Glass
+          ref={props.cardRef}
           style={{
             borderWidth: 1,
             borderColor: borderColor,
@@ -67,6 +75,7 @@ export const TopRightToast = createLvglContainerWidget(
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
             padding: margin,
+            translateX: 300,
           }}
         >
           {props.children}

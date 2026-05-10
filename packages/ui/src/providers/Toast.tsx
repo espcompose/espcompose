@@ -12,7 +12,7 @@
  */
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
-import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings } from '@espcompose/core';
+import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings, useRef, useAnimation } from '@espcompose/core';
 import { BottomToast as ToastWidget } from '../components/BottomToast';
 import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
@@ -125,15 +125,50 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
   const ctrl = useTransientOverlay<ToastPayload>(
     { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
     (_ctrl, ctx) => {
+      const cardRef = useRef();
+
       if (variant === 'topRight') {
+        const slideIn = useAnimation(cardRef, {
+          property: 'translateX',
+          from: 300,
+          to: 0,
+          duration: '300ms',
+          easing: 'ease-out',
+        });
+        const slideOut = useAnimation(cardRef, {
+          property: 'translateX',
+          from: 0,
+          to: 300,
+          duration: '300ms',
+          easing: 'ease-in',
+        });
+        ctx.registerTransition({ enter: slideIn, exit: slideOut, exitDurationMs: 300 });
+
         return (
-          <TopRightToast topOffset={ctx.slotRank * slotHeight}>
+          <TopRightToast topOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
             <Text text={ctx.payload.msg} />
           </TopRightToast>
         );
       }
+
+      const slideUp = useAnimation(cardRef, {
+        property: 'translateY',
+        from: 80,
+        to: 0,
+        duration: '300ms',
+        easing: 'ease-out',
+      });
+      const slideDown = useAnimation(cardRef, {
+        property: 'translateY',
+        from: 0,
+        to: 80,
+        duration: '300ms',
+        easing: 'ease-in',
+      });
+      ctx.registerTransition({ enter: slideUp, exit: slideDown, exitDurationMs: 300 });
+
       return (
-        <ToastWidget bottomOffset={ctx.slotRank * slotHeight}>
+        <ToastWidget bottomOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
           <Text text={ctx.payload.msg} />
         </ToastWidget>
       );

@@ -43,14 +43,14 @@ import {
   setOverlayPayloadMeta,
   forwardOverlayPayloadMeta,
 } from './global-shared';
-import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext } from './global-shared';
+import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext, OverlayTransitionRegistration } from './global-shared';
 import type { OverlayFactory } from './useOverlay';
 import {
   buildOverlayPayloadPlan,
   buildOverlayLifecycleScripts,
   readOverlayControllerInternal,
 } from './overlay-lifecycle';
-import type { OverlayScriptPair } from './overlay-lifecycle';
+import type { OverlayScriptPair, OverlayTransitionConfig } from './overlay-lifecycle';
 import {
   irIfAction,
   irGlobalSet,
@@ -69,6 +69,7 @@ import type { IRType } from '../ir/types';
 import type { OverlayController } from './useOverlay';
 import type { VisibilityController, EspComposeElement } from '../types';
 import { __espcompose } from '../reactive/compiler-plumbing';
+import { ANIMATION_ID } from '../actions/resolve/symbols';
 
 import type { IRDependency, Signal } from '../reactive';
 
@@ -259,11 +260,16 @@ function buildSlotOverlay(
 
   const slotOverlayCtrls: OverlayController<Record<string, unknown>>[] = [];
 
+  // Per-slot transition registrations captured during factory evaluation.
+  const perSlotTransitions: (OverlayTransitionRegistration | null)[] = [];
+
   // We need the template key before creating overlays to generate globals.
   let slotStateGlobals: ReturnType<typeof createSlotStateGlobals> | undefined;
 
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
+    let slotTransition: OverlayTransitionRegistration | null = null;
+
     // Forward meta so useOverlay handles global registration + proxy building.
     const wrapperFactory = (overlayCtrl: OverlayController, ctx?: { payload: Record<string, unknown> }) => {
       // On first slot, create shared slot state globals.
@@ -273,7 +279,10 @@ function buildSlotOverlay(
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
       const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
-      return factory(overlayCtrl, { slotRank, payload });
+      const registerTransition = (config: OverlayTransitionRegistration) => {
+        slotTransition = config;
+      };
+      return factory(overlayCtrl, { slotRank, payload, registerTransition });
     };
     const slotPayload = perSlotPayloadDecls[i];
     if (slotPayload) {
@@ -289,6 +298,7 @@ function buildSlotOverlay(
       wrapperFactory as OverlayFactory<Record<string, unknown>>,
     );
     slotOverlayCtrls.push(ctrl);
+    perSlotTransitions.push(slotTransition);
   }
 
   const { activeGlobalId, seqGlobalId, seqCounterGlobalId } = slotStateGlobals!;
@@ -305,6 +315,19 @@ function buildSlotOverlay(
     // Per-slot payload plan: writes to this slot's own backing globals so
     // each slot's reactive bindings stay independent.
     const slotParamPlan = buildOverlayPayloadPlan(perSlotPayloadDecls[i]);
+
+    // Build transition config from captured registration (if any).
+    const reg = perSlotTransitions[i];
+    let transition: OverlayTransitionConfig | undefined;
+    if (reg) {
+      const enterAnimId = (reg.enter as unknown as Record<symbol, string>)[ANIMATION_ID];
+      const exitAnimId = (reg.exit as unknown as Record<symbol, string>)[ANIMATION_ID];
+      transition = {
+        enterAnimationIds: [enterAnimId],
+        exitAnimationIds: [exitAnimId],
+        exitDurationMs: reg.exitDurationMs,
+      };
+    }
 
     const pair = buildOverlayLifecycleScripts(slotOverlayCtrls[i], {
       autoHide,
@@ -331,6 +354,7 @@ function buildSlotOverlay(
       hideSuffixActions: [
         buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible),
       ],
+      transition,
     });
 
     slotShowScripts.push(pair.show);

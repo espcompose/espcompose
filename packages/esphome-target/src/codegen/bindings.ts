@@ -143,6 +143,15 @@ export interface TableDecl {
   values: string[];
 }
 
+export interface AnimationDecl {
+  /** File-scope exec callback function definition. */
+  execCallback: string;
+  /** File-scope static lv_anim_t variable declaration. */
+  varDeclaration: string;
+  /** Init code for bootstrap_runtime() (lv_anim_init, lv_anim_set_*, etc.). */
+  initCode: string;
+}
+
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
   /** BoundSignal declarations for globals with reactive dependents. */
@@ -161,6 +170,8 @@ export interface ReactiveRuntimeConfig {
   tables?: TableDecl[];
   /** Pre-formatted closure-table block (struct + array per parameterized script). */
   closureTablesBlock?: string;
+  /** Animation declarations (exec callbacks, static vars, init code). */
+  animations?: AnimationDecl[];
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -418,6 +429,17 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
+  // ── Animation exec callbacks & static variables ──────────────────────
+  const animations = config.animations ?? [];
+  if (animations.length > 0) {
+    lines.push('// ── Animation exec callbacks & static variables ──');
+    for (const anim of animations) {
+      lines.push(anim.execCallback);
+      lines.push(anim.varDeclaration);
+      lines.push('');
+    }
+  }
+
   // ── Runtime bootstrap ──────────────────────────────────────────────────
   lines.push('// ── Bootstrap: wire dependency graph ──');
   lines.push('void bootstrap_runtime() {');
@@ -596,6 +618,17 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('    lv_obj_report_style_change(NULL);');
   lines.push('  });');
   lines.push('');
+
+  // ── Animation init (runs after LVGL widgets exist) ──────────────────
+  if (animations.length > 0) {
+    lines.push('  // ── Initialize LVGL animations ──');
+    for (const anim of animations) {
+      for (const line of anim.initCode.split('\n')) {
+        lines.push(`  ${line.trimStart()}`);
+      }
+    }
+    lines.push('');
+  }
 
   lines.push('  espcompose::flush();  // Initial flush to process dirty nodes marked during setup');
   lines.push('}');

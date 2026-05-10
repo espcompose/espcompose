@@ -134,6 +134,17 @@ Memo<float> memo_2([]() -> float {
 auto& memo_3 = memo_2;
 auto& memo_4 = memo_2;
 
+// ── Animation exec callbacks & static variables ──
+static void anim_05d43063_exec_cb(void* var, int32_t v) {
+  lv_obj_set_style_translate_y((lv_obj_t*)var, static_cast<lv_coord_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+static lv_anim_t anim_05d43063;
+
+static void anim_7b2a2f5b_exec_cb(void* var, int32_t v) {
+  lv_obj_set_style_translate_y((lv_obj_t*)var, static_cast<lv_coord_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+static lv_anim_t anim_7b2a2f5b;
+
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
   auto runtime = ::espcompose::EspcomposeRuntimeComponent::get_instance();
@@ -272,11 +283,11 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_32([]() {
-    lv_obj_set_style_pad_column(&id(rw_ref14), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_column(&id(r_ref14), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_33([]() {
-    lv_obj_set_style_bg_color(&id(rw_ref14), thm_333e4663_colors_surface.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(r_ref14), thm_333e4663_colors_surface.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_34([]() {
@@ -390,6 +401,20 @@ void bootstrap_runtime() {
     lv_obj_enable_style_refresh(true);
     lv_obj_report_style_change(NULL);
   });
+
+  // ── Initialize LVGL animations ──
+  lv_anim_init(&anim_05d43063);
+  lv_anim_set_var(&anim_05d43063, (void*)&id(r_ref14));
+  lv_anim_set_exec_cb(&anim_05d43063, anim_05d43063_exec_cb);
+  lv_anim_set_values(&anim_05d43063, 80, 0);
+  lv_anim_set_time(&anim_05d43063, 300);
+  lv_anim_set_path_cb(&anim_05d43063, lv_anim_path_ease_out);
+  lv_anim_init(&anim_7b2a2f5b);
+  lv_anim_set_var(&anim_7b2a2f5b, (void*)&id(r_ref14));
+  lv_anim_set_exec_cb(&anim_7b2a2f5b, anim_7b2a2f5b_exec_cb);
+  lv_anim_set_values(&anim_7b2a2f5b, 0, 80);
+  lv_anim_set_time(&anim_7b2a2f5b, 300);
+  lv_anim_set_path_cb(&anim_7b2a2f5b, lv_anim_path_ease_in);
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -884,10 +909,12 @@ lvgl:
                         id: rw_ref13
                         widgets:
                           - obj:
+                              id: r_ref14
                               border_width: 0
                               width: 90%
                               height: SIZE_CONTENT
                               align: BOTTOM_MID
+                              translate_y: 80
                               bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
                               bg_opa: 25%
                               blur_backdrop: true
@@ -898,7 +925,6 @@ lvgl:
                                 type: flex
                                 flex_flow: ROW
                                 pad_column: 0
-                              id: rw_ref14
                               widgets:
                                 - label:
                                     text: !lambda "return espcompose::sig_global_g_ref15.get();"
@@ -1025,7 +1051,14 @@ script:
           espcompose::sig_ovrl_ref12_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref12),
           LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref12));"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref26_closures[closure_index]; (void)closure;
+          lv_anim_start(&espcompose::anim_05d43063);"
       - delay: 3s
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref26_closures[closure_index]; (void)closure;
+          lv_anim_start(&espcompose::anim_7b2a2f5b);"
+      - delay: 300ms
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref26_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_ref23.get_mut()[0] = 0;
@@ -1054,6 +1087,10 @@ script:
           espcompose::scr_ref27_closures[closure_index]; (void)closure;
           espcompose::sig_global_g_ref23.get_mut()[0] = 0;
           espcompose::sig_global_g_ref23.notify(); espcompose::flush();"
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref27_closures[closure_index]; (void)closure;
+          lv_anim_start(&espcompose::anim_7b2a2f5b);"
+      - delay: 300ms
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref27_closures[closure_index]; (void)closure;
           lv_obj_add_flag(id(ovrl_ref12), LV_OBJ_FLAG_HIDDEN);"

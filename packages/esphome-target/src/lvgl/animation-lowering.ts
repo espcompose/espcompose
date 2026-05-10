@@ -97,22 +97,23 @@ function buildSelector(part?: string, state?: string): string {
  * Lower a single AttachAnimationContribution to C++ code blocks.
  *
  * Returns:
- * - `execCallback`: The static exec callback function definition
- * - `initCode`: The lv_anim_t initialization code (to be placed in a lambda)
+ * - `execCallback`: The static exec callback function definition (file-scope C++)
+ * - `varDeclaration`: The static lv_anim_t variable declaration (file-scope C++)
+ * - `initCode`: The lv_anim_t initialization code (to be placed in an on_boot lambda)
  * - `animId`: The animation ID for start/stop references
  */
 export function lowerAnimationToCpp(
   anim: AttachAnimationContribution,
   widgetAccessor: string,
-): { execCallback: string; initCode: string; animId: string } {
+): { execCallback: string; varDeclaration: string; initCode: string; animId: string } {
   const { setter, cast } = resolvePropertySetter(anim.property);
   const selector = buildSelector(anim.part, anim.state);
   const animId = anim.animationId;
 
   const execCallback = generateExecCallback(animId, setter, cast, selector);
+  const varDeclaration = `static lv_anim_t ${animId};`;
 
   const lines: string[] = [];
-  lines.push(`static lv_anim_t ${animId};`);
   lines.push(`lv_anim_init(&${animId});`);
   lines.push(`lv_anim_set_var(&${animId}, ${widgetAccessor});`);
   lines.push(`lv_anim_set_exec_cb(&${animId}, ${animId}_exec_cb);`);
@@ -158,6 +159,7 @@ export function lowerAnimationToCpp(
 
   return {
     execCallback,
+    varDeclaration,
     initCode: lines.join('\n  '),
     animId,
   };
@@ -167,7 +169,7 @@ export function lowerAnimationToCpp(
  * Generate the C++ lambda code to start an animation by ID.
  */
 export function lowerAnimationStartAction(animationId: string): string {
-  return `lv_anim_start(&${animationId});`;
+  return `lv_anim_start(&espcompose::${animationId});`;
 }
 
 /**
@@ -176,5 +178,5 @@ export function lowerAnimationStartAction(animationId: string): string {
  * Uses lv_anim_custom_del to remove the animation from the LVGL scheduler.
  */
 export function lowerAnimationStopAction(animationId: string): string {
-  return `lv_anim_custom_del(&${animationId}, nullptr);`;
+  return `lv_anim_custom_del(&espcompose::${animationId}, nullptr);`;
 }

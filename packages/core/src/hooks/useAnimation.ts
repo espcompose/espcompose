@@ -94,7 +94,8 @@ export function useAnimation(
   assertHookContext('useAnimation()');
 
   const hookPath = getCurrentHookPath();
-  const animationId = generateDeterministicId('anim', hookPath + ':' + config.property);
+  const targetToken = String(targetRef);
+  const animationId = generateDeterministicId('anim', hookPath + ':' + targetToken + ':' + config.property + ':' + config.from + ':' + config.to);
 
   // Parse all duration fields to milliseconds.
   const durationMs = parseDurationToMs(config.duration);

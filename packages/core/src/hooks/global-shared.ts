@@ -11,6 +11,7 @@ import type { ExprType } from '../ir/expr-types';
 import type { IRType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
+import type { AnimationController } from '../types';
 import { parseDurationString } from '../ir/action-types';
 import type { IRDurationLiteral } from '../ir/action-types';
 
@@ -283,6 +284,32 @@ export interface TransientOverlayContext {
    * Reactive — updates automatically when any slot shows or hides.
    */
   slotRank: Signal<number>;
+
+  /**
+   * Register entrance/exit transition animations for this overlay slot.
+   *
+   * Call once during the overlay factory to declare which animations drive
+   * the entrance (slide-in) and exit (slide-out) effects. The lifecycle
+   * scripts will start the appropriate animation at show/hide time and
+   * delay hiding until the exit animation completes.
+   */
+  registerTransition(config: OverlayTransitionRegistration): void;
+}
+
+/**
+ * Configuration for overlay entrance/exit transition animations.
+ *
+ * Passed to `ctx.registerTransition()` inside a transient overlay factory.
+ * The enter/exit controllers must come from `useAnimation()` calls on
+ * widgets within the same factory.
+ */
+export interface OverlayTransitionRegistration {
+  /** Animation controller for the entrance effect (e.g. slide-in). */
+  enter: AnimationController;
+  /** Animation controller for the exit effect (e.g. slide-out). */
+  exit: AnimationController;
+  /** Duration of the exit animation in milliseconds. */
+  exitDurationMs: number;
 }
 
 // ── Duration normalization ─────────────────────────────────────────────────

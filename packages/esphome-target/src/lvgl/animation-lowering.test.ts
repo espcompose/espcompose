@@ -17,16 +17,19 @@ function makeAnim(overrides: Partial<AttachAnimationContribution> = {}): AttachA
 }
 
 describe('lowerAnimationToCpp', () => {
-  it('generates exec callback and init code', () => {
+  it('generates exec callback, var declaration, and init code', () => {
     const result = lowerAnimationToCpp(makeAnim(), 'id(r_widget_abc).get_obj()');
     expect(result.animId).toBe('anim_test1');
     expect(result.execCallback).toContain('lv_obj_set_style_opa');
     expect(result.execCallback).toContain('anim_test1_exec_cb');
+    expect(result.varDeclaration).toBe('static lv_anim_t anim_test1;');
     expect(result.initCode).toContain('lv_anim_init');
     expect(result.initCode).toContain('lv_anim_set_values');
     expect(result.initCode).toContain('0, 255');
     expect(result.initCode).toContain('lv_anim_set_time');
     expect(result.initCode).toContain('500');
+    // initCode should NOT contain the static variable declaration
+    expect(result.initCode).not.toContain('static lv_anim_t');
   });
 
   it('sets easing path callback', () => {
@@ -87,12 +90,12 @@ describe('lowerAnimationToCpp', () => {
 
 describe('lowerAnimationStartAction', () => {
   it('generates lv_anim_start code', () => {
-    expect(lowerAnimationStartAction('anim_fade')).toBe('lv_anim_start(&anim_fade);');
+    expect(lowerAnimationStartAction('anim_fade')).toBe('lv_anim_start(&espcompose::anim_fade);');
   });
 });
 
 describe('lowerAnimationStopAction', () => {
   it('generates lv_anim_custom_del code', () => {
-    expect(lowerAnimationStopAction('anim_fade')).toBe('lv_anim_custom_del(&anim_fade, nullptr);');
+    expect(lowerAnimationStopAction('anim_fade')).toBe('lv_anim_custom_del(&espcompose::anim_fade, nullptr);');
   });
 });

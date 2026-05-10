@@ -19,7 +19,6 @@ import { buildEntityComponentIds, irTypeToEsphomeParam, irTypeToCpp, resolveEnti
 import type { CppBackendResult } from './codegen';
 import { lowerActionTree, type ActionLoweringContext } from './actions';
 import { transformEcCanvasWidgets, translateLvglStyleValues, lowerLvglWidgetTree, type LvglValueLoweringContext } from './lvgl';
-import { lowerAnimationToCpp } from './lvgl';
 import { camelToSnake } from './yaml-utils.js';
 import { buildEntityIdMap } from './ha-entity-classifier.js';
 
@@ -587,39 +586,6 @@ export function lowerToYamlConfig(
   // final lvgl section.
   if (finalConfig['lvgl'] != null) {
     translateLvglStyleValues(finalConfig['lvgl']);
-  }
-
-  // ── Lower animations ──────────────────────────────────────────────────
-  // Collect all animation contributions across all UI registries and lower
-  // them to C++ code. The exec callbacks and static variables are injected
-  // into an esphome: on_boot: lambda that runs after LVGL is initialized.
-  const animCallbacks: string[] = [];
-  const animInits: string[] = [];
-  for (const ui of ir.uis) {
-    for (const anim of ui.animations) {
-      const widgetAccessor = `id(${anim.targetRef}).get_obj()`;
-      const { execCallback, initCode } = lowerAnimationToCpp(anim, widgetAccessor);
-      animCallbacks.push(execCallback);
-      animInits.push(initCode);
-    }
-  }
-  if (animCallbacks.length > 0) {
-    const lambdaBody =
-      animCallbacks.join('\n') + '\n' +
-      animInits.join('\n  ');
-    const bootEntry = {
-      priority: 800,
-      then: [{ lambda: createYamlLambda(lambdaBody) }],
-    };
-    if (!finalConfig['esphome']) finalConfig['esphome'] = {};
-    const esphome = finalConfig['esphome'] as Record<string, unknown>;
-    if (!esphome['on_boot']) {
-      esphome['on_boot'] = [bootEntry];
-    } else if (Array.isArray(esphome['on_boot'])) {
-      (esphome['on_boot'] as unknown[]).push(bootEntry);
-    } else {
-      esphome['on_boot'] = [esphome['on_boot'], bootEntry];
-    }
   }
 
   return finalConfig;
