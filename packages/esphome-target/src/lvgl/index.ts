@@ -12,3 +12,5 @@ export { extractPaintScenesFromIR, transformEcCanvasWidgets, injectEcCanvasDrawA
 export type { EcCanvasPaintScene, PaintPrimitive } from './canvas-lowering';
 
 export { lowerAnimationToCpp, lowerAnimationStartAction, lowerAnimationStopAction } from './animation-lowering';
+
+export { lowerStyleTransitionToCpp } from './style-transition-lowering';

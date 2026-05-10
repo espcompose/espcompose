@@ -13,8 +13,9 @@ import type { ComposeTarget, EmitRequest, EmitResult, OverlayDefinition, IRBindi
 import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen';
 import { generateBindingsHeader } from './codegen/bindings.js';
+import type { AnimationDecl, StyleTransitionDecl, ReactiveRuntimeConfig } from './codegen/bindings.js';
 import { resolveAssets } from './assets.js';
-import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerAnimationToCpp } from './lvgl';
+import { extractPaintScenesFromIR, injectEcCanvasDrawActions, lowerAnimationToCpp, lowerStyleTransitionToCpp } from './lvgl';
 import { buildEntityIdMap } from './ha-entity-classifier.js';
 
 export function createEsphomeTarget(): ComposeTarget {
@@ -69,7 +70,7 @@ export function createEsphomeTarget(): ComposeTarget {
     // is emitted inside bootstrap_runtime() so it runs after LVGL widgets
     // are created.
     const seenAnimIds = new Set<string>();
-    const animationDecls: import('./codegen/bindings.js').AnimationDecl[] = [];
+    const animationDecls: AnimationDecl[] = [];
     for (const ui of ir.uis) {
       for (const anim of ui.animations) {
         if (seenAnimIds.has(anim.animationId)) continue;
@@ -80,24 +81,44 @@ export function createEsphomeTarget(): ComposeTarget {
       }
     }
 
+    // ── Lower style transitions to C++ ─────────────────────────────────
+    const seenTransIds = new Set<string>();
+    const styleTransDecls: StyleTransitionDecl[] = [];
+    for (const ui of ir.uis) {
+      for (const st of ui.styleTransitions) {
+        if (seenTransIds.has(st.transitionId)) continue;
+        seenTransIds.add(st.transitionId);
+        const widgetAccessor = `(lv_obj_t*)&id(${st.targetRef})`;
+        const { declarations, initCode } = lowerStyleTransitionToCpp(st, widgetAccessor);
+        styleTransDecls.push({ declarations, initCode });
+      }
+    }
+
     if (cppResult) {
-      // Inject animation declarations into the runtime config and regenerate.
+      // Inject animation and style transition declarations into the runtime config and regenerate.
+      const needsRegen = animationDecls.length > 0 || styleTransDecls.length > 0;
       if (animationDecls.length > 0) {
         cppResult.runtimeConfig.animations = animationDecls;
+      }
+      if (styleTransDecls.length > 0) {
+        cppResult.runtimeConfig.styleTransitions = styleTransDecls;
+      }
+      if (needsRegen) {
         cppResult.bindingsHeaderContent = generateBindingsHeader(cppResult.runtimeConfig);
       }
       const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
       fs.writeFileSync(bindingsPath, cppResult.bindingsHeaderContent, 'utf8');
       files.push(bindingsPath);
-    } else if (animationDecls.length > 0) {
-      // No reactive content but we have animations — build a minimal config.
-      const minimalConfig: import('./codegen/bindings.js').ReactiveRuntimeConfig = {
+    } else if (animationDecls.length > 0 || styleTransDecls.length > 0) {
+      // No reactive content but we have animations/transitions — build a minimal config.
+      const minimalConfig: ReactiveRuntimeConfig = {
         signals: [],
         globalSignals: [],
         memos: [],
         effects: [],
         widgetBindings: [],
-        animations: animationDecls,
+        animations: animationDecls.length > 0 ? animationDecls : undefined,
+        styleTransitions: styleTransDecls.length > 0 ? styleTransDecls : undefined,
       };
       const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
       fs.writeFileSync(bindingsPath, generateBindingsHeader(minimalConfig), 'utf8');

@@ -13,7 +13,7 @@
 import type { SemanticIR, IRAction, IRValue, IRObject, IRUIRegistry } from './types';
 import { irAction } from './types';
 import type { IRWidget } from './widget-types';
-import type { ComponentContribution, AttachTriggerContribution, AttachAnimationContribution } from './contribution-types';
+import type { ComponentContribution, AttachTriggerContribution, AttachAnimationContribution, AttachStyleTransitionContribution } from './contribution-types';
 
 // ── ContributionTarget ─────────────────────────────────────────────────────
 //
@@ -141,6 +141,28 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
         continue;
       }
       (owningUI.animations as AttachAnimationContribution[]).push(anim);
+    }
+  }
+
+  // ── Attach-style-transition contributions ───────────────────────────────
+
+  const styleTransContributions = contributions.filter(
+    (c): c is AttachStyleTransitionContribution => c.kind === 'attach-style-transition',
+  );
+
+  if (styleTransContributions.length > 0) {
+    const widgetToUI = buildWidgetUIMap(ir);
+
+    for (const st of styleTransContributions) {
+      const owningUI = widgetToUI.get(st.targetRef);
+      if (!owningUI) {
+        console.warn(
+          `[espcompose] useStyleTransition: target ref "${st.targetRef}" not found in any UI tree. ` +
+          `Style transition "${st.transitionId}" will be ignored.`,
+        );
+        continue;
+      }
+      (owningUI.styleTransitions as AttachStyleTransitionContribution[]).push(st);
     }
   }
 }

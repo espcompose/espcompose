@@ -43,14 +43,14 @@ import {
   setOverlayPayloadMeta,
   forwardOverlayPayloadMeta,
 } from './global-shared';
-import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext, OverlayTransitionRegistration } from './global-shared';
+import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext, TransitionRegistration } from './global-shared';
 import type { OverlayFactory } from './useOverlay';
 import {
   buildOverlayPayloadPlan,
   buildOverlayLifecycleScripts,
   readOverlayControllerInternal,
 } from './overlay-lifecycle';
-import type { OverlayScriptPair, OverlayTransitionConfig } from './overlay-lifecycle';
+import type { OverlayScriptPair, TransitionConfig } from './overlay-lifecycle';
 import {
   irIfAction,
   irGlobalSet,
@@ -261,14 +261,14 @@ function buildSlotOverlay(
   const slotOverlayCtrls: OverlayController<Record<string, unknown>>[] = [];
 
   // Per-slot transition registrations captured during factory evaluation.
-  const perSlotTransitions: (OverlayTransitionRegistration | null)[] = [];
+  const perSlotTransitions: (TransitionRegistration | null)[] = [];
 
   // We need the template key before creating overlays to generate globals.
   let slotStateGlobals: ReturnType<typeof createSlotStateGlobals> | undefined;
 
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
-    let slotTransition: OverlayTransitionRegistration | null = null;
+    let slotTransition: TransitionRegistration | null = null;
 
     // Forward meta so useOverlay handles global registration + proxy building.
     const wrapperFactory = (overlayCtrl: OverlayController, ctx?: { payload: Record<string, unknown> }) => {
@@ -279,7 +279,7 @@ function buildSlotOverlay(
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
       const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
-      const registerTransition = (config: OverlayTransitionRegistration) => {
+      const registerTransition = (config: TransitionRegistration) => {
         slotTransition = config;
       };
       return factory(overlayCtrl, { slotRank, payload, registerTransition });
@@ -318,7 +318,7 @@ function buildSlotOverlay(
 
     // Build transition config from captured registration (if any).
     const reg = perSlotTransitions[i];
-    let transition: OverlayTransitionConfig | undefined;
+    let transition: TransitionConfig | undefined;
     if (reg) {
       const enterAnimId = (reg.enter as unknown as Record<symbol, string>)[ANIMATION_ID];
       const exitAnimId = (reg.exit as unknown as Record<symbol, string>)[ANIMATION_ID];

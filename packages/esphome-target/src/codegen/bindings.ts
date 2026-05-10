@@ -152,6 +152,13 @@ export interface AnimationDecl {
   initCode: string;
 }
 
+export interface StyleTransitionDecl {
+  /** File-scope declarations (props array, transition dsc, style). */
+  declarations: string;
+  /** Init code for bootstrap_runtime() (lv_style_transition_dsc_init, lv_obj_add_style, etc.). */
+  initCode: string;
+}
+
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
   /** BoundSignal declarations for globals with reactive dependents. */
@@ -172,6 +179,8 @@ export interface ReactiveRuntimeConfig {
   closureTablesBlock?: string;
   /** Animation declarations (exec callbacks, static vars, init code). */
   animations?: AnimationDecl[];
+  /** Style transition declarations (props array, dsc, init code). */
+  styleTransitions?: StyleTransitionDecl[];
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -440,6 +449,16 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
+  // ── Style transition declarations ──────────────────────────────────────
+  const styleTransitions = config.styleTransitions ?? [];
+  if (styleTransitions.length > 0) {
+    lines.push('// ── Style transition declarations ──');
+    for (const st of styleTransitions) {
+      lines.push(st.declarations);
+      lines.push('');
+    }
+  }
+
   // ── Runtime bootstrap ──────────────────────────────────────────────────
   lines.push('// ── Bootstrap: wire dependency graph ──');
   lines.push('void bootstrap_runtime() {');
@@ -624,6 +643,17 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('  // ── Initialize LVGL animations ──');
     for (const anim of animations) {
       for (const line of anim.initCode.split('\n')) {
+        lines.push(`  ${line.trimStart()}`);
+      }
+    }
+    lines.push('');
+  }
+
+  // ── Style transition init (runs after LVGL widgets exist) ─────────────
+  if (styleTransitions.length > 0) {
+    lines.push('  // ── Initialize LVGL style transitions ──');
+    for (const st of styleTransitions) {
+      for (const line of st.initCode.split('\n')) {
         lines.push(`  ${line.trimStart()}`);
       }
     }

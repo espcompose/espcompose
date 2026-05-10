@@ -14,8 +14,8 @@
  * (simple show/hide, no stacking).
  */
 
-import { useOverlay, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
-import type { VisibilityController, EspComposeElement, SizeValue } from '@espcompose/core';
+import { useOverlay, useRef, useAnimation, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
+import type { VisibilityController, EspComposeElement, SizeValue, TransitionRegistration } from '@espcompose/core';
 import { useSpacing } from './useSpacing';
 import { UITheme } from '../theme/theme';
 import { Text } from '../components/Text';
@@ -66,6 +66,9 @@ export interface DialogOptions {
 export function useDialog(factory: DialogFactory, options?: DialogOptions): DialogController {
   const stack = useVisibilityStack();
 
+  // Capture transition controllers from the factory closure.
+  let transition: TransitionRegistration | undefined;
+
   const ctrl = useOverlay({ zOrder: 0 }, (overlayCtrl) => {
     const theme = UITheme.use();
     const settings = useThemeSettings();
@@ -79,6 +82,24 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
       default: '85%' as SizeValue,
     });
     const height = options?.height ?? 'fit-content';
+
+    // Fade-in/fade-out transition on the backdrop
+    const backdropRef = useRef();
+    const fadeIn = useAnimation(backdropRef, {
+      property: 'opacity',
+      from: 0,
+      to: 255,
+      duration: '200ms',
+      easing: 'ease-out',
+    });
+    const fadeOut = useAnimation(backdropRef, {
+      property: 'opacity',
+      from: 255,
+      to: 0,
+      duration: '200ms',
+      easing: 'ease-in',
+    });
+    transition = { enter: fadeIn, exit: fadeOut, exitDurationMs: 200 };
 
     const content = factory(overlayCtrl);
     const showTitleBar = !options?.hideTitleBar;
@@ -134,12 +155,14 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
 
     return (
       <Backdrop
+        ref={backdropRef}
         onPress={() => { overlayCtrl.hide(); }}
         style={{
           width: '100%',
           height: '100%',
           borderWidth: 0,
           padding: 0,
+          opacity: 'transparent',
         }}
       >
         <Dialog
@@ -163,7 +186,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
   });
 
   if (stack) {
-    return stack.register(ctrl);
+    return stack.register(ctrl, { transition });
   }
-  return useVisibility(ctrl);
+  return useVisibility(ctrl, { transition });
 }

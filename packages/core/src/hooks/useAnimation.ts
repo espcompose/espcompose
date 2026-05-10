@@ -33,6 +33,7 @@ import { registerContribution } from './useContributionScope';
 import { generateDeterministicId } from '../id';
 import { throwCompileTimeOnly } from '../errors';
 import { ANIMATION_ID } from '../actions/resolve/symbols';
+import { CSS_TO_LVGL_MAP } from '../lvgl/style/mapping';
 
 // ── Config ─────────────────────────────────────────────────────────────────
 
@@ -93,9 +94,15 @@ export function useAnimation(
 ): AnimationController {
   assertHookContext('useAnimation()');
 
+  // Resolve CSS property name to LVGL equivalent (e.g. 'opacity' → 'opa').
+  const cssMapping = CSS_TO_LVGL_MAP[config.property];
+  const lvglProperty = cssMapping && 'lvglProp' in cssMapping
+    ? cssMapping.lvglProp
+    : config.property;
+
   const hookPath = getCurrentHookPath();
   const targetToken = String(targetRef);
-  const animationId = generateDeterministicId('anim', hookPath + ':' + targetToken + ':' + config.property + ':' + config.from + ':' + config.to);
+  const animationId = generateDeterministicId('anim', hookPath + ':' + targetToken + ':' + lvglProperty + ':' + config.from + ':' + config.to);
 
   // Parse all duration fields to milliseconds.
   const durationMs = parseDurationToMs(config.duration);
@@ -120,7 +127,7 @@ export function useAnimation(
     kind: 'attach-animation',
     targetRef: String(targetRef),
     animationId,
-    property: config.property,
+    property: lvglProperty,
     from: config.from,
     to: config.to,
     durationMs,

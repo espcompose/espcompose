@@ -34,6 +34,8 @@ import {
   irOverlayHide,
   irScriptExecute,
   irLambdaCondition,
+  irDelayAction,
+  irAnimationStart,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
 import {
@@ -51,7 +53,8 @@ import {
   IR_STRING_ARRAY,
 } from '../ir/types';
 import { globalScopeContext, irTypeToExprType } from './global-shared';
-import type { GlobalDefinition, OverlayPayloadGlobalDecl } from './global-shared';
+import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransitionRegistration } from './global-shared';
+import { ANIMATION_ID } from '../actions/resolve/symbols';
 import type { OverlayController } from './useOverlay';
 import { readOverlayControllerInternal } from './overlay-lifecycle';
 import type { VisibilityController } from '../types';
@@ -74,6 +77,14 @@ interface TemplateEntry {
   fields: FieldMapping[];
   /** Per-template re-show script ID (takes `inst` param for dynamic instance index). */
   reshowScriptId: string;
+  /** Resolved transition animation IDs (if any). */
+  transition?: ResolvedTransition;
+}
+
+interface ResolvedTransition {
+  enterAnimationIds: string[];
+  exitAnimationIds: string[];
+  exitDurationMs: number;
 }
 
 interface PoolState {
@@ -110,7 +121,7 @@ export interface VisibilityStackConfig {
 }
 
 export interface VisibilityStackHandle {
-  register(ctrl: OverlayController<unknown>): VisibilityController;
+  register(ctrl: OverlayController<unknown>, opts?: { transition?: TransitionRegistration }): VisibilityController;
 }
 
 // ── Context ─────────────────────────────────────────────────────────────────
@@ -298,6 +309,13 @@ function buildShowBody(
     irOverlayShow(internal.templateKey, internal.instanceIndex, internal.zOrder),
   );
 
+  // 5. Start enter transition animations (if any)
+  if (entry.transition) {
+    for (const id of entry.transition.enterAnimationIds) {
+      actions.push(irAnimationStart(id));
+    }
+  }
+
   return actions;
 }
 
@@ -391,6 +409,14 @@ function buildHideBody(
   const newDepth = irBinary('-', depth, int(1));
   actions.push(irGlobalSet(state.depthGlobalId, IR_INT, newDepth));
 
+  // Exit transition: start exit animations and wait before hiding.
+  if (entry.transition) {
+    for (const id of entry.transition.exitAnimationIds) {
+      actions.push(irAnimationStart(id));
+    }
+    actions.push(irDelayAction({ kind: 'duration', value: entry.transition.exitDurationMs, unit: 'ms' }));
+  }
+
   // Hide my widget
   actions.push(irOverlayHide(internal.templateKey, internal.zOrder));
 
@@ -428,6 +454,12 @@ function buildRestoreDispatch(
   sameTemplateActions.push(
     irScriptExecute(entry.reshowScriptId, { userArgs: { inst: prevInst } }),
   );
+  // Re-trigger enter transition on restore
+  if (entry.transition) {
+    for (const id of entry.transition.enterAnimationIds) {
+      sameTemplateActions.push(irAnimationStart(id));
+    }
+  }
 
   // If previous was different template: delegate to shared restore coordinator
   const diffTemplateActions: IRActionNode[] = [
@@ -461,6 +493,12 @@ function appendRestoreCoordinatorBranch(
   branchActions.push(
     irScriptExecute(entry.reshowScriptId, { userArgs: { inst: prevInst } }),
   );
+  // Re-trigger enter transition on cross-template restore
+  if (entry.transition) {
+    for (const id of entry.transition.enterAnimationIds) {
+      branchActions.push(irAnimationStart(id));
+    }
+  }
 
   state.restoreActions.push(
     irIfAction(
@@ -475,6 +513,7 @@ function appendRestoreCoordinatorBranch(
 function registerOverlay(
   state: VisibilityStackState,
   ctrl: OverlayController<unknown>,
+  opts?: { transition?: TransitionRegistration },
 ): VisibilityController {
   assertHookContext('useVisibilityStack().register()');
 
@@ -506,6 +545,19 @@ function registerOverlay(
     });
 
     entry = { templateIndex, templateKey, fields, reshowScriptId };
+
+    // Resolve transition registration (if provided) into animation IDs
+    if (opts?.transition) {
+      const reg = opts.transition;
+      const enterAnimId = (reg.enter as unknown as Record<symbol, string>)[ANIMATION_ID];
+      const exitAnimId = (reg.exit as unknown as Record<symbol, string>)[ANIMATION_ID];
+      entry.transition = {
+        enterAnimationIds: [enterAnimId],
+        exitAnimationIds: [exitAnimId],
+        exitDurationMs: reg.exitDurationMs,
+      };
+    }
+
     state.templates.set(templateKey, entry);
 
     // Append branch to shared restore coordinator
@@ -575,7 +627,7 @@ export function withVisibilityStack(
   };
 
   const handle: VisibilityStackHandle = {
-    register: (ctrl) => registerOverlay(state, ctrl),
+    register: (ctrl, opts) => registerOverlay(state, ctrl, opts),
   };
 
   // Register the restore coordinator script. Its action array is grown

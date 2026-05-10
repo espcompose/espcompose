@@ -20,7 +20,7 @@ export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, Vola
 export { useRetainedGlobal } from './useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './useRetainedGlobal';
 export { withGlobalScope, hashGlobalFingerprint, createGlobalHandle, createGlobalArrayHandle, irTypeToExprType, forwardOverlayPayloadMeta, readOverlayPayloadMeta } from './global-shared';
-export type { GlobalDefinition, GlobalHandle, GlobalArrayHandle, TransientOverlayContext } from './global-shared';
+export type { GlobalDefinition, GlobalHandle, GlobalArrayHandle, TransientOverlayContext, TransitionRegistration } from './global-shared';
 export { useOverlay, withOverlayScope, peekOverlayDefinitions } from './useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayDefinition, OverlayInstance, OverlayScopeResult, CapturedOverlayAction, OverlayPayloadGlobalDecl } from './useOverlay';
 export { useTransientOverlay } from './useTransientOverlay';
@@ -31,3 +31,5 @@ export { withContributionScope, registerContribution } from './useContributionSc
 export type { ContributionScopeResult } from './useContributionScope';
 export { useAnimation } from './useAnimation';
 export type { AnimationConfig } from './useAnimation';
+export { useStyleTransition } from './useStyleTransition';
+export type { StyleTransitionConfig } from './useStyleTransition';

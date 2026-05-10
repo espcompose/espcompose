@@ -90,7 +90,7 @@ export function buildOverlayPayloadPlan(
  * along with a delay equal to `exitDurationMs` so the exit animation
  * completes before the widget is hidden.
  */
-export interface OverlayTransitionConfig {
+export interface TransitionConfig {
   enterAnimationIds: string[];
   exitAnimationIds: string[];
   exitDurationMs: number;
@@ -108,7 +108,7 @@ export interface OverlayLifecycleScriptOptions {
   hidePrefixActions?: (showScript: ScriptHandle) => IRActionNode[];
   hideSuffixActions?: IRActionNode[];
   ctrlBindingKey?: string;
-  transition?: OverlayTransitionConfig;
+  transition?: TransitionConfig;
 }
 
 export function buildOverlayLifecycleScripts(

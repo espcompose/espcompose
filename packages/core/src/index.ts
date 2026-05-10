@@ -178,7 +178,7 @@ export { useGlobal } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, VolatileGlobalOptions, GlobalArrayHandle } from './hooks/useGlobal';
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
-export type { GlobalHandle, TransientOverlayContext, OverlayTransitionRegistration } from './hooks/global-shared';
+export type { GlobalHandle, TransientOverlayContext, TransitionRegistration } from './hooks/global-shared';
 export { forwardOverlayPayloadMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayPayloadGlobalDecl } from './hooks/useOverlay';
@@ -193,6 +193,8 @@ export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
 export { useAnimation } from './hooks/useAnimation';
 export type { AnimationConfig } from './hooks/useAnimation';
+export { useStyleTransition } from './hooks/useStyleTransition';
+export type { StyleTransitionConfig } from './hooks/useStyleTransition';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 

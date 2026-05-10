@@ -42,6 +42,8 @@ import {
 } from '../ir/action-types';
 import type { IRDurationLiteral } from '../ir/action-types';
 import { normalizeDuration } from './global-shared';
+import type { TransitionRegistration } from './global-shared';
+import { ANIMATION_ID } from '../actions/resolve/symbols';
 import type { OverlayController } from './useOverlay';
 import {
   buildOverlayPayloadPlan,
@@ -92,6 +94,16 @@ export interface VisibilityOptions {
    * @default undefined (unlimited)
    */
   maxRuns?: number;
+
+  /**
+   * Transition animations for entrance/exit effects (e.g. fade-in/fade-out).
+   *
+   * When provided, the show script starts the enter animation after making
+   * the target visible, and the hide script starts the exit animation
+   * before hiding — with a delay equal to `exitDurationMs` so the exit
+   * animation completes before the widget disappears.
+   */
+  transition?: TransitionRegistration;
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -136,6 +148,7 @@ export function useVisibility(
     autoHide,
     opts?.scriptMode,
     opts?.maxRuns,
+    opts?.transition,
   );
 }
 
@@ -165,12 +178,14 @@ function buildOverlayVisibility(
   autoHide: string | number | false,
   scriptMode?: 'restart' | 'queued' | 'single',
   maxRuns?: number,
+  transition?: TransitionRegistration,
 ): VisibilityController {
   const pair = buildOverlayScriptPairWithMode(
     ctrl,
     autoHide,
     scriptMode ?? 'restart',
     maxRuns,
+    transition,
   );
   return useController<VisibilityController>({ show: pair.show, hide: pair.hide });
 }
@@ -180,9 +195,22 @@ function buildOverlayScriptPairWithMode(
   autoHide: string | number | false,
   scriptMode: 'restart' | 'queued' | 'single',
   maxRuns?: number,
+  transition?: TransitionRegistration,
 ): ReturnType<typeof buildOverlayLifecycleScripts> {
   const internal = readOverlayControllerInternal(ctrl);
   const params = buildOverlayPayloadPlan(internal.payloadDecls);
+
+  // Resolve transition registration → TransitionConfig if provided.
+  let transitionConfig: import('./overlay-lifecycle').TransitionConfig | undefined;
+  if (transition) {
+    const enterAnimId = (transition.enter as unknown as Record<symbol, string>)[ANIMATION_ID];
+    const exitAnimId = (transition.exit as unknown as Record<symbol, string>)[ANIMATION_ID];
+    transitionConfig = {
+      enterAnimationIds: [enterAnimId],
+      exitAnimationIds: [exitAnimId],
+      exitDurationMs: transition.exitDurationMs,
+    };
+  }
 
   return buildOverlayLifecycleScripts(ctrl, {
     autoHide,
@@ -198,6 +226,7 @@ function buildOverlayScriptPairWithMode(
     hidePrefixActions: autoHide === false
       ? undefined
       : (showScript) => [irScriptStop(showScript.id)],
+    transition: transitionConfig,
   });
 }
 

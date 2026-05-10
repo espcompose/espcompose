@@ -46,7 +46,7 @@ describe('useAnimation', () => {
     const contrib = result.contributions[0] as AttachAnimationContribution;
     expect(contrib.kind).toBe('attach-animation');
     expect(contrib.targetRef).toBe('r_widget_abc');
-    expect(contrib.property).toBe('opacity');
+    expect(contrib.property).toBe('opa');
     expect(contrib.from).toBe(0);
     expect(contrib.to).toBe(255);
     expect(contrib.durationMs).toBe(500);

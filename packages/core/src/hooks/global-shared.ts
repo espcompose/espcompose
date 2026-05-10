@@ -293,17 +293,20 @@ export interface TransientOverlayContext {
    * scripts will start the appropriate animation at show/hide time and
    * delay hiding until the exit animation completes.
    */
-  registerTransition(config: OverlayTransitionRegistration): void;
+  registerTransition(config: TransitionRegistration): void;
 }
 
 /**
- * Configuration for overlay entrance/exit transition animations.
+ * Configuration for entrance/exit transition animations.
  *
- * Passed to `ctx.registerTransition()` inside a transient overlay factory.
+ * Passed to `ctx.registerTransition()` inside a transient overlay factory,
+ * or to `useVisibility()` / `useVisibilityStack().register()` for any
+ * overlay that needs animated show/hide.
+ *
  * The enter/exit controllers must come from `useAnimation()` calls on
- * widgets within the same factory.
+ * widgets within the same overlay or component.
  */
-export interface OverlayTransitionRegistration {
+export interface TransitionRegistration {
   /** Animation controller for the entrance effect (e.g. slide-in). */
   enter: AnimationController;
   /** Animation controller for the exit effect (e.g. slide-out). */

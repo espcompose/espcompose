@@ -90,11 +90,44 @@ export interface AttachAnimationContribution {
 }
 
 /**
+ * Attach an LVGL style transition to a widget identified by ref.
+ *
+ * Registered by `useStyleTransition()`. When any of the listed style
+ * properties change on the widget, LVGL animates the change over the
+ * specified duration/easing instead of applying it instantly.
+ *
+ * The target lowers each style transition to an `lv_style_transition_dsc_t`
+ * setup block and applies it via `lv_obj_add_style()` in the bootstrap.
+ */
+export interface AttachStyleTransitionContribution {
+  readonly kind: 'attach-style-transition';
+  /** Ref token identifying the target widget. */
+  readonly targetRef: string;
+  /** Auto-generated transition ID (deterministic from hook path + properties). */
+  readonly transitionId: string;
+  /** Semantic style property names (camelCase, e.g. 'paddingTop', 'opacity'). */
+  readonly properties: string[];
+  /** Duration in milliseconds. */
+  readonly durationMs: number;
+  /** Start delay in milliseconds. */
+  readonly delayMs?: number;
+  /** Easing curve. */
+  readonly easing?: AnimationEasing;
+  /** LVGL part selector (camelCase, e.g. 'indicator', 'knob'). */
+  readonly part?: string;
+  /** LVGL state selector (camelCase, e.g. 'pressed', 'disabled'). */
+  readonly state?: string;
+  /** Stable identifier for ordering — derived from hook path. */
+  readonly sourceId: string;
+}
+
+/**
  * Extensible discriminated union of component contributions.
  *
- * Supports trigger attachment and widget property animations.
+ * Supports trigger attachment, widget property animations, and style transitions.
  * Add new variants here when real use cases demand them.
  */
 export type ComponentContribution =
   | AttachTriggerContribution
-  | AttachAnimationContribution;
+  | AttachAnimationContribution
+  | AttachStyleTransitionContribution;

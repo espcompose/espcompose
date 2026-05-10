@@ -145,6 +145,11 @@ static void anim_ref28_exec_cb(void* var, int32_t v) {
 }
 static lv_anim_t anim_ref28;
 
+// ── Style transition declarations ──
+static const lv_style_prop_t strans_ref31_props[] = {LV_STYLE_PAD_BOTTOM, 0};
+static lv_style_transition_dsc_t strans_ref31_dsc;
+static lv_style_t strans_ref31_style;
+
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
   auto runtime = ::espcompose::EspcomposeRuntimeComponent::get_instance();
@@ -291,7 +296,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_34([]() {
-    lv_obj_set_style_pad_bottom(&id(rw_ref13), static_cast<lv_coord_t>(memo_1.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_bottom(&id(r_ref13), static_cast<lv_coord_t>(memo_1.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};
@@ -415,6 +420,12 @@ void bootstrap_runtime() {
   lv_anim_set_values(&anim_ref28, 0, 80);
   lv_anim_set_time(&anim_ref28, 300);
   lv_anim_set_path_cb(&anim_ref28, lv_anim_path_ease_in);
+
+  // ── Initialize LVGL style transitions ──
+  lv_style_transition_dsc_init(&strans_ref31_dsc, strans_ref31_props, lv_anim_path_ease_out, 200, 0, NULL);
+  lv_style_init(&strans_ref31_style);
+  lv_style_set_transition(&strans_ref31_style, &strans_ref31_dsc);
+  lv_obj_add_style((lv_obj_t*)&id(r_ref13), &strans_ref31_style, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -898,6 +909,7 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
+                        id: r_ref13
                         width: 100%
                         height: 100%
                         bg_color: "0x000000"
@@ -906,7 +918,6 @@ lvgl:
                         pad_all: 0
                         pad_bottom: !lambda "return espcompose::memo_1.get();"
                         clickable: false
-                        id: rw_ref13
                         widgets:
                           - obj:
                               id: r_ref14
