@@ -29,3 +29,5 @@ export { structuralFingerprint, assertOverlayStructuralIdentity } from './overla
 export { useAttachedTrigger } from './useAttachedTrigger';
 export { withContributionScope, registerContribution } from './useContributionScope';
 export type { ContributionScopeResult } from './useContributionScope';
+export { useAnimation } from './useAnimation';
+export type { AnimationConfig } from './useAnimation';

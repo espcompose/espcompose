@@ -10,10 +10,10 @@
 // event are safely appended.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, IRAction, IRValue, IRObject } from './types';
+import type { SemanticIR, IRAction, IRValue, IRObject, IRUIRegistry } from './types';
 import { irAction } from './types';
 import type { IRWidget } from './widget-types';
-import type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+import type { ComponentContribution, AttachTriggerContribution, AttachAnimationContribution } from './contribution-types';
 
 // ── ContributionTarget ─────────────────────────────────────────────────────
 //
@@ -70,7 +70,7 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
   collectWidgetTargets(ir, targets);
   collectSectionTargets(ir, targets);
 
-  if (targets.size === 0) return;
+  // ── Attach-trigger contributions ───────────────────────────────────────
 
   // Group attach-trigger contributions by (targetRef, event) and sort by sourceId.
   const triggerContributions = contributions.filter(
@@ -119,6 +119,29 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
     }
     // If the prop exists but is neither 'action' nor 'null', it's unexpected.
     // Leave it alone — could be a reactive binding or other non-action value.
+  }
+
+  // ── Attach-animation contributions ─────────────────────────────────────
+
+  const animContributions = contributions.filter(
+    (c): c is AttachAnimationContribution => c.kind === 'attach-animation',
+  );
+
+  if (animContributions.length > 0) {
+    // Reuse the shared widget → UIRegistry ownership map.
+    const widgetToUI = buildWidgetUIMap(ir);
+
+    for (const anim of animContributions) {
+      const owningUI = widgetToUI.get(anim.targetRef);
+      if (!owningUI) {
+        console.warn(
+          `[espcompose] useAnimation: target ref "${anim.targetRef}" not found in any UI tree. ` +
+          `Animation "${anim.animationId}" for property "${anim.property}" will be ignored.`,
+        );
+        continue;
+      }
+      (owningUI.animations as AttachAnimationContribution[]).push(anim);
+    }
   }
 }
 
@@ -177,6 +200,39 @@ function collectIRValueTargets(value: IRValue, map: Map<string, ContributionTarg
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Map every widget ref token to its owning IRUIRegistry.
+ *
+ * This is a general-purpose utility: any contribution kind that needs to
+ * place data on the UIRegistry owning a widget can use this map.
+ */
+export function buildWidgetUIMap(ir: SemanticIR): Map<string, IRUIRegistry> {
+  const map = new Map<string, IRUIRegistry>();
+  for (const ui of ir.uis) {
+    collectWidgetUIOwnership(ui.pages, ui, map);
+    collectWidgetUIOwnership(ui.widgets, ui, map);
+    for (const tier of ui.overlays) {
+      for (const overlay of tier.overlays) {
+        collectWidgetUIOwnership(overlay.widgets, ui, map);
+      }
+    }
+  }
+  return map;
+}
+
+function collectWidgetUIOwnership(
+  widgets: readonly IRWidget[],
+  ui: IRUIRegistry,
+  map: Map<string, IRUIRegistry>,
+): void {
+  for (const widget of widgets) {
+    if (widget.id) {
+      map.set(widget.id, ui);
+    }
+    collectWidgetUIOwnership(widget.children, ui, map);
+  }
+}
 
 /**
  * Split a "targetRef:event" key back into its components.

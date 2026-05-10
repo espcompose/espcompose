@@ -83,11 +83,6 @@ Memo<lv_color_t> thm_333e4663_parts_switch_rail([]() -> lv_color_t {
   return thm_333e4663_parts_switch_rail_vals[theme_index_333e4663.get()];
 });
 
-static const int32_t thm_333e4663_radii_lg_vals[] = {16, 16};
-Memo<int32_t> thm_333e4663_radii_lg([]() -> int32_t {
-  return thm_333e4663_radii_lg_vals[theme_index_333e4663.get()];
-});
-
 static const int32_t thm_333e4663_radii_md_vals[] = {8, 8};
 Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
   return thm_333e4663_radii_md_vals[theme_index_333e4663.get()];
@@ -166,34 +161,34 @@ static const char* tbl_ovrl_ref33_act_1[] = {
 };
 
 // ── Script closure tables ──
-struct Scr15b3b637Closure {
+struct ScrEc858285Closure {
   int __ctrl_instance_index;
 };
-static const Scr15b3b637Closure scr_ref7_closures[] = {
+static const ScrEc858285Closure scr_ref7_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct ScrAf5f0a86Closure {
+struct Scr0376c950Closure {
   int __ctrl_instance_index;
 };
-static const ScrAf5f0a86Closure scr_ref49_closures[] = {
+static const Scr0376c950Closure scr_ref49_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct Scr7f8272b7Closure {
+struct ScrB0ce77f2Closure {
   int __ctrl_instance_index;
 };
-static const Scr7f8272b7Closure scr_ref16_closures[] = {
+static const ScrB0ce77f2Closure scr_ref16_closures[] = {
   { 0 },
   { 1 }
 };
 
-struct Scr4028847aClosure {
+struct ScrD8421f3bClosure {
   int __ctrl_instance_index;
 };
-static const Scr4028847aClosure scr_ref50_closures[] = {
+static const ScrD8421f3bClosure scr_ref50_closures[] = {
   { 0 },
   { 1 }
 };
@@ -230,8 +225,8 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Subscriber storage (exact-sized per node) ──
-  static NodeBase* theme_index_333e4663_subs[23];
-  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 23);
+  static NodeBase* theme_index_333e4663_subs[22];
+  theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 22);
   static NodeBase* thm_333e4663_sizes_xs_paddingX_subs[1];
   thm_333e4663_sizes_xs_paddingX.set_subscriber_storage(thm_333e4663_sizes_xs_paddingX_subs, 1);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
@@ -284,12 +279,10 @@ void bootstrap_runtime() {
   memo_4.set_subscriber_storage(memo_4_subs, 1);
   static NodeBase* thm_333e4663_sizes_md_height_subs[1];
   thm_333e4663_sizes_md_height.set_subscriber_storage(thm_333e4663_sizes_md_height_subs, 1);
-  static NodeBase* thm_333e4663_colors_surface_subs[1];
-  thm_333e4663_colors_surface.set_subscriber_storage(thm_333e4663_colors_surface_subs, 1);
-  static NodeBase* thm_333e4663_radii_lg_subs[1];
-  thm_333e4663_radii_lg.set_subscriber_storage(thm_333e4663_radii_lg_subs, 1);
   static NodeBase* thm_333e4663_spacing_lg_subs[1];
   thm_333e4663_spacing_lg.set_subscriber_storage(thm_333e4663_spacing_lg_subs, 1);
+  static NodeBase* thm_333e4663_colors_surface_subs[1];
+  thm_333e4663_colors_surface.set_subscriber_storage(thm_333e4663_colors_surface_subs, 1);
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
@@ -395,8 +388,10 @@ void bootstrap_runtime() {
     lv_obj_set_style_radius(&id(rw_ref21), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref29), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref31), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref24), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref39), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref41), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref34), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_13([]() {
@@ -444,9 +439,7 @@ void bootstrap_runtime() {
     lv_obj_set_style_pad_row(&id(rw_ref3), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(rw_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
     lv_obj_set_style_pad_row(&id(rw_ref27), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_pad_row(&id(rw_ref24), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_pad_row(&id(rw_ref37), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_pad_row(&id(rw_ref34), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_59([]() {
@@ -491,22 +484,16 @@ void bootstrap_runtime() {
     lv_obj_set_height(&id(rw_ref41), static_cast<lv_coord_t>(_src));
   });
 
-  static Effect binding_85([]() {
-    auto _src = thm_333e4663_colors_surface.get();
-    lv_obj_set_style_bg_color(&id(rw_ref24), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(&id(rw_ref34), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-  });
-
-  static Effect binding_86([]() {
-    auto _src = thm_333e4663_radii_lg.get();
-    lv_obj_set_style_radius(&id(rw_ref24), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_radius(&id(rw_ref34), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-  });
-
-  static Effect binding_87([]() {
+  static Effect binding_84([]() {
     auto _src = thm_333e4663_spacing_lg.get();
     { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(&id(rw_ref24), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(&id(rw_ref24), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(&id(rw_ref24), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(&id(rw_ref24), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
     { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(&id(rw_ref34), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(&id(rw_ref34), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(&id(rw_ref34), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(&id(rw_ref34), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
+  });
+
+  static Effect binding_86([]() {
+    auto _src = thm_333e4663_colors_surface.get();
+    lv_obj_set_style_bg_color(&id(rw_ref24), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(rw_ref34), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};
@@ -529,8 +516,6 @@ void bootstrap_runtime() {
   thm_333e4663_parts_switch_knob.wire(thm_333e4663_parts_switch_knob_src, 1);
   static NodeBase* thm_333e4663_parts_switch_rail_src[] = {&theme_index_333e4663};
   thm_333e4663_parts_switch_rail.wire(thm_333e4663_parts_switch_rail_src, 1);
-  static NodeBase* thm_333e4663_radii_lg_src[] = {&theme_index_333e4663};
-  thm_333e4663_radii_lg.wire(thm_333e4663_radii_lg_src, 1);
   static NodeBase* thm_333e4663_radii_md_src[] = {&theme_index_333e4663};
   thm_333e4663_radii_md.wire(thm_333e4663_radii_md_src, 1);
   static NodeBase* thm_333e4663_sizes_md_font_src[] = {&theme_index_333e4663};
@@ -607,12 +592,10 @@ void bootstrap_runtime() {
   binding_72.wire(binding_72_sources, 1);
   static NodeBase* binding_73_sources[] = {&thm_333e4663_sizes_md_height};
   binding_73.wire(binding_73_sources, 1);
-  static NodeBase* binding_85_sources[] = {&thm_333e4663_colors_surface};
-  binding_85.wire(binding_85_sources, 1);
-  static NodeBase* binding_86_sources[] = {&thm_333e4663_radii_lg};
+  static NodeBase* binding_84_sources[] = {&thm_333e4663_spacing_lg};
+  binding_84.wire(binding_84_sources, 1);
+  static NodeBase* binding_86_sources[] = {&thm_333e4663_colors_surface};
   binding_86.wire(binding_86_sources, 1);
-  static NodeBase* binding_87_sources[] = {&thm_333e4663_spacing_lg};
-  binding_87.wire(binding_87_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
@@ -624,7 +607,6 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&thm_333e4663_parts_switch_indicator);
   Scheduler::instance().schedule(&thm_333e4663_parts_switch_knob);
   Scheduler::instance().schedule(&thm_333e4663_parts_switch_rail);
-  Scheduler::instance().schedule(&thm_333e4663_radii_lg);
   Scheduler::instance().schedule(&thm_333e4663_radii_md);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_font);
   Scheduler::instance().schedule(&thm_333e4663_sizes_md_height);
@@ -663,9 +645,8 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_68);
   Scheduler::instance().schedule(&binding_72);
   Scheduler::instance().schedule(&binding_73);
-  Scheduler::instance().schedule(&binding_85);
+  Scheduler::instance().schedule(&binding_84);
   Scheduler::instance().schedule(&binding_86);
-  Scheduler::instance().schedule(&binding_87);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -1008,7 +989,7 @@ exports[`popup-multi-type-device > popup-multi-type-device 1`] = `
   platformio_options:
     build_flags:
       - -DUSE_LVGL_FONT
-      - -DESPCOMPOSE_MAX_NODES=83
+      - -DESPCOMPOSE_MAX_NODES=81
 esp32:
   board: esp32dev
   framework:
@@ -1366,25 +1347,33 @@ lvgl:
                           - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref23), LV_OBJ_FLAG_HIDDEN);"
                         width: 100%
                         height: 100%
-                        bg_color: "0x000000"
-                        bg_opa: 50%
                         border_width: 0
                         pad_all: 0
+                        bg_color: "0x000000"
+                        bg_opa: 50%
+                        scrollbar_mode: 'OFF'
+                        blur_backdrop: true
+                        blur_quality: AUTO
+                        blur_radius: 4
                         widgets:
                           - obj:
-                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                              bg_opa: COVER
-                              radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
-                              border_width: 0
-                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
                               width: 85%
                               height: SIZE_CONTENT
                               align: CENTER
+                              shadow_color: "0x000000"
+                              shadow_opa: 25%
+                              shadow_ofs_x: 6
+                              shadow_ofs_y: 6
+                              shadow_width: 6
+                              shadow_spread: 0
+                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               scrollbar_mode: 'OFF'
+                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                              bg_opa: 99%
                               layout:
                                 type: flex
                                 flex_flow: COLUMN
-                                pad_row: 0
                               id: rw_ref24
                               widgets:
                                 - obj:
@@ -1506,25 +1495,33 @@ lvgl:
                           - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref33), LV_OBJ_FLAG_HIDDEN);"
                         width: 100%
                         height: 100%
-                        bg_color: "0x000000"
-                        bg_opa: 50%
                         border_width: 0
                         pad_all: 0
+                        bg_color: "0x000000"
+                        bg_opa: 50%
+                        scrollbar_mode: 'OFF'
+                        blur_backdrop: true
+                        blur_quality: AUTO
+                        blur_radius: 4
                         widgets:
                           - obj:
-                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                              bg_opa: COVER
-                              radius: !lambda "return espcompose::thm_333e4663_radii_lg.get();"
-                              border_width: 0
-                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
                               width: 85%
                               height: SIZE_CONTENT
                               align: CENTER
+                              shadow_color: "0x000000"
+                              shadow_opa: 25%
+                              shadow_ofs_x: 6
+                              shadow_ofs_y: 6
+                              shadow_width: 6
+                              shadow_spread: 0
+                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               scrollbar_mode: 'OFF'
+                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                              bg_opa: 99%
                               layout:
                                 type: flex
                                 flex_flow: COLUMN
-                                pad_row: 0
                               id: rw_ref34
                               widgets:
                                 - obj:

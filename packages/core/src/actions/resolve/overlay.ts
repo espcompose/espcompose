@@ -21,6 +21,7 @@ import {
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from '../../hooks/useOverlay';
 import { CLOSURE_INDEX } from '../closure/symbols';
+import { walkActionTree } from './walk';
 
 /** Shape of an OverlayController's hidden symbol-keyed internal fields. */
 interface OverlayControllerInternal {
@@ -47,14 +48,13 @@ export function resolveOverlayControllerRefs(
   refBindings?: Record<string, unknown>,
 ): void {
   if (!refBindings) return;
-  for (let i = 0; i < actions.length; i++) {
+
+  walkActionTree(actions, (actions, i) => {
     const action = actions[i];
     if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
         if (ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]) {
-          // Replace overlay_show with script_execute — the lifecycle script
-          // handles show → delay → hide.
           actions[i] = irScriptExecute(ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID], {
             closureIndex: ctrl[CLOSURE_INDEX],
           });
@@ -65,12 +65,11 @@ export function resolveOverlayControllerRefs(
           delete action.controllerRef;
         }
       }
+      return i + 1;
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternal | undefined;
       if (ctrl) {
         if (ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]) {
-          // Replace overlay_hide with [script_stop, overlay_hide]:
-          // stop any running auto-hide timer, then immediately hide.
           const resolvedHide = irOverlayHide(
             ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey,
             ctrl[OVERLAY_Z_ORDER] ?? action.zOrder,
@@ -79,20 +78,17 @@ export function resolveOverlayControllerRefs(
             irScriptStop(ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]),
             resolvedHide,
           );
-          i++; // skip the newly inserted overlay_hide
+          return i + 2; // skip both newly inserted actions
         } else {
           action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
           action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
           delete action.controllerRef;
         }
       }
-    } else if (action.kind === 'action:if') {
-      resolveOverlayControllerRefs(action.then, refBindings);
-      if (action.else) resolveOverlayControllerRefs(action.else, refBindings);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      resolveOverlayControllerRefs(action.then, refBindings);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 /**

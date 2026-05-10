@@ -20,6 +20,7 @@ import { IR_INT } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from '../lowering';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
 import { irTypeToCpp } from '../lowering';
+import { lowerAnimationStartAction, lowerAnimationStopAction } from '../lvgl/animation-lowering.js';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -600,6 +601,12 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         `Unresolved controller_method_call action (controllerRef: ${action.controllerRef}, ` +
         `method: ${action.methodName}). Controller method calls must be resolved before lowering.`,
       );
+
+    case 'action:animation_start':
+      return { lambda: lambdaMarker(lowerAnimationStartAction(action.animationId)) };
+
+    case 'action:animation_stop':
+      return { lambda: lambdaMarker(lowerAnimationStopAction(action.animationId)) };
   }
 }
 

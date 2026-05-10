@@ -61,6 +61,7 @@ export function compileActionBody(
     overlayControllerRefs: new Set(),
     scriptHandleRefs: new Set(),
     controllerRefs: new Set(),
+    animationControllerRefs: new Set(),
     scalarCaptures: new Map(),
   };
 
@@ -88,6 +89,7 @@ export function compileActionBody(
     overlayControllerRefs: ctx.overlayControllerRefs,
     scriptHandleRefs: ctx.scriptHandleRefs,
     controllerRefs: ctx.controllerRefs,
+    animationControllerRefs: ctx.animationControllerRefs,
     scalarCaptures: ctx.scalarCaptures,
   };
 }

@@ -33,6 +33,7 @@ import { throwCompileTimeOnly } from '../errors';
 import { findClosureDescriptor } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
 import { CLOSURE_INDEX } from '../actions';
+import { walkActionTree } from '../actions/resolve/walk';
 import {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
@@ -497,9 +498,8 @@ function resolveControllerRefsParameterized(
   refBindings: Record<string, unknown>,
   paramRefMap: Map<string, Map<string, IRScriptParamRef>>,
 ): void {
-  for (let i = 0; i < actions.length; i++) {
+  walkActionTree(actions, (actions, i) => {
     const action = actions[i];
-
     if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
@@ -509,6 +509,7 @@ function resolveControllerRefsParameterized(
         action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
         delete action.controllerRef;
       }
+      return i + 1;
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
@@ -516,13 +517,10 @@ function resolveControllerRefsParameterized(
         action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
         delete action.controllerRef;
       }
-    } else if (action.kind === 'action:if') {
-      resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
-      if (action.else) resolveControllerRefsParameterized(action.else, refBindings, paramRefMap);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 /**
@@ -531,19 +529,17 @@ function resolveControllerRefsParameterized(
  * closure-row dereference.
  */
 function rewriteScalarParamRefs(actions: IRActionNode[]): void {
-  for (const action of actions) {
+  walkActionTree(actions, (actions, i) => {
+    const action = actions[i];
     if (action.kind === 'action:delay') {
       const dur = action.duration;
       if (typeof dur === 'object' && dur.kind === 'script_param' && !dur.name.startsWith('closure.')) {
         dur.name = `closure.${dur.name}`;
       }
-    } else if (action.kind === 'action:if') {
-      rewriteScalarParamRefs(action.then);
-      if (action.else) rewriteScalarParamRefs(action.else);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      rewriteScalarParamRefs(action.then);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 

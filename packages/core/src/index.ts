@@ -32,6 +32,7 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
   VisibilityController,
+  AnimationController,
 } from './types';
 export { useRef, isRef } from './types';
 
@@ -190,6 +191,8 @@ export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVi
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
+export { useAnimation } from './hooks/useAnimation';
+export type { AnimationConfig } from './hooks/useAnimation';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 
@@ -222,6 +225,8 @@ export { createFontToken, isFontToken } from './lvgl/theme/font-token';
 export type { FontToken, FontBpp, FontTokenExtras, FontTokenOptions } from './lvgl/theme/font-token';
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
+export { isDurationValue, parseDurationToMs } from './lvgl/style/duration';
+export type { DurationValue } from './lvgl/style/duration';
 export { useThemeSettings } from './lvgl/theme/settings-context';
 
 // ────────────────────────────────────────────────────────────────────────────

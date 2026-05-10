@@ -34,6 +34,7 @@ function makeIR(pages: IRWidget[], widgets: IRWidget[] = []): SemanticIR {
     pages,
     widgets,
     overlays: [],
+    animations: [],
   };
   return {
     kind: 'semantic_ir',

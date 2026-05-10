@@ -35,6 +35,7 @@ function makeUI(rotation?: number): IRUIRegistry {
     pages: [],
     widgets: [],
     overlays: [],
+    animations: [],
   };
 }
 

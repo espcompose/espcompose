@@ -26,6 +26,7 @@ import type { IRActionNode } from '../ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { resolveAnimationControllerRefs, cleanAnimationControllerRefs } from '../actions';
 import { generateId } from '../id';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
@@ -304,6 +305,9 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
         // Resolve deferred overlay controller refs — replace placeholder
         // templateKey/instanceIndex with actual values from the bound controller.
         resolveOverlayControllerRefs(rawActions, fn.__refBindings);
+        // Resolve deferred animation controller refs — replace placeholder
+        // animationId with actual value from the bound AnimationController.
+        resolveAnimationControllerRefs(rawActions, fn.__refBindings);
         // Patch IRScriptExecute.closureIndex from bound ScriptHandles.
         resolveScriptHandleClosureIndex(rawActions, fn.__refBindings);
         // Remove resolved overlay controller objects from refBindings so they
@@ -312,6 +316,7 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
         if (fn.__refBindings) {
           cleanControllerRefs(fn.__refBindings);
           cleanOverlayControllerRefs(fn.__refBindings);
+          cleanAnimationControllerRefs(fn.__refBindings);
           cleanScriptHandleRefs(fn.__refBindings);
         }
         overlayActionCapture.push({

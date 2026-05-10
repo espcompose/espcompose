@@ -130,6 +130,16 @@ export declare const OVERLAY_BRAND: unique symbol;
 export declare const CONTROLLER_BRAND: unique symbol;
 
 /**
+ * Phantom brand for animation controllers.
+ *
+ * Types branded with ANIMATION_BRAND represent compile-time animation
+ * controllers created by `useAnimation()`. The compiler detects
+ * `controller.start()` and `controller.stop()` calls on ANIMATION_BRAND-typed
+ * values and emits `animation_start` / `animation_stop` IR action nodes.
+ */
+export declare const ANIMATION_BRAND: unique symbol;
+
+/**
  * Controller returned by `useVisibility()` or `useTransientOverlay()`.
  *
  * Provides `show()` and `hide()` methods that are compile-time markers
@@ -146,6 +156,22 @@ export interface VisibilityController<P = void> {
   show(...args: P extends void ? [] : [params: P]): void;
   /** Hide the target (hide LVGL widget or overlay). */
   hide(): void;
+}
+
+/**
+ * Controller returned by `useAnimation()`.
+ *
+ * Provides `start()` and `stop()` methods that are compile-time markers
+ * — the action compiler recognises calls on ANIMATION_BRAND-typed values
+ * and emits `animation_start` / `animation_stop` IR action nodes.
+ */
+export interface AnimationController {
+  readonly [BINDING_BRAND]?: true;
+  readonly [ANIMATION_BRAND]?: true;
+  /** Start or restart the animation. Valid inside trigger handlers. */
+  start(): void;
+  /** Stop the animation and reset to start value. Valid inside trigger handlers. */
+  stop(): void;
 }
 
 /**

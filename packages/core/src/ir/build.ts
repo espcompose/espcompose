@@ -229,6 +229,7 @@ function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRUIRegistr
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
     overlays: resolveOverlayTiers(tree.overlayTiers, ctx),
+    animations: [],
   };
 }
 

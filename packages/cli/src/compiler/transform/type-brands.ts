@@ -31,6 +31,7 @@ const BINDING_BRAND_RE = /^__@BINDING_BRAND@\d+$/;
 const THEME_BRAND_RE = /^__@THEME_BRAND@\d+$/;
 const OVERLAY_BRAND_RE = /^__@OVERLAY_BRAND@\d+$/;
 const CONTROLLER_BRAND_RE = /^__@CONTROLLER_BRAND@\d+$/;
+const ANIMATION_BRAND_RE = /^__@ANIMATION_BRAND@\d+$/;
 
 /**
  * Check whether an alias symbol was declared inside `@espcompose/core`.
@@ -196,6 +197,22 @@ export function hasOverlayBrand(type: ts.Type): boolean {
 export function hasControllerBrand(type: ts.Type): boolean {
   for (const prop of type.getProperties()) {
     if (CONTROLLER_BRAND_RE.test(prop.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check whether a type carries the ANIMATION_BRAND unique-symbol property.
+ *
+ * Animation controllers created by `useAnimation()` are branded objects whose
+ * `start()` / `stop()` methods compile to animation_start / animation_stop
+ * IR action nodes.
+ */
+export function hasAnimationBrand(type: ts.Type): boolean {
+  for (const prop of type.getProperties()) {
+    if (ANIMATION_BRAND_RE.test(prop.name)) {
       return true;
     }
   }

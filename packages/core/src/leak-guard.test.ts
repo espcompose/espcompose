@@ -82,6 +82,7 @@ const LEAKS: readonly Leak[] = [
     name: 'ESPHome duration string format',
     pattern: /'\d+ms'|'\d+s'|'\d+min'/,
     reason: 'Durations are { ms: number } in IR; target formats ESPHome strings.',
+    exemptFiles: ['lvgl/style/duration.ts'],
   },
 ];
 

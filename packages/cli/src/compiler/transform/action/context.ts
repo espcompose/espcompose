@@ -42,6 +42,8 @@ export interface ActionCompileResult {
   scriptHandleRefs: Set<string>;
   /** Set of controller variable names that need to be in __refBindings. */
   controllerRefs: Set<string>;
+  /** Set of animation controller variable names that need to be in __refBindings. */
+  animationControllerRefs: Set<string>;
   /**
    * Scalar captures: maps captured variable name → IRType.
    * Populated when the action compiler encounters a non-literal identifier
@@ -79,6 +81,8 @@ export interface ActionCompilerContext {
   scriptHandleRefs: Set<string>;
   /** Set of controller variable names encountered in controller method calls. */
   controllerRefs: Set<string>;
+  /** Set of animation controller variable names encountered in animation actions. */
+  animationControllerRefs: Set<string>;
   /**
    * Scalar captures: maps captured variable name → IRType.
    * Populated when the action compiler encounters a non-literal identifier

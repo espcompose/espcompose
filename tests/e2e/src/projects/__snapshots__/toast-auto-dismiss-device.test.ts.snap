@@ -234,7 +234,6 @@ void bootstrap_runtime() {
     lv_obj_set_style_radius(&id(rw_ref7), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref10), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_radius(&id(rw_ref13), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_radius(&id(rw_ref17), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_5([]() {
@@ -265,8 +264,6 @@ void bootstrap_runtime() {
     auto _src = thm_333e4663_spacing_md.get();
     lv_obj_set_style_pad_row(&id(rw_ref9), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_pad_row(&id(rw_ref3), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(&id(rw_ref17), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(&id(rw_ref17), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(&id(rw_ref17), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(&id(rw_ref17), _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
-    lv_obj_set_style_pad_bottom(&id(rw_ref17), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_34([]() {
@@ -297,7 +294,7 @@ void bootstrap_runtime() {
     lv_obj_set_style_bg_color(&id(rw_ref17), thm_333e4663_colors_surface.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
-  static Effect binding_44([]() {
+  static Effect binding_41([]() {
     lv_obj_set_style_pad_bottom(&id(rw_ref16), static_cast<lv_coord_t>(memo_1.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
@@ -365,8 +362,8 @@ void bootstrap_runtime() {
   binding_39.wire(binding_39_sources, 1);
   static NodeBase* binding_40_sources[] = {&thm_333e4663_colors_surface};
   binding_40.wire(binding_40_sources, 1);
-  static NodeBase* binding_44_sources[] = {&memo_1};
-  binding_44.wire(binding_44_sources, 1);
+  static NodeBase* binding_41_sources[] = {&memo_1};
+  binding_41.wire(binding_41_sources, 1);
 
   Scheduler::instance().schedule(&thm_333e4663_colors_background);
   Scheduler::instance().schedule(&thm_333e4663_colors_primary_bg);
@@ -400,7 +397,7 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_38);
   Scheduler::instance().schedule(&binding_39);
   Scheduler::instance().schedule(&binding_40);
-  Scheduler::instance().schedule(&binding_44);
+  Scheduler::instance().schedule(&binding_41);
   Scheduler::instance().set_pre_flush([]() {
     lv_obj_enable_style_refresh(false);
   });
@@ -936,16 +933,16 @@ lvgl:
                         id: rw_ref16
                         widgets:
                           - obj:
-                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                              bg_opa: 90%
-                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                               border_width: 0
-                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
                               width: 90%
                               height: SIZE_CONTENT
                               align: BOTTOM_MID
-                              pad_bottom: !lambda "return espcompose::thm_333e4663_spacing_md.get();"
+                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                              bg_opa: 25%
+                              blur_backdrop: true
                               scrollbar_mode: 'OFF'
+                              blur_quality: AUTO
+                              blur_radius: 4
                               layout:
                                 type: flex
                                 flex_flow: ROW

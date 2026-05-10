@@ -17,6 +17,7 @@ import { assertHookContext } from './useState';
 import { throwCompileTimeOnly } from '../errors';
 import type { ScriptHandle } from './useScript';
 import type { BINDING_BRAND, CONTROLLER_BRAND } from '../types';
+import { CONTROLLER_SCRIPTS } from '../actions/resolve/symbols';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ export type Controller<T> = T & {
 
 /** Hidden fields on a controller object, read at serialization time. */
 export interface ControllerInternal {
-  __scripts: Record<string, ScriptHandle>;
+  [CONTROLLER_SCRIPTS]: Record<string, ScriptHandle>;
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
@@ -55,7 +56,7 @@ export interface ControllerInternal {
  * Each method in the controller maps to a ScriptHandle. When the action
  * compiler encounters `ctrl.method()`, it emits `controller_method_call` IR.
  * At serialization time, the resolver looks up the ScriptHandle from
- * `__scripts` and replaces with `script_execute`.
+ * `CONTROLLER_SCRIPTS` and replaces with `script_execute`.
  *
  * Must be called inside a function component body (render pass).
  */
@@ -73,7 +74,7 @@ export function useController<T>(
 
   const controller = {
     ...methods,
-    __scripts: scripts as unknown as Record<string, ScriptHandle>,
+    [CONTROLLER_SCRIPTS]: scripts as unknown as Record<string, ScriptHandle>,
   } as unknown as Controller<T>;
 
   return controller;

@@ -10,3 +10,5 @@ export { translateLvglStyleValues } from './style-value-translate';
 
 export { extractPaintScenesFromIR, transformEcCanvasWidgets, injectEcCanvasDrawActions } from './canvas-lowering';
 export type { EcCanvasPaintScene, PaintPrimitive } from './canvas-lowering';
+
+export { lowerAnimationToCpp, lowerAnimationStartAction, lowerAnimationStopAction } from './animation-lowering';

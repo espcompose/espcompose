@@ -10,17 +10,18 @@
 import type { IRActionNode } from '../../ir/action-types';
 import { irScriptExecute } from '../../ir/action-types';
 import type { ScriptHandle } from '../../hooks/useScript';
-import { RESOLVE_METHOD_CALL } from './symbols';
+import { RESOLVE_METHOD_CALL, CONTROLLER_SCRIPTS } from './symbols';
 import type { MethodCallResolvable } from './symbols';
 import { CLOSURE_INDEX } from '../closure/symbols';
+import { walkActionTree } from './walk';
 
 /** Shape of a controller's hidden internal fields. */
 interface ControllerInternal {
-  __scripts: Record<string, ScriptHandle & { [CLOSURE_INDEX]?: number }>;
+  [CONTROLLER_SCRIPTS]: Record<string, ScriptHandle & { [CLOSURE_INDEX]?: number }>;
 }
 
 function isController(v: unknown): v is ControllerInternal {
-  return v != null && typeof v === 'object' && '__scripts' in (v as Record<string, unknown>);
+  return v != null && typeof v === 'object' && CONTROLLER_SCRIPTS in (v as object);
 }
 
 function hasMethodCallResolver(v: unknown): v is MethodCallResolvable {
@@ -32,7 +33,7 @@ function hasMethodCallResolver(v: unknown): v is MethodCallResolvable {
  *
  * Walks the action tree and replaces `controller_method_call` placeholders with
  * `script_execute` actions using the ScriptHandle found in the controller's
- * `__scripts` map.
+ * `CONTROLLER_SCRIPTS` map.
  */
 export function resolveControllerMethodCalls(
   actions: IRActionNode[],
@@ -40,34 +41,28 @@ export function resolveControllerMethodCalls(
 ): void {
   if (!refBindings) return;
 
-  for (let i = 0; i < actions.length; i++) {
+  walkActionTree(actions, (actions, i) => {
     const action = actions[i];
-
     if (action.kind === 'action:controller_method_call') {
       const ctrl = refBindings[action.controllerRef];
       if (isController(ctrl)) {
-        const handle = ctrl.__scripts[action.methodName];
+        const handle = ctrl[CONTROLLER_SCRIPTS][action.methodName];
         if (handle) {
           actions[i] = irScriptExecute(handle.id, {
             userArgs: action.args,
             closureIndex: (handle as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX],
           });
         }
+        return i + 1;
       } else if (hasMethodCallResolver(ctrl)) {
-        // Delegate to the value's own resolution protocol. The returned
-        // actions are domain-specific intermediate IR (e.g. overlay_show)
-        // that subsequent resolver passes finalise.
         const replacement = ctrl[RESOLVE_METHOD_CALL](action.methodName, action.controllerRef);
         actions.splice(i, 1, ...replacement);
-        i--; // re-visit newly inserted actions
+        return i; // re-visit newly inserted actions
       }
-    } else if (action.kind === 'action:if') {
-      resolveControllerMethodCalls(action.then, refBindings);
-      if (action.else) resolveControllerMethodCalls(action.else, refBindings);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      resolveControllerMethodCalls(action.then, refBindings);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 /**
@@ -77,7 +72,7 @@ export function resolveControllerMethodCalls(
  * refBindings must be removed so they don't corrupt lambda strings during
  * ref resolution (controller.toString() → '[object Object]' would break).
  *
- * Removes both standard `useController()` results (`__scripts`) and any
+ * Removes both standard `useController()` results (`CONTROLLER_SCRIPTS`) and any
  * value implementing the `RESOLVE_METHOD_CALL` protocol, so new protocol
  * implementors are cleaned up automatically without a dedicated clean function.
  */

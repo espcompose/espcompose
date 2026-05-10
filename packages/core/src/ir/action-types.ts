@@ -299,7 +299,9 @@ export type IRActionNode =
   | IRLambdaAction
   | IROverlayShowAction
   | IROverlayHideAction
-  | IRControllerMethodCallAction;
+  | IRControllerMethodCallAction
+  | IRAnimationStartAction
+  | IRAnimationStopAction;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -489,5 +491,33 @@ export interface IRControllerMethodCallAction {
 
 export function irControllerMethodCall(controllerRef: string, methodName: string, args?: Record<string, IRExpression>): IRControllerMethodCallAction {
   return { kind: 'action:controller_method_call', controllerRef, methodName, ...(args && { args }) };
+}
+
+// ── Animation Actions ──────────────────────────────────────────────────────
+
+/** Start or restart a widget property animation. */
+export interface IRAnimationStartAction {
+  kind: 'action:animation_start';
+  /** Animation ID — resolved from the controller's ANIMATION_ID symbol at serialization. */
+  animationId: string;
+  /** Controller variable name — used for deferred resolution at serialization. */
+  controllerRef?: string;
+}
+
+/** Stop a widget property animation and reset to start value. */
+export interface IRAnimationStopAction {
+  kind: 'action:animation_stop';
+  /** Animation ID — resolved from the controller's ANIMATION_ID symbol at serialization. */
+  animationId: string;
+  /** Controller variable name — used for deferred resolution at serialization. */
+  controllerRef?: string;
+}
+
+export function irAnimationStart(animationId: string, controllerRef?: string): IRAnimationStartAction {
+  return { kind: 'action:animation_start', animationId, ...(controllerRef ? { controllerRef } : {}) };
+}
+
+export function irAnimationStop(animationId: string, controllerRef?: string): IRAnimationStopAction {
+  return { kind: 'action:animation_stop', animationId, ...(controllerRef ? { controllerRef } : {}) };
 }
 

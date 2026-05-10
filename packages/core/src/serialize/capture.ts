@@ -13,6 +13,7 @@ import type { IRActionNode } from '../ir/action-types';
 import type { IRClosureReadExpression } from '../ir/expr-types';
 import { irLiteralExpression } from '../ir/expr-builders';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
+import { resolveAnimationControllerRefs, cleanAnimationControllerRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
 
@@ -243,6 +244,8 @@ export function serializeValue(v: unknown): unknown {
     resolveControllerMethodCalls(actions as IRActionNode[], fn.__refBindings);
     // Resolve deferred overlay controller refs (templateKey/instanceIndex)
     resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
+    // Resolve deferred animation controller refs (animationId)
+    resolveAnimationControllerRefs(actions as IRActionNode[], fn.__refBindings);
     // Patch IRScriptExecute.closureIndex for user-written scriptHandle calls
     // by reading CLOSURE_INDEX from the bound ScriptHandle in __refBindings.
     resolveScriptHandleClosureIndex(actions as IRActionNode[], fn.__refBindings);
@@ -253,6 +256,7 @@ export function serializeValue(v: unknown): unknown {
     if (fn.__refBindings) {
       cleanControllerRefs(fn.__refBindings);
       cleanOverlayControllerRefs(fn.__refBindings);
+      cleanAnimationControllerRefs(fn.__refBindings);
       cleanScriptHandleRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }

@@ -609,6 +609,9 @@ function buildRefNameSet(
   for (const key of result.controllerRefs) {
     refNameSet.add(key);
   }
+  for (const key of result.animationControllerRefs) {
+    refNameSet.add(key);
+  }
   // Scalar captures need to be in __refBindings so the runtime can read
   // their values and create closure-table entries.
   for (const key of result.scalarCaptures.keys()) {
@@ -666,6 +669,12 @@ function collectRefNamesFromActions(
           break;
         case 'action:controller_method_call':
           names.add(action.controllerRef);
+          break;
+        case 'action:animation_start':
+        case 'action:animation_stop':
+          if ('controllerRef' in action && action.controllerRef) {
+            names.add(action.controllerRef);
+          }
           break;
         case 'action:delay':
           // If duration is an IRScriptParamRef, its name is a captured

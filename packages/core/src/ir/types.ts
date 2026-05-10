@@ -14,6 +14,7 @@ import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
 import type { ExprType } from './expr-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
+import type { AttachAnimationContribution } from './contribution-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition
@@ -257,6 +258,8 @@ export interface IRUIRegistry {
   readonly widgets: IRWidget[];
   /** Overlay subtrees grouped by zOrder, ascending. */
   readonly overlays: IROverlayTier[];
+  /** Explicit property animations attached to widgets via useAnimation(). */
+  readonly animations: AttachAnimationContribution[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────

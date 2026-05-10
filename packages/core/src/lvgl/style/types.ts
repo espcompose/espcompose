@@ -13,6 +13,9 @@
 import type { Reactive } from '../../types';
 import type { LvglStyleProps } from '../../generated/components/lvgl';
 import type { FontRef, ImageRef } from '../../component-aliases';
+import type { DurationValue } from './duration';
+export type { DurationValue } from './duration';
+export { isDurationValue, parseDurationToMs } from './duration';
 import type { RefProp } from '../../types';
 import type { HexColor } from '../theme/hex-color';
 
@@ -152,7 +155,7 @@ export interface CssAliasProps {
 
   // ── Animation ─────────────────────────────────────────────────────────
   /** Maps to `animTime`. */
-  animationDuration?: Reactive<number | string>;
+  animationDuration?: Reactive<DurationValue>;
 
   // ── Background gradient ───────────────────────────────────────────────
   /** Maps to `bgGrad`. */
