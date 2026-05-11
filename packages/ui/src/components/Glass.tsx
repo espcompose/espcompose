@@ -27,10 +27,10 @@ export const Glass = createLvglContainerWidget(
           ...props.style,
           backgroundColor: bgColor,
           backgroundOpacity: '25%',
-          backdropBlur: true,
           scrollbarMode: 'off',
-          blurQuality: "auto",
-          blurRadius: 4
+          //backdropBlur: true,
+          //blurQuality: "auto",
+          //blurRadius: 4
         }}
       >
         {props.children}

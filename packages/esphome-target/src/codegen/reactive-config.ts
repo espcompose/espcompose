@@ -546,6 +546,7 @@ export function injectReactiveBindingsRuntime(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   entities: any[],
   runtimeConfig: ReactiveRuntimeConfig,
+  options?: { perf?: boolean },
 ): Record<string, unknown> {
   // Step 1: Import HA sensors (sensor imports only, no native widget triggers)
   let result = injectHASensorImports(config, entities);
@@ -575,6 +576,12 @@ export function injectReactiveBindingsRuntime(
   // capacity before any #include.
   const maxNodes = computeMaxNodes(runtimeConfig);
   result = injectBuildFlags(result, [`-DESPCOMPOSE_MAX_NODES=${maxNodes}`]);
+
+  // Step 7: Inject performance instrumentation defines when --perf is set.
+  // ESPCOMPOSE_PERF gates timing instrumentation in the reactive runtime.
+  if (options?.perf) {
+    result = injectBuildFlag(result, 'ESPCOMPOSE_PERF');
+  }
 
   return result;
 }
@@ -615,7 +622,7 @@ function injectRuntimeIncludes(config: Record<string, unknown>): Record<string, 
   // The espcompose platform config is a top-level key.
   if (!result.espcompose) {
     result.espcompose = {
-      flush_budget_us: 2000,
+      flush_budget_us: 10000,
     };
   }
 

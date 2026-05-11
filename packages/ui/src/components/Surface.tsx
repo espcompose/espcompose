@@ -26,7 +26,7 @@ export const Surface = createLvglContainerWidget(
         style={{
           ...props.style,
           backgroundColor: bgColor,
-          backgroundOpacity: '99%',
+          backgroundOpacity: 'opaque', // '99%',
           scrollbarMode: 'off',
         }}
       >

@@ -65,7 +65,7 @@ EspcomposeRuntimeComponent = espcompose_ns.class_(
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(EspcomposeRuntimeComponent),
-        cv.Optional(CONF_FLUSH_BUDGET_US, default=2000): cv.int_range(
+        cv.Optional(CONF_FLUSH_BUDGET_US, default=10000): cv.int_range(
             min=100, max=100000
         ),
     }
@@ -92,6 +92,10 @@ async def to_code(config):
         config[CONF_ID], config[CONF_FLUSH_BUDGET_US]
     )
     await cg.register_component(var, config)
+
+    # Note: LVGL's perf monitor (LV_USE_PERF_MONITOR) requires SYSMON which
+    # requires OBSERVER — too many transitive deps to enable cleanly.
+    # Our own ESPCOMPOSE_PERF instrumentation (--perf flag) is sufficient.
 
     # Note: bootstrap_runtime() is invoked from EspcomposeRuntimeComponent::setup()
     # rather than emitted inline here. This ensures it runs *after* ESPHome has

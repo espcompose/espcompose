@@ -63,7 +63,7 @@ describe('runtime component yaml wiring', () => {
     expect(externalComps?.[0]?.components).toEqual(['espcompose']);
 
     // espcompose platform config is top-level (not nested under esphome)
-    expect(espcomposeConfig?.flush_budget_us).toBe(2000);
+    expect(espcomposeConfig?.flush_budget_us).toBe(10000);
     expect(esphome.espcompose).toBeUndefined();
     expect(esphome.external_components).toBeUndefined();
 

@@ -69,7 +69,15 @@ function restoreLambdaMarkers(value: unknown): unknown {
  * that needs `auto& closure = ...;` available in every lambda action.
  */
 function restoreLambdaMarkersWithPrefix(value: unknown, prefix: string): unknown {
-  if (isLambdaMarker(value)) return createYamlLambda(`${prefix}${value.__lambda__}`);
+  if (isLambdaMarker(value)) {
+    // Only prepend the closure dereference when the lambda body actually
+    // references a closure field.  Lambdas that never touch `closure.*`
+    // don't need it — the C++ compiler optimises it away, but skipping it
+    // keeps the generated YAML cleaner and easier to read.
+    const body = value.__lambda__;
+    const needsPrefix = body.includes('closure.');
+    return createYamlLambda(needsPrefix ? `${prefix}${body}` : body);
+  }
   if (Array.isArray(value)) return value.map((v) => restoreLambdaMarkersWithPrefix(v, prefix));
   if (value !== null && typeof value === 'object') {
     const obj: Record<string, unknown> = {};
@@ -361,6 +369,7 @@ function replaceOverlayActionsInLvglTree(
 export function lowerToYamlConfig(
   ir: SemanticIR,
   cppResult: CppBackendResult | null,
+  options?: { perf?: boolean },
 ): Record<string, unknown> {
   // Use side-channel arrays as authoritative source for reactive data
   // (hook-registered nodes may not appear in the config tree)
@@ -427,6 +436,7 @@ export function lowerToYamlConfig(
       }
       return sigMap;
     })(),
+    perf: options?.perf,
   };
 
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
@@ -506,6 +516,7 @@ export function lowerToYamlConfig(
       bindings,
       remappedEntities,
       cppResult.runtimeConfig,
+      { perf: options?.perf },
     );
   } else {
     finalConfig = injectHASensorImports(loweredConfig, remappedEntities);

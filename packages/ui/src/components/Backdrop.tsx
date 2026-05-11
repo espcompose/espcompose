@@ -28,9 +28,9 @@ export const Backdrop = createLvglContainerWidget(
           backgroundColor: '#000000',
           backgroundOpacity: '50%',
           scrollbarMode: 'off',
-          backdropBlur: true,
-          blurQuality: 'auto',
-          blurRadius: 4,
+          //backdropBlur: true,
+          //blurQuality: 'auto',
+          //blurRadius: 4,
         }}
       >
         {props.children}

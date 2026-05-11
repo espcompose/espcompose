@@ -33,6 +33,8 @@ export interface ActionLoweringContext {
   reactiveGlobalIds: Set<string>;
   /** Signal index → name map for resolving signal_read in action conditions. */
   signalNames: Map<number, string>;
+  /** When true, wrap action lambdas with performance timing instrumentation. */
+  perf?: boolean;
   /**
    * When lowering inside an `IRScript` body, maps each `ref` slot binding name
    * to the literal ESPHome ID token to emit. Single-instance scripts populate
@@ -361,8 +363,20 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       const closureBoundSlot = findClosureBoundRefSlot(action, ctx);
       if (closureBoundSlot) {
         return synthesizeNativeAsLambda(action, closureBoundSlot, ctx);
-      }
-      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config, ctx) };
+      }      // ── Perf instrumentation for visibility changes ─────────────
+      // YAML-level actions can't carry inline timing. Rewrite
+      // lvgl.widget.update with `hidden` to a lambda when perf is on.
+      if (ctx.perf && action.domain === 'lvgl' && action.operation === 'widget.update' &&
+          typeof action.config === 'object' && action.config !== null && 'hidden' in action.config) {
+        const widgetId = (action.config as Record<string, unknown>).id as string;
+        const hidden = (action.config as Record<string, unknown>).hidden;
+        const flag = hidden ? 'lv_obj_add_flag' : 'lv_obj_clear_flag';
+        return { lambda: lambdaMarker(
+          `uint32_t _t0 = millis(); ` +
+          `${flag}(id(${widgetId}), LV_OBJ_FLAG_HIDDEN); ` +
+          `ESP_LOGI("ec_perf", "widget.update hidden=${hidden ? 'true' : 'false'}(%s): %lums", "${escapeStringForCpp(widgetId)}", (unsigned long)(millis() - _t0));`
+        )};
+      }      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config, ctx) };
     }
 
     case 'action:ha_service': {
@@ -477,6 +491,13 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       return { 'script.stop': { id: action.scriptId } };
 
     case 'action:theme_select':
+      if (ctx.perf) {
+        return { lambda: lambdaMarker(
+          `uint32_t _t0 = millis(); ` +
+          `espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}"); ` +
+          `ESP_LOGI("ec_perf", "theme_select(%s): %lums", "${escapeStringForCpp(action.themeName)}", (unsigned long)(millis() - _t0));`
+        )};
+      }
       return { lambda: lambdaMarker(`espcompose::select_theme_${action.scopeId}("${escapeStringForCpp(action.themeName)}");`) };
 
     case 'action:global_set': {
@@ -581,6 +602,20 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       const indexExpr = typeof action.instanceIndex === 'number'
         ? String(action.instanceIndex)
         : action.instanceIndex.name;
+      if (ctx.perf) {
+        return { lambda: lambdaMarker(
+          `uint32_t _t0 = millis(); ` +
+          `espcompose::${muxSig}.set(${indexExpr}); ` +
+          `uint32_t _t1 = millis(); ` +
+          `espcompose::flush(); ` +
+          `uint32_t _t2 = millis(); ` +
+          `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
+          `lv_obj_move_foreground(id(${overlayId})); ` +
+          `uint32_t _t3 = millis(); ` +
+          `ESP_LOGI("ec_perf", "overlay_show(%s): mux=%lums flush=%lums show=%lums total=%lums", ` +
+          `"${escapeStringForCpp(overlayId)}", (unsigned long)(_t1-_t0), (unsigned long)(_t2-_t1), (unsigned long)(_t3-_t2), (unsigned long)(_t3-_t0));`
+        )};
+      }
       return { lambda: lambdaMarker(
         `espcompose::${muxSig}.set(${indexExpr}); espcompose::flush(); ` +
         `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
@@ -591,6 +626,13 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     case 'action:overlay_hide': {
       // Hide the overlay wrapper — not muxed, same widget across all instances.
       const overlayId = `${action.templateKey}`;
+      if (ctx.perf) {
+        return { lambda: lambdaMarker(
+          `uint32_t _t0 = millis(); ` +
+          `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
+          `ESP_LOGI("ec_perf", "overlay_hide(%s): %lums", "${escapeStringForCpp(overlayId)}", (unsigned long)(millis() - _t0));`
+        )};
+      }
       return { lambda: lambdaMarker(
         `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN);`
       )};
@@ -617,7 +659,69 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
  * in triggers, scripts, etc.).
  */
 export function lowerActionTree(actions: IRActionNode[], ctx: ActionLoweringContext = { reactiveGlobalIds: new Set(), signalNames: new Map() }): unknown[] {
-  return actions.map(a => lowerAction(a, ctx));
+  const lowered = actions.map(a => lowerAction(a, ctx));
+  return mergeAdjacentLambdas(lowered);
+}
+
+// ── Adjacent-lambda merging ──────────────────────────────────────────────
+// Each `{ lambda: ... }` in an ESPHome action list becomes a separate
+// `LambdaAction<>` template instantiation (class, vtable, heap alloc).
+// When consecutive actions are all plain lambdas we merge them into one,
+// wrapping each body in `{ }` for variable-name isolation, separated by
+// newlines for readability.
+//
+// A run is broken whenever:
+//   - a non-lambda action is encountered (delay, script.execute, if, …)
+//   - a lambda body contains `return` — in the original form, subsequent
+//     LambdaActions still execute; in a merged lambda they would not.
+
+function isLambdaAction(v: unknown): v is { lambda: LambdaMarker } {
+  if (v === null || typeof v !== 'object' || !('lambda' in v)) return false;
+  const lam = (v as Record<string, unknown>).lambda;
+  return lam !== null && typeof lam === 'object' && '__lambda__' in (lam as object);
+}
+
+function mergeAdjacentLambdas(actions: unknown[]): unknown[] {
+  if (actions.length <= 1) return actions;
+
+  const result: unknown[] = [];
+  let i = 0;
+
+  while (i < actions.length) {
+    const action = actions[i];
+    if (!isLambdaAction(action)) {
+      result.push(action);
+      i++;
+      continue;
+    }
+
+    // Collect a run of consecutive lambda actions.
+    const run: string[] = [action.lambda.__lambda__];
+    let j = i + 1;
+
+    while (j < actions.length) {
+      // If the last body in the run contains `return`, stop — merging
+      // would make subsequent bodies unreachable.
+      if (/\breturn\b/.test(run[run.length - 1])) break;
+
+      const next = actions[j];
+      if (!isLambdaAction(next)) break;
+
+      run.push(next.lambda.__lambda__);
+      j++;
+    }
+
+    if (run.length === 1) {
+      result.push(action);
+    } else {
+      const merged = run.map(body => `{ ${body} }`).join('\n');
+      result.push({ lambda: lambdaMarker(merged) });
+    }
+
+    i = j;
+  }
+
+  return result;
 }
 
 /**

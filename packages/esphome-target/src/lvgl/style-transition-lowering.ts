@@ -53,18 +53,13 @@ function resolveStylePropConstant(property: string): string {
  * Build the LV_STATE / LV_PART selector constant.
  */
 function buildSelector(part?: string, state?: string): string {
-  const parts: string[] = [];
-  if (part && part !== 'main') {
-    parts.push(`LV_PART_${part.toUpperCase()}`);
-  } else {
-    parts.push('LV_PART_MAIN');
-  }
-  if (state && state !== 'default') {
-    parts.push(`LV_STATE_${state.toUpperCase()}`);
-  } else {
-    parts.push('LV_STATE_DEFAULT');
-  }
-  return parts.join(' | ');
+  const partFlag = part && part !== 'main'
+    ? `LV_PART_${part.toUpperCase()}`
+    : 'LV_PART_MAIN';
+  const stateFlag = state && state !== 'default'
+    ? `LV_STATE_${state.toUpperCase()}`
+    : 'LV_STATE_DEFAULT';
+  return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
 }
 
 // ── Style transition C++ generation ────────────────────────────────────────

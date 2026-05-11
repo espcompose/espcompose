@@ -1244,23 +1244,18 @@ script:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref5_closures[closure_index]; (void)closure;
+          espcompose::scr_ref5_closures[closure_index]; (void)closure; {
           espcompose::sig_ovrl_ref10_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref10),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref10));"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref5_closures[closure_index]; (void)closure;
-          lv_anim_start(&espcompose::anim_ref28);"
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref10)); }
+
+          { lv_anim_start(&espcompose::anim_ref28); }"
   - id: scr_ref29
     parameters:
       closure_index: int
     then:
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          lv_anim_start(&espcompose::anim_ref30);"
+      - lambda: !lambda "lv_anim_start(&espcompose::anim_ref30);"
       - delay: 200ms
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref29_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
 "
 `;

@@ -1612,15 +1612,18 @@ script:
                 format: Popup stack overflow (max=3) — show() ignored
                 level: WARN
           else:
-            - lambda: !lambda "id(g_ref49)[id(g_ref48)] = 0;"
-            - lambda: !lambda "id(g_ref50)[id(g_ref48)] = 0;"
+            - lambda: !lambda "{ id(g_ref49)[id(g_ref48)] = 0; }
+
+                { id(g_ref50)[id(g_ref48)] = 0; }"
             - globals.set:
                 id: g_ref48
                 value: !lambda "return id(g_ref48) + 1;"
-            - lambda: !lambda "espcompose::sig_ovrl_ref17_mux.set(0); espcompose::flush();
-                lv_obj_clear_flag(id(ovrl_ref17), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_move_foreground(id(ovrl_ref17));"
-            - lambda: !lambda "lv_anim_start(&espcompose::anim_ref53);"
+            - lambda: !lambda "{ espcompose::sig_ovrl_ref17_mux.set(0);
+                espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref17),
+                LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref17));
+                }
+
+                { lv_anim_start(&espcompose::anim_ref53); }"
   - id: scr_ref54
     then:
       - if:
@@ -1659,15 +1662,18 @@ script:
                 format: Popup stack overflow (max=3) — show() ignored
                 level: WARN
           else:
-            - lambda: !lambda "id(g_ref49)[id(g_ref48)] = 0;"
-            - lambda: !lambda "id(g_ref50)[id(g_ref48)] = 1;"
+            - lambda: !lambda "{ id(g_ref49)[id(g_ref48)] = 0; }
+
+                { id(g_ref50)[id(g_ref48)] = 1; }"
             - globals.set:
                 id: g_ref48
                 value: !lambda "return id(g_ref48) + 1;"
-            - lambda: !lambda "espcompose::sig_ovrl_ref17_mux.set(1); espcompose::flush();
-                lv_obj_clear_flag(id(ovrl_ref17), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_move_foreground(id(ovrl_ref17));"
-            - lambda: !lambda "lv_anim_start(&espcompose::anim_ref53);"
+            - lambda: !lambda "{ espcompose::sig_ovrl_ref17_mux.set(1);
+                espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref17),
+                LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref17));
+                }
+
+                { lv_anim_start(&espcompose::anim_ref53); }"
   - id: scr_ref56
     parameters:
       inst: int
@@ -1685,15 +1691,18 @@ script:
                 format: Popup stack overflow (max=3) — show() ignored
                 level: WARN
           else:
-            - lambda: !lambda "id(g_ref49)[id(g_ref48)] = 1;"
-            - lambda: !lambda "id(g_ref50)[id(g_ref48)] = 0;"
+            - lambda: !lambda "{ id(g_ref49)[id(g_ref48)] = 1; }
+
+                { id(g_ref50)[id(g_ref48)] = 0; }"
             - globals.set:
                 id: g_ref48
                 value: !lambda "return id(g_ref48) + 1;"
-            - lambda: !lambda "espcompose::sig_ovrl_ref30_mux.set(0); espcompose::flush();
-                lv_obj_clear_flag(id(ovrl_ref30), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_move_foreground(id(ovrl_ref30));"
-            - lambda: !lambda "lv_anim_start(&espcompose::anim_ref57);"
+            - lambda: !lambda "{ espcompose::sig_ovrl_ref30_mux.set(0);
+                espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref30),
+                LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref30));
+                }
+
+                { lv_anim_start(&espcompose::anim_ref57); }"
   - id: scr_ref58
     then:
       - if:
@@ -1732,14 +1741,17 @@ script:
                 format: Popup stack overflow (max=3) — show() ignored
                 level: WARN
           else:
-            - lambda: !lambda "id(g_ref49)[id(g_ref48)] = 1;"
-            - lambda: !lambda "id(g_ref50)[id(g_ref48)] = 1;"
+            - lambda: !lambda "{ id(g_ref49)[id(g_ref48)] = 1; }
+
+                { id(g_ref50)[id(g_ref48)] = 1; }"
             - globals.set:
                 id: g_ref48
                 value: !lambda "return id(g_ref48) + 1;"
-            - lambda: !lambda "espcompose::sig_ovrl_ref30_mux.set(1); espcompose::flush();
-                lv_obj_clear_flag(id(ovrl_ref30), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_move_foreground(id(ovrl_ref30));"
-            - lambda: !lambda "lv_anim_start(&espcompose::anim_ref57);"
+            - lambda: !lambda "{ espcompose::sig_ovrl_ref30_mux.set(1);
+                espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref30),
+                LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref30));
+                }
+
+                { lv_anim_start(&espcompose::anim_ref57); }"
 "
 `;

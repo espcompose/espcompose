@@ -23,7 +23,7 @@ export function createEsphomeTarget(): ComposeTarget {
     name: 'esphome',
 
   async emit(request: EmitRequest): Promise<EmitResult> {
-    const { ir, outDir, sourceDir, secrets, overlays } = request;
+    const { ir, outDir, sourceDir, secrets, overlays, perf } = request;
     const files: string[] = [];
 
     // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
@@ -126,7 +126,7 @@ export function createEsphomeTarget(): ComposeTarget {
     }
 
     // ── Lower semantic IR to YAML config ────────────────────────────────
-    const finalConfig = lowerToYamlConfig(ir, cppResult);
+    const finalConfig = lowerToYamlConfig(ir, cppResult, { perf });
 
     // ── Emit native lvgl.canvas draw actions for ec-canvas scenes ───────
     injectEcCanvasDrawActions(finalConfig as Record<string, unknown>, paintScenes);

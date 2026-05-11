@@ -1034,81 +1034,57 @@ script:
       closure_index: int
       msg: string
     then:
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_ref14.set(msg); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_ref22.get_mut()[0] = 1;
-          espcompose::sig_global_g_ref22.notify(); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_ref23.get_mut()[0] = id(g_ref24);
-          espcompose::sig_global_g_ref23.notify(); espcompose::flush();"
+      - lambda: !lambda "{ espcompose::sig_global_g_ref14.set(msg);
+          espcompose::flush(); }
+
+          { espcompose::sig_global_g_ref22.get_mut()[0] = 1;
+          espcompose::sig_global_g_ref22.notify(); espcompose::flush(); }
+
+          { espcompose::sig_global_g_ref23.get_mut()[0] = id(g_ref24);
+          espcompose::sig_global_g_ref23.notify(); espcompose::flush(); }"
       - globals.set:
           id: g_ref24
-          value: !lambda "auto& closure =
-            espcompose::scr_ref25_closures[closure_index]; (void)closure;
-            return id(g_ref24) + 1;"
+          value: !lambda "return id(g_ref24) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
+          espcompose::scr_ref25_closures[closure_index]; (void)closure; {
           espcompose::sig_ovrl_ref11_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref11),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref11));"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          lv_anim_start(&espcompose::anim_ref26);"
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref11)); }
+
+          { lv_anim_start(&espcompose::anim_ref26); }"
       - delay: 3s
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          lv_anim_start(&espcompose::anim_ref27);"
+      - lambda: !lambda "lv_anim_start(&espcompose::anim_ref27);"
       - delay: 300ms
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_ref22.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref22.notify(); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref25_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "{ espcompose::sig_global_g_ref22.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref22.notify(); espcompose::flush(); }
+
+          { lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN); }"
       - if:
           condition:
-            - lambda: !lambda "auto& closure =
-                espcompose::scr_ref25_closures[closure_index]; (void)closure;
-                return id(g_ref22)[0] == 0;"
+            - lambda: !lambda "return id(g_ref22)[0] == 0;"
           then:
             - globals.set:
                 id: g_ref24
-                value: !lambda "auto& closure =
-                  espcompose::scr_ref25_closures[closure_index];
-                  (void)closure; return 0;"
+                value: !lambda "return 0;"
   - id: scr_ref28
     parameters:
       closure_index: int
     then:
       - script.stop:
           id: scr_ref25
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
-          espcompose::sig_global_g_ref22.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref22.notify(); espcompose::flush();"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
-          lv_anim_start(&espcompose::anim_ref27);"
+      - lambda: !lambda "{ espcompose::sig_global_g_ref22.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref22.notify(); espcompose::flush(); }
+
+          { lv_anim_start(&espcompose::anim_ref27); }"
       - delay: 300ms
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref28_closures[closure_index]; (void)closure;
-          lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN);"
       - if:
           condition:
-            - lambda: !lambda "auto& closure =
-                espcompose::scr_ref28_closures[closure_index]; (void)closure;
-                return id(g_ref22)[0] == 0;"
+            - lambda: !lambda "return id(g_ref22)[0] == 0;"
           then:
             - globals.set:
                 id: g_ref24
-                value: !lambda "auto& closure =
-                  espcompose::scr_ref28_closures[closure_index];
-                  (void)closure; return 0;"
+                value: !lambda "return 0;"
   - id: scr_ref4
     mode: restart
     parameters:
@@ -1126,9 +1102,10 @@ script:
     then:
       - script.stop:
           id: scr_ref25
-      - lambda: !lambda "espcompose::sig_global_g_ref22.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref22.notify(); espcompose::flush();"
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "{ espcompose::sig_global_g_ref22.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref22.notify(); espcompose::flush(); }
+
+          { lv_obj_add_flag(id(ovrl_ref11), LV_OBJ_FLAG_HIDDEN); }"
       - globals.set:
           id: g_ref24
           value: !lambda "return 0;"

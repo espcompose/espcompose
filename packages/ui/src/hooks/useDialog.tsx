@@ -99,7 +99,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
       duration: '200ms',
       easing: 'ease-in',
     });
-    transition = { enter: fadeIn, exit: fadeOut, exitDurationMs: 200 };
+    //transition = { enter: fadeIn, exit: fadeOut, exitDurationMs: 200 };
 
     const content = factory(overlayCtrl);
     const showTitleBar = !options?.hideTitleBar;
@@ -162,7 +162,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
           height: '100%',
           borderWidth: 0,
           padding: 0,
-          opacity: 'transparent',
+          opacity: 'opaque', // 'transparent',
         }}
       >
         <Dialog

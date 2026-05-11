@@ -627,15 +627,11 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
-  // Register LVGL flush batching hooks so all widget updates
-  // are applied in a single render pass.
-  lines.push('  Scheduler::instance().set_pre_flush([]() {');
-  lines.push('    lv_obj_enable_style_refresh(false);');
-  lines.push('  });');
-  lines.push('  Scheduler::instance().set_post_flush([]() {');
-  lines.push('    lv_obj_enable_style_refresh(true);');
-  lines.push('    lv_obj_report_style_change(NULL);');
-  lines.push('  });');
+  // Note: We intentionally do NOT batch style refreshes via
+  // lv_obj_enable_style_refresh(false) + lv_obj_report_style_change(NULL).
+  // The blanket NULL recalc is O(all_widgets) and takes 300ms+ on complex UIs.
+  // Inline per-object refresh during node updates is O(changed_widgets) and
+  // typically completes in <2ms.
   lines.push('');
 
   // ── Animation init (runs after LVGL widgets exist) ──────────────────

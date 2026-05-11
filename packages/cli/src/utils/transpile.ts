@@ -1,7 +1,7 @@
 import type { ComposeTarget } from '@espcompose/core/internals';
 import type { CompileResult } from '../compiler/compiler';
 
-type BuildFn = (projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean }) => Promise<CompileResult>;
+type BuildFn = (projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean; perf?: boolean }) => Promise<CompileResult>;
 
 /** Run the transpile step (TSX → YAML). */
 export async function transpileProject(
@@ -9,10 +9,10 @@ export async function transpileProject(
   yamlPath: string,
   buildFn: BuildFn,
   createTarget: () => ComposeTarget,
-  options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean },
+  options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean; perf?: boolean },
 ): Promise<CompileResult> {
   console.log(`Transpiling ${resolvedDir} → .espcompose/esphome.yaml`);
-  const result = await buildFn(resolvedDir, createTarget(), { debug: options?.debug, wireframe: options?.wireframe, dumpIR: options?.dumpIR });
+  const result = await buildFn(resolvedDir, createTarget(), { debug: options?.debug, wireframe: options?.wireframe, dumpIR: options?.dumpIR, perf: options?.perf });
   console.log(`✓ Written to ${yamlPath}`);
   return result;
 }
