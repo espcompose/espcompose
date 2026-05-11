@@ -73,24 +73,24 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
   // instance and append a new closure-table row per instance, leaving
   // rows 1..N pointing at refs whose widgets were never emitted.
   const backdropRef = useRef();
-  const enterScript = useScript(async () => {
-    await animate(backdropRef, {
-      property: 'opacity',
-      from: 0,
-      to: 255,
-      duration: '200ms',
-      easing: 'ease-out',
-    });
-  });
-  const exitScript = useScript(async () => {
-    await animate(backdropRef, {
-      property: 'opacity',
-      from: 255,
-      to: 0,
-      duration: '200ms',
-      easing: 'ease-in',
-    });
-  });
+  // const enterScript = useScript(async () => {
+  //   await animate(backdropRef, {
+  //     property: 'opacity',
+  //     from: 0,
+  //     to: 255,
+  //     duration: '100ms',
+  //     easing: 'ease-out',
+  //   });
+  // });
+  // const exitScript = useScript(async () => {
+  //   await animate(backdropRef, {
+  //     property: 'opacity',
+  //     from: 255,
+  //     to: 0,
+  //     duration: '100ms',
+  //     easing: 'ease-in',
+  //   });
+  // });
 
   const ctrl = useOverlay({ zOrder: 0 }, (overlayCtrl) => {
     const theme = UITheme.use();
@@ -191,7 +191,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
   });
 
   if (stack) {
-    return stack.register(ctrl, { afterShow: enterScript, beforeHide: exitScript });
+    return stack.register(ctrl); //, { afterShow: enterScript, beforeHide: exitScript });
   }
-  return useVisibility(ctrl, { afterShow: enterScript, beforeHide: exitScript });
+  return useVisibility(ctrl); //, { afterShow: enterScript, beforeHide: exitScript });
 }

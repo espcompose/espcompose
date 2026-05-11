@@ -133,8 +133,9 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
             property: 'translateX',
             from: 300,
             to: 0,
-            duration: '300ms',
+            duration: '800ms',
             easing: 'ease-out',
+            delay: '500ms',
           });
         });
         const exitScript = useScript(async () => {

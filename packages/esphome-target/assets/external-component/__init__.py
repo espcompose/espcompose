@@ -188,7 +188,7 @@ def _resolve_selector(part, state):
         raise cv.Invalid(f"Unknown LVGL part: {part}")
     if s is None:
         raise cv.Invalid(f"Unknown LVGL state: {state}")
-    return f"{p} | {s}"
+    return f"static_cast<lv_style_selector_t>({p}) | static_cast<lv_style_selector_t>({s})"
 
 
 ANIMATE_ACTION_SCHEMA = cv.Schema(

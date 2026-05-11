@@ -73,21 +73,14 @@ class AnimateAction : public esphome::Action<Ts...> {
     }
     cached_widget_ = w;
 
-    lv_anim_t a;
-    lv_anim_init(&a);
-    lv_anim_set_var(&a, this);
-    lv_anim_set_user_data(&a, this);
-    lv_anim_set_exec_cb(&a, AnimateAction::on_exec_);
-    lv_anim_set_values(&a, from_, to_);
-    lv_anim_set_time(&a, duration_ms_);
-    lv_anim_set_ready_cb(&a, AnimateAction::on_ready_);
-    lv_anim_set_path_cb(&a, path_cb_);
+    // Set the style property to the start value immediately so the first
+    // render (which may be expensive for full-screen overlay unhides)
+    // draws the widget at its correct initial position.
+    lv_style_value_t v;
+    v.num = from_;
+    lv_obj_set_local_style_prop(w, prop_, v, selector_);
 
-    if (delay_ms_ > 0) {
-      lv_anim_set_delay(&a, delay_ms_);
-    }
-
-    lv_anim_start(&a);
+    start_anim_();
   }
 
   void stop() override {
@@ -98,11 +91,29 @@ class AnimateAction : public esphome::Action<Ts...> {
   }
 
  private:
+  // ── Animation start helper ────────────────────────────────────────
+
+  void start_anim_() {
+    lv_anim_t a;
+    lv_anim_init(&a);
+    lv_anim_set_var(&a, this);
+    lv_anim_set_user_data(&a, this);
+    lv_anim_set_exec_cb(&a, AnimateAction::on_exec_);
+    lv_anim_set_values(&a, from_, to_);
+    lv_anim_set_time(&a, duration_ms_);
+    lv_anim_set_ready_cb(&a, AnimateAction::on_ready_);
+    lv_anim_set_path_cb(&a, path_cb_);
+    if (delay_ms_ > 0) {
+      lv_anim_set_delay(&a, delay_ms_);
+    }
+    lv_anim_start(&a);
+  }
   // ── LVGL callbacks (static) ───────────────────────────────────────
 
   static void on_exec_(void *var, int32_t value) {
     auto *self = static_cast<AnimateAction *>(var);
     if (!self->cached_widget_) return;
+
     lv_style_value_t v;
     v.num = value;
     lv_obj_set_local_style_prop(self->cached_widget_, self->prop_, v, self->selector_);
@@ -126,7 +137,7 @@ class AnimateAction : public esphome::Action<Ts...> {
   int32_t to_{0};
   uint32_t duration_ms_{300};
   uint32_t delay_ms_{0};
-  lv_style_selector_t selector_{LV_PART_MAIN | LV_STATE_DEFAULT};
+  lv_style_selector_t selector_{static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)};
   lv_anim_path_cb_t path_cb_{lv_anim_path_linear};
 
   bool running_{false};
