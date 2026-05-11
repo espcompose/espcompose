@@ -32,7 +32,6 @@ export type {
   WidgetProps,
   WidgetPropsWithChildren,
   VisibilityController,
-  AnimationController,
 } from './types';
 export { useRef, isRef } from './types';
 
@@ -169,7 +168,7 @@ export type { ImageProps } from './generated/components/image';
 export { useFont } from './hooks/useFont';
 export type { FontProps } from './generated/components/font';
 export { useScript } from './hooks/useScript';
-export type { ScriptOptions } from './hooks/useScript';
+export type { ScriptOptions, ScriptHandle } from './hooks/useScript';
 export type { ScriptMode } from './ir/types';
 export type { Int } from './types';
 export { useMemo } from './hooks/useMemo';
@@ -178,7 +177,7 @@ export { useGlobal } from './hooks/useGlobal';
 export type { GlobalType, ScalarGlobalType, ArrayGlobalType, InferGlobalTS, VolatileGlobalOptions, GlobalArrayHandle } from './hooks/useGlobal';
 export { useRetainedGlobal } from './hooks/useRetainedGlobal';
 export type { RetainedGlobalType, InferRetainedTS, RetainedGlobalOptions } from './hooks/useRetainedGlobal';
-export type { GlobalHandle, TransientOverlayContext, TransitionRegistration } from './hooks/global-shared';
+export type { GlobalHandle, TransientOverlayContext } from './hooks/global-shared';
 export { forwardOverlayPayloadMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayPayloadGlobalDecl } from './hooks/useOverlay';
@@ -191,10 +190,6 @@ export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVi
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
-export { useAnimation } from './hooks/useAnimation';
-export type { AnimationConfig } from './hooks/useAnimation';
-export { useStyleTransition } from './hooks/useStyleTransition';
-export type { StyleTransitionConfig } from './hooks/useStyleTransition';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 
@@ -203,6 +198,8 @@ export type { Context } from './hooks/useContext';
 // ────────────────────────────────────────────────────────────────────────────
 
 export { delay, logger, lambda } from './actions/primitives';
+export { animate } from './actions/animate';
+export type { AnimateConfig } from './actions/animate';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Secrets

@@ -27,6 +27,7 @@ import { compileConditionExpr, compileIf, compileWhile, compileFor } from './con
 import { compileActionCall } from './calls/router.js';
 import { compileLambdaTaggedTemplate } from './calls/lambda.js';
 import { compileControllerMethodCall } from './calls/controller.js';
+import { compileAnimateCall } from './calls/animate.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -61,7 +62,6 @@ export function compileActionBody(
     overlayControllerRefs: new Set(),
     scriptHandleRefs: new Set(),
     controllerRefs: new Set(),
-    animationControllerRefs: new Set(),
     scalarCaptures: new Map(),
   };
 
@@ -89,7 +89,6 @@ export function compileActionBody(
     overlayControllerRefs: ctx.overlayControllerRefs,
     scriptHandleRefs: ctx.scriptHandleRefs,
     controllerRefs: ctx.controllerRefs,
-    animationControllerRefs: ctx.animationControllerRefs,
     scalarCaptures: ctx.scalarCaptures,
   };
 }
@@ -238,6 +237,11 @@ function compileAwait(
     return compileWaitUntil(inner, ctx);
   }
 
+  // await animate(ref, config)
+  if (ts.isCallExpression(inner) && isCoreExportCall(inner, 'animate', ctx.checker)) {
+    return compileAnimateCall(inner, ctx);
+  }
+
   // await scriptHandle() — callable script that waits for completion
   if (ts.isCallExpression(inner)) {
     const scriptInfo = resolveScriptCallInfo(inner, ctx);
@@ -264,7 +268,7 @@ function compileAwait(
   }
 
   return emitError(expr, ctx,
-    'Can only await delay(), waitUntil(), or a useScript handle. ' +
+    'Can only await delay(), waitUntil(), animate(), or a useScript handle. ' +
     'Other await expressions have no ESPHome equivalent.');
 }
 

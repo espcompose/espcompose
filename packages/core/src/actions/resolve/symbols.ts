@@ -37,14 +37,6 @@ export interface MethodCallResolvable {
 }
 
 /**
- * Symbol-keyed animation ID, attached to AnimationController objects
- * by `useAnimation()`. The resolve pass reads this to patch
- * `IRAnimationStartAction.animationId` / `IRAnimationStopAction.animationId`
- * in the compiled action tree.
- */
-export const ANIMATION_ID: unique symbol = Symbol('animation.id');
-
-/**
  * Symbol-keyed script map, attached to controller objects by
  * `useController()`. The resolve pass reads this to map
  * `controller_method_call` IR → `script_execute` IR.

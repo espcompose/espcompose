@@ -43,14 +43,14 @@ import {
   setOverlayPayloadMeta,
   forwardOverlayPayloadMeta,
 } from './global-shared';
-import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext, TransitionRegistration } from './global-shared';
+import type { GlobalDefinition, OverlayPayloadGlobalDecl, TransientOverlayContext } from './global-shared';
 import type { OverlayFactory } from './useOverlay';
 import {
   buildOverlayPayloadPlan,
   buildOverlayLifecycleScripts,
   readOverlayControllerInternal,
 } from './overlay-lifecycle';
-import type { OverlayScriptPair, TransitionConfig } from './overlay-lifecycle';
+import type { OverlayScriptPair } from './overlay-lifecycle';
 import {
   irIfAction,
   irGlobalSet,
@@ -69,7 +69,6 @@ import type { IRType } from '../ir/types';
 import type { OverlayController } from './useOverlay';
 import type { VisibilityController, EspComposeElement } from '../types';
 import { __espcompose } from '../reactive/compiler-plumbing';
-import { ANIMATION_ID } from '../actions/resolve/symbols';
 
 import type { IRDependency, Signal } from '../reactive';
 
@@ -260,15 +259,17 @@ function buildSlotOverlay(
 
   const slotOverlayCtrls: OverlayController<Record<string, unknown>>[] = [];
 
-  // Per-slot transition registrations captured during factory evaluation.
-  const perSlotTransitions: (TransitionRegistration | null)[] = [];
+  // Per-slot lifecycle hook captures.
+  const perSlotAfterShow: (ScriptHandle | null)[] = [];
+  const perSlotBeforeHide: (ScriptHandle | null)[] = [];
 
   // We need the template key before creating overlays to generate globals.
   let slotStateGlobals: ReturnType<typeof createSlotStateGlobals> | undefined;
 
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
-    let slotTransition: TransitionRegistration | null = null;
+    let slotAfterShow: ScriptHandle | null = null;
+    let slotBeforeHide: ScriptHandle | null = null;
 
     // Forward meta so useOverlay handles global registration + proxy building.
     const wrapperFactory = (overlayCtrl: OverlayController, ctx?: { payload: Record<string, unknown> }) => {
@@ -279,10 +280,9 @@ function buildSlotOverlay(
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
       const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
-      const registerTransition = (config: TransitionRegistration) => {
-        slotTransition = config;
-      };
-      return factory(overlayCtrl, { slotRank, payload, registerTransition });
+      const afterShow = (script: ScriptHandle) => { slotAfterShow = script; };
+      const beforeHide = (script: ScriptHandle) => { slotBeforeHide = script; };
+      return factory(overlayCtrl, { slotRank, payload, afterShow, beforeHide });
     };
     const slotPayload = perSlotPayloadDecls[i];
     if (slotPayload) {
@@ -298,7 +298,8 @@ function buildSlotOverlay(
       wrapperFactory as OverlayFactory<Record<string, unknown>>,
     );
     slotOverlayCtrls.push(ctrl);
-    perSlotTransitions.push(slotTransition);
+    perSlotAfterShow.push(slotAfterShow);
+    perSlotBeforeHide.push(slotBeforeHide);
   }
 
   const { activeGlobalId, seqGlobalId, seqCounterGlobalId } = slotStateGlobals!;
@@ -315,19 +316,6 @@ function buildSlotOverlay(
     // Per-slot payload plan: writes to this slot's own backing globals so
     // each slot's reactive bindings stay independent.
     const slotParamPlan = buildOverlayPayloadPlan(perSlotPayloadDecls[i]);
-
-    // Build transition config from captured registration (if any).
-    const reg = perSlotTransitions[i];
-    let transition: TransitionConfig | undefined;
-    if (reg) {
-      const enterAnimId = (reg.enter as unknown as Record<symbol, string>)[ANIMATION_ID];
-      const exitAnimId = (reg.exit as unknown as Record<symbol, string>)[ANIMATION_ID];
-      transition = {
-        enterAnimationIds: [enterAnimId],
-        exitAnimationIds: [exitAnimId],
-        exitDurationMs: reg.exitDurationMs,
-      };
-    }
 
     const pair = buildOverlayLifecycleScripts(slotOverlayCtrls[i], {
       autoHide,
@@ -354,7 +342,8 @@ function buildSlotOverlay(
       hideSuffixActions: [
         buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible),
       ],
-      transition,
+      afterShowScript: perSlotAfterShow[i] ?? undefined,
+      beforeHideScript: perSlotBeforeHide[i] ?? undefined,
     });
 
     slotShowScripts.push(pair.show);

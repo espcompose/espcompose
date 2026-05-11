@@ -183,10 +183,8 @@ function singleActionFingerprint(action: IRActionNode): string {
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
     case 'action:controller_method_call':
       return `CM:${action.controllerRef}:${action.methodName}`;
-    case 'action:animation_start':
-      return `AS:${action.animationId}:${action.controllerRef ?? ''}`;
-    case 'action:animation_stop':
-      return `AT:${action.animationId}:${action.controllerRef ?? ''}`;
+    case 'action:animate':
+      return `AN:${action.targetRef}:${action.styleProp}:${action.from}:${action.to}:${action.durationMs}`;
   }
 }
 

@@ -114,12 +114,11 @@ export {
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
-export { resolveAnimationControllerRefs, cleanAnimationControllerRefs } from './actions/resolve/animation';
 
 // ── Contribution scope (compiler state) ────────────────────────────────────
 export { withContributionScope, registerContribution } from './hooks/useContributionScope';
 export type { ContributionScopeResult } from './hooks/useContributionScope';
-export type { ComponentContribution, AttachTriggerContribution, AttachAnimationContribution, AttachStyleTransitionContribution, AnimationEasing } from './ir/contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AnimationEasing } from './ir/contribution-types';
 export { applyContributions } from './ir/apply-contributions';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
@@ -185,6 +184,7 @@ export type {
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
 export { LVGL_UPDATABLE_WIDGETS } from './lvgl/widget-tables';
+export { CSS_TO_LVGL_MAP } from './lvgl/style/mapping';
 
 // ── Trigger args ───────────────────────────────────────────────────────────
 export { isTriggerVar } from './actions/triggers';
@@ -259,8 +259,7 @@ export type {
   IRLambdaAction, IRLambdaInterpolation,
   IROverlayShowAction, IROverlayHideAction,
   IRControllerMethodCallAction,
-  IRAnimationStartAction,
-  IRAnimationStopAction,
+  IRAnimateAction,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
   IRRefAnnotation,
@@ -275,7 +274,6 @@ export {
   irLambdaCondition, irLambdaAction,
   irOverlayShow, irOverlayHide,
   irControllerMethodCall,
-  irAnimationStart,
-  irAnimationStop,
+  irAnimateAction,
   splitActionKey, parseDurationString, parseTimeoutString,
 } from './ir/index';

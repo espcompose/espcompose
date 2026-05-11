@@ -12,7 +12,7 @@
  */
 
 import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
-import { createLvglContainerWidget, useRef, useStyleTransition } from '@espcompose/core';
+import { createLvglContainerWidget, useRef } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { Surface } from './Surface';
 import { Glass } from './Glass';
@@ -44,11 +44,6 @@ export const BottomToast = createLvglContainerWidget(
     const bottomOffset = props.bottomOffset ?? 0;
 
     const containerRef = useRef();
-    useStyleTransition(containerRef, {
-      properties: ['paddingBottom'],
-      duration: '200ms',
-      easing: 'ease-out',
-    });
 
     return (
       <lvgl-obj

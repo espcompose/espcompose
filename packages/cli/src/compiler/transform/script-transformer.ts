@@ -10,6 +10,7 @@
  */
 
 import ts from 'typescript';
+import path from 'node:path';
 import {
   scanForHAEntities as scanForHAEntitiesShared,
   detectGlobalHookCall,
@@ -55,6 +56,7 @@ export interface TransformOutput {
 export function transformScriptFile(
   sourceFile: ts.SourceFile,
   _program: ts.Program,
+  projectRoot?: string,
 ): TransformOutput {
   const checker = _program.getTypeChecker();
   const ctx: TransformContext = {
@@ -63,6 +65,7 @@ export function transformScriptFile(
     functionCounter: 0,
     diagnostics: [],
     sourceFile,
+    projectRoot,
   };
 
   // Pass 1: Scan the file for useHAEntity() / importHAEntity() calls to build entity context
@@ -72,7 +75,7 @@ export function transformScriptFile(
   // compile them via the action tree compiler
   const edits: SourceEdit[] = [];
   const refSymbols = scanForRefSymbols(sourceFile, checker);
-  const scriptHandles = scanForScriptHandles(sourceFile, checker);
+  const scriptHandles = scanForScriptHandles(sourceFile, checker, ctx.projectRoot);
   const globalHandles = scanForGlobalHandles(sourceFile, checker);
 
   findAndCompileTriggerHandlers(sourceFile, ctx, refSymbols, scriptHandles, globalHandles, edits);
@@ -100,6 +103,8 @@ interface TransformContext {
   functionCounter: number;
   diagnostics: TransformDiagnostic[];
   sourceFile: ts.SourceFile;
+  /** Project root used to derive workspace-relative paths for stable ids. */
+  projectRoot?: string;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -155,14 +160,20 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
  * Scan for `const handle = useScript(...)` patterns
  * and build a map of declaration symbol → script info (ID + user params).
  */
-function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<ts.Symbol, ScriptHandleInfo> {
+function scanForScriptHandles(sourceFile: ts.SourceFile, checker: ts.TypeChecker, projectRoot?: string): Map<ts.Symbol, ScriptHandleInfo> {
   const scriptHandles = new Map<ts.Symbol, ScriptHandleInfo>();
   const walk = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isIdentifier(node.name)) {
       if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useScript', checker)) {
-        const varName = node.name.text;
-        // Use the variable name as the script ID (snake_case, scr_ prefix)
-        const scriptId = generateDeterministicId('scr', varName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase());
+        // Derive the script ID from the call-site source location, matching
+        // the seed used in compileAndInjectUseScript so that trigger
+        // references and script definitions share the same ID.
+        const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.initializer.getStart());
+        const relPath = projectRoot
+          ? path.relative(projectRoot, sourceFile.fileName).replace(/\\/g, '/')
+          : sourceFile.fileName;
+        const seed = `${relPath}:${line + 1}:${character + 1}`;
+        const scriptId = generateDeterministicId('scr', seed);
         const sym = checker.getSymbolAtLocation(node.name);
         if (sym) {
           // Extract user-defined params from the arrow function argument
@@ -514,10 +525,20 @@ function compileAndInjectUseScript(
 
   if (result.diagnostics.length > 0) return;
 
-  // Determine script ID from parent variable declaration
+  // Determine script ID from the call-site source location. Using
+  // `<relPath>:<line>:<col>` guarantees uniqueness per `useScript` call
+  // across files, components, and nested scopes, while remaining
+  // deterministic and machine-independent for a given source. The path is
+  // workspace-relative so script ids are stable across environments (CI,
+  // dev machines) for snapshot tests.
   let scriptId = generateId('scr');
   if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
-    scriptId = generateDeterministicId('scr', parent.name.text.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase());
+    const { line, character } = ctx.sourceFile.getLineAndCharacterOfPosition(callExpr.getStart());
+    const relPath = ctx.projectRoot
+      ? path.relative(ctx.projectRoot, ctx.sourceFile.fileName).replace(/\\/g, '/')
+      : ctx.sourceFile.fileName;
+    const seed = `${relPath}:${line + 1}:${character + 1}`;
+    scriptId = generateDeterministicId('scr', seed);
   }
 
   // Store IRActionNode[] directly - lowering happens in target packages
@@ -609,9 +630,6 @@ function buildRefNameSet(
   for (const key of result.controllerRefs) {
     refNameSet.add(key);
   }
-  for (const key of result.animationControllerRefs) {
-    refNameSet.add(key);
-  }
   // Scalar captures need to be in __refBindings so the runtime can read
   // their values and create closure-table entries.
   for (const key of result.scalarCaptures.keys()) {
@@ -670,18 +688,20 @@ function collectRefNamesFromActions(
         case 'action:controller_method_call':
           names.add(action.controllerRef);
           break;
-        case 'action:animation_start':
-        case 'action:animation_stop':
-          if ('controllerRef' in action && action.controllerRef) {
-            names.add(action.controllerRef);
-          }
-          break;
         case 'action:delay':
           // If duration is an IRScriptParamRef, its name is a captured
           // variable that needs to appear in __refBindings.
           if (typeof action.duration === 'object' && action.duration.kind === 'script_param') {
             const paramName = action.duration.name;
             if (refNames.has(paramName)) names.add(paramName);
+          }
+          break;
+        case 'action:animate':
+          // The animate action's targetRef is a captured ref variable name
+          // that must appear in __refBindings so the runtime can substitute
+          // it with the actual ESPHome widget ID token.
+          if (refNames.has(action.targetRef)) {
+            names.add(action.targetRef);
           }
           break;
       }

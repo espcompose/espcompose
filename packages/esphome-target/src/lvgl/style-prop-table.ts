@@ -139,3 +139,19 @@ export const LVGL_STYLE_PROP_TABLE: Readonly<Record<string, LvglStylePropDescrip
     }
   }
 }
+
+/**
+ * Resolve a snake_case LVGL style prop name to its `LV_STYLE_*` C constant name.
+ *
+ * The mapping is mechanical: `translate_y` → `LV_STYLE_TRANSLATE_Y`.
+ * Throws if the prop is not in the table (indicates an invalid animation property).
+ */
+export function resolveLvglStyleConstant(snakeProp: string): string {
+  if (!(snakeProp in LVGL_STYLE_PROP_TABLE)) {
+    throw new Error(
+      `Cannot resolve LVGL style constant for '${snakeProp}': ` +
+      `not found in LVGL_STYLE_PROP_TABLE. Ensure the property is a valid numeric LVGL style prop.`,
+    );
+  }
+  return `LV_STYLE_${snakeProp.toUpperCase()}`;
+}

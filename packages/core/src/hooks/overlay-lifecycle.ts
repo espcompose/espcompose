@@ -1,16 +1,31 @@
 import { generateDeterministicId } from '../id';
 import {
-  irAnimationStart,
   irDelayAction,
   irGlobalSet,
   irOverlayHide,
   irOverlayShow,
+  irScriptExecute,
+  irScriptWait,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
 import { irTriggerVarExpression } from '../ir/expr-builders';
 import type { IRType, ScriptMode } from '../ir/types';
 import type { ScriptHandle, ScriptOptions } from './useScript';
 import { defineSyntheticScript } from './useScript';
+import { CLOSURE_INDEX } from '../actions';
+
+/**
+ * Build a `script.execute` action for `handle`, forwarding the handle's
+ * `[CLOSURE_INDEX]` (assigned by `useScript` when the script declares a
+ * `closure_index` parameter) so the synthetic lifecycle script passes the
+ * required argument when invoking another closure-shaped script.
+ */
+function execWithClosure(handle: ScriptHandle): IRActionNode {
+  const closureIndex = (handle as unknown as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX];
+  return closureIndex !== undefined
+    ? irScriptExecute(handle.id, { closureIndex })
+    : irScriptExecute(handle.id);
+}
 import { normalizeDuration } from './global-shared';
 import type { OverlayPayloadGlobalDecl } from './global-shared';
 import type { OverlayController } from './useOverlay';
@@ -82,20 +97,6 @@ export function buildOverlayPayloadPlan(
   };
 }
 
-/**
- * Transition animation config for overlay entrance/exit.
- *
- * When provided, the lifecycle scripts inject `animation_start` actions
- * at the appropriate points (after show for entrance, before hide for exit)
- * along with a delay equal to `exitDurationMs` so the exit animation
- * completes before the widget is hidden.
- */
-export interface TransitionConfig {
-  enterAnimationIds: string[];
-  exitAnimationIds: string[];
-  exitDurationMs: number;
-}
-
 export interface OverlayLifecycleScriptOptions {
   autoHide: string | number | false;
   showIdSeed: string;
@@ -108,7 +109,10 @@ export interface OverlayLifecycleScriptOptions {
   hidePrefixActions?: (showScript: ScriptHandle) => IRActionNode[];
   hideSuffixActions?: IRActionNode[];
   ctrlBindingKey?: string;
-  transition?: TransitionConfig;
+  /** Script handle to execute+await after overlay_show (entrance animation). */
+  afterShowScript?: ScriptHandle;
+  /** Script handle to execute+await before overlay_hide (exit animation). */
+  beforeHideScript?: ScriptHandle;
 }
 
 export function buildOverlayLifecycleScripts(
@@ -128,21 +132,18 @@ export function buildOverlayLifecycleScripts(
     ),
   ];
 
-  // Entrance transition: start enter animations immediately after showing.
-  if (options.transition) {
-    for (const id of options.transition.enterAnimationIds) {
-      showActions.push(irAnimationStart(id));
-    }
+  // afterShow hook: execute + await after overlay becomes visible
+  if (options.afterShowScript) {
+    showActions.push(execWithClosure(options.afterShowScript));
+    showActions.push(irScriptWait(options.afterShowScript.id));
   }
 
   if (options.autoHide !== false) {
     showActions.push(irDelayAction(normalizeDuration(options.autoHide)));
-    // Exit transition: start exit animations, then wait for them to finish.
-    if (options.transition) {
-      for (const id of options.transition.exitAnimationIds) {
-        showActions.push(irAnimationStart(id));
-      }
-      showActions.push(irDelayAction({ kind: 'duration', value: options.transition.exitDurationMs, unit: 'ms' }));
+    // beforeHide hook: execute + await before auto-hide
+    if (options.beforeHideScript) {
+      showActions.push(execWithClosure(options.beforeHideScript));
+      showActions.push(irScriptWait(options.beforeHideScript.id));
     }
     showActions.push(...(options.beforeAutoHideHideActions ?? []));
     showActions.push(irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey));
@@ -157,15 +158,13 @@ export function buildOverlayLifecycleScripts(
     opts: options.showScriptOptions,
   });
 
-  // Build hide script actions with optional exit transition.
   const hideActions: IRActionNode[] = [
     ...(options.hidePrefixActions?.(showScript) ?? []),
   ];
-  if (options.transition) {
-    for (const id of options.transition.exitAnimationIds) {
-      hideActions.push(irAnimationStart(id));
-    }
-    hideActions.push(irDelayAction({ kind: 'duration', value: options.transition.exitDurationMs, unit: 'ms' }));
+  // beforeHide hook: execute + await before manual hide
+  if (options.beforeHideScript) {
+    hideActions.push(execWithClosure(options.beforeHideScript));
+    hideActions.push(irScriptWait(options.beforeHideScript.id));
   }
   hideActions.push(irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey));
   hideActions.push(...(options.hideSuffixActions ?? []));

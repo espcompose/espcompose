@@ -23,7 +23,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, useContext, withContext } from './useContext';
-import { assertHookContext, getCurrentHookPath, getHookPathGeneration } from './useState';
+import { assertHookContext, getCurrentHookPath, nextCallIndexAtHookPath, withHookPath } from './useState';
 import { registerComponent } from './useReactiveScope';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND, OVERLAY_BRAND } from '../types';
@@ -170,10 +170,6 @@ export type { OverlayPayloadGlobalDecl } from './global-shared';
 interface OverlayScopeFrame {
   /** Map templateKey → OverlayDefinition. Insertion order is preserved. */
   readonly definitions: Map<string, OverlayDefinition>;
-  /** Hook-path generation seen at the last useOverlay() call, for reset detection. */
-  _lastGeneration?: number;
-  /** Per-component-invocation call counter for useOverlay(). */
-  _hookCallIndex?: number;
 }
 
 const overlayScopeContext = createContext<OverlayScopeFrame | null>(null);
@@ -235,13 +231,13 @@ export type OverlayFactory<P = void> = P extends void
 
 // ── Hook call counter ───────────────────────────────────────────────────────
 // Disambiguates multiple useOverlay() calls within the same component.
-// Uses a Map<hookPath, callIndex> on the overlay scope frame to track how many
-// useOverlay() calls have occurred for each distinct hook path. The map is
-// cleared when the hook path changes (which means a different component
-// invocation started). This ensures:
-//   - Component instance A calling useOverlay() twice → keys path#0, path#1
-//   - Component instance B calling useOverlay() twice → keys path#0, path#1
-//     (same keys as A, so B's calls correctly append to A's definitions)
+// Uses the shared per-hook-path call index from useState (the same
+// mechanism that powers useStableValue / useRef): each call returns the
+// next 0-based index for the current hook path, and pushHookPath()
+// resets a path's counter on entry. So:
+//   - Component instance A calling useOverlay() twice → indices 0, 1
+//   - Component instance B calling useOverlay() twice → indices 0, 1
+//     (same indices, so B's calls correctly append to A's definitions)
 
 /**
  * Declare a shared overlay whose widget subtree is deduplicated across all
@@ -285,17 +281,10 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
     );
   }
 
-  // Per-hook-path call counter.  Resets at the start of each component
-  // invocation.  We detect invocation boundaries via the hook-path
-  // generation counter — it increments on every pushHookPath/popHookPath,
-  // so even two sibling instances with the same path string will see
-  // different generations after the pop+push cycle between them.
-  const gen = getHookPathGeneration();
-  if (gen !== frame._lastGeneration) {
-    frame._lastGeneration = gen;
-    frame._hookCallIndex = 0;
-  }
-  const callIndex = frame._hookCallIndex!++;
+  // Per-hook-path call index, allocated from the shared call-site counter.
+  // Sibling component instances see the same index sequence (their counter
+  // resets on each pushHookPath into the same path string).
+  const callIndex = nextCallIndexAtHookPath();
 
   // Build a unique template key: hook-path + call-site index.
   const templateKey = `${basePath}#${callIndex}`;
@@ -349,13 +338,18 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
   const instanceIndex = def.instances.length;
   const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, payloadDecls);
 
-  // Evaluate the factory — captures this instance's unique closures
+  // Evaluate the factory under a synthetic hook-path frame keyed by the
+  // overlay's templateKey. This gives memoized hooks (useRef, useStableValue)
+  // inside the factory a per-template identity: all N instances of the same
+  // overlay share values (only instance 0's widgets commit), while distinct
+  // overlays (e.g. each toast slot) get distinct values. The factory itself
+  // is evaluated for every instance to capture per-instance closures
   // (entity bindings, compiled action handlers, useMemo() expressions).
-  // Even though only instance #0's widget subtree is emitted, every
-  // instance must evaluate so the compiler captures its data.
-  const rendered = paramsProxy
-    ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
-    : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl);
+  const rendered = withHookPath(safeKey, () =>
+    paramsProxy
+      ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
+      : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl),
+  );
 
   def.instances.push({ index: instanceIndex, rendered });
 

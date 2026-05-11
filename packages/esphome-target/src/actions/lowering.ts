@@ -9,6 +9,7 @@ import type {
   IRActionNode,
   IRActionConfig,
   IRActionConfigValue,
+  IRAnimateAction,
   IRCondition,
   IRDurationLiteral,
   IRExpression,
@@ -20,7 +21,6 @@ import { IR_INT } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from '../lowering';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
 import { irTypeToCpp } from '../lowering';
-import { lowerAnimationStartAction, lowerAnimationStopAction } from '../lvgl/animation-lowering.js';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -644,12 +644,45 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         `method: ${action.methodName}). Controller method calls must be resolved before lowering.`,
       );
 
-    case 'action:animation_start':
-      return { lambda: lambdaMarker(lowerAnimationStartAction(action.animationId)) };
-
-    case 'action:animation_stop':
-      return { lambda: lambdaMarker(lowerAnimationStopAction(action.animationId)) };
+    case 'action:animate':
+      return lowerAnimateAction(action, ctx);
   }
+}
+
+// ── Animate action lowering ──────────────────────────────────────────────
+
+/**
+ * Lower an IRAnimateAction to an ESPHome `espcompose.animate` YAML action.
+ *
+ * Emits ESPHome-friendly names (snake_case prop, part/state strings).
+ * The Python component resolves these to LVGL C constants at codegen time.
+ */
+function lowerAnimateAction(action: IRAnimateAction, ctx: ActionLoweringContext): unknown {
+  // Resolve widget ID — check scriptRefBindings for closure-table scripts,
+  // then fall through to literal targetRef.
+  let widgetId = action.targetRef;
+  if (ctx.scriptRefBindings && ctx.scriptRefBindings[action.targetRef]) {
+    widgetId = ctx.scriptRefBindings[action.targetRef];
+  }
+
+  const config: Record<string, unknown> = {
+    widget: widgetId,
+    prop: action.styleProp,
+    from: action.from,
+    to: action.to,
+    duration: action.durationMs,
+    easing: action.easing,
+  };
+  if (action.part) {
+    config.part = action.part;
+  }
+  if (action.state) {
+    config.state = action.state;
+  }
+  if (action.delayMs && action.delayMs > 0) {
+    config.delay = action.delayMs;
+  }
+  return { 'espcompose.animate': config };
 }
 
 /**

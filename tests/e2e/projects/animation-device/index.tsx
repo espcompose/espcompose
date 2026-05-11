@@ -1,79 +1,99 @@
 /**
  * E2E test: animation-device
  *
- * Validates the useAnimation hook end-to-end:
- * - Auto-start animation generates lv_anim_t setup with lv_anim_start()
- * - Manual start/stop via AnimationController in trigger handlers
- * - Animation configuration: easing, repeat, playback, delay
- * - Multiple animations on different widgets
+ * Validates the animate() action end-to-end:
+ * - animate() inside useScript() generates espcompose.animate YAML action
+ * - Multiple animate() calls in sequence (chained animations)
+ * - Animation configuration: easing, delay, part/state selectors
+ * - Script-driven animation with manual trigger
  */
-import { useRef, useAnimation, logger, createLvglWidget } from '@espcompose/core';
-import type { DisplayRef, Ref } from '@espcompose/core';
+import { useRef, useScript, animate, logger, createLvglWidget } from '@espcompose/core';
+import type { DisplayRef } from '@espcompose/core';
 
 /**
- * A widget component that fades in on load via auto-start animation.
+ * A widget component with a slide-in animation triggered by button press.
  */
-const FadeInPanel = createLvglWidget<{ label: string }>(
+const SlidePanel = createLvglWidget<{ label: string }>(
   (props) => {
     const panelRef = useRef();
 
-    useAnimation(panelRef, {
-      property: 'opa',
-      from: 0,
-      to: 255,
-      duration: '500ms',
-      easing: 'ease-in-out',
-      autoStart: true,
+    const slideIn = useScript(async () => {
+      await animate(panelRef, {
+        property: 'translateY',
+        from: -100,
+        to: 0,
+        duration: '300ms',
+        easing: 'ease-out',
+      });
     });
 
     return (
-      <lvgl-obj ref={panelRef} style={{ width: 200, height: 100, opacity: 'transparent' }}>
-        <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
+      <lvgl-obj style={{ width: '100%', height: 'fit-content', display: 'flex', flexDirection: 'column', rowGap: 8, padding: 0, borderWidth: 0, backgroundOpacity: 'transparent' }}>
+        <lvgl-obj ref={panelRef} style={{ width: 200, height: 100, translateY: -100 }}>
+          <lvgl-label text={props.label} style={{ placeSelf: 'center' }} />
+        </lvgl-obj>
+        <lvgl-button
+          style={{ width: 100, height: 40 }}
+          onPress={() => {
+            slideIn.execute();
+            logger.log('Slide started');
+          }}
+        >
+          <lvgl-label text="Slide In" style={{ placeSelf: 'center' }} />
+        </lvgl-button>
       </lvgl-obj>
     );
   },
 );
 
 /**
- * A widget component with a manually-controlled pulsing animation.
- * The button starts/stops a repeating opacity animation.
+ * A widget with chained animations: fade in then scale up.
  */
-const PulseWidget = createLvglWidget<{ target: Ref }>(
-  (props) => {
-    const pulse = useAnimation(props.target, {
-      property: 'opa',
-      from: 80,
-      to: 255,
-      duration: '1s',
-      easing: 'ease-in-out',
-      repeat: Infinity,
-      playback: true,
+const ChainedAnimation = createLvglWidget(
+  () => {
+    const boxRef = useRef();
+
+    const entrance = useScript(async () => {
+      await animate(boxRef, {
+        property: 'opacity',
+        from: 0,
+        to: 255,
+        duration: '200ms',
+        easing: 'ease-in',
+      });
+      await animate(boxRef, {
+        property: 'translateY',
+        from: 20,
+        to: 0,
+        duration: '300ms',
+        easing: 'ease-out',
+        delay: '50ms',
+      });
     });
 
     return (
-      <lvgl-button
-        style={{ width: 100, height: 40 }}
-        onPress={() => {
-          pulse.start();
-          logger.log('Pulse started');
-        }}
-        onLongPress={() => {
-          pulse.stop();
-          logger.log('Pulse stopped');
-        }}
-      >
-        <lvgl-label text="Pulse" style={{ placeSelf: 'center' }} />
-      </lvgl-button>
+      <lvgl-obj style={{ width: '100%', height: 'fit-content', padding: 0, borderWidth: 0, backgroundOpacity: 'transparent' }}>
+        <lvgl-obj ref={boxRef} style={{ width: 150, height: 60, opacity: 'transparent', translateY: 20 }}>
+          <lvgl-label text="Chained" style={{ placeSelf: 'center' }} />
+        </lvgl-obj>
+        <lvgl-button
+          style={{ width: 100, height: 40 }}
+          onPress={() => {
+            entrance.execute();
+          }}
+        >
+          <lvgl-label text="Animate" style={{ placeSelf: 'center' }} />
+        </lvgl-button>
+      </lvgl-obj>
     );
   },
 );
 
 function App() {
   const displayRef = useRef<DisplayRef>();
-  const targetRef = useRef();
 
   return (
-    <esphome name="animation-device" comment="useAnimation E2E test">
+    <esphome name="animation-device" comment="animate() E2E test">
       <esp32 board="esp32dev" framework={{ type: 'esp-idf' }} />
       <wifi ssid="TestWifi" password="testpass" />
       <api />
@@ -92,16 +112,11 @@ function App() {
 
       <lvgl displays={[displayRef]}>
         <lvgl-page>
-          {/* Auto-start fade-in animation */}
-          <FadeInPanel label="Welcome" />
+          {/* Script-triggered slide animation */}
+          <SlidePanel label="Welcome" />
 
-          {/* Target widget for manual pulse animation */}
-          <lvgl-obj ref={targetRef} style={{ width: 150, height: 60 }}>
-            <lvgl-label text="Pulse me" style={{ placeSelf: 'center' }} />
-          </lvgl-obj>
-
-          {/* Controls that start/stop the pulse on the target */}
-          <PulseWidget target={targetRef} />
+          {/* Chained sequential animations */}
+          <ChainedAnimation />
         </lvgl-page>
       </lvgl>
     </esphome>

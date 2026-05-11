@@ -6,6 +6,7 @@ exports[`toast-across-pages > toast-across-pages > espcompose_bindings.h 1`] = `
 
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
+#include "esphome/components/espcompose/espcompose_animate.h"
 
 inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
@@ -13,6 +14,13 @@ namespace espcompose {
 
 using esphome::id;
 using esphome::to_string;
+
+// ── id() result normalizer ──
+// ESPHome's \`id(X)\` returns \`T&\` for LVGL widgets but \`T*\` for component
+// accessors. These overloads collapse both to a uniform \`T*\`, so closure
+// tables can store one normalized lookup-array element type.
+template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
+template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Signals (one per HA entity source) ──
 Signal<int32_t> sig_ovrl_ref12_mux;
@@ -102,17 +110,37 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Script closure tables ──
-struct Scr9b094ea7Closure {
-  int __ctrl_instance_index;
+static decltype(_ec_id_ptr(id(r_ref14))) const ec_scr_ref26_cardRefs[] = {
+  _ec_id_ptr(id(r_ref14))
 };
-static const Scr9b094ea7Closure scr_ref26_closures[] = {
+struct scr_ref26_closure_t {
+  int cardRef_idx;
+};
+static const scr_ref26_closure_t scr_ref26_closures[] = {
   { 0 }
 };
 
-struct Scr979cbffeClosure {
+static decltype(_ec_id_ptr(id(r_ref14))) const ec_scr_ref27_cardRefs[] = {
+  _ec_id_ptr(id(r_ref14))
+};
+struct scr_ref27_closure_t {
+  int cardRef_idx;
+};
+static const scr_ref27_closure_t scr_ref27_closures[] = {
+  { 0 }
+};
+
+struct scr_ref28_closure_t {
   int __ctrl_instance_index;
 };
-static const Scr979cbffeClosure scr_ref29_closures[] = {
+static const scr_ref28_closure_t scr_ref28_closures[] = {
+  { 0 }
+};
+
+struct scr_ref29_closure_t {
+  int __ctrl_instance_index;
+};
+static const scr_ref29_closure_t scr_ref29_closures[] = {
   { 0 }
 };
 
@@ -133,22 +161,6 @@ Memo<float> memo_2([]() -> float {
 // ── Memo aliases (deduplicated) ──
 auto& memo_3 = memo_2;
 auto& memo_4 = memo_2;
-
-// ── Animation exec callbacks & static variables ──
-static void anim_ref27_exec_cb(void* var, int32_t v) {
-  lv_obj_set_style_translate_y((lv_obj_t*)var, static_cast<lv_coord_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
-}
-static lv_anim_t anim_ref27;
-
-static void anim_ref28_exec_cb(void* var, int32_t v) {
-  lv_obj_set_style_translate_y((lv_obj_t*)var, static_cast<lv_coord_t>(v), LV_PART_MAIN | LV_STATE_DEFAULT);
-}
-static lv_anim_t anim_ref28;
-
-// ── Style transition declarations ──
-static const lv_style_prop_t strans_ref31_props[] = {LV_STYLE_PAD_BOTTOM, 0};
-static lv_style_transition_dsc_t strans_ref31_dsc;
-static lv_style_t strans_ref31_style;
 
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
@@ -399,33 +411,6 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_32);
   Scheduler::instance().schedule(&binding_33);
   Scheduler::instance().schedule(&binding_34);
-  Scheduler::instance().set_pre_flush([]() {
-    lv_obj_enable_style_refresh(false);
-  });
-  Scheduler::instance().set_post_flush([]() {
-    lv_obj_enable_style_refresh(true);
-    lv_obj_report_style_change(NULL);
-  });
-
-  // ── Initialize LVGL animations ──
-  lv_anim_init(&anim_ref27);
-  lv_anim_set_var(&anim_ref27, (void*)&id(r_ref14));
-  lv_anim_set_exec_cb(&anim_ref27, anim_ref27_exec_cb);
-  lv_anim_set_values(&anim_ref27, 80, 0);
-  lv_anim_set_time(&anim_ref27, 300);
-  lv_anim_set_path_cb(&anim_ref27, lv_anim_path_ease_out);
-  lv_anim_init(&anim_ref28);
-  lv_anim_set_var(&anim_ref28, (void*)&id(r_ref14));
-  lv_anim_set_exec_cb(&anim_ref28, anim_ref28_exec_cb);
-  lv_anim_set_values(&anim_ref28, 0, 80);
-  lv_anim_set_time(&anim_ref28, 300);
-  lv_anim_set_path_cb(&anim_ref28, lv_anim_path_ease_in);
-
-  // ── Initialize LVGL style transitions ──
-  lv_style_transition_dsc_init(&strans_ref31_dsc, strans_ref31_props, lv_anim_path_ease_out, 200, 0, NULL);
-  lv_style_init(&strans_ref31_style);
-  lv_style_set_transition(&strans_ref31_style, &strans_ref31_dsc);
-  lv_obj_add_style((lv_obj_t*)&id(r_ref13), &strans_ref31_style, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -460,6 +445,19 @@ static const char *const ESPCOMPOSE_TAG = "espcompose";
 #else
 #define ESPCOMPOSE_LOGD(...)
 #define ESPCOMPOSE_LOGW(...)
+#endif
+
+// Define ESPCOMPOSE_PERF to enable performance timing instrumentation.
+// Example: add -DESPCOMPOSE_PERF to build_flags (done automatically by --perf).
+#ifdef ESPCOMPOSE_PERF
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_PERF_TAG = "ec_perf";
+#define ESPCOMPOSE_PERF_BEGIN() uint32_t _perf_start_us = esphome::micros()
+#define ESPCOMPOSE_PERF_END(label, fmt, ...) \\
+  ESP_LOGI(ESPCOMPOSE_PERF_TAG, label " took %" PRIu32 " \\xC2\\xB5s" fmt, esphome::micros() - _perf_start_us, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_PERF_BEGIN()
+#define ESPCOMPOSE_PERF_END(label, ...)
 #endif
 
 namespace espcompose {
@@ -541,6 +539,9 @@ public:
     if (pre_flush_) pre_flush_();
     flushing_ = true;
 
+    ESPCOMPOSE_PERF_BEGIN();
+    uint16_t total_nodes = count_[active_];
+
     static constexpr int max_passes = 10;
     const uint32_t start_us = esphome::micros();
 
@@ -566,8 +567,18 @@ public:
         }
         NodeBase* node = buf_[active_][i];
         if (node->is_dirty()) {
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_t0 = esphome::micros();
+#endif
           node->update();
           node->set_dirty(false);
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_elapsed = esphome::micros() - node_t0;
+          if (node_elapsed > 1000) {
+            ESP_LOGI(ESPCOMPOSE_PERF_TAG, "  node[%u] order=%u took %" PRIu32 " \\xC2\\xB5s",
+                     (unsigned)i, (unsigned)node->order(), node_elapsed);
+          }
+#endif
         }
       }
 
@@ -584,9 +595,19 @@ public:
       active_ = 1 - active_;
     }
 
+#ifdef ESPCOMPOSE_PERF
+    uint32_t nodes_elapsed = esphome::micros() - _perf_start_us;
+#endif
     flushing_ = false;
     if (post_flush_) post_flush_();
-    return count_[0] == 0 && count_[1] == 0;
+    bool fully_drained = count_[0] == 0 && count_[1] == 0;
+#ifdef ESPCOMPOSE_PERF
+    uint32_t total_elapsed = esphome::micros() - _perf_start_us;
+    ESP_LOGI(ESPCOMPOSE_PERF_TAG, "flush took %" PRIu32 " \\xC2\\xB5s nodes=%u drained=%s (nodes=%" PRIu32 " \\xC2\\xB5s post_flush=%" PRIu32 " \\xC2\\xB5s)",
+             total_elapsed, (unsigned)total_nodes, fully_drained ? "yes" : "no",
+             nodes_elapsed, total_elapsed - nodes_elapsed);
+#endif
+    return fully_drained;
   }
 
   void flush() {
@@ -928,10 +949,7 @@ lvgl:
                               translate_y: 80
                               bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
                               bg_opa: 25%
-                              blur_backdrop: true
                               scrollbar_mode: 'OFF'
-                              blur_quality: AUTO
-                              blur_radius: 4
                               layout:
                                 type: flex
                                 flex_flow: ROW
@@ -948,7 +966,7 @@ external_components:
     components:
       - espcompose
 espcompose:
-  flush_budget_us: 2000
+  flush_budget_us: 10000
 font:
   - id: r_ref17
     file: gfonts://Roboto
@@ -1036,6 +1054,28 @@ globals:
     type: int
 script:
   - id: scr_ref26
+    parameters:
+      closure_index: int
+    then:
+      - espcompose.animate:
+          widget: r_ref14
+          prop: translate_y
+          from: 80
+          to: 0
+          duration: 300
+          easing: ease_out
+  - id: scr_ref27
+    parameters:
+      closure_index: int
+    then:
+      - espcompose.animate:
+          widget: r_ref14
+          prop: translate_y
+          from: 0
+          to: 80
+          duration: 300
+          easing: ease_in
+  - id: scr_ref28
     mode: restart
     parameters:
       closure_index: int
@@ -1053,15 +1093,21 @@ script:
           id: g_ref25
           value: !lambda "return id(g_ref25) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref26_closures[closure_index]; (void)closure; {
+          espcompose::scr_ref28_closures[closure_index]; (void)closure;
           espcompose::sig_ovrl_ref12_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref12),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref12)); }
-
-          { lv_anim_start(&espcompose::anim_ref27); }"
+          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref12));"
+      - script.execute:
+          id: scr_ref26
+          closure_index: 0
+      - script.wait:
+          id: scr_ref26
       - delay: 3s
-      - lambda: !lambda "lv_anim_start(&espcompose::anim_ref28);"
-      - delay: 300ms
+      - script.execute:
+          id: scr_ref27
+          closure_index: 0
+      - script.wait:
+          id: scr_ref27
       - lambda: !lambda "{ espcompose::sig_global_g_ref23.get_mut()[0] = 0;
           espcompose::sig_global_g_ref23.notify(); espcompose::flush(); }
 
@@ -1078,12 +1124,14 @@ script:
       closure_index: int
     then:
       - script.stop:
-          id: scr_ref26
-      - lambda: !lambda "{ espcompose::sig_global_g_ref23.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref23.notify(); espcompose::flush(); }
-
-          { lv_anim_start(&espcompose::anim_ref28); }"
-      - delay: 300ms
+          id: scr_ref28
+      - lambda: !lambda "espcompose::sig_global_g_ref23.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref23.notify(); espcompose::flush();"
+      - script.execute:
+          id: scr_ref27
+          closure_index: 0
+      - script.wait:
+          id: scr_ref27
       - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref12), LV_OBJ_FLAG_HIDDEN);"
       - if:
           condition:
@@ -1102,13 +1150,13 @@ script:
             - lambda: !lambda "return true;"
           then:
             - script.execute:
-                id: scr_ref26
+                id: scr_ref28
                 closure_index: 0
                 msg: !lambda "return msg;"
   - id: scr_ref30
     then:
       - script.stop:
-          id: scr_ref26
+          id: scr_ref28
       - lambda: !lambda "{ espcompose::sig_global_g_ref23.get_mut()[0] = 0;
           espcompose::sig_global_g_ref23.notify(); espcompose::flush(); }
 

@@ -11,9 +11,9 @@ import type { ExprType } from '../ir/expr-types';
 import type { IRType } from '../ir/types';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
-import type { AnimationController } from '../types';
 import { parseDurationString } from '../ir/action-types';
 import type { IRDurationLiteral } from '../ir/action-types';
+import type { ScriptHandle } from './useScript';
 
 // ── GlobalDefinition ───────────────────────────────────────────────────────
 
@@ -286,33 +286,20 @@ export interface TransientOverlayContext {
   slotRank: Signal<number>;
 
   /**
-   * Register entrance/exit transition animations for this overlay slot.
+   * Register a script to run after the overlay becomes visible.
    *
-   * Call once during the overlay factory to declare which animations drive
-   * the entrance (slide-in) and exit (slide-out) effects. The lifecycle
-   * scripts will start the appropriate animation at show/hide time and
-   * delay hiding until the exit animation completes.
+   * The show lifecycle script will execute and await this script
+   * immediately after `overlay_show`. Use for entrance animations.
    */
-  registerTransition(config: TransitionRegistration): void;
-}
+  afterShow(script: ScriptHandle): void;
 
-/**
- * Configuration for entrance/exit transition animations.
- *
- * Passed to `ctx.registerTransition()` inside a transient overlay factory,
- * or to `useVisibility()` / `useVisibilityStack().register()` for any
- * overlay that needs animated show/hide.
- *
- * The enter/exit controllers must come from `useAnimation()` calls on
- * widgets within the same overlay or component.
- */
-export interface TransitionRegistration {
-  /** Animation controller for the entrance effect (e.g. slide-in). */
-  enter: AnimationController;
-  /** Animation controller for the exit effect (e.g. slide-out). */
-  exit: AnimationController;
-  /** Duration of the exit animation in milliseconds. */
-  exitDurationMs: number;
+  /**
+   * Register a script to run before the overlay is hidden.
+   *
+   * The hide lifecycle script (and auto-hide path) will execute and await
+   * this script immediately before `overlay_hide`. Use for exit animations.
+   */
+  beforeHide(script: ScriptHandle): void;
 }
 
 // ── Duration normalization ─────────────────────────────────────────────────

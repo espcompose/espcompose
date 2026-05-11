@@ -19,14 +19,13 @@ import type { Context } from '../hooks';
 import type { LvglComponentRef } from '../component-aliases';
 import { isIRReactiveNode } from '../reactive';
 import type { IRReactiveNode } from '../reactive';
-import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath, registerComponent } from '../hooks';
+import { registerReactiveBinding, withReactiveScope, withHookPath, registerComponent } from '../hooks';
 import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
 import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
 import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
-import { resolveAnimationControllerRefs, cleanAnimationControllerRefs } from '../actions';
 import { generateId } from '../id';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
@@ -118,13 +117,11 @@ function resolveLvglChildren(
       // Extract ref so it is not passed to the component function, then
       // forward it onto the root element the component returns.
       const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
-      pushHookPath(el.type.name || 'anonymous');
-      let result;
-      try {
-        result = el.type(propsWithoutRef as never);
-      } finally {
-        popHookPath();
-      }
+      const result = withHookPath(el.type.name || 'anonymous', () =>
+        (el.type as (props: never) => EspComposeElement | EspComposeElement[] | undefined | null)(
+          propsWithoutRef as never,
+        ),
+      );
       if (result == null) continue;
       const results = Array.isArray(result) ? result : [result];
       let rendered = results;
@@ -305,9 +302,6 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
         // Resolve deferred overlay controller refs — replace placeholder
         // templateKey/instanceIndex with actual values from the bound controller.
         resolveOverlayControllerRefs(rawActions, fn.__refBindings);
-        // Resolve deferred animation controller refs — replace placeholder
-        // animationId with actual value from the bound AnimationController.
-        resolveAnimationControllerRefs(rawActions, fn.__refBindings);
         // Patch IRScriptExecute.closureIndex from bound ScriptHandles.
         resolveScriptHandleClosureIndex(rawActions, fn.__refBindings);
         // Remove resolved overlay controller objects from refBindings so they
@@ -316,7 +310,6 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
         if (fn.__refBindings) {
           cleanControllerRefs(fn.__refBindings);
           cleanOverlayControllerRefs(fn.__refBindings);
-          cleanAnimationControllerRefs(fn.__refBindings);
           cleanScriptHandleRefs(fn.__refBindings);
         }
         overlayActionCapture.push({
@@ -567,25 +560,33 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
         // without polluting the top-level scope.
         // Activate overlay action capture to collect trigger handler metadata
         // via context-scoped capture list.
+        // Push the overlay's templateKey onto the hook path so any
+        // function components evaluated inside the rendered subtree (which
+        // may call useRef/useState/etc.) memoize per overlay-template,
+        // matching how the factory was invoked. Without this, sibling
+        // overlay slots' inner components share hook-path-keyed values
+        // and produce colliding ref ids.
         const actionCapture: CapturedOverlayAction[] = [];
-        const { bindings, reactiveNodes, components } = withContext(overlayActionCaptureContext, actionCapture, () =>
-          withReactiveScope(() => {
-            const resolved = resolveLvglChildren(renderedArr);
-            const widgetIR: RawIRWidget[] = [];
-            for (const ch of resolved) {
-              if (isLvglElement(ch.type)) {
-                widgetIR.push(buildLvglWidgetIR(ch));
-              } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
-                widgetIR.push(ecCanvasToPlain(ch));
+        const { bindings, reactiveNodes, components } = withHookPath(def.templateKey, () =>
+          withContext(overlayActionCaptureContext, actionCapture, () =>
+            withReactiveScope(() => {
+              const resolved = resolveLvglChildren(renderedArr);
+              const widgetIR: RawIRWidget[] = [];
+              for (const ch of resolved) {
+                if (isLvglElement(ch.type)) {
+                  widgetIR.push(buildLvglWidgetIR(ch));
+                } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
+                  widgetIR.push(ecCanvasToPlain(ch));
+                }
               }
-            }
-            // Only emit instance 0's widgets into the tier container; others
-            // contribute only their captured bindings/actions for the mux pass.
-            if (instance.index === 0) {
-              tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
-            }
-            return null;
-          }),
+              // Only emit instance 0's widgets into the tier container; others
+              // contribute only their captured bindings/actions for the mux pass.
+              if (instance.index === 0) {
+                tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
+              }
+              return null;
+            }),
+          ),
         );
         const capturedActions = actionCapture;
 

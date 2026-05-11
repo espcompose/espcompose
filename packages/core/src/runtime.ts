@@ -3,7 +3,7 @@ import { useScript, withScriptScope } from './hooks/useScript';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
 import { withOverlayScope } from './hooks/useOverlay';
 import { withContributionScope } from './hooks/useContributionScope';
-import { withContext, pushHookPath, popHookPath } from './hooks';
+import { withContext, withHookPath } from './hooks';
 import type { Context } from './hooks';
 
 import {
@@ -83,13 +83,11 @@ function toPlainObject(el: EspComposeElement | EspComposeElement[] | null | unde
   // React 19-style automatic ref forwarding for design-system widgets).
   if (typeof el.type === 'function') {
     const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
-    pushHookPath(el.type.name || 'anonymous');
-    let result;
-    try {
-      result = el.type(propsWithoutRef as never);
-    } finally {
-      popHookPath();
-    }
+    const result = withHookPath(el.type.name || 'anonymous', () =>
+      (el.type as (props: never) => EspComposeElement | EspComposeElement[] | undefined | null)(
+        propsWithoutRef as never,
+      ),
+    );
     if (result == null) return undefined;
     if (ref != null) {
       if (!Array.isArray(result)) {

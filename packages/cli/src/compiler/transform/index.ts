@@ -121,7 +121,7 @@ export function writeTransformedFiles(
       scriptInput = sourceFile;
       scriptProgram = program;
     }
-    const result = transformScriptFile(scriptInput, scriptProgram);
+    const result = transformScriptFile(scriptInput, scriptProgram, registry.projectRoot);
     diagnostics.push(...result.diagnostics);
 
     // Determine text after reactive + script transforms

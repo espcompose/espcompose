@@ -178,8 +178,7 @@ export type {
   IROverlayShowAction,
   IROverlayHideAction,
   IRControllerMethodCallAction,
-  IRAnimationStartAction,
-  IRAnimationStopAction,
+  IRAnimateAction,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -217,13 +216,12 @@ export {
   irOverlayShow,
   irOverlayHide,
   irControllerMethodCall,
-  irAnimationStart,
-  irAnimationStop,
+  irAnimateAction,
   splitActionKey,
   parseDurationString,
   parseTimeoutString,
 } from './action-types';
 
 // ── Component Contributions ──────────────────────────────────────────────────
-export type { ComponentContribution, AttachTriggerContribution, AttachAnimationContribution, AnimationEasing } from './contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AnimationEasing } from './contribution-types';
 export { applyContributions } from './apply-contributions';

@@ -6,6 +6,7 @@ exports[`design-system-device > design-system-device > espcompose_bindings.h 1`]
 
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
+#include "esphome/components/espcompose/espcompose_animate.h"
 
 inline bool operator!=(lv_color_t a, lv_color_t b) { return memcmp(&a, &b, sizeof(lv_color_t)) != 0; }
 
@@ -13,6 +14,13 @@ namespace espcompose {
 
 using esphome::id;
 using esphome::to_string;
+
+// ── id() result normalizer ──
+// ESPHome's \`id(X)\` returns \`T&\` for LVGL widgets but \`T*\` for component
+// accessors. These overloads collapse both to a uniform \`T*\`, so closure
+// tables can store one normalized lookup-array element type.
+template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
+template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -465,13 +473,6 @@ void bootstrap_runtime() {
   Scheduler::instance().schedule(&binding_27);
   Scheduler::instance().schedule(&binding_35);
   Scheduler::instance().schedule(&binding_36);
-  Scheduler::instance().set_pre_flush([]() {
-    lv_obj_enable_style_refresh(false);
-  });
-  Scheduler::instance().set_post_flush([]() {
-    lv_obj_enable_style_refresh(true);
-    lv_obj_report_style_change(NULL);
-  });
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -506,6 +507,19 @@ static const char *const ESPCOMPOSE_TAG = "espcompose";
 #else
 #define ESPCOMPOSE_LOGD(...)
 #define ESPCOMPOSE_LOGW(...)
+#endif
+
+// Define ESPCOMPOSE_PERF to enable performance timing instrumentation.
+// Example: add -DESPCOMPOSE_PERF to build_flags (done automatically by --perf).
+#ifdef ESPCOMPOSE_PERF
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_PERF_TAG = "ec_perf";
+#define ESPCOMPOSE_PERF_BEGIN() uint32_t _perf_start_us = esphome::micros()
+#define ESPCOMPOSE_PERF_END(label, fmt, ...) \\
+  ESP_LOGI(ESPCOMPOSE_PERF_TAG, label " took %" PRIu32 " \\xC2\\xB5s" fmt, esphome::micros() - _perf_start_us, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_PERF_BEGIN()
+#define ESPCOMPOSE_PERF_END(label, ...)
 #endif
 
 namespace espcompose {
@@ -587,6 +601,9 @@ public:
     if (pre_flush_) pre_flush_();
     flushing_ = true;
 
+    ESPCOMPOSE_PERF_BEGIN();
+    uint16_t total_nodes = count_[active_];
+
     static constexpr int max_passes = 10;
     const uint32_t start_us = esphome::micros();
 
@@ -612,8 +629,18 @@ public:
         }
         NodeBase* node = buf_[active_][i];
         if (node->is_dirty()) {
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_t0 = esphome::micros();
+#endif
           node->update();
           node->set_dirty(false);
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_elapsed = esphome::micros() - node_t0;
+          if (node_elapsed > 1000) {
+            ESP_LOGI(ESPCOMPOSE_PERF_TAG, "  node[%u] order=%u took %" PRIu32 " \\xC2\\xB5s",
+                     (unsigned)i, (unsigned)node->order(), node_elapsed);
+          }
+#endif
         }
       }
 
@@ -630,9 +657,19 @@ public:
       active_ = 1 - active_;
     }
 
+#ifdef ESPCOMPOSE_PERF
+    uint32_t nodes_elapsed = esphome::micros() - _perf_start_us;
+#endif
     flushing_ = false;
     if (post_flush_) post_flush_();
-    return count_[0] == 0 && count_[1] == 0;
+    bool fully_drained = count_[0] == 0 && count_[1] == 0;
+#ifdef ESPCOMPOSE_PERF
+    uint32_t total_elapsed = esphome::micros() - _perf_start_us;
+    ESP_LOGI(ESPCOMPOSE_PERF_TAG, "flush took %" PRIu32 " \\xC2\\xB5s nodes=%u drained=%s (nodes=%" PRIu32 " \\xC2\\xB5s post_flush=%" PRIu32 " \\xC2\\xB5s)",
+             total_elapsed, (unsigned)total_nodes, fully_drained ? "yes" : "no",
+             nodes_elapsed, total_elapsed - nodes_elapsed);
+#endif
+    return fully_drained;
   }
 
   void flush() {
@@ -869,9 +906,6 @@ lvgl:
                     scrollbar_mode: 'OFF'
                     bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
                     bg_opa: 25%
-                    blur_backdrop: true
-                    blur_quality: AUTO
-                    blur_radius: 4
                     layout:
                       type: flex
                       flex_flow: COLUMN
@@ -1027,7 +1061,7 @@ external_components:
     components:
       - espcompose
 espcompose:
-  flush_budget_us: 2000
+  flush_budget_us: 10000
 font:
   - id: r_ref15
     file: gfonts://Roboto

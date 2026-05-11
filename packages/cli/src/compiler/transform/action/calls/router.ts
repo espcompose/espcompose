@@ -19,7 +19,6 @@ import { compileGlobalSet, compileArraySet, compileArrayPush } from './global.js
 import { compileThemeSelect, isThemeSelectCall } from './theme.js';
 import { compileOverlayAction, isOverlayActionCall } from './overlay.js';
 import { compileControllerMethodCall, isControllerMethodCall } from './controller.js';
-import { compileAnimationAction, isAnimationActionCall } from './animation.js';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Action call classification and routing
@@ -87,11 +86,6 @@ export function compileActionCall(
     // Controller method call — ctrl.show(), ctrl.hide(), etc.
     if (isControllerMethodCall(objType, methodName)) {
       return compileControllerMethodCall(call, objExpr, objType, methodName, ctx);
-    }
-
-    // Animation controller — anim.start(), anim.stop()
-    if (isAnimationActionCall(objType, methodName)) {
-      return compileAnimationAction(call, objExpr, objType, methodName, ctx);
     }
 
     // Overlay controller — controller.show() / controller.hide()

@@ -6,25 +6,49 @@ exports[`useScript-multi-ref-device > useScript-multi-ref-device > espcompose_bi
 
 #include "esphome/components/espcompose/espcompose_reactive.h"
 #include "esphome/components/espcompose/espcompose_runtime.h"
+#include "esphome/components/espcompose/espcompose_animate.h"
 
 namespace espcompose {
 
 using esphome::id;
 using esphome::to_string;
 
+// ── id() result normalizer ──
+// ESPHome's \`id(X)\` returns \`T&\` for LVGL widgets but \`T*\` for component
+// accessors. These overloads collapse both to a uniform \`T*\`, so closure
+// tables can store one normalized lookup-array element type.
+template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
+template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
+
 // ── Script closure tables ──
-static decltype(id(r_ref3))* const ec_scr_ref6_lights[] = {
-  id(r_ref3),
-  id(r_ref4),
-  id(r_ref5)
+static decltype(_ec_id_ptr(id(r_ref3))) const ec_scr_ref6_lights[] = {
+  _ec_id_ptr(id(r_ref3))
 };
-struct Scr07617589Closure {
+struct scr_ref6_closure_t {
   int light_idx;
 };
-static const Scr07617589Closure scr_ref6_closures[] = {
-  { 0 },
-  { 1 },
-  { 2 }
+static const scr_ref6_closure_t scr_ref6_closures[] = {
+  { 0 }
+};
+
+static decltype(_ec_id_ptr(id(r_ref4))) const ec_scr_ref7_lights[] = {
+  _ec_id_ptr(id(r_ref4))
+};
+struct scr_ref7_closure_t {
+  int light_idx;
+};
+static const scr_ref7_closure_t scr_ref7_closures[] = {
+  { 0 }
+};
+
+static decltype(_ec_id_ptr(id(r_ref5))) const ec_scr_ref8_lights[] = {
+  _ec_id_ptr(id(r_ref5))
+};
+struct scr_ref8_closure_t {
+  int light_idx;
+};
+static const scr_ref8_closure_t scr_ref8_closures[] = {
+  { 0 }
 };
 
 
@@ -38,13 +62,6 @@ void bootstrap_runtime() {
   // ── Subscriber storage (exact-sized per node) ──
 
 
-  Scheduler::instance().set_pre_flush([]() {
-    lv_obj_enable_style_refresh(false);
-  });
-  Scheduler::instance().set_post_flush([]() {
-    lv_obj_enable_style_refresh(true);
-    lv_obj_report_style_change(NULL);
-  });
 
   espcompose::flush();  // Initial flush to process dirty nodes marked during setup
 }
@@ -79,6 +96,19 @@ static const char *const ESPCOMPOSE_TAG = "espcompose";
 #else
 #define ESPCOMPOSE_LOGD(...)
 #define ESPCOMPOSE_LOGW(...)
+#endif
+
+// Define ESPCOMPOSE_PERF to enable performance timing instrumentation.
+// Example: add -DESPCOMPOSE_PERF to build_flags (done automatically by --perf).
+#ifdef ESPCOMPOSE_PERF
+#include "esphome/core/log.h"
+static const char *const ESPCOMPOSE_PERF_TAG = "ec_perf";
+#define ESPCOMPOSE_PERF_BEGIN() uint32_t _perf_start_us = esphome::micros()
+#define ESPCOMPOSE_PERF_END(label, fmt, ...) \\
+  ESP_LOGI(ESPCOMPOSE_PERF_TAG, label " took %" PRIu32 " \\xC2\\xB5s" fmt, esphome::micros() - _perf_start_us, ##__VA_ARGS__)
+#else
+#define ESPCOMPOSE_PERF_BEGIN()
+#define ESPCOMPOSE_PERF_END(label, ...)
 #endif
 
 namespace espcompose {
@@ -160,6 +190,9 @@ public:
     if (pre_flush_) pre_flush_();
     flushing_ = true;
 
+    ESPCOMPOSE_PERF_BEGIN();
+    uint16_t total_nodes = count_[active_];
+
     static constexpr int max_passes = 10;
     const uint32_t start_us = esphome::micros();
 
@@ -185,8 +218,18 @@ public:
         }
         NodeBase* node = buf_[active_][i];
         if (node->is_dirty()) {
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_t0 = esphome::micros();
+#endif
           node->update();
           node->set_dirty(false);
+#ifdef ESPCOMPOSE_PERF
+          uint32_t node_elapsed = esphome::micros() - node_t0;
+          if (node_elapsed > 1000) {
+            ESP_LOGI(ESPCOMPOSE_PERF_TAG, "  node[%u] order=%u took %" PRIu32 " \\xC2\\xB5s",
+                     (unsigned)i, (unsigned)node->order(), node_elapsed);
+          }
+#endif
         }
       }
 
@@ -203,9 +246,19 @@ public:
       active_ = 1 - active_;
     }
 
+#ifdef ESPCOMPOSE_PERF
+    uint32_t nodes_elapsed = esphome::micros() - _perf_start_us;
+#endif
     flushing_ = false;
     if (post_flush_) post_flush_();
-    return count_[0] == 0 && count_[1] == 0;
+    bool fully_drained = count_[0] == 0 && count_[1] == 0;
+#ifdef ESPCOMPOSE_PERF
+    uint32_t total_elapsed = esphome::micros() - _perf_start_us;
+    ESP_LOGI(ESPCOMPOSE_PERF_TAG, "flush took %" PRIu32 " \\xC2\\xB5s nodes=%u drained=%s (nodes=%" PRIu32 " \\xC2\\xB5s post_flush=%" PRIu32 " \\xC2\\xB5s)",
+             total_elapsed, (unsigned)total_nodes, fully_drained ? "yes" : "no",
+             nodes_elapsed, total_elapsed - nodes_elapsed);
+#endif
+    return fully_drained;
   }
 
   void flush() {
@@ -430,14 +483,12 @@ binary_sensor:
     on_press:
       - script.execute:
           id: scr_ref6
-          closure_index: 1
   - platform: gpio
     pin: 13
     name: Btn Living
     on_press:
       - script.execute:
           id: scr_ref6
-          closure_index: 2
 external_components:
   - source:
       type: local
@@ -445,7 +496,7 @@ external_components:
     components:
       - espcompose
 espcompose:
-  flush_budget_us: 2000
+  flush_budget_us: 10000
 script:
   - id: scr_ref6
     parameters:
@@ -458,5 +509,27 @@ script:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref6_closures[closure_index]; (void)closure;
           ec_scr_ref6_lights[closure.light_idx]->toggle().perform();"
+  - id: scr_ref7
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref7_closures[closure_index]; (void)closure;
+          ec_scr_ref7_lights[closure.light_idx]->toggle().perform();"
+      - delay: 100ms
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref7_closures[closure_index]; (void)closure;
+          ec_scr_ref7_lights[closure.light_idx]->toggle().perform();"
+  - id: scr_ref8
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref8_closures[closure_index]; (void)closure;
+          ec_scr_ref8_lights[closure.light_idx]->toggle().perform();"
+      - delay: 100ms
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref8_closures[closure_index]; (void)closure;
+          ec_scr_ref8_lights[closure.light_idx]->toggle().perform();"
 "
 `;

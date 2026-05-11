@@ -14,8 +14,8 @@
  * (simple show/hide, no stacking).
  */
 
-import { useOverlay, useRef, useAnimation, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
-import type { VisibilityController, EspComposeElement, SizeValue, TransitionRegistration } from '@espcompose/core';
+import { useOverlay, useRef, useScript, animate, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
+import type { VisibilityController, EspComposeElement, SizeValue } from '@espcompose/core';
 import { useSpacing } from './useSpacing';
 import { UITheme } from '../theme/theme';
 import { Text } from '../components/Text';
@@ -66,8 +66,31 @@ export interface DialogOptions {
 export function useDialog(factory: DialogFactory, options?: DialogOptions): DialogController {
   const stack = useVisibilityStack();
 
-  // Capture transition controllers from the factory closure.
-  let transition: TransitionRegistration | undefined;
+  // Backdrop ref + transition scripts must live OUTSIDE the useOverlay
+  // factory: useOverlay re-evaluates the factory once per dialog instance
+  // (component-instance dedup) but only commits instance #0's widget tree.
+  // Creating these inside the factory would mint a new RefHandle per
+  // instance and append a new closure-table row per instance, leaving
+  // rows 1..N pointing at refs whose widgets were never emitted.
+  const backdropRef = useRef();
+  const enterScript = useScript(async () => {
+    await animate(backdropRef, {
+      property: 'opacity',
+      from: 0,
+      to: 255,
+      duration: '200ms',
+      easing: 'ease-out',
+    });
+  });
+  const exitScript = useScript(async () => {
+    await animate(backdropRef, {
+      property: 'opacity',
+      from: 255,
+      to: 0,
+      duration: '200ms',
+      easing: 'ease-in',
+    });
+  });
 
   const ctrl = useOverlay({ zOrder: 0 }, (overlayCtrl) => {
     const theme = UITheme.use();
@@ -82,24 +105,6 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
       default: '85%' as SizeValue,
     });
     const height = options?.height ?? 'fit-content';
-
-    // Fade-in/fade-out transition on the backdrop
-    const backdropRef = useRef();
-    const fadeIn = useAnimation(backdropRef, {
-      property: 'opacity',
-      from: 0,
-      to: 255,
-      duration: '200ms',
-      easing: 'ease-out',
-    });
-    const fadeOut = useAnimation(backdropRef, {
-      property: 'opacity',
-      from: 255,
-      to: 0,
-      duration: '200ms',
-      easing: 'ease-in',
-    });
-    //transition = { enter: fadeIn, exit: fadeOut, exitDurationMs: 200 };
 
     const content = factory(overlayCtrl);
     const showTitleBar = !options?.hideTitleBar;
@@ -186,7 +191,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
   });
 
   if (stack) {
-    return stack.register(ctrl, { transition });
+    return stack.register(ctrl, { afterShow: enterScript, beforeHide: exitScript });
   }
-  return useVisibility(ctrl, { transition });
+  return useVisibility(ctrl, { afterShow: enterScript, beforeHide: exitScript });
 }

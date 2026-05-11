@@ -592,6 +592,17 @@ export function lowerToYamlConfig(
   // Transform ec_canvas widgets → native canvas widgets.
   transformEcCanvasWidgets(finalConfig);
 
+  // If animate actions are present but no reactive runtime was emitted,
+  // inject the external component so espcompose.animate is registered.
+  if (!cppResult && hasAnimateActions(finalConfig)) {
+    injectExternalComponent(finalConfig);
+    // The espcompose platform config must also be present for the component
+    // to load and register its actions.
+    if (!finalConfig.espcompose) {
+      finalConfig.espcompose = { flush_budget_us: 10000 };
+    }
+  }
+
   // Translate semantic LVGL style values (e.g. 'transparent', 'fit-content',
   // 'fr(1)') to LVGL C-macro spellings (TRANSP, SIZE_CONTENT, FR(1)) on the
   // final lvgl section.
@@ -600,4 +611,32 @@ export function lowerToYamlConfig(
   }
 
   return finalConfig;
+}
+
+// ── Animate action detection ─────────────────────────────────────────────
+
+/**
+ * Recursively check if any action in the config uses `espcompose.animate`.
+ */
+function hasAnimateActions(config: Record<string, unknown>): boolean {
+  const json = JSON.stringify(config);
+  return json.includes('"espcompose.animate"');
+}
+
+/**
+ * Inject the external_components section for the espcompose runtime component.
+ * Used when animate actions are present but no reactive bindings exist.
+ */
+function injectExternalComponent(config: Record<string, unknown>): void {
+  const externalComponents = Array.isArray(config.external_components)
+    ? [...(config.external_components as unknown[])]
+    : [];
+  externalComponents.push({
+    source: {
+      type: 'local',
+      path: './external_components',
+    },
+    components: ['espcompose'],
+  });
+  config.external_components = externalComponents;
 }

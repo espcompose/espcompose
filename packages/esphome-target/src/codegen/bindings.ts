@@ -143,22 +143,6 @@ export interface TableDecl {
   values: string[];
 }
 
-export interface AnimationDecl {
-  /** File-scope exec callback function definition. */
-  execCallback: string;
-  /** File-scope static lv_anim_t variable declaration. */
-  varDeclaration: string;
-  /** Init code for bootstrap_runtime() (lv_anim_init, lv_anim_set_*, etc.). */
-  initCode: string;
-}
-
-export interface StyleTransitionDecl {
-  /** File-scope declarations (props array, transition dsc, style). */
-  declarations: string;
-  /** Init code for bootstrap_runtime() (lv_style_transition_dsc_init, lv_obj_add_style, etc.). */
-  initCode: string;
-}
-
 export interface ReactiveRuntimeConfig {
   signals: SignalDecl[];
   /** BoundSignal declarations for globals with reactive dependents. */
@@ -177,10 +161,6 @@ export interface ReactiveRuntimeConfig {
   tables?: TableDecl[];
   /** Pre-formatted closure-table block (struct + array per parameterized script). */
   closureTablesBlock?: string;
-  /** Animation declarations (exec callbacks, static vars, init code). */
-  animations?: AnimationDecl[];
-  /** Style transition declarations (props array, dsc, init code). */
-  styleTransitions?: StyleTransitionDecl[];
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -260,6 +240,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('');
   lines.push('#include "esphome/components/espcompose/espcompose_reactive.h"');
   lines.push('#include "esphome/components/espcompose/espcompose_runtime.h"');
+  lines.push('#include "esphome/components/espcompose/espcompose_animate.h"');
   lines.push('');
 
   // Provide operator!= for LVGL color types (needed by Signal/Memo<lv_color_t>::update)
@@ -273,6 +254,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('');
   lines.push('using esphome::id;');
   lines.push('using esphome::to_string;');
+  lines.push('');
+  lines.push('// ── id() result normalizer ──');
+  lines.push('// ESPHome\'s `id(X)` returns `T&` for LVGL widgets but `T*` for component');
+  lines.push('// accessors. These overloads collapse both to a uniform `T*`, so closure');
+  lines.push('// tables can store one normalized lookup-array element type.');
+  lines.push('template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }');
+  lines.push('template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }');
   lines.push('');
 
   // ── HA service call helper ─────────────────────────────────────────────
@@ -434,27 +422,6 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         lines.push(`  ${line}`);
       }
       lines.push('}');
-      lines.push('');
-    }
-  }
-
-  // ── Animation exec callbacks & static variables ──────────────────────
-  const animations = config.animations ?? [];
-  if (animations.length > 0) {
-    lines.push('// ── Animation exec callbacks & static variables ──');
-    for (const anim of animations) {
-      lines.push(anim.execCallback);
-      lines.push(anim.varDeclaration);
-      lines.push('');
-    }
-  }
-
-  // ── Style transition declarations ──────────────────────────────────────
-  const styleTransitions = config.styleTransitions ?? [];
-  if (styleTransitions.length > 0) {
-    lines.push('// ── Style transition declarations ──');
-    for (const st of styleTransitions) {
-      lines.push(st.declarations);
       lines.push('');
     }
   }
@@ -633,28 +600,6 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   // Inline per-object refresh during node updates is O(changed_widgets) and
   // typically completes in <2ms.
   lines.push('');
-
-  // ── Animation init (runs after LVGL widgets exist) ──────────────────
-  if (animations.length > 0) {
-    lines.push('  // ── Initialize LVGL animations ──');
-    for (const anim of animations) {
-      for (const line of anim.initCode.split('\n')) {
-        lines.push(`  ${line.trimStart()}`);
-      }
-    }
-    lines.push('');
-  }
-
-  // ── Style transition init (runs after LVGL widgets exist) ─────────────
-  if (styleTransitions.length > 0) {
-    lines.push('  // ── Initialize LVGL style transitions ──');
-    for (const st of styleTransitions) {
-      for (const line of st.initCode.split('\n')) {
-        lines.push(`  ${line.trimStart()}`);
-      }
-    }
-    lines.push('');
-  }
 
   lines.push('  espcompose::flush();  // Initial flush to process dirty nodes marked during setup');
   lines.push('}');
