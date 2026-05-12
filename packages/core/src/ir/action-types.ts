@@ -239,6 +239,8 @@ export interface IROverlayShowAction {
   instanceIndex: number | IRScriptParamRef;
   /** Z-order tier for deterministic stacking in top_layer. */
   zOrder: number;
+  /** Deterministic tier key (e.g. 'tier_abc123'). Used for tier wrapper show/hide. */
+  tierKey: string;
   /**
    * Controller variable name — when present, templateKey, instanceIndex,
    * and zOrder are resolved at runtime from __refBindings[controllerRef].
@@ -253,6 +255,8 @@ export interface IROverlayHideAction {
   templateKey: string;
   /** Z-order tier (carried for naming consistency). */
   zOrder: number;
+  /** Deterministic tier key (e.g. 'tier_abc123'). Used for tier wrapper show/hide. */
+  tierKey: string;
   /**
    * Controller variable name — when present, templateKey is resolved at
    * runtime from __refBindings[controllerRef][OVERLAY_TEMPLATE_KEY].
@@ -467,12 +471,12 @@ export function irLambdaAction(fragments: string[], slots: IRLambdaInterpolation
   return { kind: 'action:lambda_action', fragments, slots };
 }
 
-export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, controllerRef?: string): IROverlayShowAction {
-  return { kind: 'action:overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, tierKey: string, controllerRef?: string): IROverlayShowAction {
+  return { kind: 'action:overlay_show', templateKey, instanceIndex, zOrder, tierKey, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-export function irOverlayHide(templateKey: string, zOrder: number, controllerRef?: string): IROverlayHideAction {
-  return { kind: 'action:overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayHide(templateKey: string, zOrder: number, tierKey: string, controllerRef?: string): IROverlayHideAction {
+  return { kind: 'action:overlay_hide', templateKey, zOrder, tierKey, ...(controllerRef ? { controllerRef } : {}) };
 }
 
 // ── Controller Method Call ─────────────────────────────────────────────────

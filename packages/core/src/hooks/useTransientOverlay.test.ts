@@ -9,6 +9,7 @@ import type { TransientOverlayConfig } from './useTransientOverlay';
 import type { IRActionNode } from '../ir/action-types';
 import { LvglContext } from './useLvgl';
 import { withContext } from './useContext';
+import { useOverlayTier, withOverlayTierScope } from './useOverlayTier';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -24,7 +25,16 @@ function runInComponent<T>(componentName: string, fn: () => T): T {
   }
 }
 
-function buildWithQueue(config: TransientOverlayConfig) {
+/** Test helper config — uses zOrder number instead of tier handle for convenience. */
+interface TestTransientConfig {
+  zOrder?: number;
+  maxVisible?: number;
+  autoHide?: string | number | false;
+  overflow?: 'replace' | 'queue' | 'drop';
+  queueLength?: number;
+}
+
+function buildWithQueue(testConfig: TestTransientConfig) {
   const stub = { type: 'div', props: {}, __source: undefined as never };
   let factoryCallCount = 0;
   const receivedSlotRanks: unknown[] = [];
@@ -32,18 +42,29 @@ function buildWithQueue(config: TransientOverlayConfig) {
   const { result: scopeResult, scripts } = withScriptScope(() => {
     const reactiveResult = withReactiveScope(() => {
       const globalResult = withGlobalScope(() => {
-        const { result, overlays } = withOverlayScope(() => {
-          return withContext(LvglContext, mockLvglRef, () => {
-            runInComponent('TestComponent', () => {
-              useTransientOverlay(config, (_ctrl, context) => {
-                factoryCallCount++;
-                receivedSlotRanks.push(context.slotRank);
-                return stub;
+        const { result: tierResult } = withOverlayTierScope(() => {
+          const { result, overlays } = withOverlayScope(() => {
+            return withContext(LvglContext, mockLvglRef, () => {
+              runInComponent('TestComponent', () => {
+                const tier = useOverlayTier({ zOrder: testConfig.zOrder ?? 0 });
+                const config: TransientOverlayConfig = {
+                  tier,
+                  maxVisible: testConfig.maxVisible,
+                  autoHide: testConfig.autoHide,
+                  overflow: testConfig.overflow,
+                  queueLength: testConfig.queueLength,
+                };
+                useTransientOverlay(config, (_ctrl, context) => {
+                  factoryCallCount++;
+                  receivedSlotRanks.push(context.slotRank);
+                  return stub;
+                });
               });
             });
           });
+          return { result, overlays };
         });
-        return { result, overlays };
+        return tierResult;
       });
       return globalResult;
     });
@@ -62,7 +83,8 @@ function buildWithQueue(config: TransientOverlayConfig) {
 describe('useTransientOverlay', () => {
   it('throws when called outside a hook context', () => {
     expect(() =>
-      useTransientOverlay({}, () => ({ type: 'div', props: {}, __source: undefined as never })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally invalid config for error test
+      useTransientOverlay({} as any, () => ({ type: 'div', props: {}, __source: undefined as never })),
     ).toThrow(/inside a function component/);
   });
 
@@ -314,13 +336,14 @@ describe('useTransientOverlay', () => {
       let ctrl: { show: () => void; hide: () => void } | undefined;
       const stub = { type: 'div', props: {}, __source: undefined as never };
 
-      withScriptScope(() => withReactiveScope(() => withGlobalScope(() => withOverlayScope(() => {
+      withScriptScope(() => withReactiveScope(() => withGlobalScope(() => withOverlayTierScope(() => withOverlayScope(() => {
         withContext(LvglContext, mockLvglRef, () => {
           runInComponent('Foo', () => {
-            ctrl = useTransientOverlay({ autoHide: '3s' }, () => stub);
+            const tier = useOverlayTier({ zOrder: 0 });
+            ctrl = useTransientOverlay({ tier, autoHide: '3s' }, () => stub);
           });
         });
-      }))));
+      })))));
 
       expect(ctrl).toBeDefined();
       expect(() => ctrl!.show()).toThrow(/compile-time/);

@@ -34,6 +34,7 @@ import {
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_Z_ORDER,
+  OVERLAY_TIER_KEY,
 } from './useOverlay';
 
 export interface OverlayScriptPair {
@@ -45,6 +46,7 @@ export interface OverlayControllerInternalInfo {
   templateKey: string;
   instanceIndex: number;
   zOrder: number;
+  tierKey: string;
   payloadDecls?: OverlayPayloadGlobalDecl[];
 }
 
@@ -59,6 +61,7 @@ interface OverlayControllerInternalShape {
   [OVERLAY_TEMPLATE_KEY]: string;
   [OVERLAY_INSTANCE_INDEX]: number;
   [OVERLAY_Z_ORDER]: number;
+  [OVERLAY_TIER_KEY]: string;
   [OVERLAY_PAYLOAD_GLOBALS]?: OverlayPayloadGlobalDecl[];
 }
 
@@ -70,6 +73,7 @@ export function readOverlayControllerInternal(
     templateKey: internal[OVERLAY_TEMPLATE_KEY],
     instanceIndex: internal[OVERLAY_INSTANCE_INDEX],
     zOrder: internal[OVERLAY_Z_ORDER],
+    tierKey: internal[OVERLAY_TIER_KEY],
     payloadDecls: internal[OVERLAY_PAYLOAD_GLOBALS],
   };
 }
@@ -128,6 +132,7 @@ export function buildOverlayLifecycleScripts(
       internal.templateKey,
       internal.instanceIndex,
       internal.zOrder,
+      internal.tierKey,
       ctrlBindingKey,
     ),
   ];
@@ -146,7 +151,7 @@ export function buildOverlayLifecycleScripts(
       showActions.push(irScriptWait(options.beforeHideScript.id));
     }
     showActions.push(...(options.beforeAutoHideHideActions ?? []));
-    showActions.push(irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey));
+    showActions.push(irOverlayHide(internal.templateKey, internal.zOrder, internal.tierKey, ctrlBindingKey));
     showActions.push(...(options.afterAutoHideActions ?? []));
   }
 
@@ -166,7 +171,7 @@ export function buildOverlayLifecycleScripts(
     hideActions.push(execWithClosure(options.beforeHideScript));
     hideActions.push(irScriptWait(options.beforeHideScript.id));
   }
-  hideActions.push(irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey));
+  hideActions.push(irOverlayHide(internal.templateKey, internal.zOrder, internal.tierKey, ctrlBindingKey));
   hideActions.push(...(options.hideSuffixActions ?? []));
 
   const hideScript = defineSyntheticScript({

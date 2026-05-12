@@ -64,10 +64,10 @@ export function compileOverlayAction(
   switch (methodName) {
     case 'show': {
       const globalSetActions = compileOverlayShowParams(call, controllerRef, _objType, ctx);
-      return [...globalSetActions, irOverlayShow('', -1, 0, controllerRef)];
+      return [...globalSetActions, irOverlayShow('', -1, 0, '', controllerRef)];
     }
     case 'hide':
-      return [irOverlayHide('', 0, controllerRef)];
+      return [irOverlayHide('', 0, '', controllerRef)];
   }
 }
 

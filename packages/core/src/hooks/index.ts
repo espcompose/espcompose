@@ -22,6 +22,8 @@ export { withGlobalScope, hashGlobalFingerprint, createGlobalHandle, createGloba
 export type { GlobalDefinition, GlobalHandle, GlobalArrayHandle, TransientOverlayContext } from './global-shared';
 export { useOverlay, withOverlayScope, peekOverlayDefinitions } from './useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayDefinition, OverlayInstance, OverlayScopeResult, CapturedOverlayAction, OverlayPayloadGlobalDecl } from './useOverlay';
+export { useOverlayTier, withOverlayTierScope, peekOverlayTierDefinitions } from './useOverlayTier';
+export type { OverlayTierConfig, OverlayTierHandle, OverlayTierDefinition, OverlayTierScopeResult } from './useOverlayTier';
 export { useTransientOverlay } from './useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './useTransientOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './overlay-fingerprint';

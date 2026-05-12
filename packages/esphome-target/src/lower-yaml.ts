@@ -425,6 +425,14 @@ export function lowerToYamlConfig(
   // Build action lowering context so global_set knows whether to emit
   // BoundSignal C++ lambda or plain globals.set YAML, and so action
   // conditions can resolve overlay mux signal names.
+  const tiersWithWrapper = new Set<string>();
+  for (const ui of ir.uis) {
+    for (const tier of ui.overlays) {
+      if (tier.wrapperWidget) {
+        tiersWithWrapper.add(tier.tierKey);
+      }
+    }
+  }
   const actionCtx: ActionLoweringContext = {
     reactiveGlobalIds: cppResult?.runtimeConfig?.globalSignals
       ? new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId))
@@ -437,6 +445,7 @@ export function lowerToYamlConfig(
       return sigMap;
     })(),
     perf: options?.perf,
+    tiersWithWrapper,
   };
 
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);

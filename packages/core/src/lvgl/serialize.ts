@@ -21,6 +21,8 @@ import { isIRReactiveNode } from '../reactive';
 import type { IRReactiveNode } from '../reactive';
 import { registerReactiveBinding, withReactiveScope, withHookPath, registerComponent } from '../hooks';
 import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
+import { peekOverlayTierDefinitions } from '../hooks/useOverlayTier';
+import type { OverlayTierDefinition } from '../hooks/useOverlayTier';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
 import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
@@ -536,7 +538,14 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   let overlays = peekOverlayDefinitions(lvgl);
   if (overlays.length === 0) return [];
 
-  const tierMap = new Map<number, RawIROverlayContainer[]>();
+  // Collect tier definitions for wrapper widget resolution.
+  const tierDefs = peekOverlayTierDefinitions(lvgl);
+  const tierDefMap = new Map<string, OverlayTierDefinition>();
+  for (const td of tierDefs) {
+    tierDefMap.set(td.tierKey, td);
+  }
+
+  const tierMap = new Map<string, { zOrder: number; overlays: RawIROverlayContainer[]; wrapperWidget?: RawIRWidget }>();
   const processed = new Set<string>();
   while (overlays.some(d => !processed.has(d.templateKey))) {
     for (const def of overlays) {
@@ -544,10 +553,23 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
       processed.add(def.templateKey);
       assertOverlayStructuralIdentity(def.templateKey, def.instances);
 
-      let tierEntries = tierMap.get(def.zOrder);
-      if (!tierEntries) {
-        tierEntries = [];
-        tierMap.set(def.zOrder, tierEntries);
+      let tierEntry = tierMap.get(def.tierKey);
+      if (!tierEntry) {
+        // Resolve the tier's wrapper widget if present.
+        let wrapperWidget: RawIRWidget | undefined;
+        const tierDef = tierDefMap.get(def.tierKey);
+        if (tierDef?.wrapper) {
+          const wrapperArr = Array.isArray(tierDef.wrapper) ? tierDef.wrapper : [tierDef.wrapper];
+          const resolved = resolveLvglChildren(wrapperArr);
+          for (const ch of resolved) {
+            if (isLvglElement(ch.type)) {
+              wrapperWidget = buildLvglWidgetIR(ch);
+              break; // Only one wrapper widget per tier
+            }
+          }
+        }
+        tierEntry = { zOrder: def.zOrder, overlays: [], wrapperWidget };
+        tierMap.set(def.tierKey, tierEntry);
       }
 
       for (const instance of def.instances) {
@@ -582,7 +604,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
               // Only emit instance 0's widgets into the tier container; others
               // contribute only their captured bindings/actions for the mux pass.
               if (instance.index === 0) {
-                tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
+                tierEntry!.overlays.push({ templateKey: def.templateKey, widgets: widgetIR });
               }
               return null;
             }),
@@ -609,7 +631,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   }
 
   return Array.from(tierMap.entries())
-    .sort((a, b) => a[0] - b[0])
-    .filter(([, overlays]) => overlays.length > 0)
-    .map(([zOrder, overlays]) => ({ zOrder, overlays }));
+    .sort((a, b) => a[1].zOrder - b[1].zOrder)
+    .filter(([, entry]) => entry.overlays.length > 0)
+    .map(([tierKey, entry]) => ({ tierKey, zOrder: entry.zOrder, overlays: entry.overlays, wrapperWidget: entry.wrapperWidget }));
 }

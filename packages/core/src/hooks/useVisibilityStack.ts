@@ -302,7 +302,7 @@ function buildShowBody(
 
   // 4. Show overlay (payload globals are set by the overlay's own show mechanism)
   actions.push(
-    irOverlayShow(internal.templateKey, internal.instanceIndex, internal.zOrder),
+    irOverlayShow(internal.templateKey, internal.instanceIndex, internal.zOrder, internal.tierKey),
   );
 
   // 5. afterShow hook: execute + await entrance animation
@@ -417,7 +417,7 @@ function buildHideBody(
   }
 
   // Hide my widget
-  actions.push(irOverlayHide(internal.templateKey, internal.zOrder));
+  actions.push(irOverlayHide(internal.templateKey, internal.zOrder, internal.tierKey));
 
   // Restore previous entry (if any)
   // Re-read depth after decrement
@@ -526,6 +526,7 @@ function registerOverlay(
           internal.templateKey,
           { kind: 'script_param', name: 'inst' },
           internal.zOrder,
+          internal.tierKey,
         ),
       ],
       userParams: [{ name: 'inst', irType: IR_INT }],

@@ -181,6 +181,8 @@ export type { GlobalHandle, TransientOverlayContext } from './hooks/global-share
 export { forwardOverlayPayloadMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayPayloadGlobalDecl } from './hooks/useOverlay';
+export { useOverlayTier } from './hooks/useOverlayTier';
+export type { OverlayTierConfig, OverlayTierHandle } from './hooks/useOverlayTier';
 export { useTransientOverlay } from './hooks/useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
 export { useVisibility } from './hooks/useVisibility';

@@ -12,7 +12,7 @@
  */
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
-import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings, useRef, useScript, animate } from '@espcompose/core';
+import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings, useRef, useScript, animate, useOverlayTier } from '@espcompose/core';
 import { BottomToast as ToastWidget } from '../components/BottomToast';
 import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
@@ -122,8 +122,10 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
   const variant: 'bottom' | 'topRight' = variantProp
     ?? (settings?.class === 'large' || settings?.class === 'panel' ? 'topRight' : 'bottom');
 
+  const toastTier = useOverlayTier({ zOrder: 100 });
+
   const ctrl = useTransientOverlay<ToastPayload>(
-    { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
+    { tier: toastTier, maxVisible, autoHide, overflow, queueLength },
     (_ctrl, ctx) => {
       const cardRef = useRef();
 
@@ -133,9 +135,8 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
             property: 'translateX',
             from: 300,
             to: 0,
-            duration: '800ms',
+            duration: '300ms',
             easing: 'ease-out',
-            delay: '500ms',
           });
         });
         const exitScript = useScript(async () => {

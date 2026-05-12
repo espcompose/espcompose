@@ -2,6 +2,7 @@ import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks/useScript';
 import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
 import { withOverlayScope } from './hooks/useOverlay';
+import { withOverlayTierScope } from './hooks/useOverlayTier';
 import { withContributionScope } from './hooks/useContributionScope';
 import { withContext, withHookPath } from './hooks';
 import type { Context } from './hooks';
@@ -291,6 +292,7 @@ export const ESPCompose = {
   withScriptScope,
   withReactiveScope,
   withOverlayScope,
+  withOverlayTierScope,
   withContributionScope,
   clearHAEntityCache,
   clearImageCache,

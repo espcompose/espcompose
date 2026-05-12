@@ -12,11 +12,16 @@
  */
 
 import type { EspComposeElement } from '@espcompose/core';
-import { withVisibilityStack, createLvglContextProvider } from '@espcompose/core';
+import { withVisibilityStack, createLvglContextProvider, useOverlayTier, createContext, createElement } from '@espcompose/core';
+import type { OverlayTierHandle } from '@espcompose/core';
+import { Backdrop } from '../components';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
 // ────────────────────────────────────────────────────────────────────────────
+
+/** Context carrying the dialog tier handle for `useDialog()`. */
+export const DialogTierContext = createContext<OverlayTierHandle | null>(null);
 
 export interface DialogProviderProps {
   /**
@@ -37,7 +42,20 @@ export interface DialogProviderProps {
 
 function DialogProvider(props: DialogProviderProps): EspComposeElement {
   const { maxDepth = 1, children } = props;
-  return withVisibilityStack({ maxDepth, zOrder: 0 }, children);
+  const tier = useOverlayTier(
+    { zOrder: 0 },
+    <Backdrop
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    />,
+  );
+  return createElement(
+    'context',
+    { context: DialogTierContext, value: tier },
+    withVisibilityStack({ maxDepth, zOrder: 0 }, children),
+  );
 }
 
 export const DialogProviderComponent = createLvglContextProvider(DialogProvider);

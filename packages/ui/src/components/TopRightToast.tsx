@@ -55,14 +55,14 @@ export const TopRightToast = createLvglContainerWidget(
       <lvgl-obj
         ref={containerRef}
         style={{
-          width: '100%',
-          height: '100%',
+          height: 'fit-content',
+          width: 'fit-content',
           backgroundColor: '#000000',
           backgroundOpacity: 'transparent',
           borderWidth: 0,
-          padding: 0,
           paddingTop: topOffset,
           clickable: false,
+          placeSelf: 'topRight',
         }}
       >
         {/* Top-right anchored toast card */}

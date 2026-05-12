@@ -29,7 +29,7 @@ Signal<std::string> sig_ha_light_kitchen_facet_state_text;
 Signal<bool> sig_ha_light_bedroom;
 Signal<float> sig_ha_light_bedroom_attr_brightness;
 Signal<std::string> sig_ha_light_bedroom_facet_state_text;
-Signal<int32_t> sig_ovrl_ref12_mux;
+Signal<int32_t> sig_ovrl_ref13_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -196,39 +196,17 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_ref12_act_0[] = {
+static const char* tbl_ovrl_ref13_act_0[] = {
   "light.kitchen",
   "light.bedroom"
 };
 
-static const char* tbl_ovrl_ref12_act_1[] = {
+static const char* tbl_ovrl_ref13_act_1[] = {
   "light.kitchen",
   "light.bedroom"
 };
 
 // ── Script closure tables ──
-static decltype(_ec_id_ptr(id(r_ref13))) const ec_scr_ref29_backdropRefs[] = {
-  _ec_id_ptr(id(r_ref13))
-};
-struct scr_ref29_closure_t {
-  int backdropRef_idx;
-};
-static const scr_ref29_closure_t scr_ref29_closures[] = {
-  { 0 },
-  { 0 }
-};
-
-static decltype(_ec_id_ptr(id(r_ref13))) const ec_scr_ref30_backdropRefs[] = {
-  _ec_id_ptr(id(r_ref13))
-};
-struct scr_ref30_closure_t {
-  int backdropRef_idx;
-};
-static const scr_ref30_closure_t scr_ref30_closures[] = {
-  { 0 },
-  { 0 }
-};
-
 struct scr_ref5_closure_t {
   int __ctrl_instance_index;
 };
@@ -237,10 +215,10 @@ static const scr_ref5_closure_t scr_ref5_closures[] = {
   { 1 }
 };
 
-struct scr_ref31_closure_t {
+struct scr_ref29_closure_t {
   int __ctrl_instance_index;
 };
-static const scr_ref31_closure_t scr_ref31_closures[] = {
+static const scr_ref29_closure_t scr_ref29_closures[] = {
   { 0 },
   { 1 }
 };
@@ -380,8 +358,8 @@ void bootstrap_runtime() {
   thm_333e4663_typography_subtitle.set_subscriber_storage(thm_333e4663_typography_subtitle_subs, 1);
   static NodeBase* thm_333e4663_colors_textSecondary_subs[1];
   thm_333e4663_colors_textSecondary.set_subscriber_storage(thm_333e4663_colors_textSecondary_subs, 1);
-  static NodeBase* sig_ovrl_ref12_mux_subs[2];
-  sig_ovrl_ref12_mux.set_subscriber_storage(sig_ovrl_ref12_mux_subs, 2);
+  static NodeBase* sig_ovrl_ref13_mux_subs[2];
+  sig_ovrl_ref13_mux.set_subscriber_storage(sig_ovrl_ref13_mux_subs, 2);
   static NodeBase* thm_333e4663_sizes_md_font_subs[1];
   thm_333e4663_sizes_md_font.set_subscriber_storage(thm_333e4663_sizes_md_font_subs, 1);
   static NodeBase* memo_12_subs[1];
@@ -491,7 +469,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_27([]() {
-    lv_label_set_text(&id(rw_ref20), ([&]() -> std::string { switch (sig_ovrl_ref12_mux.get()) { case 0: return ((sig_ha_light_kitchen.get() ? std::string("Turn Off") : std::string("Turn On"))); case 1: return ((sig_ha_light_bedroom.get() ? std::string("Turn Off") : std::string("Turn On"))); default: return std::string{}; } })().c_str());
+    lv_label_set_text(&id(rw_ref20), ([&]() -> std::string { switch (sig_ovrl_ref13_mux.get()) { case 0: return ((sig_ha_light_kitchen.get() ? std::string("Turn Off") : std::string("Turn On"))); case 1: return ((sig_ha_light_bedroom.get() ? std::string("Turn Off") : std::string("Turn On"))); default: return std::string{}; } })().c_str());
   });
 
   static Effect binding_28([]() {
@@ -521,7 +499,7 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_38([]() {
-    lv_slider_set_value(&id(rw_ref22), static_cast<int32_t>(([&]() -> float { switch (sig_ovrl_ref12_mux.get()) { case 0: return sig_ha_light_kitchen_attr_brightness.get(); case 1: return sig_ha_light_bedroom_attr_brightness.get(); default: return float{}; } })()), LV_ANIM_ON);
+    lv_slider_set_value(&id(rw_ref22), static_cast<int32_t>(([&]() -> float { switch (sig_ovrl_ref13_mux.get()) { case 0: return sig_ha_light_kitchen_attr_brightness.get(); case 1: return sig_ha_light_bedroom_attr_brightness.get(); default: return float{}; } })()), LV_ANIM_ON);
   });
 
   static Effect binding_39([]() {
@@ -660,7 +638,7 @@ void bootstrap_runtime() {
   binding_24.wire(binding_24_sources, 1);
   static NodeBase* binding_26_sources[] = {&thm_333e4663_colors_textSecondary};
   binding_26.wire(binding_26_sources, 1);
-  static NodeBase* binding_27_sources[] = {&sig_ovrl_ref12_mux, &sig_ha_light_kitchen, &sig_ha_light_bedroom};
+  static NodeBase* binding_27_sources[] = {&sig_ovrl_ref13_mux, &sig_ha_light_kitchen, &sig_ha_light_bedroom};
   binding_27.wire(binding_27_sources, 3);
   static NodeBase* binding_28_sources[] = {&thm_333e4663_colors_primary_text};
   binding_28.wire(binding_28_sources, 1);
@@ -674,7 +652,7 @@ void bootstrap_runtime() {
   binding_34.wire(binding_34_sources, 1);
   static NodeBase* binding_35_sources[] = {&thm_333e4663_colors_primary_bgPressed};
   binding_35.wire(binding_35_sources, 1);
-  static NodeBase* binding_38_sources[] = {&sig_ovrl_ref12_mux, &sig_ha_light_kitchen_attr_brightness, &sig_ha_light_bedroom_attr_brightness};
+  static NodeBase* binding_38_sources[] = {&sig_ovrl_ref13_mux, &sig_ha_light_kitchen_attr_brightness, &sig_ha_light_bedroom_attr_brightness};
   binding_38.wire(binding_38_sources, 3);
   static NodeBase* binding_39_sources[] = {&thm_333e4663_parts_slider_rail};
   binding_39.wire(binding_39_sources, 1);
@@ -1264,7 +1242,7 @@ lvgl:
     top_layer:
       widgets:
         - obj:
-            id: overlay_tier_0
+            id: overlay_tier_ref12
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -1273,8 +1251,15 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref12
+                  width: 100%
+                  height: 100%
+                  bg_color: "0x000000"
+                  bg_opa: 50%
+                  scrollbar_mode: 'OFF'
+                  id: tw_tier_ref12
                   hidden: true
+              - obj:
+                  id: ovrl_ref13
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -1283,37 +1268,109 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
-                        id: r_ref13
                         on_press:
-                          - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref12), LV_OBJ_FLAG_HIDDEN);"
+                          - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref13); for(int
+                              i=0;i<(int)lv_obj_get_child_count(w);i++)
+                              lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG\\
+                              _HIDDEN); } { lv_obj_t* tier =
+                              lv_obj_get_parent(id(ovrl_ref13)); lv_obj_t* tw
+                              = id(tw_tier_ref12); bool any = false; for(int
+                              i=0;i<(int)lv_obj_get_child_count(tier);i++){lv_o\\
+                              bj_t* s = lv_obj_get_child(tier,i); if(s==tw)
+                              continue; for(int
+                              j=0;j<(int)lv_obj_get_child_count(s);j++){if(!lv_\\
+                              obj_has_flag(lv_obj_get_child(s,j),LV_OBJ_FLAG_HI\\
+                              DDEN)){any=true;break;}} if(any) break;} if(!any)
+                              lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN); }"
                         width: 100%
                         height: 100%
+                        bg_opa: TRANSP
                         border_width: 0
                         pad_all: 0
-                        opa: COVER
-                        bg_color: "0x000000"
-                        bg_opa: 50%
+                        hidden: true
+                    - obj:
+                        width: 85%
+                        height: SIZE_CONTENT
+                        align: CENTER
+                        shadow_color: "0x000000"
+                        shadow_opa: 25%
+                        shadow_ofs_x: 6
+                        shadow_ofs_y: 6
+                        shadow_width: 6
+                        shadow_spread: 0
+                        pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                         scrollbar_mode: 'OFF'
+                        bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                        bg_opa: COVER
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
+                        id: rw_ref14
                         widgets:
                           - obj:
-                              width: 85%
+                              width: 100%
                               height: SIZE_CONTENT
-                              align: CENTER
-                              shadow_color: "0x000000"
-                              shadow_opa: 25%
-                              shadow_ofs_x: 6
-                              shadow_ofs_y: 6
-                              shadow_width: 6
-                              shadow_spread: 0
-                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
-                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                              clickable: false
+                              bg_opa: TRANSP
+                              border_width: 0
                               scrollbar_mode: 'OFF'
-                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                              bg_opa: COVER
+                              layout:
+                                type: flex
+                                flex_flow: ROW
+                                flex_align_main: SPACE_BETWEEN
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                - label:
+                                    text: Kitchen
+                                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                    id: rw_ref15
+                                - obj:
+                                    on_press:
+                                      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref13); for(int
+                                          i=0;i<(int)lv_obj_get_child_count(w);\\
+                                          i++)
+                                          lv_obj_add_flag(lv_obj_get_child(w,i)\\
+                                          ,LV_OBJ_FLAG_HIDDEN); } { lv_obj_t*
+                                          tier =
+                                          lv_obj_get_parent(id(ovrl_ref13));
+                                          lv_obj_t* tw = id(tw_tier_ref12);
+                                          bool any = false; for(int
+                                          i=0;i<(int)lv_obj_get_child_count(tie\\
+                                          r);i++){lv_obj_t* s =
+                                          lv_obj_get_child(tier,i); if(s==tw)
+                                          continue; for(int
+                                          j=0;j<(int)lv_obj_get_child_count(s);\\
+                                          j++){if(!lv_obj_has_flag(lv_obj_get_c\\
+                                          hild(s,j),LV_OBJ_FLAG_HIDDEN)){any=tr\\
+                                          ue;break;}} if(any) break;} if(!any)
+                                          lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN\\
+                                          ); }"
+                                    width: SIZE_CONTENT
+                                    height: SIZE_CONTENT
+                                    bg_opa: TRANSP
+                                    border_width: 0
+                                    pad_all: 4
+                                    widgets:
+                                      - label:
+                                          text: 󰅖
+                                          text_color: !lambda "return
+                                            espcompose::thm_333e4663_colors_textSecondary.get();"
+                                          align: CENTER
+                                          id: rw_ref16
+                          - obj:
+                              width: 100%
+                              height: SIZE_CONTENT
+                              bg_opa: TRANSP
+                              border_width: 0
+                              pad_all: 0
+                              scrollbar_mode: AUTO
                               layout:
                                 type: flex
                                 flex_flow: COLUMN
-                              id: rw_ref14
+                                pad_row: 0
+                              id: rw_ref17
                               widgets:
                                 - obj:
                                     width: 100%
@@ -1324,136 +1381,91 @@ lvgl:
                                     scrollbar_mode: 'OFF'
                                     layout:
                                       type: flex
-                                      flex_flow: ROW
-                                      flex_align_main: SPACE_BETWEEN
-                                      flex_align_cross: CENTER
-                                      flex_align_track: CENTER
-                                    widgets:
-                                      - label:
-                                          text: Kitchen
-                                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                          id: rw_ref15
-                                      - obj:
-                                          on_press:
-                                            - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref12), LV_OBJ_FLAG_HIDDEN);"
-                                          width: SIZE_CONTENT
-                                          height: SIZE_CONTENT
-                                          bg_opa: TRANSP
-                                          border_width: 0
-                                          pad_all: 4
-                                          widgets:
-                                            - label:
-                                                text: 󰅖
-                                                text_color: !lambda "return
-                                                  espcompose::thm_333e4663_colors_textSecondary.get();"
-                                                align: CENTER
-                                                id: rw_ref16
-                                - obj:
-                                    width: 100%
-                                    height: SIZE_CONTENT
-                                    bg_opa: TRANSP
-                                    border_width: 0
-                                    pad_all: 0
-                                    scrollbar_mode: AUTO
-                                    layout:
-                                      type: flex
                                       flex_flow: COLUMN
                                       pad_row: 0
-                                    id: rw_ref17
+                                    id: rw_ref18
                                     widgets:
+                                      - button:
+                                          on_press:
+                                            - homeassistant.action:
+                                                action: homeassistant.toggle
+                                                data_template:
+                                                  entity_id: "{{ entity_id_expr }}"
+                                                variables:
+                                                  entity_id_expr: !lambda "return
+                                                    espcompose::tbl_ovrl_ref13_act_0[espcompose::\\
+                                                    sig_ovrl_ref13_mux.get()\\
+                                                    ];"
+                                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                          bg_opa: COVER
+                                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                          border_width: 0
+                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                          width: !lambda "return espcompose::memo_12.get();"
+                                          height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                          pressed:
+                                            bg_color: !lambda "return
+                                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                              );"
+                                            bg_opa: COVER
+                                          id: rw_ref19
+                                          widgets:
+                                            - label:
+                                                text: !lambda "return espcompose::memo_0.get().c_str();"
+                                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                                text_align: CENTER
+                                                align: CENTER
+                                                id: rw_ref20
+                                      - label:
+                                          text: Brightness
+                                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                          id: rw_ref21
                                       - obj:
                                           width: 100%
-                                          height: SIZE_CONTENT
-                                          clickable: false
-                                          bg_opa: TRANSP
-                                          border_width: 0
-                                          scrollbar_mode: 'OFF'
-                                          layout:
-                                            type: flex
-                                            flex_flow: COLUMN
-                                            pad_row: 0
-                                          id: rw_ref18
+                                          height: 27
+                                          pad_top: 4
+                                          pad_bottom: 4
+                                          pad_left: 11
+                                          pad_right: 9
                                           widgets:
-                                            - button:
-                                                on_press:
+                                            - slider:
+                                                min_value: 0
+                                                max_value: 255
+                                                value: !lambda "return id(ha_light_kitchen_attr_brightness).state;"
+                                                on_release:
                                                   - homeassistant.action:
-                                                      action: homeassistant.toggle
+                                                      action: homeassistant.turn_on
                                                       data_template:
                                                         entity_id: "{{ entity_id_expr }}"
+                                                        brightness: "{{ x }}"
                                                       variables:
                                                         entity_id_expr: !lambda "return
-                                                          espcompose::tbl_ovrl_ref12_act_0[espcompose::\\
-                                                          sig_ovrl_ref12_mux\\
+                                                          espcompose::tbl_ovrl_ref13_act_1[espcompose::\\
+                                                          sig_ovrl_ref13_mux\\
                                                           .get()];"
-                                                bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                                bg_opa: COVER
-                                                border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                                border_width: 0
-                                                radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                                width: !lambda "return espcompose::memo_12.get();"
-                                                height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                                pressed:
-                                                  bg_color: !lambda "return
-                                                    espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                                    );"
-                                                  bg_opa: COVER
-                                                id: rw_ref19
-                                                widgets:
-                                                  - label:
-                                                      text: !lambda "return espcompose::memo_0.get().c_str();"
-                                                      text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                                      text_align: CENTER
-                                                      align: CENTER
-                                                      id: rw_ref20
-                                            - label:
-                                                text: Brightness
-                                                text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                                id: rw_ref21
-                                            - obj:
+                                                        x: !lambda "return x;"
                                                 width: 100%
-                                                height: 27
-                                                pad_top: 4
-                                                pad_bottom: 4
-                                                pad_left: 11
-                                                pad_right: 9
-                                                widgets:
-                                                  - slider:
-                                                      min_value: 0
-                                                      max_value: 255
-                                                      value: !lambda "return id(ha_light_kitchen_attr_brightness).state;"
-                                                      on_release:
-                                                        - homeassistant.action:
-                                                            action: homeassistant.turn_on
-                                                            data_template:
-                                                              entity_id: "{{ entity_id_expr }}"
-                                                              brightness: "{{ x }}"
-                                                            variables:
-                                                              entity_id_expr: !lambda "return
-                                                                espcompose::tbl_ovrl_ref12_act_1[espcompose::\\
-                                                                sig_ovrl_ref12_m\\
-                                                                ux.get()];"
-                                                              x: !lambda "return x;"
-                                                      width: 100%
-                                                      height: 100%
-                                                      pad_left: 0
-                                                      radius: CIRCLE
-                                                      bg_opa: COVER
-                                                      bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_rail.get();"
-                                                      border_width: 0
-                                                      indicator:
-                                                        border_width: 0
-                                                        radius: CIRCLE
-                                                        bg_opa: COVER
-                                                        bg_color: !lambda "return
-                                                          espcompose::thm_333e4663_parts_slider_indicator.get();"
-                                                      knob:
-                                                        pad_all: 4
-                                                        border_width: 2
-                                                        border_color: !lambda "return espcompose::thm_333e4663_parts_slider_rail.get();"
-                                                        radius: CIRCLE
-                                                        bg_opa: COVER
-                                                        bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
-                                                      id: rw_ref22
+                                                height: 100%
+                                                pad_left: 0
+                                                radius: CIRCLE
+                                                bg_opa: COVER
+                                                bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_rail.get();"
+                                                border_width: 0
+                                                indicator:
+                                                  border_width: 0
+                                                  radius: CIRCLE
+                                                  bg_opa: COVER
+                                                  bg_color: !lambda "return
+                                                    espcompose::thm_333e4663_parts_slider_indicator.get();"
+                                                knob:
+                                                  pad_all: 4
+                                                  border_width: 2
+                                                  border_color: !lambda "return espcompose::thm_333e4663_parts_slider_rail.get();"
+                                                  radius: CIRCLE
+                                                  bg_opa: COVER
+                                                  bg_color: !lambda "return espcompose::thm_333e4663_parts_slider_knob.get();"
+                                                id: rw_ref22
+                        hidden: true
 binary_sensor:
   - platform: homeassistant
     id: ha_light_kitchen
@@ -1577,51 +1589,31 @@ font:
           - 󰠟
           - 󰠜
 script:
-  - id: scr_ref29
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref13
-          prop: opa
-          from: 0
-          to: 255
-          duration: 200
-          easing: ease_out
-  - id: scr_ref30
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref13
-          prop: opa
-          from: 255
-          to: 0
-          duration: 200
-          easing: ease_in
   - id: scr_ref5
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref5_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref12_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref12),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref12));"
-      - script.execute:
-          id: scr_ref29
-          closure_index: 0
-      - script.wait:
-          id: scr_ref29
-  - id: scr_ref31
+          espcompose::sig_ovrl_ref13_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); { lv_obj_t* w = id(ovrl_ref13); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+          lv_obj_clear_flag(id(tw_tier_ref12),LV_OBJ_FLAG_HIDDEN);
+          lv_obj_move_foreground(id(ovrl_ref13));"
+  - id: scr_ref29
     parameters:
       closure_index: int
     then:
-      - script.execute:
-          id: scr_ref30
-          closure_index: 0
-      - script.wait:
-          id: scr_ref30
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref12), LV_OBJ_FLAG_HIDDEN);"
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref13); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } {
+          lv_obj_t* tier = lv_obj_get_parent(id(ovrl_ref13)); lv_obj_t* tw =
+          id(tw_tier_ref12); bool any = false; for(int
+          i=0;i<(int)lv_obj_get_child_count(tier);i++){lv_obj_t* s =
+          lv_obj_get_child(tier,i); if(s==tw) continue; for(int
+          j=0;j<(int)lv_obj_get_child_count(s);j++){if(!lv_obj_has_flag(lv_obj_\\
+          get_child(s,j),LV_OBJ_FLAG_HIDDEN)){any=true;break;}} if(any) break;}
+          if(!any) lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN); }"
 "
 `;

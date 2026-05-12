@@ -23,13 +23,13 @@ template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
 template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Signals (one per HA entity source) ──
-Signal<int32_t> sig_ovrl_ref10_mux;
-Signal<int32_t> sig_ovrl_ref23_mux;
+Signal<int32_t> sig_ovrl_ref11_mux;
+Signal<int32_t> sig_ovrl_ref24_mux;
 
 // ── BoundSignals (one per reactive global variable) ──
-BoundSignal<std::string> sig_global_g_ref26;
-BoundSignal<std::vector<int>> sig_global_g_ref34(std::vector<int>({0}));
+BoundSignal<std::string> sig_global_g_ref27;
 BoundSignal<std::vector<int>> sig_global_g_ref35(std::vector<int>({0}));
+BoundSignal<std::vector<int>> sig_global_g_ref36(std::vector<int>({0}));
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -75,7 +75,7 @@ Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref30).get_lv_font(), id(r_ref30).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref31).get_lv_font(), id(r_ref31).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
@@ -105,17 +105,17 @@ Memo<int32_t> thm_333e4663_spacing_sm([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref30).get_lv_font(), id(r_ref30).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref31).get_lv_font(), id(r_ref31).get_lv_font()};
   return thm_333e4663_typography_body_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_subtitle([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_subtitle_vals[] = {id(r_ref29).get_lv_font(), id(r_ref29).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_subtitle_vals[] = {id(r_ref30).get_lv_font(), id(r_ref30).get_lv_font()};
   return thm_333e4663_typography_subtitle_vals[theme_index_333e4663.get()];
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref28).get_lv_font(), id(r_ref28).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref29).get_lv_font(), id(r_ref29).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
@@ -126,34 +126,12 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Static data tables (table-driven mux) ──
-static const char* tbl_ovrl_ref10_act_0[] = {
+static const char* tbl_ovrl_ref11_act_0[] = {
   "light.bedroom",
   "light.kitchen"
 };
 
 // ── Script closure tables ──
-static decltype(_ec_id_ptr(id(r_ref11))) const ec_scr_ref37_backdropRefs[] = {
-  _ec_id_ptr(id(r_ref11))
-};
-struct scr_ref37_closure_t {
-  int backdropRef_idx;
-};
-static const scr_ref37_closure_t scr_ref37_closures[] = {
-  { 0 },
-  { 0 }
-};
-
-static decltype(_ec_id_ptr(id(r_ref11))) const ec_scr_ref38_backdropRefs[] = {
-  _ec_id_ptr(id(r_ref11))
-};
-struct scr_ref38_closure_t {
-  int backdropRef_idx;
-};
-static const scr_ref38_closure_t scr_ref38_closures[] = {
-  { 0 },
-  { 0 }
-};
-
 struct scr_ref5_closure_t {
   int __ctrl_instance_index;
 };
@@ -162,16 +140,27 @@ static const scr_ref5_closure_t scr_ref5_closures[] = {
   { 1 }
 };
 
-struct scr_ref39_closure_t {
+struct scr_ref38_closure_t {
   int __ctrl_instance_index;
 };
-static const scr_ref39_closure_t scr_ref39_closures[] = {
+static const scr_ref38_closure_t scr_ref38_closures[] = {
   { 0 },
   { 1 }
 };
 
-static decltype(_ec_id_ptr(id(r_ref25))) const ec_scr_ref40_cardRefs[] = {
-  _ec_id_ptr(id(r_ref25))
+static decltype(_ec_id_ptr(id(r_ref26))) const ec_scr_ref39_cardRefs[] = {
+  _ec_id_ptr(id(r_ref26))
+};
+struct scr_ref39_closure_t {
+  int cardRef_idx;
+};
+static const scr_ref39_closure_t scr_ref39_closures[] = {
+  { 0 },
+  { 0 }
+};
+
+static decltype(_ec_id_ptr(id(r_ref26))) const ec_scr_ref40_cardRefs[] = {
+  _ec_id_ptr(id(r_ref26))
 };
 struct scr_ref40_closure_t {
   int cardRef_idx;
@@ -181,29 +170,18 @@ static const scr_ref40_closure_t scr_ref40_closures[] = {
   { 0 }
 };
 
-static decltype(_ec_id_ptr(id(r_ref25))) const ec_scr_ref41_cardRefs[] = {
-  _ec_id_ptr(id(r_ref25))
-};
 struct scr_ref41_closure_t {
-  int cardRef_idx;
+  int __ctrl_instance_index;
 };
 static const scr_ref41_closure_t scr_ref41_closures[] = {
   { 0 },
-  { 0 }
+  { 1 }
 };
 
 struct scr_ref42_closure_t {
   int __ctrl_instance_index;
 };
 static const scr_ref42_closure_t scr_ref42_closures[] = {
-  { 0 },
-  { 1 }
-};
-
-struct scr_ref43_closure_t {
-  int __ctrl_instance_index;
-};
-static const scr_ref43_closure_t scr_ref43_closures[] = {
   { 0 },
   { 1 }
 };
@@ -215,11 +193,11 @@ Memo<float> memo_0([]() -> float {
 });
 
 Memo<int32_t> memo_2([]() -> int32_t {
-  return 0 + (espcompose::sig_global_g_ref34.get()[0] != 0 && espcompose::sig_global_g_ref35.get()[0] < espcompose::sig_global_g_ref35.get()[0] ? 1 : 0);
+  return 0 + (espcompose::sig_global_g_ref35.get()[0] != 0 && espcompose::sig_global_g_ref36.get()[0] < espcompose::sig_global_g_ref36.get()[0] ? 1 : 0);
 });
 
 Memo<float> memo_3([]() -> float {
-  return (0 + (espcompose::sig_global_g_ref34.get()[0] != 0 && espcompose::sig_global_g_ref35.get()[0] < espcompose::sig_global_g_ref35.get()[0] ? 1 : 0)) * 64;
+  return (0 + (espcompose::sig_global_g_ref35.get()[0] != 0 && espcompose::sig_global_g_ref36.get()[0] < espcompose::sig_global_g_ref36.get()[0] ? 1 : 0)) * 64;
 });
 
 // ── Memo aliases (deduplicated) ──
@@ -241,19 +219,19 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Bind global BoundSignals to ESPHome global storage ──
-  sig_global_g_ref26.bind(&id(g_ref26));
-  sig_global_g_ref34.bind(&id(g_ref34));
+  sig_global_g_ref27.bind(&id(g_ref27));
   sig_global_g_ref35.bind(&id(g_ref35));
+  sig_global_g_ref36.bind(&id(g_ref36));
 
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* theme_index_333e4663_subs[17];
   theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 17);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
-  static NodeBase* sig_global_g_ref34_subs[2];
-  sig_global_g_ref34.set_subscriber_storage(sig_global_g_ref34_subs, 2);
   static NodeBase* sig_global_g_ref35_subs[2];
   sig_global_g_ref35.set_subscriber_storage(sig_global_g_ref35_subs, 2);
+  static NodeBase* sig_global_g_ref36_subs[2];
+  sig_global_g_ref36.set_subscriber_storage(sig_global_g_ref36_subs, 2);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
   thm_333e4663_colors_textPrimary.set_subscriber_storage(thm_333e4663_colors_textPrimary_subs, 1);
   static NodeBase* thm_333e4663_typography_title_subs[1];
@@ -286,8 +264,8 @@ void bootstrap_runtime() {
   thm_333e4663_typography_body.set_subscriber_storage(thm_333e4663_typography_body_subs, 1);
   static NodeBase* thm_333e4663_colors_surface_subs[1];
   thm_333e4663_colors_surface.set_subscriber_storage(thm_333e4663_colors_surface_subs, 1);
-  static NodeBase* sig_global_g_ref26_subs[1];
-  sig_global_g_ref26.set_subscriber_storage(sig_global_g_ref26_subs, 1);
+  static NodeBase* sig_global_g_ref27_subs[1];
+  sig_global_g_ref27.set_subscriber_storage(sig_global_g_ref27_subs, 1);
   static NodeBase* thm_333e4663_spacing_sm_subs[1];
   thm_333e4663_spacing_sm.set_subscriber_storage(thm_333e4663_spacing_sm_subs, 1);
   static NodeBase* memo_3_subs[1];
@@ -299,7 +277,7 @@ void bootstrap_runtime() {
     lv_obj_set_style_text_color(&id(rw_ref4), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_text_color(&id(rw_ref13), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
     lv_obj_set_style_text_color(&id(rw_ref16), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref27), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref28), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_1([]() {
@@ -396,25 +374,25 @@ void bootstrap_runtime() {
   static Effect binding_26([]() {
     auto _src = thm_333e4663_typography_body.get();
     lv_obj_set_style_text_font(&id(rw_ref16), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref27), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref28), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_46([]() {
     auto _src = thm_333e4663_colors_surface.get();
     lv_obj_set_style_bg_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(&id(r_ref25), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(r_ref26), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_47([]() {
-    lv_label_set_text(&id(rw_ref27), sig_global_g_ref26.get().c_str());
+    lv_label_set_text(&id(rw_ref28), sig_global_g_ref27.get().c_str());
   });
 
   static Effect binding_50([]() {
-    lv_obj_set_style_pad_column(&id(r_ref25), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_column(&id(r_ref26), static_cast<lv_coord_t>(thm_333e4663_spacing_sm.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_52([]() {
-    lv_obj_set_style_pad_bottom(&id(r_ref24), static_cast<lv_coord_t>(memo_3.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_bottom(&id(r_ref25), static_cast<lv_coord_t>(memo_3.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};
@@ -453,9 +431,9 @@ void bootstrap_runtime() {
   thm_333e4663_typography_title.wire(thm_333e4663_typography_title_src, 1);
   static NodeBase* memo_0_sources[] = {&thm_333e4663_sizes_md_paddingX};
   memo_0.wire(memo_0_sources, 1);
-  static NodeBase* memo_2_sources[] = {&sig_global_g_ref34, &sig_global_g_ref35};
+  static NodeBase* memo_2_sources[] = {&sig_global_g_ref35, &sig_global_g_ref36};
   memo_2.wire(memo_2_sources, 2);
-  static NodeBase* memo_3_sources[] = {&sig_global_g_ref34, &sig_global_g_ref35};
+  static NodeBase* memo_3_sources[] = {&sig_global_g_ref35, &sig_global_g_ref36};
   memo_3.wire(memo_3_sources, 2);
   static NodeBase* binding_0_sources[] = {&thm_333e4663_colors_textPrimary};
   binding_0.wire(binding_0_sources, 1);
@@ -489,7 +467,7 @@ void bootstrap_runtime() {
   binding_26.wire(binding_26_sources, 1);
   static NodeBase* binding_46_sources[] = {&thm_333e4663_colors_surface};
   binding_46.wire(binding_46_sources, 1);
-  static NodeBase* binding_47_sources[] = {&sig_global_g_ref26};
+  static NodeBase* binding_47_sources[] = {&sig_global_g_ref27};
   binding_47.wire(binding_47_sources, 1);
   static NodeBase* binding_50_sources[] = {&thm_333e4663_spacing_sm};
   binding_50.wire(binding_50_sources, 1);
@@ -1011,7 +989,7 @@ lvgl:
     top_layer:
       widgets:
         - obj:
-            id: overlay_tier_0
+            id: overlay_tier_ref10
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -1020,8 +998,15 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref10
+                  width: 100%
+                  height: 100%
+                  bg_color: "0x000000"
+                  bg_opa: 50%
+                  scrollbar_mode: 'OFF'
+                  id: tw_tier_ref10
                   hidden: true
+              - obj:
+                  id: ovrl_ref11
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -1030,150 +1015,194 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
-                        id: r_ref11
                         on_press:
-                          - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
+                          - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
+                              i=0;i<(int)lv_obj_get_child_count(w);i++)
+                              lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG\\
+                              _HIDDEN); } { lv_obj_t* tier =
+                              lv_obj_get_parent(id(ovrl_ref11)); lv_obj_t* tw
+                              = id(tw_tier_ref10); bool any = false; for(int
+                              i=0;i<(int)lv_obj_get_child_count(tier);i++){lv_o\\
+                              bj_t* s = lv_obj_get_child(tier,i); if(s==tw)
+                              continue; for(int
+                              j=0;j<(int)lv_obj_get_child_count(s);j++){if(!lv_\\
+                              obj_has_flag(lv_obj_get_child(s,j),LV_OBJ_FLAG_HI\\
+                              DDEN)){any=true;break;}} if(any) break;} if(!any)
+                              lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN); }"
                         width: 100%
                         height: 100%
+                        bg_opa: TRANSP
                         border_width: 0
                         pad_all: 0
-                        opa: COVER
-                        bg_color: "0x000000"
-                        bg_opa: 50%
+                        hidden: true
+                    - obj:
+                        width: 85%
+                        height: SIZE_CONTENT
+                        align: CENTER
+                        shadow_color: "0x000000"
+                        shadow_opa: 25%
+                        shadow_ofs_x: 6
+                        shadow_ofs_y: 6
+                        shadow_width: 6
+                        shadow_spread: 0
+                        pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
+                        radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
                         scrollbar_mode: 'OFF'
+                        bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
+                        bg_opa: COVER
+                        layout:
+                          type: flex
+                          flex_flow: COLUMN
+                        id: rw_ref12
                         widgets:
                           - obj:
-                              width: 85%
+                              width: 100%
                               height: SIZE_CONTENT
-                              align: CENTER
-                              shadow_color: "0x000000"
-                              shadow_opa: 25%
-                              shadow_ofs_x: 6
-                              shadow_ofs_y: 6
-                              shadow_width: 6
-                              shadow_spread: 0
-                              pad_all: !lambda "return espcompose::thm_333e4663_spacing_lg.get();"
-                              radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                              clickable: false
+                              bg_opa: TRANSP
+                              border_width: 0
                               scrollbar_mode: 'OFF'
-                              bg_color: !lambda "return espcompose::thm_333e4663_colors_surface.get();"
-                              bg_opa: COVER
+                              layout:
+                                type: flex
+                                flex_flow: ROW
+                                flex_align_main: SPACE_BETWEEN
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                - label:
+                                    text: ""
+                                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                    id: rw_ref13
+                                - obj:
+                                    on_press:
+                                      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
+                                          i=0;i<(int)lv_obj_get_child_count(w);\\
+                                          i++)
+                                          lv_obj_add_flag(lv_obj_get_child(w,i)\\
+                                          ,LV_OBJ_FLAG_HIDDEN); } { lv_obj_t*
+                                          tier =
+                                          lv_obj_get_parent(id(ovrl_ref11));
+                                          lv_obj_t* tw = id(tw_tier_ref10);
+                                          bool any = false; for(int
+                                          i=0;i<(int)lv_obj_get_child_count(tie\\
+                                          r);i++){lv_obj_t* s =
+                                          lv_obj_get_child(tier,i); if(s==tw)
+                                          continue; for(int
+                                          j=0;j<(int)lv_obj_get_child_count(s);\\
+                                          j++){if(!lv_obj_has_flag(lv_obj_get_c\\
+                                          hild(s,j),LV_OBJ_FLAG_HIDDEN)){any=tr\\
+                                          ue;break;}} if(any) break;} if(!any)
+                                          lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN\\
+                                          ); }"
+                                    width: SIZE_CONTENT
+                                    height: SIZE_CONTENT
+                                    bg_opa: TRANSP
+                                    border_width: 0
+                                    pad_all: 4
+                                    widgets:
+                                      - label:
+                                          text: 󰅖
+                                          text_color: !lambda "return
+                                            espcompose::thm_333e4663_colors_textSecondary.get();"
+                                          align: CENTER
+                                          id: rw_ref14
+                          - obj:
+                              width: 100%
+                              height: SIZE_CONTENT
+                              bg_opa: TRANSP
+                              border_width: 0
+                              pad_all: 0
+                              scrollbar_mode: AUTO
                               layout:
                                 type: flex
                                 flex_flow: COLUMN
-                              id: rw_ref12
+                                pad_row: 0
+                              id: rw_ref15
                               widgets:
-                                - obj:
-                                    width: 100%
-                                    height: SIZE_CONTENT
-                                    clickable: false
-                                    bg_opa: TRANSP
+                                - label:
+                                    text: Bedroom
+                                    text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
+                                    id: rw_ref16
+                                - button:
+                                    on_press:
+                                      - homeassistant.action:
+                                          action: homeassistant.toggle
+                                          data_template:
+                                            entity_id: "{{ entity_id_expr }}"
+                                          variables:
+                                            entity_id_expr: !lambda "return
+                                              espcompose::tbl_ovrl_ref11_act_0[espcompose::\\
+                                              sig_ovrl_ref11_mux.get()];"
+                                      - script.execute:
+                                          id: scr_ref17
+                                          msg: Toggled!
+                                      - delay: 2000ms
+                                      - script.execute:
+                                          id: scr_ref18
+                                    bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                    bg_opa: COVER
+                                    border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                     border_width: 0
-                                    scrollbar_mode: 'OFF'
-                                    layout:
-                                      type: flex
-                                      flex_flow: ROW
-                                      flex_align_main: SPACE_BETWEEN
-                                      flex_align_cross: CENTER
-                                      flex_align_track: CENTER
+                                    radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                    width: !lambda "return espcompose::memo_4.get();"
+                                    height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                    pressed:
+                                      bg_color: !lambda "return
+                                        espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                        );"
+                                      bg_opa: COVER
+                                    id: rw_ref19
                                     widgets:
                                       - label:
-                                          text: ""
-                                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                          id: rw_ref13
-                                      - obj:
-                                          on_press:
-                                            - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
-                                          width: SIZE_CONTENT
-                                          height: SIZE_CONTENT
-                                          bg_opa: TRANSP
-                                          border_width: 0
-                                          pad_all: 4
-                                          widgets:
-                                            - label:
-                                                text: 󰅖
-                                                text_color: !lambda "return
-                                                  espcompose::thm_333e4663_colors_textSecondary.get();"
-                                                align: CENTER
-                                                id: rw_ref14
-                                - obj:
-                                    width: 100%
-                                    height: SIZE_CONTENT
-                                    bg_opa: TRANSP
+                                          text: Toggle
+                                          text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                          text_align: CENTER
+                                          align: CENTER
+                                          id: rw_ref20
+                                - button:
+                                    on_press:
+                                      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
+                                          i=0;i<(int)lv_obj_get_child_count(w);\\
+                                          i++)
+                                          lv_obj_add_flag(lv_obj_get_child(w,i)\\
+                                          ,LV_OBJ_FLAG_HIDDEN); } { lv_obj_t*
+                                          tier =
+                                          lv_obj_get_parent(id(ovrl_ref11));
+                                          lv_obj_t* tw = id(tw_tier_ref10);
+                                          bool any = false; for(int
+                                          i=0;i<(int)lv_obj_get_child_count(tie\\
+                                          r);i++){lv_obj_t* s =
+                                          lv_obj_get_child(tier,i); if(s==tw)
+                                          continue; for(int
+                                          j=0;j<(int)lv_obj_get_child_count(s);\\
+                                          j++){if(!lv_obj_has_flag(lv_obj_get_c\\
+                                          hild(s,j),LV_OBJ_FLAG_HIDDEN)){any=tr\\
+                                          ue;break;}} if(any) break;} if(!any)
+                                          lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN\\
+                                          ); }"
+                                    bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
+                                    bg_opa: COVER
+                                    border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                                     border_width: 0
-                                    pad_all: 0
-                                    scrollbar_mode: AUTO
-                                    layout:
-                                      type: flex
-                                      flex_flow: COLUMN
-                                      pad_row: 0
-                                    id: rw_ref15
+                                    radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
+                                    width: !lambda "return espcompose::memo_5.get();"
+                                    height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
+                                    pressed:
+                                      bg_color: !lambda "return
+                                        espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
+                                        );"
+                                      bg_opa: COVER
+                                    id: rw_ref21
                                     widgets:
                                       - label:
-                                          text: Bedroom
-                                          text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                          id: rw_ref16
-                                      - button:
-                                          on_press:
-                                            - homeassistant.action:
-                                                action: homeassistant.toggle
-                                                data_template:
-                                                  entity_id: "{{ entity_id_expr }}"
-                                                variables:
-                                                  entity_id_expr: !lambda "return
-                                                    espcompose::tbl_ovrl_ref10_act_0[espcompose::\\
-                                                    sig_ovrl_ref10_mux.get()\\
-                                                    ];"
-                                            - script.execute:
-                                                id: scr_ref17
-                                                msg: Toggled!
-                                            - delay: 2000ms
-                                            - script.execute:
-                                                id: scr_ref18
-                                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                          bg_opa: COVER
-                                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                          border_width: 0
-                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                          width: !lambda "return espcompose::memo_4.get();"
-                                          height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                          pressed:
-                                            bg_color: !lambda "return
-                                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                              );"
-                                            bg_opa: COVER
-                                          id: rw_ref19
-                                          widgets:
-                                            - label:
-                                                text: Toggle
-                                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                                text_align: CENTER
-                                                align: CENTER
-                                                id: rw_ref20
-                                      - button:
-                                          on_press:
-                                            - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
-                                          bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                          bg_opa: COVER
-                                          border_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
-                                          border_width: 0
-                                          radius: !lambda "return espcompose::thm_333e4663_radii_md.get();"
-                                          width: !lambda "return espcompose::memo_5.get();"
-                                          height: !lambda "return espcompose::thm_333e4663_sizes_md_height.get();"
-                                          pressed:
-                                            bg_color: !lambda "return
-                                              espcompose::thm_333e4663_colors_primary_bgPressed.get(\\
-                                              );"
-                                            bg_opa: COVER
-                                          id: rw_ref21
-                                          widgets:
-                                            - label:
-                                                text: Close
-                                                text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
-                                                text_align: CENTER
-                                                align: CENTER
-                                                id: rw_ref22
+                                          text: Close
+                                          text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
+                                          text_align: CENTER
+                                          align: CENTER
+                                          id: rw_ref22
+                        hidden: true
         - obj:
-            id: overlay_tier_100
+            id: overlay_tier_ref23
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -1182,8 +1211,7 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref23
-                  hidden: true
+                  id: ovrl_ref24
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -1192,9 +1220,9 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
-                        id: r_ref24
-                        width: 100%
-                        height: 100%
+                        id: r_ref25
+                        height: SIZE_CONTENT
+                        width: SIZE_CONTENT
                         bg_color: "0x000000"
                         bg_opa: TRANSP
                         border_width: 0
@@ -1203,7 +1231,7 @@ lvgl:
                         clickable: false
                         widgets:
                           - obj:
-                              id: r_ref25
+                              id: r_ref26
                               border_width: 0
                               width: 90%
                               height: SIZE_CONTENT
@@ -1218,9 +1246,10 @@ lvgl:
                                 pad_column: 0
                               widgets:
                                 - label:
-                                    text: !lambda "return espcompose::sig_global_g_ref26.get();"
+                                    text: !lambda "return espcompose::sig_global_g_ref27.get();"
                                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                    id: rw_ref27
+                                    id: rw_ref28
+                        hidden: true
 external_components:
   - source:
       type: local
@@ -1230,7 +1259,7 @@ external_components:
 espcompose:
   flush_budget_us: 10000
 font:
-  - id: r_ref28
+  - id: r_ref29
     file: gfonts://Roboto
     size: 22
     bpp: 4
@@ -1242,7 +1271,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref29
+  - id: r_ref30
     file: gfonts://Roboto
     size: 20
     bpp: 4
@@ -1254,7 +1283,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref30
+  - id: r_ref31
     file: gfonts://Roboto
     size: 16
     bpp: 4
@@ -1266,7 +1295,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref31
+  - id: r_ref32
     file: gfonts://Roboto
     size: 12
     bpp: 4
@@ -1278,7 +1307,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref32
+  - id: r_ref33
     file: gfonts://Roboto
     size: 14
     bpp: 4
@@ -1290,7 +1319,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref33
+  - id: r_ref34
     file: gfonts://Roboto
     size: 18
     bpp: 4
@@ -1303,150 +1332,136 @@ font:
           - 󰠟
           - 󰠜
 globals:
-  - id: g_ref26
+  - id: g_ref27
     type: std::string
-  - id: g_ref34
-    initial_value: "{0}"
-    type: std::vector<int>
   - id: g_ref35
     initial_value: "{0}"
     type: std::vector<int>
   - id: g_ref36
+    initial_value: "{0}"
+    type: std::vector<int>
+  - id: g_ref37
     initial_value: "0"
     type: int
 script:
-  - id: scr_ref37
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref11
-          prop: opa
-          from: 0
-          to: 255
-          duration: 200
-          easing: ease_out
-  - id: scr_ref38
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref11
-          prop: opa
-          from: 255
-          to: 0
-          duration: 200
-          easing: ease_in
   - id: scr_ref5
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref5_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref10_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref10),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref10));"
-      - script.execute:
-          id: scr_ref37
-          closure_index: 0
-      - script.wait:
-          id: scr_ref37
+          espcompose::sig_ovrl_ref11_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); { lv_obj_t* w = id(ovrl_ref11); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+          lv_obj_clear_flag(id(tw_tier_ref10),LV_OBJ_FLAG_HIDDEN);
+          lv_obj_move_foreground(id(ovrl_ref11));"
+  - id: scr_ref38
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } {
+          lv_obj_t* tier = lv_obj_get_parent(id(ovrl_ref11)); lv_obj_t* tw =
+          id(tw_tier_ref10); bool any = false; for(int
+          i=0;i<(int)lv_obj_get_child_count(tier);i++){lv_obj_t* s =
+          lv_obj_get_child(tier,i); if(s==tw) continue; for(int
+          j=0;j<(int)lv_obj_get_child_count(s);j++){if(!lv_obj_has_flag(lv_obj_\\
+          get_child(s,j),LV_OBJ_FLAG_HIDDEN)){any=true;break;}} if(any) break;}
+          if(!any) lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN); }"
   - id: scr_ref39
     parameters:
       closure_index: int
     then:
-      - script.execute:
-          id: scr_ref38
-          closure_index: 0
-      - script.wait:
-          id: scr_ref38
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref10), LV_OBJ_FLAG_HIDDEN);"
-  - id: scr_ref40
-    parameters:
-      closure_index: int
-    then:
       - espcompose.animate:
-          widget: r_ref25
+          widget: r_ref26
           prop: translate_y
           from: 80
           to: 0
           duration: 300
           easing: ease_out
-  - id: scr_ref41
+  - id: scr_ref40
     parameters:
       closure_index: int
     then:
       - espcompose.animate:
-          widget: r_ref25
+          widget: r_ref26
           prop: translate_y
           from: 0
           to: 80
           duration: 300
           easing: ease_in
-  - id: scr_ref42
+  - id: scr_ref41
     mode: restart
     parameters:
       closure_index: int
       msg: string
     then:
-      - lambda: !lambda "{ espcompose::sig_global_g_ref26.set(msg);
+      - lambda: !lambda "{ espcompose::sig_global_g_ref27.set(msg);
           espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref34.get_mut()[0] = 1;
-          espcompose::sig_global_g_ref34.notify(); espcompose::flush(); }
+          { espcompose::sig_global_g_ref35.get_mut()[0] = 1;
+          espcompose::sig_global_g_ref35.notify(); espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref35.get_mut()[0] = id(g_ref36);
-          espcompose::sig_global_g_ref35.notify(); espcompose::flush(); }"
+          { espcompose::sig_global_g_ref36.get_mut()[0] = id(g_ref37);
+          espcompose::sig_global_g_ref36.notify(); espcompose::flush(); }"
       - globals.set:
-          id: g_ref36
-          value: !lambda "return id(g_ref36) + 1;"
+          id: g_ref37
+          value: !lambda "return id(g_ref37) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref42_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref23_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref23),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref23));"
+          espcompose::scr_ref41_closures[closure_index]; (void)closure;
+          espcompose::sig_ovrl_ref24_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); { lv_obj_t* w = id(ovrl_ref24); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+          lv_obj_move_foreground(id(ovrl_ref24));"
       - script.execute:
-          id: scr_ref40
+          id: scr_ref39
           closure_index: 0
       - script.wait:
-          id: scr_ref40
+          id: scr_ref39
       - delay: 3s
       - script.execute:
-          id: scr_ref41
+          id: scr_ref40
           closure_index: 0
       - script.wait:
-          id: scr_ref41
-      - lambda: !lambda "{ espcompose::sig_global_g_ref34.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref34.notify(); espcompose::flush(); }
+          id: scr_ref40
+      - lambda: !lambda "{ espcompose::sig_global_g_ref35.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref35.notify(); espcompose::flush(); }
 
-          { lv_obj_add_flag(id(ovrl_ref23), LV_OBJ_FLAG_HIDDEN); }"
+          { { lv_obj_t* w = id(ovrl_ref24); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref34)[0] == 0;"
+            - lambda: !lambda "return id(g_ref35)[0] == 0;"
           then:
             - globals.set:
-                id: g_ref36
+                id: g_ref37
                 value: !lambda "return 0;"
-  - id: scr_ref43
+  - id: scr_ref42
     parameters:
       closure_index: int
     then:
       - script.stop:
-          id: scr_ref42
-      - lambda: !lambda "espcompose::sig_global_g_ref34.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref34.notify(); espcompose::flush();"
-      - script.execute:
           id: scr_ref41
+      - lambda: !lambda "espcompose::sig_global_g_ref35.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref35.notify(); espcompose::flush();"
+      - script.execute:
+          id: scr_ref40
           closure_index: 0
       - script.wait:
-          id: scr_ref41
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref23), LV_OBJ_FLAG_HIDDEN);"
+          id: scr_ref40
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref24); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref34)[0] == 0;"
+            - lambda: !lambda "return id(g_ref35)[0] == 0;"
           then:
             - globals.set:
-                id: g_ref36
+                id: g_ref37
                 value: !lambda "return 0;"
   - id: scr_ref17
     mode: restart
@@ -1458,19 +1473,21 @@ script:
             - lambda: !lambda "return true;"
           then:
             - script.execute:
-                id: scr_ref42
+                id: scr_ref41
                 closure_index: 0
                 msg: !lambda "return msg;"
   - id: scr_ref18
     then:
       - script.stop:
-          id: scr_ref42
-      - lambda: !lambda "{ espcompose::sig_global_g_ref34.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref34.notify(); espcompose::flush(); }
+          id: scr_ref41
+      - lambda: !lambda "{ espcompose::sig_global_g_ref35.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref35.notify(); espcompose::flush(); }
 
-          { lv_obj_add_flag(id(ovrl_ref23), LV_OBJ_FLAG_HIDDEN); }"
+          { { lv_obj_t* w = id(ovrl_ref24); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } }"
       - globals.set:
-          id: g_ref36
+          id: g_ref37
           value: !lambda "return 0;"
 "
 `;

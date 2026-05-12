@@ -47,7 +47,7 @@ export async function createProjectTest(
   // IDs (ovrl_, g_) whose hash input changes when barrel export order shifts.
   // Use lookaround assertions instead of \b so that tokens embedded in C++
   // identifiers (e.g. sig_r_<random>_subs) are also normalised.
-  const unstablePrefixes = ['rw_', 'scr_', 'ec_', 'memo_', 'effect_', 'ovrl_', 'g_', 'r_', 'anim_', 'strans_'] as const;
+  const unstablePrefixes = ['rw_', 'scr_', 'ec_', 'memo_', 'effect_', 'ovrl_', 'g_', 'r_', 'anim_', 'strans_', 'tier_', 'tw_'] as const;
   const prefixPattern = unstablePrefixes.map(p => p.replace('_', '_')).join('|');
   const tokenRegex = new RegExp(
     `(?<![a-z0-9])(?:${prefixPattern})[a-z0-9]{7,11}(?![a-z0-9])`,

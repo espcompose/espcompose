@@ -14,17 +14,17 @@
  * (simple show/hide, no stacking).
  */
 
-import { useOverlay, useRef, useScript, animate, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen } from '@espcompose/core';
+import { useOverlay, useVisibility, useVisibilityStack, useThemeSettings, adaptiveScreen, useOverlayTier, useContext } from '@espcompose/core';
 import type { VisibilityController, EspComposeElement, SizeValue } from '@espcompose/core';
 import { useSpacing } from './useSpacing';
 import { UITheme } from '../theme/theme';
 import { Text } from '../components/Text';
 import { HStack } from '../components/Space';
-import { Card } from '../components/Card';
 import { mdiGlyphs } from '../theme/fonts';
 import type { SpacingToken } from '../theme/types';
 import { Backdrop } from '../components';
 import { Dialog } from '../components/Dialog';
+import { DialogTierContext } from '../providers/Dialog';
 
 export type DialogController = VisibilityController;
 
@@ -66,33 +66,22 @@ export interface DialogOptions {
 export function useDialog(factory: DialogFactory, options?: DialogOptions): DialogController {
   const stack = useVisibilityStack();
 
-  // Backdrop ref + transition scripts must live OUTSIDE the useOverlay
-  // factory: useOverlay re-evaluates the factory once per dialog instance
-  // (component-instance dedup) but only commits instance #0's widget tree.
-  // Creating these inside the factory would mint a new RefHandle per
-  // instance and append a new closure-table row per instance, leaving
-  // rows 1..N pointing at refs whose widgets were never emitted.
-  const backdropRef = useRef();
-  // const enterScript = useScript(async () => {
-  //   await animate(backdropRef, {
-  //     property: 'opacity',
-  //     from: 0,
-  //     to: 255,
-  //     duration: '100ms',
-  //     easing: 'ease-out',
-  //   });
-  // });
-  // const exitScript = useScript(async () => {
-  //   await animate(backdropRef, {
-  //     property: 'opacity',
-  //     from: 255,
-  //     to: 0,
-  //     duration: '100ms',
-  //     easing: 'ease-in',
-  //   });
-  // });
+  // Get tier from context (Dialog.Provider) or create a fallback tier
+  const contextTier = useContext(DialogTierContext);
+  const tier = contextTier ?? useOverlayTier(
+    { zOrder: 0 },
+    <Backdrop
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    />,
+  );
 
-  const ctrl = useOverlay({ zOrder: 0 }, (overlayCtrl) => {
+  // NOTE: Backdrop is now managed at the tier level (shared across all dialogs
+  // in this tier). Individual dialog factories only return content widgets.
+
+  const ctrl = useOverlay({ tier }, (overlayCtrl) => {
     const theme = UITheme.use();
     const settings = useThemeSettings();
     const width = options?.width ?? adaptiveScreen(settings ?? {}, {
@@ -158,36 +147,37 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
       ? [titleBar, scrollRegion]
       : [scrollRegion];
 
-    return (
-      <Backdrop
-        ref={backdropRef}
+    return [
+      // Full-screen transparent dismiss layer — clicking outside the dialog
+      // dismisses it. The visual backdrop is shared at the tier level; this
+      // is just the per-overlay click target.
+      <lvgl-obj
         onPress={() => { overlayCtrl.hide(); }}
         style={{
           width: '100%',
           height: '100%',
+          backgroundOpacity: 'transparent',
           borderWidth: 0,
           padding: 0,
-          opacity: 'opaque', // 'transparent',
+        }}
+      />,
+      <Dialog
+        padding={options?.padding ?? 'lg'}
+        style={{
+          width: width,
+          height: height,
+          placeSelf: 'center',
+          shadowColor: '#000000',
+          shadowOpacity: '25%',
+          shadowOffsetX: 6,
+          shadowOffsetY: 6,
+          shadowWidth: 6,
+          shadowSpread: 0,
         }}
       >
-        <Dialog
-          padding={options?.padding ?? 'lg'}
-          style={{
-            width: width,
-            height: height,
-            placeSelf: 'center',
-            shadowColor: '#000000',
-            shadowOpacity: '25%',
-            shadowOffsetX: 6,
-            shadowOffsetY: 6,
-            shadowWidth: 6,
-            shadowSpread: 0,
-          }}
-        >
-          {containerChildren}
-        </Dialog>
-      </Backdrop>
-    );
+        {containerChildren}
+      </Dialog>,
+    ];
   });
 
   if (stack) {

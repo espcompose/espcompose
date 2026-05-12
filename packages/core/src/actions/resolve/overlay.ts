@@ -19,6 +19,7 @@ import {
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
   OVERLAY_LIFECYCLE_SCRIPT_ID,
+  OVERLAY_TIER_KEY,
 } from '../../hooks/useOverlay';
 import { CLOSURE_INDEX } from '../closure/symbols';
 import { walkActionTree } from './walk';
@@ -28,6 +29,7 @@ interface OverlayControllerInternal {
   [OVERLAY_TEMPLATE_KEY]?: string;
   [OVERLAY_INSTANCE_INDEX]?: number;
   [OVERLAY_Z_ORDER]?: number;
+  [OVERLAY_TIER_KEY]?: string;
   [OVERLAY_LIFECYCLE_SCRIPT_ID]?: string;
   [CLOSURE_INDEX]?: number;
 }
@@ -62,6 +64,7 @@ export function resolveOverlayControllerRefs(
           action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
           action.instanceIndex = ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
           action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
+          action.tierKey = ctrl[OVERLAY_TIER_KEY] ?? action.tierKey;
           delete action.controllerRef;
         }
       }
@@ -73,6 +76,7 @@ export function resolveOverlayControllerRefs(
           const resolvedHide = irOverlayHide(
             ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey,
             ctrl[OVERLAY_Z_ORDER] ?? action.zOrder,
+            ctrl[OVERLAY_TIER_KEY] ?? action.tierKey,
           );
           actions.splice(i, 1,
             irScriptStop(ctrl[OVERLAY_LIFECYCLE_SCRIPT_ID]),
@@ -82,6 +86,7 @@ export function resolveOverlayControllerRefs(
         } else {
           action.templateKey = ctrl[OVERLAY_TEMPLATE_KEY] ?? action.templateKey;
           action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
+          action.tierKey = ctrl[OVERLAY_TIER_KEY] ?? action.tierKey;
           delete action.controllerRef;
         }
       }

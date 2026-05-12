@@ -54,25 +54,28 @@ export function executePhase(ctx: PhaseContext): void {
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
       const { result: overlayResult, overlays } = cjsSDK.withOverlayScope(() => {
-        const { result: config, contributions } = cjsSDK.withContributionScope(() => {
-          const mod = _require(bundlePath) as { default?: unknown };
+        const { result: tierResult } = cjsSDK.withOverlayTierScope(() => {
+          const { result: config, contributions } = cjsSDK.withContributionScope(() => {
+            const mod = _require(bundlePath) as { default?: unknown };
 
-          const rootElement = mod.default;
+            const rootElement = mod.default;
 
-          if (rootElement == null) {
-            throw new Error(
-              `Entry module does not have a default export. ` +
-                `Make sure your TSX file exports a default ESPCompose element tree.`
-            );
-          }
+            if (rootElement == null) {
+              throw new Error(
+                `Entry module does not have a default export. ` +
+                  `Make sure your TSX file exports a default ESPCompose element tree.`
+              );
+            }
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
 
-          return rendered;
+            return rendered;
+          });
+          collectedContributions = contributions;
+          return config;
         });
-        collectedContributions = contributions;
-        return config;
+        return tierResult;
       });
       collectedOverlays = overlays;
       return overlayResult;

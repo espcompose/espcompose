@@ -212,12 +212,14 @@ function resolveEcCanvasWidget(widget: RawIRWidget, ctx: WalkContext): IRWidget 
 function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROverlayTier[] {
   return tiers.map(tier => ({
     kind: 'overlay_tier' as const,
+    tierKey: tier.tierKey,
     zOrder: tier.zOrder,
     overlays: tier.overlays.map(overlay => ({
       kind: 'overlay_container' as const,
       templateKey: overlay.templateKey,
       widgets: overlay.widgets.map(w => resolveWidget(w, ctx)),
     })),
+    ...(tier.wrapperWidget ? { wrapperWidget: resolveWidget(tier.wrapperWidget, ctx) } : {}),
   }));
 }
 
@@ -302,8 +304,10 @@ export interface RawIRWidgetTree {
 }
 
 export interface RawIROverlayTier {
+  readonly tierKey: string;
   readonly zOrder: number;
   readonly overlays: RawIROverlayContainer[];
+  readonly wrapperWidget?: RawIRWidget;
 }
 
 export interface RawIROverlayContainer {

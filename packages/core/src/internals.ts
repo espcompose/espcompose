@@ -108,9 +108,12 @@ export {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
+  OVERLAY_TIER_KEY,
   OVERLAY_PAYLOAD_GLOBALS,
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from './hooks/useOverlay';
+export { withOverlayTierScope, peekOverlayTierDefinitions } from './hooks/useOverlayTier';
+export type { OverlayTierHandle, OverlayTierDefinition, OverlayTierConfig } from './hooks/useOverlayTier';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';

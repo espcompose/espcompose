@@ -23,14 +23,14 @@ template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
 template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Signals (one per HA entity source) ──
-Signal<int32_t> sig_ovrl_ref13_mux;
-Signal<int32_t> sig_ovrl_ref18_mux;
+Signal<int32_t> sig_ovrl_ref14_mux;
+Signal<int32_t> sig_ovrl_ref19_mux;
 
 // ── BoundSignals (one per reactive global variable) ──
-BoundSignal<std::string> sig_global_g_ref16;
-BoundSignal<std::vector<int>> sig_global_g_ref28(std::vector<int>({0}));
+BoundSignal<std::string> sig_global_g_ref17;
 BoundSignal<std::vector<int>> sig_global_g_ref29(std::vector<int>({0}));
-BoundSignal<std::string> sig_global_g_ref16_s1;
+BoundSignal<std::vector<int>> sig_global_g_ref30(std::vector<int>({0}));
+BoundSignal<std::string> sig_global_g_ref17_s1;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -71,7 +71,7 @@ Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref24).get_lv_font(), id(r_ref24).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref25).get_lv_font(), id(r_ref25).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
@@ -101,7 +101,7 @@ Memo<int32_t> thm_333e4663_spacing_sm([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_body([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref24).get_lv_font(), id(r_ref24).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_body_vals[] = {id(r_ref25).get_lv_font(), id(r_ref25).get_lv_font()};
   return thm_333e4663_typography_body_vals[theme_index_333e4663.get()];
 });
 
@@ -112,21 +112,8 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Script closure tables ──
-static decltype(_ec_id_ptr(id(r_ref15))) const ec_scr_ref31_cardRefs[] = {
-  _ec_id_ptr(id(r_ref15))
-};
-struct scr_ref31_closure_t {
-  int cardRef_idx;
-};
-static const scr_ref31_closure_t scr_ref31_closures[] = {
-  { 0 },
-  { 0 },
-  { 0 },
-  { 0 }
-};
-
-static decltype(_ec_id_ptr(id(r_ref15))) const ec_scr_ref32_cardRefs[] = {
-  _ec_id_ptr(id(r_ref15))
+static decltype(_ec_id_ptr(id(r_ref16))) const ec_scr_ref32_cardRefs[] = {
+  _ec_id_ptr(id(r_ref16))
 };
 struct scr_ref32_closure_t {
   int cardRef_idx;
@@ -138,14 +125,17 @@ static const scr_ref32_closure_t scr_ref32_closures[] = {
   { 0 }
 };
 
+static decltype(_ec_id_ptr(id(r_ref16))) const ec_scr_ref33_cardRefs[] = {
+  _ec_id_ptr(id(r_ref16))
+};
 struct scr_ref33_closure_t {
-  int __ctrl_instance_index;
+  int cardRef_idx;
 };
 static const scr_ref33_closure_t scr_ref33_closures[] = {
   { 0 },
-  { 1 },
-  { 2 },
-  { 3 }
+  { 0 },
+  { 0 },
+  { 0 }
 };
 
 struct scr_ref34_closure_t {
@@ -158,18 +148,18 @@ static const scr_ref34_closure_t scr_ref34_closures[] = {
   { 3 }
 };
 
-static decltype(_ec_id_ptr(id(r_ref20))) const ec_scr_ref36_cardRefs[] = {
-  _ec_id_ptr(id(r_ref20))
+struct scr_ref35_closure_t {
+  int __ctrl_instance_index;
 };
-struct scr_ref36_closure_t {
-  int cardRef_idx;
-};
-static const scr_ref36_closure_t scr_ref36_closures[] = {
-  { 0 }
+static const scr_ref35_closure_t scr_ref35_closures[] = {
+  { 0 },
+  { 1 },
+  { 2 },
+  { 3 }
 };
 
-static decltype(_ec_id_ptr(id(r_ref20))) const ec_scr_ref37_cardRefs[] = {
-  _ec_id_ptr(id(r_ref20))
+static decltype(_ec_id_ptr(id(r_ref21))) const ec_scr_ref37_cardRefs[] = {
+  _ec_id_ptr(id(r_ref21))
 };
 struct scr_ref37_closure_t {
   int cardRef_idx;
@@ -178,8 +168,11 @@ static const scr_ref37_closure_t scr_ref37_closures[] = {
   { 0 }
 };
 
+static decltype(_ec_id_ptr(id(r_ref21))) const ec_scr_ref38_cardRefs[] = {
+  _ec_id_ptr(id(r_ref21))
+};
 struct scr_ref38_closure_t {
-  int __ctrl_instance_index;
+  int cardRef_idx;
 };
 static const scr_ref38_closure_t scr_ref38_closures[] = {
   { 0 }
@@ -192,14 +185,21 @@ static const scr_ref39_closure_t scr_ref39_closures[] = {
   { 0 }
 };
 
+struct scr_ref40_closure_t {
+  int __ctrl_instance_index;
+};
+static const scr_ref40_closure_t scr_ref40_closures[] = {
+  { 0 }
+};
+
 
 // ── Memos (derived values) ──
 Memo<int32_t> memo_0([]() -> int32_t {
-  return 0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0);
+  return 0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0);
 });
 
 Memo<float> memo_1([]() -> float {
-  return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64;
+  return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64;
 });
 
 Memo<float> memo_2([]() -> float {
@@ -207,19 +207,19 @@ Memo<float> memo_2([]() -> float {
 });
 
 Memo<int32_t> memo_9([]() -> int32_t {
-  return 0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref28.get()[1] != 0 && espcompose::sig_global_g_ref29.get()[1] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0);
+  return 0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref29.get()[1] != 0 && espcompose::sig_global_g_ref30.get()[1] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0);
 });
 
 Memo<float> memo_10([]() -> float {
-  return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref28.get()[1] != 0 && espcompose::sig_global_g_ref29.get()[1] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64;
+  return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref29.get()[1] != 0 && espcompose::sig_global_g_ref30.get()[1] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64;
 });
 
 Memo<int32_t> memo_11([]() -> int32_t {
-  return 0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[1] ? 1 : 0) + (espcompose::sig_global_g_ref28.get()[1] != 0 && espcompose::sig_global_g_ref29.get()[1] < espcompose::sig_global_g_ref29.get()[1] ? 1 : 0);
+  return 0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[1] ? 1 : 0) + (espcompose::sig_global_g_ref29.get()[1] != 0 && espcompose::sig_global_g_ref30.get()[1] < espcompose::sig_global_g_ref30.get()[1] ? 1 : 0);
 });
 
 Memo<float> memo_12([]() -> float {
-  return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[1] ? 1 : 0) + (espcompose::sig_global_g_ref28.get()[1] != 0 && espcompose::sig_global_g_ref29.get()[1] < espcompose::sig_global_g_ref29.get()[1] ? 1 : 0)) * 64;
+  return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[1] ? 1 : 0) + (espcompose::sig_global_g_ref29.get()[1] != 0 && espcompose::sig_global_g_ref30.get()[1] < espcompose::sig_global_g_ref30.get()[1] ? 1 : 0)) * 64;
 });
 
 // ── Memo aliases (deduplicated) ──
@@ -241,18 +241,18 @@ void bootstrap_runtime() {
   theme_index_333e4663.set(0);
 
   // ── Bind global BoundSignals to ESPHome global storage ──
-  sig_global_g_ref16.bind(&id(g_ref16));
-  sig_global_g_ref28.bind(&id(g_ref28));
+  sig_global_g_ref17.bind(&id(g_ref17));
   sig_global_g_ref29.bind(&id(g_ref29));
-  sig_global_g_ref16_s1.bind(&id(g_ref16_s1));
+  sig_global_g_ref30.bind(&id(g_ref30));
+  sig_global_g_ref17_s1.bind(&id(g_ref17_s1));
 
   // ── Subscriber storage (exact-sized per node) ──
   static NodeBase* theme_index_333e4663_subs[14];
   theme_index_333e4663.set_subscriber_storage(theme_index_333e4663_subs, 14);
-  static NodeBase* sig_global_g_ref28_subs[7];
-  sig_global_g_ref28.set_subscriber_storage(sig_global_g_ref28_subs, 7);
   static NodeBase* sig_global_g_ref29_subs[7];
   sig_global_g_ref29.set_subscriber_storage(sig_global_g_ref29_subs, 7);
+  static NodeBase* sig_global_g_ref30_subs[7];
+  sig_global_g_ref30.set_subscriber_storage(sig_global_g_ref30_subs, 7);
   static NodeBase* thm_333e4663_sizes_md_paddingX_subs[1];
   thm_333e4663_sizes_md_paddingX.set_subscriber_storage(thm_333e4663_sizes_md_paddingX_subs, 1);
   static NodeBase* thm_333e4663_colors_primary_text_subs[1];
@@ -275,8 +275,8 @@ void bootstrap_runtime() {
   thm_333e4663_colors_background.set_subscriber_storage(thm_333e4663_colors_background_subs, 1);
   static NodeBase* thm_333e4663_spacing_lg_subs[1];
   thm_333e4663_spacing_lg.set_subscriber_storage(thm_333e4663_spacing_lg_subs, 1);
-  static NodeBase* sig_global_g_ref16_subs[1];
-  sig_global_g_ref16.set_subscriber_storage(sig_global_g_ref16_subs, 1);
+  static NodeBase* sig_global_g_ref17_subs[1];
+  sig_global_g_ref17.set_subscriber_storage(sig_global_g_ref17_subs, 1);
   static NodeBase* thm_333e4663_colors_textPrimary_subs[1];
   thm_333e4663_colors_textPrimary.set_subscriber_storage(thm_333e4663_colors_textPrimary_subs, 1);
   static NodeBase* thm_333e4663_typography_body_subs[1];
@@ -285,10 +285,10 @@ void bootstrap_runtime() {
   thm_333e4663_spacing_sm.set_subscriber_storage(thm_333e4663_spacing_sm_subs, 1);
   static NodeBase* thm_333e4663_colors_surface_subs[1];
   thm_333e4663_colors_surface.set_subscriber_storage(thm_333e4663_colors_surface_subs, 1);
-  static NodeBase* sig_ovrl_ref13_mux_subs[1];
-  sig_ovrl_ref13_mux.set_subscriber_storage(sig_ovrl_ref13_mux_subs, 1);
-  static NodeBase* sig_global_g_ref16_s1_subs[1];
-  sig_global_g_ref16_s1.set_subscriber_storage(sig_global_g_ref16_s1_subs, 1);
+  static NodeBase* sig_ovrl_ref14_mux_subs[1];
+  sig_ovrl_ref14_mux.set_subscriber_storage(sig_ovrl_ref14_mux_subs, 1);
+  static NodeBase* sig_global_g_ref17_s1_subs[1];
+  sig_global_g_ref17_s1.set_subscriber_storage(sig_global_g_ref17_s1_subs, 1);
   static NodeBase* memo_12_subs[1];
   memo_12.set_subscriber_storage(memo_12_subs, 1);
 
@@ -366,43 +366,43 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_35([]() {
-    lv_label_set_text(&id(rw_ref17), sig_global_g_ref16.get().c_str());
+    lv_label_set_text(&id(rw_ref18), sig_global_g_ref17.get().c_str());
   });
 
   static Effect binding_36([]() {
     auto _src = thm_333e4663_colors_textPrimary.get();
-    lv_obj_set_style_text_color(&id(rw_ref17), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref21), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref18), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref22), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_37([]() {
     auto _src = thm_333e4663_typography_body.get();
-    lv_obj_set_style_text_font(&id(rw_ref17), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref21), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref18), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref22), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_38([]() {
     auto _src = thm_333e4663_spacing_sm.get();
-    lv_obj_set_style_pad_column(&id(r_ref15), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_pad_column(&id(r_ref20), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_column(&id(r_ref16), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_column(&id(r_ref21), static_cast<lv_coord_t>(_src), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_39([]() {
     auto _src = thm_333e4663_colors_surface.get();
-    lv_obj_set_style_bg_color(&id(r_ref15), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(&id(r_ref20), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(r_ref16), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(r_ref21), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_40([]() {
-    lv_obj_set_style_pad_bottom(&id(r_ref14), static_cast<lv_coord_t>(([&]() -> float { switch (sig_ovrl_ref13_mux.get()) { case 0: return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64; case 1: return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64; case 2: return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64; case 3: return (0 + (espcompose::sig_global_g_ref28.get()[0] != 0 && espcompose::sig_global_g_ref29.get()[0] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref28.get()[1] != 0 && espcompose::sig_global_g_ref29.get()[1] < espcompose::sig_global_g_ref29.get()[0] ? 1 : 0)) * 64; default: return float{}; } })()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_bottom(&id(r_ref15), static_cast<lv_coord_t>(([&]() -> float { switch (sig_ovrl_ref14_mux.get()) { case 0: return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64; case 1: return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64; case 2: return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64; case 3: return (0 + (espcompose::sig_global_g_ref29.get()[0] != 0 && espcompose::sig_global_g_ref30.get()[0] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0) + (espcompose::sig_global_g_ref29.get()[1] != 0 && espcompose::sig_global_g_ref30.get()[1] < espcompose::sig_global_g_ref30.get()[0] ? 1 : 0)) * 64; default: return float{}; } })()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_41([]() {
-    lv_label_set_text(&id(rw_ref21), sig_global_g_ref16_s1.get().c_str());
+    lv_label_set_text(&id(rw_ref22), sig_global_g_ref17_s1.get().c_str());
   });
 
   static Effect binding_46([]() {
-    lv_obj_set_style_pad_bottom(&id(r_ref19), static_cast<lv_coord_t>(memo_12.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_bottom(&id(r_ref20), static_cast<lv_coord_t>(memo_12.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};
@@ -433,19 +433,19 @@ void bootstrap_runtime() {
   thm_333e4663_spacing_sm.wire(thm_333e4663_spacing_sm_src, 1);
   static NodeBase* thm_333e4663_typography_body_src[] = {&theme_index_333e4663};
   thm_333e4663_typography_body.wire(thm_333e4663_typography_body_src, 1);
-  static NodeBase* memo_0_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_0_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_0.wire(memo_0_sources, 2);
-  static NodeBase* memo_1_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_1_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_1.wire(memo_1_sources, 2);
   static NodeBase* memo_2_sources[] = {&thm_333e4663_sizes_md_paddingX};
   memo_2.wire(memo_2_sources, 1);
-  static NodeBase* memo_9_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_9_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_9.wire(memo_9_sources, 2);
-  static NodeBase* memo_10_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_10_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_10.wire(memo_10_sources, 2);
-  static NodeBase* memo_11_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_11_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_11.wire(memo_11_sources, 2);
-  static NodeBase* memo_12_sources[] = {&sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* memo_12_sources[] = {&sig_global_g_ref29, &sig_global_g_ref30};
   memo_12.wire(memo_12_sources, 2);
   static NodeBase* binding_0_sources[] = {&thm_333e4663_colors_primary_text};
   binding_0.wire(binding_0_sources, 1);
@@ -467,7 +467,7 @@ void bootstrap_runtime() {
   binding_33.wire(binding_33_sources, 1);
   static NodeBase* binding_34_sources[] = {&thm_333e4663_spacing_lg};
   binding_34.wire(binding_34_sources, 1);
-  static NodeBase* binding_35_sources[] = {&sig_global_g_ref16};
+  static NodeBase* binding_35_sources[] = {&sig_global_g_ref17};
   binding_35.wire(binding_35_sources, 1);
   static NodeBase* binding_36_sources[] = {&thm_333e4663_colors_textPrimary};
   binding_36.wire(binding_36_sources, 1);
@@ -477,9 +477,9 @@ void bootstrap_runtime() {
   binding_38.wire(binding_38_sources, 1);
   static NodeBase* binding_39_sources[] = {&thm_333e4663_colors_surface};
   binding_39.wire(binding_39_sources, 1);
-  static NodeBase* binding_40_sources[] = {&sig_ovrl_ref13_mux, &sig_global_g_ref28, &sig_global_g_ref29};
+  static NodeBase* binding_40_sources[] = {&sig_ovrl_ref14_mux, &sig_global_g_ref29, &sig_global_g_ref30};
   binding_40.wire(binding_40_sources, 3);
-  static NodeBase* binding_41_sources[] = {&sig_global_g_ref16_s1};
+  static NodeBase* binding_41_sources[] = {&sig_global_g_ref17_s1};
   binding_41.wire(binding_41_sources, 1);
   static NodeBase* binding_46_sources[] = {&memo_12};
   binding_46.wire(binding_46_sources, 1);
@@ -1045,7 +1045,7 @@ lvgl:
     top_layer:
       widgets:
         - obj:
-            id: overlay_tier_100
+            id: overlay_tier_ref13
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -1054,8 +1054,7 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref13
-                  hidden: true
+                  id: ovrl_ref14
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -1064,9 +1063,9 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
-                        id: r_ref14
-                        width: 100%
-                        height: 100%
+                        id: r_ref15
+                        height: SIZE_CONTENT
+                        width: SIZE_CONTENT
                         bg_color: "0x000000"
                         bg_opa: TRANSP
                         border_width: 0
@@ -1075,7 +1074,7 @@ lvgl:
                         clickable: false
                         widgets:
                           - obj:
-                              id: r_ref15
+                              id: r_ref16
                               border_width: 0
                               width: 90%
                               height: SIZE_CONTENT
@@ -1090,12 +1089,12 @@ lvgl:
                                 pad_column: 0
                               widgets:
                                 - label:
-                                    text: !lambda "return espcompose::sig_global_g_ref16.get();"
+                                    text: !lambda "return espcompose::sig_global_g_ref17.get();"
                                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                    id: rw_ref17
+                                    id: rw_ref18
+                        hidden: true
               - obj:
-                  id: ovrl_ref18
-                  hidden: true
+                  id: ovrl_ref19
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -1104,9 +1103,9 @@ lvgl:
                   clickable: false
                   widgets:
                     - obj:
-                        id: r_ref19
-                        width: 100%
-                        height: 100%
+                        id: r_ref20
+                        height: SIZE_CONTENT
+                        width: SIZE_CONTENT
                         bg_color: "0x000000"
                         bg_opa: TRANSP
                         border_width: 0
@@ -1115,7 +1114,7 @@ lvgl:
                         clickable: false
                         widgets:
                           - obj:
-                              id: r_ref20
+                              id: r_ref21
                               border_width: 0
                               width: 90%
                               height: SIZE_CONTENT
@@ -1130,9 +1129,10 @@ lvgl:
                                 pad_column: 0
                               widgets:
                                 - label:
-                                    text: !lambda "return espcompose::sig_global_g_ref16_s1.get();"
+                                    text: !lambda "return espcompose::sig_global_g_ref17_s1.get();"
                                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                                    id: rw_ref21
+                                    id: rw_ref22
+                        hidden: true
 external_components:
   - source:
       type: local
@@ -1142,7 +1142,7 @@ external_components:
 espcompose:
   flush_budget_us: 10000
 font:
-  - id: r_ref22
+  - id: r_ref23
     file: gfonts://Roboto
     size: 22
     bpp: 4
@@ -1154,7 +1154,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref23
+  - id: r_ref24
     file: gfonts://Roboto
     size: 20
     bpp: 4
@@ -1166,7 +1166,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref24
+  - id: r_ref25
     file: gfonts://Roboto
     size: 16
     bpp: 4
@@ -1178,7 +1178,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref25
+  - id: r_ref26
     file: gfonts://Roboto
     size: 12
     bpp: 4
@@ -1190,7 +1190,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref26
+  - id: r_ref27
     file: gfonts://Roboto
     size: 14
     bpp: 4
@@ -1202,7 +1202,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref27
+  - id: r_ref28
     file: gfonts://Roboto
     size: 18
     bpp: 4
@@ -1215,108 +1215,114 @@ font:
           - 󰠟
           - 󰠜
 globals:
-  - id: g_ref16
+  - id: g_ref17
     type: std::string
-  - id: g_ref28
-    initial_value: "{0}"
-    type: std::vector<int>
   - id: g_ref29
     initial_value: "{0}"
     type: std::vector<int>
   - id: g_ref30
+    initial_value: "{0}"
+    type: std::vector<int>
+  - id: g_ref31
     initial_value: "0"
     type: int
-  - id: g_ref16_s0
+  - id: g_ref17_s0
     type: std::string
-  - id: g_ref16_s1
+  - id: g_ref17_s1
     type: std::string
 script:
-  - id: scr_ref31
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref15
-          prop: translate_y
-          from: 80
-          to: 0
-          duration: 300
-          easing: ease_out
   - id: scr_ref32
     parameters:
       closure_index: int
     then:
       - espcompose.animate:
-          widget: r_ref15
+          widget: r_ref16
+          prop: translate_y
+          from: 80
+          to: 0
+          duration: 300
+          easing: ease_out
+  - id: scr_ref33
+    parameters:
+      closure_index: int
+    then:
+      - espcompose.animate:
+          widget: r_ref16
           prop: translate_y
           from: 0
           to: 80
           duration: 300
           easing: ease_in
-  - id: scr_ref33
+  - id: scr_ref34
     mode: restart
     parameters:
       closure_index: int
       msg: string
     then:
-      - lambda: !lambda "{ espcompose::sig_global_g_ref16.set(msg);
+      - lambda: !lambda "{ espcompose::sig_global_g_ref17.set(msg);
           espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref28.get_mut()[0] = 1;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush(); }
+          { espcompose::sig_global_g_ref29.get_mut()[0] = 1;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref29.get_mut()[0] = id(g_ref30);
-          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }"
+          { espcompose::sig_global_g_ref30.get_mut()[0] = id(g_ref31);
+          espcompose::sig_global_g_ref30.notify(); espcompose::flush(); }"
       - globals.set:
-          id: g_ref30
-          value: !lambda "return id(g_ref30) + 1;"
+          id: g_ref31
+          value: !lambda "return id(g_ref31) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref33_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref13_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref13),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref13));"
+          espcompose::scr_ref34_closures[closure_index]; (void)closure;
+          espcompose::sig_ovrl_ref14_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); { lv_obj_t* w = id(ovrl_ref14); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+          lv_obj_move_foreground(id(ovrl_ref14));"
       - script.execute:
-          id: scr_ref31
+          id: scr_ref32
           closure_index: 0
       - script.wait:
-          id: scr_ref31
+          id: scr_ref32
       - delay: 3s
       - script.execute:
-          id: scr_ref32
+          id: scr_ref33
           closure_index: 0
       - script.wait:
-          id: scr_ref32
-      - lambda: !lambda "{ espcompose::sig_global_g_ref28.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush(); }
+          id: scr_ref33
+      - lambda: !lambda "{ espcompose::sig_global_g_ref29.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }
 
-          { lv_obj_add_flag(id(ovrl_ref13), LV_OBJ_FLAG_HIDDEN); }"
+          { { lv_obj_t* w = id(ovrl_ref14); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref28)[0] == 0;"
+            - lambda: !lambda "return id(g_ref29)[0] == 0;"
           then:
             - globals.set:
-                id: g_ref30
+                id: g_ref31
                 value: !lambda "return 0;"
-  - id: scr_ref34
+  - id: scr_ref35
     parameters:
       closure_index: int
     then:
       - script.stop:
-          id: scr_ref33
-      - lambda: !lambda "espcompose::sig_global_g_ref28.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush();"
+          id: scr_ref34
+      - lambda: !lambda "espcompose::sig_global_g_ref29.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush();"
       - script.execute:
-          id: scr_ref32
+          id: scr_ref33
           closure_index: 0
       - script.wait:
-          id: scr_ref32
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref13), LV_OBJ_FLAG_HIDDEN);"
+          id: scr_ref33
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref14); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref28)[0] == 0;"
+            - lambda: !lambda "return id(g_ref29)[0] == 0;"
           then:
             - globals.set:
-                id: g_ref30
+                id: g_ref31
                 value: !lambda "return 0;"
   - id: scr_ref4
     mode: restart
@@ -1328,106 +1334,114 @@ script:
             - lambda: !lambda "return true;"
           then:
             - script.execute:
-                id: scr_ref33
+                id: scr_ref34
                 closure_index: 0
                 msg: !lambda "return msg;"
-  - id: scr_ref35
+  - id: scr_ref36
     then:
       - script.stop:
-          id: scr_ref33
-      - lambda: !lambda "{ espcompose::sig_global_g_ref28.get_mut()[0] = 0;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush(); }
+          id: scr_ref34
+      - lambda: !lambda "{ espcompose::sig_global_g_ref29.get_mut()[0] = 0;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }
 
-          { lv_obj_add_flag(id(ovrl_ref13), LV_OBJ_FLAG_HIDDEN); }"
+          { { lv_obj_t* w = id(ovrl_ref14); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } }"
       - globals.set:
-          id: g_ref30
+          id: g_ref31
           value: !lambda "return 0;"
-  - id: scr_ref36
-    parameters:
-      closure_index: int
-    then:
-      - espcompose.animate:
-          widget: r_ref20
-          prop: translate_y
-          from: 80
-          to: 0
-          duration: 300
-          easing: ease_out
   - id: scr_ref37
     parameters:
       closure_index: int
     then:
       - espcompose.animate:
-          widget: r_ref20
+          widget: r_ref21
+          prop: translate_y
+          from: 80
+          to: 0
+          duration: 300
+          easing: ease_out
+  - id: scr_ref38
+    parameters:
+      closure_index: int
+    then:
+      - espcompose.animate:
+          widget: r_ref21
           prop: translate_y
           from: 0
           to: 80
           duration: 300
           easing: ease_in
-  - id: scr_ref38
+  - id: scr_ref39
     mode: restart
     parameters:
       closure_index: int
       msg: string
     then:
-      - lambda: !lambda "{ espcompose::sig_global_g_ref16_s1.set(msg);
+      - lambda: !lambda "{ espcompose::sig_global_g_ref17_s1.set(msg);
           espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref28.get_mut()[1] = 1;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush(); }
+          { espcompose::sig_global_g_ref29.get_mut()[1] = 1;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }
 
-          { espcompose::sig_global_g_ref29.get_mut()[1] = id(g_ref30);
-          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }"
+          { espcompose::sig_global_g_ref30.get_mut()[1] = id(g_ref31);
+          espcompose::sig_global_g_ref30.notify(); espcompose::flush(); }"
       - globals.set:
-          id: g_ref30
-          value: !lambda "return id(g_ref30) + 1;"
+          id: g_ref31
+          value: !lambda "return id(g_ref31) + 1;"
       - lambda: !lambda "auto& closure =
-          espcompose::scr_ref38_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref18_mux.set(closure.__ctrl_instance_index);
-          espcompose::flush(); lv_obj_clear_flag(id(ovrl_ref18),
-          LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(ovrl_ref18));"
+          espcompose::scr_ref39_closures[closure_index]; (void)closure;
+          espcompose::sig_ovrl_ref19_mux.set(closure.__ctrl_instance_index);
+          espcompose::flush(); { lv_obj_t* w = id(ovrl_ref19); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+          lv_obj_move_foreground(id(ovrl_ref19));"
       - script.execute:
-          id: scr_ref36
+          id: scr_ref37
           closure_index: 0
       - script.wait:
-          id: scr_ref36
+          id: scr_ref37
       - delay: 3s
       - script.execute:
-          id: scr_ref37
+          id: scr_ref38
           closure_index: 0
       - script.wait:
-          id: scr_ref37
-      - lambda: !lambda "{ espcompose::sig_global_g_ref28.get_mut()[1] = 0;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush(); }
+          id: scr_ref38
+      - lambda: !lambda "{ espcompose::sig_global_g_ref29.get_mut()[1] = 0;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush(); }
 
-          { lv_obj_add_flag(id(ovrl_ref18), LV_OBJ_FLAG_HIDDEN); }"
+          { { lv_obj_t* w = id(ovrl_ref19); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); } }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref28)[0] == 0 && id(g_ref28)[1] == 0;"
+            - lambda: !lambda "return id(g_ref29)[0] == 0 && id(g_ref29)[1] == 0;"
           then:
             - globals.set:
-                id: g_ref30
+                id: g_ref31
                 value: !lambda "return 0;"
-  - id: scr_ref39
+  - id: scr_ref40
     parameters:
       closure_index: int
     then:
       - script.stop:
-          id: scr_ref38
-      - lambda: !lambda "espcompose::sig_global_g_ref28.get_mut()[1] = 0;
-          espcompose::sig_global_g_ref28.notify(); espcompose::flush();"
+          id: scr_ref39
+      - lambda: !lambda "espcompose::sig_global_g_ref29.get_mut()[1] = 0;
+          espcompose::sig_global_g_ref29.notify(); espcompose::flush();"
       - script.execute:
-          id: scr_ref37
+          id: scr_ref38
           closure_index: 0
       - script.wait:
-          id: scr_ref37
-      - lambda: !lambda "lv_obj_add_flag(id(ovrl_ref18), LV_OBJ_FLAG_HIDDEN);"
+          id: scr_ref38
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref19); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref28)[0] == 0 && id(g_ref28)[1] == 0;"
+            - lambda: !lambda "return id(g_ref29)[0] == 0 && id(g_ref29)[1] == 0;"
           then:
             - globals.set:
-                id: g_ref30
+                id: g_ref31
                 value: !lambda "return 0;"
 "
 `;

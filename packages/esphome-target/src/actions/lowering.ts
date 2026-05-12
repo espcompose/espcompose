@@ -57,6 +57,11 @@ export interface ActionLoweringContext {
    * the per-script typed-pointer lookup table: `ec_<scriptId>_<field>s[...]`.
    */
   scriptId?: string;
+  /**
+   * Set of overlay tier keys that have a wrapper widget. Used by overlay
+   * show/hide lowering to conditionally emit tier wrapper show/hide logic.
+   */
+  tiersWithWrapper?: Set<string>;
 }
 
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
@@ -593,15 +598,22 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     }
 
     case 'action:overlay_show': {
-      // Set the mux signal to this instance's index, show the overlay
-      // wrapper, move it to the foreground within its tier container,
-      // and flush the reactive graph so bindings update.
+      // Set the mux signal to this instance's index, show each content child
+      // within the overlay wrapper (children carry hidden flag, wrapper is always-visible),
+      // move wrapper to the foreground, show tier wrapper if tier has one, and flush.
       const muxSig = `sig_${action.templateKey}_mux`;
       const overlayId = `${action.templateKey}`;
-      // instanceIndex may be a literal number or a script parameter reference.
       const indexExpr = typeof action.instanceIndex === 'number'
         ? String(action.instanceIndex)
         : action.instanceIndex.name;
+      const hasWrapper = ctx.tiersWithWrapper?.has(action.tierKey) ?? false;
+      const tierWrapperId = hasWrapper ? `tw_${action.tierKey}` : '';
+
+      const showChildren = `{ lv_obj_t* w = id(${overlayId}); for(int i=0;i<(int)lv_obj_get_child_count(w);i++) lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }`;
+      const showTierWrapper = tierWrapperId
+        ? ` lv_obj_clear_flag(id(${tierWrapperId}),LV_OBJ_FLAG_HIDDEN);`
+        : '';
+
       if (ctx.perf) {
         return { lambda: lambdaMarker(
           `uint32_t _t0 = millis(); ` +
@@ -609,8 +621,9 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
           `uint32_t _t1 = millis(); ` +
           `espcompose::flush(); ` +
           `uint32_t _t2 = millis(); ` +
-          `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
-          `lv_obj_move_foreground(id(${overlayId})); ` +
+          showChildren +
+          showTierWrapper +
+          ` lv_obj_move_foreground(id(${overlayId})); ` +
           `uint32_t _t3 = millis(); ` +
           `ESP_LOGI("ec_perf", "overlay_show(%s): mux=%lums flush=%lums show=%lums total=%lums", ` +
           `"${escapeStringForCpp(overlayId)}", (unsigned long)(_t1-_t0), (unsigned long)(_t2-_t1), (unsigned long)(_t3-_t2), (unsigned long)(_t3-_t0));`
@@ -618,24 +631,43 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
       }
       return { lambda: lambdaMarker(
         `espcompose::${muxSig}.set(${indexExpr}); espcompose::flush(); ` +
-        `lv_obj_clear_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
-        `lv_obj_move_foreground(id(${overlayId}));`
+        showChildren +
+        showTierWrapper +
+        ` lv_obj_move_foreground(id(${overlayId}));`
       )};
     }
 
     case 'action:overlay_hide': {
-      // Hide the overlay wrapper — not muxed, same widget across all instances.
+      // Hide content children within the overlay wrapper, then conditionally
+      // hide the shared tier wrapper if no other overlay in this tier is visible.
       const overlayId = `${action.templateKey}`;
+      const hasWrapper = ctx.tiersWithWrapper?.has(action.tierKey) ?? false;
+      const tierWrapperId = hasWrapper ? `tw_${action.tierKey}` : '';
+
+      const hideChildren = `{ lv_obj_t* w = id(${overlayId}); for(int i=0;i<(int)lv_obj_get_child_count(w);i++) lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }`;
+
+      // Tier wrapper conditional hide: iterate tier's children (overlay wrappers),
+      // skip the tier wrapper itself, check if any sibling wrapper has a visible child.
+      let hideTierWrapper = '';
+      if (tierWrapperId) {
+        hideTierWrapper = ` { lv_obj_t* tier = lv_obj_get_parent(id(${overlayId})); ` +
+          `lv_obj_t* tw = id(${tierWrapperId}); bool any = false; ` +
+          `for(int i=0;i<(int)lv_obj_get_child_count(tier);i++){` +
+          `lv_obj_t* s = lv_obj_get_child(tier,i); if(s==tw) continue; ` +
+          `for(int j=0;j<(int)lv_obj_get_child_count(s);j++){` +
+          `if(!lv_obj_has_flag(lv_obj_get_child(s,j),LV_OBJ_FLAG_HIDDEN)){any=true;break;}` +
+          `} if(any) break;` +
+          `} if(!any) lv_obj_add_flag(tw,LV_OBJ_FLAG_HIDDEN); }`;
+      }
+
       if (ctx.perf) {
         return { lambda: lambdaMarker(
           `uint32_t _t0 = millis(); ` +
-          `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN); ` +
-          `ESP_LOGI("ec_perf", "overlay_hide(%s): %lums", "${escapeStringForCpp(overlayId)}", (unsigned long)(millis() - _t0));`
+          hideChildren + hideTierWrapper +
+          ` ESP_LOGI("ec_perf", "overlay_hide(%s): %lums", "${escapeStringForCpp(overlayId)}", (unsigned long)(millis() - _t0));`
         )};
       }
-      return { lambda: lambdaMarker(
-        `lv_obj_add_flag(id(${overlayId}), LV_OBJ_FLAG_HIDDEN);`
-      )};
+      return { lambda: lambdaMarker(hideChildren + hideTierWrapper) };
     }
 
     case 'action:controller_method_call':

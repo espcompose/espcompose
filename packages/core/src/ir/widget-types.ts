@@ -49,10 +49,17 @@ export interface IROverlayContainer {
  */
 export interface IROverlayTier {
   readonly kind: 'overlay_tier';
+  /** Deterministic tier key (e.g. 'tier_abc123'). */
+  readonly tierKey: string;
   /** Ascending z-order. */
   readonly zOrder: number;
   /** Overlay containers at this tier. */
   readonly overlays: IROverlayContainer[];
+  /**
+   * Optional wrapper widget emitted once per tier (e.g. a shared backdrop).
+   * Shown when any overlay in the tier is visible; hidden when all are dismissed.
+   */
+  readonly wrapperWidget?: IRWidget;
 }
 
 // NOTE: IRWidgetTree has been replaced by IRUIRegistry in ./types.ts.

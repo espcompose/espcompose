@@ -9,6 +9,7 @@ import {
 import { pushHookPath, popHookPath, getCurrentHookPath } from './useState';
 import { LvglContext } from './useLvgl';
 import { withContext } from './useContext';
+import { useOverlayTier, withOverlayTierScope } from './useOverlayTier';
 
 /** Push a fake LvglContext so useOverlay()'s lvgl-tree guard is satisfied. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
@@ -49,39 +50,48 @@ describe('useOverlay', () => {
     }
   }
 
+  /** Helper: create a tier then call useOverlay with it. */
+  function useOverlayWithTier(
+    zOrder: number,
+    factory: Parameters<typeof useOverlay>[1],
+  ): ReturnType<typeof useOverlay> {
+    const tier = useOverlayTier({ zOrder });
+    return useOverlay({ tier }, factory);
+  }
+
   it('throws when called outside a hook context', () => {
-    expect(() => useOverlay({}, () => null as never)).toThrow(/inside a function component/);
+    expect(() => useOverlay({ tier: {} as never }, () => null as never)).toThrow(/inside a function component/);
   });
 
   it('throws when called outside an lvgl tree', () => {
     expect(() =>
-      withScriptScope(() => withOverlayScope(() => {
-        callInsideComponent('Foo', () => useOverlay({}, () => ({ type: 'div', props: {}, __source: undefined as never })));
-      })),
+      withScriptScope(() => withOverlayTierScope(() => withOverlayScope(() => {
+        callInsideComponent('Foo', () => useOverlayWithTier(0, () => ({ type: 'div', props: {}, __source: undefined as never })));
+      }))),
     ).toThrow(/inside an <lvgl> tree/);
   });
 
   it('throws when called outside an overlay scope', () => {
     expect(() =>
-      withScriptScope(() => withLvgl(() => {
-        callInsideComponent('Foo', () => useOverlay({}, () => ({ type: 'div', props: {}, __source: undefined as never })));
-      })),
+      withScriptScope(() => withLvgl(() => withOverlayTierScope(() => {
+        callInsideComponent('Foo', () => useOverlayWithTier(0, () => ({ type: 'div', props: {}, __source: undefined as never })));
+      }))),
     ).toThrow(/overlay scope frame/);
   });
 
   it('deduplicates by hook path: 4 instances of one component → 1 definition with 4 instances', () => {
     let evaluations = 0;
-    const { result: { overlays } } = withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    const { result: { result: { overlays } } } = withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
       for (let i = 0; i < 4; i++) {
         callInsideComponent('LightButton', () => {
-          useOverlay({}, () => {
+          useOverlayWithTier(0, () => {
             evaluations++;
             return stub;
           });
         });
       }
-    })));
+    }))));
     // The factory is evaluated once per instance — captures per-instance closures.
     expect(evaluations).toBe(4);
     expect(overlays).toHaveLength(1);
@@ -91,12 +101,12 @@ describe('useOverlay', () => {
   });
 
   it('separates definitions for different component identities', () => {
-    const { result: { overlays } } = withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    const { result: { result: { overlays } } } = withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
-      callInsideComponent('LightButton', () => { useOverlay({}, () => stub); });
-      callInsideComponent('SwitchButton', () => { useOverlay({}, () => stub); });
-      callInsideComponent('LightButton', () => { useOverlay({}, () => stub); });
-    })));
+      callInsideComponent('LightButton', () => { useOverlayWithTier(0, () => stub); });
+      callInsideComponent('SwitchButton', () => { useOverlayWithTier(0, () => stub); });
+      callInsideComponent('LightButton', () => { useOverlayWithTier(0, () => stub); });
+    }))));
     expect(overlays).toHaveLength(2);
     // Two distinct definitions — order follows insertion order (LightButton first)
     expect(overlays[0].instances).toHaveLength(2);
@@ -105,16 +115,16 @@ describe('useOverlay', () => {
 
   it('returns a controller with templateKey and instanceIndex per call', () => {
     const controllers: Array<{ key: string; idx: number }> = [];
-    withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
       for (let i = 0; i < 3; i++) {
         callInsideComponent('Card', () => {
-          const ctrl = useOverlay({}, () => stub);
+          const ctrl = useOverlayWithTier(0, () => stub);
           const internal = ctrl as unknown as { [OVERLAY_TEMPLATE_KEY]: string; [OVERLAY_INSTANCE_INDEX]: number };
           controllers.push({ key: internal[OVERLAY_TEMPLATE_KEY], idx: internal[OVERLAY_INSTANCE_INDEX] });
         });
       }
-    })));
+    }))));
     expect(controllers.map(c => c.idx)).toEqual([0, 1, 2]);
     // All instances share the same templateKey
     expect(new Set(controllers.map(c => c.key)).size).toBe(1);
@@ -122,29 +132,29 @@ describe('useOverlay', () => {
 
   it('controller.show()/hide() throw at runtime (compile-time markers)', () => {
     let savedCtrl: { show: () => void; hide: () => void } | undefined;
-    withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       callInsideComponent('Foo', () => {
-        savedCtrl = useOverlay({}, () => ({ type: 'div', props: {}, __source: undefined as never }));
+        savedCtrl = useOverlayWithTier(0, () => ({ type: 'div', props: {}, __source: undefined as never }));
       });
-    })));
+    }))));
     expect(() => savedCtrl!.show()).toThrow(/compile-time/);
     expect(() => savedCtrl!.hide()).toThrow(/compile-time/);
   });
 
   it('two useOverlay() calls in the same component produce two definitions', () => {
-    const { result: { overlays } } = withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    const { result: { result: { overlays } } } = withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
       // Instance A: two useOverlay calls
       callInsideComponent('LightSwitch', () => {
-        useOverlay({}, () => stub);
-        useOverlay({}, () => stub);
+        useOverlayWithTier(0, () => stub);
+        useOverlayWithTier(0, () => stub);
       });
       // Instance B: two useOverlay calls
       callInsideComponent('LightSwitch', () => {
-        useOverlay({}, () => stub);
-        useOverlay({}, () => stub);
+        useOverlayWithTier(0, () => stub);
+        useOverlayWithTier(0, () => stub);
       });
-    })));
+    }))));
     // Two definitions (one per call site), each with 2 instances
     expect(overlays).toHaveLength(2);
     expect(overlays[0].instances).toHaveLength(2);
@@ -157,11 +167,11 @@ describe('useOverlay', () => {
   });
 
   it('stores zOrder on definitions from config', () => {
-    const { result: { overlays } } = withScriptScope(() => withLvgl(() => withOverlayScope(() => {
+    const { result: { result: { overlays } } } = withScriptScope(() => withLvgl(() => withOverlayTierScope(() => withOverlayScope(() => {
       const stub = { type: 'div', props: {}, __source: undefined as never };
-      callInsideComponent('PopupWidget', () => { useOverlay({ zOrder: 0 }, () => stub); });
-      callInsideComponent('ToastWidget', () => { useOverlay({ zOrder: 100 }, () => stub); });
-    })));
+      callInsideComponent('PopupWidget', () => { useOverlayWithTier(0, () => stub); });
+      callInsideComponent('ToastWidget', () => { useOverlayWithTier(100, () => stub); });
+    }))));
     expect(overlays).toHaveLength(2);
     // Order follows insertion: PopupWidget first (zOrder: 0), ToastWidget second (zOrder: 100)
     expect(overlays[0].zOrder).toBe(0);

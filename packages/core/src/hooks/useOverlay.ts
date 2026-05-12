@@ -43,6 +43,8 @@ import type { OverlayPayloadGlobalDecl, GlobalDefinition } from './global-shared
 import { irOverlayShow, irOverlayHide } from '../ir/action-types';
 import { generateDeterministicId } from '../id';
 import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
+import type { OverlayTierHandle } from './useOverlayTier';
+import { TIER_Z_ORDER, TIER_KEY } from './useOverlayTier';
 
 // ── Overlay controller symbols ──────────────────────────────────────────────
 // Symbol-keyed internal fields on OverlayController. Using symbols instead of
@@ -59,6 +61,8 @@ export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
 export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
 /** Overlay payload declarations (OverlayPayloadGlobalDecl[]). Symbol-keyed so useVisibility can read them. */
 export const OVERLAY_PAYLOAD_GLOBALS: unique symbol = Symbol('overlay.payloadGlobals');
+/** Deterministic tier key for the overlay's tier. */
+export const OVERLAY_TIER_KEY: unique symbol = Symbol('overlay.tierKey');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -145,6 +149,8 @@ export interface OverlayDefinition {
   readonly lvgl: string;
   /** Numeric z-order tier for stacking in top_layer. */
   readonly zOrder: number;
+  /** Deterministic tier key from useOverlayTier(). */
+  readonly tierKey: string;
   /** Per-instance records, accumulated across all callers. */
   readonly instances: OverlayInstance[];
 }
@@ -152,12 +158,13 @@ export interface OverlayDefinition {
 /** Configuration for `useOverlay()`. */
 export interface OverlayConfig {
   /**
-   * Numeric z-order tier. Overlays with higher `zOrder` are rendered above
-   * those with lower values. Within the same tier, last-shown-wins.
+   * Overlay tier handle from `useOverlayTier()`.
    *
-   * @default 0
+   * Required. Declares which z-order tier this overlay belongs to.
+   * The tier controls stacking, optional shared backdrop, and
+   * child-level visibility toggling.
    */
-  zOrder?: number;
+  tier: OverlayTierHandle;
 }
 
 // ── Overlay payload global declarations ──────────────────────────────────────
@@ -260,7 +267,9 @@ export type OverlayFactory<P = void> = P extends void
 export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFactory<P>): OverlayController<P> {
   assertHookContext('useOverlay()');
 
-  const zOrder = config.zOrder ?? 0;
+  const tier = config.tier;
+  const zOrder = tier[TIER_Z_ORDER];
+  const tierKey = tier[TIER_KEY];
 
   // Require an enclosing <lvgl> context — overlays are lvgl-scoped.
   const lvglId = String(useLvgl());
@@ -296,7 +305,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, lvgl: lvglId, zOrder, instances: [] };
+    def = { templateKey: safeKey, lvgl: lvglId, zOrder, tierKey, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 
@@ -336,7 +345,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
   }
 
   const instanceIndex = def.instances.length;
-  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, payloadDecls);
+  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, tierKey, payloadDecls);
 
   // Evaluate the factory under a synthetic hook-path frame keyed by the
   // overlay's templateKey. This gives memoized hooks (useRef, useStableValue)
@@ -372,6 +381,7 @@ function createOverlayController<P>(
   templateKey: string,
   instanceIndex: number,
   zOrder: number,
+  tierKey: string,
   payloadDecls?: OverlayPayloadGlobalDecl[],
 ): OverlayController<P> {
   return {
@@ -384,10 +394,11 @@ function createOverlayController<P>(
     [OVERLAY_TEMPLATE_KEY]: templateKey,
     [OVERLAY_INSTANCE_INDEX]: instanceIndex,
     [OVERLAY_Z_ORDER]: zOrder,
+    [OVERLAY_TIER_KEY]: tierKey,
     [OVERLAY_PAYLOAD_GLOBALS]: payloadDecls,
     [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
-      if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
-      if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];
+      if (methodName === 'show') return [irOverlayShow('', -1, 0, '', controllerRef)];
+      if (methodName === 'hide') return [irOverlayHide('', 0, '', controllerRef)];
       return [];
     },
   } as OverlayController<P>;
