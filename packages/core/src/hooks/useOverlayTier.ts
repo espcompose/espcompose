@@ -38,6 +38,8 @@ export const TIER_KEY: unique symbol = Symbol('tier.key');
 export const TIER_WRAPPER: unique symbol = Symbol('tier.wrapper');
 /** Ref token of the owning <lvgl> element. */
 export const TIER_LVGL: unique symbol = Symbol('tier.lvgl');
+/** Whether overlays in this tier should call `lv_obj_move_foreground()` on show. */
+export const TIER_BRING_TO_FRONT: unique symbol = Symbol('tier.bringToFront');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -45,9 +47,25 @@ export const TIER_LVGL: unique symbol = Symbol('tier.lvgl');
 export interface OverlayTierConfig {
   /**
    * Numeric z-order. Tiers with higher values render above tiers with lower
-   * values. Within a tier, last-shown overlay wins (via move_foreground).
+   * values. Within a tier, last-shown overlay wins (via move_foreground)
+   * when {@link bringToFront} is enabled.
    */
   zOrder: number;
+  /**
+   * When `true` (default), each overlay show in this tier calls
+   * `lv_obj_move_foreground()` so the most-recently-shown overlay appears on
+   * top of its tier siblings. Required for stacked dialogs where a newer
+   * dialog should occlude an older one.
+   *
+   * When `false`, overlays keep their declared sibling order. Recommended
+   * for tiers whose overlays animate on entrance (e.g. toasts) —
+   * `move_foreground` triggers a full-screen LVGL invalidation that can
+   * starve the first animation frame on slow displays, making the entrance
+   * appear to skip.
+   *
+   * @default true
+   */
+  bringToFront?: boolean;
 }
 
 /**
@@ -61,6 +79,7 @@ export interface OverlayTierHandle {
   readonly [TIER_KEY]: string;
   readonly [TIER_WRAPPER]?: EspComposeElement;
   readonly [TIER_LVGL]: string;
+  readonly [TIER_BRING_TO_FRONT]: boolean;
 }
 
 /**
@@ -78,6 +97,8 @@ export interface OverlayTierDefinition {
   readonly lvgl: string;
   /** Optional wrapper JSX element (e.g. backdrop). */
   readonly wrapper?: EspComposeElement;
+  /** Whether overlays in this tier should call `lv_obj_move_foreground()` on show. */
+  readonly bringToFront: boolean;
 }
 
 // ── Scope frame ─────────────────────────────────────────────────────────────
@@ -163,6 +184,7 @@ export function useOverlayTier(config: OverlayTierConfig, wrapper?: EspComposeEl
   const callIndex = nextCallIndexAtHookPath();
   const tierPath = `${basePath}#tier${callIndex}`;
   const tierKey = generateDeterministicId('tier', tierPath);
+  const bringToFront = config.bringToFront ?? true;
 
   if (!frame.definitions.has(tierPath)) {
     frame.definitions.set(tierPath, {
@@ -170,6 +192,7 @@ export function useOverlayTier(config: OverlayTierConfig, wrapper?: EspComposeEl
       zOrder: config.zOrder,
       lvgl: lvglId,
       wrapper,
+      bringToFront,
     });
   }
 
@@ -178,5 +201,6 @@ export function useOverlayTier(config: OverlayTierConfig, wrapper?: EspComposeEl
     [TIER_KEY]: tierKey,
     [TIER_WRAPPER]: wrapper,
     [TIER_LVGL]: lvglId,
+    [TIER_BRING_TO_FRONT]: bringToFront,
   };
 }

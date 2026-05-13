@@ -60,6 +60,13 @@ export interface IROverlayTier {
    * Shown when any overlay in the tier is visible; hidden when all are dismissed.
    */
   readonly wrapperWidget?: IRWidget;
+  /**
+   * When `true`, overlays in this tier call `lv_obj_move_foreground()` on
+   * show so the most-recently-shown overlay sits above its tier siblings.
+   * When `false`, overlays keep their declared sibling order — cheaper for
+   * entrance animations.
+   */
+  readonly bringToFront: boolean;
 }
 
 // NOTE: IRWidgetTree has been replaced by IRUIRegistry in ./types.ts.

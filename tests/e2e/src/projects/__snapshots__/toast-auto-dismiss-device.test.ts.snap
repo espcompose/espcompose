@@ -1150,8 +1150,7 @@ script:
           espcompose::sig_ovrl_ref16_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); { lv_obj_t* w = id(ovrl_ref16); for(int
           i=0;i<(int)lv_obj_get_child_count(w);i++)
-          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-          lv_obj_move_foreground(id(ovrl_ref16));"
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - script.execute:
           id: scr_ref30
           closure_index: 0

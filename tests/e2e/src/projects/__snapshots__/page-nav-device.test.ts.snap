@@ -632,8 +632,7 @@ lvgl:
               value: !lambda "return 0;"
           - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
               w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-              lv_obj_move_foreground(id());"
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
         widgets:
           - obj:
               width: 100%
@@ -662,8 +661,7 @@ lvgl:
               value: !lambda "return 1;"
           - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
               w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-              lv_obj_move_foreground(id());"
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
         widgets:
           - obj:
               width: 100%
@@ -692,8 +690,7 @@ lvgl:
               value: !lambda "return 2;"
           - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
               w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-              lv_obj_move_foreground(id());"
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
         widgets:
           - obj:
               width: 100%

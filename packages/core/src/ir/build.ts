@@ -214,6 +214,7 @@ function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROve
     kind: 'overlay_tier' as const,
     tierKey: tier.tierKey,
     zOrder: tier.zOrder,
+    bringToFront: tier.bringToFront,
     overlays: tier.overlays.map(overlay => ({
       kind: 'overlay_container' as const,
       templateKey: overlay.templateKey,
@@ -308,6 +309,7 @@ export interface RawIROverlayTier {
   readonly zOrder: number;
   readonly overlays: RawIROverlayContainer[];
   readonly wrapperWidget?: RawIRWidget;
+  readonly bringToFront: boolean;
 }
 
 export interface RawIROverlayContainer {

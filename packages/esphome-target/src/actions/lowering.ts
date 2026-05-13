@@ -62,6 +62,15 @@ export interface ActionLoweringContext {
    * show/hide lowering to conditionally emit tier wrapper show/hide logic.
    */
   tiersWithWrapper?: Set<string>;
+  /**
+   * Set of overlay tier keys whose overlays should call
+   * `lv_obj_move_foreground()` on show. Enables last-shown-wins z-order
+   * within a tier (needed for stacked dialogs). When omitted, the overlay
+   * keeps its declared sibling order — cheaper for entrance animations,
+   * since `move_foreground` triggers a full-screen LVGL invalidation that
+   * can starve the first animation frame on slow displays.
+   */
+  tiersWithBringToFront?: Set<string>;
 }
 
 // ── JSON-safe lambda marker ─────────────────────────────────────────────
@@ -600,7 +609,8 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
     case 'action:overlay_show': {
       // Set the mux signal to this instance's index, show each content child
       // within the overlay wrapper (children carry hidden flag, wrapper is always-visible),
-      // move wrapper to the foreground, show tier wrapper if tier has one, and flush.
+      // optionally move wrapper to the foreground (last-shown-wins z-order within tier),
+      // show tier wrapper if tier has one, and flush.
       const muxSig = `sig_${action.templateKey}_mux`;
       const overlayId = `${action.templateKey}`;
       const indexExpr = typeof action.instanceIndex === 'number'
@@ -608,10 +618,14 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         : action.instanceIndex.name;
       const hasWrapper = ctx.tiersWithWrapper?.has(action.tierKey) ?? false;
       const tierWrapperId = hasWrapper ? `tw_${action.tierKey}` : '';
+      const bringToFront = ctx.tiersWithBringToFront?.has(action.tierKey) ?? false;
 
       const showChildren = `{ lv_obj_t* w = id(${overlayId}); for(int i=0;i<(int)lv_obj_get_child_count(w);i++) lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }`;
       const showTierWrapper = tierWrapperId
         ? ` lv_obj_clear_flag(id(${tierWrapperId}),LV_OBJ_FLAG_HIDDEN);`
+        : '';
+      const moveForeground = bringToFront
+        ? ` lv_obj_move_foreground(id(${overlayId}));`
         : '';
 
       if (ctx.perf) {
@@ -623,8 +637,8 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
           `uint32_t _t2 = millis(); ` +
           showChildren +
           showTierWrapper +
-          ` lv_obj_move_foreground(id(${overlayId})); ` +
-          `uint32_t _t3 = millis(); ` +
+          moveForeground +
+          ` uint32_t _t3 = millis(); ` +
           `ESP_LOGI("ec_perf", "overlay_show(%s): mux=%lums flush=%lums show=%lums total=%lums", ` +
           `"${escapeStringForCpp(overlayId)}", (unsigned long)(_t1-_t0), (unsigned long)(_t2-_t1), (unsigned long)(_t3-_t2), (unsigned long)(_t3-_t0));`
         )};
@@ -633,7 +647,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
         `espcompose::${muxSig}.set(${indexExpr}); espcompose::flush(); ` +
         showChildren +
         showTierWrapper +
-        ` lv_obj_move_foreground(id(${overlayId}));`
+        moveForeground
       )};
     }
 

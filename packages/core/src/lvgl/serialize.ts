@@ -545,7 +545,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
     tierDefMap.set(td.tierKey, td);
   }
 
-  const tierMap = new Map<string, { zOrder: number; overlays: RawIROverlayContainer[]; wrapperWidget?: RawIRWidget }>();
+  const tierMap = new Map<string, { zOrder: number; overlays: RawIROverlayContainer[]; wrapperWidget?: RawIRWidget; bringToFront: boolean }>();
   const processed = new Set<string>();
   while (overlays.some(d => !processed.has(d.templateKey))) {
     for (const def of overlays) {
@@ -568,7 +568,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
             }
           }
         }
-        tierEntry = { zOrder: def.zOrder, overlays: [], wrapperWidget };
+        tierEntry = { zOrder: def.zOrder, overlays: [], wrapperWidget, bringToFront: tierDef?.bringToFront ?? true };
         tierMap.set(def.tierKey, tierEntry);
       }
 
@@ -633,5 +633,5 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   return Array.from(tierMap.entries())
     .sort((a, b) => a[1].zOrder - b[1].zOrder)
     .filter(([, entry]) => entry.overlays.length > 0)
-    .map(([tierKey, entry]) => ({ tierKey, zOrder: entry.zOrder, overlays: entry.overlays, wrapperWidget: entry.wrapperWidget }));
+    .map(([tierKey, entry]) => ({ tierKey, zOrder: entry.zOrder, overlays: entry.overlays, wrapperWidget: entry.wrapperWidget, bringToFront: entry.bringToFront }));
 }

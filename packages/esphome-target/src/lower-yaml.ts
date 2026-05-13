@@ -426,10 +426,14 @@ export function lowerToYamlConfig(
   // BoundSignal C++ lambda or plain globals.set YAML, and so action
   // conditions can resolve overlay mux signal names.
   const tiersWithWrapper = new Set<string>();
+  const tiersWithBringToFront = new Set<string>();
   for (const ui of ir.uis) {
     for (const tier of ui.overlays) {
       if (tier.wrapperWidget) {
         tiersWithWrapper.add(tier.tierKey);
+      }
+      if (tier.bringToFront) {
+        tiersWithBringToFront.add(tier.tierKey);
       }
     }
   }
@@ -446,6 +450,7 @@ export function lowerToYamlConfig(
     })(),
     perf: options?.perf,
     tiersWithWrapper,
+    tiersWithBringToFront,
   };
 
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);

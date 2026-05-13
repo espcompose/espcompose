@@ -122,7 +122,7 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
   const variant: 'bottom' | 'topRight' = variantProp
     ?? (settings?.class === 'large' || settings?.class === 'panel' ? 'topRight' : 'bottom');
 
-  const toastTier = useOverlayTier({ zOrder: 100 });
+  const toastTier = useOverlayTier({ zOrder: 100, bringToFront: false });
 
   const ctrl = useTransientOverlay<ToastPayload>(
     { tier: toastTier, maxVisible, autoHide, overflow, queueLength },

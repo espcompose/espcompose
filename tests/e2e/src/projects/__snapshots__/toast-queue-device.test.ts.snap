@@ -1275,8 +1275,7 @@ script:
           espcompose::sig_ovrl_ref14_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); { lv_obj_t* w = id(ovrl_ref14); for(int
           i=0;i<(int)lv_obj_get_child_count(w);i++)
-          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-          lv_obj_move_foreground(id(ovrl_ref14));"
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - script.execute:
           id: scr_ref32
           closure_index: 0
@@ -1394,8 +1393,7 @@ script:
           espcompose::sig_ovrl_ref19_mux.set(closure.__ctrl_instance_index);
           espcompose::flush(); { lv_obj_t* w = id(ovrl_ref19); for(int
           i=0;i<(int)lv_obj_get_child_count(w);i++)
-          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
-          lv_obj_move_foreground(id(ovrl_ref19));"
+          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - script.execute:
           id: scr_ref37
           closure_index: 0
