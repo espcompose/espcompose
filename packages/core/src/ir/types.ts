@@ -14,6 +14,7 @@ import type { IRBinding, IRHAEntity } from '../hooks';
 import type { IRActionNode } from './action-types';
 import type { ExprType } from './expr-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
+import type { IRStyleTransition, IRAnimateTransition } from './contribution-types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Script definition
@@ -257,6 +258,10 @@ export interface IRUIRegistry {
   readonly widgets: IRWidget[];
   /** Overlay subtrees grouped by zOrder, ascending. */
   readonly overlays: IROverlayTier[];
+  /** Declarative style transitions — lowered to C++ `lv_style_transition_dsc_t` structs. */
+  readonly styleTransitions: IRStyleTransition[];
+  /** Animated binding transitions — lowered to C++ `lv_anim_t` in binding Effect closures. */
+  readonly animateTransitions: IRAnimateTransition[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────

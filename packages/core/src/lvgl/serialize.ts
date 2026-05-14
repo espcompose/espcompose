@@ -36,7 +36,9 @@ import {
   serializeValuesPreservingKeys,
   setCurrentSource,
 } from '../serialize';
-import { expandCssStyle } from './style';
+import { expandCssStyle, resolveTransitionDescriptors } from './style';
+import type { IRStyleTransition } from '../ir/contribution-types';
+import type { StyleTransitionDescriptor } from './style/types';
 import type { RawIRWidget, RawIRWidgetTree, RawIROverlayContainer, RawIROverlayTier } from '../ir/build';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
@@ -266,6 +268,103 @@ function hoistStyleProp(data: Record<string, unknown>): void {
   }
 }
 
+// ── Style transition extraction ────────────────────────────────────────────
+// Module-scoped collector populated during buildLvglWidgetIR/buildLvglPageIR.
+// Reset at the start of each buildLvglWidgetTree() call and drained into
+// RawIRWidgetTree.styleTransitions.
+
+let pendingStyleTransitions: IRStyleTransition[] = [];
+
+/**
+ * Quick check: does `data` or any of its state/part sub-objects contain a
+ * `transition` key?  Used to decide whether to auto-assign an ID.
+ */
+function hasTransitionKey(data: Record<string, unknown>): boolean {
+  if (data.transition !== undefined) return true;
+  for (const key of Object.keys(data)) {
+    if (!LVGL_STATE_NAMES.has(key) && !LVGL_PART_NAMES.has(key)) continue;
+    const sub = data[key];
+    if (sub == null || typeof sub !== 'object' || Array.isArray(sub)) continue;
+    if ((sub as Record<string, unknown>).transition !== undefined) return true;
+    // Check part→state nesting for part sub-objects
+    if (LVGL_PART_NAMES.has(key)) {
+      for (const stateKey of Object.keys(sub as Record<string, unknown>)) {
+        if (!LVGL_STATE_NAMES.has(stateKey)) continue;
+        const stateSub = (sub as Record<string, unknown>)[stateKey];
+        if (stateSub != null && typeof stateSub === 'object' && !Array.isArray(stateSub)) {
+          if ((stateSub as Record<string, unknown>).transition !== undefined) return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Extract `transition` sidecar keys from `data` and its nested state/part
+ * sub-objects. Extracted descriptors are resolved to IR form and pushed onto
+ * `pendingStyleTransitions`. The `transition` keys are deleted from `data`
+ * so they don't flow into widget YAML.
+ */
+function extractTransitions(data: Record<string, unknown>): void {
+  // Check if any transition key exists at any level before allocating an ID.
+  if (!hasTransitionKey(data)) return;
+
+  let widgetId = typeof data.id === 'string' ? data.id : undefined;
+  if (!widgetId) {
+    widgetId = generateId('rw');
+    data.id = widgetId;
+  }
+
+  // Root-level transition → targets default state
+  extractTransitionFromLevel(data, widgetId, undefined, undefined);
+
+  // State sub-objects (e.g. data.pressed.transition)
+  for (const state of LVGL_STATE_NAMES) {
+    const sub = data[state];
+    if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
+      extractTransitionFromLevel(sub as Record<string, unknown>, widgetId, undefined, state);
+    }
+  }
+
+  // Part sub-objects (e.g. data.indicator.transition, data.indicator.pressed.transition)
+  for (const part of LVGL_PART_NAMES) {
+    const sub = data[part];
+    if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
+      const partObj = sub as Record<string, unknown>;
+      extractTransitionFromLevel(partObj, widgetId, part, undefined);
+      for (const state of LVGL_STATE_NAMES) {
+        const stateSub = partObj[state];
+        if (stateSub != null && typeof stateSub === 'object' && !Array.isArray(stateSub)) {
+          extractTransitionFromLevel(stateSub as Record<string, unknown>, widgetId, part, state);
+        }
+      }
+    }
+  }
+}
+
+function extractTransitionFromLevel(
+  obj: Record<string, unknown>,
+  widgetId: string,
+  part: string | undefined,
+  state: string | undefined,
+): void {
+  if (obj.transition === undefined) return;
+  const raw = obj.transition;
+  delete obj.transition;
+
+  const descriptorArray: StyleTransitionDescriptor[] = Array.isArray(raw) ? raw : [raw as StyleTransitionDescriptor];
+  const resolved = resolveTransitionDescriptors(descriptorArray);
+
+  pendingStyleTransitions.push({
+    kind: 'style_transition',
+    targetRef: widgetId,
+    ...(part ? { part } : {}),
+    ...(state ? { state } : {}),
+    descriptors: resolved,
+  });
+}
+
 /**
  * Convert a single LVGL widget element into its target-neutral `IRWidget`.
  *
@@ -335,6 +434,7 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
 
   const data: Record<string, unknown> = { ...allProps };
   hoistStyleProp(data);
+  extractTransitions(data);
 
   // ESPHome requires layout to have a type (flex/grid) and only on widgets
   // with children. If gap/rowGap/columnGap was set without an explicit
@@ -411,6 +511,8 @@ export function buildLvglSection(el: EspComposeElement): RawIRWidgetTree {
  */
 export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
   setCurrentSource(el.__source);
+  // Reset the style-transition collector for this tree.
+  pendingStyleTransitions = [];
   // Capture the raw ref before extractElementProps converts it to an id string.
   let lvglRef = el.props.ref as Ref<LvglComponentRef> | undefined;
 
@@ -451,6 +553,7 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
       pages,
       widgets: topWidgets,
       overlayTiers,
+      styleTransitions: pendingStyleTransitions,
     };
   });
 }
@@ -483,6 +586,7 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
 
   const pageData: Record<string, unknown> = { ...pageProps };
   hoistStyleProp(pageData);
+  extractTransitions(pageData);
 
   // Extract reactive layout spacing — same treatment as widgets (see above).
   if (pageData.layout && typeof pageData.layout === 'object') {

@@ -6,12 +6,12 @@
 // functions.
 // ────────────────────────────────────────────────────────────────────────────
 
-import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding } from '@espcompose/core/internals';
+import type { SemanticIR, OverlayDefinition, IRValue, IRAction, IRActionNode, IRExpression, IRScript, IRBinding, IRStyleTransition, IRAnimateTransition } from '@espcompose/core/internals';
 import type { IRReactiveNode } from '@espcompose/core/internals';
 import { getExprChildren } from '@espcompose/core/internals';
 import { buildRuntimeConfig } from './reactive-config.js';
-import { generateBindingsHeader } from './bindings.js';
-import type { ReactiveRuntimeConfig } from './bindings.js';
+import { generateBindingsHeader, resolveEasingCb } from './bindings.js';
+import type { ReactiveRuntimeConfig, StyleTransitionDecl, AnimateTransitionDecl } from './bindings.js';
 import { processOverlayMux } from './overlay-mux.js';
 import { generateAllClosureTables } from './closure-table.js';
 import type { RemappedHAEntity } from '../ha-entity-classifier.js';
@@ -71,18 +71,31 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const closureTablesBlock = generateAllClosureTables([...ir.scripts] as IRScript[]);
   const hasClosureTables = closureTablesBlock.length > 0;
 
-  if (!hasReactiveContent && !hasClosureTables) return null;
+  // Collect declarative style transitions from all UI registries.
+  const allStyleTransitions = ir.uis.flatMap(ui => ui.styleTransitions);
+  const styleTransitionDecls = allStyleTransitions.length > 0
+    ? lowerStyleTransitions(allStyleTransitions)
+    : undefined;
 
-  if (!hasReactiveContent && hasClosureTables) {
-    // No reactive content, but closure tables exist — emit a minimal
-    // bindings header with just the closure table declarations.
+  // Collect animated binding transitions from all UI registries.
+  const allAnimateTransitions = ir.uis.flatMap(ui => ui.animateTransitions);
+  const animateTransitionDecls = allAnimateTransitions.length > 0
+    ? lowerAnimateTransitions(allAnimateTransitions)
+    : undefined;
+
+  if (!hasReactiveContent && !hasClosureTables && !styleTransitionDecls) return null;
+
+  if (!hasReactiveContent && (hasClosureTables || styleTransitionDecls)) {
+    // No reactive content, but closure tables or style transitions exist —
+    // emit a minimal bindings header with just those declarations.
     const minimalConfig: ReactiveRuntimeConfig = {
       signals: [],
       globalSignals: [],
       memos: [],
       effects: [],
       widgetBindings: [],
-      closureTablesBlock,
+      closureTablesBlock: hasClosureTables ? closureTablesBlock : undefined,
+      styleTransitions: styleTransitionDecls,
     };
     return {
       runtimeConfig: minimalConfig,
@@ -140,6 +153,16 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
     runtimeConfig.closureTablesBlock = closureTablesBlock;
   }
 
+  // Attach style transition declarations.
+  if (styleTransitionDecls) {
+    runtimeConfig.styleTransitions = styleTransitionDecls;
+  }
+
+  // Attach animated binding transition declarations.
+  if (animateTransitionDecls) {
+    runtimeConfig.animateTransitions = animateTransitionDecls;
+  }
+
   return {
     runtimeConfig,
     bindingsHeaderContent: generateBindingsHeader(runtimeConfig),
@@ -154,6 +177,51 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
       `instances: ${overlays?.reduce((s, p) => s + p.instances.length, 0) ?? 0}, ` +
       `per-instance captured nodes: ${overlays?.flatMap(p => p.instances.map(i => i.capturedReactiveNodes?.length ?? -1)).join(',') ?? 'n/a'}]`,
   };
+}
+
+// ── Style transition IR → C++ lowering ─────────────────────────────────────
+
+/** Convert a camelCase identifier to snake_case. */
+function camelToSnake(s: string): string {
+  return s.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+}
+
+/**
+ * Lower `IRStyleTransition[]` from the semantic IR into `StyleTransitionDecl[]`
+ * ready for C++ emission in `generateBindingsHeader()`.
+ *
+ * Converts property names from LVGL camelCase (e.g. 'bgColor') to snake_case
+ * (e.g. 'bg_color') and resolves easing keys to LVGL path callback names.
+ */
+function lowerStyleTransitions(transitions: IRStyleTransition[]): StyleTransitionDecl[] {
+  return transitions.map((t): StyleTransitionDecl => ({
+    targetRef: t.targetRef,
+    part: t.part,
+    state: t.state,
+    descriptors: t.descriptors.map(d => ({
+      properties: d.properties.map(camelToSnake),
+      durationMs: d.durationMs,
+      easingCb: resolveEasingCb(d.easing),
+      delayMs: d.delayMs,
+    })),
+  }));
+}
+
+/**
+ * Lower `IRAnimateTransition[]` from the semantic IR into `AnimateTransitionDecl[]`
+ * ready for augmenting widget binding Effects in `generateBindingsHeader()`.
+ *
+ * Converts property name from LVGL camelCase to snake_case and resolves
+ * easing keys to LVGL path callback names.
+ */
+function lowerAnimateTransitions(transitions: IRAnimateTransition[]): AnimateTransitionDecl[] {
+  return transitions.map((t): AnimateTransitionDecl => ({
+    targetRef: t.targetRef,
+    property: camelToSnake(t.property),
+    durationMs: t.durationMs,
+    easingCb: resolveEasingCb(t.easing),
+    direction: t.direction,
+  }));
 }
 
 // ────────────────────────────────────────────────────────────────────────────

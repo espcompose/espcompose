@@ -192,6 +192,9 @@ export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVi
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
+export { useStyleTransition } from './hooks/useStyleTransition';
+export { useAnimateTransition } from './hooks/useAnimateTransition';
+export type { AnimateTransitionOptions } from './hooks/useAnimateTransition';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 
@@ -254,8 +257,9 @@ export type {
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage, OpacityValue } from './lvgl/style/types';
+export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage, OpacityValue, StyleTransitionDescriptor } from './lvgl/style/types';
 export { expandCssStyle } from './lvgl/style/mapping';
+export { resolveTransitionDescriptors } from './lvgl/style/resolve-transition';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Wireframe

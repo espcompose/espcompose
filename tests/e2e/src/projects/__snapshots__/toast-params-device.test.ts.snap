@@ -167,6 +167,11 @@ Memo<float> memo_2([]() -> float {
 auto& memo_3 = memo_2;
 auto& memo_4 = memo_2;
 
+// ── Animate transition exec callbacks ──
+static void _ec_anim_exec_pad_bottom(void* obj, int32_t v) {
+  lv_obj_set_style_pad_bottom((lv_obj_t*)obj, (lv_coord_t)v, LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
 // ── Bootstrap: wire dependency graph ──
 void bootstrap_runtime() {
   auto runtime = ::espcompose::EspcomposeRuntimeComponent::get_instance();
@@ -317,7 +322,21 @@ void bootstrap_runtime() {
   });
 
   static Effect binding_34([]() {
-    lv_obj_set_style_pad_bottom(&id(r_ref13), static_cast<lv_coord_t>(memo_1.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    { auto _target = static_cast<lv_coord_t>(memo_1.get());
+      auto _cur = lv_obj_get_style_pad_bottom(&id(r_ref13), LV_PART_MAIN);
+      if (_target < _cur) {
+        lv_anim_t _a;
+        lv_anim_init(&_a);
+        lv_anim_set_var(&_a, &id(r_ref13));
+        lv_anim_set_values(&_a, _cur, _target);
+        lv_anim_set_time(&_a, 300);
+        lv_anim_set_exec_cb(&_a, _ec_anim_exec_pad_bottom);
+        lv_anim_set_path_cb(&_a, lv_anim_path_ease_in);
+        lv_anim_start(&_a);
+      } else {
+        lv_obj_set_style_pad_bottom(&id(r_ref13), static_cast<lv_coord_t>(memo_1.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+      }
+    }
   });
 
   static NodeBase* thm_333e4663_colors_background_src[] = {&theme_index_333e4663};

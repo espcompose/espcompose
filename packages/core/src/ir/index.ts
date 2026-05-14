@@ -223,5 +223,5 @@ export {
 } from './action-types';
 
 // ── Component Contributions ──────────────────────────────────────────────────
-export type { ComponentContribution, AttachTriggerContribution, AnimationEasing } from './contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AnimationEasing, IRStyleTransition, IRStyleTransitionDescriptor } from './contribution-types';
 export { applyContributions } from './apply-contributions';

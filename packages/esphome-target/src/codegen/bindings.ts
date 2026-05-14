@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '../lvgl';
-import { LVGL_STYLE_PROP_TABLE } from '../lvgl';
+import { LVGL_STYLE_PROP_TABLE, resolveLvglStyleConstant } from '../lvgl';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -161,6 +161,51 @@ export interface ReactiveRuntimeConfig {
   tables?: TableDecl[];
   /** Pre-formatted closure-table block (struct + array per parameterized script). */
   closureTablesBlock?: string;
+  /** Declarative style transitions to emit as static lv_style_transition_dsc_t structs. */
+  styleTransitions?: StyleTransitionDecl[];
+  /** Animated binding transitions — augment Effect closures with lv_anim_t interpolation. */
+  animateTransitions?: AnimateTransitionDecl[];
+}
+
+// ── Style transition C++ declarations ──────────────────────────────────────
+
+export interface StyleTransitionDecl {
+  /** Target widget ref ID (used to look up the lv_obj_t at runtime). */
+  targetRef: string;
+  /** Widget type — pages use `.obj` access. */
+  targetType?: string;
+  /** LVGL part (snake_case, e.g. 'indicator'). Defaults to 'main'. */
+  part?: string;
+  /** LVGL state (snake_case, e.g. 'pressed'). Defaults to 'default'. */
+  state?: string;
+  /** Transition descriptor groups — each becomes one lv_style_transition_dsc_t. */
+  descriptors: StyleTransitionDescriptorDecl[];
+}
+
+export interface StyleTransitionDescriptorDecl {
+  /** snake_case LVGL style property names (e.g. 'bg_color', 'opa'). */
+  properties: string[];
+  /** Duration in milliseconds. */
+  durationMs: number;
+  /** LVGL easing path callback name (e.g. 'lv_anim_path_ease_out'). */
+  easingCb: string;
+  /** Delay in milliseconds. */
+  delayMs: number;
+}
+
+// ── Animate transition C++ declarations ────────────────────────────────────
+
+export interface AnimateTransitionDecl {
+  /** Target widget ref ID. */
+  targetRef: string;
+  /** snake_case LVGL style property name (e.g. 'pad_bottom'). */
+  property: string;
+  /** Duration in milliseconds. */
+  durationMs: number;
+  /** LVGL easing path callback name (e.g. 'lv_anim_path_ease_out'). */
+  easingCb: string;
+  /** Direction constraint: 'decrease' | 'increase' | 'both'. */
+  direction: 'decrease' | 'increase' | 'both';
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
@@ -426,6 +471,80 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
+  // ── Style transition static declarations ──────────────────────────────────
+  const styleTransitions = config.styleTransitions ?? [];
+  if (styleTransitions.length > 0) {
+    lines.push('// ── Style transition descriptors ──');
+    let transIdx = 0;
+    for (const trans of styleTransitions) {
+      for (let d = 0; d < trans.descriptors.length; d++) {
+        const desc = trans.descriptors[d];
+        const propConstants = desc.properties.map(p => resolveLvglStyleConstant(p));
+        lines.push(`static const lv_style_prop_t ec_trans_props_${transIdx}[] = {${propConstants.join(', ')}, 0};`);
+        lines.push(`static lv_style_transition_dsc_t ec_trans_dsc_${transIdx};`);
+        lines.push(`static lv_style_t ec_trans_style_${transIdx};`);
+        transIdx++;
+      }
+    }
+    lines.push('');
+  }
+
+  // ── Animate transition exec callbacks & validation ────────────────────
+  const animateTransitions = config.animateTransitions ?? [];
+  // Build lookup: "widgetId:prop_snake" → AnimateTransitionDecl
+  const animateTransitionMap = new Map<string, AnimateTransitionDecl>();
+  if (animateTransitions.length > 0) {
+    // Validate all animate transitions target real bindings with animatable types.
+    const ANIMATABLE_CPP_TYPES = new Set(['lv_coord_t', 'lv_opa_t', 'uint32_t']);
+
+    for (const at of animateTransitions) {
+      // Find matching binding
+      const matchingBinding = config.widgetBindings.find(b =>
+        b.widgetId === at.targetRef && camelToSnake(b.prop) === at.property,
+      );
+      if (!matchingBinding) {
+        throw new Error(
+          `useAnimateTransition: no reactive binding found for property '${at.property}' ` +
+          `on widget '${at.targetRef}'. The property must have a reactive value in the style object.`,
+        );
+      }
+
+      // Validate the C++ type is animatable (int32_t-based)
+      const descriptor = LVGL_STYLE_PROP_TABLE[at.property];
+      if (!descriptor) {
+        throw new Error(
+          `useAnimateTransition: property '${at.property}' is not a known LVGL style property.`,
+        );
+      }
+      if (!ANIMATABLE_CPP_TYPES.has(descriptor.cppType)) {
+        throw new Error(
+          `useAnimateTransition: property '${at.property}' has C++ type '${descriptor.cppType}' ` +
+          `which is not animatable. Only numeric types (lv_coord_t, lv_opa_t, uint32_t) can be animated.`,
+        );
+      }
+
+      const key = `${at.targetRef}:${at.property}`;
+      animateTransitionMap.set(key, at);
+    }
+
+    // Emit deduplicated exec callbacks (one per property name)
+    const emittedProps = new Set<string>();
+    lines.push('// ── Animate transition exec callbacks ──');
+    for (const at of animateTransitions) {
+      if (emittedProps.has(at.property)) continue;
+      emittedProps.add(at.property);
+
+      const descriptor = LVGL_STYLE_PROP_TABLE[at.property]!;
+      // Standard style setter pattern: lv_obj_set_style_<lvglSetter>(obj, val, selector)
+      // The selector is fixed at LV_PART_MAIN | LV_STATE_DEFAULT for exec callbacks;
+      // the animation operates on the object directly.
+      lines.push(`static void _ec_anim_exec_${at.property}(void* obj, int32_t v) {`);
+      lines.push(`  lv_obj_set_style_${descriptor.lvglSetter}((lv_obj_t*)obj, (${descriptor.cppType})v, LV_PART_MAIN | LV_STATE_DEFAULT);`);
+      lines.push('}');
+    }
+    lines.push('');
+  }
+
   // ── Runtime bootstrap ──────────────────────────────────────────────────
   lines.push('// ── Bootstrap: wire dependency graph ──');
   lines.push('void bootstrap_runtime() {');
@@ -488,11 +607,19 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       const first = bindings[0];
       if (bindings.length === 1) {
         // Single binding — no batching needed
-        const updateCode = generateWidgetUpdateCode(first);
-        lines.push(`  static Effect binding_${first.index}([]() {`);
-        lines.push(`    ${updateCode}`);
-        lines.push('  });');
-        lines.push('');
+        const animCode = tryGenerateAnimatedUpdateCode(first, animateTransitionMap);
+        if (animCode) {
+          lines.push(`  static Effect binding_${first.index}([]() {`);
+          for (const line of animCode) lines.push(`    ${line}`);
+          lines.push('  });');
+          lines.push('');
+        } else {
+          const updateCode = generateWidgetUpdateCode(first);
+          lines.push(`  static Effect binding_${first.index}([]() {`);
+          lines.push(`    ${updateCode}`);
+          lines.push('  });');
+          lines.push('');
+        }
       } else {
         // Batched: one Effect for all bindings from the same source(s).
         // Cache the source value to avoid redundant .get() calls.
@@ -510,8 +637,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         }
         for (const b of bindings) {
           const cachedVar = exprToVar.get(b.valueExpr)!;
-          const updateCode = generateWidgetUpdateCode({ ...b, valueExpr: cachedVar });
-          lines.push(`    ${updateCode}`);
+          const animCode = tryGenerateAnimatedUpdateCode({ ...b, valueExpr: cachedVar }, animateTransitionMap);
+          if (animCode) {
+            for (const line of animCode) lines.push(`    ${line}`);
+          } else {
+            const updateCode = generateWidgetUpdateCode({ ...b, valueExpr: cachedVar });
+            lines.push(`    ${updateCode}`);
+          }
         }
         lines.push('  });');
         lines.push('');
@@ -599,6 +731,27 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   // The blanket NULL recalc is O(all_widgets) and takes 300ms+ on complex UIs.
   // Inline per-object refresh during node updates is O(changed_widgets) and
   // typically completes in <2ms.
+  // ── Style transition init ──────────────────────────────────────────────
+  if (styleTransitions.length > 0) {
+    lines.push('');
+    lines.push('  // ── Style transition initialization ──');
+    let transIdx = 0;
+    for (const trans of styleTransitions) {
+      const obj = trans.targetType === 'page'
+        ? `id(${trans.targetRef}).obj`
+        : `&id(${trans.targetRef})`;
+      for (let d = 0; d < trans.descriptors.length; d++) {
+        const desc = trans.descriptors[d];
+        lines.push(`  lv_style_transition_dsc_init(&ec_trans_dsc_${transIdx}, ec_trans_props_${transIdx}, ${desc.easingCb}, ${desc.durationMs}, ${desc.delayMs}, NULL);`);
+        lines.push(`  lv_style_init(&ec_trans_style_${transIdx});`);
+        lines.push(`  lv_style_set_transition(&ec_trans_style_${transIdx}, &ec_trans_dsc_${transIdx});`);
+        const selector = computeTransitionSelector(trans.part, trans.state);
+        lines.push(`  lv_obj_add_style(${obj}, &ec_trans_style_${transIdx}, ${selector});`);
+        transIdx++;
+      }
+    }
+  }
+
   lines.push('');
 
   lines.push('  espcompose::flush();  // Initial flush to process dirty nodes marked during setup');
@@ -626,6 +779,43 @@ function computeStyleFlag(binding: WidgetBindingDecl): string {
     throw new Error(`Unknown LVGL state '${stateKey}' for widget binding`);
   }
   return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
+}
+
+/**
+ * Compute LVGL style selector for a style transition.
+ * Parts and states come in snake_case from the lowering pipeline.
+ */
+function computeTransitionSelector(part?: string, state?: string): string {
+  const partKey = part ? camelToSnake(part) : 'main';
+  const stateKey = state ? camelToSnake(state) : 'default';
+  const partFlag = LVGL_PART_FLAGS[partKey];
+  const stateFlag = LVGL_STATE_FLAGS[stateKey];
+  if (!partFlag) {
+    throw new Error(`Unknown LVGL part '${partKey}' for style transition`);
+  }
+  if (!stateFlag) {
+    throw new Error(`Unknown LVGL state '${stateKey}' for style transition`);
+  }
+  return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
+}
+
+/** Map an easing key (e.g. 'ease_out') to the LVGL C function pointer name. */
+const EASING_TO_LV_PATH: Record<string, string> = {
+  'linear': 'lv_anim_path_linear',
+  'ease_in': 'lv_anim_path_ease_in',
+  'ease_out': 'lv_anim_path_ease_out',
+  'ease_in_out': 'lv_anim_path_ease_in_out',
+  'overshoot': 'lv_anim_path_overshoot',
+  'bounce': 'lv_anim_path_bounce',
+  'step': 'lv_anim_path_step',
+};
+
+/**
+ * Resolve an easing key to the LVGL C path callback function name.
+ * Falls back to linear for unknown values.
+ */
+export function resolveEasingCb(easingKey: string): string {
+  return EASING_TO_LV_PATH[easingKey] ?? 'lv_anim_path_linear';
 }
 
 /**
@@ -721,6 +911,77 @@ function generateWidgetUpdateCode(binding: WidgetBindingDecl): string {
 
   // Unsupported prop
   return `/* unsupported: ${widgetType}.${prop} */`;
+}
+
+/**
+ * Try to generate animated update code for a widget binding.
+ *
+ * Returns an array of C++ lines if the binding matches an animate transition,
+ * or null if no animation applies (caller should use direct setter).
+ *
+ * The generated code uses lv_anim_t to interpolate from the current widget
+ * value to the new reactive value, with an optional direction guard.
+ */
+function tryGenerateAnimatedUpdateCode(
+  binding: WidgetBindingDecl,
+  animateTransitionMap: Map<string, AnimateTransitionDecl>,
+): string[] | null {
+  const snakeProp = camelToSnake(binding.prop);
+  const key = `${binding.widgetId}:${snakeProp}`;
+  const at = animateTransitionMap.get(key);
+  if (!at) return null;
+
+  const descriptor = LVGL_STYLE_PROP_TABLE[snakeProp];
+  if (!descriptor) return null;
+
+  const obj = binding.widgetType === 'page'
+    ? `id(${binding.widgetId}).obj`
+    : `&id(${binding.widgetId})`;
+  const cast = descriptor.cast ? descriptor.cast.replace('$V', binding.valueExpr) : binding.valueExpr;
+
+  // Read current value from widget: lv_obj_get_style_<prop>(obj, part_flag)
+  const partKey = binding.part ? camelToSnake(binding.part) : 'main';
+  const partFlag = LVGL_PART_FLAGS[partKey] ?? 'LV_PART_MAIN';
+  const getCurrent = `lv_obj_get_style_${descriptor.lvglSetter}(${obj}, ${partFlag})`;
+
+  const directSetter = `lv_obj_set_style_${descriptor.lvglSetter}(${obj}, ${cast}, ${computeStyleFlag(binding)});`;
+
+  const codeLines: string[] = [];
+  codeLines.push(`{ auto _target = ${cast};`);
+  codeLines.push(`  auto _cur = ${getCurrent};`);
+
+  // Direction guard
+  const needsGuard = at.direction !== 'both';
+  if (needsGuard) {
+    const cond = at.direction === 'decrease' ? '_target < _cur' : '_target > _cur';
+    codeLines.push(`  if (${cond}) {`);
+    codeLines.push(`    lv_anim_t _a;`);
+    codeLines.push(`    lv_anim_init(&_a);`);
+    codeLines.push(`    lv_anim_set_var(&_a, ${obj});`);
+    codeLines.push(`    lv_anim_set_values(&_a, _cur, _target);`);
+    codeLines.push(`    lv_anim_set_time(&_a, ${at.durationMs});`);
+    codeLines.push(`    lv_anim_set_exec_cb(&_a, _ec_anim_exec_${snakeProp});`);
+    codeLines.push(`    lv_anim_set_path_cb(&_a, ${at.easingCb});`);
+    codeLines.push(`    lv_anim_start(&_a);`);
+    codeLines.push(`  } else {`);
+    codeLines.push(`    ${directSetter}`);
+    codeLines.push(`  }`);
+  } else {
+    // Always animate
+    codeLines.push(`  if (_target != _cur) {`);
+    codeLines.push(`    lv_anim_t _a;`);
+    codeLines.push(`    lv_anim_init(&_a);`);
+    codeLines.push(`    lv_anim_set_var(&_a, ${obj});`);
+    codeLines.push(`    lv_anim_set_values(&_a, _cur, _target);`);
+    codeLines.push(`    lv_anim_set_time(&_a, ${at.durationMs});`);
+    codeLines.push(`    lv_anim_set_exec_cb(&_a, _ec_anim_exec_${snakeProp});`);
+    codeLines.push(`    lv_anim_set_path_cb(&_a, ${at.easingCb});`);
+    codeLines.push(`    lv_anim_start(&_a);`);
+    codeLines.push(`  }`);
+  }
+  codeLines.push('}');
+
+  return codeLines;
 }
 
 // ── Theme value helpers ────────────────────────────────────────────────────

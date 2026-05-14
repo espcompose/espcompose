@@ -18,7 +18,7 @@ import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
-import type { ComponentContribution } from './contribution-types';
+import type { ComponentContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
 import { applyContributions } from './apply-contributions';
 import type {
   SemanticIR,
@@ -232,6 +232,8 @@ function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRUIRegistr
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
     overlays: resolveOverlayTiers(tree.overlayTiers, ctx),
+    styleTransitions: tree.styleTransitions ?? [],
+    animateTransitions: tree.animateTransitions ?? [],
   };
 }
 
@@ -302,6 +304,10 @@ export interface RawIRWidgetTree {
   readonly pages: RawIRWidget[];
   readonly widgets: RawIRWidget[];
   readonly overlayTiers: RawIROverlayTier[];
+  /** Style transitions collected from inline `transition` style keys. */
+  readonly styleTransitions?: IRStyleTransition[];
+  /** Animated binding transitions contributed via `useAnimateTransition()`. */
+  readonly animateTransitions?: IRAnimateTransition[];
 }
 
 export interface RawIROverlayTier {

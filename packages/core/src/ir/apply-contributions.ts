@@ -13,7 +13,7 @@
 import type { SemanticIR, IRAction, IRValue, IRObject } from './types';
 import { irAction } from './types';
 import type { IRWidget } from './widget-types';
-import type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+import type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
 
 // ── ContributionTarget ─────────────────────────────────────────────────────
 //
@@ -119,6 +119,73 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
     }
     // If the prop exists but is neither 'action' nor 'null', it's unexpected.
     // Leave it alone — could be a reactive binding or other non-action value.
+  }
+
+  // ── Attach-style-transition contributions ────────────────────────────────
+
+  const transitionContributions = contributions.filter(
+    (c): c is AttachStyleTransitionContribution => c.kind === 'attach-style-transition',
+  );
+
+  if (transitionContributions.length > 0) {
+    // Sort by sourceId for deterministic output.
+    transitionContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    for (const c of transitionContributions) {
+      // Verify the target exists in the collected targets.
+      if (!targets.has(c.targetRef)) {
+        console.warn(
+          `[espcompose] useStyleTransition: target ref "${c.targetRef}" not found in IR tree. ` +
+          `Contribution from "${c.sourceId}" will be ignored.`,
+        );
+        continue;
+      }
+
+      // Push to the first UI registry (style transitions are global to the display).
+      const ui = ir.uis[0];
+      if (!ui) continue;
+
+      (ui.styleTransitions as IRStyleTransition[]).push({
+        kind: 'style_transition',
+        targetRef: c.targetRef,
+        part: c.part,
+        state: c.state,
+        descriptors: c.descriptors,
+      });
+    }
+  }
+
+  // ── Attach-animate-transition contributions ──────────────────────────────
+
+  const animateTransitionContributions = contributions.filter(
+    (c): c is AttachAnimateTransitionContribution => c.kind === 'attach-animate-transition',
+  );
+
+  if (animateTransitionContributions.length > 0) {
+    // Sort by sourceId for deterministic output.
+    animateTransitionContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    for (const c of animateTransitionContributions) {
+      if (!targets.has(c.targetRef)) {
+        console.warn(
+          `[espcompose] useAnimateTransition: target ref "${c.targetRef}" not found in IR tree. ` +
+          `Contribution from "${c.sourceId}" will be ignored.`,
+        );
+        continue;
+      }
+
+      const ui = ir.uis[0];
+      if (!ui) continue;
+
+      (ui.animateTransitions as IRAnimateTransition[]).push({
+        kind: 'animate_transition',
+        targetRef: c.targetRef,
+        property: c.property,
+        durationMs: c.durationMs,
+        easing: c.easing,
+        direction: c.direction,
+      });
+    }
   }
 }
 

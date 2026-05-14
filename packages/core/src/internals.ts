@@ -121,7 +121,7 @@ export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/res
 // ── Contribution scope (compiler state) ────────────────────────────────────
 export { withContributionScope, registerContribution } from './hooks/useContributionScope';
 export type { ContributionScopeResult } from './hooks/useContributionScope';
-export type { ComponentContribution, AttachTriggerContribution, AnimationEasing } from './ir/contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, AnimationEasing, AnimateTransitionDirection, IRStyleTransition, IRStyleTransitionDescriptor, IRAnimateTransition } from './ir/contribution-types';
 export { applyContributions } from './ir/apply-contributions';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────

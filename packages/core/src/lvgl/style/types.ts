@@ -18,6 +18,7 @@ export type { DurationValue } from './duration';
 export { isDurationValue, parseDurationToMs } from './duration';
 import type { RefProp } from '../../types';
 import type { HexColor } from '../theme/hex-color';
+import type { AnimationEasing } from '../../ir/contribution-types';
 
 // ── Utility types ──────────────────────────────────────────────────────────
 
@@ -290,6 +291,17 @@ export interface CssAliasProps {
   // ── Interaction ──────────────────────────────────────────────────────
   /** Whether the widget captures touch/click events. Maps to `clickable`. */
   clickable?: Reactive<boolean>;
+
+  // ── Transitions ──────────────────────────────────────────────────────
+  /**
+   * Declarative style transition — when the widget's state changes, the
+   * listed properties smoothly interpolate. Sidecar key (not a CSS→LVGL
+   * mapped prop). Extracted by `expandCssStyle()` and routed to IR.
+   *
+   * Accepted at root (controls return-to-default), inside state sub-objects
+   * (controls entry into that state), and inside part sub-objects.
+   */
+  transition?: StyleTransitionDescriptor | StyleTransitionDescriptor[];
 }
 
 // ── Composite style type ───────────────────────────────────────────────────
@@ -344,3 +356,34 @@ export type CssStyle = CssStyleProps & {
   /** Reference to one or more `style_definitions` IDs. */
   styles?: string | string[];
 };
+
+// ── Style Transition Descriptor ────────────────────────────────────────────
+
+/**
+ * Describes a declarative style transition — when the widget's state changes,
+ * the listed properties smoothly interpolate over the given duration.
+ *
+ * Each descriptor maps to one LVGL `lv_style_transition_dsc_t`. Use an array
+ * of descriptors for per-property timing control.
+ *
+ * ```tsx
+ * <lvgl-button style={{
+ *   backgroundColor: '#333',
+ *   pressed: { backgroundColor: '#666' },
+ *   transition: [
+ *     { properties: ['backgroundColor'], duration: '300ms', easing: 'ease-out' },
+ *     { properties: ['opacity'],         duration: '150ms', easing: 'linear' },
+ *   ],
+ * }} />
+ * ```
+ */
+export interface StyleTransitionDescriptor {
+  /** CSS-like property names to transition (same names used in CssStyleProps). */
+  properties: string[];
+  /** Duration of the transition. */
+  duration: DurationValue;
+  /** Easing curve. Defaults to 'linear'. */
+  easing?: AnimationEasing;
+  /** Delay before the transition starts. */
+  delay?: DurationValue;
+}

@@ -14,7 +14,7 @@
  */
 
 import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
-import { createLvglContainerWidget, useRef } from '@espcompose/core';
+import { createLvglContainerWidget, useRef, useAnimateTransition } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { UITheme } from '../theme/theme';
 
@@ -48,6 +48,12 @@ export const TopRightToast = createLvglContainerWidget(
     const topOffset = props.topOffset ?? 0;
 
     const containerRef = useRef();
+
+    useAnimateTransition(containerRef, 'paddingTop', {
+      duration: '300ms',
+      easing: 'ease-in',
+      direction: 'decrease',
+    });
 
     return (
       <lvgl-obj
