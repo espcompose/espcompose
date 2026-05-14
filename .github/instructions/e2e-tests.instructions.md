@@ -11,12 +11,18 @@ project built by the full compiler pipeline. The generated YAML is snapshot-test
 
 Run with: `pnpm --filter espcompose-e2e test`
 
+Update snapshots with: `pnpm --filter espcompose-e2e test:update-snapshots`
+
+> **Do not** use `pnpm --filter espcompose-e2e test -- -u` — the `--reporter=tap`
+> flag in the `test` script causes vitest to treat `-u` as a test name filter
+> instead of an update flag.
+
 ## Adding a New Test Project
 
 1. Create a directory under `tests/e2e/projects/<name>/`
 2. Add a `src/index.tsx` entry point (or whatever the project's root is)
 3. The test runner builds each project and compares YAML output against snapshots
-4. Update snapshots with `pnpm --filter espcompose-e2e test -- -u`
+4. Update snapshots with `pnpm --filter espcompose-e2e test:update-snapshots`
 
 ## Key Test Projects by Feature Area
 

@@ -16,6 +16,7 @@ import { createElement, useTransientOverlay, createContext, useContext, createLv
 import { BottomToast as ToastWidget } from '../components/BottomToast';
 import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
+import { UITheme } from '../theme/theme';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -128,6 +129,8 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
     { tier: toastTier, maxVisible, autoHide, overflow, queueLength },
     (_ctrl, ctx) => {
       const cardRef = useRef();
+      const theme = UITheme.use();
+      const toastTextColor = theme?.parts?.toast?.text;
 
       if (variant === 'topRight') {
         const enterScript = useScript(async () => {
@@ -153,7 +156,7 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
 
         return (
           <TopRightToast topOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
-            <Text text={ctx.payload.msg} />
+            <Text text={ctx.payload.msg} style={{ color: toastTextColor }} />
           </TopRightToast>
         );
       }
@@ -181,7 +184,7 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
 
       return (
         <ToastWidget bottomOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
-          <Text text={ctx.payload.msg} />
+          <Text text={ctx.payload.msg} style={{ color: toastTextColor }} />
         </ToastWidget>
       );
     },

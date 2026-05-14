@@ -63,12 +63,10 @@ export interface ActionLoweringContext {
    */
   tiersWithWrapper?: Set<string>;
   /**
-   * Set of overlay tier keys whose overlays should call
-   * `lv_obj_move_foreground()` on show. Enables last-shown-wins z-order
-   * within a tier (needed for stacked dialogs). When omitted, the overlay
-   * keeps its declared sibling order — cheaper for entrance animations,
-   * since `move_foreground` triggers a full-screen LVGL invalidation that
-   * can starve the first animation frame on slow displays.
+   * Set of overlay tier keys whose overlays call `lv_obj_move_foreground()`
+   * on show, enabling last-shown-wins z-order within a tier (needed for
+   * stacked dialogs).  When omitted, the overlay keeps its declared
+   * sibling order.
    */
   tiersWithBringToFront?: Set<string>;
 }

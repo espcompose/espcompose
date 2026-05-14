@@ -70,6 +70,7 @@ export function darkTheme(settings: UIThemeSettings = {}): ThemeDefinition {
       slider: { indicator: '#1E88E5', knob: '#E0E0E0', rail: '#3A3A3A' },
       switch: { indicator: '#1E88E5', rail: '#3A3A3A', knob: '#E0E0E0' },
       arc:    { indicator: '#1E88E5', knob: '#E0E0E0' },
+      toast:  { bg: '#fcf2dc', text: '#000000', border: '#7A5F2A' },
     },
   };
 }

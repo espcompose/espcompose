@@ -14,8 +14,7 @@
 import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
 import { createLvglContainerWidget, useRef } from '@espcompose/core';
 import { useSpacing } from '../hooks';
-import { Surface } from './Surface';
-import { Glass } from './Glass';
+import { UITheme } from '../theme/theme';
 
 type ToastProps = WidgetPropsWithChildren<{
   /**
@@ -42,6 +41,8 @@ type ToastProps = WidgetPropsWithChildren<{
 export const BottomToast = createLvglContainerWidget(
   (props: ToastProps) => {
     const bottomOffset = props.bottomOffset ?? 0;
+    const theme = UITheme.use();
+    const toast = theme?.parts?.toast;
 
     const containerRef = useRef();
 
@@ -60,21 +61,27 @@ export const BottomToast = createLvglContainerWidget(
         }}
       >
         {/* Bottom-anchored toast container */}
-        <Glass
+        <lvgl-obj
           ref={props.cardRef}
           style={{
-            borderWidth: props.style?.borderWidth ?? 0,
+            backgroundColor: toast?.bg,
+            backgroundOpacity: 'opaque',
+            borderWidth: props.style?.borderWidth ?? 1,
+            borderColor: toast?.border,
+            borderRadius: 0,
             width: '90%',
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'bottomCenter',
             display: 'flex',
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
+            padding: theme?.spacing?.md,
+            scrollbarMode: 'off',
             translateY: 80,
           }}
         >
           {props.children}
-        </Glass>
+        </lvgl-obj>
       </lvgl-obj>
     );
   },

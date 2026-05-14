@@ -137,8 +137,14 @@ export function buildOverlayLifecycleScripts(
     ),
   ];
 
-  // afterShow hook: execute + await after overlay becomes visible
+  // afterShow hook: yield once before starting the entrance animation so that
+  // any pending LVGL invalidation (e.g. a full-screen overlay unhide) is
+  // rendered in the first lv_timer_handler() pass.  Without this yield the
+  // animation's start timestamp (recorded by lv_anim_start) is set *before*
+  // the heavy render, and lv_tick_get() advances past the animation duration
+  // during rendering — causing the animation to complete in a single frame.
   if (options.afterShowScript) {
+    showActions.push(irDelayAction({ kind: 'duration', value: 0, unit: 'ms' }));
     showActions.push(execWithClosure(options.afterShowScript));
     showActions.push(irScriptWait(options.afterShowScript.id));
   }

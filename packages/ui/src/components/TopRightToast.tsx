@@ -17,8 +17,6 @@ import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
 import { createLvglContainerWidget, useRef } from '@espcompose/core';
 import { useSpacing } from '../hooks';
 import { UITheme } from '../theme/theme';
-import { Surface } from './Surface';
-import { Glass } from './Glass';
 
 type TopRightToastProps = WidgetPropsWithChildren<{
   /**
@@ -45,7 +43,7 @@ type TopRightToastProps = WidgetPropsWithChildren<{
 export const TopRightToast = createLvglContainerWidget(
   (props: TopRightToastProps) => {
     const theme = UITheme.use();
-    const borderColor = theme?.colors?.border;
+    const toast = theme?.parts?.toast;
     const margin = theme?.spacing.md;
     const topOffset = props.topOffset ?? 0;
 
@@ -66,11 +64,14 @@ export const TopRightToast = createLvglContainerWidget(
         }}
       >
         {/* Top-right anchored toast card */}
-        <Glass
+        <lvgl-obj
           ref={props.cardRef}
           style={{
+            backgroundColor: toast?.bg,
+            backgroundOpacity: 'opaque',
             borderWidth: 1,
-            borderColor: borderColor,
+            borderColor: toast?.border,
+            borderRadius: 0,
             width: 280,
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'topRight',
@@ -78,11 +79,12 @@ export const TopRightToast = createLvglContainerWidget(
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
             padding: margin,
+            scrollbarMode: 'off',
             translateX: 300,
           }}
         >
           {props.children}
-        </Glass>
+        </lvgl-obj>
       </lvgl-obj>
     );
   },

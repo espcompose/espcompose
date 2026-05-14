@@ -58,10 +58,8 @@ export interface OverlayTierConfig {
    * dialog should occlude an older one.
    *
    * When `false`, overlays keep their declared sibling order. Recommended
-   * for tiers whose overlays animate on entrance (e.g. toasts) —
-   * `move_foreground` triggers a full-screen LVGL invalidation that can
-   * starve the first animation frame on slow displays, making the entrance
-   * appear to skip.
+   * for tiers whose overlays don't need last-shown-wins reordering
+   * (e.g. toasts).
    *
    * @default true
    */

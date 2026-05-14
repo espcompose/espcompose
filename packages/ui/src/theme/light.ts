@@ -69,6 +69,7 @@ export function lightTheme(settings: UIThemeSettings = {}): ThemeDefinition {
       slider: { indicator: '#1565C0', knob: '#FFFFFF', rail: '#BDBDBD' },
       switch: { indicator: '#1565C0', rail: '#BDBDBD', knob: '#FFFFFF' },
       arc:    { indicator: '#1565C0', knob: '#212121' },
+      toast:  { bg: '#FFF8E1', text: '#5D4037', border: '#FFE082' },
     },
   };
 }
