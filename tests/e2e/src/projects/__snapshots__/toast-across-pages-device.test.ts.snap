@@ -165,7 +165,7 @@ auto& memo_3 = memo_1;
 
 // ── Animate transition exec callbacks ──
 static void _ec_anim_exec_pad_bottom(void* obj, int32_t v) {
-  lv_obj_set_style_pad_bottom((lv_obj_t*)obj, (lv_coord_t)v, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_bottom((lv_obj_t*)obj, (lv_coord_t)v, static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
 }
 
 // ── Bootstrap: wire dependency graph ──

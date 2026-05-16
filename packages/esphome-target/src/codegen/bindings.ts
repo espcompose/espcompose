@@ -478,7 +478,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       // The selector is fixed at LV_PART_MAIN | LV_STATE_DEFAULT for exec callbacks;
       // the animation operates on the object directly.
       lines.push(`static void _ec_anim_exec_${at.property}(void* obj, int32_t v) {`);
-      lines.push(`  lv_obj_set_style_${descriptor.lvglSetter}((lv_obj_t*)obj, (${descriptor.cppType})v, LV_PART_MAIN | LV_STATE_DEFAULT);`);
+      lines.push(`  lv_obj_set_style_${descriptor.lvglSetter}((lv_obj_t*)obj, (${descriptor.cppType})v, static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));`);
       lines.push('}');
     }
     lines.push('');

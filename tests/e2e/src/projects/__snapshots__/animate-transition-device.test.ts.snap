@@ -37,10 +37,10 @@ Memo<float> memo_1([]() -> float {
 
 // ── Animate transition exec callbacks ──
 static void _ec_anim_exec_translate_y(void* obj, int32_t v) {
-  lv_obj_set_style_translate_y((lv_obj_t*)obj, (lv_coord_t)v, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_translate_y((lv_obj_t*)obj, (lv_coord_t)v, static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
 }
 static void _ec_anim_exec_pad_top(void* obj, int32_t v) {
-  lv_obj_set_style_pad_top((lv_obj_t*)obj, (lv_coord_t)v, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_top((lv_obj_t*)obj, (lv_coord_t)v, static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
 }
 
 // ── Bootstrap: wire dependency graph ──
