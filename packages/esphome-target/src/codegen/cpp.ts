@@ -58,9 +58,20 @@ export function generateCppFromIR(ir: SemanticIR, overlays?: OverlayDefinition[]
   const allBindings = overlayMux
     ? [...reactive.bindings, ...overlayMux.muxedBindings]
     : reactive.bindings;
-  const allReactiveNodes = overlayMux
+  const mergedReactiveNodes = overlayMux
     ? [...reactive.memos, ...reactive.effects, ...overlayMux.additionalReactiveNodes]
     : [...reactive.memos, ...reactive.effects];
+
+  // ── Dead memo elimination ──────────────────────────────────────────────
+  // Walk the complete binding + effect graph to find which memos are
+  // actually referenced.  Unreferenced memos are dead code — typically
+  // per-instance overlay memos whose computations were inlined by the mux
+  // system — and can be safely dropped to save RAM and CPU on the target.
+  // Widget tree initial-value lambdas that referenced pruned memos are
+  // handled gracefully in generateInitialValueLambda (lower-yaml.ts) by
+  // emitting a type-appropriate default; the reactive Effect sets the
+  // correct value on the first flush before the display is visible.
+  const allReactiveNodes = pruneDeadMemos(mergedReactiveNodes, allBindings);
 
   const hasReactiveContent = allBindings.length > 0
     || allReactiveNodes.length > 0
@@ -444,4 +455,83 @@ function collectThemeReadsFromExpr(expr: IRExpression, refs: Set<string>): void 
   if ('index' in expr && typeof (expr as { index?: unknown }).index === 'object') {
     collectThemeReadsFromExpr((expr as { index: IRExpression }).index, refs);
   }
+}
+
+// ── Dead memo elimination ──────────────────────────────────────────────────
+//
+// Whole-program pass that removes unreferenced memos from the reactive node
+// list.  A memo is "referenced" if:
+//   - A binding's expression is backed by the memo (expression.kind === 'memo')
+//   - An expression tree contains an `expr:memo_read` pointing to the memo
+//   - Another referenced memo transitively references it
+//
+// Unreferenced memos are dead code — typically per-instance overlay memos
+// whose computations were inlined by the mux system.  Widget tree initial-
+// value lambdas handle pruned memos gracefully by emitting safe defaults.
+
+/**
+ * Recursively collect all memo IDs referenced via `expr:memo_read` in an
+ * expression tree.
+ */
+function collectMemoReads(expr: IRExpression, out: Set<string>): void {
+  if (expr.kind === 'expr:memo_read') {
+    out.add((expr as { memoId: string }).memoId);
+    return;
+  }
+  for (const child of getExprChildren(expr)) {
+    collectMemoReads(child, out);
+  }
+}
+
+/**
+ * Remove unreferenced memos from a reactive node list.  Walks all bindings
+ * and non-memo nodes (effects) to discover which memos are live, then
+ * computes a transitive closure over memo→memo dependencies.
+ */
+function pruneDeadMemos(
+  reactiveNodes: IRReactiveNode[],
+  bindings: IRBinding[],
+): IRReactiveNode[] {
+  // Fast path: nothing to prune
+  const hasMemos = reactiveNodes.some(n => n.kind === 'memo');
+  if (!hasMemos) return reactiveNodes;
+
+  // 1. Index all memos
+  const memoMap = new Map<string, IRReactiveNode>();
+  for (const node of reactiveNodes) {
+    if (node.kind === 'memo') memoMap.set(node.nodeId, node);
+  }
+
+  // 2. Collect directly referenced memo IDs
+  const referencedIds = new Set<string>();
+
+  // 2a. Bindings whose expression IS a memo (kind === 'memo')
+  for (const binding of bindings) {
+    const expr = binding.expression;
+    if (expr.kind === 'memo') referencedIds.add(expr.nodeId);
+    if (expr.exprIR) collectMemoReads(expr.exprIR, referencedIds);
+  }
+
+  // 2b. Effects and other non-memo nodes may reference memos in their exprIR
+  for (const node of reactiveNodes) {
+    if (node.kind !== 'memo' && node.exprIR) {
+      collectMemoReads(node.exprIR, referencedIds);
+    }
+  }
+
+  // 3. Transitive closure: referenced memos may themselves reference others
+  let prevSize = 0;
+  while (referencedIds.size > prevSize) {
+    prevSize = referencedIds.size;
+    for (const memoId of referencedIds) {
+      const node = memoMap.get(memoId);
+      if (node?.exprIR) collectMemoReads(node.exprIR, referencedIds);
+    }
+  }
+
+  // 4. Filter: keep all non-memo nodes + referenced memos
+  const prunedCount = [...memoMap.keys()].filter(id => !referencedIds.has(id)).length;
+  if (prunedCount === 0) return reactiveNodes;
+
+  return reactiveNodes.filter(n => n.kind !== 'memo' || referencedIds.has(n.nodeId));
 }

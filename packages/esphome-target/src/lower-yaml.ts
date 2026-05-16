@@ -181,19 +181,15 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
   // Memo: read from runtime memo variable
   const memoName = ctx?.memoNames?.get(node.nodeId);
   if (!memoName) {
-    const mapSize = ctx?.memoNames?.size ?? 0;
-    const knownKeys = ctx?.memoNames ? Array.from(ctx.memoNames.keys()).join(', ') : '(no ctx)';
-    const deps = (node.dependencies ?? []).map((d: { sourceId?: string; sourceType?: string }) => `${d.sourceType ?? '?'}:${d.sourceId ?? '?'}`).join(', ');
-    const exprKind = node.exprIR?.kind ?? 'none';
-    const pipeline = ctx?.pipelineInfo ?? '(no pipeline info)';
-    throw new Error(
-      `[espcompose] Memo node '${node.nodeId}' not found in memoNames map.\n` +
-      `  node.kind=${node.kind}, exprType=${node.exprType ?? 'undefined'}, exprIR.kind=${exprKind}\n` +
-      `  dependencies=[${deps}]\n` +
-      `  pipeline: ${pipeline}\n` +
-      `  memoNames has ${mapSize} entries: [${knownKeys}]\n` +
-      `This memo was referenced in the IR config tree but was not included in the reactive pipeline.`,
-    );
+    // Memo was pruned by dead-memo elimination (e.g. an overlay per-instance
+    // memo whose computation was inlined by the mux system).  The reactive
+    // Effect will set the correct value on the first flush — which runs in
+    // bootstrap_runtime() before the display is visible — so we emit a safe
+    // type-appropriate default for the initial-value lambda.
+    const exprType = node.exprType;
+    if (exprType === 'string') return 'return "";';
+    if (exprType === 'color') return 'return lv_color_hex(0x000000);';
+    return 'return 0;';
   }
   const exprType = node.exprType;
   if (exprType === 'string') {

@@ -243,6 +243,7 @@ export {
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { getStatementBlockExpressions } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
+export { optimizeExpr, optimizeSemanticIR } from './ir/index';
 export type {
   ExprStructuralAnalysis,
   ExprHole,

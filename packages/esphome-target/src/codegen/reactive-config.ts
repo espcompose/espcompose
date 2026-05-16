@@ -8,7 +8,7 @@
  */
 
 import { injectHASensorImports } from './reactive-injector.js';
-import { generateSignalSetLambda, computeMaxNodes } from './bindings.js';
+import { generateSignalSetLambda } from './bindings.js';
 import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings.js';
 import { Scalar } from 'yaml';
 import { exprToCpp, exprTypeToCpp, buildEntityComponentIds, toCppId } from '../lowering';
@@ -571,13 +571,7 @@ export function injectReactiveBindingsRuntime(
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 
-  // Step 6: Inject ESPCOMPOSE_MAX_NODES as a build flag so the reactive
-  // engine header (compiled in the external component TU) sees the correct
-  // capacity before any #include.
-  const maxNodes = computeMaxNodes(runtimeConfig);
-  result = injectBuildFlags(result, [`-DESPCOMPOSE_MAX_NODES=${maxNodes}`]);
-
-  // Step 7: Inject performance instrumentation defines when --perf is set.
+  // Step 6: Inject performance instrumentation defines when --perf is set.
   // ESPCOMPOSE_PERF gates timing instrumentation in the reactive runtime.
   if (options?.perf) {
     result = injectBuildFlag(result, 'ESPCOMPOSE_PERF');

@@ -145,6 +145,7 @@ export {
 export { getExprChildren, mapExprChildren } from './expr-walk';
 export { getStatementBlockExpressions } from './stmt-walk';
 export { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
+export { optimizeExpr, optimizeSemanticIR } from './optimize-expr';
 export type {
   ExprStructuralAnalysis,
   ExprHole,

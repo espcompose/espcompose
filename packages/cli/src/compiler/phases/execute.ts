@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 import type { BuildSemanticIRInput, IRThemeData, ExecuteResult, ExprType } from '@espcompose/core/internals';
-import { buildSemanticIR, brandArray, scopeHash, irScalar } from '@espcompose/core/internals';
+import { buildSemanticIR, brandArray, scopeHash, irScalar, optimizeSemanticIR } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -105,6 +105,9 @@ export function executePhase(ctx: PhaseContext): void {
         contributions: collectedContributions as BuildSemanticIRInput['contributions'],
       })
     : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] }, uis: [] };
+
+  // ── Optimize IR expressions ───────────────────────────────────────────
+  optimizeSemanticIR(ir);
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };
