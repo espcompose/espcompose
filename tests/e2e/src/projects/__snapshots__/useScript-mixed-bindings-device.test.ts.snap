@@ -675,21 +675,23 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref6_closures[closure_index]; (void)closure;
-          ec_scr_ref6_lights[closure.light_idx]->toggle().perform();"
+          espcompose::ec_scr_ref6_lights[closure.light_idx]->toggle().perfo\\
+          rm();"
       - delay: 50ms
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref6_closures[closure_index]; (void)closure;
-          ec_scr_ref6_sws[closure.sw_idx]->toggle();"
+          espcompose::ec_scr_ref6_sws[closure.sw_idx]->toggle();"
   - id: scr_ref7
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref7_closures[closure_index]; (void)closure;
-          ec_scr_ref7_lights[closure.light_idx]->toggle().perform();"
+          espcompose::ec_scr_ref7_lights[closure.light_idx]->toggle().perfo\\
+          rm();"
       - delay: 50ms
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref7_closures[closure_index]; (void)closure;
-          ec_scr_ref7_sws[closure.sw_idx]->toggle();"
+          espcompose::ec_scr_ref7_sws[closure.sw_idx]->toggle();"
 "
 `;

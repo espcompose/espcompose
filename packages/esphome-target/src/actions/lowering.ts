@@ -21,6 +21,7 @@ import { IR_INT } from '@espcompose/core/internals';
 import { exprToCpp, type CppLoweringContext } from '../lowering';
 import { lookupActionEmitter, formatCppLiteral, type ActionCppEmitter } from './cpp-emitters.js';
 import { irTypeToCpp } from '../lowering';
+import { sanitizeBindingName } from '../yaml-utils.js';
 
 // ── Action lowering context ─────────────────────────────────────────────
 
@@ -257,7 +258,10 @@ function synthesizeNativeAsLambda(
 
   const bindingName = closureSlot.bindingName;
   // Accessor: dereference the typed-pointer lookup array using the closure-row index.
-  const accessor = `ec_${scriptId}_${bindingName}s[closure.${bindingName}_idx]`;
+  // The lookup array lives in the `espcompose::` namespace alongside the closure
+  // table, so qualify it explicitly to keep the lambda body namespace-agnostic.
+  const safeName = sanitizeBindingName(bindingName);
+  const accessor = `espcompose::ec_${scriptId}_${safeName}s[closure.${safeName}_idx]`;
 
   const code = renderEmitterCall(accessor, emitter, action.config, closureSlot);
   return { lambda: lambdaMarker(code) };
@@ -284,7 +288,8 @@ function synthesizeLvglWidgetUpdate(
   }
 
   const bindingName = closureSlot.bindingName;
-  const accessor = `ec_${scriptId}_${bindingName}s[closure.${bindingName}_idx]`;
+  const safeName = sanitizeBindingName(bindingName);
+  const accessor = `espcompose::ec_${scriptId}_${safeName}s[closure.${safeName}_idx]`;
 
   // Extract the `hidden` flag to decide which LVGL function to emit.
   const hidden = typeof action.config === 'object' && action.config !== null
@@ -572,7 +577,7 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
             // refBindings resolution. Fall through to slot.name for
             // trigger handlers where slot.name is already a literal token.
             if (ctx.scriptClosureNames && ctx.scriptClosureNames.has(slot.name)) {
-              code += `closure.${slot.name}`;
+              code += `closure.${sanitizeBindingName(slot.name)}`;
             } else if (ctx.scriptRefBindings && slot.name in ctx.scriptRefBindings) {
               code += ctx.scriptRefBindings[slot.name];
             } else {

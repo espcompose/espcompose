@@ -30,7 +30,7 @@ import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
 import { generateId, generateDeterministicId } from '../id';
 import { throwCompileTimeOnly } from '../errors';
-import { findClosureDescriptor } from '../actions';
+import { findClosureDescriptor, resolveControllerMethodCalls, resolveScriptHandleClosureIndex } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
 import { CLOSURE_INDEX } from '../actions';
 import { walkActionTree } from '../actions/resolve/walk';
@@ -222,6 +222,7 @@ export function useScript<A extends ScriptParamScalar[]>(
       then: actions,
     };
     registerInScope(scriptScopeContext, dedupKey, { def: scriptDef });
+
     return createScriptHandle<A>(scriptId, closureShape.fields.length > 0 ? 0 : undefined);
   }
 
@@ -465,6 +466,14 @@ function resolveScriptActionsCanonical(
 
   let actions = structuredClone(rawActions) as IRActionNode[];
   resolveControllerRefsParameterized(actions, refBindings, paramRefMap);
+  // Resolve controller method calls (e.g. `ctrl.show()`) emitted inside
+  // script bodies. Must run BEFORE controllers are stripped from refBindings
+  // in the cleanBindings step below.
+  resolveControllerMethodCalls(actions, refBindings);
+  // Patch closure_index for direct `someScript.execute()` calls embedded in
+  // this script's body. Must run while ScriptHandle entries are still in
+  // refBindings (they're stripped below in cleanBindings).
+  resolveScriptHandleClosureIndex(actions, refBindings);
 
   // Rewrite IRScriptParamRef names in delay (and other) actions to use
   // the closure-row dereference prefix (e.g. `durationMs` → `closure.durationMs`).

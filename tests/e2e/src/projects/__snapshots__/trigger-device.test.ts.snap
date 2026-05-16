@@ -665,19 +665,21 @@ script:
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref3_closures[closure_index]; (void)closure;
-          ec_scr_ref3_lightRefs[closure.lightRef_idx]->toggle().perform();"
+          espcompose::ec_scr_ref3_lightRefs[closure.lightRef_idx]->toggle()\\
+          .perform();"
       - delay: 200ms
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref3_closures[closure_index]; (void)closure;
-          ec_scr_ref3_switchRefs[closure.switchRef_idx]->toggle();"
+          espcompose::ec_scr_ref3_switchRefs[closure.switchRef_idx]->toggle\\
+          ();"
   - id: scr_ref4
     parameters:
       closure_index: int
     then:
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref4_closures[closure_index]; (void)closure;
-          ec_scr_ref4_lightRefs[closure.lightRef_idx]->turn_on().set_bright\\
-          ness(0.5f).perform();"
+          espcompose::ec_scr_ref4_lightRefs[closure.lightRef_idx]->turn_on(\\
+          ).set_brightness(0.5f).perform();"
       - logger.log: Light dimmed to 50%
 "
 `;

@@ -102,7 +102,7 @@ function classifyInterpolation(
     const type = ctx.checker.getTypeAtLocation(expr);
     if (hasRefBrand(type)) {
       const name = expr.getText();
-      ctx.refExpressions.add(name);
+      ctx.propertyAccessRefs.add(name);
       return { kind: 'interp:ref', name };
     }
   }

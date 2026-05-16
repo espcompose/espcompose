@@ -23,6 +23,7 @@ import type {
   IRType,
 } from '@espcompose/core/internals';
 import { irTypeToCpp, irTypeZeroLiteral } from '../lowering';
+import { sanitizeBindingName } from '../yaml-utils.js';
 
 /** Per-template closure table emission. */
 export interface ClosureTableDecl {
@@ -82,7 +83,13 @@ export function buildClosureTableDecl(script: IRScript): ClosureTableDecl | null
 export function formatClosureValue(v: IRScalar, irType: IRType): string {
   switch (irType.type) {
     case 'int':    return Number.isInteger(v.value as number) ? String(v.value) : String(Math.trunc(v.value as number));
-    case 'float':  return Number.isFinite(v.value as number) ? `${v.value}f` : '0.0f';
+    case 'float':  {
+      const n = v.value as number;
+      if (!Number.isFinite(n)) return '0.0f';
+      // C++ float literal requires a decimal point before the `f` suffix.
+      const s = String(n);
+      return s.includes('.') || s.includes('e') || s.includes('E') ? `${s}f` : `${s}.0f`;
+    }
     case 'bool':   return v.value ? 'true' : 'false';
     case 'string': return cppStringLiteral(String(v.value));
   }
@@ -153,7 +160,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
     // Strip the _idx suffix from the field name to get the binding name,
     // then pluralise for the array variable name.
     const baseName = f.name.endsWith('_idx') ? f.name.slice(0, -4) : f.name;
-    const arrayVarName = `ec_${decl.scriptId}_${baseName}s`;
+    const arrayVarName = `ec_${decl.scriptId}_${sanitizeBindingName(baseName)}s`;
     const firstId = idx.ids[0];
     lines.push(
       `static decltype(_ec_id_ptr(id(${firstId}))) const ${arrayVarName}[] = {`,
@@ -168,7 +175,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Struct ──
   lines.push(`struct ${decl.structName} {`);
   for (const f of decl.fields) {
-    lines.push(`  ${irTypeToCpp(f.irType)} ${f.name};`);
+    lines.push(`  ${irTypeToCpp(f.irType)} ${sanitizeBindingName(f.name)};`);
   }
   lines.push('};');
 

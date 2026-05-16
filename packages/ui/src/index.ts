@@ -77,3 +77,7 @@ export type { DialogController, DialogFactory, DialogOptions } from './hooks/use
 // Toast system
 export { Toast, useToast } from './providers/Toast';
 export type { ToastController, ToastProviderProps } from './providers/Toast';
+
+// Screensaver system
+export { Screensaver, useScreensaver } from './providers/Screensaver';
+export type { ScreensaverController, ScreensaverContent, ScreensaverHooks, ScreensaverProviderProps } from './providers/Screensaver';

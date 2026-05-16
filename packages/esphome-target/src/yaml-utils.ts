@@ -33,3 +33,13 @@ export function toYamlKey(type: string): string {
   }
   return type;
 }
+
+/**
+ * Sanitize a binding name (e.g. `'props.backlight'`) into a valid C++
+ * identifier (`'props_backlight'`). The compiler preserves original JS
+ * expression text in the IR; this function is applied at the target layer
+ * when emitting C++ code (struct fields, variable names, etc.).
+ */
+export function sanitizeBindingName(text: string): string {
+  return text.replace(/[^A-Za-z0-9_$]/g, '_');
+}

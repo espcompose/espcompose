@@ -27,11 +27,12 @@ export interface ActionCompileResult {
   /** Names of trigger variables accessed (e.g. ['x', 'state']) */
   triggerVars: string[];
   /**
-   * Set of ref binding keys that originated from property-access expressions.
-   * Uses the full expression text (e.g. 'props.mainPage') to avoid collisions
-   * with local ref identifiers of the same short name.
+   * Set of ref binding names that originated from property-access
+   * expressions (e.g. `'props.mainPage'`).  These names are used as-is
+   * in the IR; the target is responsible for sanitizing them into valid
+   * identifiers (e.g. C++) when emitting output.
    */
-  refExpressions: Set<string>;
+  propertyAccessRefs: Set<string>;
   /** Set of overlay controller variable names that need to be in __refBindings. */
   overlayControllerRefs: Set<string>;
   /**
@@ -71,8 +72,8 @@ export interface ActionCompilerContext {
   diagnostics: ActionCompilerDiagnostic[];
   /** Collected trigger variable names. */
   triggerVars: Set<string>;
-  /** Set of ref binding keys from property-access expressions. */
-  refExpressions: Set<string>;
+  /** Set of ref binding names from property-access expressions. */
+  propertyAccessRefs: Set<string>;
   /** Set of overlay controller variable names encountered in overlay actions. */
   overlayControllerRefs: Set<string>;
   /** Set of script-handle variable names referenced (so __refBindings can carry them at runtime). */
@@ -121,3 +122,5 @@ export function emitError(
 
   return null;
 }
+
+

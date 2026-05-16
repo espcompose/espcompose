@@ -315,8 +315,11 @@ export function isRef(val: unknown): val is Ref<unknown> {
 // Shared base props
 // ────────────────────────────────────────────────────────────────────────────
 
+/** A single element or an array of elements (arrays are flattened by the JSX runtime). */
+export type EspComposeChild = EspComposeElement | EspComposeElement[];
+
 export interface BaseProps {
-  children?: EspComposeElement | EspComposeElement[];
+  children?: EspComposeChild | EspComposeChild[];
 }
 
 /**
@@ -397,12 +400,14 @@ declare global {
   namespace JSX {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface Element extends EspComposeElement {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface ElementChildrenAttribute { children: {}; }
     interface IntrinsicElements {
       /** Built-in context provider element. Use `createContextProvider()` instead of this directly. */
       context: {
         context: Context<unknown>;
         value: unknown;
-        children?: EspComposeElement | EspComposeElement[];
+        children?: EspComposeChild | EspComposeChild[];
       };
     }
   }

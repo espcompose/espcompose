@@ -459,7 +459,7 @@ function compileAndInjectTriggerHandler(
   // Build __refBindings object literal: { switchRef: switchRef, lightRef: lightRef }
   // Property-access refs use quoted keys: { "props.mainPage": props.mainPage }
   const refBindingsEntries = refNames.map(name => {
-    if (result.refExpressions.has(name)) {
+    if (result.propertyAccessRefs.has(name)) {
       return `${JSON.stringify(name)}: ${name}`;
     }
     return `${name}: ${name}`;
@@ -552,7 +552,7 @@ function compileAndInjectUseScript(
     if (!scriptParamNames.has(name) && !refNames.includes(name)) refNames.push(name);
   }
   const refBindingsEntries = refNames.map(name => {
-    if (result.refExpressions.has(name)) {
+    if (result.propertyAccessRefs.has(name)) {
       return `${JSON.stringify(name)}: ${name}`;
     }
     return `${name}: ${name}`;
@@ -618,7 +618,7 @@ function buildRefNameSet(
   result: ActionCompileResult,
 ): Set<string> {
   const refNameSet = symbolSetToNameSet(refSymbols);
-  for (const key of result.refExpressions) {
+  for (const key of result.propertyAccessRefs) {
     refNameSet.add(key);
   }
   for (const key of result.overlayControllerRefs) {
