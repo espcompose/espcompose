@@ -89,6 +89,7 @@ export type {
   DisplayRef,
   FontRef,
   ImageRef,
+  OnlineImageRef,
   LvglComponentRef,
   TouchscreenRef,
   LvglWidgetRef,
@@ -165,6 +166,8 @@ export { useHAEntity } from './hooks/useHAEntity';
 export type { LightBinding, SensorBinding, BinarySensorBinding, SwitchBinding, FanBinding, CoverBinding } from './entity/bindings';
 export { useImage } from './hooks/useImage';
 export type { ImageProps } from './generated/components/image';
+export { useOnlineImage } from './hooks/useOnlineImage';
+export type { UseOnlineImageOptions } from './hooks/useOnlineImage';
 export { useFont } from './hooks/useFont';
 export type { FontProps } from './generated/components/font';
 export { useScript } from './hooks/useScript';

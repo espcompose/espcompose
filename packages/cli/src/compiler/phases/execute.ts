@@ -33,6 +33,7 @@ export function executePhase(ctx: PhaseContext): void {
   // Clear all compiler state for a fresh render pass.
   cjsSDK.clearHAEntityCache();
   cjsSDK.clearImageCache();
+  cjsSDK.clearOnlineImageCache();
   cjsSDK.clearFontCache();
   cjsSDK.clearRefRegistry();
   cjsSDK.clearSecrets();

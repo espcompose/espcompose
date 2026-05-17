@@ -159,6 +159,20 @@ export const ACTION_OVERRIDES = new Map<string, ActionEntry[]>([
       },
     ],
   ],
+  [
+    'online_image::OnlineImage',
+    [
+      {
+        yamlKey: 'component.update',
+        shortName: 'component_update',
+        methodName: 'componentUpdate',
+        targetClass: 'online_image::OnlineImage',
+        idFieldName: 'id',
+        params: [],
+        doc: 'Manually trigger a re-download of the image. Only needed when `update_interval` is set to `never` (the default).',
+      },
+    ],
+  ],
 ]);
 
 /**

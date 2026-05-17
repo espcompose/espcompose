@@ -539,7 +539,7 @@ export function lowerToYamlConfig(
         finalConfig[section] = [];
       }
       // Lower IRValue config back to a plain object for YAML emission
-      let outConfig = irValueToYaml(comp.config) as Record<string, unknown>;
+      let outConfig = irValueToYaml(comp.config, cppCtx, actionCtx) as Record<string, unknown>;
       // Globals components carry a target-agnostic `irType: IRType` node
       // (kind: 'type'). irValueToYaml skips it via SKIP_ENTRY, so we extract
       // the IRType directly from the config tree and convert to C++ type.

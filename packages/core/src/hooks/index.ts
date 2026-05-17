@@ -12,6 +12,8 @@ export * from './useMemo';
 export * from './useReactiveScope';
 export { useHAEntity, clearHAEntityCache } from './useHAEntity';
 export { useImage, clearImageCache } from './useImage';
+export { useOnlineImage, clearOnlineImageCache } from './useOnlineImage';
+export type { UseOnlineImageOptions } from './useOnlineImage';
 export { useFont, clearFontCache } from './useFont';
 export { useLvgl, LvglContext } from './useLvgl';
 export { useGlobal, globalTypeToIRType, isArrayGlobalType } from './useGlobal';

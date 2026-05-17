@@ -587,6 +587,7 @@ lvgl:
           - button:
               id: r_ref3
               on_click:
-                - lvgl.widget.redraw: r_ref3
+                - lvgl.widget.redraw:
+                    id: r_ref3
 "
 `;

@@ -70,6 +70,7 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
   collectWidgetTargets(ir, targets);
   collectSectionTargets(ir, targets);
   collectUIRegistryTargets(ir, targets);
+  collectComponentTargets(ir, targets);
 
   // ── Attach-trigger contributions ───────────────────────────────────────
 
@@ -294,6 +295,22 @@ function collectUIRegistryTargets(ir: SemanticIR, map: Map<string, ContributionT
       getIRValue(event) { return config[event]; },
       setIRValue(event, value) { config[event] = value; },
     });
+  }
+}
+
+/**
+ * Collect component definitions (online_image, globals, etc.) as contribution targets.
+ * Each component whose config contains an `id` entry with an IRRef is indexed.
+ */
+function collectComponentTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
+  for (const comp of ir.components) {
+    const config = comp.config;
+    if (config.kind === 'object') {
+      const idEntry = (config as IRObject).entries.find(e => e.key === 'id');
+      if (idEntry && idEntry.value.kind === 'ref') {
+        map.set(idEntry.value.token, sectionObjectTarget(config as IRObject));
+      }
+    }
   }
 }
 

@@ -151,6 +151,7 @@ export const INTRINSIC_INTENT_REGISTRY: Readonly<Record<string, IntrinsicIntentM
   touchscreen: { intents: ['esphome:component'] },
   animation: { intents: ['esphome:component'] },
   image: { intents: ['esphome:component'] },
+  online_image: { intents: ['esphome:component'] },
   font: { intents: ['esphome:component'] },
   color: { intents: ['esphome:component'] },
   graph: { intents: ['esphome:component'] },

@@ -122,6 +122,7 @@ function scanForHAEntities(node: ts.Node, ctx: TransformContext): void {
 /**
  * Scan for component ref symbols. Detects:
  * - `const ref = useRef<...>()` variable declarations
+ * - Variable declarations typed as `Ref<T>` from other hooks (e.g. `useOnlineImage()`)
  * - Parameters and destructured bindings typed as `Ref<T>` or `RefProp<T>`
  *
  * The action compiler resolves the YAML action key from `@actionKey` JSDoc
@@ -135,6 +136,12 @@ function scanForRefSymbols(sourceFile: ts.SourceFile, checker: ts.TypeChecker): 
       if (ts.isCallExpression(node.initializer) && isCoreExportCall(node.initializer, 'useRef', checker)) {
         const sym = checker.getSymbolAtLocation(node.name);
         if (sym) {
+          refSymbols.add(sym);
+        }
+      } else {
+        // Detect Ref<T>-typed variables from other hooks (e.g. useOnlineImage)
+        const sym = checker.getSymbolAtLocation(node.name);
+        if (sym && isRefType(checker, sym)) {
           refSymbols.add(sym);
         }
       }
@@ -664,9 +671,10 @@ function collectRefNamesFromActions(
           if (typeof config === 'string' && refNames.has(config)) {
             names.add(config);
           } else if (typeof config === 'object' && config !== null) {
-            const id = (config as Record<string, unknown>).id;
-            if (typeof id === 'string' && refNames.has(id)) {
-              names.add(id);
+            for (const v of Object.values(config as Record<string, unknown>)) {
+              if (typeof v === 'string' && refNames.has(v)) {
+                names.add(v);
+              }
             }
           }
           break;

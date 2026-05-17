@@ -1,6 +1,6 @@
 import type { EspComposeElement, FunctionComponent } from './types';
 import { useScript, withScriptScope } from './hooks/useScript';
-import { withReactiveScope, clearHAEntityCache, clearImageCache, clearFontCache } from './hooks';
+import { withReactiveScope, clearHAEntityCache, clearImageCache, clearOnlineImageCache, clearFontCache } from './hooks';
 import { withOverlayScope } from './hooks/useOverlay';
 import { withOverlayTierScope } from './hooks/useOverlayTier';
 import { withContributionScope } from './hooks/useContributionScope';
@@ -296,6 +296,7 @@ export const ESPCompose = {
   withContributionScope,
   clearHAEntityCache,
   clearImageCache,
+  clearOnlineImageCache,
   clearFontCache,
   // Compiler state management — shared via the CJS module instance.
   // Used by the CLI compiler to reset state between compile runs.

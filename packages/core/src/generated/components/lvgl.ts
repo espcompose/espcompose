@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { ComponentProps, Reactive, RefProp, TriggerHandler } from "../../types";
-import type { __marker_LvButtonMatrixType, __marker_LvDropdownType, __marker_LvKeyboardType, __marker_LvLineType, __marker_LvPageType, __marker_LvRollerType, __marker_image_Image, __marker_lv_animimg_t, __marker_lv_arc_t, __marker_lv_bar_t, __marker_lv_button_t, __marker_lv_canvas_t, __marker_lv_checkbox_t, __marker_lv_dropdown_list_t, __marker_lv_image_t, __marker_lv_label_t, __marker_lv_led_t, __marker_lv_meter_t, __marker_lv_obj_t, __marker_lv_slider_t, __marker_lv_spinbox_t, __marker_lv_spinner_t, __marker_lv_switch_t, __marker_lv_tabview_t, __marker_lv_textarea_t, __marker_lv_tileview_t, __marker_lv_tileview_tile_t } from "../markers";
+import type { __marker_LvButtonMatrixType, __marker_LvDropdownType, __marker_LvKeyboardType, __marker_LvLineType, __marker_LvPageType, __marker_LvRollerType, __marker_image_Image, __marker_lv_animimg_t, __marker_lv_arc_t, __marker_lv_bar_t, __marker_lv_button_t, __marker_lv_canvas_t, __marker_lv_checkbox_t, __marker_lv_dropdown_list_t, __marker_lv_image_t, __marker_lv_label_t, __marker_lv_led_t, __marker_lv_meter_t, __marker_lv_obj_t, __marker_lv_slider_t, __marker_lv_spinbox_t, __marker_lv_spinner_t, __marker_lv_switch_t, __marker_lv_tabview_t, __marker_lv_textarea_t, __marker_lv_tileview_t, __marker_lv_tileview_tile_t, __marker_online_image_OnlineImage } from "../markers";
 import type { CssStyleProps } from "../../lvgl/style/types";
 import type { HexColor } from "../../lvgl/theme/hex-color";
 /** Flat LVGL style properties (visual only). No state/part nesting, no layout props. */
@@ -43,7 +43,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_image_recolor_opa */
     bgImageRecolorOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bg_image_src */
-    bgImageSrc?: string | RefProp<__marker_image_Image>;
+    bgImageSrc?: string | RefProp<__marker_image_Image> | RefProp<__marker_online_image_OnlineImage>;
     /** @yamlKey bg_image_tiled */
     bgImageTiled?: Reactive<boolean>;
     /** @yamlKey bg_main_opa */
@@ -53,7 +53,7 @@ export interface LvglStyleProps {
     /** @yamlKey bg_opa */
     bgOpa?: Reactive<string | ("TRANSP" | "COVER")>;
     /** @yamlKey bitmap_mask_src */
-    bitmapMaskSrc?: string | RefProp<__marker_image_Image>;
+    bitmapMaskSrc?: string | RefProp<__marker_image_Image> | RefProp<__marker_online_image_OnlineImage>;
     /** @yamlKey blend_mode */
     blendMode?: "NORMAL" | "ADDITIVE" | "SUBTRACTIVE" | "MULTIPLY" | "DIFFERENCE";
     /** @yamlKey blur_backdrop */
@@ -2973,7 +2973,7 @@ export interface LvglImageProps {
     pivotY?: number | string | "SIZE_CONTENT";
     rotation?: number;
     scale?: unknown;
-    src: string | RefProp<__marker_image_Image>;
+    src: string | RefProp<__marker_image_Image> | RefProp<__marker_online_image_OnlineImage>;
     zoom?: unknown;
     /**
      * CSS-like style object. All visual properties must be specified here.
@@ -6784,7 +6784,7 @@ export interface LvglProps {
     /** @yamlKey disp_bg_color */
     dispBgColor?: HexColor;
     /** @yamlKey disp_bg_image */
-    dispBgImage?: string | RefProp<__marker_image_Image>;
+    dispBgImage?: string | RefProp<__marker_image_Image> | RefProp<__marker_online_image_OnlineImage>;
     /** @yamlKey disp_bg_opa */
     dispBgOpa?: number | string;
     displays: unknown;

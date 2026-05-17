@@ -393,7 +393,13 @@ function lowerAction(action: IRActionNode, ctx: ActionLoweringContext): unknown 
           `${flag}(id(${widgetId}), LV_OBJ_FLAG_HIDDEN); ` +
           `ESP_LOGI("ec_perf", "widget.update hidden=${hidden ? 'true' : 'false'}(%s): %lums", "${escapeStringForCpp(widgetId)}", (unsigned long)(millis() - _t0));`
         )};
-      }      return { [`${action.domain}.${action.operation}`]: lowerConfig(action.config, ctx) };
+      }      const lowered = lowerConfig(action.config, ctx);
+      // LVGL actions always require a dict config with an `id` key.
+      // When the config is a bare string (ref-only, no params), wrap it.
+      const actionValue = action.domain === 'lvgl' && typeof lowered === 'string'
+        ? { id: lowered }
+        : lowered;
+      return { [`${action.domain}.${action.operation}`]: actionValue };
     }
 
     case 'action:ha_service': {

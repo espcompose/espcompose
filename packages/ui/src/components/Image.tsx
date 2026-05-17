@@ -6,7 +6,7 @@
  * radius from the theme's radius scale.
  */
 
-import type { Ref, ImageRef, WidgetProps } from '@espcompose/core';
+import type { Ref, ImageRef, OnlineImageRef, WidgetProps } from '@espcompose/core';
 import { createLvglWidget, useReactiveMap } from '@espcompose/core';
 import type { SizeToken, RadiusToken } from '../theme/types';
 import { themeLeaf } from '../hooks/utils';
@@ -21,8 +21,8 @@ const IMAGE_SIZE: Record<SizeToken, number> = {
 };
 
 export type ImageProps = WidgetProps<{
-  /** Image source — a ref from `useImage()`. */
-  src: Ref<ImageRef>;
+  /** Image source — a ref from `useImage()` or `useOnlineImage()`. */
+  src: Ref<ImageRef> | Ref<OnlineImageRef>;
   /** Rounded corner preset from the theme radius scale. */
   radius?: RadiusToken;
   /** Size preset. Maps to pixel dimensions. */
