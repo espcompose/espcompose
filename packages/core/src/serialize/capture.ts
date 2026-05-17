@@ -12,9 +12,7 @@ import { LambdaMarker, SecretMarker, QuotedMarker, isSerializeMarker } from './m
 import type { IRActionNode } from '../ir/action-types';
 import type { IRClosureReadExpression } from '../ir/expr-types';
 import { irLiteralExpression } from '../ir/expr-builders';
-import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
-import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
-import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
+import { resolveCompiledActions } from '../actions';
 
 // ── IR Capture ─────────────────────────────────────────────────────────────
 // When capture is active, serializeValue() records pre-serialization data
@@ -239,21 +237,9 @@ export function serializeValue(v: unknown): unknown {
   if (typeof v === 'function' && hasCompiledActions(v)) {
     const fn = v as CompiledActionFunction;
     let actions = fn.__compiledActions;
-    // Resolve deferred controller method calls (ctrl.show() → script_execute)
-    resolveControllerMethodCalls(actions as IRActionNode[], fn.__refBindings);
-    // Resolve deferred overlay controller refs (templateKey/instanceIndex)
-    resolveOverlayControllerRefs(actions as IRActionNode[], fn.__refBindings);
-    // Patch IRScriptExecute.closureIndex for user-written scriptHandle calls
-    // by reading CLOSURE_INDEX from the bound ScriptHandle in __refBindings.
-    resolveScriptHandleClosureIndex(actions as IRActionNode[], fn.__refBindings);
-    // Remove resolved overlay controller objects from refBindings so they don't
-    // cause string-replacement damage during lambda ref resolution in the
-    // lowering phase (OverlayController.toString() → '[object Object]' would
-    // corrupt signal names containing 'overlay').
+    // Resolve deferred IR references and clean refBindings.
+    resolveCompiledActions(actions as IRActionNode[], fn.__refBindings);
     if (fn.__refBindings) {
-      cleanControllerRefs(fn.__refBindings);
-      cleanOverlayControllerRefs(fn.__refBindings);
-      cleanScriptHandleRefs(fn.__refBindings);
       actions = resolveRefBindingsInActions(actions, fn.__refBindings);
     }
     const result = restoreLambdaMarkers(actions);

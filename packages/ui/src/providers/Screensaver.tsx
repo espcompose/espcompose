@@ -6,9 +6,10 @@
  * the screensaver's content; the library auto-wraps it in a fullscreen
  * overlay whose touch handler dismisses the screensaver.
  *
- * The `mode: 'restart'` script is the idiomatic ESPHome pattern for
- * resettable timers: each `.execute()` call restarts the countdown
- * from scratch without polling.
+ * Idle detection is delegated to LVGL's native `on_idle` trigger, which
+ * tracks inactivity across all input devices (touchscreen, encoder, keypad).
+ * The `on_resume` trigger (paired with `resume_on_input: true`) handles
+ * automatic wake-on-input.
  *
  * State machine:
  *
@@ -51,11 +52,13 @@ import {
   useScript,
   useGlobal,
   useController,
+  useLvgl,
+  useAttachedTrigger,
+  useAttachedTimeoutTrigger,
   delay,
   parseDurationToMs,
 } from '@espcompose/core';
-import { registerComponent, generateId } from '@espcompose/core/internals';
-import type { Controller } from '@espcompose/core';
+import type { Controller, DurationValue } from '@espcompose/core';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -64,12 +67,12 @@ import type { Controller } from '@espcompose/core';
 /**
  * Controller returned by `useScreensaver()`.
  *
- * - `suspend()` — immediately activates the screensaver (bypasses timeout).
- * - `resume()` — dismisses the screensaver and restarts the idle timer.
- * - `enable()` — starts the inactivity timer.
- * - `disable()` — stops the inactivity timer and dismisses if active.
- * - `reset()` — restarts the inactivity countdown. If the screensaver is
- *   active, dismisses it first.
+ * - `suspend()` — immediately activates the screensaver (bypasses idle timeout).
+ * - `resume()` — dismisses the screensaver.
+ * - `enable()` — no-op (idle detection is always active via LVGL `on_idle`).
+ * - `disable()` — dismisses the screensaver if active.
+ * - `reset()` — dismisses the screensaver if active. LVGL's idle counter
+ *   resets automatically on the next input event.
  */
 export interface ScreensaverController {
   suspend(): void;
@@ -104,16 +107,16 @@ export type ScreensaverContent = EspComposeElement | EspComposeElement[];
 export interface ScreensaverProviderProps {
   /**
    * Inactivity duration before the screensaver activates.
-   * ESPHome duration literal (e.g. `'5min'`, `'30s'`).
+   * Duration value — number (ms) or string with unit (e.g. `'5min'`, `'30s'`).
    */
-  timeout: string;
+  timeout: DurationValue;
 
   /**
    * Duration after the screensaver activates before `hooks.onSuspend()` fires.
    * When omitted, the display stays on while the screensaver is showing.
-   * ESPHome duration literal (e.g. `'10min'`).
+   * Duration value — number (ms) or string with unit (e.g. `'10min'`).
    */
-  displayOffAfter?: string;
+  displayOffAfter?: DurationValue;
 
   /**
    * Lifecycle hooks controller for display power management.
@@ -133,8 +136,8 @@ export interface ScreensaverProviderProps {
 // ────────────────────────────────────────────────────────────────────────────
 
 interface ScreensaverConfig {
-  timeout: string;
-  displayOffAfter: string;
+  timeout: DurationValue;
+  displayOffAfter: DurationValue;
   hooks: Controller<ScreensaverHooks> | undefined;
 }
 
@@ -174,6 +177,10 @@ function ScreensaverProvider(props: ScreensaverProviderProps): EspComposeElement
  * the supplied content inside a fullscreen overlay whose built-in touch
  * handler dismisses the screensaver and fires `onResume`.
  *
+ * Idle detection uses LVGL's native `on_idle` trigger, which tracks
+ * inactivity across all input devices. Wake-on-input is handled by
+ * the `on_resume` trigger (enabled via `resume_on_input: true`).
+ *
  * @param content  The screensaver's widget tree.
  * @returns A branded `ScreensaverController`.
  *
@@ -188,12 +195,10 @@ export function useScreensaver(content: ScreensaverContent): Controller<Screensa
 
   const { timeout, displayOffAfter, hooks } = config;
 
-  // Parse duration strings to milliseconds at render time so the captured
-  // closure values are plain numbers. (If they're left as strings, the C++
-  // closure field becomes `std::string` which can't be returned from a
-  // delay lambda expecting `uint32_t`.)
-  const timeoutMs = parseDurationToMs(timeout as Parameters<typeof parseDurationToMs>[0]);
-  const displayOffAfterMs = parseDurationToMs(displayOffAfter as Parameters<typeof parseDurationToMs>[0]);
+  // Compute cumulative timeout for display-off stage (timeout + displayOffAfter).
+  const timeoutMs = parseDurationToMs(timeout);
+  const displayOffAfterMs = parseDurationToMs(displayOffAfter);
+  const displayOffCumulativeMs = timeoutMs + displayOffAfterMs;
 
   // ── Noop hooks (always created — hooks can't be conditional) ────────────
   const noopSuspend = useScript(async () => {});
@@ -207,55 +212,46 @@ export function useScreensaver(content: ScreensaverContent): Controller<Screensa
   // ── State ───────────────────────────────────────────────────────────────
   const isActive = useGlobal('boolean', { initialValue: false });
 
+  // ── LVGL ref (for attaching on_idle / on_resume triggers) ───────────────
+  const lvgl = useLvgl();
+
   // ── Overlay tier (topmost) ──────────────────────────────────────────────
   const screensaverTier = useOverlayTier({ zOrder: 1000, bringToFront: false });
 
   // Closure slot for the controller we build inside the factory below.
-  // All scripts reference `overlayCtrl` (the factory arg) instead of the
-  // outer `overlay` result, which breaks the script ↔ overlay forward-ref
-  // cycle. Scripts are declared in topological order within the factory.
   let ctrl!: Controller<ScreensaverController>;
 
   useOverlay({ tier: screensaverTier }, (overlayCtrl) => {
-    // ── Idle timer script (mode: 'restart') ───────────────────────────────
-    // Declared first so resume/reset/disable can reference it.
-    const idleScript = useScript(async () => {
-      await delay(timeoutMs);
-
+    // ── LVGL on_idle: show screensaver after inactivity ───────────────────
+    useAttachedTimeoutTrigger(lvgl, 'onIdle', timeout, () => {
       overlayCtrl.show();
       isActive.set(true);
-
-      await delay(displayOffAfterMs);
-      effectiveHooks.onSuspend();
-    }, { mode: 'restart' });
-    // Auto-start the idle timer on boot. ESPHome scripts don't auto-run, so
-    // we register a one-shot `interval:` automation with `startup_delay: 0s`
-    // and a long `interval:` so it effectively fires once at boot. The
-    // script has `mode: 'restart'`, so any later activity-driven
-    // `.execute()` just resets the timer.
-    registerComponent({
-      kind: 'component',
-      section: 'interval',
-      id: generateId('ivl_screensaver'),
-      config: {
-        interval: '24h',
-        startup_delay: '0s',
-        then: [
-          { 'script.execute': { id: idleScript.id, closure_index: 0 } },
-        ],
-      },
     });
-    // ── Resume script ─────────────────────────────────────────────────────
+
+    // ── LVGL on_idle: fire onSuspend after further inactivity ─────────────
+    useAttachedTimeoutTrigger(lvgl, 'onIdle', `${displayOffCumulativeMs}ms`, () => {
+      effectiveHooks.onSuspend();
+    });
+
+    // ── LVGL on_resume: dismiss on any input activity ─────────────────────
+    useAttachedTrigger(lvgl, 'onResume', () => {
+      // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- global read in action condition
+      if (isActive.value === true) {
+        overlayCtrl.hide();
+        isActive.set(false);
+        effectiveHooks.onResume();
+      }
+    });
+
+    // ── Resume script (for touch-to-dismiss and programmatic resume) ──────
     const resumeScript = useScript(async () => {
       overlayCtrl.hide();
       isActive.set(false);
       effectiveHooks.onResume();
-      idleScript.execute();
     });
 
-    // ── Suspend script (bypass timeout) ───────────────────────────────────
+    // ── Suspend script (bypass timeout — programmatic activation) ─────────
     const suspendScript = useScript(async () => {
-      idleScript.stop();
       overlayCtrl.show();
       isActive.set(true);
 
@@ -263,14 +259,11 @@ export function useScreensaver(content: ScreensaverContent): Controller<Screensa
       effectiveHooks.onSuspend();
     });
 
-    // ── Enable script ─────────────────────────────────────────────────────
-    const enableScript = useScript(async () => {
-      idleScript.execute();
-    });
+    // ── Enable script (no-op — idle detection is always active via LVGL) ──
+    const enableScript = useScript(async () => {});
 
     // ── Disable script ────────────────────────────────────────────────────
     const disableScript = useScript(async () => {
-      idleScript.stop();
       // eslint-disable-next-line @espcompose/eslint/no-untracked-signal -- global read in action condition
       if (isActive.value === true) {
         overlayCtrl.hide();
@@ -287,7 +280,6 @@ export function useScreensaver(content: ScreensaverContent): Controller<Screensa
         isActive.set(false);
         effectiveHooks.onResume();
       }
-      idleScript.execute();
     });
 
     ctrl = useController<ScreensaverController>({

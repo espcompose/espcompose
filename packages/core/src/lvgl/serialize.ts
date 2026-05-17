@@ -25,9 +25,7 @@ import { peekOverlayTierDefinitions } from '../hooks/useOverlayTier';
 import type { OverlayTierDefinition } from '../hooks/useOverlayTier';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
-import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
-import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
-import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { resolveCompiledActions } from '../actions';
 import { generateId } from '../id';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
@@ -398,21 +396,8 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
       if (typeof val === 'function' && val != null && '__compiledActions' in val) {
         const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
         const rawActions = fn.__compiledActions as IRActionNode[];
-        // Resolve deferred controller method calls → script_execute
-        resolveControllerMethodCalls(rawActions, fn.__refBindings);
-        // Resolve deferred overlay controller refs — replace placeholder
-        // templateKey/instanceIndex with actual values from the bound controller.
-        resolveOverlayControllerRefs(rawActions, fn.__refBindings);
-        // Patch IRScriptExecute.closureIndex from bound ScriptHandles.
-        resolveScriptHandleClosureIndex(rawActions, fn.__refBindings);
-        // Remove resolved overlay controller objects from refBindings so they
-        // don't corrupt lambda strings during ref resolution (toString →
-        // '[object Object]' would replace 'overlay' in signal names).
-        if (fn.__refBindings) {
-          cleanControllerRefs(fn.__refBindings);
-          cleanOverlayControllerRefs(fn.__refBindings);
-          cleanScriptHandleRefs(fn.__refBindings);
-        }
+        // Resolve deferred IR references and clean refBindings.
+        resolveCompiledActions(rawActions, fn.__refBindings);
         overlayActionCapture.push({
           rawActions,
           refBindings: fn.__refBindings,

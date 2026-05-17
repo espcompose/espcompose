@@ -192,6 +192,7 @@ export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVi
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
+export { useAttachedTimeoutTrigger } from './hooks/useAttachedTimeoutTrigger';
 export { useStyleTransition } from './hooks/useStyleTransition';
 export { useAnimateTransition } from './hooks/useAnimateTransition';
 export type { AnimateTransitionOptions } from './hooks/useAnimateTransition';

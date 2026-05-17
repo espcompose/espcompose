@@ -23,7 +23,7 @@ template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
 template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Signals (one per HA entity source) ──
-Signal<int32_t> sig_ovrl_ref11_mux;
+Signal<int32_t> sig_ovrl_ref5_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -59,7 +59,7 @@ Memo<int32_t> thm_333e4663_radii_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_sizes_md_font([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref15).get_lv_font(), id(r_ref15).get_lv_font()};
+  static const lv_font_t* thm_333e4663_sizes_md_font_vals[] = {id(r_ref18).get_lv_font(), id(r_ref18).get_lv_font()};
   return thm_333e4663_sizes_md_font_vals[theme_index_333e4663.get()];
 });
 
@@ -79,7 +79,7 @@ Memo<int32_t> thm_333e4663_spacing_md([]() -> int32_t {
 });
 
 Memo<const lv_font_t*> thm_333e4663_typography_title([]() -> const lv_font_t* {
-  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref13).get_lv_font(), id(r_ref13).get_lv_font()};
+  static const lv_font_t* thm_333e4663_typography_title_vals[] = {id(r_ref16).get_lv_font(), id(r_ref16).get_lv_font()};
   return thm_333e4663_typography_title_vals[theme_index_333e4663.get()];
 });
 
@@ -90,80 +90,47 @@ void select_theme_333e4663(const char* name) {
 }
 
 // ── Script closure tables ──
-static decltype(_ec_id_ptr(id(r_ref2))) const ec_scr_ref21_backlightRefs[] = {
+static decltype(_ec_id_ptr(id(r_ref2))) const ec_scr_ref7_backlightRefs[] = {
   _ec_id_ptr(id(r_ref2))
 };
-struct scr_ref21_closure_t {
-  int backlightRef_idx;
-};
-static const scr_ref21_closure_t scr_ref21_closures[] = {
-  { 0 }
-};
-
-static decltype(_ec_id_ptr(id(r_ref2))) const ec_scr_ref22_backlightRefs[] = {
-  _ec_id_ptr(id(r_ref2))
-};
-struct scr_ref22_closure_t {
-  int backlightRef_idx;
-};
-static const scr_ref22_closure_t scr_ref22_closures[] = {
-  { 0 }
-};
-
-struct scr_ref20_closure_t {
-  float displayOffAfterMs;
-  int overlayCtrl_instance_index;
-  float timeoutMs;
-};
-static const scr_ref20_closure_t scr_ref20_closures[] = {
-  { 600000.0f, 0, 300000.0f }
-};
-
-static decltype(_ec_id_ptr(id(scr_ref20))) const ec_scr_ref12_idleScripts[] = {
-  _ec_id_ptr(id(scr_ref20))
-};
-struct scr_ref12_closure_t {
-  int idleScript_idx;
-  int overlayCtrl_instance_index;
-};
-static const scr_ref12_closure_t scr_ref12_closures[] = {
-  { 0, 0 }
-};
-
 struct scr_ref7_closure_t {
-  float displayOffAfterMs;
-  int overlayCtrl_instance_index;
+  int backlightRef_idx;
 };
 static const scr_ref7_closure_t scr_ref7_closures[] = {
+  { 0 }
+};
+
+static decltype(_ec_id_ptr(id(r_ref2))) const ec_scr_ref6_backlightRefs[] = {
+  _ec_id_ptr(id(r_ref2))
+};
+struct scr_ref6_closure_t {
+  int backlightRef_idx;
+};
+static const scr_ref6_closure_t scr_ref6_closures[] = {
+  { 0 }
+};
+
+struct scr_ref15_closure_t {
+  int overlayCtrl_instance_index;
+};
+static const scr_ref15_closure_t scr_ref15_closures[] = {
+  { 0 }
+};
+
+struct scr_ref11_closure_t {
+  float displayOffAfterMs;
+  int overlayCtrl_instance_index;
+};
+static const scr_ref11_closure_t scr_ref11_closures[] = {
   { 600000.0f, 0 }
 };
 
-static decltype(_ec_id_ptr(id(scr_ref20))) const ec_scr_ref24_idleScripts[] = {
-  _ec_id_ptr(id(scr_ref20))
-};
-struct scr_ref24_closure_t {
-  int idleScript_idx;
-};
-static const scr_ref24_closure_t scr_ref24_closures[] = {
-  { 0 }
-};
-
-struct scr_ref25_closure_t {
+struct scr_ref23_closure_t {
   int overlayCtrl_instance_index;
 };
-static const scr_ref25_closure_t scr_ref25_closures[] = {
+static const scr_ref23_closure_t scr_ref23_closures[] = {
+  { 0 },
   { 0 }
-};
-
-static decltype(_ec_id_ptr(id(scr_ref20))) const ec_scr_ref26_idleScripts[] = {
-  _ec_id_ptr(id(scr_ref20))
-};
-struct scr_ref26_closure_t {
-  int idleScript_idx;
-  int overlayCtrl_instance_index;
-};
-static const scr_ref26_closure_t scr_ref26_closures[] = {
-  { 0, 0 }
 };
 
 
@@ -183,49 +150,49 @@ void bootstrap_runtime() {
 
   // ── Widget binding effects ──
   static Effect binding_0([]() {
-    lv_obj_set_style_text_color(&id(rw_ref6), thm_333e4663_colors_textPrimary.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref10), thm_333e4663_colors_textPrimary.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_1([]() {
-    lv_obj_set_style_text_font(&id(rw_ref6), thm_333e4663_typography_title.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref10), thm_333e4663_typography_title.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_2([]() {
-    lv_obj_set_style_text_color(&id(rw_ref9), thm_333e4663_colors_primary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref13), thm_333e4663_colors_primary_text.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_3([]() {
-    lv_obj_set_style_text_font(&id(rw_ref9), thm_333e4663_sizes_md_font.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref13), thm_333e4663_sizes_md_font.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_4([]() {
     auto _src = thm_333e4663_colors_primary_bg.get();
-    lv_obj_set_style_bg_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_border_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_border_color(&id(rw_ref12), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_6([]() {
-    lv_obj_set_style_radius(&id(rw_ref8), static_cast<lv_coord_t>(thm_333e4663_radii_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_radius(&id(rw_ref12), static_cast<lv_coord_t>(thm_333e4663_radii_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_7([]() {
-    lv_obj_set_width(&id(rw_ref8), static_cast<lv_coord_t>(memo_0.get()));
+    lv_obj_set_width(&id(rw_ref12), static_cast<lv_coord_t>(memo_0.get()));
   });
 
   static Effect binding_8([]() {
-    lv_obj_set_height(&id(rw_ref8), static_cast<lv_coord_t>(thm_333e4663_sizes_md_height.get()));
+    lv_obj_set_height(&id(rw_ref12), static_cast<lv_coord_t>(thm_333e4663_sizes_md_height.get()));
   });
 
   static Effect binding_9([]() {
-    lv_obj_set_style_bg_color(&id(rw_ref8), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
+    lv_obj_set_style_bg_color(&id(rw_ref12), thm_333e4663_colors_primary_bgPressed.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_PRESSED)));
   });
 
   static Effect binding_10([]() {
-    lv_obj_set_style_pad_row(&id(rw_ref5), static_cast<lv_coord_t>(thm_333e4663_spacing_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_pad_row(&id(rw_ref9), static_cast<lv_coord_t>(thm_333e4663_spacing_md.get()), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_11([]() {
-    lv_obj_set_style_bg_color(id(rw_ref4).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(id(rw_ref8).obj, thm_333e4663_colors_background.get(), (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
 
@@ -820,12 +787,41 @@ lvgl:
   - id: r_ref3
     displays:
       - r_ref0
+    on_resume:
+      - if:
+          condition:
+            - lambda: !lambda "return id(g_ref4) == true;"
+          then:
+            - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref5); for(int
+                i=0;i<(int)lv_obj_get_child_count(w);i++)
+                lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+            - globals.set:
+                id: g_ref4
+                value: !lambda "return false;"
+            - script.execute:
+                id: scr_ref6
+                closure_index: 0
+    on_idle:
+      - timeout: 5min
+        then:
+          - lambda: !lambda "espcompose::sig_ovrl_ref5_mux.set(0); espcompose::flush();
+              { lv_obj_t* w = id(ovrl_ref5); for(int
+              i=0;i<(int)lv_obj_get_child_count(w);i++)
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+          - globals.set:
+              id: g_ref4
+              value: !lambda "return true;"
+      - timeout: 900000ms
+        then:
+          - script.execute:
+              id: scr_ref7
+              closure_index: 0
     pages:
       - bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
         bg_opa: COVER
         border_width: 0
         scrollbar_mode: 'OFF'
-        id: rw_ref4
+        id: rw_ref8
         widgets:
           - obj:
               width: 100%
@@ -838,16 +834,16 @@ lvgl:
                 type: flex
                 flex_flow: COLUMN
                 pad_row: 0
-              id: rw_ref5
+              id: rw_ref9
               widgets:
                 - label:
                     text: Screensaver Test
                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                    id: rw_ref6
+                    id: rw_ref10
                 - button:
                     on_press:
                       - script.execute:
-                          id: scr_ref7
+                          id: scr_ref11
                           closure_index: 0
                     bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                     bg_opa: COVER
@@ -861,18 +857,18 @@ lvgl:
                         espcompose::thm_333e4663_colors_primary_bgPressed.get()\\
                         ;"
                       bg_opa: COVER
-                    id: rw_ref8
+                    id: rw_ref12
                     widgets:
                       - label:
                           text: Suspend
                           text_color: !lambda "return espcompose::thm_333e4663_colors_primary_text.get();"
                           text_align: CENTER
                           align: CENTER
-                          id: rw_ref9
+                          id: rw_ref13
     top_layer:
       widgets:
         - obj:
-            id: overlay_tier_ref10
+            id: overlay_tier_ref14
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -881,7 +877,7 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref11
+                  id: ovrl_ref5
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -901,7 +897,7 @@ lvgl:
                           - obj:
                               on_press:
                                 - script.execute:
-                                    id: scr_ref12
+                                    id: scr_ref15
                                     closure_index: 0
                               height: 100%
                               width: 100%
@@ -916,7 +912,7 @@ external_components:
 espcompose:
   flush_budget_us: 10000
 font:
-  - id: r_ref13
+  - id: r_ref16
     file: gfonts://Roboto
     size: 22
     bpp: 4
@@ -928,7 +924,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref14
+  - id: r_ref17
     file: gfonts://Roboto
     size: 20
     bpp: 4
@@ -940,7 +936,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref15
+  - id: r_ref18
     file: gfonts://Roboto
     size: 16
     bpp: 4
@@ -952,7 +948,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref16
+  - id: r_ref19
     file: gfonts://Roboto
     size: 12
     bpp: 4
@@ -964,7 +960,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref17
+  - id: r_ref20
     file: gfonts://Roboto
     size: 14
     bpp: 4
@@ -976,7 +972,7 @@ font:
           - 󰌶
           - 󰠟
           - 󰠜
-  - id: r_ref18
+  - id: r_ref21
     file: gfonts://Roboto
     size: 18
     bpp: 4
@@ -989,140 +985,76 @@ font:
           - 󰠟
           - 󰠜
 globals:
-  - id: g_ref19
+  - id: g_ref4
     initial_value: "false"
     type: bool
-interval:
-  - interval: 24h
-    startup_delay: 0s
-    then:
-      - script.execute:
-          id: scr_ref20
-          closure_index: 0
 script:
-  - id: scr_ref21
-    parameters:
-      closure_index: int
-    then:
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref21_closures[closure_index]; (void)closure;
-          espcompose::ec_scr_ref21_backlightRefs[closure.backlightRef_idx]->\\
-          turn_off().perform();"
-  - id: scr_ref22
-    parameters:
-      closure_index: int
-    then:
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref22_closures[closure_index]; (void)closure;
-          espcompose::ec_scr_ref22_backlightRefs[closure.backlightRef_idx]->\\
-          turn_on().perform();"
-  - id: scr_ref23
-    then: []
-  - id: scr_ref20
-    mode: restart
-    parameters:
-      closure_index: int
-    then:
-      - delay: !lambda "auto& closure =
-          espcompose::scr_ref20_closures[closure_index]; (void)closure;
-          return closure.timeoutMs;"
-      - lambda: !lambda "auto& closure =
-          espcompose::scr_ref20_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref11_mux.set(closure.overlayCtrl_instance_in\\
-          dex); espcompose::flush(); { lv_obj_t* w = id(ovrl_ref11); for(int
-          i=0;i<(int)lv_obj_get_child_count(w);i++)
-          lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
-      - globals.set:
-          id: g_ref19
-          value: !lambda "return true;"
-      - delay: !lambda "auto& closure =
-          espcompose::scr_ref20_closures[closure_index]; (void)closure;
-          return closure.displayOffAfterMs;"
-      - script.execute:
-          id: scr_ref21
-          closure_index: 0
-  - id: scr_ref12
-    parameters:
-      closure_index: int
-    then:
-      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
-          i=0;i<(int)lv_obj_get_child_count(w);i++)
-          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
-      - globals.set:
-          id: g_ref19
-          value: !lambda "return false;"
-      - script.execute:
-          id: scr_ref22
-          closure_index: 0
-      - script.execute:
-          id: scr_ref20
-          closure_index: 0
   - id: scr_ref7
     parameters:
       closure_index: int
     then:
-      - script.stop:
-          id: scr_ref20
       - lambda: !lambda "auto& closure =
           espcompose::scr_ref7_closures[closure_index]; (void)closure;
-          espcompose::sig_ovrl_ref11_mux.set(closure.overlayCtrl_instance_in\\
-          dex); espcompose::flush(); { lv_obj_t* w = id(ovrl_ref11); for(int
+          espcompose::ec_scr_ref7_backlightRefs[closure.backlightRef_idx]->\\
+          turn_off().perform();"
+  - id: scr_ref6
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref6_closures[closure_index]; (void)closure;
+          espcompose::ec_scr_ref6_backlightRefs[closure.backlightRef_idx]->\\
+          turn_on().perform();"
+  - id: scr_ref22
+    then: []
+  - id: scr_ref15
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref5); for(int
+          i=0;i<(int)lv_obj_get_child_count(w);i++)
+          lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+      - globals.set:
+          id: g_ref4
+          value: !lambda "return false;"
+      - script.execute:
+          id: scr_ref6
+          closure_index: 0
+  - id: scr_ref11
+    parameters:
+      closure_index: int
+    then:
+      - lambda: !lambda "auto& closure =
+          espcompose::scr_ref11_closures[closure_index]; (void)closure;
+          espcompose::sig_ovrl_ref5_mux.set(closure.overlayCtrl_instance_in\\
+          dex); espcompose::flush(); { lv_obj_t* w = id(ovrl_ref5); for(int
           i=0;i<(int)lv_obj_get_child_count(w);i++)
           lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
       - globals.set:
-          id: g_ref19
+          id: g_ref4
           value: !lambda "return true;"
       - delay: !lambda "auto& closure =
-          espcompose::scr_ref7_closures[closure_index]; (void)closure;
+          espcompose::scr_ref11_closures[closure_index]; (void)closure;
           return closure.displayOffAfterMs;"
       - script.execute:
-          id: scr_ref21
+          id: scr_ref7
           closure_index: 0
-  - id: scr_ref24
-    parameters:
-      closure_index: int
-    then:
-      - script.execute:
-          id: scr_ref20
-          closure_index: 0
-  - id: scr_ref25
-    parameters:
-      closure_index: int
-    then:
-      - script.stop:
-          id: scr_ref20
-      - if:
-          condition:
-            - lambda: !lambda "return id(g_ref19) == true;"
-          then:
-            - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
-                i=0;i<(int)lv_obj_get_child_count(w);i++)
-                lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
-            - globals.set:
-                id: g_ref19
-                value: !lambda "return false;"
-            - script.execute:
-                id: scr_ref22
-                closure_index: 0
-  - id: scr_ref26
+  - id: scr_ref23
     parameters:
       closure_index: int
     then:
       - if:
           condition:
-            - lambda: !lambda "return id(g_ref19) == true;"
+            - lambda: !lambda "return id(g_ref4) == true;"
           then:
-            - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref11); for(int
+            - lambda: !lambda "{ lv_obj_t* w = id(ovrl_ref5); for(int
                 i=0;i<(int)lv_obj_get_child_count(w);i++)
                 lv_obj_add_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
             - globals.set:
-                id: g_ref19
+                id: g_ref4
                 value: !lambda "return false;"
             - script.execute:
-                id: scr_ref22
+                id: scr_ref6
                 closure_index: 0
-      - script.execute:
-          id: scr_ref20
-          closure_index: 0
 "
 `;

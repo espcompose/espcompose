@@ -10,6 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { IRActionNode } from './action-types';
+import type { DurationValue } from '../lvgl/style/duration';
 
 // ── Contribution kinds ─────────────────────────────────────────────────────
 
@@ -168,12 +169,37 @@ export interface AttachAnimateTransitionContribution {
 }
 
 /**
+ * Attach compiled trigger actions with a timeout to a component identified by ref.
+ *
+ * Used for structured triggers like LVGL `on_idle` that pair a timeout
+ * duration with an action list: `{ timeout: '30s', then: [...] }`.
+ *
+ * Multiple contributions to the same `(targetRef, event)` accumulate as
+ * separate `{ timeout, then }` entries in the output array. Each entry
+ * is sorted by `sourceId` for determinism.
+ */
+export interface AttachTimeoutTriggerContribution {
+  readonly kind: 'attach-timeout-trigger';
+  /** Ref token identifying the target component (e.g. LVGL component ref). */
+  readonly targetRef: string;
+  /** camelCase trigger prop name on the target (e.g. `'onIdle'`). */
+  readonly event: string;
+  /** Duration value (number in ms, or a string with unit suffix). */
+  readonly timeout: DurationValue;
+  /** Compiled action nodes for the `then` block. */
+  readonly actions: IRActionNode[];
+  /** Stable identifier for ordering — typically derived from hook path. */
+  readonly sourceId: string;
+}
+
+/**
  * Extensible discriminated union of component contributions.
  *
- * Supports trigger attachment, style transition attachment, and
- * animated binding transition attachment.
+ * Supports trigger attachment, timeout trigger attachment, style transition
+ * attachment, and animated binding transition attachment.
  */
 export type ComponentContribution =
   | AttachTriggerContribution
+  | AttachTimeoutTriggerContribution
   | AttachStyleTransitionContribution
   | AttachAnimateTransitionContribution;

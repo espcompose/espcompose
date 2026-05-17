@@ -11,9 +11,9 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, IRAction, IRValue, IRObject } from './types';
-import { irAction } from './types';
+import { irAction, irArray, irObject, irEntry, irScalar } from './types';
 import type { IRWidget } from './widget-types';
-import type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
+import type { ComponentContribution, AttachTriggerContribution, AttachTimeoutTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
 
 // ── ContributionTarget ─────────────────────────────────────────────────────
 //
@@ -69,6 +69,7 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
   const targets = new Map<string, ContributionTarget>();
   collectWidgetTargets(ir, targets);
   collectSectionTargets(ir, targets);
+  collectUIRegistryTargets(ir, targets);
 
   // ── Attach-trigger contributions ───────────────────────────────────────
 
@@ -187,6 +188,58 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
       });
     }
   }
+
+  // ── Attach-timeout-trigger contributions ─────────────────────────────────
+
+  const timeoutTriggerContributions = contributions.filter(
+    (c): c is AttachTimeoutTriggerContribution => c.kind === 'attach-timeout-trigger',
+  );
+
+  if (timeoutTriggerContributions.length > 0) {
+    // Sort by sourceId for deterministic ordering.
+    timeoutTriggerContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    // Group by (targetRef, event).
+    const groups = new Map<string, AttachTimeoutTriggerContribution[]>();
+    for (const c of timeoutTriggerContributions) {
+      const key = `${c.targetRef}:${c.event}`;
+      let list = groups.get(key);
+      if (!list) {
+        list = [];
+        groups.set(key, list);
+      }
+      list.push(c);
+    }
+
+    // Build a structured IRArray for each (targetRef, event) group.
+    for (const [key, contribs] of groups) {
+      const [targetRef, event] = splitKey(key);
+      const target = targets.get(targetRef);
+      if (!target) {
+        console.warn(
+          `[espcompose] useAttachedTimeoutTrigger: target ref "${targetRef}" not found in IR tree. ` +
+          `Contribution to "${event}" from [${contribs.map(c => c.sourceId).join(', ')}] will be ignored.`,
+        );
+        continue;
+      }
+
+      // Each contribution becomes one { timeout, then } entry.
+      const items = contribs.map(c =>
+        irObject([
+          irEntry('timeout', irScalar(c.timeout)),
+          irEntry('then', irAction(c.actions)),
+        ]),
+      );
+
+      // Append to any existing structured trigger array.
+      const existing = target.getIRValue(event);
+      if (existing && existing.kind === 'array') {
+        (existing as { items: IRValue[] }).items.push(...items);
+      } else {
+        target.setIRValue(event, irArray(items));
+      }
+    }
+  }
 }
 
 // ── Target collection ──────────────────────────────────────────────────────
@@ -223,6 +276,24 @@ function collectWidgetsRecursive(widgets: readonly IRWidget[], map: Map<string, 
 function collectSectionTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
   for (const section of ir.sections) {
     collectIRValueTargets(section.value, map);
+  }
+}
+
+/**
+ * Collect UIRegistry (LVGL component) instances as contribution targets.
+ *
+ * Each `IRUIRegistry.lvgl` ref token maps to a target that reads/writes
+ * entries in the registry's `config` dict, enabling `useAttachedTrigger`
+ * and `useAttachedTimeoutTrigger` to contribute triggers to the top-level
+ * LVGL component (e.g. `on_idle`, `on_resume`).
+ */
+function collectUIRegistryTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
+  for (const ui of ir.uis) {
+    const config = ui.config as Record<string, IRValue>;
+    map.set(ui.lvgl, {
+      getIRValue(event) { return config[event]; },
+      setIRValue(event, value) { config[event] = value; },
+    });
   }
 }
 

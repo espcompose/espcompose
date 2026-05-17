@@ -317,6 +317,15 @@ function findAndCompileTriggerHandlers(
     }
   }
 
+  // useAttachedTimeoutTrigger(ref, 'event', 'timeout', () => { ... })
+  if (ts.isCallExpression(node) && isCoreExportCall(node, 'useAttachedTimeoutTrigger', ctx.checker) &&
+      node.arguments.length >= 4) {
+    const arg = node.arguments[3];
+    if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+      compileAndInjectTriggerHandler(arg, ctx, refSymbols, scriptHandles, globalHandles, edits);
+    }
+  }
+
   // Variable initializer containing arrow functions typed as TriggerHandler:
   //   const handler = () => { binding.toggle(); }
   //   const handler = props.onPress ?? (() => { binding.toggle(); })

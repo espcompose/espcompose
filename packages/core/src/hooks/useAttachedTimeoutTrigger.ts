@@ -1,46 +1,52 @@
 // ────────────────────────────────────────────────────────────────────────────
-// useAttachedTrigger — attach trigger actions to a referenced widget
+// useAttachedTimeoutTrigger — attach timeout-structured trigger actions
 //
-// Allows library components to contribute trigger actions to widgets they
-// reference but don't own. The contributed actions are merged into the
-// target widget's trigger prop during buildSemanticIR().
+// Like useAttachedTrigger, but for triggers that pair a timeout duration
+// with an action list (e.g. LVGL `on_idle`). Each call contributes one
+// { timeout, then } entry to the target's structured trigger array.
 //
 // Example:
-//   const pageRef = useRef<LvPageType>();
-//   useAttachedTrigger(pageRef, 'onShow', () => { activeSignal.set(0); });
+//   const lvgl = useLvgl();
+//   useAttachedTimeoutTrigger(lvgl, 'onIdle', 30_000, () => {
+//     overlay.show();
+//   });
 //
 // The handler arrow function is compiled by the Script Transformer (same as
-// JSX trigger props and useScript() bodies). At runtime, this hook reads the
-// compiled action metadata and registers it as a ComponentContribution.
+// useAttachedTrigger and useScript). At runtime, this hook reads the
+// compiled action metadata and registers an AttachTimeoutTriggerContribution.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { TriggerHandler } from '../types';
 import type { IRActionNode } from '../ir/action-types';
+import type { DurationValue } from '../lvgl/style/duration';
 import { assertHookContext, getCurrentHookPath } from './useState';
 import { registerContribution } from './useContributionScope';
 import { resolveRefBindingsInActions } from '../serialize';
 import { resolveCompiledActions } from '../actions';
 
 /**
- * Attach compiled trigger actions to a widget identified by `targetRef`.
+ * Attach a timeout-structured trigger to a component identified by `targetRef`.
  *
- * The `event` parameter is a camelCase trigger prop name (e.g. `'onShow'`,
- * `'onLoad'`, `'onPress'`). The `handler` is a trigger arrow function whose
- * body has been compiled to an action tree by the Script Transformer.
+ * The `event` parameter is a camelCase trigger prop name (e.g. `'onIdle'`).
+ * The `timeout` is a duration value (number in ms, or a string like `'30s'`).
+ * The `handler` is a trigger arrow function whose body has been compiled
+ * to an action tree by the Script Transformer.
  *
- * Contributed actions are appended AFTER any user-authored actions on the
- * same trigger, maintaining deterministic ordering via `sourceId`.
+ * Multiple calls with the same `(targetRef, event)` accumulate as separate
+ * `{ timeout, then }` entries, sorted by `sourceId` for determinism.
  *
- * @param targetRef  Ref to the target widget (must be assigned to a widget's `ref` prop)
- * @param event      camelCase trigger prop name on the target widget
+ * @param targetRef  Ref to the target component (e.g. LVGL component ref)
+ * @param event      camelCase trigger prop name (e.g. `'onIdle'`)
+ * @param timeout    Duration value (number in ms, or a string with unit suffix)
  * @param handler    Compiled trigger handler arrow function
  */
-export function useAttachedTrigger<T = void>(
+export function useAttachedTimeoutTrigger<T = void>(
   targetRef: { toString(): string },
   event: string,
+  timeout: DurationValue,
   handler: TriggerHandler<T>,
 ): void {
-  assertHookContext('useAttachedTrigger()');
+  assertHookContext('useAttachedTimeoutTrigger()');
 
   // The Script Transformer attaches __compiledActions to trigger handler
   // functions during the AST compilation phase.
@@ -51,10 +57,10 @@ export function useAttachedTrigger<T = void>(
 
   if (!fn.__compiledActions) {
     throw new Error(
-      `[espcompose] useAttachedTrigger(): handler has no compiled actions.\n` +
+      `[espcompose] useAttachedTimeoutTrigger(): handler has no compiled actions.\n` +
       `  This means the Script Transformer did not recognize this call site.\n` +
       `  Ensure the handler is a direct arrow function expression:\n` +
-      `    useAttachedTrigger(ref, 'onShow', () => { ... })\n` +
+      `    useAttachedTimeoutTrigger(ref, 'onIdle', timeout, () => { ... })\n` +
       `  Dynamic function references are not supported.`,
     );
   }
@@ -72,9 +78,10 @@ export function useAttachedTrigger<T = void>(
     : fn.__compiledActions;
 
   registerContribution({
-    kind: 'attach-trigger',
+    kind: 'attach-timeout-trigger',
     targetRef: String(targetRef),
     event,
+    timeout,
     actions: resolvedActions,
     sourceId,
   });

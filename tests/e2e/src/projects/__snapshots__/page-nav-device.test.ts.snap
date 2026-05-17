@@ -23,7 +23,7 @@ template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }
 template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }
 
 // ── Signals (one per HA entity source) ──
-Signal<int32_t> sig_ovrl_ref10_mux;
+Signal<int32_t> sig_ovrl_ref4_mux;
 
 // ── Theme scope: espcompose:ui (333e4663) ──
 Signal<int32_t> theme_index_333e4663;
@@ -86,30 +86,30 @@ void bootstrap_runtime() {
   // ── Widget binding effects ──
   static Effect binding_0([]() {
     auto _src = thm_333e4663_colors_textPrimary.get();
-    lv_obj_set_style_text_color(&id(rw_ref4), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref6), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_color(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref7), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_color(&id(rw_ref9), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_1([]() {
     auto _src = thm_333e4663_typography_title.get();
-    lv_obj_set_style_text_font(&id(rw_ref4), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref6), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_text_font(&id(rw_ref8), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref5), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref7), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_text_font(&id(rw_ref9), _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_2([]() {
     auto _src = thm_333e4663_colors_background.get();
     lv_obj_set_style_bg_color(id(r_ref2).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(id(r_ref5).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
-    lv_obj_set_style_bg_color(id(r_ref7).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(id(r_ref6).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
+    lv_obj_set_style_bg_color(id(r_ref8).obj, _src, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT)));
   });
 
   static Effect binding_3([]() {
     auto _src = thm_333e4663_spacing_md.get();
     { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref2).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
-    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(r_ref5).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref5).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref5).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref5).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
-    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(r_ref7).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref7).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref7).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref7).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
+    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(r_ref6).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref6).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref6).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref6).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
+    { auto _v = static_cast<lv_coord_t>(_src); lv_obj_set_style_pad_top(id(r_ref8).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_bottom(id(r_ref8).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_left(id(r_ref8).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); lv_obj_set_style_pad_right(id(r_ref8).obj, _v, (static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT))); }
   });
 
   static Effect binding_12([]() {
@@ -728,9 +728,11 @@ lvgl:
           - globals.set:
               id: g_ref3
               value: !lambda "return 0;"
-          - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
-              w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+          - lambda: !lambda "espcompose::sig_ovrl_ref4_mux.set(0); espcompose::flush();
+              { lv_obj_t* w = id(ovrl_ref4); for(int
+              i=0;i<(int)lv_obj_get_child_count(w);i++)
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+              lv_obj_move_foreground(id(ovrl_ref4));"
         widgets:
           - obj:
               width: 100%
@@ -746,8 +748,8 @@ lvgl:
                 - label:
                     text: Home
                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                    id: rw_ref4
-      - id: r_ref5
+                    id: rw_ref5
+      - id: r_ref6
         bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
         bg_opa: COVER
         border_width: 0
@@ -757,9 +759,11 @@ lvgl:
           - globals.set:
               id: g_ref3
               value: !lambda "return 1;"
-          - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
-              w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+          - lambda: !lambda "espcompose::sig_ovrl_ref4_mux.set(0); espcompose::flush();
+              { lv_obj_t* w = id(ovrl_ref4); for(int
+              i=0;i<(int)lv_obj_get_child_count(w);i++)
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+              lv_obj_move_foreground(id(ovrl_ref4));"
         widgets:
           - obj:
               width: 100%
@@ -775,8 +779,8 @@ lvgl:
                 - label:
                     text: Settings
                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                    id: rw_ref6
-      - id: r_ref7
+                    id: rw_ref7
+      - id: r_ref8
         bg_color: !lambda "return espcompose::thm_333e4663_colors_background.get();"
         bg_opa: COVER
         border_width: 0
@@ -786,9 +790,11 @@ lvgl:
           - globals.set:
               id: g_ref3
               value: !lambda "return 2;"
-          - lambda: !lambda "espcompose::sig__mux.set(-1); espcompose::flush(); { lv_obj_t*
-              w = id(); for(int i=0;i<(int)lv_obj_get_child_count(w);i++)
-              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }"
+          - lambda: !lambda "espcompose::sig_ovrl_ref4_mux.set(0); espcompose::flush();
+              { lv_obj_t* w = id(ovrl_ref4); for(int
+              i=0;i<(int)lv_obj_get_child_count(w);i++)
+              lv_obj_clear_flag(lv_obj_get_child(w,i),LV_OBJ_FLAG_HIDDEN); }
+              lv_obj_move_foreground(id(ovrl_ref4));"
         widgets:
           - obj:
               width: 100%
@@ -804,11 +810,11 @@ lvgl:
                 - label:
                     text: About
                     text_color: !lambda "return espcompose::thm_333e4663_colors_textPrimary.get();"
-                    id: rw_ref8
+                    id: rw_ref9
     top_layer:
       widgets:
         - obj:
-            id: overlay_tier_ref9
+            id: overlay_tier_ref10
             width: 100%
             height: 100%
             bg_opa: TRANSP
@@ -817,7 +823,7 @@ lvgl:
             clickable: false
             widgets:
               - obj:
-                  id: ovrl_ref10
+                  id: ovrl_ref4
                   width: 100%
                   height: 100%
                   bg_opa: TRANSP
@@ -862,7 +868,7 @@ lvgl:
                           - button:
                               on_press:
                                 - lvgl.page.show:
-                                    id: r_ref5
+                                    id: r_ref6
                               bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               bg_opa: COVER
                               height: 36
@@ -884,7 +890,7 @@ lvgl:
                           - button:
                               on_press:
                                 - lvgl.page.show:
-                                    id: r_ref7
+                                    id: r_ref8
                               bg_color: !lambda "return espcompose::thm_333e4663_colors_primary_bg.get();"
                               bg_opa: COVER
                               height: 36

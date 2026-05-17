@@ -28,6 +28,7 @@ export { useTransientOverlay } from './useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './useTransientOverlay';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './overlay-fingerprint';
 export { useAttachedTrigger } from './useAttachedTrigger';
+export { useAttachedTimeoutTrigger } from './useAttachedTimeoutTrigger';
 export { useStyleTransition } from './useStyleTransition';
 export { useAnimateTransition } from './useAnimateTransition';
 export type { AnimateTransitionOptions } from './useAnimateTransition';
