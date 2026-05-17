@@ -69,7 +69,7 @@ export function useDialog(factory: DialogFactory, options?: DialogOptions): Dial
   // Get tier from context (Dialog.Provider) or create a fallback tier
   const contextTier = useContext(DialogTierContext);
   const tier = contextTier ?? useOverlayTier(
-    { zOrder: 0 },
+    { zOrder: 50 },
     <Backdrop
       style={{
         width: '100%',
