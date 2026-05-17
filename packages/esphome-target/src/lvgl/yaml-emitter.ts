@@ -154,24 +154,34 @@ export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringC
     for (const tier of tree.overlays) {
       const overlayContainerWidgets: Record<string, unknown>[] = [];
 
+      // Track whether any overlay in this tier starts visible — if so,
+      // the shared tier wrapper should also start visible.
+      const tierHasInitiallyVisible = tier.overlays.some(o => o.initiallyVisible);
+
       // Emit shared tier wrapper widget as first child, hidden initially
+      // unless at least one overlay in the tier is initially visible.
       if (tier.wrapperWidget) {
         const wrapperYaml = lowerLvglWidget(tier.wrapperWidget, ctx);
         // Inject hidden flag and tier wrapper ID into the lowered wrapper
         const wrapperKey = Object.keys(wrapperYaml)[0];
         const wrapperProps = wrapperYaml[wrapperKey] as Record<string, unknown>;
         wrapperProps.id = `tw_${tier.tierKey}`;
-        wrapperProps.hidden = true;
+        if (!tierHasInitiallyVisible) {
+          wrapperProps.hidden = true;
+        }
         overlayContainerWidgets.push(wrapperYaml);
       }
 
       for (const overlay of tier.overlays) {
-        // Each content child gets hidden: true; the wrapper obj stays always-visible
+        // Each content child gets hidden: true unless initiallyVisible;
+        // the wrapper obj stays always-visible.
         const widgets = overlay.widgets.map(w => {
           const lowered = lowerLvglWidget(w, ctx);
-          const key = Object.keys(lowered)[0];
-          const props = lowered[key] as Record<string, unknown>;
-          props.hidden = true;
+          if (!overlay.initiallyVisible) {
+            const key = Object.keys(lowered)[0];
+            const props = lowered[key] as Record<string, unknown>;
+            props.hidden = true;
+          }
           return lowered;
         });
         overlayContainerWidgets.push({

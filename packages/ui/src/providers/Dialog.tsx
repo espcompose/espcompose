@@ -43,7 +43,7 @@ export interface DialogProviderProps {
 function DialogProvider(props: DialogProviderProps): EspComposeElement {
   const { maxDepth = 1, children } = props;
   const tier = useOverlayTier(
-    { zOrder: 0 },
+    { zOrder: 50 },
     <Backdrop
       style={{
         width: '100%',

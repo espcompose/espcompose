@@ -39,6 +39,8 @@ export interface IROverlayContainer {
   readonly kind: 'overlay_container';
   /** Stable template key for the overlay definition. */
   readonly templateKey: string;
+  /** When `true`, content children start visible (no hidden flag at boot). */
+  readonly initiallyVisible: boolean;
   /** Instance-0 widgets to render inside the overlay container. */
   readonly widgets: IRWidget[];
 }

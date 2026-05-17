@@ -708,7 +708,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
               // Only emit instance 0's widgets into the tier container; others
               // contribute only their captured bindings/actions for the mux pass.
               if (instance.index === 0) {
-                tierEntry!.overlays.push({ templateKey: def.templateKey, widgets: widgetIR });
+                tierEntry!.overlays.push({ templateKey: def.templateKey, widgets: widgetIR, initiallyVisible: def.initiallyVisible });
               }
               return null;
             }),

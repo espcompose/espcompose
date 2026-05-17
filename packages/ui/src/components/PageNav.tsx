@@ -145,6 +145,7 @@ export const PageNav = createLvglWidget<PageNavProps>(
           padding: 4,
           backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
           borderWidth: props.style?.borderWidth ?? 0,
+          ...props.style
         }}
       >
         {buttons}

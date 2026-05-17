@@ -151,6 +151,8 @@ export interface OverlayDefinition {
   readonly zOrder: number;
   /** Deterministic tier key from useOverlayTier(). */
   readonly tierKey: string;
+  /** When `true`, the overlay content starts visible (not hidden) on boot. */
+  readonly initiallyVisible: boolean;
   /** Per-instance records, accumulated across all callers. */
   readonly instances: OverlayInstance[];
 }
@@ -165,6 +167,17 @@ export interface OverlayConfig {
    * child-level visibility toggling.
    */
   tier: OverlayTierHandle;
+
+  /**
+   * When `true`, the overlay starts visible on boot (instance 0's content
+   * is shown without requiring an explicit `show()` call).
+   *
+   * The mux signal defaults to instance 0, so reactive bindings are
+   * correct immediately. The tier wrapper (if any) is also visible.
+   *
+   * @default false
+   */
+  initiallyVisible?: boolean;
 }
 
 // ── Overlay payload global declarations ──────────────────────────────────────
@@ -305,7 +318,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, lvgl: lvglId, zOrder, tierKey, instances: [] };
+    def = { templateKey: safeKey, lvgl: lvglId, zOrder, tierKey, initiallyVisible: config.initiallyVisible === true, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 
