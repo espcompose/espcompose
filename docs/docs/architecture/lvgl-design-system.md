@@ -280,7 +280,7 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 | `useScript(fn)` | Define a named ESPHome script from an async arrow function |
 | `useImage(props)` | Register an image asset |
 | `useFont(props)` | Register a font asset |
-| `usePopup(factory)` | Create a modal popup overlay; returns a controller with `.show()` / `.dismiss()` |
+| `useDialog(factory, options?)` | Create a modal dialog overlay; returns a controller with `.show()` / `.hide()` |
 | `useToast()` | Access the nearest `Toast.Provider` controller; call `.show({ msg })` to trigger |
 
 ---
@@ -325,10 +325,10 @@ useMemo(() => sensor.isOn ? "On" : "Off")
 
 | Component | Description | Key Props |
 |-----------|-------------|-----------|
-| `Popup` | Modal overlay with backdrop | `padding`, `radius`, `gap`, `backdropOpacity`, `onBackdropPress` |
+| `Dialog.Provider` | Dialog stacking provider | `maxDepth` |
 | `Toast.Provider` | Bottom-anchored notification system | `autoHide`, `maxVisible`, `overflow`, `slotHeight` |
 
-Hooks: `usePopup(factory)` returns a controller with `.show()` / `.dismiss()`. `useToast()` returns a controller with `.show({ msg })` / `.hide()`.
+Hooks: `useDialog(factory, options?)` returns a controller with `.show()` / `.hide()`. `useToast()` returns a controller with `.show({ msg })` / `.hide()`.
 
 ---
 

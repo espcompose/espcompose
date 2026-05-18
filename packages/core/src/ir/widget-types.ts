@@ -39,6 +39,8 @@ export interface IROverlayContainer {
   readonly kind: 'overlay_container';
   /** Stable template key for the overlay definition. */
   readonly templateKey: string;
+  /** When `true`, content children start visible (no hidden flag at boot). */
+  readonly initiallyVisible: boolean;
   /** Instance-0 widgets to render inside the overlay container. */
   readonly widgets: IRWidget[];
 }
@@ -49,10 +51,24 @@ export interface IROverlayContainer {
  */
 export interface IROverlayTier {
   readonly kind: 'overlay_tier';
+  /** Deterministic tier key (e.g. 'tier_abc123'). */
+  readonly tierKey: string;
   /** Ascending z-order. */
   readonly zOrder: number;
   /** Overlay containers at this tier. */
   readonly overlays: IROverlayContainer[];
+  /**
+   * Optional wrapper widget emitted once per tier (e.g. a shared backdrop).
+   * Shown when any overlay in the tier is visible; hidden when all are dismissed.
+   */
+  readonly wrapperWidget?: IRWidget;
+  /**
+   * When `true`, overlays in this tier call `lv_obj_move_foreground()` on
+   * show so the most-recently-shown overlay sits above its tier siblings.
+   * When `false`, overlays keep their declared sibling order — cheaper for
+   * entrance animations.
+   */
+  readonly bringToFront: boolean;
 }
 
 // NOTE: IRWidgetTree has been replaced by IRUIRegistry in ./types.ts.

@@ -3,8 +3,8 @@
 //
 // When the action compiler encounters `ctrl.method()` on a
 // CONTROLLER_BRAND-typed value, it emits `controller_method_call` IR.
-// At resolution time, `resolveControllerMethodCalls` checks `__scripts`
-// first (standard `useController()` path). If that fails, it falls back
+// At resolution time, `resolveControllerMethodCalls` checks
+// `CONTROLLER_SCRIPTS` first (standard `useController()` path). If that fails, it falls back
 // to this protocol symbol — any runtime value that implements
 // `RESOLVE_METHOD_CALL` can self-resolve its method calls into domain-
 // specific IR actions (e.g. overlay show/hide, future controller types).
@@ -35,3 +35,10 @@ export const RESOLVE_METHOD_CALL: unique symbol = Symbol('resolve_method_call');
 export interface MethodCallResolvable {
   [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[];
 }
+
+/**
+ * Symbol-keyed script map, attached to controller objects by
+ * `useController()`. The resolve pass reads this to map
+ * `controller_method_call` IR → `script_execute` IR.
+ */
+export const CONTROLLER_SCRIPTS: unique symbol = Symbol('controller.scripts');

@@ -9,7 +9,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import yaml from 'yaml';
-import type { ComposeTarget, EmitRequest, EmitResult } from '@espcompose/core/internals';
+import type { ComposeTarget, EmitRequest, EmitResult, OverlayDefinition, IRBinding, IRReactiveNode } from '@espcompose/core/internals';
 import { lowerToYamlConfig } from './lower-yaml.js';
 import { generateCppFromIR } from './codegen';
 import { resolveAssets } from './assets.js';
@@ -21,14 +21,14 @@ export function createEsphomeTarget(): ComposeTarget {
     name: 'esphome',
 
   async emit(request: EmitRequest): Promise<EmitResult> {
-    const { ir, outDir, sourceDir, secrets, overlays } = request;
+    const { ir, outDir, sourceDir, secrets, overlays, perf } = request;
     const files: string[] = [];
 
     // ── Remap semantic entity IDs → ESPHome target IDs ──────────────────
     // Core mints deterministic semantic IDs during render; we remap them
     // here so all downstream code sees target-specific IDs.
     const { semanticToTarget, remappedEntities } = buildEntityIdMap([...ir.entities]);
-    remapEntityIdsInIR(ir, semanticToTarget);
+    remapEntityIdsInIR(ir, semanticToTarget, overlays);
 
     // ── Generate C++ headers from semantic IR ───────────────────────────
     const cppResult = generateCppFromIR(ir, overlays, remappedEntities);
@@ -47,7 +47,7 @@ export function createEsphomeTarget(): ComposeTarget {
     // __dirname resolves to dist/ when bundled into the CLI (prebuild copies assets there)
     // or to src/ when running from source under vitest — both use ../assets/.
     const assetsDir = path.resolve(__dirname, '..', 'assets', 'external-component');
-    for (const assetFile of ['__init__.py', 'espcompose_runtime.h', 'espcompose_runtime.cpp', 'espcompose_reactive.h']) {
+    for (const assetFile of ['__init__.py', 'espcompose_runtime.h', 'espcompose_runtime.cpp', 'espcompose_reactive.h', 'espcompose_animate.h']) {
       const src = path.join(assetsDir, assetFile);
       if (fs.existsSync(src)) {
         const dest = path.join(componentDestDir, assetFile);
@@ -61,6 +61,7 @@ export function createEsphomeTarget(): ComposeTarget {
     // separate translation unit that cannot see the widget ID globals declared
     // in main.cpp.  Using esphome.includes: places the header into main.cpp's
     // compilation context where all id() references resolve correctly.
+
     if (cppResult) {
       const bindingsPath = path.join(outDir, 'espcompose_bindings.h');
       fs.writeFileSync(bindingsPath, cppResult.bindingsHeaderContent, 'utf8');
@@ -68,7 +69,7 @@ export function createEsphomeTarget(): ComposeTarget {
     }
 
     // ── Lower semantic IR to YAML config ────────────────────────────────
-    const finalConfig = lowerToYamlConfig(ir, cppResult);
+    const finalConfig = lowerToYamlConfig(ir, cppResult, { perf });
 
     // ── Emit native lvgl.canvas draw actions for ec-canvas scenes ───────
     injectEcCanvasDrawActions(finalConfig as Record<string, unknown>, paintScenes);
@@ -113,17 +114,18 @@ import type { SemanticIR } from '@espcompose/core/internals';
  * provided mapping. Also rewrites `IRHAEntity.semanticId` to the target ID
  * so downstream code can use it as the ESPHome component `id:` field.
  */
-function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string>): void {
+function remapEntityIdsInIR(
+  ir: SemanticIR,
+  semanticToTarget: Map<string, string>,
+  overlays?: readonly OverlayDefinition[],
+): void {
   if (semanticToTarget.size === 0) return;
 
   function remap(id: string): string {
     return semanticToTarget.get(id) ?? id;
   }
 
-  // Remap reactive nodes (memos + effects)
-  // Cast to mutable — we intentionally mutate IR in-place before codegen
-  const allNodes = [...ir.reactives.memos, ...ir.reactives.effects];
-  for (const node of allNodes) {
+  function remapNode(node: IRReactiveNode): void {
     if (node.sourceId) (node as { sourceId: string }).sourceId = remap(node.sourceId);
     if (node.dependencies) {
       for (const dep of node.dependencies) {
@@ -134,14 +136,36 @@ function remapEntityIdsInIR(ir: SemanticIR, semanticToTarget: Map<string, string
     }
   }
 
-  // Remap bindings
-  for (const binding of ir.reactives.bindings) {
+  function remapBinding(binding: IRBinding): void {
     const expr = binding.expression;
     if (expr.sourceId) (expr as { sourceId: string }).sourceId = remap(expr.sourceId);
     if (expr.dependencies) {
       for (const dep of expr.dependencies) {
         if (dep.sourceId && dep.sourceType === 'ha_entity') {
           (dep as { sourceId: string }).sourceId = remap(dep.sourceId);
+        }
+      }
+    }
+  }
+
+  // Remap top-level reactive nodes (memos + effects)
+  for (const node of ir.reactives.memos) remapNode(node);
+  for (const node of ir.reactives.effects) remapNode(node);
+
+  // Remap top-level bindings
+  for (const binding of ir.reactives.bindings) remapBinding(binding);
+
+  // Remap overlay-captured bindings and reactive nodes — these live on
+  // OverlayInstance objects (outside ir.reactives) and are merged in by
+  // generateCppFromIR via processOverlayMux.
+  if (overlays) {
+    for (const def of overlays) {
+      for (const inst of def.instances) {
+        if (inst.capturedBindings) {
+          for (const binding of inst.capturedBindings) remapBinding(binding);
+        }
+        if (inst.capturedReactiveNodes) {
+          for (const node of inst.capturedReactiveNodes) remapNode(node);
         }
       }
     }

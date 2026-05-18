@@ -7,8 +7,11 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { IRReactiveNode, isIRReactiveNode } from './node';
+import type { IRDependency } from './node';
 import { __espcompose } from './compiler-plumbing';
-import { irCall } from '../ir/expr-builders';
+import { irCall, irTernary, irBinary, irLiteralExpression } from '../ir/expr-builders';
+import type { IRExpression, ExprType } from '../ir/expr-types';
+import { inferExprType } from '../lvgl/theme/signals';
 import type { TriggerHandler, BINDING_BRAND, EspComposeElement } from '../types';
 import type { CssStyleProps } from '../lvgl/style';
 
@@ -88,11 +91,21 @@ export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
 // ── useReactiveMap ─────────────────────────────────────────────────────────
 
 /**
+ * Compiler-injected metadata for union expansion.
+ * @internal — never constructed by user code.
+ */
+interface UseReactiveMapCompilerMetadata<T> {
+  unionMembers: T[];
+}
+
+/**
  * Map a `Reactive<T>` prop through a pure function, returning a reactive
  * result when the input is reactive.
  *
- * Encapsulates the common `useReactive` → `isIRReactiveNode` → `useMemo`
- * pattern so that hook authors never need to deal with the branch manually.
+ * When `T` is a finite string literal union and the input is reactive, the
+ * compiler injects `$compilerMetadata` (typed `never` to prevent user use)
+ * containing union members. The runtime calls `fn` for each member and builds
+ * a chained ternary `derivedMemo`.
  *
  * @example
  * export function useSpacing(value: Reactive<SpacingToken>): Signal<number> {
@@ -102,12 +115,119 @@ export function useReactive<T>(prop: Reactive<T>): T | IRReactiveNode<T> {
 export function useReactiveMap<T, R>(
   prop: Reactive<T>,
   fn: (value: T) => R,
+  $compilerMetadata?: never,
 ): R {
   const resolved = useReactive(prop);
   if (isIRReactiveNode(resolved)) {
-    return fn((resolved as IRReactiveNode<T>).get()) as R;
+    if ($compilerMetadata !== undefined) {
+      return expandReactiveUnion(resolved as IRReactiveNode, fn, $compilerMetadata as unknown as UseReactiveMapCompilerMetadata<T>);
+    }
+    const node = resolved as IRReactiveNode;
+    const source = node.dependencies.length > 0
+      ? ` (source: ${node.dependencies.map(d => d.sourceId).join(', ')})`
+      : '';
+    throw new Error(
+      `useReactiveMap() received a reactive (Signal) input${source}. ` +
+      `The mapper function cannot produce a reactive result — it evaluates once ` +
+      `with a static default and freezes to a single theme/value path. ` +
+      `Use separate useMemo() calls per output value instead.`,
+    );
   }
   return fn(resolved as T);
+}
+
+/**
+ * Build a chained ternary `derivedMemo` by evaluating `fn` for each union member.
+ *
+ * For members `['primary', 'secondary', 'danger']`, generates:
+ * ```
+ * input == 'primary' ? fn('primary')
+ *   : input == 'secondary' ? fn('secondary')
+ *   : fn('danger')
+ * ```
+ */
+function expandReactiveUnion<T, R>(
+  inputNode: IRReactiveNode,
+  fn: (value: T) => R,
+  meta: UseReactiveMapCompilerMetadata<T>,
+): R {
+  const { unionMembers } = meta;
+  if (unionMembers.length === 0) {
+    throw new Error('useReactiveMap: $compilerMetadata.unionMembers is empty.');
+  }
+
+  const inputIR = inputNode.exprIR;
+  if (!inputIR) {
+    throw new Error('useReactiveMap: reactive input has no exprIR — cannot build union expansion.');
+  }
+
+  // Evaluate fn for each union member, collecting results + their IR
+  const branches: { member: T; result: R; exprIR: IRExpression; deps: IRDependency[] }[] = [];
+  for (const member of unionMembers) {
+    const result = fn(member);
+    const { exprIR, deps } = extractResultIR(result, member);
+    branches.push({ member, result, exprIR, deps });
+  }
+
+  // Determine exprType from the first result
+  const exprType = inferResultExprType(branches[0].result);
+
+  // Build chained ternary from back to front:
+  // last branch is the fallback (no condition)
+  let chain: IRExpression = branches[branches.length - 1].exprIR;
+  for (let i = branches.length - 2; i >= 0; i--) {
+    const b = branches[i];
+    const test = irBinary('==', inputIR, irLiteralExpression(b.member as string));
+    chain = irTernary(test, b.exprIR, chain);
+  }
+
+  // Merge all dependencies
+  const allDeps: IRDependency[] = [...inputNode.dependencies];
+  for (const b of branches) {
+    for (const dep of b.deps) {
+      if (!allDeps.some(d => d.sourceId === dep.sourceId && d.sourceType === dep.sourceType && d.themePath === dep.themePath)) {
+        allDeps.push(dep);
+      }
+    }
+  }
+
+  return __espcompose.derivedMemo<R>({
+    exprType,
+    dependencies: allDeps,
+    exprIR: chain,
+  }) as unknown as R;
+}
+
+/** Extract the ExprIR and dependencies from a mapper result (IRReactiveNode or primitive). */
+function extractResultIR<T>(result: unknown, member: T): { exprIR: IRExpression; deps: IRDependency[] } {
+  if (result instanceof IRReactiveNode) {
+    const ir = result.exprIR;
+    if (!ir) {
+      throw new Error(
+        `useReactiveMap: fn(${JSON.stringify(member)}) returned an IRReactiveNode with no exprIR.`,
+      );
+    }
+    return { exprIR: ir, deps: result.dependencies };
+  }
+  // Plain primitive — wrap as literal
+  if (typeof result === 'string' || typeof result === 'number' || typeof result === 'boolean') {
+    return { exprIR: irLiteralExpression(result), deps: [] };
+  }
+  throw new Error(
+    `useReactiveMap: fn(${JSON.stringify(member)}) returned an unsupported value of type ${typeof result}. ` +
+    `Expected an IRReactiveNode or a primitive (string/number/boolean).`,
+  );
+}
+
+/** Infer ExprType from a mapper result. */
+function inferResultExprType(result: unknown): ExprType {
+  if (result instanceof IRReactiveNode) {
+    if (!result.exprType) {
+      throw new Error('useReactiveMap: mapper returned an IRReactiveNode with no exprType.');
+    }
+    return result.exprType;
+  }
+  return inferExprType(result) as ExprType;
 }
 
 // ── reactiveIsNaN ──────────────────────────────────────────────────────────

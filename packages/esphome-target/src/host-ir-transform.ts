@@ -76,6 +76,9 @@ const HOST_ALLOWED_SECTIONS = new Set([
   'script',
   'interval',
   'on_boot',
+
+  // Networking (host platform supports these)
+  'http_request',
 ]);
 
 // ── Known display model → dimensions ────────────────────────────────────

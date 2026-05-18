@@ -89,6 +89,7 @@ export type {
   DisplayRef,
   FontRef,
   ImageRef,
+  OnlineImageRef,
   LvglComponentRef,
   TouchscreenRef,
   LvglWidgetRef,
@@ -165,10 +166,12 @@ export { useHAEntity } from './hooks/useHAEntity';
 export type { LightBinding, SensorBinding, BinarySensorBinding, SwitchBinding, FanBinding, CoverBinding } from './entity/bindings';
 export { useImage } from './hooks/useImage';
 export type { ImageProps } from './generated/components/image';
+export { useOnlineImage } from './hooks/useOnlineImage';
+export type { UseOnlineImageOptions } from './hooks/useOnlineImage';
 export { useFont } from './hooks/useFont';
 export type { FontProps } from './generated/components/font';
 export { useScript } from './hooks/useScript';
-export type { ScriptOptions } from './hooks/useScript';
+export type { ScriptOptions, ScriptHandle } from './hooks/useScript';
 export type { ScriptMode } from './ir/types';
 export type { Int } from './types';
 export { useMemo } from './hooks/useMemo';
@@ -181,13 +184,21 @@ export type { GlobalHandle, TransientOverlayContext } from './hooks/global-share
 export { forwardOverlayPayloadMeta } from './hooks/global-shared';
 export { useOverlay } from './hooks/useOverlay';
 export type { OverlayController, OverlayFactory, OverlayConfig, OverlayPayloadGlobalDecl } from './hooks/useOverlay';
+export { useOverlayTier } from './hooks/useOverlayTier';
+export type { OverlayTierConfig, OverlayTierHandle } from './hooks/useOverlayTier';
 export { useTransientOverlay } from './hooks/useTransientOverlay';
 export type { TransientOverlayConfig, TransientOverlayFactory, TransientOverlayController } from './hooks/useTransientOverlay';
 export { useVisibility } from './hooks/useVisibility';
 export type { VisibilityOptions } from './hooks/useVisibility';
+export { useVisibilityStack, withVisibilityStack } from './hooks/useVisibilityStack';
+export type { VisibilityStackHandle, VisibilityStackConfig } from './hooks/useVisibilityStack';
 export { useController } from './hooks/useController';
 export type { Controller, ControllerScriptMap } from './hooks/useController';
 export { useAttachedTrigger } from './hooks/useAttachedTrigger';
+export { useAttachedTimeoutTrigger } from './hooks/useAttachedTimeoutTrigger';
+export { useStyleTransition } from './hooks/useStyleTransition';
+export { useAnimateTransition } from './hooks/useAnimateTransition';
+export type { AnimateTransitionOptions } from './hooks/useAnimateTransition';
 export { createContext, useContext } from './hooks/useContext';
 export type { Context } from './hooks/useContext';
 
@@ -196,6 +207,8 @@ export type { Context } from './hooks/useContext';
 // ────────────────────────────────────────────────────────────────────────────
 
 export { delay, logger, lambda } from './actions/primitives';
+export { animate } from './actions/animate';
+export type { AnimateConfig } from './actions/animate';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Secrets
@@ -217,9 +230,11 @@ export type { Signal } from './reactive/node';
 export { createTheme } from './lvgl/theme/create-theme';
 export type { ThemeHandle, ThemeProviderProps } from './lvgl/theme/create-theme';
 export { createFontToken, isFontToken } from './lvgl/theme/font-token';
-export type { FontToken, FontBpp } from './lvgl/theme/font-token';
+export type { FontToken, FontBpp, FontTokenExtras, FontTokenOptions } from './lvgl/theme/font-token';
 export { isHexColor } from './lvgl/theme/hex-color';
 export type { HexColor } from './lvgl/theme/hex-color';
+export { isDurationValue, parseDurationToMs } from './lvgl/style/duration';
+export type { DurationValue } from './lvgl/style/duration';
 export { useThemeSettings } from './lvgl/theme/settings-context';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -246,8 +261,9 @@ export type {
 // Public API — CSS-like Style System
 // ────────────────────────────────────────────────────────────────────────────
 
-export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage } from './lvgl/style/types';
+export type { CssStyleProps, CssAliasProps, CssStyle, LvglStateName, LvglPartName, SizeValue, Percentage, OpacityValue, StyleTransitionDescriptor } from './lvgl/style/types';
 export { expandCssStyle } from './lvgl/style/mapping';
+export { resolveTransitionDescriptors } from './lvgl/style/resolve-transition';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Public API — Wireframe

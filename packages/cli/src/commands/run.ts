@@ -17,6 +17,7 @@ export function registerRunCommand(program: Command) {
     .option('--host', 'Target the ESPHome host platform with SDL2 display instead of physical hardware')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
     .option('--dump-ir', 'Write semantic-ir.json debug dump to the output directory')
+    .option('--perf', 'Enable on-device performance instrumentation (LVGL perf monitor, action/flush timing)')
     .option('--width <px>', 'Override SDL display width (only with --host)', parseInt)
     .option('--height <px>', 'Override SDL display height (only with --host)', parseInt)
     .action(withErrorHandler('Run', async (projectDir?: string, opts?: {
@@ -25,6 +26,7 @@ export function registerRunCommand(program: Command) {
       host?: boolean;
       wireframe?: boolean;
       dumpIr?: boolean;
+      perf?: boolean;
       width?: number;
       height?: number;
     }) => {
@@ -38,7 +40,7 @@ export function registerRunCommand(program: Command) {
         const { transformIRForHost } = await import('@espcompose/esphome-target');
 
         console.log(`Compiling ${resolvedDir} for ESPHome host platform…`);
-        const executeResult = await compileToIR(resolvedDir, createEsphomeTarget(), { wireframe: opts?.wireframe, debug: opts?.debug });
+        const executeResult = await compileToIR(resolvedDir, createEsphomeTarget(), { wireframe: opts?.wireframe, debug: opts?.debug, perf: opts?.perf });
         const hostIR = transformIRForHost(executeResult.ir, {
           width: opts.width,
           height: opts.height,
@@ -65,6 +67,7 @@ export function registerRunCommand(program: Command) {
           projectDir: resolvedDir,
           outDir,
           sourceDir,
+          perf: opts?.perf,
         });
         console.log(`✓ Written to ${yamlPath}`);
 
@@ -73,7 +76,7 @@ export function registerRunCommand(program: Command) {
       } else {
         // Standard mode: transpile → run on device
         const { build } = await import('../compiler');
-        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr });
+        const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr, perf: opts?.perf });
         if (opts?.metrics) printMetrics(result);
         console.log('Running esphome run…');
         await esphomeRun(yamlPath, extraArgs);

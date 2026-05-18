@@ -1,18 +1,18 @@
 /**
  * E2E project: popup-multi-device
  *
- * Validates the popup system with many instances (>5) of the same component,
+ * Validates the dialog system with many instances (>5) of the same component,
  * each bound to a different HA entity.  This is the "light switch grid"
- * pattern where a single popup definition is shared across all instances.
+ * pattern where a single dialog definition is shared across all instances.
  *
  * Critical pattern: the entity binding is created OUTSIDE the component
- * (via useHAEntity in the parent) and passed in as a prop.  The popup
+ * (via useHAEntity in the parent) and passed in as a prop.  The dialog
  * closure captures props.entity — NOT a locally-created entity.  This is
  * the exact pattern from the demo project that triggers the memo name
  * leak bug.
  *
  * Regression target: the YAML backend must reference the correct sequential
- * C++ memo names (memo_0, memo_1, …) for popup widget bindings, NOT the
+ * C++ memo names (memo_0, memo_1, …) for dialog widget bindings, NOT the
  * raw IRReactiveNode nodeId.  With the old code-path the YAML emitted
  * `espcompose::memo_<randomId>.get()` which doesn't exist in the bindings
  * header — a hard C++ compile error.
@@ -33,9 +33,8 @@ import {
   Text,
   Button,
   Switch,
-  Popup,
   UITheme,
-  usePopup,
+  useDialog,
 } from '@espcompose/ui';
 
 // ── Reusable component with a popup ──────────────────────────────────────
@@ -48,19 +47,19 @@ type LightSwitchProps = WidgetProps<{
 }>;
 
 const LightSwitch = createLvglWidget<LightSwitchProps>((props) => {
-  const popup = usePopup((ctrl) => (
-    <Popup onBackdropPress={() => { ctrl.hide(); }}>
+  const dialog = useDialog((ctrl) => (
+    <>
       <Text text="Control" />
       <Button text="Toggle" onPress={() => { props.entity.toggle(); }} />
       <Button text="Close" onPress={() => { ctrl.hide(); }} />
-    </Popup>
+    </>
   ));
 
   return (
     <HStack align="spaceBetween" crossAlign="center">
       <Text text={props.text} />
       <Switch value={props.entity.isOn} onChange={() => { props.entity.toggle(); }} />
-      <Button text="…" size="xs" onPress={() => { popup.show(); }} />
+      <Button text="…" size="xs" onPress={() => { dialog.show(); }} />
     </HStack>
   );
 });

@@ -31,6 +31,8 @@ export interface PhaseContext {
   wireframe?: boolean;
   /** When true, write a `semantic-ir.json` debug dump to the output directory. */
   dumpIR?: boolean;
+  /** When true, enable on-device performance instrumentation. */
+  perf?: boolean;
 
   // ── Emit options (set before the pipeline when emit phase is included) ──
 

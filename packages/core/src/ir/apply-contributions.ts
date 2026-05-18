@@ -11,9 +11,9 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { SemanticIR, IRAction, IRValue, IRObject } from './types';
-import { irAction } from './types';
+import { irAction, irArray, irObject, irEntry, irScalar } from './types';
 import type { IRWidget } from './widget-types';
-import type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+import type { ComponentContribution, AttachTriggerContribution, AttachTimeoutTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
 
 // ── ContributionTarget ─────────────────────────────────────────────────────
 //
@@ -69,8 +69,10 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
   const targets = new Map<string, ContributionTarget>();
   collectWidgetTargets(ir, targets);
   collectSectionTargets(ir, targets);
+  collectUIRegistryTargets(ir, targets);
+  collectComponentTargets(ir, targets);
 
-  if (targets.size === 0) return;
+  // ── Attach-trigger contributions ───────────────────────────────────────
 
   // Group attach-trigger contributions by (targetRef, event) and sort by sourceId.
   const triggerContributions = contributions.filter(
@@ -120,6 +122,125 @@ export function applyContributions(ir: SemanticIR, contributions: ComponentContr
     // If the prop exists but is neither 'action' nor 'null', it's unexpected.
     // Leave it alone — could be a reactive binding or other non-action value.
   }
+
+  // ── Attach-style-transition contributions ────────────────────────────────
+
+  const transitionContributions = contributions.filter(
+    (c): c is AttachStyleTransitionContribution => c.kind === 'attach-style-transition',
+  );
+
+  if (transitionContributions.length > 0) {
+    // Sort by sourceId for deterministic output.
+    transitionContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    for (const c of transitionContributions) {
+      // Verify the target exists in the collected targets.
+      if (!targets.has(c.targetRef)) {
+        console.warn(
+          `[espcompose] useStyleTransition: target ref "${c.targetRef}" not found in IR tree. ` +
+          `Contribution from "${c.sourceId}" will be ignored.`,
+        );
+        continue;
+      }
+
+      // Push to the first UI registry (style transitions are global to the display).
+      const ui = ir.uis[0];
+      if (!ui) continue;
+
+      (ui.styleTransitions as IRStyleTransition[]).push({
+        kind: 'style_transition',
+        targetRef: c.targetRef,
+        part: c.part,
+        state: c.state,
+        descriptors: c.descriptors,
+      });
+    }
+  }
+
+  // ── Attach-animate-transition contributions ──────────────────────────────
+
+  const animateTransitionContributions = contributions.filter(
+    (c): c is AttachAnimateTransitionContribution => c.kind === 'attach-animate-transition',
+  );
+
+  if (animateTransitionContributions.length > 0) {
+    // Sort by sourceId for deterministic output.
+    animateTransitionContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    for (const c of animateTransitionContributions) {
+      if (!targets.has(c.targetRef)) {
+        console.warn(
+          `[espcompose] useAnimateTransition: target ref "${c.targetRef}" not found in IR tree. ` +
+          `Contribution from "${c.sourceId}" will be ignored.`,
+        );
+        continue;
+      }
+
+      const ui = ir.uis[0];
+      if (!ui) continue;
+
+      (ui.animateTransitions as IRAnimateTransition[]).push({
+        kind: 'animate_transition',
+        targetRef: c.targetRef,
+        property: c.property,
+        durationMs: c.durationMs,
+        easing: c.easing,
+        direction: c.direction,
+      });
+    }
+  }
+
+  // ── Attach-timeout-trigger contributions ─────────────────────────────────
+
+  const timeoutTriggerContributions = contributions.filter(
+    (c): c is AttachTimeoutTriggerContribution => c.kind === 'attach-timeout-trigger',
+  );
+
+  if (timeoutTriggerContributions.length > 0) {
+    // Sort by sourceId for deterministic ordering.
+    timeoutTriggerContributions.sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+
+    // Group by (targetRef, event).
+    const groups = new Map<string, AttachTimeoutTriggerContribution[]>();
+    for (const c of timeoutTriggerContributions) {
+      const key = `${c.targetRef}:${c.event}`;
+      let list = groups.get(key);
+      if (!list) {
+        list = [];
+        groups.set(key, list);
+      }
+      list.push(c);
+    }
+
+    // Build a structured IRArray for each (targetRef, event) group.
+    for (const [key, contribs] of groups) {
+      const [targetRef, event] = splitKey(key);
+      const target = targets.get(targetRef);
+      if (!target) {
+        console.warn(
+          `[espcompose] useAttachedTimeoutTrigger: target ref "${targetRef}" not found in IR tree. ` +
+          `Contribution to "${event}" from [${contribs.map(c => c.sourceId).join(', ')}] will be ignored.`,
+        );
+        continue;
+      }
+
+      // Each contribution becomes one { timeout, then } entry.
+      const items = contribs.map(c =>
+        irObject([
+          irEntry('timeout', irScalar(c.timeout)),
+          irEntry('then', irAction(c.actions)),
+        ]),
+      );
+
+      // Append to any existing structured trigger array.
+      const existing = target.getIRValue(event);
+      if (existing && existing.kind === 'array') {
+        (existing as { items: IRValue[] }).items.push(...items);
+      } else {
+        target.setIRValue(event, irArray(items));
+      }
+    }
+  }
 }
 
 // ── Target collection ──────────────────────────────────────────────────────
@@ -156,6 +277,40 @@ function collectWidgetsRecursive(widgets: readonly IRWidget[], map: Map<string, 
 function collectSectionTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
   for (const section of ir.sections) {
     collectIRValueTargets(section.value, map);
+  }
+}
+
+/**
+ * Collect UIRegistry (LVGL component) instances as contribution targets.
+ *
+ * Each `IRUIRegistry.lvgl` ref token maps to a target that reads/writes
+ * entries in the registry's `config` dict, enabling `useAttachedTrigger`
+ * and `useAttachedTimeoutTrigger` to contribute triggers to the top-level
+ * LVGL component (e.g. `on_idle`, `on_resume`).
+ */
+function collectUIRegistryTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
+  for (const ui of ir.uis) {
+    const config = ui.config as Record<string, IRValue>;
+    map.set(ui.lvgl, {
+      getIRValue(event) { return config[event]; },
+      setIRValue(event, value) { config[event] = value; },
+    });
+  }
+}
+
+/**
+ * Collect component definitions (online_image, globals, etc.) as contribution targets.
+ * Each component whose config contains an `id` entry with an IRRef is indexed.
+ */
+function collectComponentTargets(ir: SemanticIR, map: Map<string, ContributionTarget>): void {
+  for (const comp of ir.components) {
+    const config = comp.config;
+    if (config.kind === 'object') {
+      const idEntry = (config as IRObject).entries.find(e => e.key === 'id');
+      if (idEntry && idEntry.value.kind === 'ref') {
+        map.set(idEntry.value.token, sectionObjectTarget(config as IRObject));
+      }
+    }
   }
 }
 

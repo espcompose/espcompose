@@ -19,13 +19,13 @@ import type { Context } from '../hooks';
 import type { LvglComponentRef } from '../component-aliases';
 import { isIRReactiveNode } from '../reactive';
 import type { IRReactiveNode } from '../reactive';
-import { registerReactiveBinding, withReactiveScope, pushHookPath, popHookPath, registerComponent } from '../hooks';
+import { registerReactiveBinding, withReactiveScope, withHookPath, registerComponent } from '../hooks';
 import { peekOverlayDefinitions, assertOverlayStructuralIdentity } from '../hooks';
+import { peekOverlayTierDefinitions } from '../hooks/useOverlayTier';
+import type { OverlayTierDefinition } from '../hooks/useOverlayTier';
 import type { CapturedOverlayAction } from '../hooks';
 import type { IRActionNode } from '../ir/action-types';
-import { resolveOverlayControllerRefs, cleanOverlayControllerRefs } from '../actions';
-import { resolveScriptHandleClosureIndex, cleanScriptHandleRefs } from '../actions';
-import { resolveControllerMethodCalls, cleanControllerRefs } from '../actions';
+import { resolveCompiledActions } from '../actions';
 import { generateId } from '../id';
 import { LVGL_PART_NAMES, LVGL_STATE_NAMES } from './widget-tables';
 import {
@@ -34,7 +34,9 @@ import {
   serializeValuesPreservingKeys,
   setCurrentSource,
 } from '../serialize';
-import { expandCssStyle } from './style';
+import { expandCssStyle, resolveTransitionDescriptors } from './style';
+import type { IRStyleTransition } from '../ir/contribution-types';
+import type { StyleTransitionDescriptor } from './style/types';
 import type { RawIRWidget, RawIRWidgetTree, RawIROverlayContainer, RawIROverlayTier } from '../ir/build';
 
 import { isEcCanvasElement, ecCanvasToPlain } from './canvas/serialize';
@@ -117,13 +119,11 @@ function resolveLvglChildren(
       // Extract ref so it is not passed to the component function, then
       // forward it onto the root element the component returns.
       const { ref, ...propsWithoutRef } = el.props as Record<string, unknown> & { ref?: unknown };
-      pushHookPath(el.type.name || 'anonymous');
-      let result;
-      try {
-        result = el.type(propsWithoutRef as never);
-      } finally {
-        popHookPath();
-      }
+      const result = withHookPath(el.type.name || 'anonymous', () =>
+        (el.type as (props: never) => EspComposeElement | EspComposeElement[] | undefined | null)(
+          propsWithoutRef as never,
+        ),
+      );
       if (result == null) continue;
       const results = Array.isArray(result) ? result : [result];
       let rendered = results;
@@ -266,6 +266,103 @@ function hoistStyleProp(data: Record<string, unknown>): void {
   }
 }
 
+// ── Style transition extraction ────────────────────────────────────────────
+// Module-scoped collector populated during buildLvglWidgetIR/buildLvglPageIR.
+// Reset at the start of each buildLvglWidgetTree() call and drained into
+// RawIRWidgetTree.styleTransitions.
+
+let pendingStyleTransitions: IRStyleTransition[] = [];
+
+/**
+ * Quick check: does `data` or any of its state/part sub-objects contain a
+ * `transition` key?  Used to decide whether to auto-assign an ID.
+ */
+function hasTransitionKey(data: Record<string, unknown>): boolean {
+  if (data.transition !== undefined) return true;
+  for (const key of Object.keys(data)) {
+    if (!LVGL_STATE_NAMES.has(key) && !LVGL_PART_NAMES.has(key)) continue;
+    const sub = data[key];
+    if (sub == null || typeof sub !== 'object' || Array.isArray(sub)) continue;
+    if ((sub as Record<string, unknown>).transition !== undefined) return true;
+    // Check part→state nesting for part sub-objects
+    if (LVGL_PART_NAMES.has(key)) {
+      for (const stateKey of Object.keys(sub as Record<string, unknown>)) {
+        if (!LVGL_STATE_NAMES.has(stateKey)) continue;
+        const stateSub = (sub as Record<string, unknown>)[stateKey];
+        if (stateSub != null && typeof stateSub === 'object' && !Array.isArray(stateSub)) {
+          if ((stateSub as Record<string, unknown>).transition !== undefined) return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Extract `transition` sidecar keys from `data` and its nested state/part
+ * sub-objects. Extracted descriptors are resolved to IR form and pushed onto
+ * `pendingStyleTransitions`. The `transition` keys are deleted from `data`
+ * so they don't flow into widget YAML.
+ */
+function extractTransitions(data: Record<string, unknown>): void {
+  // Check if any transition key exists at any level before allocating an ID.
+  if (!hasTransitionKey(data)) return;
+
+  let widgetId = typeof data.id === 'string' ? data.id : undefined;
+  if (!widgetId) {
+    widgetId = generateId('rw');
+    data.id = widgetId;
+  }
+
+  // Root-level transition → targets default state
+  extractTransitionFromLevel(data, widgetId, undefined, undefined);
+
+  // State sub-objects (e.g. data.pressed.transition)
+  for (const state of LVGL_STATE_NAMES) {
+    const sub = data[state];
+    if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
+      extractTransitionFromLevel(sub as Record<string, unknown>, widgetId, undefined, state);
+    }
+  }
+
+  // Part sub-objects (e.g. data.indicator.transition, data.indicator.pressed.transition)
+  for (const part of LVGL_PART_NAMES) {
+    const sub = data[part];
+    if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
+      const partObj = sub as Record<string, unknown>;
+      extractTransitionFromLevel(partObj, widgetId, part, undefined);
+      for (const state of LVGL_STATE_NAMES) {
+        const stateSub = partObj[state];
+        if (stateSub != null && typeof stateSub === 'object' && !Array.isArray(stateSub)) {
+          extractTransitionFromLevel(stateSub as Record<string, unknown>, widgetId, part, state);
+        }
+      }
+    }
+  }
+}
+
+function extractTransitionFromLevel(
+  obj: Record<string, unknown>,
+  widgetId: string,
+  part: string | undefined,
+  state: string | undefined,
+): void {
+  if (obj.transition === undefined) return;
+  const raw = obj.transition;
+  delete obj.transition;
+
+  const descriptorArray: StyleTransitionDescriptor[] = Array.isArray(raw) ? raw : [raw as StyleTransitionDescriptor];
+  const resolved = resolveTransitionDescriptors(descriptorArray);
+
+  pendingStyleTransitions.push({
+    kind: 'style_transition',
+    targetRef: widgetId,
+    ...(part ? { part } : {}),
+    ...(state ? { state } : {}),
+    descriptors: resolved,
+  });
+}
+
 /**
  * Convert a single LVGL widget element into its target-neutral `IRWidget`.
  *
@@ -299,21 +396,8 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
       if (typeof val === 'function' && val != null && '__compiledActions' in val) {
         const fn = val as { __compiledActions: unknown[]; __refBindings?: Record<string, unknown> };
         const rawActions = fn.__compiledActions as IRActionNode[];
-        // Resolve deferred controller method calls → script_execute
-        resolveControllerMethodCalls(rawActions, fn.__refBindings);
-        // Resolve deferred overlay controller refs — replace placeholder
-        // templateKey/instanceIndex with actual values from the bound controller.
-        resolveOverlayControllerRefs(rawActions, fn.__refBindings);
-        // Patch IRScriptExecute.closureIndex from bound ScriptHandles.
-        resolveScriptHandleClosureIndex(rawActions, fn.__refBindings);
-        // Remove resolved overlay controller objects from refBindings so they
-        // don't corrupt lambda strings during ref resolution (toString →
-        // '[object Object]' would replace 'overlay' in signal names).
-        if (fn.__refBindings) {
-          cleanControllerRefs(fn.__refBindings);
-          cleanOverlayControllerRefs(fn.__refBindings);
-          cleanScriptHandleRefs(fn.__refBindings);
-        }
+        // Resolve deferred IR references and clean refBindings.
+        resolveCompiledActions(rawActions, fn.__refBindings);
         overlayActionCapture.push({
           rawActions,
           refBindings: fn.__refBindings,
@@ -335,6 +419,7 @@ function buildLvglWidgetIR(el: EspComposeElement): RawIRWidget {
 
   const data: Record<string, unknown> = { ...allProps };
   hoistStyleProp(data);
+  extractTransitions(data);
 
   // ESPHome requires layout to have a type (flex/grid) and only on widgets
   // with children. If gap/rowGap/columnGap was set without an explicit
@@ -411,6 +496,8 @@ export function buildLvglSection(el: EspComposeElement): RawIRWidgetTree {
  */
 export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
   setCurrentSource(el.__source);
+  // Reset the style-transition collector for this tree.
+  pendingStyleTransitions = [];
   // Capture the raw ref before extractElementProps converts it to an id string.
   let lvglRef = el.props.ref as Ref<LvglComponentRef> | undefined;
 
@@ -451,6 +538,7 @@ export function buildLvglWidgetTree(el: EspComposeElement): RawIRWidgetTree {
       pages,
       widgets: topWidgets,
       overlayTiers,
+      styleTransitions: pendingStyleTransitions,
     };
   });
 }
@@ -483,6 +571,7 @@ function buildLvglPageIR(child: EspComposeElement): RawIRWidget {
 
   const pageData: Record<string, unknown> = { ...pageProps };
   hoistStyleProp(pageData);
+  extractTransitions(pageData);
 
   // Extract reactive layout spacing — same treatment as widgets (see above).
   if (pageData.layout && typeof pageData.layout === 'object') {
@@ -538,7 +627,14 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   let overlays = peekOverlayDefinitions(lvgl);
   if (overlays.length === 0) return [];
 
-  const tierMap = new Map<number, RawIROverlayContainer[]>();
+  // Collect tier definitions for wrapper widget resolution.
+  const tierDefs = peekOverlayTierDefinitions(lvgl);
+  const tierDefMap = new Map<string, OverlayTierDefinition>();
+  for (const td of tierDefs) {
+    tierDefMap.set(td.tierKey, td);
+  }
+
+  const tierMap = new Map<string, { zOrder: number; overlays: RawIROverlayContainer[]; wrapperWidget?: RawIRWidget; bringToFront: boolean }>();
   const processed = new Set<string>();
   while (overlays.some(d => !processed.has(d.templateKey))) {
     for (const def of overlays) {
@@ -546,10 +642,23 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
       processed.add(def.templateKey);
       assertOverlayStructuralIdentity(def.templateKey, def.instances);
 
-      let tierEntries = tierMap.get(def.zOrder);
-      if (!tierEntries) {
-        tierEntries = [];
-        tierMap.set(def.zOrder, tierEntries);
+      let tierEntry = tierMap.get(def.tierKey);
+      if (!tierEntry) {
+        // Resolve the tier's wrapper widget if present.
+        let wrapperWidget: RawIRWidget | undefined;
+        const tierDef = tierDefMap.get(def.tierKey);
+        if (tierDef?.wrapper) {
+          const wrapperArr = Array.isArray(tierDef.wrapper) ? tierDef.wrapper : [tierDef.wrapper];
+          const resolved = resolveLvglChildren(wrapperArr);
+          for (const ch of resolved) {
+            if (isLvglElement(ch.type)) {
+              wrapperWidget = buildLvglWidgetIR(ch);
+              break; // Only one wrapper widget per tier
+            }
+          }
+        }
+        tierEntry = { zOrder: def.zOrder, overlays: [], wrapperWidget, bringToFront: tierDef?.bringToFront ?? true };
+        tierMap.set(def.tierKey, tierEntry);
       }
 
       for (const instance of def.instances) {
@@ -562,25 +671,33 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
         // without polluting the top-level scope.
         // Activate overlay action capture to collect trigger handler metadata
         // via context-scoped capture list.
+        // Push the overlay's templateKey onto the hook path so any
+        // function components evaluated inside the rendered subtree (which
+        // may call useRef/useState/etc.) memoize per overlay-template,
+        // matching how the factory was invoked. Without this, sibling
+        // overlay slots' inner components share hook-path-keyed values
+        // and produce colliding ref ids.
         const actionCapture: CapturedOverlayAction[] = [];
-        const { bindings, reactiveNodes, components } = withContext(overlayActionCaptureContext, actionCapture, () =>
-          withReactiveScope(() => {
-            const resolved = resolveLvglChildren(renderedArr);
-            const widgetIR: RawIRWidget[] = [];
-            for (const ch of resolved) {
-              if (isLvglElement(ch.type)) {
-                widgetIR.push(buildLvglWidgetIR(ch));
-              } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
-                widgetIR.push(ecCanvasToPlain(ch));
+        const { bindings, reactiveNodes, components } = withHookPath(def.templateKey, () =>
+          withContext(overlayActionCaptureContext, actionCapture, () =>
+            withReactiveScope(() => {
+              const resolved = resolveLvglChildren(renderedArr);
+              const widgetIR: RawIRWidget[] = [];
+              for (const ch of resolved) {
+                if (isLvglElement(ch.type)) {
+                  widgetIR.push(buildLvglWidgetIR(ch));
+                } else if (typeof ch.type === 'string' && isEcCanvasElement(ch.type)) {
+                  widgetIR.push(ecCanvasToPlain(ch));
+                }
               }
-            }
-            // Only emit instance 0's widgets into the tier container; others
-            // contribute only their captured bindings/actions for the mux pass.
-            if (instance.index === 0) {
-              tierEntries!.push({ templateKey: def.templateKey, widgets: widgetIR });
-            }
-            return null;
-          }),
+              // Only emit instance 0's widgets into the tier container; others
+              // contribute only their captured bindings/actions for the mux pass.
+              if (instance.index === 0) {
+                tierEntry!.overlays.push({ templateKey: def.templateKey, widgets: widgetIR, initiallyVisible: def.initiallyVisible });
+              }
+              return null;
+            }),
+          ),
         );
         const capturedActions = actionCapture;
 
@@ -603,7 +720,7 @@ function collectOverlayTiers(lvgl: string): RawIROverlayTier[] {
   }
 
   return Array.from(tierMap.entries())
-    .sort((a, b) => a[0] - b[0])
-    .filter(([, overlays]) => overlays.length > 0)
-    .map(([zOrder, overlays]) => ({ zOrder, overlays }));
+    .sort((a, b) => a[1].zOrder - b[1].zOrder)
+    .filter(([, entry]) => entry.overlays.length > 0)
+    .map(([tierKey, entry]) => ({ tierKey, zOrder: entry.zOrder, overlays: entry.overlays, wrapperWidget: entry.wrapperWidget, bringToFront: entry.bringToFront }));
 }

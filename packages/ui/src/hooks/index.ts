@@ -2,5 +2,5 @@ export { useSpacing } from './useSpacing';
 export { useSize } from './useSize';
 export { useStatus } from './useStatus';
 export { useRadius } from './useRadius';
-export { usePopup } from './usePopup';
-export type { PopupController, PopupFactory } from './usePopup';
+export { useDialog } from './useDialog';
+export type { DialogController, DialogFactory, DialogOptions } from './useDialog';

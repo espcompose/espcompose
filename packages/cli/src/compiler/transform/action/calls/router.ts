@@ -114,7 +114,7 @@ export function compileActionCall(
     if (hasRefBrand(objType)) {
       const objName = ts.isIdentifier(objExpr) ? objExpr.text : objExpr.getText();
       if (!ts.isIdentifier(objExpr)) {
-        ctx.refExpressions.add(objName);
+        ctx.propertyAccessRefs.add(objName);
       }
       return compileRefAction(call, objName, methodName, ctx);
     }

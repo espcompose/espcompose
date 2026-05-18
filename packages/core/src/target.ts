@@ -42,6 +42,8 @@ export interface EmitRequest extends ExecuteResult {
   outDir: string;
   /** Absolute path to the source directory (for asset resolution). */
   sourceDir: string;
+  /** When true, enable on-device performance instrumentation. */
+  perf?: boolean;
 }
 
 /** Result returned from a target's `emit()` method. */

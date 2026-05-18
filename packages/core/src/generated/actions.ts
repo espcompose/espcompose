@@ -12665,6 +12665,11 @@ export interface OnlineImage_SetUrlParams {
 
 export interface OnlineImageActions {
   /**
+   * Manually trigger a re-download of the image. Only needed when `update_interval` is set to `never` (the default).
+   * @actionKey component.update
+   */
+  componentUpdate(): void;
+  /**
    * Release the memory currently used by an image. Can be used if different display pages need different images, to avoid wasting memory on an image that is currently not being displayed.
    * @actionKey online_image.release
    */

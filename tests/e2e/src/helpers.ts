@@ -43,17 +43,25 @@ export async function createProjectTest(
 
   // Normalise random ref tokens (r_<random>) and reactive widget IDs
   // (rw_<random>) to deterministic sequential IDs so that snapshots are
-  // stable across runs.
+  // stable across runs.  Also normalise deterministic-but-counter-dependent
+  // IDs (ovrl_, g_) whose hash input changes when barrel export order shifts.
   // Use lookaround assertions instead of \b so that tokens embedded in C++
   // identifiers (e.g. sig_r_<random>_subs) are also normalised.
+  const unstablePrefixes = ['rw_', 'scr_', 'ec_', 'memo_', 'effect_', 'ovrl_', 'g_', 'r_', 'anim_', 'strans_', 'tier_', 'tw_'] as const;
+  const prefixPattern = unstablePrefixes.map(p => p.replace('_', '_')).join('|');
+  const tokenRegex = new RegExp(
+    `(?<![a-z0-9])(?:${prefixPattern})[a-z0-9]{7,11}(?![a-z0-9])`,
+    'g',
+  );
+
   let counter = 0;
   const tokenMap = new Map<string, string>();
   const stabilise = (text: string) =>
-    text.replace(/(?<![a-z0-9])(?:r_|rw_|scr_|ec_|memo_|effect_)[a-z0-9]{7,11}(?![a-z0-9])/g, (tok) => {
+    text.replace(tokenRegex, (tok) => {
       let stable = tokenMap.get(tok);
       if (!stable) {
-        const prefix = tok.startsWith('rw_') ? 'rw_ref' : tok.startsWith('scr_') ? 'scr_ref' : tok.startsWith('ec_') ? 'ec_ref' : tok.startsWith('memo_') ? 'memo_ref' : tok.startsWith('effect_') ? 'effect_ref' : 'r_ref';
-        stable = `${prefix}${counter++}`;
+        const prefix = unstablePrefixes.find(p => tok.startsWith(p)) ?? 'r_';
+        stable = `${prefix}ref${counter++}`;
         tokenMap.set(tok, stable);
       }
       return stable;

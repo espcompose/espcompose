@@ -30,7 +30,7 @@ export function isControllerMethodCall(
  *
  * Resolution is deferred: the controller's source-text identifier is captured
  * as a `controllerRef` placeholder. At serialization time the resolve pass
- * looks up `__scripts[methodName]` on the controller in `__refBindings` and
+ * looks up `CONTROLLER_SCRIPTS[methodName]` on the controller in `__refBindings` and
  * replaces with `irScriptExecute`.
  *
  * When the call has an object-literal argument (parameterized show), its

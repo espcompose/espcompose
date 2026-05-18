@@ -14,7 +14,7 @@
  * - Overlay-hosted nav: a single PageNav lives in top_layer and is shown on
  *   each page's onLoad so it persists across page transitions.
  */
-import { useRef, useOverlay, useAttachedTrigger, createLvglWidget } from '@espcompose/core';
+import { useRef, useOverlay, useOverlayTier, useAttachedTrigger, createLvglWidget } from '@espcompose/core';
 import type { DisplayRef, Ref } from '@espcompose/core';
 import { Screen, Text, VStack, PageNav, UITheme } from '@espcompose/ui';
 
@@ -24,7 +24,8 @@ import { Screen, Text, VStack, PageNav, UITheme } from '@espcompose/ui';
  */
 const NavHost = createLvglWidget(
   ({ pages }: { pages: { id: string; label: string; page: Ref }[] }) => {
-    const nav = useOverlay({ zOrder: 0 }, () => (
+    const tier = useOverlayTier({ zOrder: 0 });
+    const nav = useOverlay({ tier }, () => (
       <PageNav items={pages} />
     ));
 

@@ -18,7 +18,7 @@ import type { IRReactiveNode } from '../reactive';
 import type { SerializationCaptures } from '../serialize';
 import type { IRActionNode } from './action-types';
 import type { IRWidget, IROverlayTier } from './widget-types';
-import type { ComponentContribution } from './contribution-types';
+import type { ComponentContribution, IRStyleTransition, IRAnimateTransition } from './contribution-types';
 import { applyContributions } from './apply-contributions';
 import type {
   SemanticIR,
@@ -212,12 +212,16 @@ function resolveEcCanvasWidget(widget: RawIRWidget, ctx: WalkContext): IRWidget 
 function resolveOverlayTiers(tiers: RawIROverlayTier[], ctx: WalkContext): IROverlayTier[] {
   return tiers.map(tier => ({
     kind: 'overlay_tier' as const,
+    tierKey: tier.tierKey,
     zOrder: tier.zOrder,
+    bringToFront: tier.bringToFront,
     overlays: tier.overlays.map(overlay => ({
       kind: 'overlay_container' as const,
       templateKey: overlay.templateKey,
+      initiallyVisible: overlay.initiallyVisible,
       widgets: overlay.widgets.map(w => resolveWidget(w, ctx)),
     })),
+    ...(tier.wrapperWidget ? { wrapperWidget: resolveWidget(tier.wrapperWidget, ctx) } : {}),
   }));
 }
 
@@ -229,6 +233,8 @@ function resolveWidgetTree(tree: RawIRWidgetTree, ctx: WalkContext): IRUIRegistr
     pages: tree.pages.map(p => resolveWidget(p, ctx)),
     widgets: tree.widgets.map(w => resolveWidget(w, ctx)),
     overlays: resolveOverlayTiers(tree.overlayTiers, ctx),
+    styleTransitions: tree.styleTransitions ?? [],
+    animateTransitions: tree.animateTransitions ?? [],
   };
 }
 
@@ -299,16 +305,24 @@ export interface RawIRWidgetTree {
   readonly pages: RawIRWidget[];
   readonly widgets: RawIRWidget[];
   readonly overlayTiers: RawIROverlayTier[];
+  /** Style transitions collected from inline `transition` style keys. */
+  readonly styleTransitions?: IRStyleTransition[];
+  /** Animated binding transitions contributed via `useAnimateTransition()`. */
+  readonly animateTransitions?: IRAnimateTransition[];
 }
 
 export interface RawIROverlayTier {
+  readonly tierKey: string;
   readonly zOrder: number;
   readonly overlays: RawIROverlayContainer[];
+  readonly wrapperWidget?: RawIRWidget;
+  readonly bringToFront: boolean;
 }
 
 export interface RawIROverlayContainer {
   readonly templateKey: string;
   readonly widgets: RawIRWidget[];
+  readonly initiallyVisible: boolean;
 }
 
 /**

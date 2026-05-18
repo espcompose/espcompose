@@ -1,14 +1,15 @@
 // ── Controller descriptor ───────────────────────────────────────────────────
 
 import type { ClosureDescriptor } from './registry';
+import { CONTROLLER_SCRIPTS } from '../resolve/symbols';
 
 /** Shape of a controller's hidden internal fields (from useController). */
 interface ControllerInternalShape {
-  __scripts: Record<string, unknown>;
+  [CONTROLLER_SCRIPTS]: Record<string, unknown>;
 }
 
 function isControllerObject(v: unknown): v is ControllerInternalShape {
-  return v != null && typeof v === 'object' && '__scripts' in (v as Record<string, unknown>);
+  return v != null && typeof v === 'object' && CONTROLLER_SCRIPTS in (v as object);
 }
 
 export const controllerDescriptor: ClosureDescriptor<ControllerInternalShape> = {
@@ -16,7 +17,7 @@ export const controllerDescriptor: ClosureDescriptor<ControllerInternalShape> = 
 
   toClosureKey(v) {
     // Aggregate script IDs for dedup identity.
-    const ids = Object.entries(v.__scripts)
+    const ids = Object.entries(v[CONTROLLER_SCRIPTS])
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, h]) => `${k}:${(h as { id?: string })?.id ?? ''}`)
       .join(',');

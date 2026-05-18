@@ -32,6 +32,7 @@ const GRID_CELL_ALIGN = { start: 'START', center: 'CENTER', end: 'END', stretch:
 const PLACE_SELF = { center: 'CENTER', topLeft: 'TOP_LEFT', topCenter: 'TOP_MID', topRight: 'TOP_RIGHT', bottomLeft: 'BOTTOM_LEFT', bottomCenter: 'BOTTOM_MID', bottomRight: 'BOTTOM_RIGHT', leftCenter: 'LEFT_MID', rightCenter: 'RIGHT_MID' } as const;
 const SCROLLBAR_MODE = { off: 'OFF', on: 'ON', active: 'ACTIVE', auto: 'AUTO' } as const;
 const RADIUS = { circle: 'CIRCLE' } as const;
+const BLUR_QUALITY = { auto: 'AUTO', speed: 'SPEED', precision: 'PRECISION' } as const;
 
 /**
  * Maps snake_case LVGL style prop names → semantic CSS value → LVGL C-macro
@@ -91,6 +92,9 @@ const VALUE_TRANSLATIONS: Readonly<Record<string, Readonly<Record<string, string
 
   // Scrollbar
   scrollbar_mode:            SCROLLBAR_MODE,
+
+  // Blur
+  blur_quality:              BLUR_QUALITY,
 };
 
 /** Snake_case LVGL props that hold grid track value arrays. */

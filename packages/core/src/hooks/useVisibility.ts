@@ -53,6 +53,7 @@ export type { OverlayScriptPair } from './overlay-lifecycle';
 import type { VisibilityController } from '../types';
 import type { __marker_lv_obj_t } from '../generated/markers';
 import type { Ref } from '../types';
+import type { ScriptHandle } from './useScript';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -92,6 +93,18 @@ export interface VisibilityOptions {
    * @default undefined (unlimited)
    */
   maxRuns?: number;
+
+  /**
+   * Script to execute+await after the overlay becomes visible.
+   * Use for entrance animations via `useScript` + `animate()`.
+   */
+  afterShow?: ScriptHandle;
+
+  /**
+   * Script to execute+await before the overlay is hidden.
+   * Use for exit animations via `useScript` + `animate()`.
+   */
+  beforeHide?: ScriptHandle;
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -136,6 +149,8 @@ export function useVisibility(
     autoHide,
     opts?.scriptMode,
     opts?.maxRuns,
+    opts?.afterShow,
+    opts?.beforeHide,
   );
 }
 
@@ -165,12 +180,16 @@ function buildOverlayVisibility(
   autoHide: string | number | false,
   scriptMode?: 'restart' | 'queued' | 'single',
   maxRuns?: number,
+  afterShow?: ScriptHandle,
+  beforeHide?: ScriptHandle,
 ): VisibilityController {
   const pair = buildOverlayScriptPairWithMode(
     ctrl,
     autoHide,
     scriptMode ?? 'restart',
     maxRuns,
+    afterShow,
+    beforeHide,
   );
   return useController<VisibilityController>({ show: pair.show, hide: pair.hide });
 }
@@ -180,6 +199,8 @@ function buildOverlayScriptPairWithMode(
   autoHide: string | number | false,
   scriptMode: 'restart' | 'queued' | 'single',
   maxRuns?: number,
+  afterShow?: ScriptHandle,
+  beforeHide?: ScriptHandle,
 ): ReturnType<typeof buildOverlayLifecycleScripts> {
   const internal = readOverlayControllerInternal(ctrl);
   const params = buildOverlayPayloadPlan(internal.payloadDecls);
@@ -198,6 +219,8 @@ function buildOverlayScriptPairWithMode(
     hidePrefixActions: autoHide === false
       ? undefined
       : (showScript) => [irScriptStop(showScript.id)],
+    afterShowScript: afterShow,
+    beforeHideScript: beforeHide,
   });
 }
 

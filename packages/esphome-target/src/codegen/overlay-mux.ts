@@ -183,6 +183,8 @@ function singleActionFingerprint(action: IRActionNode): string {
       return `PD:${action.templateKey}:${action.controllerRef ?? ''}`;
     case 'action:controller_method_call':
       return `CM:${action.controllerRef}:${action.methodName}`;
+    case 'action:animate':
+      return `AN:${action.targetRef}:${action.styleProp}:${action.from}:${action.to}:${action.durationMs}`;
   }
 }
 
@@ -219,7 +221,7 @@ export function processOverlayMux(
     const instanceBindings = def.instances.map(inst => inst.capturedBindings ?? []);
     const instanceReactiveNodes = def.instances.map(inst => inst.capturedReactiveNodes ?? []);
 
-    // Collect reactive nodes from all instances
+    // Collect per-instance reactive nodes (memos, effects) for the codegen.
     for (const nodes of instanceReactiveNodes) {
       additionalReactiveNodes.push(...nodes);
     }
@@ -324,6 +326,7 @@ export function processOverlayMux(
           ...binding0,
           expression: {
             ...binding0.expression,
+            kind: 'expression',
             exprIR: finalExpr,
             dependencies: [
               ...(binding0.expression.dependencies ?? []),
@@ -420,6 +423,7 @@ export function processOverlayMux(
         }
       }
     }
+
   }
 
   return {

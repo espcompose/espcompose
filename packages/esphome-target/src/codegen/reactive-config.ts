@@ -8,10 +8,10 @@
  */
 
 import { injectHASensorImports } from './reactive-injector.js';
-import { generateSignalSetLambda, computeMaxNodes } from './bindings.js';
+import { generateSignalSetLambda } from './bindings.js';
 import type { SignalDecl, BoundSignalDecl, MemoDecl, EffectDecl, WidgetBindingDecl, ThemeMemoDecl, TriggerFunctionDecl, ReactiveRuntimeConfig } from './bindings.js';
 import { Scalar } from 'yaml';
-import { exprToCpp, exprTypeToCpp, buildEntityComponentIds } from '../lowering';
+import { exprToCpp, exprTypeToCpp, buildEntityComponentIds, toCppId } from '../lowering';
 import { statementBlockToCpp } from '../lowering/stmt-to-cpp.js';
 import type { CppLoweringContext } from '../lowering';
 import type { IRExpression } from '@espcompose/core/internals';
@@ -70,8 +70,9 @@ function deriveSourceSignals(
         names.push(sigName);
       }
     } else {
-      // HA entity dependency — signal name is sig_${sourceId}
-      const sigName = `sig_${dep.sourceId}`;
+      // HA entity dependency — sourceId has been remapped to target ID by
+      // remapEntityIdsInIR before we reach this point.
+      const sigName = `sig_${toCppId(dep.sourceId)}`;
       if (signalMap.has(sigName) && !names.includes(sigName)) {
         names.push(sigName);
       }
@@ -125,7 +126,7 @@ function walkExprForSources(
     case 'expr:entity_prop': {
       const compId = ctx.entityComponentIds.get(`${node.entityId}#${node.propertyKey}`) ?? ctx.entityComponentIds.get(node.entityId);
       if (compId) {
-        const sigName = `sig_${compId}`;
+        const sigName = `sig_${toCppId(compId)}`;
         if (signalMap.has(sigName)) out.add(sigName);
       }
       break;
@@ -192,7 +193,7 @@ export function buildRuntimeConfig(
     const id = entity.targetId ?? entity.generatedId;
     const platform = entity.platform ?? entity.sensorType;
     if (!id || !platform) continue;
-    const sigName = `sig_${id}`;
+    const sigName = `sig_${toCppId(id)}`;
     if (!signalMap.has(sigName)) {
       signalMap.set(sigName, {
         name: sigName,
@@ -421,7 +422,7 @@ export function buildRuntimeConfig(
       sourceNames = [sigName];
     } else {
       // Single-source binding: read directly from signal
-      const sigName = `sig_${expr.sourceId}`;
+      const sigName = `sig_${toCppId(expr.sourceId)}`;
       valueExpr = `${sigName}.get()`;
       const signalDecl = signalMap.get(sigName);
       cppType = signalDecl?.cppType ?? (expr.exprType ? exprTypeToCpp(expr.exprType) : 'bool');
@@ -545,6 +546,7 @@ export function injectReactiveBindingsRuntime(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   entities: any[],
   runtimeConfig: ReactiveRuntimeConfig,
+  options?: { perf?: boolean },
 ): Record<string, unknown> {
   // Step 1: Import HA sensors (sensor imports only, no native widget triggers)
   let result = injectHASensorImports(config, entities);
@@ -569,11 +571,11 @@ export function injectReactiveBindingsRuntime(
     result = injectBuildFlag(result, 'USE_LVGL_FONT');
   }
 
-  // Step 6: Inject ESPCOMPOSE_MAX_NODES as a build flag so the reactive
-  // engine header (compiled in the external component TU) sees the correct
-  // capacity before any #include.
-  const maxNodes = computeMaxNodes(runtimeConfig);
-  result = injectBuildFlags(result, [`-DESPCOMPOSE_MAX_NODES=${maxNodes}`]);
+  // Step 6: Inject performance instrumentation defines when --perf is set.
+  // ESPCOMPOSE_PERF gates timing instrumentation in the reactive runtime.
+  if (options?.perf) {
+    result = injectBuildFlag(result, 'ESPCOMPOSE_PERF');
+  }
 
   return result;
 }
@@ -614,7 +616,7 @@ function injectRuntimeIncludes(config: Record<string, unknown>): Record<string, 
   // The espcompose platform config is a top-level key.
   if (!result.espcompose) {
     result.espcompose = {
-      flush_budget_us: 2000,
+      flush_budget_us: 10000,
     };
   }
 

@@ -28,6 +28,8 @@ export interface CompileOptions {
   wireframe?: boolean;
   /** When true, write a `semantic-ir.json` debug dump to the output directory. */
   dumpIR?: boolean;
+  /** When true, enable on-device performance instrumentation. */
+  perf?: boolean;
 }
 
 /** Result returned from compile/build with per-phase timing data. */
@@ -149,12 +151,12 @@ async function runPipeline(ctx: PhaseContext, steps: PipelineStep[]): Promise<vo
  *   [setup] → [type-check] → [lint] → [transform] → [bundle] → [execute] → [emit] → [teardown]
  */
 export async function compile(options: CompileOptions): Promise<CompileResult> {
-  const { entryFile, projectDir, outDir, target, debug = false, wireframe, dumpIR: shouldDumpIR } = options;
+  const { entryFile, projectDir, outDir, target, debug = false, wireframe, dumpIR: shouldDumpIR, perf } = options;
 
   const sourceDir = path.dirname(entryFile);
   const buildDir = path.join(sourceDir, '.espcompose-build');
   const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
-  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, wireframe, dumpIR: shouldDumpIR, projectDir, outDir, target };
+  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug, wireframe, dumpIR: shouldDumpIR, perf, projectDir, outDir, target };
 
   await runPipeline(ctx, compilePipeline);
 
@@ -220,7 +222,7 @@ export async function dumpIR(ir: SemanticIR, outDir: string): Promise<void> {
  *
  * @param projectDir  Absolute path to the project directory.
  */
-export async function build(projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean }): Promise<CompileResult> {
+export async function build(projectDir: string, target: ComposeTarget, options?: { debug?: boolean; wireframe?: boolean; dumpIR?: boolean; perf?: boolean }): Promise<CompileResult> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -234,7 +236,7 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
   const entryFile = path.resolve(projectDir, pkg.main);
   const outDir = path.join(projectDir, '.espcompose');
 
-  return compile({ entryFile, projectDir, outDir, target, debug: options?.debug, wireframe: options?.wireframe, dumpIR: options?.dumpIR });
+  return compile({ entryFile, projectDir, outDir, target, debug: options?.debug, wireframe: options?.wireframe, dumpIR: options?.dumpIR, perf: options?.perf });
 }
 
 /**
@@ -246,7 +248,7 @@ export async function build(projectDir: string, target: ComposeTarget, options?:
  * Returns the ExecuteResult (SemanticIR + sidecar data) so callers
  * (e.g. --host mode) can forward it to a downstream `target.emit()`.
  */
-export async function compileToIR(projectDir: string, target: ComposeTarget, options?: { wireframe?: boolean; debug?: boolean }): Promise<ExecuteResult> {
+export async function compileToIR(projectDir: string, target: ComposeTarget, options?: { wireframe?: boolean; debug?: boolean; perf?: boolean }): Promise<ExecuteResult> {
   const pkgPath = path.join(projectDir, 'package.json');
   if (!fs.existsSync(pkgPath)) {
     throw new Error(`No package.json found in project directory: ${projectDir}`);
@@ -261,7 +263,7 @@ export async function compileToIR(projectDir: string, target: ComposeTarget, opt
   const sourceDir = path.dirname(entryFile);
   const buildDir = path.join(sourceDir, '.espcompose-build');
   const bundlePath = path.join(buildDir, '.espcompose-bundle.cjs');
-  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug: options?.debug ?? false, wireframe: options?.wireframe, projectDir, target };
+  const ctx: PhaseContext = { entryFile, sourceDir, buildDir, bundlePath, debug: options?.debug ?? false, wireframe: options?.wireframe, perf: options?.perf, projectDir, target };
 
   await runPipeline(ctx, irPipeline);
 

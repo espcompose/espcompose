@@ -2,6 +2,10 @@
 #include "espcompose_reactive.h"
 #include "esphome/core/log.h"
 
+#ifdef ESPCOMPOSE_PERF
+static const char *const PERF_TAG = "ec_perf";
+#endif
+
 namespace espcompose {
 
 // Forward declaration — defined in the project-generated espcompose_bindings.h.
@@ -29,7 +33,16 @@ void EspcomposeRuntimeComponent::loop() {
   }
 
   flush_requested_ = false;
+#ifdef ESPCOMPOSE_PERF
+  uint32_t t0 = esphome::micros();
+#endif
   const bool drained = flush_for_budget_us(flush_budget_us_);
+#ifdef ESPCOMPOSE_PERF
+  uint32_t elapsed = esphome::micros() - t0;
+  if (elapsed > 500) {
+    ESP_LOGI(PERF_TAG, "loop flush: %" PRIu32 " \xC2\xB5s, drained=%s", elapsed, drained ? "yes" : "no");
+  }
+#endif
   if (!drained) {
     // More work queued than can fit in budget; request another flush
     ESP_LOGW(TAG, "Reactive flush did not complete within %" PRIu32 " µs budget, deferring remaining work", flush_budget_us_);

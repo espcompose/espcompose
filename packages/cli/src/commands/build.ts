@@ -13,17 +13,19 @@ export function registerBuildCommand(program: Command) {
     .option('--metrics', 'Print compiler phase timing breakdown after build')
     .option('--wireframe', 'Enable colored outline overlays on all widgets for layout visualization')
     .option('--dump-ir', 'Write semantic-ir.json debug dump to the output directory')
+    .option('--perf', 'Enable on-device performance instrumentation (LVGL perf monitor, action/flush timing)')
     .action(withErrorHandler('Build', async (projectDir?: string, opts?: {
       debug?: boolean;
       metrics?: boolean;
       wireframe?: boolean;
       dumpIr?: boolean;
+      perf?: boolean;
     }) => {
       const { build } = await import('../compiler');
       const { createEsphomeTarget, esphomeCompile } = await import('@espcompose/esphome-target');
       const { resolvedDir, yamlPath } = resolvePaths(projectDir);
       const extraArgs = extractPassthroughArgs();
-      const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr });
+      const result = await transpileProject(resolvedDir, yamlPath, build, createEsphomeTarget, { debug: opts?.debug, wireframe: opts?.wireframe, dumpIR: opts?.dumpIr, perf: opts?.perf });
       if (opts?.metrics) printMetrics(result);
       console.log('Compiling firmware…');
       await esphomeCompile(yamlPath, extraArgs);

@@ -20,7 +20,7 @@ namespace espcompose {
 class EspcomposeRuntimeComponent : public esphome::Component {
  public:
   /// Constructor accepts configurable flush budget (microseconds per loop iteration)
-  explicit EspcomposeRuntimeComponent(uint32_t flush_budget_us = 2000)
+  explicit EspcomposeRuntimeComponent(uint32_t flush_budget_us = 10000)
       : flush_budget_us_(flush_budget_us) {
     if (instance_ != nullptr) {
       ESP_LOGW("espcompose", "Multiple EspcomposeRuntimeComponent instances — overwriting previous");

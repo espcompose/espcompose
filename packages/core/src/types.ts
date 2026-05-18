@@ -5,7 +5,7 @@ import type {
 import type { InferReactiveProperties } from './reactive/properties';
 import { REACTIVE_PROPERTY_MAP } from './reactive/properties';
 import { IRReactiveNode } from './reactive/node';
-import { assertHookContext } from './hooks/useState';
+import { assertHookContext, useStableValue } from './hooks/useState';
 import { throwCompileTimeOnly } from './errors';
 import { generateId } from './id';
 
@@ -296,7 +296,11 @@ export class RefHandle<T = unknown> implements BaseRef<T> {
  */
 export function useRef<T = unknown>(): Ref<T> {
   assertHookContext('useRef()');
-  return new RefHandle<T>() as unknown as Ref<T>;
+  // Memoize per (hookPath, callIndex). Sibling component instances at the
+  // same hook path share the same RefHandle at each call site, so refs
+  // captured by deduped overlay templates / scripts always point at the
+  // single committed widget instance rather than per-instance ghosts.
+  return useStableValue<RefHandle<T>>(() => new RefHandle<T>()) as unknown as Ref<T>;
 }
 
 /**
@@ -311,8 +315,11 @@ export function isRef(val: unknown): val is Ref<unknown> {
 // Shared base props
 // ────────────────────────────────────────────────────────────────────────────
 
+/** A single element or an array of elements (arrays are flattened by the JSX runtime). */
+export type EspComposeChild = EspComposeElement | EspComposeElement[];
+
 export interface BaseProps {
-  children?: EspComposeElement | EspComposeElement[];
+  children?: EspComposeChild | EspComposeChild[];
 }
 
 /**
@@ -393,12 +400,14 @@ declare global {
   namespace JSX {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface Element extends EspComposeElement {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface ElementChildrenAttribute { children: {}; }
     interface IntrinsicElements {
       /** Built-in context provider element. Use `createContextProvider()` instead of this directly. */
       context: {
         context: Context<unknown>;
         value: unknown;
-        children?: EspComposeElement | EspComposeElement[];
+        children?: EspComposeChild | EspComposeChild[];
       };
     }
   }

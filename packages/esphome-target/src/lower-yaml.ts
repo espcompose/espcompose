@@ -69,7 +69,15 @@ function restoreLambdaMarkers(value: unknown): unknown {
  * that needs `auto& closure = ...;` available in every lambda action.
  */
 function restoreLambdaMarkersWithPrefix(value: unknown, prefix: string): unknown {
-  if (isLambdaMarker(value)) return createYamlLambda(`${prefix}${value.__lambda__}`);
+  if (isLambdaMarker(value)) {
+    // Only prepend the closure dereference when the lambda body actually
+    // references a closure field.  Lambdas that never touch `closure.*`
+    // don't need it — the C++ compiler optimises it away, but skipping it
+    // keeps the generated YAML cleaner and easier to read.
+    const body = value.__lambda__;
+    const needsPrefix = body.includes('closure.');
+    return createYamlLambda(needsPrefix ? `${prefix}${body}` : body);
+  }
   if (Array.isArray(value)) return value.map((v) => restoreLambdaMarkersWithPrefix(v, prefix));
   if (value !== null && typeof value === 'object') {
     const obj: Record<string, unknown> = {};
@@ -173,19 +181,15 @@ function generateInitialValueLambda(node: any, ctx?: CppLoweringContext): string
   // Memo: read from runtime memo variable
   const memoName = ctx?.memoNames?.get(node.nodeId);
   if (!memoName) {
-    const mapSize = ctx?.memoNames?.size ?? 0;
-    const knownKeys = ctx?.memoNames ? Array.from(ctx.memoNames.keys()).join(', ') : '(no ctx)';
-    const deps = (node.dependencies ?? []).map((d: { sourceId?: string; sourceType?: string }) => `${d.sourceType ?? '?'}:${d.sourceId ?? '?'}`).join(', ');
-    const exprKind = node.exprIR?.kind ?? 'none';
-    const pipeline = ctx?.pipelineInfo ?? '(no pipeline info)';
-    throw new Error(
-      `[espcompose] Memo node '${node.nodeId}' not found in memoNames map.\n` +
-      `  node.kind=${node.kind}, exprType=${node.exprType ?? 'undefined'}, exprIR.kind=${exprKind}\n` +
-      `  dependencies=[${deps}]\n` +
-      `  pipeline: ${pipeline}\n` +
-      `  memoNames has ${mapSize} entries: [${knownKeys}]\n` +
-      `This memo was referenced in the IR config tree but was not included in the reactive pipeline.`,
-    );
+    // Memo was pruned by dead-memo elimination (e.g. an overlay per-instance
+    // memo whose computation was inlined by the mux system).  The reactive
+    // Effect will set the correct value on the first flush — which runs in
+    // bootstrap_runtime() before the display is visible — so we emit a safe
+    // type-appropriate default for the initial-value lambda.
+    const exprType = node.exprType;
+    if (exprType === 'string') return 'return "";';
+    if (exprType === 'color') return 'return lv_color_hex(0x000000);';
+    return 'return 0;';
   }
   const exprType = node.exprType;
   if (exprType === 'string') {
@@ -361,6 +365,7 @@ function replaceOverlayActionsInLvglTree(
 export function lowerToYamlConfig(
   ir: SemanticIR,
   cppResult: CppBackendResult | null,
+  options?: { perf?: boolean },
 ): Record<string, unknown> {
   // Use side-channel arrays as authoritative source for reactive data
   // (hook-registered nodes may not appear in the config tree)
@@ -416,6 +421,18 @@ export function lowerToYamlConfig(
   // Build action lowering context so global_set knows whether to emit
   // BoundSignal C++ lambda or plain globals.set YAML, and so action
   // conditions can resolve overlay mux signal names.
+  const tiersWithWrapper = new Set<string>();
+  const tiersWithBringToFront = new Set<string>();
+  for (const ui of ir.uis) {
+    for (const tier of ui.overlays) {
+      if (tier.wrapperWidget) {
+        tiersWithWrapper.add(tier.tierKey);
+      }
+      if (tier.bringToFront) {
+        tiersWithBringToFront.add(tier.tierKey);
+      }
+    }
+  }
   const actionCtx: ActionLoweringContext = {
     reactiveGlobalIds: cppResult?.runtimeConfig?.globalSignals
       ? new Set(cppResult.runtimeConfig.globalSignals.map(gs => gs.globalId))
@@ -427,6 +444,9 @@ export function lowerToYamlConfig(
       }
       return sigMap;
     })(),
+    perf: options?.perf,
+    tiersWithWrapper,
+    tiersWithBringToFront,
   };
 
   const loweredConfig = lowerIRConfig(ir, cppCtx, actionCtx);
@@ -506,6 +526,7 @@ export function lowerToYamlConfig(
       bindings,
       remappedEntities,
       cppResult.runtimeConfig,
+      { perf: options?.perf },
     );
   } else {
     finalConfig = injectHASensorImports(loweredConfig, remappedEntities);
@@ -518,7 +539,7 @@ export function lowerToYamlConfig(
         finalConfig[section] = [];
       }
       // Lower IRValue config back to a plain object for YAML emission
-      let outConfig = irValueToYaml(comp.config) as Record<string, unknown>;
+      let outConfig = irValueToYaml(comp.config, cppCtx, actionCtx) as Record<string, unknown>;
       // Globals components carry a target-agnostic `irType: IRType` node
       // (kind: 'type'). irValueToYaml skips it via SKIP_ENTRY, so we extract
       // the IRType directly from the config tree and convert to C++ type.
@@ -581,6 +602,17 @@ export function lowerToYamlConfig(
   // Transform ec_canvas widgets → native canvas widgets.
   transformEcCanvasWidgets(finalConfig);
 
+  // If animate actions are present but no reactive runtime was emitted,
+  // inject the external component so espcompose.animate is registered.
+  if (!cppResult && hasAnimateActions(finalConfig)) {
+    injectExternalComponent(finalConfig);
+    // The espcompose platform config must also be present for the component
+    // to load and register its actions.
+    if (!finalConfig.espcompose) {
+      finalConfig.espcompose = { flush_budget_us: 10000 };
+    }
+  }
+
   // Translate semantic LVGL style values (e.g. 'transparent', 'fit-content',
   // 'fr(1)') to LVGL C-macro spellings (TRANSP, SIZE_CONTENT, FR(1)) on the
   // final lvgl section.
@@ -589,4 +621,32 @@ export function lowerToYamlConfig(
   }
 
   return finalConfig;
+}
+
+// ── Animate action detection ─────────────────────────────────────────────
+
+/**
+ * Recursively check if any action in the config uses `espcompose.animate`.
+ */
+function hasAnimateActions(config: Record<string, unknown>): boolean {
+  const json = JSON.stringify(config);
+  return json.includes('"espcompose.animate"');
+}
+
+/**
+ * Inject the external_components section for the espcompose runtime component.
+ * Used when animate actions are present but no reactive bindings exist.
+ */
+function injectExternalComponent(config: Record<string, unknown>): void {
+  const externalComponents = Array.isArray(config.external_components)
+    ? [...(config.external_components as unknown[])]
+    : [];
+  externalComponents.push({
+    source: {
+      type: 'local',
+      path: './external_components',
+    },
+    components: ['espcompose'],
+  });
+  config.external_components = externalComponents;
 }

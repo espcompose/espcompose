@@ -61,7 +61,13 @@ export function substituteThemeFonts(
 // ── Internals ──────────────────────────────────────────────────────────────
 
 function fontTokenKey(token: FontToken): string {
-  return `${token.file}|${token.size}|${token.bpp}`;
+  return JSON.stringify([
+    token.file,
+    token.size,
+    token.bpp,
+    token.glyphs ?? [],
+    token.extras ?? [],
+  ]);
 }
 
 function walkForFontTokens(
@@ -72,7 +78,13 @@ function walkForFontTokens(
     if (isFontToken(value)) {
       const key = fontTokenKey(value);
       if (!fontRefs.has(key)) {
-        fontRefs.set(key, useFont({ file: value.file, size: value.size, bpp: value.bpp }));
+        fontRefs.set(key, useFont({
+          file: value.file,
+          size: value.size,
+          bpp: value.bpp,
+          ...(value.glyphs ? { glyphs: value.glyphs } : {}),
+          ...(value.extras ? { extras: value.extras } : {}),
+        }));
       }
     } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
       walkForFontTokens(value as Record<string, unknown>, fontRefs);

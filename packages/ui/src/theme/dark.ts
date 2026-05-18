@@ -9,11 +9,9 @@
  * Uses `adaptiveScreen` to vary spacing and typography by display class.
  */
 
-import { createFontToken, adaptiveScreen } from '@espcompose/core';
+import { adaptiveScreen } from '@espcompose/core';
 import type { ThemeDefinition, UIThemeSettings } from './types';
-
-// ── Shared font tokens (ThemeProvider registers the ESPHome font assets) ──
-const montserrat = (size: number) => createFontToken('gfonts://Roboto', size);
+import { roboto } from './fonts';
 
 export function darkTheme(settings: UIThemeSettings = {}): ThemeDefinition {
   return {
@@ -37,10 +35,10 @@ export function darkTheme(settings: UIThemeSettings = {}): ThemeDefinition {
     },
 
     typography: {
-      title:    adaptiveScreen(settings, { micro: montserrat(18), compact: montserrat(22), default: montserrat(28) }),
-      subtitle: adaptiveScreen(settings, { micro: montserrat(16), default: montserrat(20) }),
-      body:     montserrat(16),
-      caption:  montserrat(12),
+      title:    adaptiveScreen(settings, { micro: roboto(18), compact: roboto(22), default: roboto(28) }),
+      subtitle: adaptiveScreen(settings, { micro: roboto(16), default: roboto(20) }),
+      body:     roboto(16),
+      caption:  roboto(12),
     },
 
     spacing: {
@@ -61,17 +59,18 @@ export function darkTheme(settings: UIThemeSettings = {}): ThemeDefinition {
     },
 
     sizes: {
-      xs: { height: 28, font: montserrat(12), paddingX: 8,  paddingY: 4  },
-      sm: { height: 36, font: montserrat(14), paddingX: 12, paddingY: 6  },
-      md: { height: 44, font: montserrat(16), paddingX: 16, paddingY: 8  },
-      lg: { height: 52, font: montserrat(18), paddingX: 20, paddingY: 10 },
-      xl: { height: 64, font: montserrat(22), paddingX: 24, paddingY: 12 },
+      xs: { height: 28, font: roboto(12), paddingX: 8,  paddingY: 4  },
+      sm: { height: 36, font: roboto(14), paddingX: 12, paddingY: 6  },
+      md: { height: 44, font: roboto(16), paddingX: 16, paddingY: 8  },
+      lg: { height: 52, font: roboto(18), paddingX: 20, paddingY: 10 },
+      xl: { height: 64, font: roboto(22), paddingX: 24, paddingY: 12 },
     },
 
     parts: {
       slider: { indicator: '#1E88E5', knob: '#E0E0E0', rail: '#3A3A3A' },
       switch: { indicator: '#1E88E5', rail: '#3A3A3A', knob: '#E0E0E0' },
       arc:    { indicator: '#1E88E5', knob: '#E0E0E0' },
+      toast:  { bg: '#fcf2dc', text: '#000000', border: '#7A5F2A' },
     },
   };
 }

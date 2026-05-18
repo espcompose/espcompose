@@ -56,6 +56,16 @@ export function irTypeToEsphomeParam(vt: IRType): string {
   }
 }
 
+/**
+ * Sanitize an arbitrary string (e.g. an HA entity ID like
+ * `ha_entity:light.office:brightness`) into a valid C++ identifier
+ * fragment by replacing all non-alphanumeric/non-underscore characters
+ * with underscores.
+ */
+export function toCppId(raw: string): string {
+  return raw.replace(/[^A-Za-z0-9_]/g, '_');
+}
+
 /** Zero-value C++ literal for an `IRType`. */
 export function irTypeZeroLiteral(vt: IRType): string {
   if (vt.isArray) return '{}';

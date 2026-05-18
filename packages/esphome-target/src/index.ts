@@ -25,4 +25,4 @@ export { lowerLvglWidgetTree, lowerLvglWidget } from './lvgl';
 
 // YAML key/element shaping utilities (also used by the CLI action transformer
 // when emitting ESPHome action configs).
-export { camelToSnake, toYamlKey } from './yaml-utils.js';
+export { camelToSnake, toYamlKey, sanitizeBindingName } from './yaml-utils.js';

@@ -471,6 +471,44 @@ describe('expandCssStyle', () => {
       disabled: { opa: 'transparent' },
     });
   });
+
+  it('passes through transition descriptors at root level', () => {
+    const result = expandCssStyle({
+      backgroundColor: '#FFF',
+      transition: { properties: ['backgroundColor'], duration: 200 },
+    });
+    expect(result).toEqual({
+      bgColor: '#FFF',
+      transition: { properties: ['backgroundColor'], duration: 200 },
+    });
+  });
+
+  it('passes through transition descriptors inside state sub-objects', () => {
+    const result = expandCssStyle({
+      pressed: {
+        backgroundColor: '#EEE',
+        transition: [
+          { properties: ['backgroundColor'], duration: '300ms', easing: 'ease-out' },
+        ],
+      },
+    });
+    expect(result).toEqual({
+      pressed: {
+        bgColor: '#EEE',
+        transition: [
+          { properties: ['backgroundColor'], duration: '300ms', easing: 'ease-out' },
+        ],
+      },
+    });
+  });
+
+  it('does not include transition in visual prop expansion', () => {
+    const result = expandCssStyle({
+      transition: { properties: ['opacity'], duration: 200 },
+    });
+    // transition should be the only key — no LVGL prop created from it
+    expect(Object.keys(result).filter(k => k !== 'transition')).toEqual([]);
+  });
 });
 
 // ────────────────────────────────────────────────────────────────────────────

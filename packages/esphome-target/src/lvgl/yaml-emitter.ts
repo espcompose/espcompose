@@ -153,12 +153,40 @@ export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringC
     const tierWidgets: Record<string, unknown>[] = [];
     for (const tier of tree.overlays) {
       const overlayContainerWidgets: Record<string, unknown>[] = [];
+
+      // Track whether any overlay in this tier starts visible — if so,
+      // the shared tier wrapper should also start visible.
+      const tierHasInitiallyVisible = tier.overlays.some(o => o.initiallyVisible);
+
+      // Emit shared tier wrapper widget as first child, hidden initially
+      // unless at least one overlay in the tier is initially visible.
+      if (tier.wrapperWidget) {
+        const wrapperYaml = lowerLvglWidget(tier.wrapperWidget, ctx);
+        // Inject hidden flag and tier wrapper ID into the lowered wrapper
+        const wrapperKey = Object.keys(wrapperYaml)[0];
+        const wrapperProps = wrapperYaml[wrapperKey] as Record<string, unknown>;
+        wrapperProps.id = `tw_${tier.tierKey}`;
+        if (!tierHasInitiallyVisible) {
+          wrapperProps.hidden = true;
+        }
+        overlayContainerWidgets.push(wrapperYaml);
+      }
+
       for (const overlay of tier.overlays) {
-        const widgets = overlay.widgets.map(w => lowerLvglWidget(w, ctx));
+        // Each content child gets hidden: true unless initiallyVisible;
+        // the wrapper obj stays always-visible.
+        const widgets = overlay.widgets.map(w => {
+          const lowered = lowerLvglWidget(w, ctx);
+          if (!overlay.initiallyVisible) {
+            const key = Object.keys(lowered)[0];
+            const props = lowered[key] as Record<string, unknown>;
+            props.hidden = true;
+          }
+          return lowered;
+        });
         overlayContainerWidgets.push({
           obj: {
             id: `${overlay.templateKey}`,
-            hidden: true,
             width: '100%',
             height: '100%',
             bg_opa: 'transparent',
@@ -171,7 +199,7 @@ export function lowerLvglWidgetTree(tree: IRUIRegistry, ctx?: LvglValueLoweringC
       }
       tierWidgets.push({
         obj: {
-          id: `overlay_tier_${tier.zOrder}`,
+          id: `overlay_${tier.tierKey}`,
           width: '100%',
           height: '100%',
           bg_opa: 'transparent',

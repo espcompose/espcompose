@@ -38,7 +38,7 @@ export const Text = createLvglWidget<TextProps>(
     const theme = UITheme.use();
     const textColor = props.color != null
       ? useStatus(props.color).text
-      : theme?.colors?.textPrimary;
+      : props.style?.color ?? theme?.colors?.textPrimary;
 
     return (
       <lvgl-label

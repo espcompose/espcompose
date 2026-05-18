@@ -9,6 +9,7 @@
 export { darkTheme } from './theme/dark';
 export { lightTheme } from './theme/light';
 export { UITheme } from './theme/theme';
+export { mdiGlyphs } from './theme/fonts';
 
 // Theme types
 export type {
@@ -61,14 +62,22 @@ export type { PageNavProps, PageNavItem } from './components/PageNav';
 
 // Binding-driven components
 export { SensorText } from './components/SensorText';
+export { HALightButton } from './components/HALightButton';
+export type { HALightButtonProps } from './components/HALightButton';
 
-// Popup system
-export { Popup } from './components/Popup';
+// Dialog system
+import { DialogProviderComponent } from './providers/Dialog';
+export const Dialog = { Provider: DialogProviderComponent };
+export type { DialogProviderProps } from './providers/Dialog';
 
 // Overlay convenience hooks
-export { usePopup } from './hooks/usePopup';
-export type { PopupController, PopupFactory } from './hooks/usePopup';
+export { useDialog } from './hooks/useDialog';
+export type { DialogController, DialogFactory, DialogOptions } from './hooks/useDialog';
 
 // Toast system
 export { Toast, useToast } from './providers/Toast';
 export type { ToastController, ToastProviderProps } from './providers/Toast';
+
+// Screensaver system
+export { Screensaver, useScreensaver } from './providers/Screensaver';
+export type { ScreensaverController, ScreensaverContent, ScreensaverHooks, ScreensaverProviderProps } from './providers/Screensaver';

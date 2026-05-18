@@ -30,6 +30,7 @@
 
 import { assertHookContext } from './useState';
 import { useOverlay } from './useOverlay';
+import type { OverlayTierHandle } from './useOverlayTier';
 import { defineSyntheticScript } from './useScript';
 import type { ScriptHandle } from './useScript';
 import { useController } from './useController';
@@ -79,12 +80,11 @@ import type { IRDependency, Signal } from '../reactive';
  */
 export interface TransientOverlayConfig {
   /**
-   * Numeric z-order tier. Overlays with higher `zOrder` are rendered above
-   * those with lower values. Within the same tier, last-shown-wins.
+   * Overlay tier handle from `useOverlayTier()`.
    *
-   * @default 0
+   * Required. Declares which z-order tier this transient overlay belongs to.
    */
-  zOrder?: number;
+  tier: OverlayTierHandle;
 
   /**
    * Maximum number of overlays visible simultaneously.
@@ -186,21 +186,17 @@ export function useTransientOverlay<P extends Record<string, unknown> = Record<s
   assertHookContext('useTransientOverlay()');
 
   const {
-    zOrder = 0,
+    tier,
     maxVisible = 1,
     autoHide = false,
     overflow = 'replace',
     queueLength = 1,
   } = config;
 
-  return buildSlotOverlay(zOrder, maxVisible, autoHide, overflow, queueLength, factory as TransientOverlayFactory<Record<string, unknown>>);
+  return buildSlotOverlay(tier, maxVisible, autoHide, overflow, queueLength, factory as TransientOverlayFactory<Record<string, unknown>>);
 }
 
-// ── Slot allocation & coordination ──────────────────────────────────────────
-
 /**
- * Pre-allocate N overlay slots with first-free allocation.
- *
  * Each slot gets its own overlay + show/hide script pair (always mode: restart).
  * A coordinator script dispatches `show()` calls to the first inactive slot,
  * backed by per-slot active/seq array globals and a monotonic counter.
@@ -220,7 +216,7 @@ export function useTransientOverlay<P extends Record<string, unknown> = Record<s
  * resets the array globals.
  */
 function buildSlotOverlay(
-  zOrder: number,
+  tier: OverlayTierHandle,
   maxVisible: number,
   autoHide: string | number | false,
   overflow: 'replace' | 'queue' | 'drop',
@@ -259,11 +255,18 @@ function buildSlotOverlay(
 
   const slotOverlayCtrls: OverlayController<Record<string, unknown>>[] = [];
 
+  // Per-slot lifecycle hook captures.
+  const perSlotAfterShow: (ScriptHandle | null)[] = [];
+  const perSlotBeforeHide: (ScriptHandle | null)[] = [];
+
   // We need the template key before creating overlays to generate globals.
   let slotStateGlobals: ReturnType<typeof createSlotStateGlobals> | undefined;
 
   for (let i = 0; i < maxVisible; i++) {
     const slotIndex = i;
+    let slotAfterShow: ScriptHandle | null = null;
+    let slotBeforeHide: ScriptHandle | null = null;
+
     // Forward meta so useOverlay handles global registration + proxy building.
     const wrapperFactory = (overlayCtrl: OverlayController, ctx?: { payload: Record<string, unknown> }) => {
       // On first slot, create shared slot state globals.
@@ -273,7 +276,9 @@ function buildSlotOverlay(
       }
       const slotRank = buildSlotRankMemo(slotIndex, maxVisible, slotStateGlobals!.activeGlobalId, slotStateGlobals!.seqGlobalId);
       const payload = (ctx?.payload ?? {}) as Record<string, unknown>;
-      return factory(overlayCtrl, { slotRank, payload });
+      const afterShow = (script: ScriptHandle) => { slotAfterShow = script; };
+      const beforeHide = (script: ScriptHandle) => { slotBeforeHide = script; };
+      return factory(overlayCtrl, { slotRank, payload, afterShow, beforeHide });
     };
     const slotPayload = perSlotPayloadDecls[i];
     if (slotPayload) {
@@ -285,10 +290,12 @@ function buildSlotOverlay(
     }
 
     const ctrl = useOverlay(
-      { zOrder },
+      { tier },
       wrapperFactory as OverlayFactory<Record<string, unknown>>,
     );
     slotOverlayCtrls.push(ctrl);
+    perSlotAfterShow.push(slotAfterShow);
+    perSlotBeforeHide.push(slotBeforeHide);
   }
 
   const { activeGlobalId, seqGlobalId, seqCounterGlobalId } = slotStateGlobals!;
@@ -331,6 +338,8 @@ function buildSlotOverlay(
       hideSuffixActions: [
         buildAllIdleResetAction(activeGlobalId, seqCounterGlobalId, maxVisible),
       ],
+      afterShowScript: perSlotAfterShow[i] ?? undefined,
+      beforeHideScript: perSlotBeforeHide[i] ?? undefined,
     });
 
     slotShowScripts.push(pair.show);
@@ -383,8 +392,8 @@ function buildSlotOverlay(
     // Deactivate the slot.
     hideActions.push(irArraySet(activeGlobalId, IR_INT_ARRAY, irLiteralExpression(i), irLiteralExpression(0)));
     // Hide the overlay.
-    const { templateKey, zOrder: slotZOrder } = readOverlayControllerInternal(slotOverlayCtrls[i]);
-    hideActions.push(irOverlayHide(templateKey, slotZOrder));
+    const { templateKey, zOrder: slotZOrder, tierKey: slotTierKey } = readOverlayControllerInternal(slotOverlayCtrls[i]);
+    hideActions.push(irOverlayHide(templateKey, slotZOrder, slotTierKey));
   }
   // Reset counter to 0.
   hideActions.push(irGlobalSet(seqCounterGlobalId, IR_INT, irLiteralExpression(0)));

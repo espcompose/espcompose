@@ -54,6 +54,7 @@ const GRID_CELL_ALIGN_VALUES = makeIdentity('start', 'center', 'end', 'stretch')
 const DISPLAY_VALUES = makeIdentity('flex', 'grid');
 const PLACE_SELF_VALUES = makeIdentity('center', 'topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'leftCenter', 'rightCenter');
 const SCROLLBAR_MODE_VALUES = makeIdentity('off', 'on', 'active', 'auto');
+const BLUR_QUALITY_VALUES = makeIdentity('auto', 'speed', 'precision');
 
 // ── CSS → LVGL mapping table ───────────────────────────────────────────────
 
@@ -147,6 +148,11 @@ const _cssToLvglMap = {
   backgroundImageTint:           { kind: 'direct', lvglProp: 'bgImageRecolor' },
   backgroundImageTintOpacity:    { kind: 'transform', lvglProp: 'bgImageRecolorOpa', valueMap: OPACITY_VALUES },
   backgroundRepeat:              { kind: 'transform', lvglProp: 'bgImageTiled', valueMap: { repeat: true, 'no-repeat': false } },
+
+  // ── Blur ───────────────────────────────────────────────────────────────
+  backdropBlur:            { kind: 'direct', lvglProp: 'blurBackdrop' },
+  blurQuality:             { kind: 'transform', lvglProp: 'blurQuality', valueMap: BLUR_QUALITY_VALUES },
+  blurRadius:              { kind: 'direct', lvglProp: 'blurRadius' },
 
   // ── Border extras ─────────────────────────────────────────────────────
   borderDrawOrder:       { kind: 'transform', lvglProp: 'borderPost', valueMap: { 'after-children': true, 'before-children': false } },
@@ -277,8 +283,8 @@ export function expandCssProps(
 
     // Skip state/part sub-objects — they're handled by the deep expander
     if (LVGL_STATE_NAMES.has(key) || LVGL_PART_NAMES.has(key)) continue;
-    // Skip styles reference
-    if (key === 'styles') continue;
+    // Skip sidecar keys (not CSS→LVGL mapped — routed separately)
+    if (key === 'styles' || key === 'transition') continue;
 
     const mapping = CSS_TO_LVGL_MAP[key];
     if (mapping?.kind === 'shorthand') {
@@ -296,7 +302,7 @@ export function expandCssProps(
   for (const [key, value] of Object.entries(cssProps)) {
     if (value === undefined) continue;
     if (LVGL_STATE_NAMES.has(key) || LVGL_PART_NAMES.has(key)) continue;
-    if (key === 'styles') continue;
+    if (key === 'styles' || key === 'transition') continue;
 
     const mapping = CSS_TO_LVGL_MAP[key];
     if (mapping?.kind === 'direct') {
@@ -428,7 +434,12 @@ export function expandCssStyle(
   for (const state of LVGL_STATE_NAMES) {
     const sub = style[state];
     if (sub != null && typeof sub === 'object' && !Array.isArray(sub)) {
-      const stateExpanded = expandCssProps(sub as Record<string, unknown>);
+      const stateObj = sub as Record<string, unknown>;
+      const stateExpanded = expandCssProps(stateObj);
+      // Pass through sidecar keys inside state sub-objects
+      if (stateObj.transition !== undefined) {
+        stateExpanded.transition = stateObj.transition;
+      }
       expanded[state] = stateExpanded;
     }
   }
@@ -446,6 +457,11 @@ export function expandCssStyle(
     expanded.styles = style.styles;
   }
 
+  // Pass through transition descriptors
+  if (style.transition !== undefined) {
+    expanded.transition = style.transition;
+  }
+
   return expanded;
 }
 
@@ -459,10 +475,12 @@ export function expandCssStyle(
 
 type _MapKey = keyof typeof _cssToLvglMap;
 type _AliasKey = keyof CssAliasProps;
+// Sidecar keys live on CssAliasProps but are NOT in the CSS→LVGL map.
+type _SidecarKey = 'transition';
 
 type _AssertSync<
   _InMapNotType extends [Exclude<_MapKey, _AliasKey>] extends [never] ? true : Exclude<_MapKey, _AliasKey>,
-  _InTypeNotMap extends [Exclude<_AliasKey, _MapKey>] extends [never] ? true : Exclude<_AliasKey, _MapKey>,
+  _InTypeNotMap extends [Exclude<_AliasKey, _MapKey | _SidecarKey>] extends [never] ? true : Exclude<_AliasKey, _MapKey | _SidecarKey>,
 > = true;
 
 // If this line errors, the map and CssAliasProps are out of sync.

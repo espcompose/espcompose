@@ -19,6 +19,7 @@ import type { IRActionNode } from '../ir/action-types';
 import { assertHookContext, getCurrentHookPath } from './useState';
 import { registerContribution } from './useContributionScope';
 import { resolveRefBindingsInActions } from '../serialize';
+import { resolveCompiledActions } from '../actions';
 
 /**
  * Attach compiled trigger actions to a widget identified by `targetRef`.
@@ -59,6 +60,10 @@ export function useAttachedTrigger<T = void>(
   }
 
   const sourceId = getCurrentHookPath();
+
+  // Resolve deferred IR references (controller method calls, overlay
+  // controller refs, script handle closure indices) and clean refBindings.
+  resolveCompiledActions(fn.__compiledActions, fn.__refBindings);
 
   // Resolve bindings: replace ref name strings with tokens and
   // expr:closure_read nodes with concrete literal values.

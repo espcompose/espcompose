@@ -239,6 +239,8 @@ export interface IROverlayShowAction {
   instanceIndex: number | IRScriptParamRef;
   /** Z-order tier for deterministic stacking in top_layer. */
   zOrder: number;
+  /** Deterministic tier key (e.g. 'tier_abc123'). Used for tier wrapper show/hide. */
+  tierKey: string;
   /**
    * Controller variable name — when present, templateKey, instanceIndex,
    * and zOrder are resolved at runtime from __refBindings[controllerRef].
@@ -253,6 +255,8 @@ export interface IROverlayHideAction {
   templateKey: string;
   /** Z-order tier (carried for naming consistency). */
   zOrder: number;
+  /** Deterministic tier key (e.g. 'tier_abc123'). Used for tier wrapper show/hide. */
+  tierKey: string;
   /**
    * Controller variable name — when present, templateKey is resolved at
    * runtime from __refBindings[controllerRef][OVERLAY_TEMPLATE_KEY].
@@ -299,7 +303,8 @@ export type IRActionNode =
   | IRLambdaAction
   | IROverlayShowAction
   | IROverlayHideAction
-  | IRControllerMethodCallAction;
+  | IRControllerMethodCallAction
+  | IRAnimateAction;
 
 // ── Condition Types ────────────────────────────────────────────────────────
 
@@ -466,12 +471,12 @@ export function irLambdaAction(fragments: string[], slots: IRLambdaInterpolation
   return { kind: 'action:lambda_action', fragments, slots };
 }
 
-export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, controllerRef?: string): IROverlayShowAction {
-  return { kind: 'action:overlay_show', templateKey, instanceIndex, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayShow(templateKey: string, instanceIndex: number | IRScriptParamRef, zOrder: number, tierKey: string, controllerRef?: string): IROverlayShowAction {
+  return { kind: 'action:overlay_show', templateKey, instanceIndex, zOrder, tierKey, ...(controllerRef ? { controllerRef } : {}) };
 }
 
-export function irOverlayHide(templateKey: string, zOrder: number, controllerRef?: string): IROverlayHideAction {
-  return { kind: 'action:overlay_hide', templateKey, zOrder, ...(controllerRef ? { controllerRef } : {}) };
+export function irOverlayHide(templateKey: string, zOrder: number, tierKey: string, controllerRef?: string): IROverlayHideAction {
+  return { kind: 'action:overlay_hide', templateKey, zOrder, tierKey, ...(controllerRef ? { controllerRef } : {}) };
 }
 
 // ── Controller Method Call ─────────────────────────────────────────────────
@@ -489,5 +494,55 @@ export interface IRControllerMethodCallAction {
 
 export function irControllerMethodCall(controllerRef: string, methodName: string, args?: Record<string, IRExpression>): IRControllerMethodCallAction {
   return { kind: 'action:controller_method_call', controllerRef, methodName, ...(args && { args }) };
+}
+
+// ── Animate Action (async property animation) ─────────────────────────────
+
+/** Async widget property animation — awaitable in scripts. */
+export interface IRAnimateAction {
+  kind: 'action:animate';
+  /** Ref binding name for the target widget. */
+  targetRef: string;
+  /** Style property in LVGL snake_case form (e.g. 'translate_y', 'opa'). */
+  styleProp: string;
+  /** Start value (integer). */
+  from: number;
+  /** End value (integer). */
+  to: number;
+  /** Duration in milliseconds. */
+  durationMs: number;
+  /** Easing key (e.g. 'ease_out', 'linear'). */
+  easing: string;
+  /** LVGL part name (e.g. 'indicator', 'knob'). Omit for 'main'. */
+  part?: string;
+  /** LVGL state name (e.g. 'pressed', 'disabled'). Omit for 'default'. */
+  state?: string;
+  /** Start delay in milliseconds. */
+  delayMs?: number;
+}
+
+export function irAnimateAction(
+  targetRef: string,
+  styleProp: string,
+  from: number,
+  to: number,
+  durationMs: number,
+  easing: string,
+  part?: string,
+  state?: string,
+  delayMs?: number,
+): IRAnimateAction {
+  return {
+    kind: 'action:animate',
+    targetRef,
+    styleProp,
+    from,
+    to,
+    durationMs,
+    easing,
+    ...(part ? { part } : {}),
+    ...(state ? { state } : {}),
+    ...(delayMs ? { delayMs } : {}),
+  };
 }
 

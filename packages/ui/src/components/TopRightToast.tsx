@@ -13,19 +13,12 @@
  * with a deterministic ID for show/hide action targeting.
  */
 
-import type { WidgetPropsWithChildren } from '@espcompose/core';
-import { createLvglContainerWidget } from '@espcompose/core';
-import { useSpacing, useRadius } from '../hooks';
+import type { WidgetPropsWithChildren, Ref } from '@espcompose/core';
+import { createLvglContainerWidget, useRef, useAnimateTransition } from '@espcompose/core';
+import { useSpacing } from '../hooks';
 import { UITheme } from '../theme/theme';
-import type { SpacingToken, RadiusToken } from '../theme/types';
 
 type TopRightToastProps = WidgetPropsWithChildren<{
-  /** Padding inside the toast card. Default: 'md'. */
-  padding?: SpacingToken;
-  /** Corner radius of the toast card. Default: 'md'. */
-  radius?: RadiusToken;
-  /** Margin from the top/right screen edges. Default: 'md'. */
-  margin?: SpacingToken;
   /**
    * Top offset in pixels. Used internally by `Toast.Provider` for
    * multi-slot downward stacking.
@@ -34,6 +27,13 @@ type TopRightToastProps = WidgetPropsWithChildren<{
    * @default 0
    */
   topOffset?: number;
+
+  /**
+   * Ref forwarded to the inner Glass card for animation targeting.
+   *
+   * @internal
+   */
+  cardRef?: Ref;
 }>;
 
 /**
@@ -43,43 +43,50 @@ type TopRightToastProps = WidgetPropsWithChildren<{
 export const TopRightToast = createLvglContainerWidget(
   (props: TopRightToastProps) => {
     const theme = UITheme.use();
-    const padding = useSpacing(props.padding ?? 'md');
-    const radius = useRadius(props.radius ?? 'md');
-    const margin = useSpacing(props.margin ?? 'md');
-    const bgColor = props.style?.backgroundColor ?? theme?.colors?.surface;
-    const borderColor = theme?.colors?.border;
+    const toast = theme?.parts?.toast;
+    const margin = theme?.spacing.md;
     const topOffset = props.topOffset ?? 0;
+
+    const containerRef = useRef();
+
+    useAnimateTransition(containerRef, 'paddingTop', {
+      duration: '300ms',
+      easing: 'ease-in',
+      direction: 'decrease',
+    });
 
     return (
       <lvgl-obj
+        ref={containerRef}
         style={{
-          width: '100%',
-          height: '100%',
+          height: 'fit-content',
+          width: 'fit-content',
           backgroundColor: '#000000',
           backgroundOpacity: 'transparent',
           borderWidth: 0,
-          padding: 0,
           paddingTop: topOffset,
-          paddingRight: margin,
           clickable: false,
+          placeSelf: 'topRight',
         }}
       >
         {/* Top-right anchored toast card */}
         <lvgl-obj
+          ref={props.cardRef}
           style={{
-            backgroundColor: bgColor,
-            backgroundOpacity: '100%',
-            borderRadius: radius,
+            backgroundColor: toast?.bg,
+            backgroundOpacity: 'opaque',
             borderWidth: 1,
-            borderColor: borderColor,
-            padding: padding,
+            borderColor: toast?.border,
+            borderRadius: 0,
             width: 280,
             height: props.style?.height ?? 'fit-content',
             placeSelf: 'topRight',
-            scrollbarMode: 'off',
             display: 'flex',
             flexDirection: 'row',
             columnGap: useSpacing('sm'),
+            padding: margin,
+            scrollbarMode: 'off',
+            translateX: 300,
           }}
         >
           {props.children}

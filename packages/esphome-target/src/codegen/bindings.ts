@@ -10,7 +10,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { LVGL_PART_FLAGS, LVGL_STATE_FLAGS } from '../lvgl';
-import { LVGL_STYLE_PROP_TABLE } from '../lvgl';
+import { LVGL_STYLE_PROP_TABLE, resolveLvglStyleConstant } from '../lvgl';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -161,36 +161,54 @@ export interface ReactiveRuntimeConfig {
   tables?: TableDecl[];
   /** Pre-formatted closure-table block (struct + array per parameterized script). */
   closureTablesBlock?: string;
+  /** Declarative style transitions to emit as static lv_style_transition_dsc_t structs. */
+  styleTransitions?: StyleTransitionDecl[];
+  /** Animated binding transitions — augment Effect closures with lv_anim_t interpolation. */
+  animateTransitions?: AnimateTransitionDecl[];
+}
+
+// ── Style transition C++ declarations ──────────────────────────────────────
+
+export interface StyleTransitionDecl {
+  /** Target widget ref ID (used to look up the lv_obj_t at runtime). */
+  targetRef: string;
+  /** Widget type — pages use `.obj` access. */
+  targetType?: string;
+  /** LVGL part (snake_case, e.g. 'indicator'). Defaults to 'main'. */
+  part?: string;
+  /** LVGL state (snake_case, e.g. 'pressed'). Defaults to 'default'. */
+  state?: string;
+  /** Transition descriptor groups — each becomes one lv_style_transition_dsc_t. */
+  descriptors: StyleTransitionDescriptorDecl[];
+}
+
+export interface StyleTransitionDescriptorDecl {
+  /** snake_case LVGL style property names (e.g. 'bg_color', 'opa'). */
+  properties: string[];
+  /** Duration in milliseconds. */
+  durationMs: number;
+  /** LVGL easing path callback name (e.g. 'lv_anim_path_ease_out'). */
+  easingCb: string;
+  /** Delay in milliseconds. */
+  delayMs: number;
+}
+
+// ── Animate transition C++ declarations ────────────────────────────────────
+
+export interface AnimateTransitionDecl {
+  /** Target widget ref ID. */
+  targetRef: string;
+  /** snake_case LVGL style property name (e.g. 'pad_bottom'). */
+  property: string;
+  /** Duration in milliseconds. */
+  durationMs: number;
+  /** LVGL easing path callback name (e.g. 'lv_anim_path_ease_out'). */
+  easingCb: string;
+  /** Direction constraint: 'decrease' | 'increase' | 'both'. */
+  direction: 'decrease' | 'increase' | 'both';
 }
 
 // ── C++ code generation ────────────────────────────────────────────────────
-
-/**
- * Compute the ESPCOMPOSE_MAX_NODES capacity for the reactive runtime.
- */
-export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
-  const themeScopes = config.themes ?? [];
-  const totalThemeMemos = themeScopes.reduce((sum, sc) => sum + sc.themeMemos.length, 0);
-  const themeSignalCount = themeScopes.length; // one theme_index per scope
-  const canonicalMemoCount = config.memos.filter(m => m.canonicalIndex == null).length;
-
-  const bindingGroupKeys = new Set<string>();
-  for (const b of config.widgetBindings) {
-    bindingGroupKeys.add([...b.sourceNames].sort().join(','));
-  }
-  const batchedBindingCount = bindingGroupKeys.size;
-
-  const totalNodes =
-    config.signals.length +
-    config.globalSignals.length +
-    themeSignalCount +
-    totalThemeMemos +
-    canonicalMemoCount +
-    config.effects.length +
-    batchedBindingCount;
-
-  return totalNodes + 16;
-}
 
 /**
  * Generate the full contents of espcompose_bindings.h.
@@ -198,48 +216,15 @@ export function computeMaxNodes(config: ReactiveRuntimeConfig): number {
 export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   const lines: string[] = [];
 
-  // ── Compute subscriber counts for the reactive runtime ──────────────
   const themeScopes = config.themes ?? [];
   const allThemeMemos = themeScopes.flatMap(sc => sc.themeMemos);
-
-  // Count batched binding Effects (one per unique source group)
-  const bindingGroupKeys = new Set<string>();
-  for (const b of config.widgetBindings) {
-    bindingGroupKeys.add([...b.sourceNames].sort().join(','));
-  }
-
-  // Max fan-out: theme_index_<scopeId> → all theme memos is typically the largest.
-  // Also account for signal → memos/bindings and memo → bindings.
-  // Only count subscribers for canonical memos (aliases are references).
-  const subscriberCounts = new Map<string, number>();
-  const incSub = (src: string) => subscriberCounts.set(src, (subscriberCounts.get(src) ?? 0) + 1);
-  for (const sc of themeScopes) {
-    const indexName = `theme_index_${sc.scopeId}`;
-    for (const _tm of sc.themeMemos) incSub(indexName);
-  }
-  // Account for global signal subscribers
-  for (const _gs of config.globalSignals) {
-    // Global signals get subscribers from memos and bindings that reference them,
-    // which are already counted in the memo/effect/binding loops below.
-  }
-  for (const memo of config.memos) {
-    if (memo.canonicalIndex != null) continue; // alias — no wiring
-    for (const s of memo.sourceSignals) incSub(s);
-  }
-  for (const effect of config.effects) {
-    for (const s of effect.sourceNames) incSub(s);
-  }
-  // For batched bindings, each source group subscribes once (not per-binding)
-  for (const key of bindingGroupKeys) {
-    const sourceNames = key.split(',');
-    for (const s of sourceNames) incSub(s);
-  }
 
   lines.push('// Auto-generated by espcompose — do not edit');
   lines.push('#pragma once');
   lines.push('');
   lines.push('#include "esphome/components/espcompose/espcompose_reactive.h"');
   lines.push('#include "esphome/components/espcompose/espcompose_runtime.h"');
+  lines.push('#include "esphome/components/espcompose/espcompose_animate.h"');
   lines.push('');
 
   // Provide operator!= for LVGL color types (needed by Signal/Memo<lv_color_t>::update)
@@ -253,6 +238,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
   lines.push('');
   lines.push('using esphome::id;');
   lines.push('using esphome::to_string;');
+  lines.push('');
+  lines.push('// ── id() result normalizer ──');
+  lines.push('// ESPHome\'s `id(X)` returns `T&` for LVGL widgets but `T*` for component');
+  lines.push('// accessors. These overloads collapse both to a uniform `T*`, so closure');
+  lines.push('// tables can store one normalized lookup-array element type.');
+  lines.push('template<typename T> constexpr T* _ec_id_ptr(T& v) noexcept { return &v; }');
+  lines.push('template<typename T> constexpr T* _ec_id_ptr(T* v) noexcept { return v; }');
   lines.push('');
 
   // ── HA service call helper ─────────────────────────────────────────────
@@ -418,6 +410,80 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
+  // ── Style transition static declarations ──────────────────────────────────
+  const styleTransitions = config.styleTransitions ?? [];
+  if (styleTransitions.length > 0) {
+    lines.push('// ── Style transition descriptors ──');
+    let transIdx = 0;
+    for (const trans of styleTransitions) {
+      for (let d = 0; d < trans.descriptors.length; d++) {
+        const desc = trans.descriptors[d];
+        const propConstants = desc.properties.map(p => resolveLvglStyleConstant(p));
+        lines.push(`static const lv_style_prop_t ec_trans_props_${transIdx}[] = {${propConstants.join(', ')}, 0};`);
+        lines.push(`static lv_style_transition_dsc_t ec_trans_dsc_${transIdx};`);
+        lines.push(`static lv_style_t ec_trans_style_${transIdx};`);
+        transIdx++;
+      }
+    }
+    lines.push('');
+  }
+
+  // ── Animate transition exec callbacks & validation ────────────────────
+  const animateTransitions = config.animateTransitions ?? [];
+  // Build lookup: "widgetId:prop_snake" → AnimateTransitionDecl
+  const animateTransitionMap = new Map<string, AnimateTransitionDecl>();
+  if (animateTransitions.length > 0) {
+    // Validate all animate transitions target real bindings with animatable types.
+    const ANIMATABLE_CPP_TYPES = new Set(['lv_coord_t', 'lv_opa_t', 'uint32_t']);
+
+    for (const at of animateTransitions) {
+      // Find matching binding
+      const matchingBinding = config.widgetBindings.find(b =>
+        b.widgetId === at.targetRef && camelToSnake(b.prop) === at.property,
+      );
+      if (!matchingBinding) {
+        throw new Error(
+          `useAnimateTransition: no reactive binding found for property '${at.property}' ` +
+          `on widget '${at.targetRef}'. The property must have a reactive value in the style object.`,
+        );
+      }
+
+      // Validate the C++ type is animatable (int32_t-based)
+      const descriptor = LVGL_STYLE_PROP_TABLE[at.property];
+      if (!descriptor) {
+        throw new Error(
+          `useAnimateTransition: property '${at.property}' is not a known LVGL style property.`,
+        );
+      }
+      if (!ANIMATABLE_CPP_TYPES.has(descriptor.cppType)) {
+        throw new Error(
+          `useAnimateTransition: property '${at.property}' has C++ type '${descriptor.cppType}' ` +
+          `which is not animatable. Only numeric types (lv_coord_t, lv_opa_t, uint32_t) can be animated.`,
+        );
+      }
+
+      const key = `${at.targetRef}:${at.property}`;
+      animateTransitionMap.set(key, at);
+    }
+
+    // Emit deduplicated exec callbacks (one per property name)
+    const emittedProps = new Set<string>();
+    lines.push('// ── Animate transition exec callbacks ──');
+    for (const at of animateTransitions) {
+      if (emittedProps.has(at.property)) continue;
+      emittedProps.add(at.property);
+
+      const descriptor = LVGL_STYLE_PROP_TABLE[at.property]!;
+      // Standard style setter pattern: lv_obj_set_style_<lvglSetter>(obj, val, selector)
+      // The selector is fixed at LV_PART_MAIN | LV_STATE_DEFAULT for exec callbacks;
+      // the animation operates on the object directly.
+      lines.push(`static void _ec_anim_exec_${at.property}(void* obj, int32_t v) {`);
+      lines.push(`  lv_obj_set_style_${descriptor.lvglSetter}((lv_obj_t*)obj, (${descriptor.cppType})v, static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));`);
+      lines.push('}');
+    }
+    lines.push('');
+  }
+
   // ── Runtime bootstrap ──────────────────────────────────────────────────
   lines.push('// ── Bootstrap: wire dependency graph ──');
   lines.push('void bootstrap_runtime() {');
@@ -442,15 +508,7 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     lines.push('');
   }
 
-  // ── Allocate exact-sized subscriber storage for each node ──────────
-  // The codegen knows the full dependency graph, so we emit perfectly-
-  // sized static arrays — no wasted memory on nodes with few/no subscribers.
-  lines.push('  // ── Subscriber storage (exact-sized per node) ──');
-  for (const [nodeName, count] of subscriberCounts.entries()) {
-    lines.push(`  static NodeBase* ${nodeName}_subs[${count}];`);
-    lines.push(`  ${nodeName}.set_subscriber_storage(${nodeName}_subs, ${count});`);
-  }
-  lines.push('');
+
 
   // ── User effect declarations (static local — constructed once at setup) ──
   if (config.effects.length > 0) {
@@ -480,11 +538,19 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
       const first = bindings[0];
       if (bindings.length === 1) {
         // Single binding — no batching needed
-        const updateCode = generateWidgetUpdateCode(first);
-        lines.push(`  static Effect binding_${first.index}([]() {`);
-        lines.push(`    ${updateCode}`);
-        lines.push('  });');
-        lines.push('');
+        const animCode = tryGenerateAnimatedUpdateCode(first, animateTransitionMap);
+        if (animCode) {
+          lines.push(`  static Effect binding_${first.index}([]() {`);
+          for (const line of animCode) lines.push(`    ${line}`);
+          lines.push('  });');
+          lines.push('');
+        } else {
+          const updateCode = generateWidgetUpdateCode(first);
+          lines.push(`  static Effect binding_${first.index}([]() {`);
+          lines.push(`    ${updateCode}`);
+          lines.push('  });');
+          lines.push('');
+        }
       } else {
         // Batched: one Effect for all bindings from the same source(s).
         // Cache the source value to avoid redundant .get() calls.
@@ -502,8 +568,13 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
         }
         for (const b of bindings) {
           const cachedVar = exprToVar.get(b.valueExpr)!;
-          const updateCode = generateWidgetUpdateCode({ ...b, valueExpr: cachedVar });
-          lines.push(`    ${updateCode}`);
+          const animCode = tryGenerateAnimatedUpdateCode({ ...b, valueExpr: cachedVar }, animateTransitionMap);
+          if (animCode) {
+            for (const line of animCode) lines.push(`    ${line}`);
+          } else {
+            const updateCode = generateWidgetUpdateCode({ ...b, valueExpr: cachedVar });
+            lines.push(`    ${updateCode}`);
+          }
         }
         lines.push('  });');
         lines.push('');
@@ -511,90 +582,35 @@ export function generateBindingsHeader(config: ReactiveRuntimeConfig): string {
     }
   }
 
-  // Wire theme memos (each scope's memos depend on their scope's theme_index)
-  for (const sc of themeScopes) {
-    const indexName = `theme_index_${sc.scopeId}`;
-    for (const tm of sc.themeMemos) {
-      const src = `${tm.name}_src`;
-      lines.push(`  static NodeBase* ${src}[] = {&${indexName}};`);
-      lines.push(`  ${tm.name}.wire(${src}, 1);`);
-    }
-  }
+  // Nodes self-schedule during construction (dirty=true + schedule(this)),
+  // so no explicit schedule block is needed here.
 
-  // Wire memos (only canonical — aliases are references, not separate nodes)
-  for (const memo of canonicalMemos) {
-    if (memo.sourceSignals.length > 0) {
-      const sourcesVar = `memo_${memo.index}_sources`;
-      lines.push(`  static NodeBase* ${sourcesVar}[] = {${memo.sourceSignals.map(s => `&${s}`).join(', ')}};`);
-      lines.push(`  memo_${memo.index}.wire(${sourcesVar}, ${memo.sourceSignals.length});`);
-    }
-  }
-
-  // Wire user effects
-  for (const effect of config.effects) {
-    if (effect.sourceNames.length > 0) {
-      const sourcesVar = `effect_${effect.index}_sources`;
-      lines.push(`  static NodeBase* ${sourcesVar}[] = {${effect.sourceNames.map(s => `&${s}`).join(', ')}};`);
-      lines.push(`  effect_${effect.index}.wire(${sourcesVar}, ${effect.sourceNames.length});`);
-    }
-  }
-
-  // Wire widget binding effects (batched — one per source group)
-  {
-    const wiredGroups = new Map<string, WidgetBindingDecl>();
-    for (const binding of config.widgetBindings) {
-      const key = [...binding.sourceNames].sort().join(',');
-      if (!wiredGroups.has(key)) {
-        wiredGroups.set(key, binding);
-      }
-    }
-    for (const [, binding] of wiredGroups) {
-      if (binding.sourceNames.length > 0) {
-        const sourcesVar = `binding_${binding.index}_sources`;
-        lines.push(`  static NodeBase* ${sourcesVar}[] = {${binding.sourceNames.map(s => `&${s}`).join(', ')}};`);
-        lines.push(`  binding_${binding.index}.wire(${sourcesVar}, ${binding.sourceNames.length});`);
+  // Note: We intentionally do NOT batch style refreshes via
+  // lv_obj_enable_style_refresh(false) + lv_obj_report_style_change(NULL).
+  // The blanket NULL recalc is O(all_widgets) and takes 300ms+ on complex UIs.
+  // Inline per-object refresh during node updates is O(changed_widgets) and
+  // typically completes in <2ms.
+  // ── Style transition init ──────────────────────────────────────────────
+  if (styleTransitions.length > 0) {
+    lines.push('');
+    lines.push('  // ── Style transition initialization ──');
+    let transIdx = 0;
+    for (const trans of styleTransitions) {
+      const obj = trans.targetType === 'page'
+        ? `id(${trans.targetRef}).obj`
+        : `&id(${trans.targetRef})`;
+      for (let d = 0; d < trans.descriptors.length; d++) {
+        const desc = trans.descriptors[d];
+        lines.push(`  lv_style_transition_dsc_init(&ec_trans_dsc_${transIdx}, ec_trans_props_${transIdx}, ${desc.easingCb}, ${desc.durationMs}, ${desc.delayMs}, NULL);`);
+        lines.push(`  lv_style_init(&ec_trans_style_${transIdx});`);
+        lines.push(`  lv_style_set_transition(&ec_trans_style_${transIdx}, &ec_trans_dsc_${transIdx});`);
+        const selector = computeTransitionSelector(trans.part, trans.state);
+        lines.push(`  lv_obj_add_style(${obj}, &ec_trans_style_${transIdx}, ${selector});`);
+        transIdx++;
       }
     }
   }
 
-  // Schedule all dirty nodes so the initial flush actually processes them.
-  // Constructors set dirty=true but don't enqueue, so we must do it here.
-  lines.push('');
-  for (const sc of themeScopes) {
-    for (const tm of sc.themeMemos) {
-      lines.push(`  Scheduler::instance().schedule(&${tm.name});`);
-    }
-  }
-  // Schedule only canonical memos (aliases are references to canonicals)
-  for (const memo of canonicalMemos) {
-    lines.push(`  Scheduler::instance().schedule(&memo_${memo.index});`);
-  }
-  for (const effect of config.effects) {
-    lines.push(`  Scheduler::instance().schedule(&effect_${effect.index});`);
-  }
-  // Schedule only one binding Effect per source group (batched)
-  {
-    const scheduledGroups = new Map<string, WidgetBindingDecl>();
-    for (const binding of config.widgetBindings) {
-      const key = [...binding.sourceNames].sort().join(',');
-      if (!scheduledGroups.has(key)) {
-        scheduledGroups.set(key, binding);
-      }
-    }
-    for (const [, binding] of scheduledGroups) {
-      lines.push(`  Scheduler::instance().schedule(&binding_${binding.index});`);
-    }
-  }
-
-  // Register LVGL flush batching hooks so all widget updates
-  // are applied in a single render pass.
-  lines.push('  Scheduler::instance().set_pre_flush([]() {');
-  lines.push('    lv_obj_enable_style_refresh(false);');
-  lines.push('  });');
-  lines.push('  Scheduler::instance().set_post_flush([]() {');
-  lines.push('    lv_obj_enable_style_refresh(true);');
-  lines.push('    lv_obj_report_style_change(NULL);');
-  lines.push('  });');
   lines.push('');
 
   lines.push('  espcompose::flush();  // Initial flush to process dirty nodes marked during setup');
@@ -622,6 +638,43 @@ function computeStyleFlag(binding: WidgetBindingDecl): string {
     throw new Error(`Unknown LVGL state '${stateKey}' for widget binding`);
   }
   return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
+}
+
+/**
+ * Compute LVGL style selector for a style transition.
+ * Parts and states come in snake_case from the lowering pipeline.
+ */
+function computeTransitionSelector(part?: string, state?: string): string {
+  const partKey = part ? camelToSnake(part) : 'main';
+  const stateKey = state ? camelToSnake(state) : 'default';
+  const partFlag = LVGL_PART_FLAGS[partKey];
+  const stateFlag = LVGL_STATE_FLAGS[stateKey];
+  if (!partFlag) {
+    throw new Error(`Unknown LVGL part '${partKey}' for style transition`);
+  }
+  if (!stateFlag) {
+    throw new Error(`Unknown LVGL state '${stateKey}' for style transition`);
+  }
+  return `(static_cast<lv_style_selector_t>(${partFlag}) | static_cast<lv_style_selector_t>(${stateFlag}))`;
+}
+
+/** Map an easing key (e.g. 'ease_out') to the LVGL C function pointer name. */
+const EASING_TO_LV_PATH: Record<string, string> = {
+  'linear': 'lv_anim_path_linear',
+  'ease_in': 'lv_anim_path_ease_in',
+  'ease_out': 'lv_anim_path_ease_out',
+  'ease_in_out': 'lv_anim_path_ease_in_out',
+  'overshoot': 'lv_anim_path_overshoot',
+  'bounce': 'lv_anim_path_bounce',
+  'step': 'lv_anim_path_step',
+};
+
+/**
+ * Resolve an easing key to the LVGL C path callback function name.
+ * Falls back to linear for unknown values.
+ */
+export function resolveEasingCb(easingKey: string): string {
+  return EASING_TO_LV_PATH[easingKey] ?? 'lv_anim_path_linear';
 }
 
 /**
@@ -717,6 +770,77 @@ function generateWidgetUpdateCode(binding: WidgetBindingDecl): string {
 
   // Unsupported prop
   return `/* unsupported: ${widgetType}.${prop} */`;
+}
+
+/**
+ * Try to generate animated update code for a widget binding.
+ *
+ * Returns an array of C++ lines if the binding matches an animate transition,
+ * or null if no animation applies (caller should use direct setter).
+ *
+ * The generated code uses lv_anim_t to interpolate from the current widget
+ * value to the new reactive value, with an optional direction guard.
+ */
+function tryGenerateAnimatedUpdateCode(
+  binding: WidgetBindingDecl,
+  animateTransitionMap: Map<string, AnimateTransitionDecl>,
+): string[] | null {
+  const snakeProp = camelToSnake(binding.prop);
+  const key = `${binding.widgetId}:${snakeProp}`;
+  const at = animateTransitionMap.get(key);
+  if (!at) return null;
+
+  const descriptor = LVGL_STYLE_PROP_TABLE[snakeProp];
+  if (!descriptor) return null;
+
+  const obj = binding.widgetType === 'page'
+    ? `id(${binding.widgetId}).obj`
+    : `&id(${binding.widgetId})`;
+  const cast = descriptor.cast ? descriptor.cast.replace('$V', binding.valueExpr) : binding.valueExpr;
+
+  // Read current value from widget: lv_obj_get_style_<prop>(obj, part_flag)
+  const partKey = binding.part ? camelToSnake(binding.part) : 'main';
+  const partFlag = LVGL_PART_FLAGS[partKey] ?? 'LV_PART_MAIN';
+  const getCurrent = `lv_obj_get_style_${descriptor.lvglSetter}(${obj}, ${partFlag})`;
+
+  const directSetter = `lv_obj_set_style_${descriptor.lvglSetter}(${obj}, ${cast}, ${computeStyleFlag(binding)});`;
+
+  const codeLines: string[] = [];
+  codeLines.push(`{ auto _target = ${cast};`);
+  codeLines.push(`  auto _cur = ${getCurrent};`);
+
+  // Direction guard
+  const needsGuard = at.direction !== 'both';
+  if (needsGuard) {
+    const cond = at.direction === 'decrease' ? '_target < _cur' : '_target > _cur';
+    codeLines.push(`  if (${cond}) {`);
+    codeLines.push(`    lv_anim_t _a;`);
+    codeLines.push(`    lv_anim_init(&_a);`);
+    codeLines.push(`    lv_anim_set_var(&_a, ${obj});`);
+    codeLines.push(`    lv_anim_set_values(&_a, _cur, _target);`);
+    codeLines.push(`    lv_anim_set_time(&_a, ${at.durationMs});`);
+    codeLines.push(`    lv_anim_set_exec_cb(&_a, _ec_anim_exec_${snakeProp});`);
+    codeLines.push(`    lv_anim_set_path_cb(&_a, ${at.easingCb});`);
+    codeLines.push(`    lv_anim_start(&_a);`);
+    codeLines.push(`  } else {`);
+    codeLines.push(`    ${directSetter}`);
+    codeLines.push(`  }`);
+  } else {
+    // Always animate
+    codeLines.push(`  if (_target != _cur) {`);
+    codeLines.push(`    lv_anim_t _a;`);
+    codeLines.push(`    lv_anim_init(&_a);`);
+    codeLines.push(`    lv_anim_set_var(&_a, ${obj});`);
+    codeLines.push(`    lv_anim_set_values(&_a, _cur, _target);`);
+    codeLines.push(`    lv_anim_set_time(&_a, ${at.durationMs});`);
+    codeLines.push(`    lv_anim_set_exec_cb(&_a, _ec_anim_exec_${snakeProp});`);
+    codeLines.push(`    lv_anim_set_path_cb(&_a, ${at.easingCb});`);
+    codeLines.push(`    lv_anim_start(&_a);`);
+    codeLines.push(`  }`);
+  }
+  codeLines.push('}');
+
+  return codeLines;
 }
 
 // ── Theme value helpers ────────────────────────────────────────────────────

@@ -86,7 +86,7 @@ export function compileActionConfigValue(
     const propType = ctx.checker.getTypeAtLocation(expr);
     if (hasRefBrand(propType)) {
       const bindingKey = expr.getText();
-      ctx.refExpressions.add(bindingKey);
+      ctx.propertyAccessRefs.add(bindingKey);
       return bindingKey;
     }
   }

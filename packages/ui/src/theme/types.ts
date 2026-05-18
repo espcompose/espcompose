@@ -83,10 +83,20 @@ export interface SliderPartColors extends PartColors {
   rail: HexColor;
 }
 
+export interface ToastPartColors {
+  /** Solid background fill. */
+  bg: HexColor;
+  /** Message text color. */
+  text: HexColor;
+  /** Border color (set borderWidth to 0 to hide). */
+  border: HexColor;
+}
+
 export interface ThemeParts {
   slider: SliderPartColors;
   switch: SwitchPartColors;
   arc: PartColors;
+  toast: ToastPartColors;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

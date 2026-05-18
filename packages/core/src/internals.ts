@@ -101,6 +101,7 @@ export type { RetainedGlobalType } from './hooks/useRetainedGlobal';
 
 // ── Hook internals (used by target backends) ───────────────────────────────
 export type { IRHAEntity, IRBinding, ComponentRegistration, HAEntityVariant } from './hooks/useReactiveScope';
+export { registerComponent } from './hooks/useReactiveScope';
 export type { OverlayDefinition, OverlayInstance, OverlayController, CapturedOverlayAction } from './hooks/useOverlay';
 export {
   withOverlayScope,
@@ -108,9 +109,12 @@ export {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_Z_ORDER,
+  OVERLAY_TIER_KEY,
   OVERLAY_PAYLOAD_GLOBALS,
   OVERLAY_LIFECYCLE_SCRIPT_ID,
 } from './hooks/useOverlay';
+export { withOverlayTierScope, peekOverlayTierDefinitions } from './hooks/useOverlayTier';
+export type { OverlayTierHandle, OverlayTierDefinition, OverlayTierConfig } from './hooks/useOverlayTier';
 export { structuralFingerprint, assertOverlayStructuralIdentity } from './hooks/overlay-fingerprint';
 export type { VisibilityOptions } from './hooks/useVisibility';
 export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/resolve/controller';
@@ -118,7 +122,7 @@ export { resolveControllerMethodCalls, cleanControllerRefs } from './actions/res
 // ── Contribution scope (compiler state) ────────────────────────────────────
 export { withContributionScope, registerContribution } from './hooks/useContributionScope';
 export type { ContributionScopeResult } from './hooks/useContributionScope';
-export type { ComponentContribution, AttachTriggerContribution } from './ir/contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AttachAnimateTransitionContribution, AnimationEasing, AnimateTransitionDirection, IRStyleTransition, IRStyleTransitionDescriptor, IRAnimateTransition } from './ir/contribution-types';
 export { applyContributions } from './ir/apply-contributions';
 
 // ── Capture Protocol ───────────────────────────────────────────────────────
@@ -184,6 +188,7 @@ export type {
 
 // ── LVGL ───────────────────────────────────────────────────────────────────
 export { LVGL_UPDATABLE_WIDGETS } from './lvgl/widget-tables';
+export { CSS_TO_LVGL_MAP } from './lvgl/style/mapping';
 
 // ── Trigger args ───────────────────────────────────────────────────────────
 export { isTriggerVar } from './actions/triggers';
@@ -239,6 +244,7 @@ export {
 export { getExprChildren, mapExprChildren } from './ir/index';
 export { getStatementBlockExpressions } from './ir/index';
 export { analyzeExprStructure, analyzeActionStructure } from './ir/index';
+export { optimizeExpr, optimizeSemanticIR } from './ir/index';
 export type {
   ExprStructuralAnalysis,
   ExprHole,
@@ -258,6 +264,7 @@ export type {
   IRLambdaAction, IRLambdaInterpolation,
   IROverlayShowAction, IROverlayHideAction,
   IRControllerMethodCallAction,
+  IRAnimateAction,
   IRCondition, IRLambdaCondition, IRNativeCondition,
   IRActionConfig, IRActionConfigDict, IRActionConfigValue,
   IRRefAnnotation,
@@ -272,5 +279,6 @@ export {
   irLambdaCondition, irLambdaAction,
   irOverlayShow, irOverlayHide,
   irControllerMethodCall,
+  irAnimateAction,
   splitActionKey, parseDurationString, parseTimeoutString,
 } from './ir/index';

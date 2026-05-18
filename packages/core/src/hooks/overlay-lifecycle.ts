@@ -4,12 +4,28 @@ import {
   irGlobalSet,
   irOverlayHide,
   irOverlayShow,
+  irScriptExecute,
+  irScriptWait,
 } from '../ir/action-types';
 import type { IRActionNode } from '../ir/action-types';
 import { irTriggerVarExpression } from '../ir/expr-builders';
 import type { IRType, ScriptMode } from '../ir/types';
 import type { ScriptHandle, ScriptOptions } from './useScript';
 import { defineSyntheticScript } from './useScript';
+import { CLOSURE_INDEX } from '../actions';
+
+/**
+ * Build a `script.execute` action for `handle`, forwarding the handle's
+ * `[CLOSURE_INDEX]` (assigned by `useScript` when the script declares a
+ * `closure_index` parameter) so the synthetic lifecycle script passes the
+ * required argument when invoking another closure-shaped script.
+ */
+function execWithClosure(handle: ScriptHandle): IRActionNode {
+  const closureIndex = (handle as unknown as { [CLOSURE_INDEX]?: number })[CLOSURE_INDEX];
+  return closureIndex !== undefined
+    ? irScriptExecute(handle.id, { closureIndex })
+    : irScriptExecute(handle.id);
+}
 import { normalizeDuration } from './global-shared';
 import type { OverlayPayloadGlobalDecl } from './global-shared';
 import type { OverlayController } from './useOverlay';
@@ -18,6 +34,7 @@ import {
   OVERLAY_INSTANCE_INDEX,
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_Z_ORDER,
+  OVERLAY_TIER_KEY,
 } from './useOverlay';
 
 export interface OverlayScriptPair {
@@ -29,6 +46,7 @@ export interface OverlayControllerInternalInfo {
   templateKey: string;
   instanceIndex: number;
   zOrder: number;
+  tierKey: string;
   payloadDecls?: OverlayPayloadGlobalDecl[];
 }
 
@@ -43,6 +61,7 @@ interface OverlayControllerInternalShape {
   [OVERLAY_TEMPLATE_KEY]: string;
   [OVERLAY_INSTANCE_INDEX]: number;
   [OVERLAY_Z_ORDER]: number;
+  [OVERLAY_TIER_KEY]: string;
   [OVERLAY_PAYLOAD_GLOBALS]?: OverlayPayloadGlobalDecl[];
 }
 
@@ -54,6 +73,7 @@ export function readOverlayControllerInternal(
     templateKey: internal[OVERLAY_TEMPLATE_KEY],
     instanceIndex: internal[OVERLAY_INSTANCE_INDEX],
     zOrder: internal[OVERLAY_Z_ORDER],
+    tierKey: internal[OVERLAY_TIER_KEY],
     payloadDecls: internal[OVERLAY_PAYLOAD_GLOBALS],
   };
 }
@@ -93,6 +113,10 @@ export interface OverlayLifecycleScriptOptions {
   hidePrefixActions?: (showScript: ScriptHandle) => IRActionNode[];
   hideSuffixActions?: IRActionNode[];
   ctrlBindingKey?: string;
+  /** Script handle to execute+await after overlay_show (entrance animation). */
+  afterShowScript?: ScriptHandle;
+  /** Script handle to execute+await before overlay_hide (exit animation). */
+  beforeHideScript?: ScriptHandle;
 }
 
 export function buildOverlayLifecycleScripts(
@@ -108,14 +132,32 @@ export function buildOverlayLifecycleScripts(
       internal.templateKey,
       internal.instanceIndex,
       internal.zOrder,
+      internal.tierKey,
       ctrlBindingKey,
     ),
   ];
 
+  // afterShow hook: yield once before starting the entrance animation so that
+  // any pending LVGL invalidation (e.g. a full-screen overlay unhide) is
+  // rendered in the first lv_timer_handler() pass.  Without this yield the
+  // animation's start timestamp (recorded by lv_anim_start) is set *before*
+  // the heavy render, and lv_tick_get() advances past the animation duration
+  // during rendering — causing the animation to complete in a single frame.
+  if (options.afterShowScript) {
+    showActions.push(irDelayAction({ kind: 'duration', value: 0, unit: 'ms' }));
+    showActions.push(execWithClosure(options.afterShowScript));
+    showActions.push(irScriptWait(options.afterShowScript.id));
+  }
+
   if (options.autoHide !== false) {
     showActions.push(irDelayAction(normalizeDuration(options.autoHide)));
+    // beforeHide hook: execute + await before auto-hide
+    if (options.beforeHideScript) {
+      showActions.push(execWithClosure(options.beforeHideScript));
+      showActions.push(irScriptWait(options.beforeHideScript.id));
+    }
     showActions.push(...(options.beforeAutoHideHideActions ?? []));
-    showActions.push(irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey));
+    showActions.push(irOverlayHide(internal.templateKey, internal.zOrder, internal.tierKey, ctrlBindingKey));
     showActions.push(...(options.afterAutoHideActions ?? []));
   }
 
@@ -127,13 +169,20 @@ export function buildOverlayLifecycleScripts(
     opts: options.showScriptOptions,
   });
 
+  const hideActions: IRActionNode[] = [
+    ...(options.hidePrefixActions?.(showScript) ?? []),
+  ];
+  // beforeHide hook: execute + await before manual hide
+  if (options.beforeHideScript) {
+    hideActions.push(execWithClosure(options.beforeHideScript));
+    hideActions.push(irScriptWait(options.beforeHideScript.id));
+  }
+  hideActions.push(irOverlayHide(internal.templateKey, internal.zOrder, internal.tierKey, ctrlBindingKey));
+  hideActions.push(...(options.hideSuffixActions ?? []));
+
   const hideScript = defineSyntheticScript({
     id: generateDeterministicId('scr', options.hideIdSeed),
-    actions: [
-      ...(options.hidePrefixActions?.(showScript) ?? []),
-      irOverlayHide(internal.templateKey, internal.zOrder, ctrlBindingKey),
-      ...(options.hideSuffixActions ?? []),
-    ],
+    actions: hideActions,
     refBindings: { [ctrlBindingKey]: ctrl },
   });
 

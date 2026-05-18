@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 import type { BuildSemanticIRInput, IRThemeData, ExecuteResult, ExprType } from '@espcompose/core/internals';
-import { buildSemanticIR, brandArray, scopeHash, irScalar } from '@espcompose/core/internals';
+import { buildSemanticIR, brandArray, scopeHash, irScalar, optimizeSemanticIR } from '@espcompose/core/internals';
 import type { PhaseContext } from './types';
 
 /**
@@ -33,6 +33,7 @@ export function executePhase(ctx: PhaseContext): void {
   // Clear all compiler state for a fresh render pass.
   cjsSDK.clearHAEntityCache();
   cjsSDK.clearImageCache();
+  cjsSDK.clearOnlineImageCache();
   cjsSDK.clearFontCache();
   cjsSDK.clearRefRegistry();
   cjsSDK.clearSecrets();
@@ -54,25 +55,28 @@ export function executePhase(ctx: PhaseContext): void {
   const { result: reactiveResult, bindings, entities, components, reactiveNodes } = cjsSDK.withReactiveScope(() => {
     const { result: scriptResult, scripts } = cjsSDK.withScriptScope(() => {
       const { result: overlayResult, overlays } = cjsSDK.withOverlayScope(() => {
-        const { result: config, contributions } = cjsSDK.withContributionScope(() => {
-          const mod = _require(bundlePath) as { default?: unknown };
+        const { result: tierResult } = cjsSDK.withOverlayTierScope(() => {
+          const { result: config, contributions } = cjsSDK.withContributionScope(() => {
+            const mod = _require(bundlePath) as { default?: unknown };
 
-          const rootElement = mod.default;
+            const rootElement = mod.default;
 
-          if (rootElement == null) {
-            throw new Error(
-              `Entry module does not have a default export. ` +
-                `Make sure your TSX file exports a default ESPCompose element tree.`
-            );
-          }
+            if (rootElement == null) {
+              throw new Error(
+                `Entry module does not have a default export. ` +
+                  `Make sure your TSX file exports a default ESPCompose element tree.`
+              );
+            }
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const rendered = cjsSDK.render(rootElement as any) as Record<string, unknown>;
 
-          return rendered;
+            return rendered;
+          });
+          collectedContributions = contributions;
+          return config;
         });
-        collectedContributions = contributions;
-        return config;
+        return tierResult;
       });
       collectedOverlays = overlays;
       return overlayResult;
@@ -102,6 +106,9 @@ export function executePhase(ctx: PhaseContext): void {
         contributions: collectedContributions as BuildSemanticIRInput['contributions'],
       })
     : { kind: 'semantic_ir' as const, sections: brandArray([], 'section_registry'), entities: brandArray([], 'entity_registry'), components: brandArray([], 'component_registry'), scripts: brandArray([], 'script_registry'), themes: brandArray([], 'theme_registry'), reactives: { kind: 'reactive_registry' as const, bindings: [], memos: [], effects: [] }, uis: [] };
+
+  // ── Optimize IR expressions ───────────────────────────────────────────
+  optimizeSemanticIR(ir);
 
   // ── Assemble execute result ───────────────────────────────────────────
   const executeResult: ExecuteResult = { ir };

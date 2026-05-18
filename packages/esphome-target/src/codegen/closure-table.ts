@@ -3,9 +3,9 @@
 //
 // For each `IRScript` whose `closureShape` is populated, emit:
 //   1. A struct declaring the closure-row layout
-//        struct EcScript1Closure { const char* light_id; int brightness; };
+//        struct scr_abcd1234_closure_t { const char* light_id; int brightness; };
 //   2. A static const array of rows for per-instance values
-//        static const EcScript1Closure ec_script_1_closures[] = {
+//        static const scr_abcd1234_closure_t scr_abcd1234_closures[] = {
 //          { "kitchen_light", 100 },
 //          { "bedroom_light", 60 },
 //        };
@@ -23,12 +23,13 @@ import type {
   IRType,
 } from '@espcompose/core/internals';
 import { irTypeToCpp, irTypeZeroLiteral } from '../lowering';
+import { sanitizeBindingName } from '../yaml-utils.js';
 
 /** Per-template closure table emission. */
 export interface ClosureTableDecl {
   /** Script id this table belongs to. */
   scriptId: string;
-  /** C++ struct name (e.g. `EcScript1Closure`). */
+  /** C++ struct name (e.g. `scr_abcd1234_closure_t`). */
   structName: string;
   /** C++ array name (e.g. `ec_script_1_closures`). */
   arrayName: string;
@@ -42,11 +43,10 @@ export interface ClosureTableDecl {
 // Naming helpers
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Convert snake_case / arbitrary id → PascalCase suffixed with `Closure`. */
+/** Closure struct name derived from script id, kept in snake_case so
+ *  the e2e snapshot stabiliser regex handles it without special-casing. */
 export function closureStructName(scriptId: string): string {
-  const parts = scriptId.split(/[^A-Za-z0-9]+/).filter(Boolean);
-  const pascal = parts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join('');
-  return `${pascal || 'Script'}Closure`;
+  return `${scriptId}_closure_t`;
 }
 
 /** Per-template C++ identifier for the closure-table array. */
@@ -83,7 +83,13 @@ export function buildClosureTableDecl(script: IRScript): ClosureTableDecl | null
 export function formatClosureValue(v: IRScalar, irType: IRType): string {
   switch (irType.type) {
     case 'int':    return Number.isInteger(v.value as number) ? String(v.value) : String(Math.trunc(v.value as number));
-    case 'float':  return Number.isFinite(v.value as number) ? `${v.value}f` : '0.0f';
+    case 'float':  {
+      const n = v.value as number;
+      if (!Number.isFinite(n)) return '0.0f';
+      // C++ float literal requires a decimal point before the `f` suffix.
+      const s = String(n);
+      return s.includes('.') || s.includes('e') || s.includes('E') ? `${s}f` : `${s}.0f`;
+    }
     case 'bool':   return v.value ? 'true' : 'false';
     case 'string': return cppStringLiteral(String(v.value));
   }
@@ -143,6 +149,10 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   }
 
   // ── Typed-pointer lookup arrays for id_ref fields ──
+  // ESPHome's `id(X)` returns `T&` for LVGL widgets but `T*` for component
+  // accessors (light, switch, sensor, …). We normalize both via the
+  // `_ec_id_ptr` overload set emitted at the top of the bindings header
+  // so the array element type is always `T*`.
   for (const f of decl.fields) {
     if (f.irType.format !== 'id_ref') continue;
     const idx = idRefIndices.get(f.name)!;
@@ -150,14 +160,14 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
     // Strip the _idx suffix from the field name to get the binding name,
     // then pluralise for the array variable name.
     const baseName = f.name.endsWith('_idx') ? f.name.slice(0, -4) : f.name;
-    const arrayVarName = `ec_${decl.scriptId}_${baseName}s`;
+    const arrayVarName = `ec_${decl.scriptId}_${sanitizeBindingName(baseName)}s`;
     const firstId = idx.ids[0];
     lines.push(
-      `static decltype(id(${firstId}))* const ${arrayVarName}[] = {`,
+      `static decltype(_ec_id_ptr(id(${firstId}))) const ${arrayVarName}[] = {`,
     );
     for (let i = 0; i < idx.ids.length; i++) {
       const comma = i < idx.ids.length - 1 ? ',' : '';
-      lines.push(`  id(${idx.ids[i]})${comma}`);
+      lines.push(`  _ec_id_ptr(id(${idx.ids[i]}))${comma}`);
     }
     lines.push('};');
   }
@@ -165,7 +175,7 @@ export function generateClosureTableLines(decl: ClosureTableDecl): string[] {
   // ── Struct ──
   lines.push(`struct ${decl.structName} {`);
   for (const f of decl.fields) {
-    lines.push(`  ${irTypeToCpp(f.irType)} ${f.name};`);
+    lines.push(`  ${irTypeToCpp(f.irType)} ${sanitizeBindingName(f.name)};`);
   }
   lines.push('};');
 

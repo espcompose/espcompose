@@ -13,6 +13,7 @@ import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND } from '../types';
 import { parseDurationString } from '../ir/action-types';
 import type { IRDurationLiteral } from '../ir/action-types';
+import type { ScriptHandle } from './useScript';
 
 // ── GlobalDefinition ───────────────────────────────────────────────────────
 
@@ -283,6 +284,22 @@ export interface TransientOverlayContext {
    * Reactive — updates automatically when any slot shows or hides.
    */
   slotRank: Signal<number>;
+
+  /**
+   * Register a script to run after the overlay becomes visible.
+   *
+   * The show lifecycle script will execute and await this script
+   * immediately after `overlay_show`. Use for entrance animations.
+   */
+  afterShow(script: ScriptHandle): void;
+
+  /**
+   * Register a script to run before the overlay is hidden.
+   *
+   * The hide lifecycle script (and auto-hide path) will execute and await
+   * this script immediately before `overlay_hide`. Use for exit animations.
+   */
+  beforeHide(script: ScriptHandle): void;
 }
 
 // ── Duration normalization ─────────────────────────────────────────────────

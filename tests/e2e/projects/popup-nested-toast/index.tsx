@@ -1,13 +1,13 @@
 /**
  * E2E project: popup-nested-toast
  *
- * Validates nested overlay hooks — Toast.Provider inside a usePopup() factory.
+ * Validates nested overlay hooks — Toast.Provider inside a useDialog() factory.
  *
  * Expected behaviour:
- *   - Both popup and toast overlay definitions are emitted into top_layer
- *   - toast.show() / toast.hide() inside the popup's trigger handler
+ *   - Both dialog and toast overlay definitions are emitted into top_layer
+ *   - toast.show() / toast.hide() inside the dialog's trigger handler
  *     correctly references the toast overlay wrapper
- *   - Pressing the toggle button inside the popup triggers the entity
+ *   - Pressing the toggle button inside the dialog triggers the entity
  *     toggle AND shows the toast
  */
 import { DisplayRef, useRef, useHAEntity, createLvglWidget, delay } from '@espcompose/core';
@@ -16,15 +16,14 @@ import {
   VStack,
   Text,
   Button,
-  Popup,
   UITheme,
-  usePopup,
+  useDialog,
   Toast,
   useToast,
 } from '@espcompose/ui';
 
 /**
- * PopupContent — rendered inside the popup; uses toast from context.
+ * PopupContent — rendered inside the dialog; uses toast from context.
  */
 const PopupContent = createLvglWidget(
   ({ entityId, label, onClose }: { entityId: string; label: string; onClose: () => void }) => {
@@ -32,7 +31,7 @@ const PopupContent = createLvglWidget(
     const toast = useToast();
 
     return (
-      <Popup onBackdropPress={onClose}>
+      <>
         <Text text={label} />
         <Button
           text="Toggle"
@@ -47,7 +46,7 @@ const PopupContent = createLvglWidget(
           text="Close"
           onPress={onClose}
         />
-      </Popup>
+      </>
     );
   },
 );
@@ -57,7 +56,7 @@ const PopupContent = createLvglWidget(
  */
 const DeviceCard = createLvglWidget(
   ({ entityId, label }: { entityId: string; label: string }) => {
-    const popup = usePopup((ctrl) => (
+    const dialog = useDialog((ctrl) => (
       <Toast.Provider>
         <PopupContent entityId={entityId} label={label} onClose={() => { ctrl.hide(); }} />
       </Toast.Provider>
@@ -66,7 +65,7 @@ const DeviceCard = createLvglWidget(
     return (
       <Button
         text={label}
-        onPress={() => { popup.show(); }}
+        onPress={() => { dialog.show(); }}
       />
     );
   },

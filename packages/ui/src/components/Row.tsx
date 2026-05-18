@@ -75,6 +75,7 @@ export const [Row, Col] = createLvglLayoutWidget(
           style={{
             width: props.style?.width ?? '100%',
             height: props.style?.height ?? 'fit-content',
+            clickable: props.style?.clickable ?? false,
             backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
             borderWidth: props.style?.borderWidth ?? 0,
             borderColor: props.style?.borderColor,
@@ -96,6 +97,7 @@ export const [Row, Col] = createLvglLayoutWidget(
     return (
       <lvgl-obj
         style={{
+          clickable: props.style?.clickable ?? false,
           backgroundOpacity: props.style?.backgroundOpacity ?? 'transparent',
           borderWidth: props.style?.borderWidth ?? 0,
           borderColor: props.style?.borderColor,

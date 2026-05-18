@@ -161,6 +161,125 @@ function isDirectSignalPassthrough(expr: ts.Expression, checker: ts.TypeChecker)
   return ts.isIdentifier(expr) || ts.isPropertyAccessExpression(expr);
 }
 
+/**
+ * Check if an expression is a useReactiveMap() call from @espcompose/core.
+ */
+function isReactiveMapCall(expr: ts.Expression, checker: ts.TypeChecker): expr is ts.CallExpression {
+  if (!ts.isCallExpression(expr)) return false;
+  return isCoreExportCall(expr, 'useReactiveMap', checker);
+}
+
+/**
+ * If the first argument of a useReactiveMap() call is Signal-branded and
+ * the underlying type T is a finite string literal union, inject a
+ * `$compilerMetadata` third argument with the union members.
+ *
+ * This runs post-typecheck so the `never`-typed parameter accepts the value.
+ */
+function injectReactiveMapUnionHint(
+  callExpr: ts.CallExpression,
+  sourceFile: ts.SourceFile,
+  checker: ts.TypeChecker,
+  edits: SourceEdit[],
+): void {
+  // Must have exactly 2 arguments (prop, fn) — skip if already injected
+  if (callExpr.arguments.length !== 2) return;
+
+  const arg0 = callExpr.arguments[0];
+  const arg0Type = checker.getTypeAtLocation(arg0);
+
+  // Only inject when arg0 could be reactive (Signal-branded or Reactive<T>)
+  if (!hasSignalBrand(arg0Type) && !hasReactiveNodeBrand(arg0Type)) return;
+
+  // Extract string literal union members from the inner type T
+  const members = extractStringLiteralUnionMembers(arg0Type);
+  if (!members) return;
+
+  // Inject 3rd argument: { unionMembers: ['primary', 'secondary', ...] }
+  const membersJson = members.map(m => JSON.stringify(m)).join(', ');
+  const metaArg = `, { unionMembers: [${membersJson}] }`;
+
+  // Insert before the closing paren of the call
+  const closeParenPos = callExpr.getEnd() - 1;
+  edits.push({ position: closeParenPos, text: metaArg });
+}
+
+/**
+ * Extract string literal union members from a potentially Signal-branded type.
+ *
+ * Signal<T> = T & { [SIGNAL_BRAND]: true }. When T is a union like
+ * 'primary' | 'secondary', TS distributes the intersection:
+ *   ('primary' & Brand) | ('secondary' & Brand)
+ *
+ * Reactive<T> = T | IRReactiveNode<T>. When T = 'primary' | 'secondary':
+ *   'primary' | 'secondary' | IRReactiveNode<'primary' | 'secondary'>
+ *
+ * We skip IRReactiveNode members and collect the string literals.
+ *
+ * Returns the string literal values, or null if the type isn't a finite
+ * string literal union.
+ */
+function extractStringLiteralUnionMembers(type: ts.Type): string[] | null {
+  if (type.isUnion()) {
+    const members: string[] = [];
+    for (const member of type.types) {
+      // Skip IRReactiveNode members (Reactive<T> = T | IRReactiveNode<T>)
+      if (isReactiveNodeType(member)) continue;
+      const inner = unwrapToStringLiteral(member);
+      if (inner === null) return null; // Non-literal member → bail
+      members.push(inner);
+    }
+    return members.length > 0 ? members : null;
+  }
+
+  // Single branded literal — 'primary' & Brand (non-distributed)
+  const single = unwrapToStringLiteral(type);
+  if (single !== null) return [single];
+
+  return null;
+}
+
+/**
+ * Check if a type is IRReactiveNode (has REACTIVE_NODE_BRAND property).
+ */
+function isReactiveNodeType(type: ts.Type): boolean {
+  return type.getProperties().some(prop =>
+    /^__@REACTIVE_NODE_BRAND@\d+$/.test(prop.name),
+  );
+}
+
+/**
+ * Check if a type is or contains an IRReactiveNode (Reactive<T> union).
+ */
+function hasReactiveNodeBrand(type: ts.Type): boolean {
+  if (isReactiveNodeType(type)) return true;
+  if (type.isUnion()) {
+    return type.types.some(t => isReactiveNodeType(t));
+  }
+  if (type.isIntersection()) {
+    return type.types.some(t => hasReactiveNodeBrand(t));
+  }
+  return false;
+}
+
+/**
+ * Unwrap a single type to a string literal value.
+ * Handles intersections with brand types (e.g. 'primary' & { [SIGNAL_BRAND]: true }).
+ */
+function unwrapToStringLiteral(type: ts.Type): string | null {
+  // Direct string literal
+  if (type.isStringLiteral()) return type.value;
+
+  // Intersection — find the string literal among the members
+  if (type.isIntersection()) {
+    for (const member of type.types) {
+      if (member.isStringLiteral()) return member.value;
+    }
+  }
+
+  return null;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Compiled metadata serialization
 // ────────────────────────────────────────────────────────────────────────────
@@ -216,6 +335,11 @@ function walkNode(
   if (ts.isCallExpression(node) && isMemoCall(node, checker)) {
     processExplicitMemo(node, sourceFile, checker, haEntities, globals, edits, diagnostics, onTransform);
     return; // Don't recurse into children — we've handled this node
+  }
+
+  // Inject $compilerMetadata for useReactiveMap() with Signal-branded arg0
+  if (ts.isCallExpression(node) && isReactiveMapCall(node, checker)) {
+    injectReactiveMapUnionHint(node, sourceFile, checker, edits);
   }
 
   ts.forEachChild(node, child => {

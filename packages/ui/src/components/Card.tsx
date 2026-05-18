@@ -1,15 +1,13 @@
 /**
- * Card component — a styled container for grouping content.
- *
- * Compiles to <lvgl-obj> with rounded corners, padding, and themed background.
- * Background color comes from the `ds-surface-alt` style definition.
+ * Card component — a Surface with default padding and rounded corners.
  */
 
 import type { WidgetPropsWithChildren } from '@espcompose/core';
 import { createLvglContainerWidget } from '@espcompose/core';
 import { useSpacing, useRadius } from '../hooks';
-import { UITheme } from '../theme/theme';
 import type { SpacingToken, RadiusToken } from '../theme/types';
+import { Surface } from './Surface';
+import { Glass } from './Glass';
 
 type CardProps = WidgetPropsWithChildren<{
   /** Padding inside the card. Default: 'md'. */
@@ -21,7 +19,7 @@ type CardProps = WidgetPropsWithChildren<{
 }>;
 
 /**
- * Card — a styled container with background and rounded corners.
+ * Card — a Surface with default padding and rounded corners.
  *
  * @example
  * <Card>
@@ -34,28 +32,27 @@ export const Card = createLvglContainerWidget(
     const padding = props.style?.padding != null ? props.style.padding : useSpacing(props.padding ?? 'md');
     const radius = props.style?.borderRadius != null ? props.style.borderRadius : useRadius(props.radius ?? 'md');
     const gap = props.gap != null ? useSpacing(props.gap) : undefined;
-    const theme = UITheme.use();
-    const bgColor = props.style?.backgroundColor ?? theme?.colors?.surfaceAlt;
 
     return (
-        <lvgl-obj
-          style={{
-            backgroundColor: bgColor,
-            backgroundOpacity: '50%',
-            padding: padding,
-            borderRadius: radius,
-            borderColor: props.style?.borderColor,
-            borderWidth: props.style?.borderWidth ?? 0,
-            width: props.style?.width ?? '100%',
-            height: props.style?.height ?? 'fit-content',
-            scrollbarMode: 'off',
-            display: 'flex',
-            flexDirection: 'column',
-            ...(gap != null ? { rowGap: gap } : {}),
-          }}
-        >
-          {props.children}
-        </lvgl-obj>
+      <Glass
+        style={{
+          ...props.style,
+          padding,
+          borderRadius: radius,
+          borderWidth: 1,
+          borderOpacity: '10%',
+          borderColor: '#EEEEEE',
+          shadowSpread: 0,
+          width: props.style?.width ?? '100%',
+          height: props.style?.height ?? 'fit-content',
+          scrollbarMode: 'off',
+          display: 'flex',
+          flexDirection: 'column',
+          ...(gap != null ? { rowGap: gap } : {}),
+        }}
+      >
+        {props.children}
+      </Glass>
     );
   },
 );

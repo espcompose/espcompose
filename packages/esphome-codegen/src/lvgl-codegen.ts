@@ -87,7 +87,7 @@ function lvglTypeToTs(prop: LvglPropDef): ts.TypeNode {
       return typeRef('HexColor');
 
     case 'image':
-      return unionType([keyword('string'), refPropType(internalMarkerName('image::Image'))]);
+      return unionType([keyword('string'), refPropType(internalMarkerName('image::Image')), refPropType(internalMarkerName('online_image::OnlineImage'))]);
 
     case 'integer':
     case 'positive_integer':
@@ -227,7 +227,10 @@ export function buildLvglFileContent(
   statements.push(importTypeDecl(['ComponentProps', 'Reactive', 'RefProp', 'TriggerHandler'], '../../types'));
 
   // Collect every marker we need to import from ../markers (image + per-widget).
-  const markerImports = new Set<string>([internalMarkerName('image::Image')]);
+  const markerImports = new Set<string>([
+    internalMarkerName('image::Image'),
+    internalMarkerName('online_image::OnlineImage'),
+  ]);
   if (widgetCppTypeMap) {
     for (const cppType of widgetCppTypeMap.values()) {
       markerImports.add(internalMarkerName(cppType));
@@ -235,8 +238,8 @@ export function buildLvglFileContent(
   }
   statements.push(importTypeDecl([...markerImports].sort(), '../markers'));
 
-  statements.push(importTypeDecl(['CssStyleProps'], '../../style-types'));
-  statements.push(importTypeDecl(['HexColor'], '../../theme/hex-color'));
+  statements.push(importTypeDecl(['CssStyleProps'], '../../lvgl/style/types'));
+  statements.push(importTypeDecl(['HexColor'], '../../lvgl/theme/hex-color'));
 
   // ── Layout props to exclude from LvglStyleProps ───────────────────────────
   // These are layout concerns, not visual style — handled by layout components

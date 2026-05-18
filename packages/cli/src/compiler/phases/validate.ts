@@ -31,6 +31,9 @@ function collectNullPaths(ir: SemanticIR): string[] {
 }
 
 function walkSection(section: IRSection, paths: string[]): void {
+  // A top-level section with a null value (e.g. `http_request:`) is valid
+  // ESPHome YAML — it means "include this component with defaults."
+  if (section.value.kind === 'null') return;
   walkValue(section.value, section.key, paths);
 }
 

@@ -12,10 +12,11 @@
  */
 
 import type { EspComposeElement, VisibilityController } from '@espcompose/core';
-import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings } from '@espcompose/core';
-import { BottomToast as ToastWidget } from '../components/Toast';
+import { createElement, useTransientOverlay, createContext, useContext, createLvglContextProvider, useThemeSettings, useRef, useScript, animate, useOverlayTier } from '@espcompose/core';
+import { BottomToast as ToastWidget } from '../components/BottomToast';
 import { TopRightToast } from '../components/TopRightToast';
 import { Text } from '../components/Text';
+import { UITheme } from '../theme/theme';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -122,19 +123,68 @@ export function ToastProvider(props: ToastProviderProps): EspComposeElement {
   const variant: 'bottom' | 'topRight' = variantProp
     ?? (settings?.class === 'large' || settings?.class === 'panel' ? 'topRight' : 'bottom');
 
+  const toastTier = useOverlayTier({ zOrder: 100, bringToFront: false });
+
   const ctrl = useTransientOverlay<ToastPayload>(
-    { zOrder: 100, maxVisible, autoHide, overflow, queueLength },
+    { tier: toastTier, maxVisible, autoHide, overflow, queueLength },
     (_ctrl, ctx) => {
+      const cardRef = useRef();
+      const theme = UITheme.use();
+      const toastTextColor = theme?.parts?.toast?.text;
+
       if (variant === 'topRight') {
+        const enterScript = useScript(async () => {
+          await animate(cardRef, {
+            property: 'translateX',
+            from: 300,
+            to: 0,
+            duration: '300ms',
+            easing: 'ease-out',
+          });
+        });
+        const exitScript = useScript(async () => {
+          await animate(cardRef, {
+            property: 'translateX',
+            from: 0,
+            to: 300,
+            duration: '300ms',
+            easing: 'ease-in',
+          });
+        });
+        ctx.afterShow(enterScript);
+        ctx.beforeHide(exitScript);
+
         return (
-          <TopRightToast topOffset={ctx.slotRank * slotHeight}>
-            <Text text={ctx.payload.msg} />
+          <TopRightToast topOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
+            <Text text={ctx.payload.msg} style={{ color: toastTextColor }} />
           </TopRightToast>
         );
       }
+
+      const enterScript = useScript(async () => {
+        await animate(cardRef, {
+          property: 'translateY',
+          from: 80,
+          to: 0,
+          duration: '300ms',
+          easing: 'ease-out',
+        });
+      });
+      const exitScript = useScript(async () => {
+        await animate(cardRef, {
+          property: 'translateY',
+          from: 0,
+          to: 80,
+          duration: '300ms',
+          easing: 'ease-in',
+        });
+      });
+      ctx.afterShow(enterScript);
+      ctx.beforeHide(exitScript);
+
       return (
-        <ToastWidget bottomOffset={ctx.slotRank * slotHeight}>
-          <Text text={ctx.payload.msg} />
+        <ToastWidget bottomOffset={ctx.slotRank * slotHeight} cardRef={cardRef}>
+          <Text text={ctx.payload.msg} style={{ color: toastTextColor }} />
         </ToastWidget>
       );
     },

@@ -6,7 +6,6 @@ export {
   generateSignalSetLambda,
   generateInitialValueLambda,
   getRuntimeHeaderContent,
-  computeMaxNodes,
 } from './bindings';
 export type {
   SignalDecl,

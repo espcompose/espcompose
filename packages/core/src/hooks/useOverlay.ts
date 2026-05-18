@@ -23,7 +23,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { createContext, useContext, withContext } from './useContext';
-import { assertHookContext, getCurrentHookPath, getHookPathGeneration } from './useState';
+import { assertHookContext, getCurrentHookPath, nextCallIndexAtHookPath, withHookPath } from './useState';
 import { registerComponent } from './useReactiveScope';
 import { throwCompileTimeOnly } from '../errors';
 import type { BINDING_BRAND, OVERLAY_BRAND } from '../types';
@@ -43,6 +43,8 @@ import type { OverlayPayloadGlobalDecl, GlobalDefinition } from './global-shared
 import { irOverlayShow, irOverlayHide } from '../ir/action-types';
 import { generateDeterministicId } from '../id';
 import { RESOLVE_METHOD_CALL } from '../actions/resolve/symbols';
+import type { OverlayTierHandle } from './useOverlayTier';
+import { TIER_Z_ORDER, TIER_KEY } from './useOverlayTier';
 
 // ── Overlay controller symbols ──────────────────────────────────────────────
 // Symbol-keyed internal fields on OverlayController. Using symbols instead of
@@ -59,6 +61,8 @@ export const OVERLAY_Z_ORDER: unique symbol = Symbol('overlay.zOrder');
 export const OVERLAY_LIFECYCLE_SCRIPT_ID: unique symbol = Symbol('overlay.lifecycleScriptId');
 /** Overlay payload declarations (OverlayPayloadGlobalDecl[]). Symbol-keyed so useVisibility can read them. */
 export const OVERLAY_PAYLOAD_GLOBALS: unique symbol = Symbol('overlay.payloadGlobals');
+/** Deterministic tier key for the overlay's tier. */
+export const OVERLAY_TIER_KEY: unique symbol = Symbol('overlay.tierKey');
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -145,6 +149,10 @@ export interface OverlayDefinition {
   readonly lvgl: string;
   /** Numeric z-order tier for stacking in top_layer. */
   readonly zOrder: number;
+  /** Deterministic tier key from useOverlayTier(). */
+  readonly tierKey: string;
+  /** When `true`, the overlay content starts visible (not hidden) on boot. */
+  readonly initiallyVisible: boolean;
   /** Per-instance records, accumulated across all callers. */
   readonly instances: OverlayInstance[];
 }
@@ -152,12 +160,24 @@ export interface OverlayDefinition {
 /** Configuration for `useOverlay()`. */
 export interface OverlayConfig {
   /**
-   * Numeric z-order tier. Overlays with higher `zOrder` are rendered above
-   * those with lower values. Within the same tier, last-shown-wins.
+   * Overlay tier handle from `useOverlayTier()`.
    *
-   * @default 0
+   * Required. Declares which z-order tier this overlay belongs to.
+   * The tier controls stacking, optional shared backdrop, and
+   * child-level visibility toggling.
    */
-  zOrder?: number;
+  tier: OverlayTierHandle;
+
+  /**
+   * When `true`, the overlay starts visible on boot (instance 0's content
+   * is shown without requiring an explicit `show()` call).
+   *
+   * The mux signal defaults to instance 0, so reactive bindings are
+   * correct immediately. The tier wrapper (if any) is also visible.
+   *
+   * @default false
+   */
+  initiallyVisible?: boolean;
 }
 
 // ── Overlay payload global declarations ──────────────────────────────────────
@@ -170,10 +190,6 @@ export type { OverlayPayloadGlobalDecl } from './global-shared';
 interface OverlayScopeFrame {
   /** Map templateKey → OverlayDefinition. Insertion order is preserved. */
   readonly definitions: Map<string, OverlayDefinition>;
-  /** Hook-path generation seen at the last useOverlay() call, for reset detection. */
-  _lastGeneration?: number;
-  /** Per-component-invocation call counter for useOverlay(). */
-  _hookCallIndex?: number;
 }
 
 const overlayScopeContext = createContext<OverlayScopeFrame | null>(null);
@@ -235,13 +251,13 @@ export type OverlayFactory<P = void> = P extends void
 
 // ── Hook call counter ───────────────────────────────────────────────────────
 // Disambiguates multiple useOverlay() calls within the same component.
-// Uses a Map<hookPath, callIndex> on the overlay scope frame to track how many
-// useOverlay() calls have occurred for each distinct hook path. The map is
-// cleared when the hook path changes (which means a different component
-// invocation started). This ensures:
-//   - Component instance A calling useOverlay() twice → keys path#0, path#1
-//   - Component instance B calling useOverlay() twice → keys path#0, path#1
-//     (same keys as A, so B's calls correctly append to A's definitions)
+// Uses the shared per-hook-path call index from useState (the same
+// mechanism that powers useStableValue / useRef): each call returns the
+// next 0-based index for the current hook path, and pushHookPath()
+// resets a path's counter on entry. So:
+//   - Component instance A calling useOverlay() twice → indices 0, 1
+//   - Component instance B calling useOverlay() twice → indices 0, 1
+//     (same indices, so B's calls correctly append to A's definitions)
 
 /**
  * Declare a shared overlay whose widget subtree is deduplicated across all
@@ -264,7 +280,9 @@ export type OverlayFactory<P = void> = P extends void
 export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFactory<P>): OverlayController<P> {
   assertHookContext('useOverlay()');
 
-  const zOrder = config.zOrder ?? 0;
+  const tier = config.tier;
+  const zOrder = tier[TIER_Z_ORDER];
+  const tierKey = tier[TIER_KEY];
 
   // Require an enclosing <lvgl> context — overlays are lvgl-scoped.
   const lvglId = String(useLvgl());
@@ -285,17 +303,10 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
     );
   }
 
-  // Per-hook-path call counter.  Resets at the start of each component
-  // invocation.  We detect invocation boundaries via the hook-path
-  // generation counter — it increments on every pushHookPath/popHookPath,
-  // so even two sibling instances with the same path string will see
-  // different generations after the pop+push cycle between them.
-  const gen = getHookPathGeneration();
-  if (gen !== frame._lastGeneration) {
-    frame._lastGeneration = gen;
-    frame._hookCallIndex = 0;
-  }
-  const callIndex = frame._hookCallIndex!++;
+  // Per-hook-path call index, allocated from the shared call-site counter.
+  // Sibling component instances see the same index sequence (their counter
+  // resets on each pushHookPath into the same path string).
+  const callIndex = nextCallIndexAtHookPath();
 
   // Build a unique template key: hook-path + call-site index.
   const templateKey = `${basePath}#${callIndex}`;
@@ -307,7 +318,7 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
 
   let def = frame.definitions.get(templateKey);
   if (!def) {
-    def = { templateKey: safeKey, lvgl: lvglId, zOrder, instances: [] };
+    def = { templateKey: safeKey, lvgl: lvglId, zOrder, tierKey, initiallyVisible: config.initiallyVisible === true, instances: [] };
     frame.definitions.set(templateKey, def);
   }
 
@@ -347,15 +358,20 @@ export function useOverlay<P = void>(config: OverlayConfig, factory: OverlayFact
   }
 
   const instanceIndex = def.instances.length;
-  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, payloadDecls);
+  const ctrl = createOverlayController<P>(safeKey, instanceIndex, zOrder, tierKey, payloadDecls);
 
-  // Evaluate the factory — captures this instance's unique closures
+  // Evaluate the factory under a synthetic hook-path frame keyed by the
+  // overlay's templateKey. This gives memoized hooks (useRef, useStableValue)
+  // inside the factory a per-template identity: all N instances of the same
+  // overlay share values (only instance 0's widgets commit), while distinct
+  // overlays (e.g. each toast slot) get distinct values. The factory itself
+  // is evaluated for every instance to capture per-instance closures
   // (entity bindings, compiled action handlers, useMemo() expressions).
-  // Even though only instance #0's widget subtree is emitted, every
-  // instance must evaluate so the compiler captures its data.
-  const rendered = paramsProxy
-    ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
-    : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl);
+  const rendered = withHookPath(safeKey, () =>
+    paramsProxy
+      ? (factory as (ctrl: OverlayController<P>, ctx: { payload: unknown }) => EspComposeElement | EspComposeElement[])(ctrl, { payload: paramsProxy })
+      : (factory as (ctrl: OverlayController<P>) => EspComposeElement | EspComposeElement[])(ctrl),
+  );
 
   def.instances.push({ index: instanceIndex, rendered });
 
@@ -378,6 +394,7 @@ function createOverlayController<P>(
   templateKey: string,
   instanceIndex: number,
   zOrder: number,
+  tierKey: string,
   payloadDecls?: OverlayPayloadGlobalDecl[],
 ): OverlayController<P> {
   return {
@@ -390,10 +407,11 @@ function createOverlayController<P>(
     [OVERLAY_TEMPLATE_KEY]: templateKey,
     [OVERLAY_INSTANCE_INDEX]: instanceIndex,
     [OVERLAY_Z_ORDER]: zOrder,
+    [OVERLAY_TIER_KEY]: tierKey,
     [OVERLAY_PAYLOAD_GLOBALS]: payloadDecls,
     [RESOLVE_METHOD_CALL](methodName: string, controllerRef: string): IRActionNode[] {
-      if (methodName === 'show') return [irOverlayShow('', -1, 0, controllerRef)];
-      if (methodName === 'hide') return [irOverlayHide('', 0, controllerRef)];
+      if (methodName === 'show') return [irOverlayShow('', -1, 0, '', controllerRef)];
+      if (methodName === 'hide') return [irOverlayHide('', 0, '', controllerRef)];
       return [];
     },
   } as OverlayController<P>;

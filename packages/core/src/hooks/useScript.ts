@@ -28,11 +28,12 @@ import type { ScriptMode, IRScriptParamDecl, IRType, IRScalar, ClosureShape, Clo
 import { irScalar } from '../ir/types';
 import type { BINDING_BRAND } from '../types';
 import { isRef } from '../types';
-import { generateId } from '../id';
+import { generateId, generateDeterministicId } from '../id';
 import { throwCompileTimeOnly } from '../errors';
-import { findClosureDescriptor } from '../actions';
+import { findClosureDescriptor, resolveControllerMethodCalls, resolveScriptHandleClosureIndex } from '../actions';
 import type { OverlayControllerInternal } from '../actions';
 import { CLOSURE_INDEX } from '../actions';
+import { walkActionTree } from '../actions/resolve/walk';
 import {
   OVERLAY_TEMPLATE_KEY,
   OVERLAY_INSTANCE_INDEX,
@@ -164,9 +165,33 @@ export function useScript<A extends ScriptParamScalar[]>(
     const closureShape = classifyBindings(refBindings, scalarCaptures);
 
     // Build a dedup key from bodyHash + closure-shape signature.
+    // Also include resolved Ref binding values: animate (and other widget-
+    // targeting actions) bake the widget ID statically into the YAML at
+    // lowering time rather than reading from the closure table, so two
+    // call sites with the same body but different ref values must NOT
+    // dedup — otherwise the second site's actions would reference the
+    // first site's widget. Cases that legitimately share a script across
+    // instances (e.g. multiple instances of the same overlay) see the
+    // same ref values and still dedup correctly.
     // Without a bodyHash (e.g. uncompiled tests), fall back to var-name dedup.
+    const refValueSignature = Object.keys(refBindings)
+      .sort()
+      .filter(k => isRef(refBindings[k]))
+      .map(k => `${k}=${(refBindings[k] as { toString(): string }).toString()}`)
+      .join(',');
     const dedupKey = bodyHash
-      ? `canonical:${bodyHash}|${closureShapeSignature(closureShape)}`
+      ? `canonical:${bodyHash}|${closureShapeSignature(closureShape)}|${refValueSignature}`
+      : varScriptId;
+
+    // The first registration for a given varScriptId uses it as-is — this
+    // is the ID trigger handler actions embed at compile time. Subsequent
+    // registrations with the same varScriptId but different ref values
+    // (overlay factory multi-slot scenario) get a differentiated ID so ESPHome
+    // doesn't see duplicate script definitions.
+    const varScriptIdTaken = findInScope(scriptScopeContext, dedupKey) !== undefined
+      || Object.values(useContext(scriptScopeContext).value).some(e => e.def.id === varScriptId);
+    const scriptId = varScriptIdTaken && refValueSignature
+      ? generateDeterministicId('scr', `${varScriptId}|${refValueSignature}`)
       : varScriptId;
 
     // Check for dedup
@@ -187,7 +212,7 @@ export function useScript<A extends ScriptParamScalar[]>(
     const { actions, refBindings: scriptRefBindings } =
       resolveScriptActionsCanonical(body.__compiledScript.then, refBindings);
     const scriptDef: ScriptDefinition = {
-      id: varScriptId,
+      id: scriptId,
       mode: opts?.mode,
       maxRuns: opts?.maxRuns,
       userParams: userParams && userParams.length > 0 ? userParams : undefined,
@@ -197,7 +222,8 @@ export function useScript<A extends ScriptParamScalar[]>(
       then: actions,
     };
     registerInScope(scriptScopeContext, dedupKey, { def: scriptDef });
-    return createScriptHandle<A>(varScriptId, closureShape.fields.length > 0 ? 0 : undefined);
+
+    return createScriptHandle<A>(scriptId, closureShape.fields.length > 0 ? 0 : undefined);
   }
 
   // Fallback for bodies without compiled metadata (dev mode / uncompiled)
@@ -440,6 +466,14 @@ function resolveScriptActionsCanonical(
 
   let actions = structuredClone(rawActions) as IRActionNode[];
   resolveControllerRefsParameterized(actions, refBindings, paramRefMap);
+  // Resolve controller method calls (e.g. `ctrl.show()`) emitted inside
+  // script bodies. Must run BEFORE controllers are stripped from refBindings
+  // in the cleanBindings step below.
+  resolveControllerMethodCalls(actions, refBindings);
+  // Patch closure_index for direct `someScript.execute()` calls embedded in
+  // this script's body. Must run while ScriptHandle entries are still in
+  // refBindings (they're stripped below in cleanBindings).
+  resolveScriptHandleClosureIndex(actions, refBindings);
 
   // Rewrite IRScriptParamRef names in delay (and other) actions to use
   // the closure-row dereference prefix (e.g. `durationMs` → `closure.durationMs`).
@@ -497,9 +531,8 @@ function resolveControllerRefsParameterized(
   refBindings: Record<string, unknown>,
   paramRefMap: Map<string, Map<string, IRScriptParamRef>>,
 ): void {
-  for (let i = 0; i < actions.length; i++) {
+  walkActionTree(actions, (actions, i) => {
     const action = actions[i];
-
     if (action.kind === 'action:overlay_show' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
@@ -509,6 +542,7 @@ function resolveControllerRefsParameterized(
         action.instanceIndex = paramRefs?.get('instance_index') ?? ctrl[OVERLAY_INSTANCE_INDEX] ?? action.instanceIndex;
         delete action.controllerRef;
       }
+      return i + 1;
     } else if (action.kind === 'action:overlay_hide' && action.controllerRef) {
       const ctrl = refBindings[action.controllerRef] as OverlayControllerInternalShape | undefined;
       if (ctrl) {
@@ -516,13 +550,10 @@ function resolveControllerRefsParameterized(
         action.zOrder = ctrl[OVERLAY_Z_ORDER] ?? action.zOrder;
         delete action.controllerRef;
       }
-    } else if (action.kind === 'action:if') {
-      resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
-      if (action.else) resolveControllerRefsParameterized(action.else, refBindings, paramRefMap);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      resolveControllerRefsParameterized(action.then, refBindings, paramRefMap);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 /**
@@ -531,19 +562,17 @@ function resolveControllerRefsParameterized(
  * closure-row dereference.
  */
 function rewriteScalarParamRefs(actions: IRActionNode[]): void {
-  for (const action of actions) {
+  walkActionTree(actions, (actions, i) => {
+    const action = actions[i];
     if (action.kind === 'action:delay') {
       const dur = action.duration;
       if (typeof dur === 'object' && dur.kind === 'script_param' && !dur.name.startsWith('closure.')) {
         dur.name = `closure.${dur.name}`;
       }
-    } else if (action.kind === 'action:if') {
-      rewriteScalarParamRefs(action.then);
-      if (action.else) rewriteScalarParamRefs(action.else);
-    } else if (action.kind === 'action:while' || action.kind === 'action:repeat') {
-      rewriteScalarParamRefs(action.then);
+      return i + 1;
     }
-  }
+    return undefined;
+  });
 }
 
 

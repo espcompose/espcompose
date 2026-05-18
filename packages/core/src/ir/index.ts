@@ -145,6 +145,7 @@ export {
 export { getExprChildren, mapExprChildren } from './expr-walk';
 export { getStatementBlockExpressions } from './stmt-walk';
 export { analyzeExprStructure, analyzeActionStructure } from './structural-analysis';
+export { optimizeExpr, optimizeSemanticIR } from './optimize-expr';
 export type {
   ExprStructuralAnalysis,
   ExprHole,
@@ -178,6 +179,7 @@ export type {
   IROverlayShowAction,
   IROverlayHideAction,
   IRControllerMethodCallAction,
+  IRAnimateAction,
   IRCondition,
   IRLambdaCondition,
   IRNativeCondition,
@@ -215,11 +217,12 @@ export {
   irOverlayShow,
   irOverlayHide,
   irControllerMethodCall,
+  irAnimateAction,
   splitActionKey,
   parseDurationString,
   parseTimeoutString,
 } from './action-types';
 
 // ── Component Contributions ──────────────────────────────────────────────────
-export type { ComponentContribution, AttachTriggerContribution } from './contribution-types';
+export type { ComponentContribution, AttachTriggerContribution, AttachStyleTransitionContribution, AnimationEasing, IRStyleTransition, IRStyleTransitionDescriptor } from './contribution-types';
 export { applyContributions } from './apply-contributions';
