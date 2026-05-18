@@ -39,7 +39,10 @@ export interface UseOnlineImageOptions {
   byteOrder?: 'BIG_ENDIAN' | 'LITTLE_ENDIAN';
   /** Download buffer size in bytes (default 65536). */
   bufferSize?: number;
-  /** How often to re-download the image (e.g. `'5s'`, `'30s'`, `'1min'`). Defaults to `'never'`. */
+  /**
+   * How often to re-download the image (e.g. `'5s'`, `'30s'`, `'1min'`).
+   * Defaults to `'never'`.
+   */
   updateInterval?: string;
 }
 
